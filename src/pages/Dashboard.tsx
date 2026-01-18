@@ -7,10 +7,13 @@ import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
 import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
+import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
+import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Droplets, RefreshCw } from 'lucide-react';
+import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Droplets, RefreshCw, Receipt, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Delivery {
@@ -27,6 +30,8 @@ interface Delivery {
 export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
+  const [period, setPeriod] = useState<Period>('month');
+  const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
   const [recentDeliveries, setRecentDeliveries] = useState<Delivery[]>([]);
   const [deliveriesLoading, setDeliveriesLoading] = useState(true);
@@ -107,6 +112,7 @@ export default function Dashboard() {
     setRefreshing(true);
     await Promise.all([
       refresh(),
+      refreshPeriod(),
       fetchRecentDeliveries(),
       fetchProductionStats(),
       isCeo ? checkPaymentDelays() : Promise.resolve(),
@@ -132,23 +138,26 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+        {/* Header with Period Selector */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Tableau de Bord</h1>
             <p className="text-muted-foreground mt-1">
               Vue d'ensemble des opérations Talmi Beton
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-            Actualiser
-          </Button>
+          <div className="flex items-center gap-3">
+            <PeriodSelector value={period} onChange={setPeriod} />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+              Actualiser
+            </Button>
+          </div>
         </div>
 
         {/* Executive Command Center - CEO Only */}
@@ -172,47 +181,63 @@ export default function Dashboard() {
           onDismiss={dismissAlert} 
         />
 
-        {/* KPI Grid */}
+        {/* Period-Aware KPI Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            title="Livraisons"
-            value={stats.totalDeliveries}
-            subtitle="Ce mois"
-            icon={Truck}
-            trend={getTrendDirection(stats.deliveriesTrend)}
-            trendValue={formatTrend(stats.deliveriesTrend)}
-            variant={stats.deliveriesTrend < -20 ? 'negative' : 'default'}
-          />
-          <KPICard
+          <PeriodKPICard
             title="Volume Total"
-            value={`${stats.totalVolume.toFixed(0)} m³`}
-            subtitle="Béton livré"
+            value={`${periodStats.totalVolume.toFixed(0)} m³`}
+            subtitle={periodStats.periodLabel}
             icon={Package}
-            trend={getTrendDirection(stats.volumeTrend)}
-            trendValue={formatTrend(stats.volumeTrend)}
-            variant={stats.volumeTrend > 0 ? 'positive' : stats.volumeTrend < -15 ? 'negative' : 'default'}
+            trend={periodStats.volumeTrend}
+            trendLabel={periodStats.previousPeriodLabel}
+            variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
           />
-          <KPICard
-            title="Clients Actifs"
-            value={stats.totalClients}
-            subtitle="Ce mois"
-            icon={Users}
-            trend={getTrendDirection(stats.clientsTrend)}
-            trendValue={formatTrend(stats.clientsTrend)}
-            variant={stats.clientsTrend < -10 ? 'warning' : 'default'}
-          />
-          <KPICard
-            title="Paiements"
-            value={stats.pendingPaymentsCount}
-            subtitle={stats.pendingPaymentsTotal > 0 ? `${(stats.pendingPaymentsTotal / 1000).toFixed(0)}K DH en retard` : 'En attente'}
+          <PeriodKPICard
+            title="Chiffre d'Affaires"
+            value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
+            subtitle={`${periodStats.nbFactures} factures`}
             icon={DollarSign}
-            variant={stats.pendingPaymentsTotal > 100000 ? 'negative' : stats.pendingPaymentsCount > 10 ? 'warning' : 'default'}
+            trend={periodStats.caTrend}
+            trendLabel={periodStats.previousPeriodLabel}
+            variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
+          />
+          <PeriodKPICard
+            title="CUR Moyen"
+            value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
+            subtitle="Coût Unitaire Réel"
+            icon={Gauge}
+            trend={periodStats.curTrend}
+            trendLabel={periodStats.previousPeriodLabel}
+            variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
+          />
+          <PeriodKPICard
+            title="Marge Brute"
+            value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
+            subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
+            icon={TrendingUp}
+            trend={periodStats.margeTrend}
+            trendLabel={periodStats.previousPeriodLabel}
+            variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
           />
         </div>
 
-        {/* Secondary KPIs for CEO/Accounting */}
+        {/* Profit Net & Dépenses - CEO Only */}
         {(isCeo || isAccounting) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <PeriodKPICard
+              title="Profit Net"
+              value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
+              subtitle="CA - Coûts - Dépenses"
+              icon={Calculator}
+              variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
+            />
+            <PeriodKPICard
+              title="Total Dépenses"
+              value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
+              subtitle={periodStats.periodLabel}
+              icon={Receipt}
+              variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
+            />
             <KPICard
               title="Alertes Marge"
               value={stats.marginAlerts}
@@ -221,27 +246,11 @@ export default function Dashboard() {
               variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
             />
             <KPICard
-              title="CUR Moyen (7j)"
-              value={stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)}` : '—'}
-              subtitle="DH/m³"
-              icon={Gauge}
-              trend={getTrendDirection(stats.curTrend)}
-              trendValue={stats.curTrend !== 0 ? formatTrend(stats.curTrend) : undefined}
-              variant={stats.curTrend > 5 ? 'warning' : 'default'}
-            />
-            <KPICard
-              title="Taux E/C Moyen"
-              value={stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—'}
-              subtitle={stats.tauxECMoyen > 0.55 ? '⚠️ Dilution' : 'Normal'}
-              icon={Droplets}
-              variant={stats.tauxECMoyen > 0.55 ? 'warning' : 'default'}
-            />
-            <KPICard
-              title="Performance"
-              value={`${(100 - (stats.marginAlerts / Math.max(stats.totalDeliveries, 1)) * 100).toFixed(1)}%`}
-              subtitle="Taux de conformité"
-              icon={TrendingUp}
-              variant="positive"
+              title="Clients Actifs"
+              value={periodStats.nbClients}
+              subtitle={periodStats.periodLabel}
+              icon={Users}
+              variant="default"
             />
           </div>
         )}

@@ -317,6 +317,42 @@ export type Database = {
         }
         Relationships: []
       }
+      depenses: {
+        Row: {
+          categorie: string
+          created_at: string
+          created_by: string
+          date_depense: string
+          description: string | null
+          id: string
+          montant: number
+          photo_recu_url: string
+          updated_at: string
+        }
+        Insert: {
+          categorie: string
+          created_at?: string
+          created_by: string
+          date_depense?: string
+          description?: string | null
+          id?: string
+          montant: number
+          photo_recu_url: string
+          updated_at?: string
+        }
+        Update: {
+          categorie?: string
+          created_at?: string
+          created_by?: string
+          date_depense?: string
+          description?: string | null
+          id?: string
+          montant?: number
+          photo_recu_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       factures: {
         Row: {
           bl_id: string
