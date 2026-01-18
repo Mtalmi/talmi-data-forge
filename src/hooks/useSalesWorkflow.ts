@@ -344,6 +344,67 @@ export function useSalesWorkflow() {
     }
   }, [user, fetchData]);
 
+  // Create Direct BC (without Devis) - Quick Order
+  const createDirectBc = useCallback(async (data: {
+    client_id: string;
+    formule_id: string;
+    volume_m3: number;
+    prix_vente_m3: number;
+    date_livraison_souhaitee: string;
+    heure_livraison_souhaitee?: string;
+    adresse_livraison?: string;
+    contact_chantier?: string;
+    telephone_chantier?: string;
+    reference_client?: string;
+    conditions_acces?: string;
+    pompe_requise?: boolean;
+    type_pompe?: string;
+    notes?: string;
+  }): Promise<BonCommande | null> => {
+    try {
+      const bc_id = generateBcId();
+      const total_ht = data.prix_vente_m3 * data.volume_m3;
+
+      const { data: newBc, error } = await supabase
+        .from('bons_commande')
+        .insert({
+          bc_id,
+          client_id: data.client_id,
+          formule_id: data.formule_id,
+          volume_m3: data.volume_m3,
+          prix_vente_m3: data.prix_vente_m3,
+          total_ht,
+          statut: 'pret_production',
+          date_livraison_souhaitee: data.date_livraison_souhaitee,
+          heure_livraison_souhaitee: data.heure_livraison_souhaitee || null,
+          adresse_livraison: data.adresse_livraison || null,
+          contact_chantier: data.contact_chantier || null,
+          telephone_chantier: data.telephone_chantier || null,
+          reference_client: data.reference_client || null,
+          conditions_acces: data.conditions_acces || null,
+          pompe_requise: data.pompe_requise || false,
+          type_pompe: data.type_pompe || null,
+          notes: data.notes || null,
+          prix_verrouille: true,
+          created_by: user?.id,
+          validated_by: user?.id,
+          validated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await fetchData();
+      toast.success(`Commande ${bc_id} créée avec succès!`);
+      return newBc;
+    } catch (error) {
+      console.error('Error creating direct BC:', error);
+      toast.error('Erreur lors de la création de la commande');
+      return null;
+    }
+  }, [user, generateBcId, fetchData]);
+
   // Stats
   const stats = {
     devisEnAttente: devisList.filter(d => d.statut === 'en_attente').length,
@@ -368,6 +429,7 @@ export function useSalesWorkflow() {
     saveDevis,
     convertToBc,
     createBlFromBc,
+    createDirectBc,
     updateDevisStatus,
     updateBcStatus,
   };
