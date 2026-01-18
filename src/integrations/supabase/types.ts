@@ -14,6 +14,112 @@ export type Database = {
   }
   public: {
     Tables: {
+      achats: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_commande: string
+          date_livraison_prevue: string | null
+          date_livraison_reelle: string | null
+          fournisseur_id: string
+          id: string
+          montant_ht: number
+          montant_ttc: number | null
+          notes: string | null
+          numero_achat: string
+          statut: string
+          tva_pct: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_commande?: string
+          date_livraison_prevue?: string | null
+          date_livraison_reelle?: string | null
+          fournisseur_id: string
+          id?: string
+          montant_ht?: number
+          montant_ttc?: number | null
+          notes?: string | null
+          numero_achat: string
+          statut?: string
+          tva_pct?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_commande?: string
+          date_livraison_prevue?: string | null
+          date_livraison_reelle?: string | null
+          fournisseur_id?: string
+          id?: string
+          montant_ht?: number
+          montant_ttc?: number | null
+          notes?: string | null
+          numero_achat?: string
+          statut?: string
+          tva_pct?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achats_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      alertes_reapprovisionnement: {
+        Row: {
+          actif: boolean | null
+          created_at: string
+          delai_commande_jours: number | null
+          derniere_alerte: string | null
+          fournisseur_prefere_id: string | null
+          id: string
+          materiau: string
+          quantite_reorder: number
+          seuil_alerte: number
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean | null
+          created_at?: string
+          delai_commande_jours?: number | null
+          derniere_alerte?: string | null
+          fournisseur_prefere_id?: string | null
+          id?: string
+          materiau: string
+          quantite_reorder: number
+          seuil_alerte: number
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean | null
+          created_at?: string
+          delai_commande_jours?: number | null
+          derniere_alerte?: string | null
+          fournisseur_prefere_id?: string | null
+          id?: string
+          materiau?: string
+          quantite_reorder?: number
+          seuil_alerte?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alertes_reapprovisionnement_fournisseur_prefere_id_fkey"
+            columns: ["fournisseur_prefere_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alertes_systeme: {
         Row: {
           created_at: string | null
@@ -619,6 +725,69 @@ export type Database = {
         }
         Relationships: []
       }
+      factures_fournisseur: {
+        Row: {
+          achat_id: string | null
+          created_at: string
+          date_echeance: string
+          date_facture: string
+          fournisseur_id: string
+          id: string
+          montant_ht: number
+          montant_paye: number | null
+          montant_ttc: number
+          numero_facture: string
+          statut: string
+          tva: number
+          updated_at: string
+        }
+        Insert: {
+          achat_id?: string | null
+          created_at?: string
+          date_echeance: string
+          date_facture?: string
+          fournisseur_id: string
+          id?: string
+          montant_ht: number
+          montant_paye?: number | null
+          montant_ttc: number
+          numero_facture: string
+          statut?: string
+          tva?: number
+          updated_at?: string
+        }
+        Update: {
+          achat_id?: string | null
+          created_at?: string
+          date_echeance?: string
+          date_facture?: string
+          fournisseur_id?: string
+          id?: string
+          montant_ht?: number
+          montant_paye?: number | null
+          montant_ttc?: number
+          numero_facture?: string
+          statut?: string
+          tva?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "factures_fournisseur_achat_id_fkey"
+            columns: ["achat_id"]
+            isOneToOne: false
+            referencedRelation: "achats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factures_fournisseur_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       flotte: {
         Row: {
           capacite_m3: number | null
@@ -730,6 +899,57 @@ export type Database = {
         }
         Relationships: []
       }
+      fournisseurs: {
+        Row: {
+          actif: boolean | null
+          adresse: string | null
+          code_fournisseur: string
+          conditions_paiement: string | null
+          contact_email: string | null
+          contact_nom: string | null
+          contact_telephone: string | null
+          created_at: string
+          delai_livraison_jours: number | null
+          id: string
+          nom_fournisseur: string
+          note_qualite: number | null
+          updated_at: string
+          ville: string | null
+        }
+        Insert: {
+          actif?: boolean | null
+          adresse?: string | null
+          code_fournisseur: string
+          conditions_paiement?: string | null
+          contact_email?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          created_at?: string
+          delai_livraison_jours?: number | null
+          id?: string
+          nom_fournisseur: string
+          note_qualite?: number | null
+          updated_at?: string
+          ville?: string | null
+        }
+        Update: {
+          actif?: boolean | null
+          adresse?: string | null
+          code_fournisseur?: string
+          conditions_paiement?: string | null
+          contact_email?: string | null
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          created_at?: string
+          delai_livraison_jours?: number | null
+          id?: string
+          nom_fournisseur?: string
+          note_qualite?: number | null
+          updated_at?: string
+          ville?: string | null
+        }
+        Relationships: []
+      }
       incidents_flotte: {
         Row: {
           created_at: string
@@ -768,6 +988,47 @@ export type Database = {
           type_incident?: string
         }
         Relationships: []
+      }
+      lignes_achat: {
+        Row: {
+          achat_id: string
+          created_at: string
+          id: string
+          materiau: string
+          montant_ligne: number
+          prix_unitaire: number
+          quantite: number
+          unite: string
+        }
+        Insert: {
+          achat_id: string
+          created_at?: string
+          id?: string
+          materiau: string
+          montant_ligne: number
+          prix_unitaire: number
+          quantite: number
+          unite?: string
+        }
+        Update: {
+          achat_id?: string
+          created_at?: string
+          id?: string
+          materiau?: string
+          montant_ligne?: number
+          prix_unitaire?: number
+          quantite?: number
+          unite?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lignes_achat_achat_id_fkey"
+            columns: ["achat_id"]
+            isOneToOne: false
+            referencedRelation: "achats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       mouvements_stock: {
         Row: {
@@ -816,6 +1077,60 @@ export type Database = {
           type_mouvement?: string
         }
         Relationships: []
+      }
+      paiements_fournisseur: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_paiement: string
+          facture_id: string
+          fournisseur_id: string
+          id: string
+          mode_paiement: string
+          montant: number
+          notes: string | null
+          reference_paiement: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_paiement?: string
+          facture_id: string
+          fournisseur_id: string
+          id?: string
+          mode_paiement: string
+          montant: number
+          notes?: string | null
+          reference_paiement?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_paiement?: string
+          facture_id?: string
+          fournisseur_id?: string
+          id?: string
+          mode_paiement?: string
+          montant?: number
+          notes?: string | null
+          reference_paiement?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paiements_fournisseur_facture_id_fkey"
+            columns: ["facture_id"]
+            isOneToOne: false
+            referencedRelation: "factures_fournisseur"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "paiements_fournisseur_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       prix_achat_actuels: {
         Row: {
