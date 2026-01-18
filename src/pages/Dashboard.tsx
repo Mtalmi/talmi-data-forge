@@ -15,6 +15,7 @@ import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
 import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Droplets, RefreshCw, Receipt, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 
 interface Delivery {
   bl_id: string;
@@ -148,6 +149,7 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-3">
             <PeriodSelector value={period} onChange={setPeriod} />
+            {isCeo && <DailyReportGenerator />}
             <Button 
               variant="outline" 
               size="sm" 

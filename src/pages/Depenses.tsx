@@ -3,6 +3,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useDepenses, Depense } from '@/hooks/useDepenses';
 import { ExpenseForm } from '@/components/expenses/ExpenseForm';
+import { ExportButton } from '@/components/documents/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -98,6 +99,21 @@ export default function Depenses() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <ExportButton
+              data={depenses.map(d => ({
+                date: d.date_depense,
+                categorie: d.categorie,
+                description: d.description || '',
+                montant: d.montant,
+              }))}
+              columns={[
+                { key: 'date', label: 'Date' },
+                { key: 'categorie', label: 'Catégorie' },
+                { key: 'description', label: 'Description' },
+                { key: 'montant', label: 'Montant (DH)' },
+              ]}
+              filename="depenses"
+            />
             <Button variant="outline" size="sm" onClick={refresh}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Actualiser
