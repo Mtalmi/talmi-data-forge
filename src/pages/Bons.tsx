@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
+import { BlPrintable } from '@/components/bons/BlPrintable';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,7 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, FileSpreadsheet } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -597,8 +598,8 @@ export default function Bons() {
                   <TableHead className="text-right">Volume</TableHead>
                   <TableHead>Workflow</TableHead>
                   <TableHead>Paiement</TableHead>
-                  <TableHead className="w-10"></TableHead>
-                  <TableHead className="w-10">Détail</TableHead>
+                  <TableHead className="w-10">Valid.</TableHead>
+                  <TableHead className="w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -669,16 +670,31 @@ export default function Bons() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setDetailBlId(b.bl_id);
-                          setDetailDialogOpen(true);
-                        }}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="min-h-[44px] min-w-[44px] p-0"
+                          onClick={() => {
+                            setDetailBlId(b.bl_id);
+                            setDetailDialogOpen(true);
+                          }}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {b.validation_technique && (
+                          <BlPrintable 
+                            bl={{
+                              bl_id: b.bl_id,
+                              date_livraison: b.date_livraison,
+                              volume_m3: b.volume_m3,
+                              formule_id: b.formule_id,
+                              heure_depart_centrale: null,
+                              toupie_assignee: b.toupie_assignee,
+                            }}
+                          />
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

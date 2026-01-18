@@ -44,6 +44,7 @@ export default function Dashboard() {
     curMoyen: '—',
   });
 
+  // Auto-refresh every 30 seconds
   useEffect(() => {
     fetchRecentDeliveries();
     fetchProductionStats();
@@ -51,6 +52,15 @@ export default function Dashboard() {
     if (isCeo) {
       checkPaymentDelays();
     }
+    
+    // Set up auto-refresh interval
+    const autoRefreshInterval = setInterval(() => {
+      refresh();
+      refreshPeriod();
+      fetchRecentDeliveries();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(autoRefreshInterval);
   }, [isCeo]);
 
   const fetchRecentDeliveries = async () => {

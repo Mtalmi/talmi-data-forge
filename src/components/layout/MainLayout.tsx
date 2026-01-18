@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import Sidebar from './Sidebar';
+import { GlobalSearch } from '@/components/search/GlobalSearch';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -10,7 +11,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
     <div className="flex h-screen bg-background overflow-hidden">
       <Sidebar />
       <main className="flex-1 overflow-y-auto">
-        <div className="p-6 lg:p-8">{children}</div>
+        {/* Top Bar with Global Search */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-4 py-3 lg:px-6">
+          <GlobalSearch />
+        </div>
+        <div className="p-4 lg:p-6">{children}</div>
       </main>
     </div>
   );
