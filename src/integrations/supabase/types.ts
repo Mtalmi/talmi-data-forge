@@ -1109,6 +1109,7 @@ export type Database = {
       is_agent_administratif: { Args: { _user_id: string }; Returns: boolean }
       is_centraliste: { Args: { _user_id: string }; Returns: boolean }
       is_ceo: { Args: { _user_id: string }; Returns: boolean }
+      is_ceo_direct: { Args: { _user_id: string }; Returns: boolean }
       is_ceo_v2: { Args: { _user_id: string }; Returns: boolean }
       is_commercial: { Args: { _user_id: string }; Returns: boolean }
       is_directeur_operations: { Args: { _user_id: string }; Returns: boolean }
