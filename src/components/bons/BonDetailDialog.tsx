@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useZonesLivraison, MODES_PAIEMENT } from '@/hooks/useZonesLivraison';
 import {
   Dialog,
   DialogContent,
@@ -23,7 +24,10 @@ import {
   DollarSign,
   Lock,
   Loader2,
-  Save
+  Save,
+  MapPin,
+  CreditCard,
+  Building2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -48,6 +52,11 @@ interface BonDetail {
   chauffeur_nom: string | null;
   facture_id: string | null;
   created_at: string;
+  // Logistics & Payment fields
+  zone_livraison_id: string | null;
+  mode_paiement: string | null;
+  prix_livraison_m3: number | null;
+  prestataire_id: string | null;
 }
 
 interface BonDetailDialogProps {
@@ -59,6 +68,7 @@ interface BonDetailDialogProps {
 
 export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetailDialogProps) {
   const { isCeo, isAgentAdministratif } = useAuth();
+  const { getZoneById, getPrestataireById } = useZonesLivraison();
   const [bon, setBon] = useState<BonDetail | null>(null);
   const [loading, setLoading] = useState(false);
   const [prixVente, setPrixVente] = useState('');
@@ -217,6 +227,49 @@ export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetai
             </div>
           </div>
 
+          {/* Logistics & Payment Section */}
+          {(bon.zone_livraison_id || bon.mode_paiement || bon.prestataire_id) && (
+            <div className="p-4 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-sm mb-3">Logistique & Paiement</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {bon.zone_livraison_id && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-muted-foreground text-xs">Zone Livraison</p>
+                      <p className="font-medium">
+                        {getZoneById(bon.zone_livraison_id)?.nom_zone || bon.zone_livraison_id}
+                        {bon.prix_livraison_m3 ? ` (${bon.prix_livraison_m3} DH/m³)` : ''}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {bon.mode_paiement && (
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-muted-foreground text-xs">Mode Paiement</p>
+                      <p className="font-medium capitalize">
+                        {MODES_PAIEMENT.find(m => m.value === bon.mode_paiement)?.label || bon.mode_paiement}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {bon.prestataire_id && (
+                  <div className="flex items-center gap-2 col-span-2">
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-muted-foreground text-xs">Prestataire Transport</p>
+                      <p className="font-medium">
+                        {getPrestataireById(bon.prestataire_id)?.nom_prestataire || bon.prestataire_id}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Prix de Vente Section */}
           <div className="p-4 rounded-lg border border-border/50">
             <div className="flex items-center justify-between mb-3">
@@ -292,6 +345,8 @@ export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetai
             curReel={bon.cur_reel}
             margeBrutePct={bon.marge_brute_pct}
             workflowStatus={bon.workflow_status}
+            modePaiement={bon.mode_paiement}
+            prixLivraisonM3={bon.prix_livraison_m3}
             onInvoiceGenerated={() => {
               fetchBonDetail();
               onUpdate();

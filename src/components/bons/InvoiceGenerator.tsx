@@ -27,6 +27,8 @@ interface InvoiceGeneratorProps {
   curReel: number | null;
   margeBrutePct: number | null;
   workflowStatus: string | null;
+  modePaiement?: string | null;
+  prixLivraisonM3?: number | null;
   onInvoiceGenerated: () => void;
 }
 
@@ -39,6 +41,8 @@ export function InvoiceGenerator({
   curReel,
   margeBrutePct,
   workflowStatus,
+  modePaiement,
+  prixLivraisonM3,
   onInvoiceGenerated,
 }: InvoiceGeneratorProps) {
   const { user, isCeo, isAgentAdministratif } = useAuth();
@@ -87,7 +91,7 @@ export function InvoiceGenerator({
         if (updateError) throw updateError;
       }
 
-      // Create facture record
+      // Create facture record - NOW INCLUDES mode_paiement and prix_livraison_m3
       const { error: factureError } = await supabase
         .from('factures')
         .insert([{
@@ -103,6 +107,8 @@ export function InvoiceGenerator({
           cur_reel: curReel,
           marge_brute_dh: margeBruteDH,
           marge_brute_pct: calculatedMargePct,
+          mode_paiement: modePaiement || 'virement',
+          prix_livraison_m3: prixLivraisonM3 || 0,
           created_by: user?.id,
         }]);
 
