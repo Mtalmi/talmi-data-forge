@@ -654,6 +654,60 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_score_history: {
+        Row: {
+          account_age_score: number | null
+          avg_days_overdue: number | null
+          balance_trend_score: number | null
+          client_id: string
+          created_at: string
+          credit_utilization_score: number | null
+          delay_frequency_score: number | null
+          grade: string
+          id: string
+          payment_history_score: number | null
+          risk_level: string
+          score: number
+          snapshot_date: string
+          total_outstanding: number | null
+          total_overdue: number | null
+        }
+        Insert: {
+          account_age_score?: number | null
+          avg_days_overdue?: number | null
+          balance_trend_score?: number | null
+          client_id: string
+          created_at?: string
+          credit_utilization_score?: number | null
+          delay_frequency_score?: number | null
+          grade: string
+          id?: string
+          payment_history_score?: number | null
+          risk_level: string
+          score: number
+          snapshot_date?: string
+          total_outstanding?: number | null
+          total_overdue?: number | null
+        }
+        Update: {
+          account_age_score?: number | null
+          avg_days_overdue?: number | null
+          balance_trend_score?: number | null
+          client_id?: string
+          created_at?: string
+          credit_utilization_score?: number | null
+          delay_frequency_score?: number | null
+          grade?: string
+          id?: string
+          payment_history_score?: number | null
+          risk_level?: string
+          score?: number
+          snapshot_date?: string
+          total_outstanding?: number | null
+          total_overdue?: number | null
+        }
+        Relationships: []
+      }
       depenses: {
         Row: {
           categorie: string
