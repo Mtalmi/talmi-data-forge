@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { CreditScoreDashboard } from '@/components/clients/CreditScoreDashboard';
+import CreditScoreTrendDashboard from '@/components/clients/CreditScoreTrendDashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -46,7 +47,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Copy,
-  TrendingUp
+  TrendingUp,
+  History
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -388,6 +390,10 @@ export default function Clients() {
               <TrendingUp className="h-4 w-4" />
               Scores de Crédit
             </TabsTrigger>
+            <TabsTrigger value="credit-history" className="flex items-center gap-2">
+              <History className="h-4 w-4" />
+              Historique & Tendances
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="list" className="space-y-4">
@@ -562,6 +568,10 @@ export default function Clients() {
 
           <TabsContent value="credit-scores">
             <CreditScoreDashboard />
+          </TabsContent>
+
+          <TabsContent value="credit-history">
+            <CreditScoreTrendDashboard />
           </TabsContent>
         </Tabs>
 
