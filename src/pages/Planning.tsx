@@ -24,6 +24,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useDeviceType } from '@/hooks/useDeviceType';
+import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
 
 interface BonLivraison {
   bl_id: string;
@@ -55,6 +57,7 @@ interface Camion {
 
 export default function Planning() {
   const navigate = useNavigate();
+  const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -237,42 +240,47 @@ export default function Planning() {
   };
 
   const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => (
-    <Card className="mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
+    <Card className={cn(
+      "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
+      isTouchDevice && "active:scale-[0.98]"
+    )}>
+      <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">
           <div>
-            <p className="font-semibold text-sm">{bon.bl_id}</p>
-            <p className="text-xs text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
+            <p className={cn("font-semibold", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
+            <p className={cn("text-muted-foreground", isTouchDevice ? "text-sm" : "text-xs")}>
+              {bon.clients?.nom_client || bon.client_id}
+            </p>
           </div>
           {getStatusBadge(bon.workflow_status)}
         </div>
         
-        <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+        <div className={cn("grid grid-cols-2 gap-2 mb-3", isTouchDevice ? "text-sm" : "text-xs")}>
           <div className="flex items-center gap-1 text-muted-foreground">
-            <Package className="h-3 w-3" />
+            <Package className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span>{bon.formule_id}</span>
           </div>
           <div className="flex items-center gap-1 text-muted-foreground">
-            <Factory className="h-3 w-3" />
-            <span>{bon.volume_m3} m³</span>
+            <Factory className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
+            <span className="font-semibold">{bon.volume_m3} m³</span>
           </div>
           {bon.zones_livraison && (
             <div className="flex items-center gap-1 text-muted-foreground col-span-2">
-              <Navigation className="h-3 w-3" />
+              <Navigation className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
               <span>Zone {bon.zones_livraison.code_zone}: {bon.zones_livraison.nom_zone}</span>
             </div>
           )}
         </div>
 
         {showTimeInput && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
               <Input
                 type="time"
                 value={bon.heure_prevue || ''}
                 onChange={(e) => updateBonTime(bon.bl_id, e.target.value)}
-                className="h-8 text-sm"
+                className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}
               />
             </div>
             <div className="flex items-center gap-2">
@@ -281,7 +289,7 @@ export default function Planning() {
                 value={bon.camion_assigne || bon.toupie_assignee || ''}
                 onValueChange={(value) => assignTruck(bon.bl_id, value)}
               >
-                <SelectTrigger className="h-8 text-sm">
+                <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
                   <SelectValue placeholder="Assigner camion" />
                 </SelectTrigger>
                 <SelectContent>
@@ -298,26 +306,32 @@ export default function Planning() {
             {/* Launch Production Button */}
             {bon.workflow_status === 'planification' && bon.heure_prevue && (bon.camion_assigne || bon.toupie_assignee) && (
               <Button 
-                size="sm" 
-                className="w-full mt-2 gap-2"
+                size={isTouchDevice ? "lg" : "sm"}
+                className={cn(
+                  "w-full mt-2 gap-2",
+                  isTouchDevice && "min-h-[52px] text-base"
+                )}
                 onClick={() => startProduction(bon)}
               >
-                <Factory className="h-4 w-4" />
+                <Factory className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
                 Lancer Production
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
               </Button>
             )}
           </div>
         )}
 
         {!showTimeInput && bon.heure_prevue && (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
-            <Timer className="h-3 w-3" />
+          <div className={cn(
+            "flex items-center gap-2 text-muted-foreground mt-2",
+            isTouchDevice ? "text-sm" : "text-xs"
+          )}>
+            <Timer className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span>Prévu: {bon.heure_prevue}</span>
             {(bon.camion_assigne || bon.toupie_assignee) && (
               <>
                 <span className="text-muted-foreground">•</span>
-                <Truck className="h-3 w-3" />
+                <Truck className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
                 <span>{bon.camion_assigne || bon.toupie_assignee}</span>
               </>
             )}
@@ -331,6 +345,52 @@ export default function Planning() {
   const totalBonsToday = bons.length;
   const pendingBons = bons.filter(b => ['planification', 'validation_technique'].includes(b.workflow_status)).length;
 
+  // Mark as delivered
+  const markDelivered = async (bon: BonLivraison) => {
+    try {
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ 
+          workflow_status: 'livre',
+          heure_retour_centrale: new Date().toISOString()
+        })
+        .eq('bl_id', bon.bl_id);
+
+      if (error) throw error;
+      toast.success('Livraison confirmée!');
+      fetchData();
+    } catch (error) {
+      console.error('Error marking delivered:', error);
+      toast.error('Erreur lors de la confirmation');
+    }
+  };
+
+  // Tablet/Mobile optimized view
+  if (isMobile || isTablet) {
+    return (
+      <MainLayout>
+        <TabletPlanningView
+          aProduire={aProduire}
+          enChargement={enChargement}
+          enLivraison={enLivraison}
+          conflicts={conflicts}
+          totalBonsToday={totalBonsToday}
+          pendingBons={pendingBons}
+          availableCamions={availableCamions}
+          totalCamions={camions.length}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          onRefresh={fetchData}
+          onStartProduction={startProduction}
+          onMarkDelivered={markDelivered}
+          onOpenDetails={(bon) => navigate(`/bons?bl=${bon.bl_id}`)}
+          loading={loading}
+        />
+      </MainLayout>
+    );
+  }
+
+  // Desktop view
   return (
     <MainLayout>
       <div className="space-y-6">
