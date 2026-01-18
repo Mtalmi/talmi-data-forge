@@ -20,6 +20,7 @@ import {
   CalendarClock,
   ShoppingCart,
   BarChart3,
+  PackageSearch,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -115,6 +116,7 @@ export default function Sidebar() {
         <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" />
         <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" />
         <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" />
+        <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" />
         {canReadPrix && (
           <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
         )}
