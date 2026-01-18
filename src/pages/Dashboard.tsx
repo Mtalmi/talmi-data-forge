@@ -6,6 +6,7 @@ import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
+import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
@@ -249,32 +250,37 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RecentDeliveries deliveries={recentDeliveries} loading={deliveriesLoading} />
           
-          {/* Production Summary Card */}
-          <div className="card-industrial p-6 animate-fade-in">
-            <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Formules actives</span>
-                <span className="font-semibold">{productionStats.formulesActives}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Prix mis à jour</span>
-                <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
-                <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
-                  {productionStats.tauxECMoyen}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
-                <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
-                  {productionStats.curMoyen}
-                </span>
+          {/* Daily Profit Summary - CEO Only */}
+          {isCeo ? (
+            <DailyProfitSummary />
+          ) : (
+            /* Production Summary Card */
+            <div className="card-industrial p-6 animate-fade-in">
+              <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <span className="text-sm text-muted-foreground">Formules actives</span>
+                  <span className="font-semibold">{productionStats.formulesActives}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <span className="text-sm text-muted-foreground">Prix mis à jour</span>
+                  <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
+                  <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
+                    {productionStats.tauxECMoyen}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
+                  <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
+                    {productionStats.curMoyen}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </MainLayout>
