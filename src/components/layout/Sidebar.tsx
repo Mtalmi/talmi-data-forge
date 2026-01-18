@@ -22,6 +22,7 @@ import {
   BarChart3,
   PackageSearch,
   Clock,
+  MapPin,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -118,6 +119,7 @@ export default function Sidebar() {
         <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" />
         <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" />
         <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" />
+        <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" />
         <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" />
         {canReadPrix && (
           <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
