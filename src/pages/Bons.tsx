@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useDeviceType } from '@/hooks/useDeviceType';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
 import { BlPrintable } from '@/components/bons/BlPrintable';
 import { ExportButton } from '@/components/documents/ExportButton';
+import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
 import { DriverDispatchCard } from '@/components/planning/DriverDispatchCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -139,7 +141,7 @@ export default function Bons() {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [bonsRes, formulesRes, clientsRes] = await Promise.all([
         supabase.from('bons_livraison_reels').select('*').order('created_at', { ascending: false }),
@@ -160,7 +162,19 @@ export default function Bons() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Pull to refresh for mobile
+  const handlePullRefresh = useCallback(async () => {
+    setLoading(true);
+    await fetchData();
+  }, [fetchData]);
+
+  const { containerRef, isPulling, isRefreshing, pullDistance, progress } = usePullToRefresh({
+    onRefresh: handlePullRefresh,
+    threshold: 80,
+    disabled: !isMobile && !isTablet,
+  });
 
   const generateBlId = () => {
     const today = new Date();
@@ -459,7 +473,21 @@ export default function Bons() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div 
+        ref={isMobile || isTablet ? containerRef : undefined}
+        className={cn(
+          "space-y-6",
+          (isMobile || isTablet) && "overflow-y-auto"
+        )}
+      >
+        {/* Pull to Refresh Indicator - Mobile/Tablet only */}
+        {(isMobile || isTablet) && (
+          <PullToRefreshIndicator
+            pullDistance={pullDistance}
+            isRefreshing={isRefreshing}
+            progress={progress}
+          />
+        )}
         <div className={cn(
           "flex gap-4",
           isTouchDevice ? "flex-col" : "flex-row items-center justify-between"

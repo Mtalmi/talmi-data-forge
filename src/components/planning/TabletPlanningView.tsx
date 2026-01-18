@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { DriverDispatchCard } from './DriverDispatchCard';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
 import { 
   Clock, 
   Truck, 
@@ -72,8 +74,31 @@ export function TabletPlanningView({
 }: TabletPlanningViewProps) {
   const [activeTab, setActiveTab] = useState('produire');
 
+  const handleRefresh = useCallback(async () => {
+    await new Promise<void>((resolve) => {
+      onRefresh();
+      // Give time for the refresh to complete
+      setTimeout(resolve, 500);
+    });
+  }, [onRefresh]);
+
+  const { containerRef, isPulling, isRefreshing, pullDistance, progress } = usePullToRefresh({
+    onRefresh: handleRefresh,
+    threshold: 80,
+    disabled: loading,
+  });
+
   return (
-    <div className="space-y-4 pb-20">
+    <div 
+      ref={containerRef}
+      className="space-y-4 pb-20 overflow-y-auto h-[calc(100vh-64px)] -mx-4 px-4"
+    >
+      {/* Pull to Refresh Indicator */}
+      <PullToRefreshIndicator
+        pullDistance={pullDistance}
+        isRefreshing={isRefreshing}
+        progress={progress}
+      />
       {/* Header - Sticky on tablet */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-4 pt-2 -mx-4 px-4 border-b">
         <div className="flex items-center justify-between gap-3 mb-4">
