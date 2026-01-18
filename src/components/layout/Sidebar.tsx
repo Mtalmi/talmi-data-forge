@@ -19,6 +19,7 @@ import {
   Receipt,
   CalendarClock,
   ShoppingCart,
+  BarChart3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -125,6 +126,7 @@ export default function Sidebar() {
                 Contrôle CEO
               </p>
             </div>
+            <NavItem to="/rapports" icon={<BarChart3 className="h-5 w-5" />} label="Rapports & BI" />
             <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" />
             <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" />
             <NavItem to="/users" icon={<Shield className="h-5 w-5" />} label="Utilisateurs" />
