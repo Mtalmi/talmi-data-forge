@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -80,6 +81,7 @@ const WORKFLOW_STEPS = [
 
 export default function Bons() {
   const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
+  const { transitionWorkflow, canTransitionTo } = useBonWorkflow();
 
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -301,26 +303,12 @@ export default function Bons() {
   };
 
   const updateWorkflowStatus = async (blId: string, newStatus: string) => {
-    try {
-      const updateData: Record<string, unknown> = { workflow_status: newStatus };
-      
-      if (newStatus === 'validation_technique') {
-        updateData.validation_technique = true;
-        updateData.validated_by = user?.id;
-        updateData.validated_at = new Date().toISOString();
-      }
-
-      const { error } = await supabase
-        .from('bons_livraison_reels')
-        .update(updateData)
-        .eq('bl_id', blId);
-
-      if (error) throw error;
-      toast.success('Statut mis à jour');
+    const bon = bons.find(b => b.bl_id === blId);
+    const currentStatus = bon?.workflow_status || 'planification';
+    
+    const success = await transitionWorkflow(blId, currentStatus, newStatus);
+    if (success) {
       fetchData();
-    } catch (error) {
-      console.error('Error updating workflow:', error);
-      toast.error('Erreur lors de la mise à jour');
     }
   };
 
