@@ -233,11 +233,14 @@ const handler = async (req: Request): Promise<Response> => {
         sentCount++;
 
         // Log to alerts table
-        await supabase.from("alertes").insert({
-          type_alerte: "Rappel Paiement Envoyé",
+        await supabase.from("alertes_systeme").insert({
+          type_alerte: "rappel_paiement",
+          niveau: "info",
+          titre: "Rappel Paiement Envoyé",
           message: `Rappel automatique envoyé à ${client.client_nom} pour ${payments.length} facture(s) totalisant ${totalDue.toLocaleString("fr-FR")} DH`,
-          priorite: "info",
-          destinataires: ["accounting", "ceo"],
+          reference_id: client.client_id,
+          reference_table: "clients",
+          destinataire_role: "accounting",
         });
       } catch (emailError: any) {
         console.error(`Failed to send reminder to ${client.client_nom}:`, emailError);
@@ -258,11 +261,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Create summary alert if any reminders were sent
     if (sentCount > 0) {
-      await supabase.from("alertes").insert({
-        type_alerte: "Rappels Automatiques",
+      await supabase.from("alertes_systeme").insert({
+        type_alerte: "rappels_automatiques",
+        niveau: "info",
+        titre: "Rappels Automatiques",
         message: `${sentCount} client(s) notifié(s) pour ${overduePayments.length} facture(s) en retard (31-60 jours)`,
-        priorite: "info",
-        destinataires: ["ceo", "accounting"],
+        destinataire_role: "ceo",
       });
     }
 
