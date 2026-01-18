@@ -3,112 +3,167 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, Calculator } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, Calculator, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MarginAnalysisBoxProps {
   blId: string;
   formuleId: string;
   volumeM3: number;
-  curReel: number | null;
+  cimentReelKg: number;
+  adjuvantReelL: number | null;
+  eauReelL: number | null;
   prixVenteM3: number | null;
-  margeBrutePct: number | null;
+  curReelFromDb?: number | null;
+  margeBrutePct?: number | null;
 }
 
-interface TheoreticalCost {
-  cutPerM3: number;
-  totalCut: number;
+interface PriceData {
+  ciment: number;
+  sable: number;
+  gravier: number;
+  eau: number;
+  adjuvant: number;
+  transport: number;
+}
+
+interface FormuleData {
+  ciment_kg_m3: number;
+  sable_kg_m3: number | null;
+  gravier_kg_m3: number | null;
+  eau_l_m3: number;
+  adjuvant_l_m3: number | null;
 }
 
 export function MarginAnalysisBox({
   blId,
   formuleId,
   volumeM3,
-  curReel,
+  cimentReelKg,
+  adjuvantReelL,
+  eauReelL,
   prixVenteM3,
+  curReelFromDb,
   margeBrutePct,
 }: MarginAnalysisBoxProps) {
-  const [theoreticalCost, setTheoreticalCost] = useState<TheoreticalCost | null>(null);
+  const [prices, setPrices] = useState<PriceData | null>(null);
+  const [formule, setFormule] = useState<FormuleData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTheoreticalCost();
-  }, [formuleId, volumeM3]);
+    fetchData();
+  }, [formuleId]);
 
-  const fetchTheoreticalCost = async () => {
+  const fetchData = async () => {
     try {
-      // Fetch formule and calculate CUT
-      const { data: formule } = await supabase
-        .from('formules_theoriques')
-        .select('*')
-        .eq('formule_id', formuleId)
-        .single();
-
-      if (!formule) {
-        setLoading(false);
-        return;
-      }
-
       // Fetch current prices
-      const { data: prices } = await supabase
+      const { data: pricesData } = await supabase
         .from('prix_achat_actuels')
         .select('matiere_premiere, prix_unitaire_dh');
 
-      if (!prices) {
-        setLoading(false);
-        return;
+      // Fetch formule for theoretical values
+      const { data: formuleData } = await supabase
+        .from('formules_theoriques')
+        .select('ciment_kg_m3, sable_kg_m3, gravier_kg_m3, eau_l_m3, adjuvant_l_m3')
+        .eq('formule_id', formuleId)
+        .single();
+
+      if (pricesData) {
+        const getPrice = (keyword: string) => {
+          const price = pricesData.find(p => 
+            p.matiere_premiere.toLowerCase().includes(keyword.toLowerCase())
+          );
+          return price?.prix_unitaire_dh || 0;
+        };
+
+        setPrices({
+          ciment: getPrice('ciment'),       // DH per tonne
+          sable: getPrice('sable'),         // DH per m³
+          gravier: getPrice('gravier') || getPrice('gravette'),  // DH per m³
+          eau: getPrice('eau'),             // DH per m³
+          adjuvant: getPrice('adjuvant') || getPrice('plastif'), // DH per L
+          transport: getPrice('transport') || 100, // Fixed transport cost
+        });
       }
 
-      // Calculate CUT per m³
-      const getPrice = (keyword: string) => {
-        const price = prices.find(p => 
-          p.matiere_premiere.toLowerCase().includes(keyword.toLowerCase())
-        );
-        return price?.prix_unitaire_dh || 0;
-      };
-
-      const cimentPrice = getPrice('ciment');
-      const sablePrice = getPrice('sable');
-      const gravierPrice = getPrice('gravier') || getPrice('gravette');
-      const eauPrice = getPrice('eau');
-      const adjuvantPrice = getPrice('adjuvant') || getPrice('plastif');
-
-      // CUT calculation per m³
-      const cutPerM3 = 
-        (formule.ciment_kg_m3 / 1000) * cimentPrice +
-        (formule.sable_kg_m3 || 0) / 1000 * sablePrice +
-        (formule.gravier_kg_m3 || 0) / 1000 * gravierPrice +
-        (formule.eau_l_m3 / 1000) * eauPrice +
-        (formule.adjuvant_l_m3 || 0) * adjuvantPrice;
-
-      setTheoreticalCost({
-        cutPerM3,
-        totalCut: cutPerM3 * volumeM3,
-      });
+      if (formuleData) {
+        setFormule(formuleData);
+      }
     } catch (error) {
-      console.error('Error fetching theoretical cost:', error);
+      console.error('Error fetching margin data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate margins
-  const curReelTotal = curReel ? curReel * volumeM3 : null;
-  const prixVenteTotal = prixVenteM3 ? prixVenteM3 * volumeM3 : null;
+  // ========== LIVE CUR CALCULATION ==========
+  // CUR = (Ciment_Reel * Prix_Ciment/1000) + (Eau_Reel * Prix_Eau/1000) + (Adjuvant_Reel * Prix_Adjuvant) + Sable + Gravier (from formula)
   
-  const margeBruteDH = curReelTotal && prixVenteTotal 
-    ? prixVenteTotal - curReelTotal 
+  const calculateLiveCUR = (): number | null => {
+    if (!prices || !formule || !cimentReelKg || volumeM3 <= 0) return null;
+
+    // Ciment: price is per tonne, convert kg to tonnes
+    const coutCiment = (cimentReelKg / 1000) * prices.ciment;
+    
+    // Eau: price is per m³, convert L to m³
+    const eauL = eauReelL || (formule.eau_l_m3 * volumeM3);
+    const coutEau = (eauL / 1000) * prices.eau;
+    
+    // Adjuvant: price is per L
+    const adjuvantL = adjuvantReelL || (formule.adjuvant_l_m3 || 0) * volumeM3;
+    const coutAdjuvant = adjuvantL * prices.adjuvant;
+    
+    // Sable: use theoretical (per m³, we need to convert kg to m³ using density ~1600 kg/m³)
+    const sableM3 = (formule.sable_kg_m3 || 0) / 1600 * volumeM3;
+    const coutSable = sableM3 * prices.sable;
+    
+    // Gravier: use theoretical (per m³, density ~1500 kg/m³)
+    const gravierM3 = (formule.gravier_kg_m3 || 0) / 1500 * volumeM3;
+    const coutGravier = gravierM3 * prices.gravier;
+    
+    // Total cost for the full volume
+    const totalCost = coutCiment + coutEau + coutAdjuvant + coutSable + coutGravier;
+    
+    // CUR per m³
+    return totalCost / volumeM3;
+  };
+
+  // ========== THEORETICAL CUT CALCULATION ==========
+  const calculateCUT = (): number | null => {
+    if (!prices || !formule) return null;
+
+    const coutCiment = (formule.ciment_kg_m3 / 1000) * prices.ciment;
+    const coutEau = (formule.eau_l_m3 / 1000) * prices.eau;
+    const coutAdjuvant = (formule.adjuvant_l_m3 || 0) * prices.adjuvant;
+    const coutSable = ((formule.sable_kg_m3 || 0) / 1600) * prices.sable;
+    const coutGravier = ((formule.gravier_kg_m3 || 0) / 1500) * prices.gravier;
+
+    return coutCiment + coutEau + coutAdjuvant + coutSable + coutGravier;
+  };
+
+  // Use live calculation, fall back to DB value if not calculable
+  const curReel = calculateLiveCUR() ?? curReelFromDb ?? null;
+  const cutTheorique = calculateCUT();
+
+  // ========== MARGIN CALCULATIONS ==========
+  // Marge Brute = Prix de Vente - CUR
+  const margeBruteDH = curReel && prixVenteM3 
+    ? (prixVenteM3 - curReel) * volumeM3 
     : null;
   
-  const calculatedMargePct = curReel && prixVenteM3 
+  // Marge Brute % = (Marge Brute / Prix de Vente) * 100
+  const calculatedMargePct = curReel && prixVenteM3 && prixVenteM3 > 0
     ? ((prixVenteM3 - curReel) / prixVenteM3) * 100 
     : margeBrutePct;
 
-  const ecartCout = theoreticalCost && curReel 
-    ? ((curReel - theoreticalCost.cutPerM3) / theoreticalCost.cutPerM3) * 100 
+  // Écart CUR/CUT
+  const ecartCout = cutTheorique && curReel 
+    ? ((curReel - cutTheorique) / cutTheorique) * 100 
     : null;
 
+  // Visual alerts
   const isMarginLow = calculatedMargePct !== null && calculatedMargePct < 20;
+  const isMarginCritical = calculatedMargePct !== null && calculatedMargePct < 0; // Losing money!
   const hasLeakage = ecartCout !== null && ecartCout > 5;
 
   if (loading) {
@@ -132,7 +187,8 @@ export function MarginAnalysisBox({
   return (
     <Card className={cn(
       "border-2 transition-colors",
-      isMarginLow ? "border-destructive/50 bg-destructive/5" : "border-border/50"
+      isMarginCritical ? "border-destructive bg-destructive/5" : 
+      isMarginLow ? "border-warning/50 bg-warning/5" : "border-border/50"
     )}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
@@ -140,12 +196,17 @@ export function MarginAnalysisBox({
             <Calculator className="h-4 w-4" />
             Analyse de Marge
           </CardTitle>
-          {isMarginLow && (
+          {isMarginCritical ? (
             <Badge variant="destructive" className="animate-pulse">
               <AlertTriangle className="h-3 w-3 mr-1" />
-              Marge Critique
+              PERTE
             </Badge>
-          )}
+          ) : isMarginLow ? (
+            <Badge variant="outline" className="border-warning text-warning animate-pulse">
+              <AlertTriangle className="h-3 w-3 mr-1" />
+              Marge Faible
+            </Badge>
+          ) : null}
         </div>
         <p className="text-xs text-muted-foreground">BL {blId} • {volumeM3} m³</p>
       </CardHeader>
@@ -155,12 +216,12 @@ export function MarginAnalysisBox({
           <div className="p-3 rounded-lg bg-muted/50">
             <p className="text-xs text-muted-foreground mb-1">Coût Théorique (CUT)</p>
             <p className="text-lg font-bold font-mono">
-              {theoreticalCost ? `${theoreticalCost.cutPerM3.toFixed(2)}` : '—'}
+              {cutTheorique ? `${cutTheorique.toFixed(2)}` : '—'}
               <span className="text-xs font-normal text-muted-foreground ml-1">DH/m³</span>
             </p>
-            {theoreticalCost && (
+            {cutTheorique && (
               <p className="text-xs text-muted-foreground mt-1">
-                Total: {theoreticalCost.totalCut.toFixed(2)} DH
+                Total: {(cutTheorique * volumeM3).toFixed(2)} DH
               </p>
             )}
           </div>
@@ -176,9 +237,9 @@ export function MarginAnalysisBox({
               {curReel ? `${curReel.toFixed(2)}` : '—'}
               <span className="text-xs font-normal text-muted-foreground ml-1">DH/m³</span>
             </p>
-            {curReelTotal && (
+            {curReel && (
               <p className="text-xs text-muted-foreground mt-1">
-                Total: {curReelTotal.toFixed(2)} DH
+                Total: {(curReel * volumeM3).toFixed(2)} DH
               </p>
             )}
           </div>
@@ -213,26 +274,28 @@ export function MarginAnalysisBox({
             <p className="text-xs text-muted-foreground mb-1">Marge Brute</p>
             <p className={cn(
               "text-lg font-bold font-mono",
-              isMarginLow && "text-destructive"
+              isMarginCritical ? "text-destructive" : isMarginLow ? "text-warning" : "text-success"
             )}>
-              {margeBruteDH !== null ? `${margeBruteDH.toFixed(0)}` : '—'}
+              {margeBruteDH !== null ? `${margeBruteDH >= 0 ? '+' : ''}${margeBruteDH.toFixed(0)}` : '—'}
               <span className="text-xs font-normal text-muted-foreground ml-1">DH</span>
             </p>
           </div>
           <div className={cn(
             "p-3 rounded-lg",
-            isMarginLow ? "bg-destructive/10" : "bg-success/10"
+            isMarginCritical ? "bg-destructive/10" : isMarginLow ? "bg-warning/10" : "bg-success/10"
           )}>
             <p className="text-xs text-muted-foreground mb-1">Marge Brute %</p>
             <p className={cn(
               "text-xl font-bold font-mono flex items-center gap-2",
-              isMarginLow ? "text-destructive" : "text-success"
+              isMarginCritical ? "text-destructive" : isMarginLow ? "text-warning" : "text-success"
             )}>
               {calculatedMargePct !== null ? `${calculatedMargePct.toFixed(1)}%` : '—'}
-              {isMarginLow ? (
-                <TrendingDown className="h-5 w-5" />
-              ) : (
-                <TrendingUp className="h-5 w-5" />
+              {calculatedMargePct !== null && (
+                calculatedMargePct >= 20 ? (
+                  <TrendingUp className="h-5 w-5" />
+                ) : (
+                  <TrendingDown className="h-5 w-5" />
+                )
               )}
             </p>
           </div>
@@ -251,21 +314,54 @@ export function MarginAnalysisBox({
           </div>
         )}
 
-        {/* Warning Banner */}
-        {isMarginLow && (
+        {/* Critical Warning Banner */}
+        {isMarginCritical && (
           <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30">
             <div className="flex items-start gap-2">
               <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-destructive text-sm">
-                  Alerte Marge Insuffisante
+                  ⚠️ PERTE SUR CETTE LIVRAISON
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  La marge brute est inférieure à 20%. Vérifiez les coûts réels et le prix de vente.
+                  Le coût réel ({curReel?.toFixed(2)} DH/m³) dépasse le prix de vente ({prixVenteM3?.toFixed(2)} DH/m³).
+                  Perte de {Math.abs(margeBruteDH || 0).toFixed(0)} DH.
                 </p>
               </div>
             </div>
           </div>
+        )}
+
+        {/* Low Margin Warning Banner */}
+        {isMarginLow && !isMarginCritical && (
+          <div className="p-3 rounded-lg bg-warning/10 border border-warning/30">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-warning text-sm">
+                  Marge Insuffisante (&lt; 20%)
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Vérifiez les coûts réels et ajustez le prix de vente si nécessaire.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cost Breakdown (Debug Info) */}
+        {prices && (
+          <details className="text-xs text-muted-foreground">
+            <summary className="cursor-pointer hover:text-foreground">
+              📊 Détail du calcul CUR
+            </summary>
+            <div className="mt-2 p-2 bg-muted/30 rounded space-y-1 font-mono">
+              <div>Ciment: {cimentReelKg} kg × {prices.ciment}/T = {((cimentReelKg / 1000) * prices.ciment).toFixed(2)} DH</div>
+              <div>Eau: {eauReelL || 'théorique'} L × {prices.eau}/m³ = {(((eauReelL || (formule?.eau_l_m3 || 0) * volumeM3) / 1000) * prices.eau).toFixed(2)} DH</div>
+              <div>Adjuvant: {adjuvantReelL || 'théorique'} L × {prices.adjuvant}/L = {((adjuvantReelL || (formule?.adjuvant_l_m3 || 0) * volumeM3) * prices.adjuvant).toFixed(2)} DH</div>
+              <div className="border-t pt-1 font-bold">Total: {curReel ? (curReel * volumeM3).toFixed(2) : '—'} DH</div>
+            </div>
+          </details>
         )}
       </CardContent>
     </Card>

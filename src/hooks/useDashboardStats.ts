@@ -137,10 +137,10 @@ export function useDashboardStats() {
         ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
         : 0;
 
-      // CUR Moyen (7 days)
-      const curValues = sevenDayData?.filter(d => d.cur_reel) || [];
-      const curMoyen7j = curValues.length > 0 
-        ? curValues.reduce((sum, d) => sum + (d.cur_reel || 0), 0) / curValues.length 
+      // CUR Moyen (7 days) - only from validated BLs (livre or facture)
+      const validatedBLs = sevenDayData?.filter(d => d.cur_reel && d.cur_reel > 0) || [];
+      const curMoyen7j = validatedBLs.length > 0 
+        ? validatedBLs.reduce((sum, d) => sum + (d.cur_reel || 0), 0) / validatedBLs.length 
         : 0;
 
       // Previous 7-day CUR for trend
