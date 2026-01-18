@@ -104,6 +104,91 @@ export type Database = {
         }
         Relationships: []
       }
+      bons_commande: {
+        Row: {
+          adresse_livraison: string | null
+          bc_id: string
+          client_id: string
+          created_at: string
+          created_by: string | null
+          date_livraison_souhaitee: string | null
+          devis_id: string | null
+          formule_id: string
+          id: string
+          notes: string | null
+          prix_vente_m3: number
+          prix_verrouille: boolean
+          statut: string
+          total_ht: number
+          updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+          volume_m3: number
+        }
+        Insert: {
+          adresse_livraison?: string | null
+          bc_id: string
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          date_livraison_souhaitee?: string | null
+          devis_id?: string | null
+          formule_id: string
+          id?: string
+          notes?: string | null
+          prix_vente_m3: number
+          prix_verrouille?: boolean
+          statut?: string
+          total_ht: number
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          volume_m3: number
+        }
+        Update: {
+          adresse_livraison?: string | null
+          bc_id?: string
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          date_livraison_souhaitee?: string | null
+          devis_id?: string | null
+          formule_id?: string
+          id?: string
+          notes?: string | null
+          prix_vente_m3?: number
+          prix_verrouille?: boolean
+          statut?: string
+          total_ht?: number
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          volume_m3?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bons_commande_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "bons_commande_devis_id_fkey"
+            columns: ["devis_id"]
+            isOneToOne: false
+            referencedRelation: "devis"
+            referencedColumns: ["devis_id"]
+          },
+          {
+            foreignKeyName: "bons_commande_formule_id_fkey"
+            columns: ["formule_id"]
+            isOneToOne: false
+            referencedRelation: "formules_theoriques"
+            referencedColumns: ["formule_id"]
+          },
+        ]
+      }
       bons_livraison_reels: {
         Row: {
           adjuvant_reel_l: number | null
@@ -352,6 +437,90 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      devis: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          created_by: string | null
+          cut_per_m3: number
+          date_expiration: string | null
+          devis_id: string
+          distance_km: number
+          fixed_cost_per_m3: number
+          formule_id: string
+          id: string
+          margin_pct: number
+          notes: string | null
+          prix_vente_m3: number
+          statut: string
+          total_cost_per_m3: number
+          total_ht: number
+          transport_extra_per_m3: number
+          updated_at: string
+          validite_jours: number
+          volume_m3: number
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          cut_per_m3: number
+          date_expiration?: string | null
+          devis_id: string
+          distance_km?: number
+          fixed_cost_per_m3?: number
+          formule_id: string
+          id?: string
+          margin_pct?: number
+          notes?: string | null
+          prix_vente_m3: number
+          statut?: string
+          total_cost_per_m3: number
+          total_ht: number
+          transport_extra_per_m3?: number
+          updated_at?: string
+          validite_jours?: number
+          volume_m3: number
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          cut_per_m3?: number
+          date_expiration?: string | null
+          devis_id?: string
+          distance_km?: number
+          fixed_cost_per_m3?: number
+          formule_id?: string
+          id?: string
+          margin_pct?: number
+          notes?: string | null
+          prix_vente_m3?: number
+          statut?: string
+          total_cost_per_m3?: number
+          total_ht?: number
+          transport_extra_per_m3?: number
+          updated_at?: string
+          validite_jours?: number
+          volume_m3?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devis_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+          {
+            foreignKeyName: "devis_formule_id_fkey"
+            columns: ["formule_id"]
+            isOneToOne: false
+            referencedRelation: "formules_theoriques"
+            referencedColumns: ["formule_id"]
+          },
+        ]
       }
       factures: {
         Row: {

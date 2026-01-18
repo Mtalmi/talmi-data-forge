@@ -17,6 +17,7 @@ import {
   Warehouse,
   Route,
   Receipt,
+  ShoppingCart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -100,6 +101,7 @@ export default function Sidebar() {
         <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" />
         <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" />
         <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" />
+        <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" />
         
         <div className="pt-4 pb-2">
           <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">

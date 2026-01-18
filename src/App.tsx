@@ -15,6 +15,7 @@ import Stocks from "./pages/Stocks";
 import Logistique from "./pages/Logistique";
 import Laboratoire from "./pages/Laboratoire";
 import Depenses from "./pages/Depenses";
+import Ventes from "./pages/Ventes";
 import Users from "./pages/Users";
 import Approbations from "./pages/Approbations";
 import Alertes from "./pages/Alertes";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/logistique" element={<Logistique />} />
             <Route path="/laboratoire" element={<Laboratoire />} />
             <Route path="/depenses" element={<Depenses />} />
+            <Route path="/ventes" element={<Ventes />} />
             <Route path="/users" element={<Users />} />
             <Route path="/approbations" element={<Approbations />} />
             <Route path="/alertes" element={<Alertes />} />
