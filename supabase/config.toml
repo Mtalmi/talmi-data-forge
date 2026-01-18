@@ -1,1 +1,10 @@
 project_id = "pmnwvehuopoddjpohqxw"
+
+[functions.send-payment-reminder]
+verify_jwt = false
+
+[functions.send-document-email]
+verify_jwt = false
+
+[functions.send-monthly-report]
+verify_jwt = false
