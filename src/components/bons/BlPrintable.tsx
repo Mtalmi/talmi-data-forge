@@ -171,25 +171,39 @@ export function BlPrintable({ bl, disabled = false }: BlPrintableProps) {
               padding-top: 5px;
             }
             .cgv-section {
-              margin-top: 25px;
-              padding: 15px;
-              border: 1px solid #ccc;
+              margin-top: 20px;
+              padding: 12px 15px;
+              border: 1px solid #ddd;
+              background: #fafafa;
               font-size: 7pt;
-              color: #666;
-              line-height: 1.3;
+              color: #888;
+              line-height: 1.4;
             }
             .cgv-title {
               font-size: 8pt;
               font-weight: bold;
               margin-bottom: 8px;
-              color: #333;
+              color: #666;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
             }
             .cgv-rules {
               list-style-type: decimal;
-              padding-left: 15px;
+              padding-left: 18px;
+              margin: 0;
             }
             .cgv-rules li {
-              margin-bottom: 3px;
+              margin-bottom: 2px;
+            }
+            .cgv-rules li strong {
+              color: #666;
+            }
+            .cgv-footer {
+              margin-top: 10px;
+              font-style: italic;
+              text-align: center;
+              font-size: 7pt;
+              color: #999;
             }
             .footer {
               margin-top: 15px;
@@ -302,16 +316,17 @@ export function BlPrintable({ bl, disabled = false }: BlPrintableProps) {
             </div>
 
             <div class="cgv-section">
-              <div class="cgv-title">CONDITIONS GÉNÉRALES - Les 7 Règles d'Or</div>
+              <div class="cgv-title">Conditions de Livraison (Extrait des CGV)</div>
               <ol class="cgv-rules">
-                <li><strong>Validité:</strong> Devis valable 30 jours.</li>
-                <li><strong>Accès:</strong> Le client garantit un accès sécurisé pour nos camions.</li>
-                <li><strong>Attente:</strong> 30 min gratuites, puis facturation des frais d'attente au-delà.</li>
-                <li><strong>Qualité:</strong> Responsabilité limitée à la livraison à la goulotte.</li>
-                <li><strong>Eau:</strong> Toute adjonction d'eau sur site annule la garantie de résistance.</li>
-                <li><strong>Paiement:</strong> Paiement selon les délais convenus; pénalités en cas de retard (Loi 32-10).</li>
-                <li><strong>Litiges:</strong> Compétence exclusive des tribunaux de Casablanca.</li>
+                <li><strong>Validité :</strong> Ce Bon de Livraison est soumis aux CGV de Talmi Beton.</li>
+                <li><strong>Accès :</strong> Le client garantit un accès sécurisé et dégagé au point de déchargement.</li>
+                <li><strong>Attente :</strong> Le temps de déchargement est limité à 30 minutes. Tout dépassement sera facturé.</li>
+                <li><strong>Qualité :</strong> La conformité du béton est garantie jusqu'à la goulotte du camion.</li>
+                <li><strong>Eau :</strong> Toute adjonction d'eau sur site annule la garantie de résistance du béton.</li>
+                <li><strong>Paiement :</strong> Le paiement est dû selon les termes convenus. Des pénalités s'appliquent en cas de retard (Loi 32-10).</li>
+                <li><strong>Litiges :</strong> Les tribunaux de Casablanca sont seuls compétents.</li>
               </ol>
+              <p class="cgv-footer">*La signature du client atteste de la réception du volume et de l'acceptation des conditions ci-dessus.*</p>
             </div>
 
             <div class="footer">
