@@ -11,6 +11,7 @@ import Clients from "./pages/Clients";
 import Prix from "./pages/Prix";
 import Bons from "./pages/Bons";
 import Production from "./pages/Production";
+import Stocks from "./pages/Stocks";
 import Users from "./pages/Users";
 import Approbations from "./pages/Approbations";
 import Alertes from "./pages/Alertes";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/prix" element={<Prix />} />
             <Route path="/bons" element={<Bons />} />
             <Route path="/production" element={<Production />} />
+            <Route path="/stocks" element={<Stocks />} />
             <Route path="/users" element={<Users />} />
             <Route path="/approbations" element={<Approbations />} />
             <Route path="/alertes" element={<Alertes />} />

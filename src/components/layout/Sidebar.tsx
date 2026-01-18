@@ -14,6 +14,7 @@ import {
   CheckSquare,
   AlertTriangle,
   Factory,
+  Warehouse,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -103,6 +104,7 @@ export default function Sidebar() {
           </p>
         </div>
         <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" />
+        <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" />
         {canReadPrix && (
           <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
         )}
