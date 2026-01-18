@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,8 +28,23 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Users, Loader2, Edit, Trash2, Phone, Mail } from 'lucide-react';
+import { 
+  Plus, 
+  Users, 
+  Loader2, 
+  Edit, 
+  Trash2, 
+  Phone, 
+  Mail, 
+  Ban, 
+  Unlock, 
+  FileWarning, 
+  AlertTriangle,
+  CheckCircle,
+  Copy
+} from 'lucide-react';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface Client {
   client_id: string;
@@ -38,16 +54,24 @@ interface Client {
   telephone: string | null;
   email: string | null;
   adresse: string | null;
+  solde_du: number | null;
+  limite_credit_dh: number | null;
+  credit_bloque: boolean | null;
   created_at: string;
 }
 
 export default function Clients() {
-  const { isCeo, isCommercial } = useAuth();
-  const canEdit = isCeo || isCommercial;
+  const { isCeo, isCommercial, isAgentAdministratif } = useAuth();
+  const { blockClient, unblockClient, generateMiseEnDemeure, checkPaymentDelays } = usePaymentDelays();
+  const canEdit = isCeo || isCommercial || isAgentAdministratif;
+  const canBlock = isCeo;
+  const canSendNotice = isCeo || isAgentAdministratif;
   
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [noticeDialogOpen, setNoticeDialogOpen] = useState(false);
+  const [noticeContent, setNoticeContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   // Form state
@@ -61,7 +85,11 @@ export default function Clients() {
 
   useEffect(() => {
     fetchClients();
-  }, []);
+    // Check payment delays on load
+    if (isCeo || isAgentAdministratif) {
+      checkPaymentDelays();
+    }
+  }, [isCeo, isAgentAdministratif]);
 
   const fetchClients = async () => {
     try {
@@ -151,10 +179,49 @@ export default function Clients() {
     }
   };
 
+  const handleBlock = async (clientId: string, isBlocked: boolean | null) => {
+    if (isBlocked) {
+      await unblockClient(clientId);
+    } else {
+      if (!confirm('Bloquer ce client ? Il ne pourra plus passer de commandes.')) return;
+      await blockClient(clientId, 'Blocage manuel par CEO');
+    }
+    fetchClients();
+  };
+
+  const handleSendNotice = async (clientId: string) => {
+    const result = await generateMiseEnDemeure(clientId);
+    if (result.success && result.content) {
+      setNoticeContent(result.content);
+      setNoticeDialogOpen(true);
+    }
+  };
+
+  const copyNotice = () => {
+    navigator.clipboard.writeText(noticeContent);
+    toast.success('Copié dans le presse-papiers');
+  };
+
   const getDelaiLabel = (jours: number | null) => {
     if (jours === 0) return 'Comptant';
     return `${jours} jours`;
   };
+
+  const getClientStatus = (client: Client) => {
+    if (client.credit_bloque) {
+      return { status: 'blocked', label: 'Bloqué', color: 'text-destructive bg-destructive/10' };
+    }
+    if (client.solde_du && client.solde_du > (client.limite_credit_dh || 50000)) {
+      return { status: 'overlimit', label: 'Hors Limite', color: 'text-warning bg-warning/10' };
+    }
+    if (client.solde_du && client.solde_du > 0) {
+      return { status: 'debt', label: 'Solde Dû', color: 'text-muted-foreground bg-muted' };
+    }
+    return { status: 'ok', label: 'OK', color: 'text-success bg-success/10' };
+  };
+
+  const clientsWithDebt = clients.filter(c => c.solde_du && c.solde_du > 0);
+  const blockedClients = clients.filter(c => c.credit_bloque);
 
   return (
     <MainLayout>
@@ -275,6 +342,45 @@ export default function Clients() {
           )}
         </div>
 
+        {/* CEO Quick Stats */}
+        {isCeo && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="card-industrial p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-muted">
+                  <Users className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Clients</p>
+                  <p className="text-xl font-bold">{clients.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="card-industrial p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-warning/10">
+                  <AlertTriangle className="h-5 w-5 text-warning" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Soldes Dus</p>
+                  <p className="text-xl font-bold">{clientsWithDebt.length}</p>
+                </div>
+              </div>
+            </div>
+            <div className="card-industrial p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-destructive/10">
+                  <Ban className="h-5 w-5 text-destructive" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bloqués</p>
+                  <p className="text-xl font-bold">{blockedClients.length}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Table */}
         <div className="card-industrial overflow-hidden">
           {loading ? (
@@ -295,63 +401,137 @@ export default function Clients() {
                   <TableHead>Contact</TableHead>
                   <TableHead>Téléphone</TableHead>
                   <TableHead>Délai</TableHead>
-                  {canEdit && <TableHead className="w-24">Actions</TableHead>}
+                  <TableHead>Statut</TableHead>
+                  {(isCeo || isAgentAdministratif) && <TableHead className="text-right">Solde Dû</TableHead>}
+                  {canEdit && <TableHead className="w-32">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clients.map((c) => (
-                  <TableRow key={c.client_id}>
-                    <TableCell className="font-mono font-medium">{c.client_id}</TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{c.nom_client}</p>
-                        {c.email && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                            <Mail className="h-3 w-3" />
-                            {c.email}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{c.contact_personne || '—'}</TableCell>
-                    <TableCell>
-                      {c.telephone ? (
-                        <span className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" />
-                          {c.telephone}
-                        </span>
-                      ) : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <span className="status-pill pending">
-                        {getDelaiLabel(c.delai_paiement_jours)}
-                      </span>
-                    </TableCell>
-                    {canEdit && (
+                {clients.map((c) => {
+                  const status = getClientStatus(c);
+                  return (
+                    <TableRow key={c.client_id} className={c.credit_bloque ? 'opacity-60' : ''}>
+                      <TableCell className="font-mono font-medium">{c.client_id}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          {isCeo && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                              onClick={() => handleDelete(c.client_id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                        <div>
+                          <p className="font-medium">{c.nom_client}</p>
+                          {c.email && (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                              <Mail className="h-3 w-3" />
+                              {c.email}
+                            </p>
                           )}
                         </div>
                       </TableCell>
-                    )}
-                  </TableRow>
-                ))}
+                      <TableCell>{c.contact_personne || '—'}</TableCell>
+                      <TableCell>
+                        {c.telephone ? (
+                          <span className="flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {c.telephone}
+                          </span>
+                        ) : '—'}
+                      </TableCell>
+                      <TableCell>
+                        <span className="status-pill pending">
+                          {getDelaiLabel(c.delai_paiement_jours)}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium', status.color)}>
+                          {status.status === 'blocked' && <Ban className="h-3 w-3" />}
+                          {status.status === 'overlimit' && <AlertTriangle className="h-3 w-3" />}
+                          {status.status === 'ok' && <CheckCircle className="h-3 w-3" />}
+                          {status.label}
+                        </span>
+                      </TableCell>
+                      {(isCeo || isAgentAdministratif) && (
+                        <TableCell className="text-right">
+                          {c.solde_du && c.solde_du > 0 ? (
+                            <span className={cn('font-mono font-medium', c.solde_du > (c.limite_credit_dh || 50000) ? 'text-destructive' : 'text-warning')}>
+                              {c.solde_du.toLocaleString()} DH
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                      )}
+                      {canEdit && (
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            
+                            {/* Block/Unblock - CEO only */}
+                            {canBlock && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className={cn('h-8 w-8 p-0', c.credit_bloque ? 'text-success hover:text-success' : 'text-destructive hover:text-destructive')}
+                                onClick={() => handleBlock(c.client_id, c.credit_bloque)}
+                                title={c.credit_bloque ? 'Débloquer' : 'Bloquer'}
+                              >
+                                {c.credit_bloque ? <Unlock className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
+                              </Button>
+                            )}
+
+                            {/* Send Notice - CEO or Agent Admin */}
+                            {canSendNotice && c.solde_du && c.solde_du > 0 && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-warning hover:text-warning"
+                                onClick={() => handleSendNotice(c.client_id)}
+                                title="Mise en Demeure"
+                              >
+                                <FileWarning className="h-4 w-4" />
+                              </Button>
+                            )}
+                            
+                            {isCeo && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                                onClick={() => handleDelete(c.client_id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
         </div>
+
+        {/* Mise en Demeure Dialog */}
+        <Dialog open={noticeDialogOpen} onOpenChange={setNoticeDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Mise en Demeure Générée</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4">
+              <pre className="bg-muted p-4 rounded-lg text-sm whitespace-pre-wrap font-mono">
+                {noticeContent}
+              </pre>
+              <div className="flex justify-end gap-3 mt-4">
+                <Button variant="outline" onClick={() => setNoticeDialogOpen(false)}>
+                  Fermer
+                </Button>
+                <Button onClick={copyNotice}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copier
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </MainLayout>
   );

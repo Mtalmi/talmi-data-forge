@@ -4,16 +4,11 @@ import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp } from 'lucide-react';
-
-interface DashboardStats {
-  totalDeliveries: number;
-  totalVolume: number;
-  totalClients: number;
-  pendingPayments: number;
-  marginAlerts: number;
-}
+import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Droplets, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Delivery {
   bl_id: string;
@@ -26,124 +21,143 @@ interface Delivery {
   alerte_ecart: boolean;
 }
 
-interface Alert {
-  id: string;
-  type: 'critical' | 'warning' | 'info';
-  message: string;
-  timestamp: string;
-}
-
 export default function Dashboard() {
-  const { role } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
-    totalDeliveries: 0,
-    totalVolume: 0,
-    totalClients: 0,
-    pendingPayments: 0,
-    marginAlerts: 0,
-  });
+  const { role, isCeo, isAccounting } = useAuth();
+  const { stats, loading: statsLoading, refresh } = useDashboardStats();
+  const { checkPaymentDelays } = usePaymentDelays();
   const [recentDeliveries, setRecentDeliveries] = useState<Delivery[]>([]);
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [deliveriesLoading, setDeliveriesLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [productionStats, setProductionStats] = useState({
+    formulesActives: 0,
+    prixUpdatedAt: '—',
+    tauxECMoyen: '—',
+    curMoyen: '—',
+  });
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    fetchRecentDeliveries();
+    fetchProductionStats();
+    // Check payment delays on load (for CEO/Admin)
+    if (isCeo) {
+      checkPaymentDelays();
+    }
+  }, [isCeo]);
 
-  const fetchDashboardData = async () => {
+  const fetchRecentDeliveries = async () => {
     try {
-      // Fetch delivery stats
-      const { data: deliveries, error: deliveriesError } = await supabase
+      const { data, error } = await supabase
         .from('bons_livraison_reels')
-        .select('*')
+        .select('bl_id, date_livraison, client_id, formule_id, volume_m3, statut_paiement, ecart_marge, alerte_ecart')
         .order('created_at', { ascending: false })
         .limit(10);
 
-      if (deliveriesError) throw deliveriesError;
-
-      // Fetch all deliveries count
-      const { count: totalDeliveries } = await supabase
-        .from('bons_livraison_reels')
-        .select('*', { count: 'exact', head: true });
-
-      // Fetch clients count
-      const { count: totalClients } = await supabase
-        .from('clients')
-        .select('*', { count: 'exact', head: true });
-
-      // Fetch pending payments
-      const { count: pendingPayments } = await supabase
-        .from('bons_livraison_reels')
-        .select('*', { count: 'exact', head: true })
-        .eq('statut_paiement', 'En Attente');
-
-      // Fetch margin alerts
-      const { count: marginAlerts } = await supabase
-        .from('bons_livraison_reels')
-        .select('*', { count: 'exact', head: true })
-        .eq('alerte_ecart', true);
-
-      // Calculate total volume
-      const { data: volumeData } = await supabase
-        .from('bons_livraison_reels')
-        .select('volume_m3');
-
-      const totalVolume = volumeData?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
-
-      setStats({
-        totalDeliveries: totalDeliveries || 0,
-        totalVolume,
-        totalClients: totalClients || 0,
-        pendingPayments: pendingPayments || 0,
-        marginAlerts: marginAlerts || 0,
-      });
-
-      setRecentDeliveries(deliveries || []);
-
-      // Generate alerts
-      const newAlerts: Alert[] = [];
-      if (marginAlerts && marginAlerts > 0) {
-        newAlerts.push({
-          id: 'margin-alert',
-          type: 'critical',
-          message: `${marginAlerts} bon(s) avec écart de marge > 5%`,
-          timestamp: new Date().toISOString(),
-        });
-      }
-      if (pendingPayments && pendingPayments > 5) {
-        newAlerts.push({
-          id: 'payment-alert',
-          type: 'warning',
-          message: `${pendingPayments} paiements en attente`,
-          timestamp: new Date().toISOString(),
-        });
-      }
-      setAlerts(newAlerts);
-
+      if (error) throw error;
+      setRecentDeliveries(data || []);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching recent deliveries:', error);
     } finally {
-      setLoading(false);
+      setDeliveriesLoading(false);
     }
   };
 
+  const fetchProductionStats = async () => {
+    try {
+      // Fetch active formules count
+      const { count: formulesCount } = await supabase
+        .from('formules_theoriques')
+        .select('*', { count: 'exact', head: true });
+
+      // Fetch latest price update
+      const { data: latestPrice } = await supabase
+        .from('prix_achat_actuels')
+        .select('date_mise_a_jour')
+        .order('date_mise_a_jour', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      setProductionStats({
+        formulesActives: formulesCount || 0,
+        prixUpdatedAt: latestPrice?.date_mise_a_jour 
+          ? new Date(latestPrice.date_mise_a_jour).toLocaleDateString('fr-FR') 
+          : '—',
+        tauxECMoyen: stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—',
+        curMoyen: stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)} DH` : '—',
+      });
+    } catch (error) {
+      console.error('Error fetching production stats:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Update production stats when dashboard stats change
+    if (!statsLoading) {
+      setProductionStats(prev => ({
+        ...prev,
+        tauxECMoyen: stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—',
+        curMoyen: stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)} DH` : '—',
+      }));
+    }
+  }, [stats, statsLoading]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      refresh(),
+      fetchRecentDeliveries(),
+      fetchProductionStats(),
+      isCeo ? checkPaymentDelays() : Promise.resolve(),
+    ]);
+    setRefreshing(false);
+  };
+
   const dismissAlert = (id: string) => {
-    setAlerts(alerts.filter(a => a.id !== id));
+    // Alerts are managed by useDashboardStats, this is for UI dismissal only
+  };
+
+  const getTrendDirection = (value: number): 'up' | 'down' | 'neutral' => {
+    if (value > 2) return 'up';
+    if (value < -2) return 'down';
+    return 'neutral';
+  };
+
+  const formatTrend = (value: number): string => {
+    const sign = value >= 0 ? '+' : '';
+    return `${sign}${value.toFixed(0)}%`;
   };
 
   return (
     <MainLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Tableau de Bord</h1>
-          <p className="text-muted-foreground mt-1">
-            Vue d'ensemble des opérations Talmi Beton
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Tableau de Bord</h1>
+            <p className="text-muted-foreground mt-1">
+              Vue d'ensemble des opérations Talmi Beton
+            </p>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh}
+            disabled={refreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
         </div>
 
         {/* Alerts */}
-        <AlertBanner alerts={alerts} onDismiss={dismissAlert} />
+        <AlertBanner 
+          alerts={stats.alerts.map(a => ({
+            id: a.id,
+            type: a.type,
+            message: `${a.title}: ${a.message}`,
+            timestamp: a.timestamp,
+          }))} 
+          onDismiss={dismissAlert} 
+        />
 
         {/* KPI Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -152,36 +166,40 @@ export default function Dashboard() {
             value={stats.totalDeliveries}
             subtitle="Ce mois"
             icon={Truck}
-            trend="up"
-            trendValue="+12%"
+            trend={getTrendDirection(stats.deliveriesTrend)}
+            trendValue={formatTrend(stats.deliveriesTrend)}
+            variant={stats.deliveriesTrend < -20 ? 'negative' : 'default'}
           />
           <KPICard
             title="Volume Total"
             value={`${stats.totalVolume.toFixed(0)} m³`}
             subtitle="Béton livré"
             icon={Package}
-            trend="up"
-            trendValue="+8%"
-            variant="positive"
+            trend={getTrendDirection(stats.volumeTrend)}
+            trendValue={formatTrend(stats.volumeTrend)}
+            variant={stats.volumeTrend > 0 ? 'positive' : stats.volumeTrend < -15 ? 'negative' : 'default'}
           />
           <KPICard
             title="Clients Actifs"
             value={stats.totalClients}
-            subtitle="Dans la base"
+            subtitle="Ce mois"
             icon={Users}
+            trend={getTrendDirection(stats.clientsTrend)}
+            trendValue={formatTrend(stats.clientsTrend)}
+            variant={stats.clientsTrend < -10 ? 'warning' : 'default'}
           />
           <KPICard
             title="Paiements"
-            value={stats.pendingPayments}
-            subtitle="En attente"
+            value={stats.pendingPaymentsCount}
+            subtitle={stats.pendingPaymentsTotal > 0 ? `${(stats.pendingPaymentsTotal / 1000).toFixed(0)}K DH en retard` : 'En attente'}
             icon={DollarSign}
-            variant={stats.pendingPayments > 10 ? 'warning' : 'default'}
+            variant={stats.pendingPaymentsTotal > 100000 ? 'negative' : stats.pendingPaymentsCount > 10 ? 'warning' : 'default'}
           />
         </div>
 
         {/* Secondary KPIs for CEO/Accounting */}
-        {(role === 'ceo' || role === 'accounting') && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {(isCeo || isAccounting) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <KPICard
               title="Alertes Marge"
               value={stats.marginAlerts}
@@ -190,12 +208,26 @@ export default function Dashboard() {
               variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
             />
             <KPICard
+              title="CUR Moyen (7j)"
+              value={stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)}` : '—'}
+              subtitle="DH/m³"
+              icon={Gauge}
+              trend={getTrendDirection(stats.curTrend)}
+              trendValue={stats.curTrend !== 0 ? formatTrend(stats.curTrend) : undefined}
+              variant={stats.curTrend > 5 ? 'warning' : 'default'}
+            />
+            <KPICard
+              title="Taux E/C Moyen"
+              value={stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—'}
+              subtitle={stats.tauxECMoyen > 0.55 ? '⚠️ Dilution' : 'Normal'}
+              icon={Droplets}
+              variant={stats.tauxECMoyen > 0.55 ? 'warning' : 'default'}
+            />
+            <KPICard
               title="Performance"
-              value="94.2%"
+              value={`${(100 - (stats.marginAlerts / Math.max(stats.totalDeliveries, 1)) * 100).toFixed(1)}%`}
               subtitle="Taux de conformité"
               icon={TrendingUp}
-              trend="up"
-              trendValue="+2.1%"
               variant="positive"
             />
           </div>
@@ -203,27 +235,31 @@ export default function Dashboard() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentDeliveries deliveries={recentDeliveries} loading={loading} />
+          <RecentDeliveries deliveries={recentDeliveries} loading={deliveriesLoading} />
           
-          {/* Quick Actions / Summary Card */}
+          {/* Production Summary Card */}
           <div className="card-industrial p-6 animate-fade-in">
             <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <span className="text-sm text-muted-foreground">Formules actives</span>
-                <span className="font-semibold">—</span>
+                <span className="font-semibold">{productionStats.formulesActives}</span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <span className="text-sm text-muted-foreground">Prix mis à jour</span>
-                <span className="font-semibold">—</span>
+                <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
-                <span className="font-semibold">—</span>
+                <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
+                  {productionStats.tauxECMoyen}
+                </span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">CUR moyen</span>
-                <span className="font-semibold">—</span>
+                <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
+                <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
+                  {productionStats.curMoyen}
+                </span>
               </div>
             </div>
           </div>
