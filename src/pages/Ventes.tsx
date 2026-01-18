@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useSalesWorkflow, Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,6 +54,8 @@ import {
   Phone,
   FileCheck,
   Building2,
+  Play,
+  Factory,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -76,12 +79,14 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
 };
 
 export default function Ventes() {
+  const navigate = useNavigate();
   const { isCeo, canCreateBons } = useAuth();
-  const { devisList, bcList, loading, stats, fetchData, convertToBc, updateDevisStatus } = useSalesWorkflow();
+  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, updateDevisStatus } = useSalesWorkflow();
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
   const [converting, setConverting] = useState(false);
+  const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
   
   // Enhanced form state
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(undefined);
@@ -135,6 +140,18 @@ export default function Ventes() {
     setSelectedDevis(devis);
     setDeliveryAddress(devis.client?.adresse || '');
     setConvertDialogOpen(true);
+  };
+
+  // Handle launching production from BC - creates BL and navigates to Planning
+  const handleLaunchProduction = async (bc: BonCommande) => {
+    setLaunchingProduction(bc.bc_id);
+    const blId = await createBlFromBc(bc);
+    setLaunchingProduction(null);
+    
+    if (blId) {
+      // Navigate to Planning page
+      navigate('/planning');
+    }
   };
 
   return (
@@ -436,7 +453,25 @@ export default function Ventes() {
                               )}
                             </TableCell>
                             <TableCell>
-                              <BcPdfGenerator bc={bc} compact />
+                              <div className="flex items-center gap-2">
+                                {bc.statut === 'pret_production' && (
+                                  <Button
+                                    size="sm"
+                                    variant="default"
+                                    onClick={() => handleLaunchProduction(bc)}
+                                    disabled={launchingProduction === bc.bc_id}
+                                    className="gap-1"
+                                  >
+                                    {launchingProduction === bc.bc_id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <Factory className="h-3 w-3" />
+                                    )}
+                                    Lancer Production
+                                  </Button>
+                                )}
+                                <BcPdfGenerator bc={bc} compact />
+                              </div>
                             </TableCell>
                           </TableRow>
                         );

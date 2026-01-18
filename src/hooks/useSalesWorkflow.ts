@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 export interface Devis {
   id: string;
@@ -280,6 +281,69 @@ export function useSalesWorkflow() {
     }
   }, [fetchData]);
 
+  // Create BL from BC - The missing link!
+  const createBlFromBc = useCallback(async (bc: BonCommande): Promise<string | null> => {
+    try {
+      // Generate BL ID
+      const today = new Date();
+      const dateStr = format(today, 'yyMMdd');
+      
+      // Get count for today to generate sequence
+      const { count } = await supabase
+        .from('bons_livraison_reels')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', format(today, 'yyyy-MM-dd'))
+        .lt('created_at', format(new Date(today.getTime() + 86400000), 'yyyy-MM-dd'));
+      
+      const sequence = ((count || 0) + 1).toString().padStart(4, '0');
+      const blId = `TB-${dateStr}-${sequence}`;
+
+      // Get formule to get theoretical values for initial ciment
+      const { data: formule } = await supabase
+        .from('formules_theoriques')
+        .select('ciment_kg_m3')
+        .eq('formule_id', bc.formule_id)
+        .single();
+
+      const cimentReel = formule ? formule.ciment_kg_m3 * bc.volume_m3 : bc.volume_m3 * 350; // Default 350kg/m³
+
+      // Create the BL entry
+      const { error: blError } = await supabase
+        .from('bons_livraison_reels')
+        .insert({
+          bl_id: blId,
+          client_id: bc.client_id,
+          formule_id: bc.formule_id,
+          volume_m3: bc.volume_m3,
+          ciment_reel_kg: cimentReel,
+          prix_vente_m3: bc.prix_vente_m3,
+          date_livraison: bc.date_livraison_souhaitee || format(today, 'yyyy-MM-dd'),
+          heure_prevue: bc.heure_livraison_souhaitee || null,
+          workflow_status: 'planification',
+          statut_paiement: 'En Attente',
+          created_by: user?.id,
+        });
+
+      if (blError) throw blError;
+
+      // Update BC status to en_production
+      const { error: bcError } = await supabase
+        .from('bons_commande')
+        .update({ statut: 'en_production' })
+        .eq('bc_id', bc.bc_id);
+
+      if (bcError) throw bcError;
+
+      await fetchData();
+      toast.success(`BL ${blId} créé - Prêt pour planification`);
+      return blId;
+    } catch (error) {
+      console.error('Error creating BL from BC:', error);
+      toast.error('Erreur lors de la création du BL');
+      return null;
+    }
+  }, [user, fetchData]);
+
   // Stats
   const stats = {
     devisEnAttente: devisList.filter(d => d.statut === 'en_attente').length,
@@ -303,6 +367,7 @@ export function useSalesWorkflow() {
     fetchData,
     saveDevis,
     convertToBc,
+    createBlFromBc,
     updateDevisStatus,
     updateBcStatus,
   };
