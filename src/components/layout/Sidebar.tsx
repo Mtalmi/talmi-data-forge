@@ -15,6 +15,7 @@ import {
   AlertTriangle,
   Factory,
   Warehouse,
+  Route,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -96,6 +97,7 @@ export default function Sidebar() {
         </div>
         <NavItem to="/bons" icon={<Truck className="h-5 w-5" />} label="Bons de Livraison" />
         <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" />
+        <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" />
         <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" />
         
         <div className="pt-4 pb-2">
