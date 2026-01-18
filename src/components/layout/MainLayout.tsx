@@ -20,14 +20,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
       
       <main className="flex-1 overflow-y-auto">
         {/* Top Bar with Global Search and Notifications */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-4 py-3 lg:px-6">
-          <div className="flex items-center justify-between gap-4">
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-3 py-2 sm:px-4 sm:py-3 lg:px-6">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Mobile: Hamburger + Logo */}
             {showMobileNav && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <MobileSidebar />
-                <div className="flex items-center gap-2">
-                  <Building2 className="h-5 w-5 text-primary" />
+                <div className="flex items-center gap-1.5">
+                  <Building2 className="h-4 w-4 text-primary" />
                   <span className="font-bold text-sm">TBOS</span>
                 </div>
               </div>
@@ -41,7 +41,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             <NotificationCenter />
           </div>
         </div>
-        <div className="p-4 lg:p-6">{children}</div>
+        <div className="p-3 sm:p-4 lg:p-6">{children}</div>
       </main>
     </div>
   );
