@@ -17,7 +17,7 @@ const PERIODS: { value: Period; label: string; icon: React.ReactNode }[] = [
 
 export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
   return (
-    <div className="flex items-center gap-1 p-1 bg-muted/50 rounded-lg">
+    <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-muted/50 rounded-lg">
       {PERIODS.map((period) => (
         <Button
           key={period.value}
@@ -25,14 +25,14 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
           size="sm"
           onClick={() => onChange(period.value)}
           className={cn(
-            'gap-2 transition-all',
+            'gap-1.5 transition-all px-2 sm:px-3 h-8 sm:h-9',
             value === period.value 
               ? 'shadow-sm' 
               : 'hover:bg-background/80'
           )}
         >
           {period.icon}
-          <span className="hidden sm:inline">{period.label}</span>
+          <span className="hidden sm:inline text-xs">{period.label}</span>
         </Button>
       ))}
     </div>

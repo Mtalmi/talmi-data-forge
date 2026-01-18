@@ -46,18 +46,18 @@ export function PeriodKPICard({
 
   return (
     <div className={cn(
-      'p-4 rounded-xl border transition-all',
+      'p-3 sm:p-4 rounded-lg border transition-all',
       variant === 'positive' && 'bg-success/5 border-success/30',
       variant === 'negative' && 'bg-destructive/5 border-destructive/30',
       variant === 'warning' && 'bg-warning/5 border-warning/30',
       variant === 'default' && 'bg-card border-border/50',
       className
     )}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">{title}</p>
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider truncate">{title}</p>
           <p className={cn(
-            'text-2xl font-bold font-mono mt-1 tabular-nums',
+            'text-lg sm:text-2xl font-bold font-mono mt-0.5 tabular-nums',
             variant === 'positive' && 'text-success',
             variant === 'negative' && 'text-destructive',
             variant === 'warning' && 'text-warning'
@@ -65,18 +65,18 @@ export function PeriodKPICard({
             {value}
           </p>
           {subtitle && (
-            <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>
           )}
         </div>
         <div className={cn(
-          'p-2 rounded-lg',
+          'p-1.5 sm:p-2 rounded-md flex-shrink-0',
           variant === 'positive' && 'bg-success/10',
           variant === 'negative' && 'bg-destructive/10',
           variant === 'warning' && 'bg-warning/10',
           variant === 'default' && 'bg-muted'
         )}>
           <Icon className={cn(
-            'h-5 w-5',
+            'h-4 w-4 sm:h-5 sm:w-5',
             variant === 'positive' && 'text-success',
             variant === 'negative' && 'text-destructive',
             variant === 'warning' && 'text-warning',
@@ -87,13 +87,13 @@ export function PeriodKPICard({
 
       {trend !== undefined && (
         <div className={cn(
-          'flex items-center gap-1 mt-3 text-xs',
+          'flex items-center gap-1 mt-2 text-[10px] sm:text-xs',
           getTrendColor()
         )}>
           {getTrendIcon()}
           <span className="font-medium">{formatTrend(trend)}</span>
           {trendLabel && (
-            <span className="text-muted-foreground ml-1">vs {trendLabel}</span>
+            <span className="text-muted-foreground ml-1 hidden sm:inline">vs {trendLabel}</span>
           )}
         </div>
       )}

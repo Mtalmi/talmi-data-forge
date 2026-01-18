@@ -148,16 +148,16 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header with Period Selector */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col gap-3">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Tableau de Bord</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
+            <p className="text-sm text-muted-foreground">
               Vue d'ensemble des opérations Talmi Beton
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <PeriodSelector value={period} onChange={setPeriod} />
             {isCeo && <DailyReportGenerator />}
             <Button 
@@ -165,16 +165,17 @@ export default function Dashboard() {
               size="sm" 
               onClick={handleRefresh}
               disabled={refreshing}
+              className="min-h-[40px]"
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
-              Actualiser
+              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline ml-2">Actualiser</span>
             </Button>
           </div>
         </div>
 
         {/* Executive Command Center - CEO Only */}
         {isCeo && (
-          <div className="card-industrial p-4 sm:p-6">
+          <div className="card-industrial p-3 sm:p-6">
             <ExecutiveCommandCenter />
           </div>
         )}
