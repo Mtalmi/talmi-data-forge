@@ -722,7 +722,7 @@ export default function Bons() {
             <p className="text-muted-foreground">Aucun bon de livraison</p>
           </div>
         ) : (
-            <Table className="data-table-industrial">
+          <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
                   <TableHead>N° Bon</TableHead>
@@ -833,9 +833,8 @@ export default function Bons() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
-          )}
-        </div>
+          </Table>
+        )}
 
         {/* Detail Dialog */}
         <BonDetailDialog
