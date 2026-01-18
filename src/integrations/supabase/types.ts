@@ -107,6 +107,8 @@ export type Database = {
       bons_livraison_reels: {
         Row: {
           adjuvant_reel_l: number | null
+          affaissement_conforme: boolean | null
+          affaissement_mm: number | null
           alerte_ecart: boolean | null
           alerte_marge: boolean | null
           alerte_planification: boolean | null
@@ -154,6 +156,8 @@ export type Database = {
         }
         Insert: {
           adjuvant_reel_l?: number | null
+          affaissement_conforme?: boolean | null
+          affaissement_mm?: number | null
           alerte_ecart?: boolean | null
           alerte_marge?: boolean | null
           alerte_planification?: boolean | null
@@ -201,6 +205,8 @@ export type Database = {
         }
         Update: {
           adjuvant_reel_l?: number | null
+          affaissement_conforme?: boolean | null
+          affaissement_mm?: number | null
           alerte_ecart?: boolean | null
           alerte_marge?: boolean | null
           alerte_planification?: boolean | null
@@ -371,6 +377,8 @@ export type Database = {
       formules_theoriques: {
         Row: {
           adjuvant_l_m3: number
+          affaissement_cible_mm: number | null
+          affaissement_tolerance_mm: number | null
           ciment_kg_m3: number
           created_at: string
           cut_dh_m3: number | null
@@ -379,12 +387,15 @@ export type Database = {
           formule_id: string
           gravette_m3: number | null
           gravier_kg_m3: number | null
+          resistance_cible_28j_mpa: number | null
           sable_kg_m3: number | null
           sable_m3: number | null
           updated_at: string
         }
         Insert: {
           adjuvant_l_m3?: number
+          affaissement_cible_mm?: number | null
+          affaissement_tolerance_mm?: number | null
           ciment_kg_m3: number
           created_at?: string
           cut_dh_m3?: number | null
@@ -393,12 +404,15 @@ export type Database = {
           formule_id: string
           gravette_m3?: number | null
           gravier_kg_m3?: number | null
+          resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
           updated_at?: string
         }
         Update: {
           adjuvant_l_m3?: number
+          affaissement_cible_mm?: number | null
+          affaissement_tolerance_mm?: number | null
           ciment_kg_m3?: number
           created_at?: string
           cut_dh_m3?: number | null
@@ -407,6 +421,7 @@ export type Database = {
           formule_id?: string
           gravette_m3?: number | null
           gravier_kg_m3?: number | null
+          resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
           updated_at?: string
@@ -631,6 +646,74 @@ export type Database = {
           station?: string | null
         }
         Relationships: []
+      }
+      tests_laboratoire: {
+        Row: {
+          affaissement_conforme: boolean | null
+          affaissement_mm: number | null
+          alerte_qualite: boolean | null
+          bl_id: string
+          created_at: string
+          date_prelevement: string
+          date_test_28j: string | null
+          date_test_7j: string | null
+          formule_id: string
+          id: string
+          notes: string | null
+          resistance_28j_mpa: number | null
+          resistance_7j_mpa: number | null
+          resistance_conforme: boolean | null
+          technicien_prelevement: string | null
+          technicien_test: string | null
+          updated_at: string
+        }
+        Insert: {
+          affaissement_conforme?: boolean | null
+          affaissement_mm?: number | null
+          alerte_qualite?: boolean | null
+          bl_id: string
+          created_at?: string
+          date_prelevement?: string
+          date_test_28j?: string | null
+          date_test_7j?: string | null
+          formule_id: string
+          id?: string
+          notes?: string | null
+          resistance_28j_mpa?: number | null
+          resistance_7j_mpa?: number | null
+          resistance_conforme?: boolean | null
+          technicien_prelevement?: string | null
+          technicien_test?: string | null
+          updated_at?: string
+        }
+        Update: {
+          affaissement_conforme?: boolean | null
+          affaissement_mm?: number | null
+          alerte_qualite?: boolean | null
+          bl_id?: string
+          created_at?: string
+          date_prelevement?: string
+          date_test_28j?: string | null
+          date_test_7j?: string | null
+          formule_id?: string
+          id?: string
+          notes?: string | null
+          resistance_28j_mpa?: number | null
+          resistance_7j_mpa?: number | null
+          resistance_conforme?: boolean | null
+          technicien_prelevement?: string | null
+          technicien_test?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_laboratoire_bl_id_fkey"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "bons_livraison_reels"
+            referencedColumns: ["bl_id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

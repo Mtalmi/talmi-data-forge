@@ -107,6 +107,7 @@ export default function Sidebar() {
         </div>
         <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" />
         <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" />
+        <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" />
         {canReadPrix && (
           <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
         )}
