@@ -17,6 +17,7 @@ import {
   Warehouse,
   Route,
   Receipt,
+  CalendarClock,
   ShoppingCart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -97,6 +98,7 @@ export default function Sidebar() {
             Production
           </p>
         </div>
+        <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" />
         <NavItem to="/bons" icon={<Truck className="h-5 w-5" />} label="Bons de Livraison" />
         <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" />
         <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" />
