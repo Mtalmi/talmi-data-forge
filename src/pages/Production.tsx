@@ -1,0 +1,542 @@
+import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import MainLayout from '@/components/layout/MainLayout';
+import { useAuth } from '@/hooks/useAuth';
+import { useBonWorkflow } from '@/hooks/useBonWorkflow';
+import { useMachineSync } from '@/hooks/useMachineSync';
+import { ProductionComparePanel } from '@/components/production/ProductionComparePanel';
+import { ApiDocumentation } from '@/components/production/ApiDocumentation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Factory,
+  Loader2,
+  RefreshCw,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Wifi,
+  WifiOff,
+  Play,
+  ArrowRight,
+} from 'lucide-react';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
+
+interface BonProduction {
+  bl_id: string;
+  date_livraison: string;
+  client_id: string;
+  formule_id: string;
+  volume_m3: number;
+  ciment_reel_kg: number;
+  adjuvant_reel_l: number | null;
+  eau_reel_l: number | null;
+  workflow_status: string | null;
+  source_donnees: string | null;
+  machine_id: string | null;
+  justification_ecart: string | null;
+  validation_technique: boolean | null;
+  alerte_ecart: boolean | null;
+}
+
+interface Formule {
+  formule_id: string;
+  designation: string;
+  ciment_kg_m3: number;
+  adjuvant_l_m3: number;
+  eau_l_m3: number;
+}
+
+export default function Production() {
+  const { isCeo, isCentraliste, isResponsableTechnique } = useAuth();
+  const { transitionWorkflow } = useBonWorkflow();
+  const { syncing, lastSync, simulateMachineSync, updateBonWithMachineData, requiresJustification } = useMachineSync();
+
+  const [bons, setBons] = useState<BonProduction[]>([]);
+  const [formules, setFormules] = useState<Formule[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedBon, setSelectedBon] = useState<BonProduction | null>(null);
+  const [selectedFormule, setSelectedFormule] = useState<Formule | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // Edit state
+  const [editValues, setEditValues] = useState({
+    ciment_reel_kg: 0,
+    adjuvant_reel_l: 0,
+    eau_reel_l: 0,
+  });
+  const [justification, setJustification] = useState('');
+  const [deviations, setDeviations] = useState<{ field: string; percent: number }[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  const canEdit = isCeo || isCentraliste;
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [bonsRes, formulesRes] = await Promise.all([
+        supabase
+          .from('bons_livraison_reels')
+          .select('*')
+          .in('workflow_status', ['production', 'validation_technique'])
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('formules_theoriques')
+          .select('formule_id, designation, ciment_kg_m3, adjuvant_l_m3, eau_l_m3'),
+      ]);
+
+      if (bonsRes.error) throw bonsRes.error;
+      if (formulesRes.error) throw formulesRes.error;
+
+      setBons(bonsRes.data || []);
+      setFormules(formulesRes.data || []);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Erreur lors du chargement');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectBon = (bon: BonProduction) => {
+    setSelectedBon(bon);
+    const formule = formules.find(f => f.formule_id === bon.formule_id);
+    setSelectedFormule(formule || null);
+    setEditValues({
+      ciment_reel_kg: bon.ciment_reel_kg || 0,
+      adjuvant_reel_l: bon.adjuvant_reel_l || 0,
+      eau_reel_l: bon.eau_reel_l || 0,
+    });
+    setJustification(bon.justification_ecart || '');
+    updateDeviations(bon, formule);
+    setDialogOpen(true);
+  };
+
+  const updateDeviations = (bon: BonProduction, formule: Formule | null) => {
+    if (!formule) {
+      setDeviations([]);
+      return;
+    }
+    
+    const result = requiresJustification(
+      editValues.ciment_reel_kg,
+      formule.ciment_kg_m3 * bon.volume_m3,
+      editValues.adjuvant_reel_l,
+      formule.adjuvant_l_m3 * bon.volume_m3,
+      editValues.eau_reel_l,
+      formule.eau_l_m3 * bon.volume_m3
+    );
+    setDeviations(result.deviations);
+  };
+
+  useEffect(() => {
+    if (selectedBon && selectedFormule) {
+      const result = requiresJustification(
+        editValues.ciment_reel_kg,
+        selectedFormule.ciment_kg_m3 * selectedBon.volume_m3,
+        editValues.adjuvant_reel_l,
+        selectedFormule.adjuvant_l_m3 * selectedBon.volume_m3,
+        editValues.eau_reel_l,
+        selectedFormule.eau_l_m3 * selectedBon.volume_m3
+      );
+      setDeviations(result.deviations);
+    }
+  }, [editValues, selectedBon, selectedFormule, requiresJustification]);
+
+  const handleSync = async () => {
+    if (!selectedBon || !selectedFormule) return;
+
+    const result = await simulateMachineSync(selectedFormule, selectedBon.volume_m3);
+    
+    if (result.success && result.data) {
+      setEditValues({
+        ciment_reel_kg: result.data.ciment_reel_kg,
+        adjuvant_reel_l: result.data.adjuvant_reel_l,
+        eau_reel_l: result.data.eau_reel_l,
+      });
+      
+      // Update the BL with machine data
+      await updateBonWithMachineData(selectedBon.bl_id, result.data);
+      fetchData();
+    }
+  };
+
+  const handleValueChange = (field: keyof typeof editValues, value: number) => {
+    setEditValues(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSave = async () => {
+    if (!selectedBon) return;
+
+    // Check if justification is required but not provided
+    if (deviations.length > 0 && !justification.trim()) {
+      toast.error('Une justification est requise pour les écarts > 5%');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const updateData: Record<string, unknown> = {
+        ciment_reel_kg: editValues.ciment_reel_kg,
+        adjuvant_reel_l: editValues.adjuvant_reel_l,
+        eau_reel_l: editValues.eau_reel_l,
+        alerte_ecart: deviations.length > 0,
+      };
+
+      if (justification.trim()) {
+        updateData.justification_ecart = justification.trim();
+      }
+
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update(updateData)
+        .eq('bl_id', selectedBon.bl_id);
+
+      if (error) throw error;
+
+      // Create alert if there are deviations
+      if (deviations.length > 0) {
+        await supabase.from('alertes_systeme').insert([{
+          type_alerte: 'ecart_production',
+          niveau: 'warning',
+          titre: 'Écart Production > 5%',
+          message: `BL ${selectedBon.bl_id}: ${deviations.map(d => `${d.field} +${d.percent.toFixed(1)}%`).join(', ')}. Justification: ${justification}`,
+          reference_id: selectedBon.bl_id,
+          reference_table: 'bons_livraison_reels',
+          destinataire_role: 'ceo',
+        }]);
+      }
+
+      toast.success('Données de production enregistrées');
+      setDialogOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error('Error saving:', error);
+      toast.error('Erreur lors de l\'enregistrement');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAdvanceToValidation = async () => {
+    if (!selectedBon) return;
+
+    // Check if justification is required
+    if (deviations.length > 0 && !justification.trim()) {
+      toast.error('Une justification est requise avant de passer en validation');
+      return;
+    }
+
+    // First save
+    await handleSave();
+
+    // Then transition
+    const success = await transitionWorkflow(
+      selectedBon.bl_id,
+      selectedBon.workflow_status || 'production',
+      'validation_technique'
+    );
+
+    if (success) {
+      setDialogOpen(false);
+      fetchData();
+    }
+  };
+
+  const getSourceBadge = (source: string | null) => {
+    if (source === 'machine_sync') {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success">
+          <Wifi className="h-3 w-3" />
+          Machine
+        </span>
+      );
+    }
+    return (
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
+        <WifiOff className="h-3 w-3" />
+        Manuel
+      </span>
+    );
+  };
+
+  return (
+    <MainLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+              <Factory className="h-7 w-7 text-primary" />
+              Centre de Commande Production
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Interface Centraliste - Comparaison Théorique vs Réel
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {lastSync && (
+              <span className="text-xs text-muted-foreground">
+                Dernière sync: {format(lastSync, 'HH:mm:ss', { locale: fr })}
+              </span>
+            )}
+            <Button variant="outline" size="sm" onClick={fetchData}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualiser
+            </Button>
+          </div>
+        </div>
+
+        {/* Status Legend */}
+        <div className="flex flex-wrap gap-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning border border-warning/30">
+            <Play className="h-3 w-3" />
+            En Production
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/30">
+            <CheckCircle className="h-3 w-3" />
+            En Validation
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-success/10 text-success border border-success/30">
+            <Wifi className="h-3 w-3" />
+            Sync Machine
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-destructive/10 text-destructive border border-destructive/30">
+            <AlertTriangle className="h-3 w-3" />
+            Écart &gt; 5%
+          </span>
+        </div>
+
+        {/* Production Queue */}
+        <div className="card-industrial overflow-x-auto">
+          {loading ? (
+            <div className="p-8 text-center">
+              <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+            </div>
+          ) : bons.length === 0 ? (
+            <div className="p-8 text-center">
+              <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+              <p className="text-muted-foreground">Aucun bon en production</p>
+            </div>
+          ) : (
+            <Table className="data-table-industrial">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>N° Bon</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Client</TableHead>
+                  <TableHead>Formule</TableHead>
+                  <TableHead className="text-right">Volume</TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="w-20"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {bons.map((bon) => (
+                  <TableRow
+                    key={bon.bl_id}
+                    className={cn(
+                      'cursor-pointer hover:bg-muted/30',
+                      bon.alerte_ecart && 'bg-destructive/5'
+                    )}
+                    onClick={() => canEdit && handleSelectBon(bon)}
+                  >
+                    <TableCell className="font-mono font-medium">
+                      <div className="flex items-center gap-2">
+                        {bon.bl_id}
+                        {bon.alerte_ecart && (
+                          <AlertTriangle className="h-4 w-4 text-destructive" />
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(bon.date_livraison), 'dd/MM/yyyy', { locale: fr })}
+                    </TableCell>
+                    <TableCell>{bon.client_id}</TableCell>
+                    <TableCell className="font-mono text-sm">{bon.formule_id}</TableCell>
+                    <TableCell className="text-right font-semibold">{bon.volume_m3} m³</TableCell>
+                    <TableCell>{getSourceBadge(bon.source_donnees)}</TableCell>
+                    <TableCell>
+                      <span className={cn(
+                        'inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium',
+                        bon.workflow_status === 'production' && 'bg-warning/20 text-warning',
+                        bon.workflow_status === 'validation_technique' && 'bg-purple-500/20 text-purple-500'
+                      )}>
+                        {bon.workflow_status === 'production' && <Play className="h-3 w-3" />}
+                        {bon.workflow_status === 'validation_technique' && <CheckCircle className="h-3 w-3" />}
+                        {bon.workflow_status === 'production' ? 'Production' : 'Validation'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {canEdit && (
+                        <Button variant="ghost" size="sm">
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+
+        {/* API Documentation (Hidden/Collapsible) */}
+        {isCeo && (
+          <ApiDocumentation className="mt-8" />
+        )}
+      </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <Factory className="h-5 w-5 text-primary" />
+              Production: {selectedBon?.bl_id}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedBon && selectedFormule && (
+            <div className="space-y-6 mt-4">
+              {/* Info Bar */}
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <div className="flex items-center gap-4">
+                  <div>
+                    <span className="text-xs text-muted-foreground">Client:</span>
+                    <p className="font-medium">{selectedBon.client_id}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Formule:</span>
+                    <p className="font-mono font-medium">{selectedBon.formule_id}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Volume:</span>
+                    <p className="font-semibold">{selectedBon.volume_m3} m³</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={handleSync}
+                  disabled={syncing}
+                  className="gap-2"
+                >
+                  {syncing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Synchronisation...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="h-4 w-4" />
+                      Synchroniser avec la Centrale
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {/* Compare Panel */}
+              <ProductionComparePanel
+                formule={selectedFormule}
+                volume={selectedBon.volume_m3}
+                realValues={editValues}
+                onValueChange={handleValueChange}
+                deviations={deviations}
+                disabled={saving}
+              />
+
+              {/* Justification (required if deviations > 5%) */}
+              {deviations.length > 0 && (
+                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                    <span className="font-semibold text-destructive">
+                      Justification Requise
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Un ou plusieurs écarts dépassent 5%. Veuillez fournir une justification pour continuer.
+                  </p>
+                  <div className="space-y-2">
+                    <Label className="form-label-industrial">Justification de l'écart</Label>
+                    <Textarea
+                      value={justification}
+                      onChange={(e) => setJustification(e.target.value)}
+                      placeholder="Expliquez la raison de l'écart de consommation..."
+                      rows={3}
+                      className={cn(
+                        !justification.trim() && 'border-destructive'
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Machine Info */}
+              {selectedBon.machine_id && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Wifi className="h-4 w-4 text-success" />
+                  <span>Machine ID: {selectedBon.machine_id}</span>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-4 border-t border-border">
+                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                  Annuler
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={handleSave}
+                  disabled={saving}
+                >
+                  {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                  Enregistrer
+                </Button>
+                {selectedBon.workflow_status === 'production' && (
+                  <Button
+                    onClick={handleAdvanceToValidation}
+                    disabled={saving || (deviations.length > 0 && !justification.trim())}
+                  >
+                    <ArrowRight className="h-4 w-4 mr-2" />
+                    Valider & Avancer
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </MainLayout>
+  );
+}

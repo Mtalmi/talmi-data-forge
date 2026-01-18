@@ -129,9 +129,11 @@ export type Database = {
           heure_depart_reelle: string | null
           justification_ecart: string | null
           km_parcourus: number | null
+          machine_id: string | null
           marge_brute_pct: number | null
           prix_vente_m3: number | null
           raison_annulation: string | null
+          source_donnees: string | null
           statut_paiement: string
           temps_attente_site: number | null
           temps_mission_heures: number | null
@@ -167,9 +169,11 @@ export type Database = {
           heure_depart_reelle?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
+          machine_id?: string | null
           marge_brute_pct?: number | null
           prix_vente_m3?: number | null
           raison_annulation?: string | null
+          source_donnees?: string | null
           statut_paiement?: string
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
@@ -205,9 +209,11 @@ export type Database = {
           heure_depart_reelle?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
+          machine_id?: string | null
           marge_brute_pct?: number | null
           prix_vente_m3?: number | null
           raison_annulation?: string | null
+          source_donnees?: string | null
           statut_paiement?: string
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
