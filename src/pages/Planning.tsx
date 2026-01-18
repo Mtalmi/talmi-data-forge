@@ -52,6 +52,14 @@ export default function Planning() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
+  // Auto-refresh every 15 seconds for live dispatch
+  useEffect(() => {
+    const autoRefreshInterval = setInterval(() => {
+      fetchData();
+    }, 15000);
+    return () => clearInterval(autoRefreshInterval);
+  }, [selectedDate]);
+
   const fetchData = async () => {
     setLoading(true);
     try {
