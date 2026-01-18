@@ -22,6 +22,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import BankCSVImport from '@/components/banking/BankCSVImport';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
   non_rapproche: { label: 'En attente', color: 'bg-amber-100 text-amber-800', icon: AlertCircle },
@@ -215,12 +216,13 @@ export default function Rapprochement() {
                 )}
                 Auto-rapprocher
               </Button>
+              <BankCSVImport onImport={importTransactions} />
               <Button
                 variant="outline"
                 onClick={() => setShowImportDialog(true)}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Importer
+                Manuel
               </Button>
               <Button variant="outline" size="icon" onClick={refetch}>
                 <RefreshCw className="h-4 w-4" />
