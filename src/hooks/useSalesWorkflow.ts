@@ -1,0 +1,286 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+
+export interface Devis {
+  id: string;
+  devis_id: string;
+  client_id: string | null;
+  formule_id: string;
+  volume_m3: number;
+  distance_km: number;
+  cut_per_m3: number;
+  fixed_cost_per_m3: number;
+  transport_extra_per_m3: number;
+  total_cost_per_m3: number;
+  margin_pct: number;
+  prix_vente_m3: number;
+  total_ht: number;
+  statut: string;
+  validite_jours: number;
+  date_expiration: string | null;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  client?: { nom_client: string; adresse: string | null };
+  formule?: { designation: string };
+}
+
+export interface BonCommande {
+  id: string;
+  bc_id: string;
+  devis_id: string | null;
+  client_id: string;
+  formule_id: string;
+  volume_m3: number;
+  prix_vente_m3: number;
+  total_ht: number;
+  statut: string;
+  date_livraison_souhaitee: string | null;
+  adresse_livraison: string | null;
+  notes: string | null;
+  prix_verrouille: boolean;
+  created_by: string | null;
+  validated_by: string | null;
+  validated_at: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined data
+  client?: { nom_client: string };
+  formule?: { designation: string };
+}
+
+export function useSalesWorkflow() {
+  const { user } = useAuth();
+  const [devisList, setDevisList] = useState<Devis[]>([]);
+  const [bcList, setBcList] = useState<BonCommande[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [devisRes, bcRes] = await Promise.all([
+        supabase
+          .from('devis')
+          .select(`
+            *,
+            client:clients(nom_client, adresse),
+            formule:formules_theoriques(designation)
+          `)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('bons_commande')
+          .select(`
+            *,
+            client:clients(nom_client),
+            formule:formules_theoriques(designation)
+          `)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      if (devisRes.error) throw devisRes.error;
+      if (bcRes.error) throw bcRes.error;
+
+      setDevisList(devisRes.data || []);
+      setBcList(bcRes.data || []);
+    } catch (error) {
+      console.error('Error fetching sales data:', error);
+      toast.error('Erreur lors du chargement des données');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const generateDevisId = useCallback(() => {
+    const date = new Date();
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `DEV-${year}${month}-${random}`;
+  }, []);
+
+  const generateBcId = useCallback(() => {
+    const date = new Date();
+    const year = date.getFullYear().toString().slice(-2);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `BC-${year}${month}-${random}`;
+  }, []);
+
+  const saveDevis = useCallback(async (data: {
+    client_id?: string;
+    formule_id: string;
+    volume_m3: number;
+    distance_km: number;
+    cut_per_m3: number;
+    fixed_cost_per_m3: number;
+    transport_extra_per_m3: number;
+    total_cost_per_m3: number;
+    margin_pct: number;
+    prix_vente_m3: number;
+    total_ht: number;
+    notes?: string;
+  }) => {
+    try {
+      const devis_id = generateDevisId();
+      const date_expiration = new Date();
+      date_expiration.setDate(date_expiration.getDate() + 30);
+
+      const { data: newDevis, error } = await supabase
+        .from('devis')
+        .insert({
+          devis_id,
+          client_id: data.client_id || null,
+          formule_id: data.formule_id,
+          volume_m3: data.volume_m3,
+          distance_km: data.distance_km,
+          cut_per_m3: data.cut_per_m3,
+          fixed_cost_per_m3: data.fixed_cost_per_m3,
+          transport_extra_per_m3: data.transport_extra_per_m3,
+          total_cost_per_m3: data.total_cost_per_m3,
+          margin_pct: data.margin_pct,
+          prix_vente_m3: data.prix_vente_m3,
+          total_ht: data.total_ht,
+          statut: 'en_attente',
+          validite_jours: 30,
+          date_expiration: date_expiration.toISOString().split('T')[0],
+          notes: data.notes || null,
+          created_by: user?.id,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      await fetchData();
+      toast.success(`Devis ${devis_id} enregistré`);
+      return newDevis;
+    } catch (error) {
+      console.error('Error saving devis:', error);
+      toast.error('Erreur lors de l\'enregistrement du devis');
+      return null;
+    }
+  }, [user, generateDevisId, fetchData]);
+
+  const convertToBc = useCallback(async (devis: Devis, deliveryData?: {
+    date_livraison_souhaitee?: string;
+    adresse_livraison?: string;
+  }) => {
+    try {
+      if (!devis.client_id) {
+        toast.error('Un client doit être associé au devis avant la conversion');
+        return null;
+      }
+
+      const bc_id = generateBcId();
+
+      // Create BC
+      const { data: newBc, error: bcError } = await supabase
+        .from('bons_commande')
+        .insert({
+          bc_id,
+          devis_id: devis.devis_id,
+          client_id: devis.client_id,
+          formule_id: devis.formule_id,
+          volume_m3: devis.volume_m3,
+          prix_vente_m3: devis.prix_vente_m3,
+          total_ht: devis.total_ht,
+          statut: 'pret_production',
+          date_livraison_souhaitee: deliveryData?.date_livraison_souhaitee || null,
+          adresse_livraison: deliveryData?.adresse_livraison || devis.client?.adresse || null,
+          prix_verrouille: true,
+          created_by: user?.id,
+          validated_by: user?.id,
+          validated_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (bcError) throw bcError;
+
+      // Update Devis status
+      const { error: updateError } = await supabase
+        .from('devis')
+        .update({ statut: 'converti' })
+        .eq('devis_id', devis.devis_id);
+
+      if (updateError) throw updateError;
+
+      await fetchData();
+      toast.success(`Bon de Commande ${bc_id} créé - Prix verrouillé`);
+      return newBc;
+    } catch (error) {
+      console.error('Error converting to BC:', error);
+      toast.error('Erreur lors de la conversion en BC');
+      return null;
+    }
+  }, [user, generateBcId, fetchData]);
+
+  const updateDevisStatus = useCallback(async (devisId: string, statut: string) => {
+    try {
+      const { error } = await supabase
+        .from('devis')
+        .update({ statut })
+        .eq('devis_id', devisId);
+
+      if (error) throw error;
+
+      await fetchData();
+      toast.success('Statut mis à jour');
+    } catch (error) {
+      console.error('Error updating devis status:', error);
+      toast.error('Erreur lors de la mise à jour');
+    }
+  }, [fetchData]);
+
+  const updateBcStatus = useCallback(async (bcId: string, statut: string) => {
+    try {
+      const { error } = await supabase
+        .from('bons_commande')
+        .update({ statut })
+        .eq('bc_id', bcId);
+
+      if (error) throw error;
+
+      await fetchData();
+      toast.success('Statut BC mis à jour');
+    } catch (error) {
+      console.error('Error updating BC status:', error);
+      toast.error('Erreur lors de la mise à jour');
+    }
+  }, [fetchData]);
+
+  // Stats
+  const stats = {
+    devisEnAttente: devisList.filter(d => d.statut === 'en_attente').length,
+    devisAcceptes: devisList.filter(d => d.statut === 'accepte').length,
+    devisConverti: devisList.filter(d => d.statut === 'converti').length,
+    devisRefuses: devisList.filter(d => d.statut === 'refuse').length,
+    bcPretProduction: bcList.filter(bc => bc.statut === 'pret_production').length,
+    bcEnProduction: bcList.filter(bc => bc.statut === 'en_production').length,
+    bcLivre: bcList.filter(bc => bc.statut === 'livre').length,
+    totalDevisHT: devisList
+      .filter(d => d.statut === 'en_attente')
+      .reduce((sum, d) => sum + (d.total_ht || 0), 0),
+    totalBcHT: bcList.reduce((sum, bc) => sum + (bc.total_ht || 0), 0),
+  };
+
+  return {
+    devisList,
+    bcList,
+    loading,
+    stats,
+    fetchData,
+    saveDevis,
+    convertToBc,
+    updateDevisStatus,
+    updateBcStatus,
+  };
+}
