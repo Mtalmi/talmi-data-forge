@@ -114,6 +114,7 @@ export type Database = {
           annule_par: string | null
           assignation_count: number | null
           bl_id: string
+          chauffeur_nom: string | null
           ciment_reel_kg: number
           client_id: string
           created_at: string
@@ -124,9 +125,13 @@ export type Database = {
           ecart_marge: number | null
           facture_generee: boolean | null
           facture_id: string | null
+          facturer_attente: boolean | null
           formule_id: string
+          heure_arrivee_chantier: string | null
+          heure_depart_centrale: string | null
           heure_depart_prevue: string | null
           heure_depart_reelle: string | null
+          heure_retour_centrale: string | null
           justification_ecart: string | null
           km_parcourus: number | null
           machine_id: string | null
@@ -135,8 +140,10 @@ export type Database = {
           raison_annulation: string | null
           source_donnees: string | null
           statut_paiement: string
+          temps_attente_chantier_minutes: number | null
           temps_attente_site: number | null
           temps_mission_heures: number | null
+          temps_rotation_minutes: number | null
           toupie_assignee: string | null
           updated_at: string
           validated_at: string | null
@@ -154,6 +161,7 @@ export type Database = {
           annule_par?: string | null
           assignation_count?: number | null
           bl_id: string
+          chauffeur_nom?: string | null
           ciment_reel_kg: number
           client_id: string
           created_at?: string
@@ -164,9 +172,13 @@ export type Database = {
           ecart_marge?: number | null
           facture_generee?: boolean | null
           facture_id?: string | null
+          facturer_attente?: boolean | null
           formule_id: string
+          heure_arrivee_chantier?: string | null
+          heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
           heure_depart_reelle?: string | null
+          heure_retour_centrale?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
           machine_id?: string | null
@@ -175,8 +187,10 @@ export type Database = {
           raison_annulation?: string | null
           source_donnees?: string | null
           statut_paiement?: string
+          temps_attente_chantier_minutes?: number | null
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
+          temps_rotation_minutes?: number | null
           toupie_assignee?: string | null
           updated_at?: string
           validated_at?: string | null
@@ -194,6 +208,7 @@ export type Database = {
           annule_par?: string | null
           assignation_count?: number | null
           bl_id?: string
+          chauffeur_nom?: string | null
           ciment_reel_kg?: number
           client_id?: string
           created_at?: string
@@ -204,9 +219,13 @@ export type Database = {
           ecart_marge?: number | null
           facture_generee?: boolean | null
           facture_id?: string | null
+          facturer_attente?: boolean | null
           formule_id?: string
+          heure_arrivee_chantier?: string | null
+          heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
           heure_depart_reelle?: string | null
+          heure_retour_centrale?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
           machine_id?: string | null
@@ -215,8 +234,10 @@ export type Database = {
           raison_annulation?: string | null
           source_donnees?: string | null
           statut_paiement?: string
+          temps_attente_chantier_minutes?: number | null
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
+          temps_rotation_minutes?: number | null
           toupie_assignee?: string | null
           updated_at?: string
           validated_at?: string | null
@@ -290,6 +311,63 @@ export type Database = {
         }
         Relationships: []
       }
+      flotte: {
+        Row: {
+          capacite_m3: number | null
+          chauffeur: string | null
+          created_at: string
+          derniere_maintenance_at: string | null
+          id: string
+          id_camion: string
+          immatriculation: string | null
+          is_interne: boolean
+          km_compteur: number | null
+          notes: string | null
+          prochaine_maintenance_at: string | null
+          proprietaire: string
+          statut: string
+          telephone_chauffeur: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          capacite_m3?: number | null
+          chauffeur?: string | null
+          created_at?: string
+          derniere_maintenance_at?: string | null
+          id?: string
+          id_camion: string
+          immatriculation?: string | null
+          is_interne?: boolean
+          km_compteur?: number | null
+          notes?: string | null
+          prochaine_maintenance_at?: string | null
+          proprietaire?: string
+          statut?: string
+          telephone_chauffeur?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          capacite_m3?: number | null
+          chauffeur?: string | null
+          created_at?: string
+          derniere_maintenance_at?: string | null
+          id?: string
+          id_camion?: string
+          immatriculation?: string | null
+          is_interne?: boolean
+          km_compteur?: number | null
+          notes?: string | null
+          prochaine_maintenance_at?: string | null
+          proprietaire?: string
+          statut?: string
+          telephone_chauffeur?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       formules_theoriques: {
         Row: {
           adjuvant_l_m3: number
@@ -332,6 +410,45 @@ export type Database = {
           sable_kg_m3?: number | null
           sable_m3?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      incidents_flotte: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date_incident: string
+          description: string
+          id: string
+          id_camion: string
+          resolu: boolean | null
+          resolu_at: string | null
+          resolution_notes: string | null
+          type_incident: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date_incident?: string
+          description: string
+          id?: string
+          id_camion: string
+          resolu?: boolean | null
+          resolu_at?: string | null
+          resolution_notes?: string | null
+          type_incident: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date_incident?: string
+          description?: string
+          id?: string
+          id_camion?: string
+          resolu?: boolean | null
+          resolu_at?: string | null
+          resolution_notes?: string | null
+          type_incident?: string
         }
         Relationships: []
       }
@@ -470,6 +587,48 @@ export type Database = {
           seuil_alerte?: number
           unite?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      suivi_carburant: {
+        Row: {
+          consommation_l_100km: number | null
+          cout_total_dh: number | null
+          created_at: string
+          created_by: string | null
+          date_releve: string
+          id: string
+          id_camion: string
+          km_compteur: number
+          km_parcourus: number | null
+          litres: number
+          station: string | null
+        }
+        Insert: {
+          consommation_l_100km?: number | null
+          cout_total_dh?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_releve?: string
+          id?: string
+          id_camion: string
+          km_compteur: number
+          km_parcourus?: number | null
+          litres: number
+          station?: string | null
+        }
+        Update: {
+          consommation_l_100km?: number | null
+          cout_total_dh?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_releve?: string
+          id?: string
+          id_camion?: string
+          km_compteur?: number
+          km_parcourus?: number | null
+          litres?: number
+          station?: string | null
         }
         Relationships: []
       }
