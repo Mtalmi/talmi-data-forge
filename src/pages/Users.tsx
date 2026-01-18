@@ -32,12 +32,12 @@ import { toast } from 'sonner';
 import { Navigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
-type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial';
+type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste';
 
 interface UserRole {
   id: string;
   user_id: string;
-  role: AppRole;
+  role: string;
   created_at: string;
 }
 
@@ -47,6 +47,54 @@ interface Profile {
   full_name: string | null;
 }
 
+const ROLE_CONFIG: Record<string, { label: string; description: string; className: string }> = {
+  ceo: { 
+    label: 'CEO', 
+    description: 'Accès complet • Approbations • Prix d\'achat', 
+    className: 'bg-primary/20 text-primary' 
+  },
+  superviseur: { 
+    label: 'Superviseur (Karim)', 
+    description: 'Lecture tout sauf prix • Ajustements logistique', 
+    className: 'bg-blue-500/20 text-blue-500' 
+  },
+  responsable_technique: { 
+    label: 'Resp. Technique (Abdel)', 
+    description: 'Validation conformité technique béton', 
+    className: 'bg-purple-500/20 text-purple-500' 
+  },
+  directeur_operations: { 
+    label: 'Directeur Opérations', 
+    description: 'Planification • Assignation toupies', 
+    className: 'bg-orange-500/20 text-orange-500' 
+  },
+  agent_administratif: { 
+    label: 'Agent Administratif', 
+    description: 'Clients • Facturation • Paiements', 
+    className: 'bg-teal-500/20 text-teal-500' 
+  },
+  centraliste: { 
+    label: 'Centraliste (Hassan)', 
+    description: 'Saisie consommations réelles', 
+    className: 'bg-pink-500/20 text-pink-500' 
+  },
+  operator: { 
+    label: 'Opérateur (Legacy)', 
+    description: 'Bons de livraison', 
+    className: 'bg-accent/20 text-accent' 
+  },
+  accounting: { 
+    label: 'Comptabilité (Legacy)', 
+    description: 'Paiements uniquement', 
+    className: 'bg-success/20 text-success' 
+  },
+  commercial: { 
+    label: 'Commercial (Legacy)', 
+    description: 'Gestion clients', 
+    className: 'bg-warning/20 text-warning' 
+  },
+};
+
 export default function Users() {
   const { isCeo } = useAuth();
   const [userRoles, setUserRoles] = useState<(UserRole & { profile?: Profile })[]>([]);
@@ -55,11 +103,9 @@ export default function Users() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Form state
   const [selectedUserId, setSelectedUserId] = useState('');
-  const [selectedRole, setSelectedRole] = useState<AppRole>('operator');
+  const [selectedRole, setSelectedRole] = useState<string>('operator');
 
-  // Redirect if not CEO
   if (!isCeo) {
     return <Navigate to="/" replace />;
   }
@@ -71,7 +117,7 @@ export default function Users() {
   const fetchData = async () => {
     try {
       const [rolesRes, profilesRes] = await Promise.all([
-        supabase.from('user_roles').select('*').order('created_at', { ascending: false }),
+        supabase.from('user_roles_v2').select('*').order('created_at', { ascending: false }),
         supabase.from('profiles').select('user_id, email, full_name'),
       ]);
 
@@ -106,7 +152,6 @@ export default function Users() {
         return;
       }
 
-      // Check if already has this role
       const existing = userRoles.find(
         r => r.user_id === selectedUserId && r.role === selectedRole
       );
@@ -116,7 +161,7 @@ export default function Users() {
         return;
       }
 
-      const { error } = await supabase.from('user_roles').insert([{
+      const { error } = await supabase.from('user_roles_v2').insert([{
         user_id: selectedUserId,
         role: selectedRole,
       }]);
@@ -141,7 +186,7 @@ export default function Users() {
 
     try {
       const { error } = await supabase
-        .from('user_roles')
+        .from('user_roles_v2')
         .delete()
         .eq('id', id);
 
@@ -154,23 +199,6 @@ export default function Users() {
     }
   };
 
-  const getRoleBadge = (role: AppRole) => {
-    const styles: Record<AppRole, string> = {
-      ceo: 'bg-primary/20 text-primary',
-      operator: 'bg-accent/20 text-accent',
-      accounting: 'bg-success/20 text-success',
-      commercial: 'bg-warning/20 text-warning',
-    };
-    const labels: Record<AppRole, string> = {
-      ceo: 'CEO',
-      operator: 'Opérateur',
-      accounting: 'Comptabilité',
-      commercial: 'Commercial',
-    };
-    return { className: styles[role], label: labels[role] };
-  };
-
-  // Get users without any role
   const usersWithoutRole = profiles.filter(
     p => !userRoles.some(r => r.user_id === p.user_id)
   );
@@ -178,12 +206,11 @@ export default function Users() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Gestion des Utilisateurs</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Matrice de Commandement</h1>
             <p className="text-muted-foreground mt-1">
-              Attribution des rôles et permissions
+              Attribution des rôles selon la C&C Matrix
             </p>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -193,7 +220,7 @@ export default function Users() {
                 Assigner un Rôle
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-lg">
               <DialogHeader>
                 <DialogTitle>Assigner un Rôle</DialogTitle>
               </DialogHeader>
@@ -207,7 +234,7 @@ export default function Users() {
                     <SelectContent>
                       {profiles.map((p) => (
                         <SelectItem key={p.user_id} value={p.user_id}>
-                          {p.email || p.full_name || p.user_id.slice(0, 8)}
+                          {p.full_name || p.email || p.user_id.slice(0, 8)}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -215,35 +242,29 @@ export default function Users() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="form-label-industrial">Rôle</Label>
-                  <Select value={selectedRole} onValueChange={(v) => setSelectedRole(v as AppRole)}>
+                  <Label className="form-label-industrial">Rôle C&C</Label>
+                  <Select value={selectedRole} onValueChange={setSelectedRole}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="ceo">CEO (Accès complet)</SelectItem>
-                      <SelectItem value="operator">Opérateur (Bons de livraison)</SelectItem>
-                      <SelectItem value="accounting">Comptabilité (Paiements)</SelectItem>
-                      <SelectItem value="commercial">Commercial (Clients)</SelectItem>
+                      {Object.entries(ROLE_CONFIG).map(([key, config]) => (
+                        <SelectItem key={key} value={key}>
+                          <div className="flex flex-col">
+                            <span>{config.label}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="p-3 rounded-lg bg-muted/50 text-sm">
-                  <p className="font-medium mb-2">Permissions du rôle:</p>
-                  {selectedRole === 'ceo' && (
-                    <p className="text-muted-foreground">Accès complet à toutes les fonctionnalités</p>
-                  )}
-                  {selectedRole === 'operator' && (
-                    <p className="text-muted-foreground">Création de bons de livraison, lecture des formules et prix</p>
-                  )}
-                  {selectedRole === 'accounting' && (
-                    <p className="text-muted-foreground">Mise à jour des statuts de paiement uniquement</p>
-                  )}
-                  {selectedRole === 'commercial' && (
-                    <p className="text-muted-foreground">Gestion des clients, lecture des bons</p>
-                  )}
-                </div>
+                {selectedRole && ROLE_CONFIG[selectedRole] && (
+                  <div className="p-3 rounded-lg bg-muted/50 text-sm">
+                    <p className="font-medium mb-1">{ROLE_CONFIG[selectedRole].label}</p>
+                    <p className="text-muted-foreground">{ROLE_CONFIG[selectedRole].description}</p>
+                  </div>
+                )}
 
                 <div className="flex justify-end gap-3 pt-4">
                   <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
@@ -265,7 +286,6 @@ export default function Users() {
           </Dialog>
         </div>
 
-        {/* Users without role warning */}
         {usersWithoutRole.length > 0 && (
           <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
             <div className="flex items-center gap-2">
@@ -277,7 +297,6 @@ export default function Users() {
           </div>
         )}
 
-        {/* Table */}
         <div className="card-industrial overflow-hidden">
           {loading ? (
             <div className="p-8 text-center">
@@ -294,13 +313,14 @@ export default function Users() {
                 <TableRow>
                   <TableHead>Utilisateur</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Rôle</TableHead>
-                  <TableHead className="w-24">Actions</TableHead>
+                  <TableHead>Rôle C&C</TableHead>
+                  <TableHead>Permissions</TableHead>
+                  <TableHead className="w-20">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {userRoles.map((ur) => {
-                  const badge = getRoleBadge(ur.role);
+                  const config = ROLE_CONFIG[ur.role] || { label: ur.role, className: 'bg-muted text-muted-foreground', description: '' };
                   return (
                     <TableRow key={ur.id}>
                       <TableCell className="font-medium">
@@ -310,9 +330,12 @@ export default function Users() {
                         {ur.profile?.email || ur.user_id.slice(0, 8) + '...'}
                       </TableCell>
                       <TableCell>
-                        <span className={cn('inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold', badge.className)}>
-                          {badge.label}
+                        <span className={cn('inline-flex items-center px-2.5 py-1 rounded text-xs font-semibold', config.className)}>
+                          {config.label}
                         </span>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
+                        {config.description}
                       </TableCell>
                       <TableCell>
                         <Button
@@ -330,6 +353,75 @@ export default function Users() {
               </TableBody>
             </Table>
           )}
+        </div>
+
+        {/* Permission Matrix Overview */}
+        <div className="card-industrial p-6">
+          <h3 className="text-lg font-semibold mb-4">Matrice des Permissions</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 px-2 font-medium">Rôle</th>
+                  <th className="text-center py-2 px-2">Prix</th>
+                  <th className="text-center py-2 px-2">Formules</th>
+                  <th className="text-center py-2 px-2">Bons</th>
+                  <th className="text-center py-2 px-2">Clients</th>
+                  <th className="text-center py-2 px-2">Approbations</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium">CEO</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W</td>
+                  <td className="text-center py-2 px-2 text-success">✓ TOUT</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W</td>
+                  <td className="text-center py-2 px-2 text-success">✓ TOUT</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium">Superviseur</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Logistique</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Dosage</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium">Resp. Technique</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Validation</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium">Dir. Opérations</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Planif</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Dérog.</td>
+                </tr>
+                <tr className="border-b border-border/50">
+                  <td className="py-2 px-2 font-medium">Agent Admin</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">R</td>
+                  <td className="text-center py-2 px-2 text-warning">Paiement</td>
+                  <td className="text-center py-2 px-2 text-success">R/W</td>
+                  <td className="text-center py-2 px-2 text-warning">Facture</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-2 font-medium">Centraliste</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">R (jour)</td>
+                  <td className="text-center py-2 px-2 text-warning">Conso.</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </MainLayout>

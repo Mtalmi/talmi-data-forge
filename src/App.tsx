@@ -11,6 +11,8 @@ import Clients from "./pages/Clients";
 import Prix from "./pages/Prix";
 import Bons from "./pages/Bons";
 import Users from "./pages/Users";
+import Approbations from "./pages/Approbations";
+import Alertes from "./pages/Alertes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
             <Route path="/prix" element={<Prix />} />
             <Route path="/bons" element={<Bons />} />
             <Route path="/users" element={<Users />} />
+            <Route path="/approbations" element={<Approbations />} />
+            <Route path="/alertes" element={<Alertes />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

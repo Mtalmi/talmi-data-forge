@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial';
+type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste';
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +16,15 @@ interface AuthContextType {
   isOperator: boolean;
   isAccounting: boolean;
   isCommercial: boolean;
+  isSuperviseur: boolean;
+  isResponsableTechnique: boolean;
+  isDirecteurOperations: boolean;
+  isAgentAdministratif: boolean;
+  isCentraliste: boolean;
+  canCreateBons: boolean;
+  canReadPrix: boolean;
+  canManageClients: boolean;
+  canValidateTechnique: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,13 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Defer role fetching with setTimeout
         if (session?.user) {
           setTimeout(() => {
             fetchUserRole(session.user.id);
@@ -44,7 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -59,14 +65,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserRole = async (userId: string) => {
     try {
+      // Try new v2 table first
       const { data, error } = await supabase
-        .from('user_roles')
+        .from('user_roles_v2')
         .select('role')
         .eq('user_id', userId)
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching role:', error);
+        console.error('Error fetching role from v2:', error);
+        // Fallback to old table
+        const { data: oldData, error: oldError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .maybeSingle();
+        
+        if (!oldError && oldData) {
+          setRole(oldData.role as AppRole);
+        }
         return;
       }
 
@@ -101,6 +118,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
   };
 
+  const isCeo = role === 'ceo';
+  const isOperator = role === 'operator';
+  const isAccounting = role === 'accounting';
+  const isCommercial = role === 'commercial';
+  const isSuperviseur = role === 'superviseur';
+  const isResponsableTechnique = role === 'responsable_technique';
+  const isDirecteurOperations = role === 'directeur_operations';
+  const isAgentAdministratif = role === 'agent_administratif';
+  const isCentraliste = role === 'centraliste';
+
   const value: AuthContextType = {
     user,
     session,
@@ -109,10 +136,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     signIn,
     signUp,
     signOut,
-    isCeo: role === 'ceo',
-    isOperator: role === 'operator',
-    isAccounting: role === 'accounting',
-    isCommercial: role === 'commercial',
+    isCeo,
+    isOperator,
+    isAccounting,
+    isCommercial,
+    isSuperviseur,
+    isResponsableTechnique,
+    isDirecteurOperations,
+    isAgentAdministratif,
+    isCentraliste,
+    // Derived permissions
+    canCreateBons: isCeo || isAgentAdministratif || isDirecteurOperations,
+    canReadPrix: isCeo,
+    canManageClients: isCeo || isAgentAdministratif || isCommercial,
+    canValidateTechnique: isCeo || isResponsableTechnique,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

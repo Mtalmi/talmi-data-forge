@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -27,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -45,9 +46,11 @@ interface BonLivraison {
   km_parcourus: number | null;
   temps_mission_heures: number | null;
   statut_paiement: string;
-  cur_reel: number | null;
-  ecart_marge: number | null;
+  workflow_status: string | null;
+  toupie_assignee: string | null;
+  validation_technique: boolean | null;
   alerte_ecart: boolean;
+  alerte_marge: boolean | null;
   created_at: string;
 }
 
@@ -61,12 +64,22 @@ interface Formule {
 interface Client {
   client_id: string;
   nom_client: string;
+  limite_credit_dh: number | null;
+  solde_du: number | null;
 }
 
+const WORKFLOW_STEPS = [
+  { value: 'planification', label: 'Planification', icon: Clock, color: 'text-muted-foreground' },
+  { value: 'production', label: 'Production', icon: Play, color: 'text-warning' },
+  { value: 'validation_technique', label: 'Validation Tech.', icon: CheckCircle, color: 'text-purple-500' },
+  { value: 'en_livraison', label: 'En Livraison', icon: Truck, color: 'text-blue-500' },
+  { value: 'livre', label: 'Livré', icon: Package, color: 'text-success' },
+  { value: 'facture', label: 'Facturé', icon: FileText, color: 'text-primary' },
+  { value: 'annule', label: 'Annulé', icon: XCircle, color: 'text-destructive' },
+];
+
 export default function Bons() {
-  const { user, isCeo, isOperator, isAccounting } = useAuth();
-  const canCreate = isCeo || isOperator;
-  const canUpdatePayment = isCeo || isAccounting;
+  const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
 
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -86,6 +99,7 @@ export default function Bons() {
   const [eauReel, setEauReel] = useState('');
   const [kmParcourus, setKmParcourus] = useState('');
   const [tempsMission, setTempsMission] = useState('');
+  const [toupie, setToupie] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -96,7 +110,7 @@ export default function Bons() {
       const [bonsRes, formulesRes, clientsRes] = await Promise.all([
         supabase.from('bons_livraison_reels').select('*').order('created_at', { ascending: false }),
         supabase.from('formules_theoriques').select('formule_id, designation, ciment_kg_m3, adjuvant_l_m3'),
-        supabase.from('clients').select('client_id, nom_client'),
+        supabase.from('clients').select('client_id, nom_client, limite_credit_dh, solde_du'),
       ]);
 
       if (bonsRes.error) throw bonsRes.error;
@@ -131,6 +145,7 @@ export default function Bons() {
     setEauReel('');
     setKmParcourus('');
     setTempsMission('');
+    setToupie('');
     setToleranceErrors([]);
   };
 
@@ -140,7 +155,6 @@ export default function Bons() {
     }
   }, [dialogOpen]);
 
-  // Validate tolerances
   const validateTolerances = () => {
     const errors: string[] = [];
     const selectedFormule = formules.find(f => f.formule_id === formuleId);
@@ -176,12 +190,24 @@ export default function Bons() {
     }
   }, [formuleId, volume, cimentReel, adjuvantReel]);
 
+  const checkCreditLimit = () => {
+    const selectedClient = clients.find(c => c.client_id === clientId);
+    if (!selectedClient) return null;
+
+    const solde = selectedClient.solde_du || 0;
+    const limite = selectedClient.limite_credit_dh || 50000;
+
+    if (solde > limite) {
+      return { exceeded: true, solde, limite };
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
-      // Volume validation
       const volumeNum = parseFloat(volume);
       if (volumeNum <= 0 || volumeNum >= 12) {
         toast.error('Volume doit être entre 0 et 12 m³');
@@ -189,7 +215,33 @@ export default function Bons() {
         return;
       }
 
-      // Check for tolerance errors (warning but allow)
+      // Check credit limit
+      const creditCheck = checkCreditLimit();
+      if (creditCheck?.exceeded) {
+        // Create approval request
+        await supabase.from('approbations_ceo').insert([{
+          type_approbation: 'credit',
+          reference_id: blId,
+          reference_table: 'bons_livraison_reels',
+          demande_par: user?.id,
+          montant: creditCheck.solde,
+          details: { limite: creditCheck.limite, client_id: clientId },
+        }]);
+
+        // Create alert
+        await supabase.from('alertes_systeme').insert([{
+          type_alerte: 'credit',
+          niveau: 'critical',
+          titre: 'Dépassement Limite Crédit',
+          message: `Client ${clientId} a dépassé sa limite de crédit (${creditCheck.solde.toLocaleString()} / ${creditCheck.limite.toLocaleString()} DH)`,
+          reference_id: blId,
+          reference_table: 'bons_livraison_reels',
+          destinataire_role: 'ceo',
+        }]);
+
+        toast.warning('Demande d\'approbation crédit envoyée au CEO');
+      }
+
       const errors = validateTolerances();
       const hasAlerte = errors.length > 0;
 
@@ -198,12 +250,14 @@ export default function Bons() {
         client_id: clientId,
         formule_id: formuleId,
         volume_m3: volumeNum,
-        ciment_reel_kg: parseFloat(cimentReel),
+        ciment_reel_kg: parseFloat(cimentReel) || 0,
         adjuvant_reel_l: adjuvantReel ? parseFloat(adjuvantReel) : null,
         eau_reel_l: eauReel ? parseFloat(eauReel) : null,
         km_parcourus: kmParcourus ? parseFloat(kmParcourus) : null,
         temps_mission_heures: tempsMission ? parseFloat(tempsMission) : null,
         statut_paiement: 'En Attente',
+        workflow_status: 'planification',
+        toupie_assignee: toupie || null,
         alerte_ecart: hasAlerte,
         created_by: user?.id,
       }]);
@@ -220,7 +274,17 @@ export default function Bons() {
         return;
       }
 
+      // Create fuite alert if tolerance exceeded
       if (hasAlerte) {
+        await supabase.from('alertes_systeme').insert([{
+          type_alerte: 'fuite',
+          niveau: 'warning',
+          titre: 'Alerte Fuite - Tolérance Dépassée',
+          message: errors.join('. '),
+          reference_id: blId,
+          reference_table: 'bons_livraison_reels',
+          destinataire_role: 'ceo',
+        }]);
         toast.warning('Bon créé avec alertes de tolérance');
       } else {
         toast.success('Bon de livraison créé');
@@ -236,6 +300,30 @@ export default function Bons() {
     }
   };
 
+  const updateWorkflowStatus = async (blId: string, newStatus: string) => {
+    try {
+      const updateData: Record<string, unknown> = { workflow_status: newStatus };
+      
+      if (newStatus === 'validation_technique') {
+        updateData.validation_technique = true;
+        updateData.validated_by = user?.id;
+        updateData.validated_at = new Date().toISOString();
+      }
+
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update(updateData)
+        .eq('bl_id', blId);
+
+      if (error) throw error;
+      toast.success('Statut mis à jour');
+      fetchData();
+    } catch (error) {
+      console.error('Error updating workflow:', error);
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
   const updatePaymentStatus = async (blId: string, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -244,12 +332,23 @@ export default function Bons() {
         .eq('bl_id', blId);
 
       if (error) throw error;
-      toast.success('Statut mis à jour');
+      toast.success('Statut paiement mis à jour');
       fetchData();
     } catch (error) {
       console.error('Error updating status:', error);
       toast.error('Erreur lors de la mise à jour');
     }
+  };
+
+  const getWorkflowBadge = (status: string | null) => {
+    const step = WORKFLOW_STEPS.find(s => s.value === status) || WORKFLOW_STEPS[0];
+    const Icon = step.icon;
+    return (
+      <span className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-muted', step.color)}>
+        <Icon className="h-3 w-3" />
+        {step.label}
+      </span>
+    );
   };
 
   const getStatusPill = (status: string) => {
@@ -261,18 +360,19 @@ export default function Bons() {
     return map[status] || 'pending';
   };
 
+  const canUpdatePayment = isCeo || isAgentAdministratif;
+
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Bons de Livraison</h1>
             <p className="text-muted-foreground mt-1">
-              Suivi des livraisons et consommations réelles
+              Workflow complet de la commande à la facturation
             </p>
           </div>
-          {canCreate && (
+          {canCreateBons && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -314,7 +414,7 @@ export default function Bons() {
                         <SelectContent>
                           {formules.map((f) => (
                             <SelectItem key={f.formule_id} value={f.formule_id}>
-                              {f.formule_id} - {f.designation}
+                              {f.formule_id}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -322,19 +422,28 @@ export default function Bons() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="form-label-industrial">Volume (m³)</Label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      min="0.1"
-                      max="11.9"
-                      placeholder="8.5"
-                      value={volume}
-                      onChange={(e) => setVolume(e.target.value)}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">Max: 12 m³</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="form-label-industrial">Volume (m³)</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        min="0.1"
+                        max="11.9"
+                        placeholder="8.5"
+                        value={volume}
+                        onChange={(e) => setVolume(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="form-label-industrial">Toupie Assignée</Label>
+                      <Input
+                        placeholder="T-001"
+                        value={toupie}
+                        onChange={(e) => setToupie(e.target.value)}
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-4">
@@ -369,13 +478,12 @@ export default function Bons() {
                     </div>
                   </div>
 
-                  {/* Tolerance Warnings */}
                   {toleranceErrors.length > 0 && (
                     <div className="p-3 rounded-lg bg-warning/10 border border-warning/30">
                       <div className="flex items-start gap-2">
                         <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-medium text-warning text-sm">Alertes de Tolérance</p>
+                          <p className="font-medium text-warning text-sm">Alertes de Tolérance (Fuite)</p>
                           <ul className="mt-1 space-y-0.5">
                             {toleranceErrors.map((err, i) => (
                               <li key={i} className="text-xs text-foreground">{err}</li>
@@ -431,7 +539,19 @@ export default function Bons() {
           )}
         </div>
 
-        {/* Table */}
+        {/* Workflow Legend */}
+        <div className="flex flex-wrap gap-2">
+          {WORKFLOW_STEPS.map((step) => {
+            const Icon = step.icon;
+            return (
+              <span key={step.value} className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-muted/50', step.color)}>
+                <Icon className="h-3 w-3" />
+                {step.label}
+              </span>
+            );
+          })}
+        </div>
+
         <div className="card-industrial overflow-x-auto">
           {loading ? (
             <div className="p-8 text-center">
@@ -451,20 +571,19 @@ export default function Bons() {
                   <TableHead>Client</TableHead>
                   <TableHead>Formule</TableHead>
                   <TableHead className="text-right">Volume</TableHead>
-                  <TableHead className="text-right">Ciment</TableHead>
-                  <TableHead>Statut</TableHead>
+                  <TableHead>Workflow</TableHead>
+                  <TableHead>Paiement</TableHead>
                   <TableHead className="w-10"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {bons.map((b) => (
-                  <TableRow key={b.bl_id} className={b.alerte_ecart ? 'bg-destructive/5' : ''}>
+                  <TableRow key={b.bl_id} className={cn(b.alerte_ecart && 'bg-destructive/5', b.alerte_marge && 'bg-warning/5')}>
                     <TableCell className="font-mono font-medium">
                       <div className="flex items-center gap-2">
                         {b.bl_id}
-                        {b.alerte_ecart && (
-                          <AlertCircle className="h-4 w-4 text-destructive" />
-                        )}
+                        {b.alerte_ecart && <AlertCircle className="h-4 w-4 text-destructive" />}
+                        {b.alerte_marge && <AlertCircle className="h-4 w-4 text-warning" />}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -473,7 +592,27 @@ export default function Bons() {
                     <TableCell>{b.client_id}</TableCell>
                     <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
                     <TableCell className="text-right">{b.volume_m3} m³</TableCell>
-                    <TableCell className="text-right font-mono">{b.ciment_reel_kg} kg</TableCell>
+                    <TableCell>
+                      {(isCeo || isDirecteurOperations || isResponsableTechnique) && b.workflow_status !== 'facture' && b.workflow_status !== 'annule' ? (
+                        <Select
+                          value={b.workflow_status || 'planification'}
+                          onValueChange={(val) => updateWorkflowStatus(b.bl_id, val)}
+                        >
+                          <SelectTrigger className="w-[140px] h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {WORKFLOW_STEPS.filter(s => s.value !== 'annule').map((step) => (
+                              <SelectItem key={step.value} value={step.value}>
+                                {step.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        getWorkflowBadge(b.workflow_status)
+                      )}
+                    </TableCell>
                     <TableCell>
                       {canUpdatePayment ? (
                         <Select
@@ -481,7 +620,7 @@ export default function Bons() {
                           onValueChange={(val) => updatePaymentStatus(b.bl_id, val)}
                         >
                           <SelectTrigger className={cn(
-                            'w-[130px] h-8',
+                            'w-[120px] h-8',
                             getStatusPill(b.statut_paiement) === 'paid' && 'border-success/50',
                             getStatusPill(b.statut_paiement) === 'late' && 'border-destructive/50'
                           )}>
@@ -500,7 +639,7 @@ export default function Bons() {
                       )}
                     </TableCell>
                     <TableCell>
-                      {b.statut_paiement === 'Payé' && (
+                      {b.validation_technique && (
                         <CheckCircle className="h-5 w-5 text-success" />
                       )}
                     </TableCell>

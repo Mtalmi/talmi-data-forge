@@ -2,16 +2,17 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
-  FileText,
   FlaskConical,
   DollarSign,
   Users,
   Truck,
-  Settings,
   LogOut,
   Shield,
   Building2,
   ChevronRight,
+  Bell,
+  CheckSquare,
+  AlertTriangle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -50,21 +51,21 @@ function NavItem({ to, icon, label, badge }: NavItemProps) {
 }
 
 export default function Sidebar() {
-  const { user, role, signOut, isCeo } = useAuth();
+  const { user, role, signOut, isCeo, canReadPrix } = useAuth();
 
   const getRoleBadge = () => {
-    switch (role) {
-      case 'ceo':
-        return { label: 'CEO', className: 'bg-primary/20 text-primary' };
-      case 'operator':
-        return { label: 'Opérateur', className: 'bg-accent/20 text-accent' };
-      case 'accounting':
-        return { label: 'Comptabilité', className: 'bg-success/20 text-success' };
-      case 'commercial':
-        return { label: 'Commercial', className: 'bg-warning/20 text-warning' };
-      default:
-        return { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
-    }
+    const roleConfig: Record<string, { label: string; className: string }> = {
+      ceo: { label: 'CEO', className: 'bg-primary/20 text-primary' },
+      operator: { label: 'Opérateur', className: 'bg-accent/20 text-accent' },
+      accounting: { label: 'Comptabilité', className: 'bg-success/20 text-success' },
+      commercial: { label: 'Commercial', className: 'bg-warning/20 text-warning' },
+      superviseur: { label: 'Superviseur', className: 'bg-blue-500/20 text-blue-500' },
+      responsable_technique: { label: 'Resp. Technique', className: 'bg-purple-500/20 text-purple-500' },
+      directeur_operations: { label: 'Dir. Opérations', className: 'bg-orange-500/20 text-orange-500' },
+      agent_administratif: { label: 'Agent Admin', className: 'bg-teal-500/20 text-teal-500' },
+      centraliste: { label: 'Centraliste', className: 'bg-pink-500/20 text-pink-500' },
+    };
+    return role ? roleConfig[role] : { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
   };
 
   const roleBadge = getRoleBadge();
@@ -100,15 +101,19 @@ export default function Sidebar() {
           </p>
         </div>
         <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" />
-        <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
+        {canReadPrix && (
+          <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
+        )}
         
         {isCeo && (
           <>
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Administration
+                Contrôle CEO
               </p>
             </div>
+            <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" />
+            <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" />
             <NavItem to="/users" icon={<Shield className="h-5 w-5" />} label="Utilisateurs" />
           </>
         )}
