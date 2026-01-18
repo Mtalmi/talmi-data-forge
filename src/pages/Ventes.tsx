@@ -63,6 +63,7 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
+import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
 import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { cn } from '@/lib/utils';
@@ -458,6 +459,7 @@ export default function Ventes() {
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-1">
+                                <DevisSendDialog devis={devis} />
                                 <DevisPdfGenerator devis={devis} />
                                 {devis.statut === 'en_attente' && devis.client_id && (
                                   <Button

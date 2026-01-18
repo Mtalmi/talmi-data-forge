@@ -662,6 +662,42 @@ export type Database = {
           },
         ]
       }
+      employes: {
+        Row: {
+          actif: boolean
+          created_at: string
+          id: string
+          nom: string
+          prenom: string
+          role: string
+          telephone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          actif?: boolean
+          created_at?: string
+          id?: string
+          nom: string
+          prenom: string
+          role?: string
+          telephone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          actif?: boolean
+          created_at?: string
+          id?: string
+          nom?: string
+          prenom?: string
+          role?: string
+          telephone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       factures: {
         Row: {
           bl_id: string
@@ -1132,6 +1168,59 @@ export type Database = {
           },
         ]
       }
+      pointages: {
+        Row: {
+          created_at: string
+          date_pointage: string
+          employe_id: string
+          heure_entree: string | null
+          heure_sortie: string | null
+          id: string
+          notes: string | null
+          source: string
+          updated_at: string
+          valide: boolean
+          valide_at: string | null
+          valide_par: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_pointage?: string
+          employe_id: string
+          heure_entree?: string | null
+          heure_sortie?: string | null
+          id?: string
+          notes?: string | null
+          source?: string
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_pointage?: string
+          employe_id?: string
+          heure_entree?: string | null
+          heure_sortie?: string | null
+          id?: string
+          notes?: string | null
+          source?: string
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pointages_employe_id_fkey"
+            columns: ["employe_id"]
+            isOneToOne: false
+            referencedRelation: "employes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       prix_achat_actuels: {
         Row: {
           created_at: string
@@ -1185,6 +1274,65 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      rapports_journaliers: {
+        Row: {
+          created_at: string
+          date_rapport: string
+          employe_id: string
+          id: string
+          materiaux_utilises: Json | null
+          observations: string | null
+          problemes_rencontres: string | null
+          soumis_at: string
+          taches_completees: string
+          taches_en_cours: string | null
+          updated_at: string
+          valide: boolean
+          valide_at: string | null
+          valide_par: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_rapport?: string
+          employe_id: string
+          id?: string
+          materiaux_utilises?: Json | null
+          observations?: string | null
+          problemes_rencontres?: string | null
+          soumis_at?: string
+          taches_completees: string
+          taches_en_cours?: string | null
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_rapport?: string
+          employe_id?: string
+          id?: string
+          materiaux_utilises?: Json | null
+          observations?: string | null
+          problemes_rencontres?: string | null
+          soumis_at?: string
+          taches_completees?: string
+          taches_en_cours?: string | null
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rapports_journaliers_employe_id_fkey"
+            columns: ["employe_id"]
+            isOneToOne: false
+            referencedRelation: "employes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stocks: {
         Row: {
