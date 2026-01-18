@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +20,8 @@ import {
   Calendar,
   Package,
   Users,
-  Timer
+  Timer,
+  ArrowRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -47,6 +49,7 @@ interface Camion {
 }
 
 export default function Planning() {
+  const navigate = useNavigate();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,6 +192,29 @@ export default function Planning() {
     }
   };
 
+  // Start production: advance to 'production' status and navigate to Production page
+  const startProduction = async (bon: BonLivraison) => {
+    try {
+      // Update workflow status to production
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ 
+          workflow_status: 'production',
+          heure_depart_centrale: new Date().toISOString()
+        })
+        .eq('bl_id', bon.bl_id);
+
+      if (error) throw error;
+      
+      toast.success('Production lancée!');
+      // Navigate to Production page with BL ID as search param
+      navigate(`/production?bl=${bon.bl_id}`);
+    } catch (error) {
+      console.error('Error starting production:', error);
+      toast.error('Erreur lors du lancement');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
       planification: { label: 'Planification', variant: 'outline' },
@@ -254,6 +280,18 @@ export default function Planning() {
                 </SelectContent>
               </Select>
             </div>
+            {/* Launch Production Button */}
+            {bon.workflow_status === 'planification' && bon.heure_prevue && (bon.camion_assigne || bon.toupie_assignee) && (
+              <Button 
+                size="sm" 
+                className="w-full mt-2 gap-2"
+                onClick={() => startProduction(bon)}
+              >
+                <Factory className="h-4 w-4" />
+                Lancer Production
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         )}
 

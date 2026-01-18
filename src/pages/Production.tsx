@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useMachineSync } from '@/hooks/useMachineSync';
+import { useStocks } from '@/hooks/useStocks';
 import { ProductionComparePanel } from '@/components/production/ProductionComparePanel';
 import { ApiDocumentation } from '@/components/production/ApiDocumentation';
 import { Button } from '@/components/ui/button';
@@ -74,9 +76,13 @@ interface Formule {
 }
 
 export default function Production() {
+  const [searchParams] = useSearchParams();
+  const blFromUrl = searchParams.get('bl');
+  
   const { isCeo, isCentraliste, isResponsableTechnique } = useAuth();
   const { transitionWorkflow } = useBonWorkflow();
   const { syncing, lastSync, simulateMachineSync, updateBonWithMachineData, requiresJustification } = useMachineSync();
+  const { deductConsumption, fetchStocks } = useStocks();
 
   const [bons, setBons] = useState<BonProduction[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -100,6 +106,16 @@ export default function Production() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Auto-open dialog if BL is passed in URL
+  useEffect(() => {
+    if (blFromUrl && bons.length > 0 && formules.length > 0) {
+      const bon = bons.find(b => b.bl_id === blFromUrl);
+      if (bon) {
+        handleSelectBon(bon);
+      }
+    }
+  }, [blFromUrl, bons, formules]);
 
   const fetchData = async () => {
     try {
@@ -248,7 +264,7 @@ export default function Production() {
   };
 
   const handleAdvanceToValidation = async () => {
-    if (!selectedBon) return;
+    if (!selectedBon || !selectedFormule) return;
 
     // Check if justification is required
     if (deviations.length > 0 && !justification.trim()) {
@@ -256,19 +272,69 @@ export default function Production() {
       return;
     }
 
-    // First save
-    await handleSave();
+    setSaving(true);
+    try {
+      // Update production data
+      const updateData: Record<string, unknown> = {
+        ciment_reel_kg: editValues.ciment_reel_kg,
+        adjuvant_reel_l: editValues.adjuvant_reel_l,
+        eau_reel_l: editValues.eau_reel_l,
+        alerte_ecart: deviations.length > 0,
+      };
 
-    // Then transition
-    const success = await transitionWorkflow(
-      selectedBon.bl_id,
-      selectedBon.workflow_status || 'production',
-      'validation_technique'
-    );
+      if (justification.trim()) {
+        updateData.justification_ecart = justification.trim();
+      }
 
-    if (success) {
-      setDialogOpen(false);
-      fetchData();
+      const { error: saveError } = await supabase
+        .from('bons_livraison_reels')
+        .update(updateData)
+        .eq('bl_id', selectedBon.bl_id);
+
+      if (saveError) throw saveError;
+
+      // Deduct stock consumption
+      const consumption = [
+        { materiau: 'ciment', quantite: editValues.ciment_reel_kg / 1000 }, // Convert kg to tonnes
+        { materiau: 'adjuvant', quantite: editValues.adjuvant_reel_l },
+        { materiau: 'eau', quantite: editValues.eau_reel_l / 1000 }, // Convert L to m³
+        { materiau: 'sable', quantite: (selectedFormule.ciment_kg_m3 * selectedBon.volume_m3) / 1000 * 2 }, // Approximate
+        { materiau: 'gravier', quantite: (selectedFormule.ciment_kg_m3 * selectedBon.volume_m3) / 1000 * 3 }, // Approximate
+      ].filter(c => c.quantite > 0);
+
+      await deductConsumption(selectedBon.bl_id, consumption);
+
+      // Create alert if there are deviations
+      if (deviations.length > 0) {
+        await supabase.from('alertes_systeme').insert([{
+          type_alerte: 'ecart_production',
+          niveau: 'warning',
+          titre: 'Écart Production > 5%',
+          message: `BL ${selectedBon.bl_id}: ${deviations.map(d => `${d.field} +${d.percent.toFixed(1)}%`).join(', ')}. Justification: ${justification}`,
+          reference_id: selectedBon.bl_id,
+          reference_table: 'bons_livraison_reels',
+          destinataire_role: 'ceo',
+        }]);
+      }
+
+      // Transition to validation_technique
+      const success = await transitionWorkflow(
+        selectedBon.bl_id,
+        selectedBon.workflow_status || 'production',
+        'validation_technique'
+      );
+
+      if (success) {
+        toast.success('Production enregistrée & stocks mis à jour');
+        setDialogOpen(false);
+        fetchData();
+        fetchStocks();
+      }
+    } catch (error) {
+      console.error('Error advancing to validation:', error);
+      toast.error('Erreur lors de la validation');
+    } finally {
+      setSaving(false);
     }
   };
 

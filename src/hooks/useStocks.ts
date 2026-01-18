@@ -236,6 +236,77 @@ export function useStocks() {
     }
   }, [fetchStocks]);
 
+  // Deduct stock consumption for a production run
+  const deductConsumption = useCallback(async (
+    blId: string,
+    consumption: { materiau: string; quantite: number }[]
+  ): Promise<boolean> => {
+    try {
+      for (const item of consumption) {
+        const stock = stocks.find(s => 
+          s.materiau.toLowerCase().includes(item.materiau.toLowerCase()) ||
+          item.materiau.toLowerCase().includes(s.materiau.toLowerCase())
+        );
+        
+        if (!stock) {
+          console.warn(`Stock for ${item.materiau} not found, skipping...`);
+          continue;
+        }
+
+        const quantiteAvant = stock.quantite_actuelle;
+        const quantiteApres = Math.max(0, quantiteAvant - item.quantite);
+
+        // Update stock
+        const { error: updateError } = await supabase
+          .from('stocks')
+          .update({
+            quantite_actuelle: quantiteApres,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', stock.id);
+
+        if (updateError) throw updateError;
+
+        // Record movement
+        const { error: moveError } = await supabase
+          .from('mouvements_stock')
+          .insert({
+            materiau: stock.materiau,
+            type_mouvement: 'consommation',
+            quantite: item.quantite,
+            quantite_avant: quantiteAvant,
+            quantite_apres: quantiteApres,
+            reference_id: blId,
+            reference_table: 'bons_livraison_reels',
+            notes: `Production BL ${blId}`,
+          });
+
+        if (moveError) throw moveError;
+
+        // Create alert if stock is low
+        if (quantiteApres <= stock.seuil_alerte) {
+          await supabase.from('alertes_systeme').insert({
+            type_alerte: 'stock_bas',
+            niveau: quantiteApres <= stock.seuil_alerte / 2 ? 'critical' : 'warning',
+            titre: 'Stock Bas',
+            message: `${stock.materiau}: ${quantiteApres.toFixed(0)} ${stock.unite} restant(s) (seuil: ${stock.seuil_alerte})`,
+            reference_id: stock.id,
+            reference_table: 'stocks',
+            destinataire_role: 'ceo',
+          });
+        }
+      }
+
+      await fetchStocks();
+      await fetchMouvements();
+      return true;
+    } catch (error) {
+      console.error('Error deducting consumption:', error);
+      toast.error('Erreur lors de la déduction des stocks');
+      return false;
+    }
+  }, [stocks, fetchStocks, fetchMouvements]);
+
   const getCriticalStocks = useCallback((): Stock[] => {
     return stocks.filter(s => s.quantite_actuelle <= s.seuil_alerte);
   }, [stocks]);
@@ -267,5 +338,6 @@ export function useStocks() {
     adjustStock,
     updateAlertThreshold,
     getCriticalStocks,
+    deductConsumption,
   };
 }
