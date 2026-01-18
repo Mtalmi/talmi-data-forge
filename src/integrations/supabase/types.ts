@@ -224,8 +224,11 @@ export type Database = {
           formule_id: string
           heure_livraison_souhaitee: string | null
           id: string
+          mode_paiement: string | null
           notes: string | null
           pompe_requise: boolean | null
+          prestataire_id: string | null
+          prix_livraison_m3: number | null
           prix_vente_m3: number
           prix_verrouille: boolean
           reference_client: string | null
@@ -237,6 +240,7 @@ export type Database = {
           validated_at: string | null
           validated_by: string | null
           volume_m3: number
+          zone_livraison_id: string | null
         }
         Insert: {
           adresse_livraison?: string | null
@@ -251,8 +255,11 @@ export type Database = {
           formule_id: string
           heure_livraison_souhaitee?: string | null
           id?: string
+          mode_paiement?: string | null
           notes?: string | null
           pompe_requise?: boolean | null
+          prestataire_id?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3: number
           prix_verrouille?: boolean
           reference_client?: string | null
@@ -264,6 +271,7 @@ export type Database = {
           validated_at?: string | null
           validated_by?: string | null
           volume_m3: number
+          zone_livraison_id?: string | null
         }
         Update: {
           adresse_livraison?: string | null
@@ -278,8 +286,11 @@ export type Database = {
           formule_id?: string
           heure_livraison_souhaitee?: string | null
           id?: string
+          mode_paiement?: string | null
           notes?: string | null
           pompe_requise?: boolean | null
+          prestataire_id?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3?: number
           prix_verrouille?: boolean
           reference_client?: string | null
@@ -291,6 +302,7 @@ export type Database = {
           validated_at?: string | null
           validated_by?: string | null
           volume_m3?: number
+          zone_livraison_id?: string | null
         }
         Relationships: [
           {
@@ -313,6 +325,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "formules_theoriques"
             referencedColumns: ["formule_id"]
+          },
+          {
+            foreignKeyName: "bons_commande_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires_transport"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_commande_zone_livraison_id_fkey"
+            columns: ["zone_livraison_id"]
+            isOneToOne: false
+            referencedRelation: "zones_livraison"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -352,6 +378,9 @@ export type Database = {
           km_parcourus: number | null
           machine_id: string | null
           marge_brute_pct: number | null
+          mode_paiement: string | null
+          prestataire_id: string | null
+          prix_livraison_m3: number | null
           prix_vente_m3: number | null
           raison_annulation: string | null
           source_donnees: string | null
@@ -367,6 +396,7 @@ export type Database = {
           validation_technique: boolean | null
           volume_m3: number
           workflow_status: string | null
+          zone_livraison_id: string | null
         }
         Insert: {
           adjuvant_reel_l?: number | null
@@ -403,6 +433,9 @@ export type Database = {
           km_parcourus?: number | null
           machine_id?: string | null
           marge_brute_pct?: number | null
+          mode_paiement?: string | null
+          prestataire_id?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
           raison_annulation?: string | null
           source_donnees?: string | null
@@ -418,6 +451,7 @@ export type Database = {
           validation_technique?: boolean | null
           volume_m3: number
           workflow_status?: string | null
+          zone_livraison_id?: string | null
         }
         Update: {
           adjuvant_reel_l?: number | null
@@ -454,6 +488,9 @@ export type Database = {
           km_parcourus?: number | null
           machine_id?: string | null
           marge_brute_pct?: number | null
+          mode_paiement?: string | null
+          prestataire_id?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
           raison_annulation?: string | null
           source_donnees?: string | null
@@ -469,6 +506,7 @@ export type Database = {
           validation_technique?: boolean | null
           volume_m3?: number
           workflow_status?: string | null
+          zone_livraison_id?: string | null
         }
         Relationships: [
           {
@@ -491,6 +529,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "formules_theoriques"
             referencedColumns: ["formule_id"]
+          },
+          {
+            foreignKeyName: "bons_livraison_reels_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires_transport"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bons_livraison_reels_zone_livraison_id_fkey"
+            columns: ["zone_livraison_id"]
+            isOneToOne: false
+            referencedRelation: "zones_livraison"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -592,6 +644,7 @@ export type Database = {
           id: string
           margin_pct: number
           notes: string | null
+          prix_livraison_m3: number | null
           prix_vente_m3: number
           statut: string
           total_cost_per_m3: number
@@ -600,6 +653,7 @@ export type Database = {
           updated_at: string
           validite_jours: number
           volume_m3: number
+          zone_livraison_id: string | null
         }
         Insert: {
           client_id?: string | null
@@ -614,6 +668,7 @@ export type Database = {
           id?: string
           margin_pct?: number
           notes?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3: number
           statut?: string
           total_cost_per_m3: number
@@ -622,6 +677,7 @@ export type Database = {
           updated_at?: string
           validite_jours?: number
           volume_m3: number
+          zone_livraison_id?: string | null
         }
         Update: {
           client_id?: string | null
@@ -636,6 +692,7 @@ export type Database = {
           id?: string
           margin_pct?: number
           notes?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3?: number
           statut?: string
           total_cost_per_m3?: number
@@ -644,6 +701,7 @@ export type Database = {
           updated_at?: string
           validite_jours?: number
           volume_m3?: number
+          zone_livraison_id?: string | null
         }
         Relationships: [
           {
@@ -659,6 +717,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "formules_theoriques"
             referencedColumns: ["formule_id"]
+          },
+          {
+            foreignKeyName: "devis_zone_livraison_id_fkey"
+            columns: ["zone_livraison_id"]
+            isOneToOne: false
+            referencedRelation: "zones_livraison"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -711,6 +776,8 @@ export type Database = {
           id: string
           marge_brute_dh: number | null
           marge_brute_pct: number | null
+          mode_paiement: string | null
+          prix_livraison_m3: number | null
           prix_vente_m3: number
           statut: string
           total_ht: number
@@ -731,6 +798,8 @@ export type Database = {
           id?: string
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
+          mode_paiement?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3: number
           statut?: string
           total_ht: number
@@ -751,6 +820,8 @@ export type Database = {
           id?: string
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
+          mode_paiement?: string | null
+          prix_livraison_m3?: number | null
           prix_vente_m3?: number
           statut?: string
           total_ht?: number
@@ -1221,6 +1292,45 @@ export type Database = {
           },
         ]
       }
+      prestataires_transport: {
+        Row: {
+          actif: boolean
+          code_prestataire: string
+          contact_nom: string | null
+          contact_telephone: string | null
+          created_at: string
+          id: string
+          nom_prestataire: string
+          note_service: number | null
+          tarif_base_m3: number
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          code_prestataire: string
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          created_at?: string
+          id?: string
+          nom_prestataire: string
+          note_service?: number | null
+          tarif_base_m3?: number
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          code_prestataire?: string
+          contact_nom?: string | null
+          contact_telephone?: string | null
+          created_at?: string
+          id?: string
+          nom_prestataire?: string
+          note_service?: number | null
+          tarif_base_m3?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       prix_achat_actuels: {
         Row: {
           created_at: string
@@ -1519,6 +1629,39 @@ export type Database = {
           id?: string
           role?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      zones_livraison: {
+        Row: {
+          actif: boolean
+          code_zone: string
+          created_at: string
+          description: string | null
+          id: string
+          nom_zone: string
+          prix_livraison_m3: number
+          updated_at: string
+        }
+        Insert: {
+          actif?: boolean
+          code_zone: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom_zone: string
+          prix_livraison_m3?: number
+          updated_at?: string
+        }
+        Update: {
+          actif?: boolean
+          code_zone?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom_zone?: string
+          prix_livraison_m3?: number
+          updated_at?: string
         }
         Relationships: []
       }

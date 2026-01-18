@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { useSalesWorkflow, Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
+import { useZonesLivraison, MODES_PAIEMENT } from '@/hooks/useZonesLivraison';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -59,6 +60,8 @@ import {
   Factory,
   Package,
   Copy,
+  CreditCard,
+  Banknote,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -86,6 +89,7 @@ export default function Ventes() {
   const navigate = useNavigate();
   const { isCeo, canCreateBons } = useAuth();
   const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, updateDevisStatus } = useSalesWorkflow();
+  const { zones, prestataires } = useZonesLivraison();
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
@@ -115,6 +119,11 @@ export default function Ventes() {
   const [pompeRequise, setPompeRequise] = useState(false);
   const [typePompe, setTypePompe] = useState('');
   const [notes, setNotes] = useState('');
+  
+  // Zone and Payment Mode state
+  const [selectedZoneId, setSelectedZoneId] = useState('');
+  const [modePaiement, setModePaiement] = useState('virement');
+  const [selectedPrestataireId, setSelectedPrestataireId] = useState('');
 
   // Fetch clients and formules for dropdowns
   useEffect(() => {
@@ -144,7 +153,14 @@ export default function Ventes() {
     setOrderFormuleId('');
     setOrderVolume('');
     setOrderPrix('');
+    setSelectedZoneId('');
+    setModePaiement('virement');
+    setSelectedPrestataireId('');
   };
+
+  // Get selected zone pricing
+  const selectedZone = zones.find(z => z.id === selectedZoneId);
+  const prixLivraison = selectedZone?.prix_livraison_m3 || 0;
 
   const handleConvertToBc = async () => {
     if (!selectedDevis) return;
@@ -161,6 +177,10 @@ export default function Ventes() {
       pompe_requise: pompeRequise,
       type_pompe: typePompe || undefined,
       notes: notes || undefined,
+      zone_livraison_id: selectedZoneId || undefined,
+      mode_paiement: modePaiement,
+      prix_livraison_m3: prixLivraison,
+      prestataire_id: selectedPrestataireId || undefined,
     });
     setConverting(false);
     setConvertDialogOpen(false);
@@ -233,6 +253,10 @@ export default function Ventes() {
       pompe_requise: pompeRequise,
       type_pompe: typePompe || undefined,
       notes: notes || undefined,
+      zone_livraison_id: selectedZoneId || undefined,
+      mode_paiement: modePaiement,
+      prix_livraison_m3: prixLivraison,
+      prestataire_id: selectedPrestataireId || undefined,
     });
     setCreatingOrder(false);
     
@@ -1057,6 +1081,82 @@ export default function Ventes() {
                     placeholder="06 XX XX XX XX"
                   />
                 </div>
+              </div>
+            </div>
+
+            {/* Zone & Payment Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                Zone & Paiement
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    Zone de Livraison *
+                  </Label>
+                  <Select value={selectedZoneId} onValueChange={setSelectedZoneId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner une zone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {zones.map((zone) => (
+                        <SelectItem key={zone.id} value={zone.id}>
+                          Zone {zone.code_zone} - {zone.nom_zone} ({zone.prix_livraison_m3} DH/m³)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    Mode de Paiement
+                  </Label>
+                  <Select value={modePaiement} onValueChange={setModePaiement}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {MODES_PAIEMENT.map((mode) => (
+                        <SelectItem key={mode.value} value={mode.value}>
+                          {mode.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground" />
+                    Prestataire Transport
+                  </Label>
+                  <Select value={selectedPrestataireId} onValueChange={setSelectedPrestataireId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un prestataire" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {prestataires.map((prest) => (
+                        <SelectItem key={prest.id} value={prest.id}>
+                          {prest.nom_prestataire} ({prest.tarif_base_m3} DH/m³)
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedZone && (
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
+                    <div className="text-xs text-muted-foreground">Coût Livraison</div>
+                    <div className="text-lg font-bold font-mono text-primary">
+                      +{prixLivraison} DH/m³
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

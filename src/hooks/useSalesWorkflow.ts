@@ -188,6 +188,10 @@ export function useSalesWorkflow() {
     pompe_requise?: boolean;
     type_pompe?: string;
     notes?: string;
+    zone_livraison_id?: string;
+    mode_paiement?: string;
+    prix_livraison_m3?: number;
+    prestataire_id?: string;
   }) => {
     try {
       if (!devis.client_id) {
@@ -219,6 +223,10 @@ export function useSalesWorkflow() {
           pompe_requise: deliveryData?.pompe_requise || false,
           type_pompe: deliveryData?.type_pompe || null,
           notes: deliveryData?.notes || null,
+          zone_livraison_id: deliveryData?.zone_livraison_id || null,
+          mode_paiement: deliveryData?.mode_paiement || 'virement',
+          prix_livraison_m3: deliveryData?.prix_livraison_m3 || 0,
+          prestataire_id: deliveryData?.prestataire_id || null,
           prix_verrouille: true,
           created_by: user?.id,
           validated_by: user?.id,
@@ -360,6 +368,10 @@ export function useSalesWorkflow() {
     pompe_requise?: boolean;
     type_pompe?: string;
     notes?: string;
+    zone_livraison_id?: string;
+    mode_paiement?: string;
+    prix_livraison_m3?: number;
+    prestataire_id?: string;
   }): Promise<BonCommande | null> => {
     try {
       const bc_id = generateBcId();
@@ -385,6 +397,10 @@ export function useSalesWorkflow() {
           pompe_requise: data.pompe_requise || false,
           type_pompe: data.type_pompe || null,
           notes: data.notes || null,
+          zone_livraison_id: data.zone_livraison_id || null,
+          mode_paiement: data.mode_paiement || 'virement',
+          prix_livraison_m3: data.prix_livraison_m3 || 0,
+          prestataire_id: data.prestataire_id || null,
           prix_verrouille: true,
           created_by: user?.id,
           validated_by: user?.id,
