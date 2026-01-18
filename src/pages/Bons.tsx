@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
+import { useDeviceType } from '@/hooks/useDeviceType';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
 import { BlPrintable } from '@/components/bons/BlPrintable';
 import { ExportButton } from '@/components/documents/ExportButton';
+import { DriverDispatchCard } from '@/components/planning/DriverDispatchCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -32,7 +38,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -93,6 +99,8 @@ const WORKFLOW_STEPS = [
 export default function Bons() {
   const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
   const { transitionWorkflow, canTransitionTo } = useBonWorkflow();
+  const { isMobile, isTablet, isTouchDevice } = useDeviceType();
+  const [searchParams] = useSearchParams();
 
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -103,6 +111,17 @@ export default function Bons() {
   const [toleranceErrors, setToleranceErrors] = useState<string[]>([]);
   const [detailBlId, setDetailBlId] = useState<string | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'cards'>(isMobile || isTablet ? 'cards' : 'table');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  // Check for URL params to open detail
+  useEffect(() => {
+    const blParam = searchParams.get('bl');
+    if (blParam) {
+      setDetailBlId(blParam);
+      setDetailDialogOpen(true);
+    }
+  }, [searchParams]);
 
   // Form state
   const [blId, setBlId] = useState('');
@@ -363,44 +382,150 @@ export default function Bons() {
 
   const canUpdatePayment = isCeo || isAgentAdministratif;
 
+  // Filter bons by status
+  const filteredBons = statusFilter === 'all' 
+    ? bons 
+    : bons.filter(b => b.workflow_status === statusFilter);
+
+  // Mobile/Tablet Card View
+  const renderCardView = () => (
+    <div className="space-y-4">
+      {/* Status Filter Tabs */}
+      <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
+        <TabsList className={cn(
+          "w-full grid",
+          isTouchDevice ? "h-14 grid-cols-4" : "h-10 grid-cols-7"
+        )}>
+          <TabsTrigger value="all" className={cn(isTouchDevice && "h-12 text-xs")}>
+            Tous
+            <Badge variant="secondary" className="ml-1 text-[10px]">{bons.length}</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="planification" className={cn(isTouchDevice && "h-12 text-xs")}>
+            📋
+          </TabsTrigger>
+          <TabsTrigger value="en_livraison" className={cn(isTouchDevice && "h-12 text-xs")}>
+            🚚
+          </TabsTrigger>
+          <TabsTrigger value="livre" className={cn(isTouchDevice && "h-12 text-xs")}>
+            ✅
+          </TabsTrigger>
+          {!isTouchDevice && (
+            <>
+              <TabsTrigger value="production">Production</TabsTrigger>
+              <TabsTrigger value="facture">Facturé</TabsTrigger>
+              <TabsTrigger value="annule">Annulé</TabsTrigger>
+            </>
+          )}
+        </TabsList>
+      </Tabs>
+
+      {/* Cards List */}
+      {filteredBons.length === 0 ? (
+        <Card>
+          <CardContent className="p-8 text-center">
+            <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-muted-foreground">Aucun bon de livraison</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-3">
+          {filteredBons.map((b) => (
+            <DriverDispatchCard
+              key={b.bl_id}
+              bon={{
+                bl_id: b.bl_id,
+                client_id: b.client_id,
+                formule_id: b.formule_id,
+                volume_m3: b.volume_m3,
+                workflow_status: b.workflow_status || 'planification',
+                heure_prevue: null,
+                camion_assigne: b.toupie_assignee,
+                toupie_assignee: b.toupie_assignee,
+                zone_livraison_id: b.zone_livraison_id,
+                mode_paiement: b.mode_paiement,
+                clients: { nom_client: clients.find(c => c.client_id === b.client_id)?.nom_client || b.client_id },
+              }}
+              showActions={false}
+              onOpenDetails={() => {
+                setDetailBlId(b.bl_id);
+                setDetailDialogOpen(true);
+              }}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className={cn(
+          "flex gap-4",
+          isTouchDevice ? "flex-col" : "flex-row items-center justify-between"
+        )}>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Bons de Livraison</h1>
-            <p className="text-muted-foreground mt-1">
-              Workflow complet de la commande à la facturation
-            </p>
+            <h1 className={cn(
+              "font-bold tracking-tight",
+              isTouchDevice ? "text-xl" : "text-2xl"
+            )}>Bons de Livraison</h1>
+            {!isTouchDevice && (
+              <p className="text-muted-foreground mt-1">
+                Workflow complet de la commande à la facturation
+              </p>
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <ExportButton
-              data={bons.map(b => ({
-                bl_id: b.bl_id,
-                date: b.date_livraison,
-                client: b.client_id,
-                formule: b.formule_id,
-                volume: b.volume_m3,
-                ciment_kg: b.ciment_reel_kg,
-                workflow: b.workflow_status || 'planification',
-                paiement: b.statut_paiement,
-                cur: b.cur_reel || 0,
-                marge_pct: b.marge_brute_pct || 0,
-              }))}
-              columns={[
-                { key: 'bl_id', label: 'N° Bon' },
-                { key: 'date', label: 'Date' },
-                { key: 'client', label: 'Client' },
-                { key: 'formule', label: 'Formule' },
-                { key: 'volume', label: 'Volume (m³)' },
-                { key: 'ciment_kg', label: 'Ciment (kg)' },
-                { key: 'workflow', label: 'Statut' },
-                { key: 'paiement', label: 'Paiement' },
-                { key: 'cur', label: 'CUR (DH/m³)' },
-                { key: 'marge_pct', label: 'Marge (%)' },
-              ]}
-              filename="bons_livraison"
-            />
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* View Toggle - Only on desktop/tablet */}
+            {!isMobile && (
+              <div className="flex items-center border rounded-lg p-1">
+                <Button
+                  variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('table')}
+                  className="h-9 px-3"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('cards')}
+                  className="h-9 px-3"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+            {!isTouchDevice && (
+              <ExportButton
+                data={bons.map(b => ({
+                  bl_id: b.bl_id,
+                  date: b.date_livraison,
+                  client: b.client_id,
+                  formule: b.formule_id,
+                  volume: b.volume_m3,
+                  ciment_kg: b.ciment_reel_kg,
+                  workflow: b.workflow_status || 'planification',
+                  paiement: b.statut_paiement,
+                  cur: b.cur_reel || 0,
+                  marge_pct: b.marge_brute_pct || 0,
+                }))}
+                columns={[
+                  { key: 'bl_id', label: 'N° Bon' },
+                  { key: 'date', label: 'Date' },
+                  { key: 'client', label: 'Client' },
+                  { key: 'formule', label: 'Formule' },
+                  { key: 'volume', label: 'Volume (m³)' },
+                  { key: 'ciment_kg', label: 'Ciment (kg)' },
+                  { key: 'workflow', label: 'Statut' },
+                  { key: 'paiement', label: 'Paiement' },
+                  { key: 'cur', label: 'CUR (DH/m³)' },
+                  { key: 'marge_pct', label: 'Marge (%)' },
+                ]}
+                filename="bons_livraison"
+              />
+            )}
             {canCreateBons && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
@@ -569,30 +694,34 @@ export default function Bons() {
           </div>
         </div>
 
-        {/* Workflow Legend */}
-        <div className="flex flex-wrap gap-2">
-          {WORKFLOW_STEPS.map((step) => {
-            const Icon = step.icon;
-            return (
-              <span key={step.value} className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-muted/50', step.color)}>
-                <Icon className="h-3 w-3" />
-                {step.label}
-              </span>
-            );
-          })}
-        </div>
+        {/* Workflow Legend - Hide on mobile */}
+        {!isMobile && (
+          <div className="flex flex-wrap gap-2">
+            {WORKFLOW_STEPS.map((step) => {
+              const Icon = step.icon;
+              return (
+                <span key={step.value} className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-muted/50', step.color)}>
+                  <Icon className="h-3 w-3" />
+                  {step.label}
+                </span>
+              );
+            })}
+          </div>
+        )}
 
-        <div className="card-industrial overflow-x-auto">
-          {loading ? (
-            <div className="p-8 text-center">
-              <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
-            </div>
-          ) : bons.length === 0 ? (
-            <div className="p-8 text-center">
-              <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucun bon de livraison</p>
-            </div>
-          ) : (
+        {/* Content: Card view for mobile/tablet, Table for desktop */}
+        {loading ? (
+          <div className="p-8 text-center">
+            <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+          </div>
+        ) : viewMode === 'cards' || isMobile ? (
+          renderCardView()
+        ) : bons.length === 0 ? (
+          <div className="p-8 text-center">
+            <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-muted-foreground">Aucun bon de livraison</p>
+          </div>
+        ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
