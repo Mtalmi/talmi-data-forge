@@ -210,6 +210,66 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_transactions: {
+        Row: {
+          client_id_suggere: string | null
+          created_at: string
+          date_transaction: string
+          date_valeur: string | null
+          devise: string | null
+          facture_id_suggeree: string | null
+          id: string
+          libelle: string
+          montant: number
+          notes: string | null
+          rapproche_at: string | null
+          rapproche_par: string | null
+          reference_bancaire: string | null
+          score_confiance: number | null
+          statut_rapprochement: string | null
+          type_transaction: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_id_suggere?: string | null
+          created_at?: string
+          date_transaction: string
+          date_valeur?: string | null
+          devise?: string | null
+          facture_id_suggeree?: string | null
+          id?: string
+          libelle: string
+          montant: number
+          notes?: string | null
+          rapproche_at?: string | null
+          rapproche_par?: string | null
+          reference_bancaire?: string | null
+          score_confiance?: number | null
+          statut_rapprochement?: string | null
+          type_transaction?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_id_suggere?: string | null
+          created_at?: string
+          date_transaction?: string
+          date_valeur?: string | null
+          devise?: string | null
+          facture_id_suggeree?: string | null
+          id?: string
+          libelle?: string
+          montant?: number
+          notes?: string | null
+          rapproche_at?: string | null
+          rapproche_par?: string | null
+          reference_bancaire?: string | null
+          score_confiance?: number | null
+          statut_rapprochement?: string | null
+          type_transaction?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bons_commande: {
         Row: {
           adresse_livraison: string | null
@@ -1440,6 +1500,65 @@ export type Database = {
             columns: ["employe_id"]
             isOneToOne: false
             referencedRelation: "employes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rapprochements_bancaires: {
+        Row: {
+          bl_id: string | null
+          client_id: string | null
+          created_at: string
+          ecart_montant: number | null
+          facture_id: string | null
+          id: string
+          montant_facture: number | null
+          montant_transaction: number | null
+          motif_match: string | null
+          score_confiance: number | null
+          transaction_id: string | null
+          type_match: string
+          valide_at: string | null
+          valide_par: string | null
+        }
+        Insert: {
+          bl_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          ecart_montant?: number | null
+          facture_id?: string | null
+          id?: string
+          montant_facture?: number | null
+          montant_transaction?: number | null
+          motif_match?: string | null
+          score_confiance?: number | null
+          transaction_id?: string | null
+          type_match: string
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Update: {
+          bl_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          ecart_montant?: number | null
+          facture_id?: string | null
+          id?: string
+          montant_facture?: number | null
+          montant_transaction?: number | null
+          motif_match?: string | null
+          score_confiance?: number | null
+          transaction_id?: string | null
+          type_match?: string
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rapprochements_bancaires_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "bank_transactions"
             referencedColumns: ["id"]
           },
         ]
