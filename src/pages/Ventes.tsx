@@ -6,6 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import {
   Table,
   TableBody,
@@ -21,6 +25,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -36,10 +47,17 @@ import {
   RefreshCw,
   TrendingUp,
   AlertTriangle,
+  CalendarIcon,
+  MapPin,
+  User,
+  Phone,
+  FileCheck,
+  Building2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
+import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { cn } from '@/lib/utils';
 
@@ -63,26 +81,57 @@ export default function Ventes() {
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
-  const [deliveryDate, setDeliveryDate] = useState('');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
   const [converting, setConverting] = useState(false);
+  
+  // Enhanced form state
+  const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(undefined);
+  const [deliveryTime, setDeliveryTime] = useState('08:00');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [contactChantier, setContactChantier] = useState('');
+  const [telephoneChantier, setTelephoneChantier] = useState('');
+  const [referenceClient, setReferenceClient] = useState('');
+  const [conditionsAcces, setConditionsAcces] = useState('');
+  const [pompeRequise, setPompeRequise] = useState(false);
+  const [typePompe, setTypePompe] = useState('');
+  const [notes, setNotes] = useState('');
+
+  const resetFormState = () => {
+    setDeliveryDate(undefined);
+    setDeliveryTime('08:00');
+    setDeliveryAddress('');
+    setContactChantier('');
+    setTelephoneChantier('');
+    setReferenceClient('');
+    setConditionsAcces('');
+    setPompeRequise(false);
+    setTypePompe('');
+    setNotes('');
+  };
 
   const handleConvertToBc = async () => {
     if (!selectedDevis) return;
     
     setConverting(true);
     await convertToBc(selectedDevis, {
-      date_livraison_souhaitee: deliveryDate || undefined,
+      date_livraison_souhaitee: deliveryDate ? format(deliveryDate, 'yyyy-MM-dd') : undefined,
+      heure_livraison_souhaitee: deliveryTime || undefined,
       adresse_livraison: deliveryAddress || undefined,
+      contact_chantier: contactChantier || undefined,
+      telephone_chantier: telephoneChantier || undefined,
+      reference_client: referenceClient || undefined,
+      conditions_acces: conditionsAcces || undefined,
+      pompe_requise: pompeRequise,
+      type_pompe: typePompe || undefined,
+      notes: notes || undefined,
     });
     setConverting(false);
     setConvertDialogOpen(false);
     setSelectedDevis(null);
-    setDeliveryDate('');
-    setDeliveryAddress('');
+    resetFormState();
   };
 
   const openConvertDialog = (devis: Devis) => {
+    resetFormState();
     setSelectedDevis(devis);
     setDeliveryAddress(devis.client?.adresse || '');
     setConvertDialogOpen(true);
@@ -337,14 +386,14 @@ export default function Ventes() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>N° BC</TableHead>
-                        <TableHead>Devis Source</TableHead>
                         <TableHead>Client</TableHead>
                         <TableHead>Formule</TableHead>
+                        <TableHead>Date Livraison</TableHead>
                         <TableHead className="text-right">Volume</TableHead>
-                        <TableHead className="text-right">Prix/m³</TableHead>
                         <TableHead className="text-right">Total HT</TableHead>
                         <TableHead>Statut</TableHead>
                         <TableHead>Prix</TableHead>
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -353,15 +402,18 @@ export default function Ventes() {
                         return (
                           <TableRow key={bc.id}>
                             <TableCell className="font-mono font-medium">{bc.bc_id}</TableCell>
-                            <TableCell className="font-mono text-xs text-muted-foreground">
-                              {bc.devis_id || '—'}
-                            </TableCell>
                             <TableCell>{bc.client?.nom_client || '—'}</TableCell>
                             <TableCell>
                               <span className="text-xs">{bc.formule_id}</span>
                             </TableCell>
+                            <TableCell>
+                              {bc.date_livraison_souhaitee ? (
+                                <span className="text-sm">
+                                  {format(new Date(bc.date_livraison_souhaitee), 'dd/MM/yyyy', { locale: fr })}
+                                </span>
+                              ) : '—'}
+                            </TableCell>
                             <TableCell className="text-right font-mono">{bc.volume_m3} m³</TableCell>
-                            <TableCell className="text-right font-mono">{bc.prix_vente_m3.toLocaleString()} DH</TableCell>
                             <TableCell className="text-right font-mono font-medium">
                               {bc.total_ht.toLocaleString()} DH
                             </TableCell>
@@ -383,6 +435,9 @@ export default function Ventes() {
                                 </Badge>
                               )}
                             </TableCell>
+                            <TableCell>
+                              <BcPdfGenerator bc={bc} compact />
+                            </TableCell>
                           </TableRow>
                         );
                       })}
@@ -395,79 +450,272 @@ export default function Ventes() {
         </Tabs>
       </div>
 
-      {/* Convert to BC Dialog */}
+      {/* Convert to BC Dialog - Professional Order Form */}
       <Dialog open={convertDialogOpen} onOpenChange={setConvertDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="h-5 w-5 text-primary" />
-              Valider en Bon de Commande
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <FileCheck className="h-6 w-6 text-primary" />
+              Création Bon de Commande Officiel
             </DialogTitle>
           </DialogHeader>
           
           {selectedDevis && (
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-muted/50">
-                <p className="text-sm font-medium mb-2">Récapitulatif du Devis</p>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span className="text-muted-foreground">N° Devis:</span>
-                  <span className="font-mono">{selectedDevis.devis_id}</span>
-                  <span className="text-muted-foreground">Client:</span>
-                  <span>{selectedDevis.client?.nom_client}</span>
-                  <span className="text-muted-foreground">Volume:</span>
-                  <span>{selectedDevis.volume_m3} m³</span>
-                  <span className="text-muted-foreground">Prix/m³:</span>
-                  <span className="font-mono">{selectedDevis.prix_vente_m3.toLocaleString()} DH</span>
-                  <span className="text-muted-foreground">Total HT:</span>
-                  <span className="font-mono font-bold text-primary">
-                    {selectedDevis.total_ht.toLocaleString()} DH
-                  </span>
-                </div>
-              </div>
+            <div className="space-y-6">
+              {/* Quote Summary Card */}
+              <Card className="border-primary/30 bg-primary/5">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Récapitulatif du Devis Source
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground text-xs">N° Devis</p>
+                      <p className="font-mono font-semibold">{selectedDevis.devis_id}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Client</p>
+                      <p className="font-semibold">{selectedDevis.client?.nom_client}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Formule</p>
+                      <p className="font-mono text-sm">{selectedDevis.formule_id}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Volume</p>
+                      <p className="font-semibold">{selectedDevis.volume_m3} m³</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Prix/m³</p>
+                      <p className="font-mono">{selectedDevis.prix_vente_m3.toLocaleString()} DH</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Total HT</p>
+                      <p className="font-mono font-bold text-primary text-lg">
+                        {selectedDevis.total_ht.toLocaleString()} DH
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label>Date de livraison souhaitée</Label>
-                  <Input
-                    type="date"
-                    value={deliveryDate}
-                    onChange={(e) => setDeliveryDate(e.target.value)}
-                  />
-                </div>
+              {/* Delivery Section */}
+              <div className="space-y-4">
+                <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
+                  <Truck className="h-4 w-4" />
+                  Informations de Livraison
+                </h3>
                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Date Picker */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                      Date de livraison *
+                    </Label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !deliveryDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {deliveryDate ? format(deliveryDate, "PPP", { locale: fr }) : "Sélectionner une date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={deliveryDate}
+                          onSelect={setDeliveryDate}
+                          disabled={(date) => date < new Date()}
+                          initialFocus
+                          className="p-3 pointer-events-auto"
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Time Picker */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      Heure souhaitée
+                    </Label>
+                    <Select value={deliveryTime} onValueChange={setDeliveryTime}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Heure" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="06:00">06:00</SelectItem>
+                        <SelectItem value="07:00">07:00</SelectItem>
+                        <SelectItem value="08:00">08:00</SelectItem>
+                        <SelectItem value="09:00">09:00</SelectItem>
+                        <SelectItem value="10:00">10:00</SelectItem>
+                        <SelectItem value="11:00">11:00</SelectItem>
+                        <SelectItem value="12:00">12:00</SelectItem>
+                        <SelectItem value="13:00">13:00</SelectItem>
+                        <SelectItem value="14:00">14:00</SelectItem>
+                        <SelectItem value="15:00">15:00</SelectItem>
+                        <SelectItem value="16:00">16:00</SelectItem>
+                        <SelectItem value="17:00">17:00</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Address */}
                 <div className="space-y-2">
-                  <Label>Adresse de livraison</Label>
-                  <Input
+                  <Label className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    Adresse du chantier *
+                  </Label>
+                  <Textarea
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="Adresse du chantier..."
+                    placeholder="Adresse complète du chantier..."
+                    rows={2}
+                  />
+                </div>
+
+                {/* Conditions d'accès */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Truck className="h-4 w-4 text-muted-foreground" />
+                    Conditions d'accès
+                  </Label>
+                  <Input
+                    value={conditionsAcces}
+                    onChange={(e) => setConditionsAcces(e.target.value)}
+                    placeholder="Ex: Portail bleu, accès par la rue principale..."
                   />
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30">
-                <p className="text-sm text-destructive flex items-center gap-2">
+              {/* Contact Section */}
+              <div className="space-y-4">
+                <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
+                  <User className="h-4 w-4" />
+                  Contact Chantier
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      Nom du contact
+                    </Label>
+                    <Input
+                      value={contactChantier}
+                      onChange={(e) => setContactChantier(e.target.value)}
+                      placeholder="Responsable chantier..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      Téléphone chantier
+                    </Label>
+                    <Input
+                      value={telephoneChantier}
+                      onChange={(e) => setTelephoneChantier(e.target.value)}
+                      placeholder="+212 6XX XXX XXX"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Reference & Options */}
+              <div className="space-y-4">
+                <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
+                  <Building2 className="h-4 w-4" />
+                  Références & Options
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Référence client (N° commande interne)</Label>
+                    <Input
+                      value={referenceClient}
+                      onChange={(e) => setReferenceClient(e.target.value)}
+                      placeholder="REF-CLIENT-001"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="flex items-center gap-2">
+                        Pompe à béton requise ?
+                      </Label>
+                      <Switch
+                        checked={pompeRequise}
+                        onCheckedChange={setPompeRequise}
+                      />
+                    </div>
+
+                    {pompeRequise && (
+                      <Select value={typePompe} onValueChange={setTypePompe}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Type de pompe" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pompe_automotrice">Pompe automotrice</SelectItem>
+                          <SelectItem value="pompe_stationnaire">Pompe stationnaire</SelectItem>
+                          <SelectItem value="pompe_bras">Pompe à bras (36m)</SelectItem>
+                          <SelectItem value="pompe_bras_xl">Pompe à bras (42m+)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Notes / Instructions spéciales</Label>
+                  <Textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Instructions particulières pour la livraison..."
+                    rows={2}
+                  />
+                </div>
+              </div>
+
+              {/* Price Lock Warning */}
+              <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
+                <p className="text-sm text-destructive flex items-center gap-2 font-medium">
                   <Lock className="h-4 w-4" />
-                  <strong>Attention:</strong> Le prix de vente sera verrouillé après validation
+                  ATTENTION: Prix de vente verrouillé après validation
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Seul le CEO pourra modifier le prix une fois le BC créé
+                  Le prix convenu de {selectedDevis.prix_vente_m3.toLocaleString()} DH/m³ sera verrouillé. Seul le CEO pourra modifier ce prix une fois le BC validé.
                 </p>
               </div>
             </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setConvertDialogOpen(false)}>
               Annuler
             </Button>
-            <Button onClick={handleConvertToBc} disabled={converting} className="gap-2">
+            <Button 
+              onClick={handleConvertToBc} 
+              disabled={converting || !deliveryDate} 
+              className="gap-2"
+              size="lg"
+            >
               {converting ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <CheckCircle className="h-4 w-4" />
               )}
-              Valider le BC
+              Valider le Bon de Commande
             </Button>
           </DialogFooter>
         </DialogContent>

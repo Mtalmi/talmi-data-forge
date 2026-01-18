@@ -9,14 +9,20 @@ import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
 interface BcPdfGeneratorProps {
   bc: {
     bc_id: string;
-    devis_id: string | null;
+    devis_id?: string | null;
     formule_id: string;
     volume_m3: number;
     prix_vente_m3: number;
     total_ht: number;
-    date_livraison_souhaitee: string | null;
-    adresse_livraison: string | null;
-    client?: { nom_client: string; adresse: string | null; telephone: string | null } | null;
+    date_livraison_souhaitee?: string | null;
+    adresse_livraison?: string | null;
+    contact_chantier?: string | null;
+    telephone_chantier?: string | null;
+    reference_client?: string | null;
+    conditions_acces?: string | null;
+    pompe_requise?: boolean;
+    type_pompe?: string | null;
+    client?: { nom_client: string; adresse?: string | null; telephone?: string | null } | null;
     formule?: { designation: string } | null;
   };
   compact?: boolean;

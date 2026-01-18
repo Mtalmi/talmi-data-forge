@@ -40,7 +40,14 @@ export interface BonCommande {
   total_ht: number;
   statut: string;
   date_livraison_souhaitee: string | null;
+  heure_livraison_souhaitee: string | null;
   adresse_livraison: string | null;
+  contact_chantier: string | null;
+  telephone_chantier: string | null;
+  reference_client: string | null;
+  conditions_acces: string | null;
+  pompe_requise: boolean;
+  type_pompe: string | null;
   notes: string | null;
   prix_verrouille: boolean;
   created_by: string | null;
@@ -49,7 +56,7 @@ export interface BonCommande {
   created_at: string;
   updated_at: string;
   // Joined data
-  client?: { nom_client: string };
+  client?: { nom_client: string; adresse: string | null; telephone: string | null };
   formule?: { designation: string };
 }
 
@@ -75,7 +82,7 @@ export function useSalesWorkflow() {
           .from('bons_commande')
           .select(`
             *,
-            client:clients(nom_client),
+            client:clients(nom_client, adresse, telephone),
             formule:formules_theoriques(designation)
           `)
           .order('created_at', { ascending: false }),
@@ -171,7 +178,15 @@ export function useSalesWorkflow() {
 
   const convertToBc = useCallback(async (devis: Devis, deliveryData?: {
     date_livraison_souhaitee?: string;
+    heure_livraison_souhaitee?: string;
     adresse_livraison?: string;
+    contact_chantier?: string;
+    telephone_chantier?: string;
+    reference_client?: string;
+    conditions_acces?: string;
+    pompe_requise?: boolean;
+    type_pompe?: string;
+    notes?: string;
   }) => {
     try {
       if (!devis.client_id) {
@@ -181,7 +196,7 @@ export function useSalesWorkflow() {
 
       const bc_id = generateBcId();
 
-      // Create BC
+      // Create BC with all professional details
       const { data: newBc, error: bcError } = await supabase
         .from('bons_commande')
         .insert({
@@ -194,7 +209,15 @@ export function useSalesWorkflow() {
           total_ht: devis.total_ht,
           statut: 'pret_production',
           date_livraison_souhaitee: deliveryData?.date_livraison_souhaitee || null,
+          heure_livraison_souhaitee: deliveryData?.heure_livraison_souhaitee || null,
           adresse_livraison: deliveryData?.adresse_livraison || devis.client?.adresse || null,
+          contact_chantier: deliveryData?.contact_chantier || null,
+          telephone_chantier: deliveryData?.telephone_chantier || null,
+          reference_client: deliveryData?.reference_client || null,
+          conditions_acces: deliveryData?.conditions_acces || null,
+          pompe_requise: deliveryData?.pompe_requise || false,
+          type_pompe: deliveryData?.type_pompe || null,
+          notes: deliveryData?.notes || null,
           prix_verrouille: true,
           created_by: user?.id,
           validated_by: user?.id,
