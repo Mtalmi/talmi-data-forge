@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
+import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +30,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -52,6 +53,9 @@ interface BonLivraison {
   validation_technique: boolean | null;
   alerte_ecart: boolean;
   alerte_marge: boolean | null;
+  prix_vente_m3: number | null;
+  cur_reel: number | null;
+  marge_brute_pct: number | null;
   created_at: string;
 }
 
@@ -90,6 +94,8 @@ export default function Bons() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [toleranceErrors, setToleranceErrors] = useState<string[]>([]);
+  const [detailBlId, setDetailBlId] = useState<string | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
   // Form state
   const [blId, setBlId] = useState('');
@@ -562,6 +568,7 @@ export default function Bons() {
                   <TableHead>Workflow</TableHead>
                   <TableHead>Paiement</TableHead>
                   <TableHead className="w-10"></TableHead>
+                  <TableHead className="w-10">Détail</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -631,12 +638,32 @@ export default function Bons() {
                         <CheckCircle className="h-5 w-5 text-success" />
                       )}
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setDetailBlId(b.bl_id);
+                          setDetailDialogOpen(true);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
         </div>
+
+        {/* Detail Dialog */}
+        <BonDetailDialog
+          blId={detailBlId}
+          open={detailDialogOpen}
+          onOpenChange={setDetailDialogOpen}
+          onUpdate={fetchData}
+        />
       </div>
     </MainLayout>
   );

@@ -317,6 +317,69 @@ export type Database = {
         }
         Relationships: []
       }
+      factures: {
+        Row: {
+          bl_id: string
+          client_id: string
+          created_at: string
+          created_by: string | null
+          cur_reel: number | null
+          date_facture: string
+          facture_id: string
+          formule_id: string
+          id: string
+          marge_brute_dh: number | null
+          marge_brute_pct: number | null
+          prix_vente_m3: number
+          statut: string
+          total_ht: number
+          total_ttc: number
+          tva_pct: number
+          updated_at: string
+          volume_m3: number
+        }
+        Insert: {
+          bl_id: string
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          cur_reel?: number | null
+          date_facture?: string
+          facture_id: string
+          formule_id: string
+          id?: string
+          marge_brute_dh?: number | null
+          marge_brute_pct?: number | null
+          prix_vente_m3: number
+          statut?: string
+          total_ht: number
+          total_ttc: number
+          tva_pct?: number
+          updated_at?: string
+          volume_m3: number
+        }
+        Update: {
+          bl_id?: string
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          cur_reel?: number | null
+          date_facture?: string
+          facture_id?: string
+          formule_id?: string
+          id?: string
+          marge_brute_dh?: number | null
+          marge_brute_pct?: number | null
+          prix_vente_m3?: number
+          statut?: string
+          total_ht?: number
+          total_ttc?: number
+          tva_pct?: number
+          updated_at?: string
+          volume_m3?: number
+        }
+        Relationships: []
+      }
       flotte: {
         Row: {
           capacite_m3: number | null
