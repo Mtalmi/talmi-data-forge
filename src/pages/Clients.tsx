@@ -5,9 +5,11 @@ import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { ExportButton } from '@/components/documents/ExportButton';
+import { CreditScoreDashboard } from '@/components/clients/CreditScoreDashboard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -43,7 +45,8 @@ import {
   FileWarning, 
   AlertTriangle,
   CheckCircle,
-  Copy
+  Copy,
+  TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -233,7 +236,7 @@ export default function Clients() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
             <p className="text-muted-foreground mt-1">
-              Gestion des clients et conditions de paiement
+              Gestion des clients, conditions de paiement et scores de crédit
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -374,46 +377,60 @@ export default function Clients() {
           </div>
         </div>
 
-        {/* CEO Quick Stats */}
-        {isCeo && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="card-industrial p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-muted">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Clients</p>
-                  <p className="text-xl font-bold">{clients.length}</p>
-                </div>
-              </div>
-            </div>
-            <div className="card-industrial p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-warning/10">
-                  <AlertTriangle className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Soldes Dus</p>
-                  <p className="text-xl font-bold">{clientsWithDebt.length}</p>
-                </div>
-              </div>
-            </div>
-            <div className="card-industrial p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/10">
-                  <Ban className="h-5 w-5 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bloqués</p>
-                  <p className="text-xl font-bold">{blockedClients.length}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Tabs for List and Credit Scores */}
+        <Tabs defaultValue="list" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="list" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Liste Clients
+            </TabsTrigger>
+            <TabsTrigger value="credit-scores" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Scores de Crédit
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Table */}
+          <TabsContent value="list" className="space-y-4">
+            {/* CEO Quick Stats */}
+            {isCeo && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="card-industrial p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-muted">
+                      <Users className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Clients</p>
+                      <p className="text-xl font-bold">{clients.length}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-industrial p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-warning/10">
+                      <AlertTriangle className="h-5 w-5 text-warning" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Soldes Dus</p>
+                      <p className="text-xl font-bold">{clientsWithDebt.length}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="card-industrial p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-destructive/10">
+                      <Ban className="h-5 w-5 text-destructive" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bloqués</p>
+                      <p className="text-xl font-bold">{blockedClients.length}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Table */}
         <div className="card-industrial overflow-hidden">
           {loading ? (
             <div className="p-8 text-center">
@@ -539,8 +556,14 @@ export default function Clients() {
                 })}
               </TableBody>
             </Table>
-          )}
-        </div>
+            )}
+          </div>
+          </TabsContent>
+
+          <TabsContent value="credit-scores">
+            <CreditScoreDashboard />
+          </TabsContent>
+        </Tabs>
 
         {/* Mise en Demeure Dialog */}
         <Dialog open={noticeDialogOpen} onOpenChange={setNoticeDialogOpen}>
