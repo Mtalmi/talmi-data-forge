@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { supabase } from '@/integrations/supabase/client';
 import { useSalesWorkflow, Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -56,6 +57,7 @@ import {
   Building2,
   Play,
   Factory,
+  Package,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -81,14 +83,26 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
 export default function Ventes() {
   const navigate = useNavigate();
   const { isCeo, canCreateBons } = useAuth();
-  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, updateDevisStatus } = useSalesWorkflow();
+  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, updateDevisStatus } = useSalesWorkflow();
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
   const [converting, setConverting] = useState(false);
   const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
   
-  // Enhanced form state
+  // Direct Order Dialog State
+  const [directOrderOpen, setDirectOrderOpen] = useState(false);
+  const [creatingOrder, setCreatingOrder] = useState(false);
+  const [clients, setClients] = useState<{client_id: string; nom_client: string; adresse: string | null; telephone: string | null}[]>([]);
+  const [formules, setFormules] = useState<{formule_id: string; designation: string; cut_dh_m3: number | null}[]>([]);
+  
+  // Direct Order Form State
+  const [orderClientId, setOrderClientId] = useState('');
+  const [orderFormuleId, setOrderFormuleId] = useState('');
+  const [orderVolume, setOrderVolume] = useState('');
+  const [orderPrix, setOrderPrix] = useState('');
+  
+  // Enhanced form state (shared)
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(undefined);
   const [deliveryTime, setDeliveryTime] = useState('08:00');
   const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -99,6 +113,19 @@ export default function Ventes() {
   const [pompeRequise, setPompeRequise] = useState(false);
   const [typePompe, setTypePompe] = useState('');
   const [notes, setNotes] = useState('');
+
+  // Fetch clients and formules for dropdowns
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      const [clientsRes, formulesRes] = await Promise.all([
+        supabase.from('clients').select('client_id, nom_client, adresse, telephone').order('nom_client'),
+        supabase.from('formules_theoriques').select('formule_id, designation, cut_dh_m3').order('formule_id'),
+      ]);
+      if (clientsRes.data) setClients(clientsRes.data);
+      if (formulesRes.data) setFormules(formulesRes.data);
+    };
+    fetchDropdownData();
+  }, []);
 
   const resetFormState = () => {
     setDeliveryDate(undefined);
@@ -111,6 +138,10 @@ export default function Ventes() {
     setPompeRequise(false);
     setTypePompe('');
     setNotes('');
+    setOrderClientId('');
+    setOrderFormuleId('');
+    setOrderVolume('');
+    setOrderPrix('');
   };
 
   const handleConvertToBc = async () => {
@@ -154,6 +185,47 @@ export default function Ventes() {
     }
   };
 
+  // Handle direct order creation
+  const handleCreateDirectOrder = async () => {
+    if (!orderClientId || !orderFormuleId || !orderVolume || !orderPrix || !deliveryDate) {
+      return;
+    }
+
+    setCreatingOrder(true);
+    const bc = await createDirectBc({
+      client_id: orderClientId,
+      formule_id: orderFormuleId,
+      volume_m3: parseFloat(orderVolume),
+      prix_vente_m3: parseFloat(orderPrix),
+      date_livraison_souhaitee: format(deliveryDate, 'yyyy-MM-dd'),
+      heure_livraison_souhaitee: deliveryTime || undefined,
+      adresse_livraison: deliveryAddress || undefined,
+      contact_chantier: contactChantier || undefined,
+      telephone_chantier: telephoneChantier || undefined,
+      reference_client: referenceClient || undefined,
+      conditions_acces: conditionsAcces || undefined,
+      pompe_requise: pompeRequise,
+      type_pompe: typePompe || undefined,
+      notes: notes || undefined,
+    });
+    setCreatingOrder(false);
+    
+    if (bc) {
+      setDirectOrderOpen(false);
+      resetFormState();
+    }
+  };
+
+  // Auto-fill client address when client is selected
+  const handleClientSelect = (clientId: string) => {
+    setOrderClientId(clientId);
+    const client = clients.find(c => c.client_id === clientId);
+    if (client) {
+      setDeliveryAddress(client.adresse || '');
+      setTelephoneChantier(client.telephone || '');
+    }
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -165,7 +237,14 @@ export default function Ventes() {
               Gestion des devis et bons de commande
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button 
+              onClick={() => setDirectOrderOpen(true)}
+              className="gap-2"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              Nouvelle Commande
+            </Button>
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               Actualiser
@@ -751,6 +830,285 @@ export default function Ventes() {
                 <CheckCircle className="h-4 w-4" />
               )}
               Valider le Bon de Commande
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Direct Order Dialog - Create BC without Devis */}
+      <Dialog open={directOrderOpen} onOpenChange={setDirectOrderOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <ShoppingCart className="h-6 w-6 text-primary" />
+              Nouvelle Commande Directe
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Client & Product Selection */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                  Client *
+                </Label>
+                <Select value={orderClientId} onValueChange={handleClientSelect}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner un client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((client) => (
+                      <SelectItem key={client.client_id} value={client.client_id}>
+                        {client.nom_client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Package className="h-4 w-4 text-muted-foreground" />
+                  Formule Béton *
+                </Label>
+                <Select value={orderFormuleId} onValueChange={setOrderFormuleId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une formule" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {formules.map((formule) => (
+                      <SelectItem key={formule.formule_id} value={formule.formule_id}>
+                        {formule.formule_id} - {formule.designation}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Volume & Price */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Volume (m³) *</Label>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="1"
+                  max="12"
+                  value={orderVolume}
+                  onChange={(e) => setOrderVolume(e.target.value)}
+                  placeholder="Ex: 8"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Prix de Vente (DH/m³) *</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={orderPrix}
+                  onChange={(e) => setOrderPrix(e.target.value)}
+                  placeholder="Ex: 850"
+                />
+              </div>
+            </div>
+
+            {/* Calculated Total */}
+            {orderVolume && orderPrix && (
+              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Total HT</span>
+                  <span className="text-2xl font-bold text-primary font-mono">
+                    {(parseFloat(orderVolume) * parseFloat(orderPrix)).toLocaleString()} DH
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Delivery Section */}
+            <div className="space-y-4">
+              <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
+                <Truck className="h-4 w-4" />
+                Informations de Livraison
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Date Picker */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                    Date de livraison *
+                  </Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !deliveryDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {deliveryDate ? format(deliveryDate, "PPP", { locale: fr }) : "Sélectionner une date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={deliveryDate}
+                        onSelect={setDeliveryDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Time Picker */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    Heure souhaitée
+                  </Label>
+                  <Select value={deliveryTime} onValueChange={setDeliveryTime}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Heure" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map(time => (
+                        <SelectItem key={time} value={time}>{time}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Address */}
+                <div className="space-y-2 md:col-span-2">
+                  <Label className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    Adresse de livraison
+                  </Label>
+                  <Input
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    placeholder="Adresse complète du chantier"
+                  />
+                </div>
+
+                {/* Contact */}
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    Contact chantier
+                  </Label>
+                  <Input
+                    value={contactChantier}
+                    onChange={(e) => setContactChantier(e.target.value)}
+                    placeholder="Nom du responsable"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    Téléphone
+                  </Label>
+                  <Input
+                    value={telephoneChantier}
+                    onChange={(e) => setTelephoneChantier(e.target.value)}
+                    placeholder="06 XX XX XX XX"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Additional Options */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Référence client</Label>
+                  <Input
+                    value={referenceClient}
+                    onChange={(e) => setReferenceClient(e.target.value)}
+                    placeholder="N° commande client"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Conditions d'accès</Label>
+                  <Input
+                    value={conditionsAcces}
+                    onChange={(e) => setConditionsAcces(e.target.value)}
+                    placeholder="Étroit, pente, etc."
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-3 rounded-lg border">
+                <div>
+                  <Label>Pompe requise</Label>
+                  <p className="text-xs text-muted-foreground">Service de pompage béton</p>
+                </div>
+                <Switch
+                  checked={pompeRequise}
+                  onCheckedChange={setPompeRequise}
+                />
+              </div>
+
+              {pompeRequise && (
+                <Select value={typePompe} onValueChange={setTypePompe}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Type de pompe" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pompe_automotrice">Pompe automotrice</SelectItem>
+                    <SelectItem value="pompe_stationnaire">Pompe stationnaire</SelectItem>
+                    <SelectItem value="pompe_bras">Pompe à bras (36m)</SelectItem>
+                    <SelectItem value="pompe_bras_xl">Pompe à bras (42m+)</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+
+              <div className="space-y-2">
+                <Label>Notes / Instructions</Label>
+                <Textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Instructions particulières..."
+                  rows={2}
+                />
+              </div>
+            </div>
+
+            {/* Price Lock Warning */}
+            <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
+              <p className="text-sm text-warning flex items-center gap-2 font-medium">
+                <Lock className="h-4 w-4" />
+                Prix verrouillé après création
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Le prix de vente sera verrouillé. Seul le CEO pourra le modifier.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => { setDirectOrderOpen(false); resetFormState(); }}>
+              Annuler
+            </Button>
+            <Button 
+              onClick={handleCreateDirectOrder} 
+              disabled={creatingOrder || !orderClientId || !orderFormuleId || !orderVolume || !orderPrix || !deliveryDate} 
+              className="gap-2"
+              size="lg"
+            >
+              {creatingOrder ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle className="h-4 w-4" />
+              )}
+              Créer la Commande
             </Button>
           </DialogFooter>
         </DialogContent>
