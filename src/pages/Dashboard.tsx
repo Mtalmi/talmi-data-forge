@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
+import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
@@ -147,6 +148,9 @@ export default function Dashboard() {
             Actualiser
           </Button>
         </div>
+
+        {/* Leakage Alert Banner - Critical */}
+        {(isCeo || isAccounting) && <LeakageAlertBanner />}
 
         {/* Alerts */}
         <AlertBanner 

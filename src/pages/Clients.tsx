@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
+import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { Button } from '@/components/ui/button';
@@ -234,14 +235,18 @@ export default function Clients() {
               Gestion des clients et conditions de paiement
             </p>
           </div>
-          {canEdit && (
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nouveau Client
-                </Button>
-              </DialogTrigger>
+          <div className="flex items-center gap-2">
+            {/* Smart Quote Calculator */}
+            <SmartQuoteCalculator />
+            
+            {canEdit && (
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nouveau Client
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle>Créer un Client</DialogTitle>
@@ -339,7 +344,8 @@ export default function Clients() {
                 </form>
               </DialogContent>
             </Dialog>
-          )}
+            )}
+          </div>
         </div>
 
         {/* CEO Quick Stats */}
