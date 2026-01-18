@@ -58,6 +58,7 @@ import {
   Play,
   Factory,
   Package,
+  Copy,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -183,6 +184,30 @@ export default function Ventes() {
       // Navigate to Planning page
       navigate('/planning');
     }
+  };
+
+  // Handle copying a BC to a new order (pre-fill form)
+  const handleCopyBc = (bc: BonCommande) => {
+    resetFormState();
+    setOrderClientId(bc.client_id);
+    setOrderFormuleId(bc.formule_id);
+    setOrderVolume(bc.volume_m3.toString());
+    setOrderPrix(bc.prix_vente_m3.toString());
+    if (bc.date_livraison_souhaitee) {
+      setDeliveryDate(new Date(bc.date_livraison_souhaitee));
+    }
+    if (bc.heure_livraison_souhaitee) {
+      setDeliveryTime(bc.heure_livraison_souhaitee);
+    }
+    setDeliveryAddress(bc.adresse_livraison || bc.client?.adresse || '');
+    setContactChantier(bc.contact_chantier || '');
+    setTelephoneChantier(bc.telephone_chantier || '');
+    setReferenceClient(bc.reference_client || '');
+    setConditionsAcces(bc.conditions_acces || '');
+    setPompeRequise(bc.pompe_requise || false);
+    setTypePompe(bc.type_pompe || '');
+    setNotes(bc.notes || '');
+    setDirectOrderOpen(true);
   };
 
   // Handle direct order creation
@@ -549,6 +574,15 @@ export default function Ventes() {
                                     Lancer Production
                                   </Button>
                                 )}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleCopyBc(bc)}
+                                  className="gap-1"
+                                  title="Copier vers nouvelle commande"
+                                >
+                                  <Copy className="h-3 w-3" />
+                                </Button>
                                 <BcPdfGenerator bc={bc} compact />
                               </div>
                             </TableCell>
