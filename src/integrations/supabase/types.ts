@@ -335,6 +335,54 @@ export type Database = {
         }
         Relationships: []
       }
+      mouvements_stock: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          fournisseur: string | null
+          id: string
+          materiau: string
+          notes: string | null
+          numero_bl_fournisseur: string | null
+          quantite: number
+          quantite_apres: number
+          quantite_avant: number
+          reference_id: string | null
+          reference_table: string | null
+          type_mouvement: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          fournisseur?: string | null
+          id?: string
+          materiau: string
+          notes?: string | null
+          numero_bl_fournisseur?: string | null
+          quantite: number
+          quantite_apres: number
+          quantite_avant: number
+          reference_id?: string | null
+          reference_table?: string | null
+          type_mouvement: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          fournisseur?: string | null
+          id?: string
+          materiau?: string
+          notes?: string | null
+          numero_bl_fournisseur?: string | null
+          quantite?: number
+          quantite_apres?: number
+          quantite_avant?: number
+          reference_id?: string | null
+          reference_table?: string | null
+          type_mouvement?: string
+        }
+        Relationships: []
+      }
       prix_achat_actuels: {
         Row: {
           created_at: string
@@ -386,6 +434,42 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      stocks: {
+        Row: {
+          capacite_max: number | null
+          created_at: string
+          derniere_reception_at: string | null
+          id: string
+          materiau: string
+          quantite_actuelle: number
+          seuil_alerte: number
+          unite: string
+          updated_at: string
+        }
+        Insert: {
+          capacite_max?: number | null
+          created_at?: string
+          derniere_reception_at?: string | null
+          id?: string
+          materiau: string
+          quantite_actuelle?: number
+          seuil_alerte?: number
+          unite: string
+          updated_at?: string
+        }
+        Update: {
+          capacite_max?: number | null
+          created_at?: string
+          derniere_reception_at?: string | null
+          id?: string
+          materiau?: string
+          quantite_actuelle?: number
+          seuil_alerte?: number
+          unite?: string
+          updated_at?: string
         }
         Relationships: []
       }
