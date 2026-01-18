@@ -17,6 +17,10 @@ interface BlPrintableProps {
     chauffeur_nom?: string | null;
     client?: { nom_client: string; adresse?: string | null } | null;
     formule?: { designation?: string } | null;
+    // Logistics fields
+    zone?: { nom_zone?: string; code_zone?: string } | null;
+    mode_paiement?: string | null;
+    prix_livraison_m3?: number | null;
   };
   disabled?: boolean;
 }

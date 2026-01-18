@@ -56,6 +56,11 @@ export interface BonCommande {
   validated_at: string | null;
   created_at: string;
   updated_at: string;
+  // Logistics & Payment fields
+  zone_livraison_id: string | null;
+  mode_paiement: string | null;
+  prix_livraison_m3: number | null;
+  prestataire_id: string | null;
   // Joined data
   client?: { nom_client: string; adresse: string | null; telephone: string | null };
   formule?: { designation: string };
@@ -315,7 +320,7 @@ export function useSalesWorkflow() {
 
       const cimentReel = formule ? formule.ciment_kg_m3 * bc.volume_m3 : bc.volume_m3 * 350; // Default 350kg/m³
 
-      // Create the BL entry
+      // Create the BL entry - NOW INCLUDES ALL LOGISTICS & PAYMENT DATA
       const { error: blError } = await supabase
         .from('bons_livraison_reels')
         .insert({
@@ -329,6 +334,11 @@ export function useSalesWorkflow() {
           heure_prevue: bc.heure_livraison_souhaitee || null,
           workflow_status: 'planification',
           statut_paiement: 'En Attente',
+          // Propagate logistics & payment fields from BC
+          zone_livraison_id: bc.zone_livraison_id || null,
+          mode_paiement: bc.mode_paiement || 'virement',
+          prix_livraison_m3: bc.prix_livraison_m3 || 0,
+          prestataire_id: bc.prestataire_id || null,
           created_by: user?.id,
         });
 

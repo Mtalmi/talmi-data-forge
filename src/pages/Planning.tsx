@@ -37,7 +37,12 @@ interface BonLivraison {
   date_livraison: string;
   heure_depart_centrale: string | null;
   created_at: string;
+  // Logistics fields
+  zone_livraison_id: string | null;
+  mode_paiement: string | null;
+  prestataire_id: string | null;
   clients?: { nom_client: string } | null;
+  zones_livraison?: { nom_zone: string; code_zone: string } | null;
 }
 
 interface Camion {
@@ -81,13 +86,17 @@ export default function Planning() {
           date_livraison,
           heure_depart_centrale,
           created_at,
-          clients(nom_client)
+          zone_livraison_id,
+          mode_paiement,
+          prestataire_id,
+          clients(nom_client),
+          zones_livraison(nom_zone, code_zone)
         `)
         .eq('date_livraison', selectedDate)
         .order('heure_prevue', { ascending: true, nullsFirst: false });
 
       if (blError) throw blError;
-      setBons(blData || []);
+      setBons((blData || []) as BonLivraison[]);
 
       // Fetch available trucks
       const { data: camionData, error: camionError } = await supabase
@@ -247,6 +256,12 @@ export default function Planning() {
             <Factory className="h-3 w-3" />
             <span>{bon.volume_m3} m³</span>
           </div>
+          {bon.zones_livraison && (
+            <div className="flex items-center gap-1 text-muted-foreground col-span-2">
+              <Navigation className="h-3 w-3" />
+              <span>Zone {bon.zones_livraison.code_zone}: {bon.zones_livraison.nom_zone}</span>
+            </div>
+          )}
         </div>
 
         {showTimeInput && (

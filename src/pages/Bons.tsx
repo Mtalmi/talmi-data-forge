@@ -59,6 +59,11 @@ interface BonLivraison {
   cur_reel: number | null;
   marge_brute_pct: number | null;
   created_at: string;
+  // Logistics & Payment fields
+  zone_livraison_id: string | null;
+  mode_paiement: string | null;
+  prix_livraison_m3: number | null;
+  prestataire_id: string | null;
 }
 
 interface Formule {
