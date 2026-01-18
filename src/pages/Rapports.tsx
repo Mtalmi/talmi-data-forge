@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useReportingData } from '@/hooks/useReportingData';
+import { MonthlyReportPdfGenerator } from '@/components/reports/MonthlyReportPdfGenerator';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -122,10 +123,7 @@ export default function Rapports() {
             <Button variant="outline" size="icon" onClick={refresh}>
               <RefreshCw className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              Exporter
-            </Button>
+            <MonthlyReportPdfGenerator data={data} period={selectedPeriod} />
           </div>
         </div>
 
