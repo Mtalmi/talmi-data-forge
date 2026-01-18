@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
 import { SiloVisual } from '@/components/stocks/SiloVisual';
 import { ReceptionForm } from '@/components/stocks/ReceptionForm';
+import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -97,6 +97,9 @@ export default function Stocks() {
             )}
           </div>
         </div>
+
+        {/* Recent Receptions Indicator */}
+        <RecentReceptionsCard mouvements={mouvements} />
 
         {/* Critical Alerts Banner */}
         {criticalStocks.length > 0 && (
