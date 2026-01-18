@@ -21,11 +21,13 @@ import {
   CreditCard,
   Star,
   Truck,
-  RefreshCw
+  RefreshCw,
+  ShoppingCart
 } from 'lucide-react';
 import { useFournisseurs, Fournisseur, Achat, FactureFournisseur } from '@/hooks/useFournisseurs';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import PurchaseOrderForm from '@/components/suppliers/PurchaseOrderForm';
 
 const statusColors: Record<string, string> = {
   en_attente: 'bg-yellow-100 text-yellow-800',
@@ -59,12 +61,14 @@ export default function Fournisseurs() {
     stats,
     refresh,
     createFournisseur,
+    createAchat,
     updateAchatStatus,
     recordPayment,
   } = useFournisseurs();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showNewFournisseur, setShowNewFournisseur] = useState(false);
+  const [showNewAchat, setShowNewAchat] = useState(false);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [selectedFacture, setSelectedFacture] = useState<FactureFournisseur | null>(null);
   
@@ -411,8 +415,14 @@ export default function Fournisseurs() {
             </Card>
           </TabsContent>
 
-          {/* Achats Tab */}
           <TabsContent value="achats" className="space-y-4">
+            <div className="flex justify-end">
+              <Button onClick={() => setShowNewAchat(true)}>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Nouvelle Commande
+              </Button>
+            </div>
+            
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -686,6 +696,14 @@ export default function Fournisseurs() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Purchase Order Form */}
+        <PurchaseOrderForm
+          open={showNewAchat}
+          onOpenChange={setShowNewAchat}
+          fournisseurs={fournisseurs}
+          onSubmit={createAchat}
+        />
       </div>
     </MainLayout>
   );
