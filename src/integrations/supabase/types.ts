@@ -109,17 +109,24 @@ export type Database = {
           adresse_livraison: string | null
           bc_id: string
           client_id: string
+          conditions_acces: string | null
+          contact_chantier: string | null
           created_at: string
           created_by: string | null
           date_livraison_souhaitee: string | null
           devis_id: string | null
           formule_id: string
+          heure_livraison_souhaitee: string | null
           id: string
           notes: string | null
+          pompe_requise: boolean | null
           prix_vente_m3: number
           prix_verrouille: boolean
+          reference_client: string | null
           statut: string
+          telephone_chantier: string | null
           total_ht: number
+          type_pompe: string | null
           updated_at: string
           validated_at: string | null
           validated_by: string | null
@@ -129,17 +136,24 @@ export type Database = {
           adresse_livraison?: string | null
           bc_id: string
           client_id: string
+          conditions_acces?: string | null
+          contact_chantier?: string | null
           created_at?: string
           created_by?: string | null
           date_livraison_souhaitee?: string | null
           devis_id?: string | null
           formule_id: string
+          heure_livraison_souhaitee?: string | null
           id?: string
           notes?: string | null
+          pompe_requise?: boolean | null
           prix_vente_m3: number
           prix_verrouille?: boolean
+          reference_client?: string | null
           statut?: string
+          telephone_chantier?: string | null
           total_ht: number
+          type_pompe?: string | null
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
@@ -149,17 +163,24 @@ export type Database = {
           adresse_livraison?: string | null
           bc_id?: string
           client_id?: string
+          conditions_acces?: string | null
+          contact_chantier?: string | null
           created_at?: string
           created_by?: string | null
           date_livraison_souhaitee?: string | null
           devis_id?: string | null
           formule_id?: string
+          heure_livraison_souhaitee?: string | null
           id?: string
           notes?: string | null
+          pompe_requise?: boolean | null
           prix_vente_m3?: number
           prix_verrouille?: boolean
+          reference_client?: string | null
           statut?: string
+          telephone_chantier?: string | null
           total_ht?: number
+          type_pompe?: string | null
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
