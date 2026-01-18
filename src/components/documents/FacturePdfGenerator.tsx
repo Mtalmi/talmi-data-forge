@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { FileDown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
 
 interface FacturePdfGeneratorProps {
   facture: {
@@ -19,16 +22,19 @@ interface FacturePdfGeneratorProps {
     formule?: { designation: string } | null;
     formule_id?: string;
   };
+  compact?: boolean;
 }
 
-export function FacturePdfGenerator({ facture }: FacturePdfGeneratorProps) {
+export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGeneratorProps) {
   const [generating, setGenerating] = useState(false);
+  const [useFullCGV, setUseFullCGV] = useState(facture.volume_m3 >= 500);
 
   const generatePdf = async () => {
     setGenerating(true);
 
     try {
       const tvaAmount = facture.total_ht * (facture.tva_pct / 100);
+      const cgvContent = getCGVContent(facture.volume_m3, useFullCGV);
 
       const pdfContent = `
         <!DOCTYPE html>
@@ -59,12 +65,9 @@ export function FacturePdfGenerator({ facture }: FacturePdfGeneratorProps) {
             .payment-info { background: #fef3c7; border: 2px solid #f59e0b; padding: 20px; border-radius: 8px; margin-top: 30px; }
             .payment-title { font-weight: bold; color: #b45309; margin-bottom: 10px; }
             .bank-details { background: #f9fafb; padding: 15px; border-radius: 8px; margin-top: 15px; font-family: 'Courier New', monospace; font-size: 12px; }
-            .cgv { margin-top: 40px; padding: 20px; background: #f9fafb; border-radius: 8px; font-size: 11px; color: #666; page-break-before: always; }
-            .cgv-title { font-weight: bold; margin-bottom: 10px; color: #333; font-size: 14px; }
-            .cgv-list { list-style: disc; padding-left: 20px; }
-            .cgv-list li { margin-bottom: 8px; }
             .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #666; border-top: 1px solid #e5e7eb; padding-top: 20px; }
-            @media print { body { padding: 20px; } .cgv { page-break-before: always; } }
+            ${CGV_STYLES}
+            @media print { body { padding: 20px; } }
           </style>
         </head>
         <body>
@@ -140,27 +143,13 @@ export function FacturePdfGenerator({ facture }: FacturePdfGeneratorProps) {
             </div>
           </div>
 
-          <div class="cgv">
-            <div class="cgv-title">CONDITIONS GÉNÉRALES DE VENTE</div>
-            <ul class="cgv-list">
-              <li><strong>Livraison:</strong> Livraison gratuite dans un rayon de 20 km. Au-delà, supplément de 5 DH/m³/km.</li>
-              <li><strong>Délai de paiement:</strong> 30 jours fin de mois, sauf conditions particulières négociées.</li>
-              <li><strong>Pénalités de retard:</strong> En cas de retard de paiement, des pénalités de 1.5% par mois seront appliquées conformément à la loi 32-10.</li>
-              <li><strong>Quantité minimale:</strong> Commande minimum de 2 m³ par livraison.</li>
-              <li><strong>Temps d'attente:</strong> Au-delà de 30 minutes sur chantier, facturation de 100 DH/15 minutes.</li>
-              <li><strong>Annulation:</strong> Toute commande annulée moins de 24h avant la livraison sera facturée à 50%.</li>
-              <li><strong>Conformité:</strong> Le béton est livré conforme aux normes NM 10.1.008.</li>
-              <li><strong>Responsabilité:</strong> TALMI BETON n'est pas responsable de l'utilisation du béton après livraison.</li>
-              <li><strong>Réclamations:</strong> Toute réclamation doit être formulée par écrit dans les 48 heures suivant la livraison.</li>
-              <li><strong>Juridiction:</strong> En cas de litige, seuls les tribunaux de Casablanca sont compétents.</li>
-            </ul>
-          </div>
-
           <div class="footer">
             <strong>TALMI BETON SARL</strong><br>
             Zone Industrielle - Casablanca | Tél: +212 5XX XXX XXX | Email: contact@talmibeton.ma<br>
             RC: XXXXXX | IF: XXXXXX | ICE: XXXXXXXXXXXXXXX
           </div>
+
+          ${cgvContent}
         </body>
         </html>
       `;
@@ -183,10 +172,32 @@ export function FacturePdfGenerator({ facture }: FacturePdfGeneratorProps) {
     }
   };
 
+  if (compact) {
+    return (
+      <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
+        {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        PDF
+      </Button>
+    );
+  }
+
   return (
-    <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
-      {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-      Télécharger PDF
-    </Button>
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <Switch 
+          id="facture-cgv-toggle" 
+          checked={useFullCGV} 
+          onCheckedChange={setUseFullCGV}
+          className="data-[state=checked]:bg-primary"
+        />
+        <Label htmlFor="facture-cgv-toggle" className="text-xs text-muted-foreground cursor-pointer">
+          CGV Complètes
+        </Label>
+      </div>
+      <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
+        {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        Télécharger PDF
+      </Button>
+    </div>
   );
 }
