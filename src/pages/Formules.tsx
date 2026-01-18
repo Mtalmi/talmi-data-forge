@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { useFinancialCalculations } from '@/hooks/useFinancialCalculations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,18 +21,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, FlaskConical, AlertCircle, Loader2, Edit, Trash2 } from 'lucide-react';
+import { Plus, FlaskConical, AlertCircle, Loader2, Edit, Trash2, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 const formuleSchema = z.object({
-  formule_id: z.string().min(1, 'ID requis').regex(/^C\d+\/\d+-S\d+-G\d+$/, 'Format: CXX/YY-SX-GX'),
+  formule_id: z.string().min(1, 'ID requis'),
   designation: z.string().min(1, 'Désignation requise'),
   ciment_kg_m3: z.number().min(251, 'Ciment: 251-599 kg/m³').max(599, 'Ciment: 251-599 kg/m³'),
   eau_l_m3: z.number().min(121, 'Eau: 121-219 L/m³').max(219, 'Eau: 121-219 L/m³'),
   adjuvant_l_m3: z.number().min(0, 'Adjuvant >= 0'),
   sable_kg_m3: z.number().min(0).optional(),
   gravier_kg_m3: z.number().min(0).optional(),
+  sable_m3: z.number().min(0).optional(),
+  gravette_m3: z.number().min(0).optional(),
 });
 
 interface Formule {
@@ -42,12 +45,16 @@ interface Formule {
   adjuvant_l_m3: number;
   sable_kg_m3: number | null;
   gravier_kg_m3: number | null;
+  sable_m3: number | null;
+  gravette_m3: number | null;
   created_at: string;
 }
 
 export default function Formules() {
   const { isCeo } = useAuth();
+  const { calculateCUT, fetchPrices } = useFinancialCalculations();
   const [formules, setFormules] = useState<Formule[]>([]);
+  const [formuleCuts, setFormuleCuts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -60,7 +67,9 @@ export default function Formules() {
   const [eau, setEau] = useState('');
   const [adjuvant, setAdjuvant] = useState('0');
   const [sable, setSable] = useState('');
+  const [sableM3, setSableM3] = useState('');
   const [gravier, setGravier] = useState('');
+  const [gravetteM3, setGravetteM3] = useState('');
 
   useEffect(() => {
     fetchFormules();
@@ -75,6 +84,17 @@ export default function Formules() {
 
       if (error) throw error;
       setFormules(data || []);
+      
+      // Calculate CUT for each formula
+      if (data && data.length > 0) {
+        await fetchPrices();
+        const cuts: Record<string, number> = {};
+        for (const f of data) {
+          const cut = await calculateCUT(f);
+          cuts[f.formule_id] = cut;
+        }
+        setFormuleCuts(cuts);
+      }
     } catch (error) {
       console.error('Error fetching formules:', error);
       toast.error('Erreur lors du chargement des formules');
@@ -351,6 +371,12 @@ export default function Formules() {
                   <TableHead className="text-right">Eau</TableHead>
                   <TableHead className="text-right">Ratio E/C</TableHead>
                   <TableHead className="text-right">Adjuvant</TableHead>
+                  <TableHead className="text-right">
+                    <span className="flex items-center justify-end gap-1">
+                      <Calculator className="h-3 w-3" />
+                      CUT
+                    </span>
+                  </TableHead>
                   {isCeo && <TableHead className="w-24">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -367,6 +393,11 @@ export default function Formules() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">{f.adjuvant_l_m3} L/m³</TableCell>
+                    <TableCell className="text-right">
+                      <span className="font-mono font-semibold text-primary">
+                        {formuleCuts[f.formule_id] ? `${formuleCuts[f.formule_id].toFixed(2)} DH` : '—'}
+                      </span>
+                    </TableCell>
                     {isCeo && (
                       <TableCell>
                         <div className="flex items-center gap-1">

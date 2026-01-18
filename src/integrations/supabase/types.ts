@@ -289,33 +289,42 @@ export type Database = {
           adjuvant_l_m3: number
           ciment_kg_m3: number
           created_at: string
+          cut_dh_m3: number | null
           designation: string
           eau_l_m3: number
           formule_id: string
+          gravette_m3: number | null
           gravier_kg_m3: number | null
           sable_kg_m3: number | null
+          sable_m3: number | null
           updated_at: string
         }
         Insert: {
           adjuvant_l_m3?: number
           ciment_kg_m3: number
           created_at?: string
+          cut_dh_m3?: number | null
           designation: string
           eau_l_m3: number
           formule_id: string
+          gravette_m3?: number | null
           gravier_kg_m3?: number | null
           sable_kg_m3?: number | null
+          sable_m3?: number | null
           updated_at?: string
         }
         Update: {
           adjuvant_l_m3?: number
           ciment_kg_m3?: number
           created_at?: string
+          cut_dh_m3?: number | null
           designation?: string
           eau_l_m3?: number
           formule_id?: string
+          gravette_m3?: number | null
           gravier_kg_m3?: number | null
           sable_kg_m3?: number | null
+          sable_m3?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -421,6 +430,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_cut: {
+        Args: {
+          p_adjuvant_l: number
+          p_ciment_kg: number
+          p_eau_l: number
+          p_gravette_m3: number
+          p_sable_m3: number
+        }
+        Returns: number
+      }
+      calculate_quote_price: {
+        Args: {
+          p_distance_km?: number
+          p_formule_id: string
+          p_volume_m3: number
+        }
+        Returns: {
+          cut_per_m3: number
+          fixed_cost_per_m3: number
+          margin_pct: number
+          prix_vente_minimum: number
+          total_cost_per_m3: number
+          total_quote: number
+          transport_extra_per_m3: number
+        }[]
+      }
       can_modify_bon_within_time: {
         Args: { _created_at: string }
         Returns: boolean
