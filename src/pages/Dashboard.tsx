@@ -5,6 +5,7 @@ import KPICard from '@/components/dashboard/KPICard';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
+import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
@@ -148,6 +149,13 @@ export default function Dashboard() {
             Actualiser
           </Button>
         </div>
+
+        {/* Executive Command Center - CEO Only */}
+        {isCeo && (
+          <div className="card-industrial p-4 sm:p-6">
+            <ExecutiveCommandCenter />
+          </div>
+        )}
 
         {/* Leakage Alert Banner - Critical */}
         {(isCeo || isAccounting) && <LeakageAlertBanner />}
