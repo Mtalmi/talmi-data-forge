@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { FileDown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
 
 interface BcPdfGeneratorProps {
   bc: {
@@ -16,15 +19,19 @@ interface BcPdfGeneratorProps {
     client?: { nom_client: string; adresse: string | null; telephone: string | null } | null;
     formule?: { designation: string } | null;
   };
+  compact?: boolean;
 }
 
-export function BcPdfGenerator({ bc }: BcPdfGeneratorProps) {
+export function BcPdfGenerator({ bc, compact = false }: BcPdfGeneratorProps) {
   const [generating, setGenerating] = useState(false);
+  const [useFullCGV, setUseFullCGV] = useState(bc.volume_m3 >= 500);
 
   const generatePdf = async () => {
     setGenerating(true);
 
     try {
+      const cgvContent = getCGVContent(bc.volume_m3, useFullCGV);
+
       const pdfContent = `
         <!DOCTYPE html>
         <html>
@@ -52,11 +59,8 @@ export function BcPdfGenerator({ bc }: BcPdfGeneratorProps) {
             .price-highlight { font-size: 24px; color: #2563eb; font-weight: bold; }
             .confirmation-box { background: #dcfce7; border: 2px solid #22c55e; padding: 20px; border-radius: 8px; margin-top: 30px; }
             .confirmation-title { font-weight: bold; color: #16a34a; margin-bottom: 10px; }
-            .cgv { margin-top: 40px; padding: 20px; background: #f9fafb; border-radius: 8px; font-size: 11px; color: #666; }
-            .cgv-title { font-weight: bold; margin-bottom: 10px; color: #333; }
-            .cgv-list { list-style: disc; padding-left: 20px; }
-            .cgv-list li { margin-bottom: 5px; }
             .footer { margin-top: 40px; text-align: center; font-size: 11px; color: #666; border-top: 1px solid #e5e7eb; padding-top: 20px; }
+            ${CGV_STYLES}
             @media print { body { padding: 20px; } }
           </style>
         </head>
@@ -143,23 +147,13 @@ export function BcPdfGenerator({ bc }: BcPdfGeneratorProps) {
             <p style="margin-top: 10px;"><strong>Référence Devis:</strong> ${bc.devis_id || 'N/A'}</p>
           </div>
 
-          <div class="cgv">
-            <div class="cgv-title">CONDITIONS GÉNÉRALES DE VENTE</div>
-            <ul class="cgv-list">
-              <li><strong>Livraison:</strong> Livraison gratuite dans un rayon de 20 km. Au-delà, supplément de 5 DH/m³/km.</li>
-              <li><strong>Délai de paiement:</strong> Selon conditions client.</li>
-              <li><strong>Quantité minimale:</strong> Commande minimum de 2 m³ par livraison.</li>
-              <li><strong>Temps d'attente:</strong> Au-delà de 30 minutes sur chantier, facturation de 100 DH/15 minutes.</li>
-              <li><strong>Annulation:</strong> Toute commande annulée moins de 24h avant la livraison sera facturée à 50%.</li>
-              <li><strong>Conformité:</strong> Le béton est livré conforme aux normes NM 10.1.008.</li>
-            </ul>
-          </div>
-
           <div class="footer">
             <strong>TALMI BETON SARL</strong><br>
             Zone Industrielle - Casablanca | Tél: +212 5XX XXX XXX | Email: contact@talmibeton.ma<br>
             RC: XXXXXX | IF: XXXXXX | ICE: XXXXXXXXXXXXXXX
           </div>
+
+          ${cgvContent}
         </body>
         </html>
       `;
@@ -182,10 +176,32 @@ export function BcPdfGenerator({ bc }: BcPdfGeneratorProps) {
     }
   };
 
+  if (compact) {
+    return (
+      <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
+        {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        PDF
+      </Button>
+    );
+  }
+
   return (
-    <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
-      {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-      PDF
-    </Button>
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <Switch 
+          id="bc-cgv-toggle" 
+          checked={useFullCGV} 
+          onCheckedChange={setUseFullCGV}
+          className="data-[state=checked]:bg-primary"
+        />
+        <Label htmlFor="bc-cgv-toggle" className="text-xs text-muted-foreground cursor-pointer">
+          CGV Complètes
+        </Label>
+      </div>
+      <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
+        {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+        Télécharger PDF
+      </Button>
+    </div>
   );
 }

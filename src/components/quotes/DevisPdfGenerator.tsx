@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { FileDown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
 
 interface DevisPdfGeneratorProps {
   devis: {
@@ -24,12 +27,14 @@ interface DevisPdfGeneratorProps {
 
 export default function DevisPdfGenerator({ devis }: DevisPdfGeneratorProps) {
   const [generating, setGenerating] = useState(false);
+  const [useFullCGV, setUseFullCGV] = useState(devis.volume_m3 >= 500);
 
   const generatePdf = async () => {
     setGenerating(true);
     
     try {
-      // Create PDF content using HTML/CSS and print dialog
+      const cgvContent = getCGVContent(devis.volume_m3, useFullCGV);
+      
       const pdfContent = `
         <!DOCTYPE html>
         <html>
@@ -131,26 +136,6 @@ export default function DevisPdfGenerator({ devis }: DevisPdfGeneratorProps) {
               color: #f59e0b;
               font-weight: bold;
             }
-            .cgv {
-              margin-top: 40px;
-              padding: 20px;
-              background: #f9fafb;
-              border-radius: 8px;
-              font-size: 11px;
-              color: #666;
-            }
-            .cgv-title {
-              font-weight: bold;
-              margin-bottom: 10px;
-              color: #333;
-            }
-            .cgv-list {
-              list-style: disc;
-              padding-left: 20px;
-            }
-            .cgv-list li {
-              margin-bottom: 5px;
-            }
             .footer {
               margin-top: 40px;
               text-align: center;
@@ -169,6 +154,7 @@ export default function DevisPdfGenerator({ devis }: DevisPdfGeneratorProps) {
               font-weight: 500;
               margin-top: 10px;
             }
+            ${CGV_STYLES}
             @media print {
               body { padding: 20px; }
               .no-print { display: none; }
@@ -241,65 +227,23 @@ export default function DevisPdfGenerator({ devis }: DevisPdfGeneratorProps) {
             </table>
           </div>
 
-          <div class="section">
-            <div class="section-title">Décomposition des Coûts (Confidentiel)</div>
-            <table class="table">
-              <tr>
-                <td>Coût Unitaire Théorique (CUT)</td>
-                <td class="number">${devis.cut_per_m3.toFixed(2)} DH/m³</td>
-              </tr>
-              <tr>
-                <td>Frais Fixes</td>
-                <td class="number">${devis.fixed_cost_per_m3.toFixed(2)} DH/m³</td>
-              </tr>
-              ${devis.transport_extra_per_m3 > 0 ? `
-              <tr>
-                <td>Transport Supplémentaire</td>
-                <td class="number">${devis.transport_extra_per_m3.toFixed(2)} DH/m³</td>
-              </tr>
-              ` : ''}
-              <tr style="font-weight: bold; background: #f3f4f6;">
-                <td>Coût Total / m³</td>
-                <td class="number">${devis.total_cost_per_m3.toFixed(2)} DH/m³</td>
-              </tr>
-              <tr style="color: #16a34a;">
-                <td>Marge Appliquée</td>
-                <td class="number">${devis.margin_pct}%</td>
-              </tr>
-            </table>
-          </div>
-
-          <div class="cgv">
-            <div class="cgv-title">CONDITIONS GÉNÉRALES DE VENTE</div>
-            <ul class="cgv-list">
-              <li><strong>Livraison:</strong> Livraison gratuite dans un rayon de 20 km. Au-delà, supplément de 5 DH/m³/km.</li>
-              <li><strong>Délai de paiement:</strong> 30 jours fin de mois, sauf conditions particulières.</li>
-              <li><strong>Validité du devis:</strong> Ce devis est valable 30 jours à compter de sa date d'émission.</li>
-              <li><strong>Quantité minimale:</strong> Commande minimum de 2 m³ par livraison.</li>
-              <li><strong>Temps d'attente:</strong> Au-delà de 30 minutes sur chantier, facturation de 100 DH/15 minutes.</li>
-              <li><strong>Annulation:</strong> Toute commande annulée moins de 24h avant la livraison sera facturée à 50%.</li>
-              <li><strong>Conformité:</strong> Le béton est livré conforme aux normes NM 10.1.008.</li>
-              <li><strong>Responsabilité:</strong> TALMI BETON n'est pas responsable de l'utilisation du béton après livraison.</li>
-            </ul>
-          </div>
-
           <div class="footer">
             <strong>TALMI BETON SARL</strong><br>
             Zone Industrielle - Casablanca | Tél: +212 5XX XXX XXX | Email: contact@talmibeton.ma<br>
             RC: XXXXXX | IF: XXXXXX | ICE: XXXXXXXXXXXXXXX
           </div>
+
+          ${cgvContent}
         </body>
         </html>
       `;
 
-      // Open in new window for printing
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.write(pdfContent);
         printWindow.document.close();
         printWindow.focus();
         
-        // Wait for content to load then print
         setTimeout(() => {
           printWindow.print();
         }, 500);
@@ -317,19 +261,32 @@ export default function DevisPdfGenerator({ devis }: DevisPdfGeneratorProps) {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={generatePdf}
-      disabled={generating}
-      className="gap-2"
-    >
-      {generating ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <FileDown className="h-4 w-4" />
-      )}
-      Télécharger PDF
-    </Button>
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        <Switch 
+          id="cgv-toggle" 
+          checked={useFullCGV} 
+          onCheckedChange={setUseFullCGV}
+          className="data-[state=checked]:bg-primary"
+        />
+        <Label htmlFor="cgv-toggle" className="text-xs text-muted-foreground cursor-pointer">
+          CGV Complètes
+        </Label>
+      </div>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={generatePdf}
+        disabled={generating}
+        className="gap-2"
+      >
+        {generating ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <FileDown className="h-4 w-4" />
+        )}
+        Télécharger PDF
+      </Button>
+    </div>
   );
 }
