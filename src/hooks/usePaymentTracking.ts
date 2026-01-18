@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { differenceInDays } from 'date-fns';
+import { differenceInDays, addDays, format } from 'date-fns';
 
 export interface PaymentRecord {
   bl_id: string;
@@ -17,6 +17,9 @@ export interface PaymentRecord {
   days_overdue: number;
   aging_bucket: '0-30' | '31-60' | '61-90' | '90+';
   facture_id: string | null;
+  client_email?: string;
+  date_echeance: string;
+  reminder_sent?: boolean;
 }
 
 export interface AgingBucket {
@@ -102,7 +105,7 @@ export function usePaymentTracking() {
       // Fetch clients for names and payment terms
       const { data: clients, error: clientsError } = await supabase
         .from('clients')
-        .select('client_id, nom_client, delai_paiement_jours');
+        .select('client_id, nom_client, delai_paiement_jours, email');
 
       if (clientsError) throw clientsError;
 
@@ -129,7 +132,9 @@ export function usePaymentTracking() {
           bl_id: bon.bl_id,
           client_id: bon.client_id,
           client_nom: client?.nom_client || 'Client Inconnu',
+          client_email: client?.email || undefined,
           date_livraison: bon.date_livraison,
+          date_echeance: format(dueDate, 'yyyy-MM-dd'),
           volume_m3: bon.volume_m3,
           prix_vente_m3: prixVente,
           prix_livraison_m3: prixLivraison,
@@ -243,6 +248,61 @@ export function usePaymentTracking() {
     }
   }, [fetchPaymentData]);
 
+  // Get payments in 31-60 day aging bucket eligible for reminders
+  const getAgingReminders = useCallback(() => {
+    return payments.filter(p => 
+      p.aging_bucket === '31-60' && 
+      p.statut_paiement !== 'Payé' &&
+      p.client_email
+    );
+  }, [payments]);
+
+  // Send payment reminder emails for 31-60 day bucket
+  const sendPaymentReminders = useCallback(async (paymentIds?: string[]): Promise<{ sent: number; failed: number; errors: string[] }> => {
+    const eligiblePayments = paymentIds 
+      ? payments.filter(p => paymentIds.includes(p.bl_id) && p.client_email)
+      : getAgingReminders();
+
+    let sent = 0;
+    let failed = 0;
+    const errors: string[] = [];
+
+    for (const payment of eligiblePayments) {
+      if (!payment.client_email) {
+        failed++;
+        errors.push(`${payment.client_nom}: Pas d'email configuré`);
+        continue;
+      }
+
+      try {
+        const { error } = await supabase.functions.invoke('send-payment-reminder', {
+          body: {
+            to: payment.client_email,
+            clientName: payment.client_nom,
+            factureId: payment.facture_id || payment.bl_id,
+            montantDu: payment.total_ht,
+            dateEcheance: payment.date_echeance,
+            joursRetard: payment.days_overdue,
+          },
+        });
+
+        if (error) {
+          failed++;
+          errors.push(`${payment.client_nom}: ${error.message}`);
+        } else {
+          sent++;
+          console.log(`Payment reminder sent to ${payment.client_nom} (${payment.client_email})`);
+        }
+      } catch (err) {
+        failed++;
+        errors.push(`${payment.client_nom}: Erreur d'envoi`);
+        console.error('Error sending payment reminder:', err);
+      }
+    }
+
+    return { sent, failed, errors };
+  }, [payments, getAgingReminders]);
+
   useEffect(() => {
     fetchPaymentData();
   }, [fetchPaymentData]);
@@ -254,5 +314,7 @@ export function usePaymentTracking() {
     error,
     refetch: fetchPaymentData,
     markAsPaid,
+    getAgingReminders,
+    sendPaymentReminders,
   };
 }

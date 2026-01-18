@@ -51,6 +51,8 @@ import {
   Calendar,
   Loader2,
   DollarSign,
+  Mail,
+  Send,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -68,15 +70,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 
 export default function Paiements() {
   const { isCeo, role } = useAuth();
-  const { payments, stats, loading, refetch, markAsPaid } = usePaymentTracking();
+  const { payments, stats, loading, refetch, markAsPaid, getAgingReminders, sendPaymentReminders } = usePaymentTracking();
   
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [modeFilter, setModeFilter] = useState<string>('all');
   const [agingFilter, setAgingFilter] = useState<string>('all');
   const [markingPaid, setMarkingPaid] = useState<string | null>(null);
+  const [sendingReminders, setSendingReminders] = useState(false);
 
   const canManagePayments = isCeo || role === 'agent_administratif' || role === 'accounting';
+  
+  // Get eligible payments for reminders (31-60 days)
+  const reminderEligible = getAgingReminders();
 
   // Filter payments
   const filteredPayments = payments.filter(p => {
@@ -98,6 +104,26 @@ export default function Paiements() {
       toast.success('Paiement marqué comme payé');
     } else {
       toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const handleSendReminders = async () => {
+    if (reminderEligible.length === 0) {
+      toast.info('Aucune facture éligible aux rappels (31-60 jours)');
+      return;
+    }
+
+    setSendingReminders(true);
+    const result = await sendPaymentReminders();
+    setSendingReminders(false);
+
+    if (result.sent > 0) {
+      toast.success(`${result.sent} rappel(s) envoyé(s) avec succès`);
+    }
+    if (result.failed > 0) {
+      toast.error(`${result.failed} échec(s) d'envoi`, {
+        description: result.errors.slice(0, 3).join(', '),
+      });
     }
   };
 
@@ -138,11 +164,63 @@ export default function Paiements() {
               Analyse des créances et rapports d'antériorité
             </p>
           </div>
-          <Button variant="outline" size="sm" onClick={refetch}>
-            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-            Actualiser
-          </Button>
+          <div className="flex gap-2">
+            {canManagePayments && reminderEligible.length > 0 && (
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={handleSendReminders}
+                disabled={sendingReminders}
+                className="gap-2"
+              >
+                {sendingReminders ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+                Envoyer Rappels ({reminderEligible.length})
+              </Button>
+            )}
+            <Button variant="outline" size="sm" onClick={refetch}>
+              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+              Actualiser
+            </Button>
+          </div>
         </div>
+
+        {/* Reminder Alert Banner */}
+        {canManagePayments && reminderEligible.length > 0 && (
+          <Card className="border-warning/50 bg-warning/5">
+            <CardContent className="pt-4">
+              <div className="flex items-center gap-4">
+                <div className="p-2 rounded-lg bg-warning/10">
+                  <Mail className="h-5 w-5 text-warning" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-warning">Rappels de Paiement Automatiques</p>
+                  <p className="text-sm text-muted-foreground">
+                    {reminderEligible.length} facture(s) dans la tranche 31-60 jours éligible(s) aux rappels • 
+                    Total: {formatCurrency(reminderEligible.reduce((sum, p) => sum + p.total_ht, 0))}
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleSendReminders}
+                  disabled={sendingReminders}
+                  className="gap-2 border-warning/50 text-warning hover:bg-warning/10"
+                >
+                  {sendingReminders ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  Envoyer les rappels
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -462,22 +540,42 @@ export default function Paiements() {
                           </TableCell>
                           {canManagePayments && (
                             <TableCell className="text-right">
-                              {payment.statut_paiement !== 'Payé' && (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleMarkPaid(payment.bl_id)}
-                                  disabled={markingPaid === payment.bl_id}
-                                  className="gap-1"
-                                >
-                                  {markingPaid === payment.bl_id ? (
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                  ) : (
-                                    <CheckCircle className="h-3 w-3" />
-                                  )}
-                                  Encaisser
-                                </Button>
-                              )}
+                              <div className="flex items-center justify-end gap-1">
+                                {payment.statut_paiement !== 'Payé' && payment.aging_bucket === '31-60' && payment.client_email && (
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={async () => {
+                                      const result = await sendPaymentReminders([payment.bl_id]);
+                                      if (result.sent > 0) {
+                                        toast.success(`Rappel envoyé à ${payment.client_nom}`);
+                                      } else {
+                                        toast.error('Échec de l\'envoi');
+                                      }
+                                    }}
+                                    className="gap-1 text-warning hover:text-warning hover:bg-warning/10"
+                                    title="Envoyer un rappel"
+                                  >
+                                    <Mail className="h-3 w-3" />
+                                  </Button>
+                                )}
+                                {payment.statut_paiement !== 'Payé' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleMarkPaid(payment.bl_id)}
+                                    disabled={markingPaid === payment.bl_id}
+                                    className="gap-1"
+                                  >
+                                    {markingPaid === payment.bl_id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <CheckCircle className="h-3 w-3" />
+                                    )}
+                                    Encaisser
+                                  </Button>
+                                )}
+                              </div>
                             </TableCell>
                           )}
                         </TableRow>
