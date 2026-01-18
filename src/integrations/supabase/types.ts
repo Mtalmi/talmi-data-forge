@@ -14,10 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertes_systeme: {
+        Row: {
+          created_at: string | null
+          destinataire_role: string | null
+          id: string
+          lu: boolean | null
+          lu_at: string | null
+          lu_par: string | null
+          message: string
+          niveau: string
+          reference_id: string | null
+          reference_table: string | null
+          titre: string
+          type_alerte: string
+        }
+        Insert: {
+          created_at?: string | null
+          destinataire_role?: string | null
+          id?: string
+          lu?: boolean | null
+          lu_at?: string | null
+          lu_par?: string | null
+          message: string
+          niveau: string
+          reference_id?: string | null
+          reference_table?: string | null
+          titre: string
+          type_alerte: string
+        }
+        Update: {
+          created_at?: string | null
+          destinataire_role?: string | null
+          id?: string
+          lu?: boolean | null
+          lu_at?: string | null
+          lu_par?: string | null
+          message?: string
+          niveau?: string
+          reference_id?: string | null
+          reference_table?: string | null
+          titre?: string
+          type_alerte?: string
+        }
+        Relationships: []
+      }
+      approbations_ceo: {
+        Row: {
+          approuve_at: string | null
+          approuve_par: string | null
+          commentaire: string | null
+          demande_at: string | null
+          demande_par: string
+          details: Json | null
+          id: string
+          montant: number | null
+          reference_id: string
+          reference_table: string
+          statut: string
+          type_approbation: string
+        }
+        Insert: {
+          approuve_at?: string | null
+          approuve_par?: string | null
+          commentaire?: string | null
+          demande_at?: string | null
+          demande_par: string
+          details?: Json | null
+          id?: string
+          montant?: number | null
+          reference_id: string
+          reference_table: string
+          statut?: string
+          type_approbation: string
+        }
+        Update: {
+          approuve_at?: string | null
+          approuve_par?: string | null
+          commentaire?: string | null
+          demande_at?: string | null
+          demande_par?: string
+          details?: Json | null
+          id?: string
+          montant?: number | null
+          reference_id?: string
+          reference_table?: string
+          statut?: string
+          type_approbation?: string
+        }
+        Relationships: []
+      }
       bons_livraison_reels: {
         Row: {
           adjuvant_reel_l: number | null
           alerte_ecart: boolean | null
+          alerte_marge: boolean | null
+          alerte_planification: boolean | null
+          annule_at: string | null
+          annule_par: string | null
+          assignation_count: number | null
           bl_id: string
           ciment_reel_kg: number
           client_id: string
@@ -27,16 +122,35 @@ export type Database = {
           date_livraison: string
           eau_reel_l: number | null
           ecart_marge: number | null
+          facture_generee: boolean | null
+          facture_id: string | null
           formule_id: string
+          heure_depart_prevue: string | null
+          heure_depart_reelle: string | null
+          justification_ecart: string | null
           km_parcourus: number | null
+          marge_brute_pct: number | null
+          prix_vente_m3: number | null
+          raison_annulation: string | null
           statut_paiement: string
+          temps_attente_site: number | null
           temps_mission_heures: number | null
+          toupie_assignee: string | null
           updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+          validation_technique: boolean | null
           volume_m3: number
+          workflow_status: string | null
         }
         Insert: {
           adjuvant_reel_l?: number | null
           alerte_ecart?: boolean | null
+          alerte_marge?: boolean | null
+          alerte_planification?: boolean | null
+          annule_at?: string | null
+          annule_par?: string | null
+          assignation_count?: number | null
           bl_id: string
           ciment_reel_kg: number
           client_id: string
@@ -46,16 +160,35 @@ export type Database = {
           date_livraison?: string
           eau_reel_l?: number | null
           ecart_marge?: number | null
+          facture_generee?: boolean | null
+          facture_id?: string | null
           formule_id: string
+          heure_depart_prevue?: string | null
+          heure_depart_reelle?: string | null
+          justification_ecart?: string | null
           km_parcourus?: number | null
+          marge_brute_pct?: number | null
+          prix_vente_m3?: number | null
+          raison_annulation?: string | null
           statut_paiement?: string
+          temps_attente_site?: number | null
           temps_mission_heures?: number | null
+          toupie_assignee?: string | null
           updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          validation_technique?: boolean | null
           volume_m3: number
+          workflow_status?: string | null
         }
         Update: {
           adjuvant_reel_l?: number | null
           alerte_ecart?: boolean | null
+          alerte_marge?: boolean | null
+          alerte_planification?: boolean | null
+          annule_at?: string | null
+          annule_par?: string | null
+          assignation_count?: number | null
           bl_id?: string
           ciment_reel_kg?: number
           client_id?: string
@@ -65,12 +198,26 @@ export type Database = {
           date_livraison?: string
           eau_reel_l?: number | null
           ecart_marge?: number | null
+          facture_generee?: boolean | null
+          facture_id?: string | null
           formule_id?: string
+          heure_depart_prevue?: string | null
+          heure_depart_reelle?: string | null
+          justification_ecart?: string | null
           km_parcourus?: number | null
+          marge_brute_pct?: number | null
+          prix_vente_m3?: number | null
+          raison_annulation?: string | null
           statut_paiement?: string
+          temps_attente_site?: number | null
           temps_mission_heures?: number | null
+          toupie_assignee?: string | null
           updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          validation_technique?: boolean | null
           volume_m3?: number
+          workflow_status?: string | null
         }
         Relationships: [
           {
@@ -95,9 +242,13 @@ export type Database = {
           client_id: string
           contact_personne: string | null
           created_at: string
+          credit_bloque: boolean | null
           delai_paiement_jours: number | null
+          derniere_commande_at: string | null
           email: string | null
+          limite_credit_dh: number | null
           nom_client: string
+          solde_du: number | null
           telephone: string | null
           updated_at: string
         }
@@ -106,9 +257,13 @@ export type Database = {
           client_id: string
           contact_personne?: string | null
           created_at?: string
+          credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
+          derniere_commande_at?: string | null
           email?: string | null
+          limite_credit_dh?: number | null
           nom_client: string
+          solde_du?: number | null
           telephone?: string | null
           updated_at?: string
         }
@@ -117,9 +272,13 @@ export type Database = {
           client_id?: string
           contact_personne?: string | null
           created_at?: string
+          credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
+          derniere_commande_at?: string | null
           email?: string | null
+          limite_credit_dh?: number | null
           nom_client?: string
+          solde_du?: number | null
           telephone?: string | null
           updated_at?: string
         }
