@@ -23,28 +23,36 @@ import {
   PackageSearch,
   Clock,
   MapPin,
+  Menu,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { useDeviceType } from '@/hooks/useDeviceType';
+import { useState } from 'react';
 
 interface NavItemProps {
   to: string;
   icon: React.ReactNode;
   label: string;
   badge?: number;
+  onClick?: () => void;
 }
 
-function NavItem({ to, icon, label, badge }: NavItemProps) {
+function NavItem({ to, icon, label, badge, onClick }: NavItemProps) {
   const location = useLocation();
   const isActive = location.pathname === to;
 
   return (
     <NavLink
       to={to}
+      onClick={onClick}
       className={cn(
         'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200',
         'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+        'min-h-[44px]', // Touch-friendly minimum height
         isActive && 'bg-primary/10 text-primary border-l-2 border-primary -ml-[2px] pl-[14px]'
       )}
     >
@@ -60,7 +68,7 @@ function NavItem({ to, icon, label, badge }: NavItemProps) {
   );
 }
 
-export default function Sidebar() {
+function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
   const { user, role, signOut, isCeo, canReadPrix } = useAuth();
 
   const getRoleBadge = () => {
@@ -81,7 +89,7 @@ export default function Sidebar() {
   const roleBadge = getRoleBadge();
 
   return (
-    <aside className="flex flex-col w-64 h-screen bg-sidebar border-r border-sidebar-border">
+    <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
         <div className="p-2 rounded-lg bg-primary/10">
@@ -95,36 +103,36 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} label="Tableau de bord" />
+        <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} label="Tableau de bord" onClick={onNavClick} />
         
         <div className="pt-4 pb-2">
           <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Production
           </p>
         </div>
-        <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" />
-        <NavItem to="/bons" icon={<Truck className="h-5 w-5" />} label="Bons de Livraison" />
-        <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" />
-        <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" />
-        <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" />
-        <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" />
+        <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />
+        <NavItem to="/bons" icon={<Truck className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />
+        <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />
+        <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />
+        <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />
+        <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" onClick={onNavClick} />
         
         <div className="pt-4 pb-2">
           <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Gestion
           </p>
         </div>
-        <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" />
-        <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" />
-        <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" />
-        <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" />
-        <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" />
-        <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" />
-        <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" />
-        <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" />
-        <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" />
+        <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" onClick={onNavClick} />
+        <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" onClick={onNavClick} />
+        <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />
+        <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />
+        <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />
+        <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />
+        <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />
+        <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />
+        <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />
         {canReadPrix && (
-          <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" />
+          <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />
         )}
         
         {isCeo && (
@@ -134,10 +142,10 @@ export default function Sidebar() {
                 Contrôle CEO
               </p>
             </div>
-            <NavItem to="/rapports" icon={<BarChart3 className="h-5 w-5" />} label="Rapports & BI" />
-            <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" />
-            <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" />
-            <NavItem to="/users" icon={<Shield className="h-5 w-5" />} label="Utilisateurs" />
+            <NavItem to="/rapports" icon={<BarChart3 className="h-5 w-5" />} label="Rapports & BI" onClick={onNavClick} />
+            <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" onClick={onNavClick} />
+            <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" onClick={onNavClick} />
+            <NavItem to="/users" icon={<Shield className="h-5 w-5" />} label="Utilisateurs" onClick={onNavClick} />
           </>
         )}
       </nav>
@@ -162,13 +170,54 @@ export default function Sidebar() {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          className="w-full justify-start text-muted-foreground hover:text-foreground min-h-[44px]"
           onClick={signOut}
         >
           <LogOut className="h-4 w-4 mr-2" />
           Déconnexion
         </Button>
       </div>
+    </>
+  );
+}
+
+// Mobile Sidebar with Sheet
+export function MobileSidebar() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="lg:hidden min-h-[44px] min-w-[44px]"
+        >
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="p-0 w-72 bg-sidebar">
+        <div className="flex flex-col h-full">
+          <SidebarContent onNavClick={() => setOpen(false)} />
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+// Desktop Sidebar
+export default function Sidebar() {
+  const { isMobile, isTablet } = useDeviceType();
+
+  // Hide sidebar on mobile/tablet - use MobileSidebar instead
+  if (isMobile || isTablet) {
+    return null;
+  }
+
+  return (
+    <aside className="hidden lg:flex flex-col w-64 h-screen bg-sidebar border-r border-sidebar-border">
+      <SidebarContent />
     </aside>
   );
 }
