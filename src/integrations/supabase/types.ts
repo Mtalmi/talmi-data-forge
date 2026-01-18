@@ -236,6 +236,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles_v2: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -252,10 +273,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_role_v2: {
+        Args: { _role: string; _user_id: string }
+        Returns: boolean
+      }
       is_accounting: { Args: { _user_id: string }; Returns: boolean }
+      is_agent_administratif: { Args: { _user_id: string }; Returns: boolean }
+      is_centraliste: { Args: { _user_id: string }; Returns: boolean }
       is_ceo: { Args: { _user_id: string }; Returns: boolean }
+      is_ceo_v2: { Args: { _user_id: string }; Returns: boolean }
       is_commercial: { Args: { _user_id: string }; Returns: boolean }
+      is_directeur_operations: { Args: { _user_id: string }; Returns: boolean }
       is_operator: { Args: { _user_id: string }; Returns: boolean }
+      is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
+      is_superviseur: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
