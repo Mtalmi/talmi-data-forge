@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
+import { ExportButton } from '@/components/documents/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -236,9 +237,34 @@ export default function Clients() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            <ExportButton
+              data={clients.map(c => ({
+                id: c.client_id,
+                nom: c.nom_client,
+                contact: c.contact_personne || '',
+                telephone: c.telephone || '',
+                email: c.email || '',
+                delai: c.delai_paiement_jours || 30,
+                solde_du: c.solde_du || 0,
+                limite_credit: c.limite_credit_dh || 50000,
+                bloque: c.credit_bloque ? 'Oui' : 'Non',
+              }))}
+              columns={[
+                { key: 'id', label: 'ID' },
+                { key: 'nom', label: 'Entreprise' },
+                { key: 'contact', label: 'Contact' },
+                { key: 'telephone', label: 'Téléphone' },
+                { key: 'email', label: 'Email' },
+                { key: 'delai', label: 'Délai (jours)' },
+                { key: 'solde_du', label: 'Solde Dû (DH)' },
+                { key: 'limite_credit', label: 'Limite Crédit (DH)' },
+                { key: 'bloque', label: 'Bloqué' },
+              ]}
+              filename="clients"
+            />
+            
             {/* Smart Quote Calculator */}
             <SmartQuoteCalculator />
-            
             {canEdit && (
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>

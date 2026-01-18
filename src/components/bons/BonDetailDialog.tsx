@@ -272,8 +272,11 @@ export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetai
             blId={bon.bl_id}
             formuleId={bon.formule_id}
             volumeM3={bon.volume_m3}
-            curReel={bon.cur_reel}
+            cimentReelKg={bon.ciment_reel_kg}
+            adjuvantReelL={bon.adjuvant_reel_l}
+            eauReelL={bon.eau_reel_l}
             prixVenteM3={bon.prix_vente_m3}
+            curReelFromDb={bon.cur_reel}
             margeBrutePct={bon.marge_brute_pct}
           />
 

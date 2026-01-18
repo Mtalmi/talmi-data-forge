@@ -4,6 +4,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
+import { ExportButton } from '@/components/documents/ExportButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -366,7 +367,35 @@ export default function Bons() {
               Workflow complet de la commande à la facturation
             </p>
           </div>
-          {canCreateBons && (
+          <div className="flex items-center gap-2">
+            <ExportButton
+              data={bons.map(b => ({
+                bl_id: b.bl_id,
+                date: b.date_livraison,
+                client: b.client_id,
+                formule: b.formule_id,
+                volume: b.volume_m3,
+                ciment_kg: b.ciment_reel_kg,
+                workflow: b.workflow_status || 'planification',
+                paiement: b.statut_paiement,
+                cur: b.cur_reel || 0,
+                marge_pct: b.marge_brute_pct || 0,
+              }))}
+              columns={[
+                { key: 'bl_id', label: 'N° Bon' },
+                { key: 'date', label: 'Date' },
+                { key: 'client', label: 'Client' },
+                { key: 'formule', label: 'Formule' },
+                { key: 'volume', label: 'Volume (m³)' },
+                { key: 'ciment_kg', label: 'Ciment (kg)' },
+                { key: 'workflow', label: 'Statut' },
+                { key: 'paiement', label: 'Paiement' },
+                { key: 'cur', label: 'CUR (DH/m³)' },
+                { key: 'marge_pct', label: 'Marge (%)' },
+              ]}
+              filename="bons_livraison"
+            />
+            {canCreateBons && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -530,7 +559,8 @@ export default function Bons() {
                 </form>
               </DialogContent>
             </Dialog>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Workflow Legend */}
