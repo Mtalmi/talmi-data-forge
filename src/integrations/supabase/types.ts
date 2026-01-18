@@ -201,6 +201,7 @@ export type Database = {
           annule_par: string | null
           assignation_count: number | null
           bl_id: string
+          camion_assigne: string | null
           chauffeur_nom: string | null
           ciment_reel_kg: number
           client_id: string
@@ -218,6 +219,7 @@ export type Database = {
           heure_depart_centrale: string | null
           heure_depart_prevue: string | null
           heure_depart_reelle: string | null
+          heure_prevue: string | null
           heure_retour_centrale: string | null
           justification_ecart: string | null
           km_parcourus: number | null
@@ -250,6 +252,7 @@ export type Database = {
           annule_par?: string | null
           assignation_count?: number | null
           bl_id: string
+          camion_assigne?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg: number
           client_id: string
@@ -267,6 +270,7 @@ export type Database = {
           heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
           heure_depart_reelle?: string | null
+          heure_prevue?: string | null
           heure_retour_centrale?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
@@ -299,6 +303,7 @@ export type Database = {
           annule_par?: string | null
           assignation_count?: number | null
           bl_id?: string
+          camion_assigne?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg?: number
           client_id?: string
@@ -316,6 +321,7 @@ export type Database = {
           heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
           heure_depart_reelle?: string | null
+          heure_prevue?: string | null
           heure_retour_centrale?: string | null
           justification_ecart?: string | null
           km_parcourus?: number | null
@@ -338,6 +344,13 @@ export type Database = {
           workflow_status?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bons_livraison_reels_camion_assigne_fkey"
+            columns: ["camion_assigne"]
+            isOneToOne: false
+            referencedRelation: "flotte"
+            referencedColumns: ["id_camion"]
+          },
           {
             foreignKeyName: "bons_livraison_reels_client_id_fkey"
             columns: ["client_id"]

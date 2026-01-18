@@ -1,0 +1,493 @@
+import { useState, useEffect, useMemo } from 'react';
+import MainLayout from '@/components/layout/MainLayout';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { format, addHours, parseISO, isWithinInterval, differenceInMinutes } from 'date-fns';
+import { fr } from 'date-fns/locale';
+import { 
+  Clock, 
+  Truck, 
+  AlertTriangle, 
+  Factory, 
+  Navigation, 
+  RefreshCw,
+  Calendar,
+  Package,
+  Users,
+  Timer
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface BonLivraison {
+  bl_id: string;
+  client_id: string;
+  formule_id: string;
+  volume_m3: number;
+  workflow_status: string;
+  heure_prevue: string | null;
+  camion_assigne: string | null;
+  toupie_assignee: string | null;
+  date_livraison: string;
+  heure_depart_centrale: string | null;
+  created_at: string;
+  clients?: { nom_client: string } | null;
+}
+
+interface Camion {
+  id_camion: string;
+  immatriculation: string | null;
+  chauffeur: string | null;
+  statut: string;
+  capacite_m3: number | null;
+}
+
+export default function Planning() {
+  const [bons, setBons] = useState<BonLivraison[]>([]);
+  const [camions, setCamions] = useState<Camion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch BLs for the selected date
+      const { data: blData, error: blError } = await supabase
+        .from('bons_livraison_reels')
+        .select(`
+          bl_id,
+          client_id,
+          formule_id,
+          volume_m3,
+          workflow_status,
+          heure_prevue,
+          camion_assigne,
+          toupie_assignee,
+          date_livraison,
+          heure_depart_centrale,
+          created_at,
+          clients(nom_client)
+        `)
+        .eq('date_livraison', selectedDate)
+        .order('heure_prevue', { ascending: true, nullsFirst: false });
+
+      if (blError) throw blError;
+      setBons(blData || []);
+
+      // Fetch available trucks
+      const { data: camionData, error: camionError } = await supabase
+        .from('flotte')
+        .select('id_camion, immatriculation, chauffeur, statut, capacite_m3')
+        .eq('type', 'Toupie')
+        .order('id_camion');
+
+      if (camionError) throw camionError;
+      setCamions(camionData || []);
+
+    } catch (error) {
+      console.error('Error fetching planning data:', error);
+      toast.error('Erreur lors du chargement des données');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedDate]);
+
+  // Categorize BLs for the dispatch board
+  const { aProduire, enChargement, enLivraison, conflicts } = useMemo(() => {
+    const now = new Date();
+    const in2Hours = addHours(now, 2);
+    
+    const aProduire: BonLivraison[] = [];
+    const enChargement: BonLivraison[] = [];
+    const enLivraison: BonLivraison[] = [];
+    const scheduledTimes: { bl: BonLivraison; time: Date }[] = [];
+
+    bons.forEach(bon => {
+      if (bon.workflow_status === 'production') {
+        enChargement.push(bon);
+      } else if (bon.workflow_status === 'en_livraison') {
+        enLivraison.push(bon);
+      } else if (['planification', 'validation_technique'].includes(bon.workflow_status)) {
+        // Check if scheduled within next 2 hours
+        if (bon.heure_prevue) {
+          const [hours, minutes] = bon.heure_prevue.split(':').map(Number);
+          const scheduledTime = new Date(selectedDate);
+          scheduledTime.setHours(hours, minutes, 0, 0);
+          
+          if (isWithinInterval(scheduledTime, { start: now, end: in2Hours }) || scheduledTime < now) {
+            aProduire.push(bon);
+          }
+          scheduledTimes.push({ bl: bon, time: scheduledTime });
+        } else {
+          aProduire.push(bon); // No time = needs attention
+        }
+      }
+    });
+
+    // Detect scheduling conflicts (within 15 minutes)
+    const conflicts: { bl1: BonLivraison; bl2: BonLivraison }[] = [];
+    for (let i = 0; i < scheduledTimes.length; i++) {
+      for (let j = i + 1; j < scheduledTimes.length; j++) {
+        const diff = Math.abs(differenceInMinutes(scheduledTimes[i].time, scheduledTimes[j].time));
+        if (diff < 15) {
+          conflicts.push({ bl1: scheduledTimes[i].bl, bl2: scheduledTimes[j].bl });
+        }
+      }
+    }
+
+    return { aProduire, enChargement, enLivraison, conflicts };
+  }, [bons, selectedDate]);
+
+  const updateBonTime = async (blId: string, time: string) => {
+    try {
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ heure_prevue: time || null })
+        .eq('bl_id', blId);
+
+      if (error) throw error;
+      toast.success('Heure mise à jour');
+      fetchData();
+    } catch (error) {
+      console.error('Error updating time:', error);
+      toast.error('Erreur lors de la mise à jour');
+    }
+  };
+
+  const assignTruck = async (blId: string, camionId: string) => {
+    try {
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ 
+          camion_assigne: camionId || null,
+          toupie_assignee: camionId || null 
+        })
+        .eq('bl_id', blId);
+
+      if (error) throw error;
+      toast.success('Camion assigné');
+      fetchData();
+    } catch (error) {
+      console.error('Error assigning truck:', error);
+      toast.error('Erreur lors de l\'assignation');
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+      planification: { label: 'Planification', variant: 'outline' },
+      production: { label: 'Production', variant: 'secondary' },
+      validation_technique: { label: 'Validation', variant: 'secondary' },
+      en_livraison: { label: 'En Livraison', variant: 'default' },
+      livre: { label: 'Livré', variant: 'default' },
+    };
+    const config = statusConfig[status] || { label: status, variant: 'outline' as const };
+    return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => (
+    <Card className="mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow">
+      <CardContent className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <p className="font-semibold text-sm">{bon.bl_id}</p>
+            <p className="text-xs text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
+          </div>
+          {getStatusBadge(bon.workflow_status)}
+        </div>
+        
+        <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Package className="h-3 w-3" />
+            <span>{bon.formule_id}</span>
+          </div>
+          <div className="flex items-center gap-1 text-muted-foreground">
+            <Factory className="h-3 w-3" />
+            <span>{bon.volume_m3} m³</span>
+          </div>
+        </div>
+
+        {showTimeInput && (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Input
+                type="time"
+                value={bon.heure_prevue || ''}
+                onChange={(e) => updateBonTime(bon.bl_id, e.target.value)}
+                className="h-8 text-sm"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Truck className="h-4 w-4 text-muted-foreground" />
+              <Select
+                value={bon.camion_assigne || bon.toupie_assignee || ''}
+                onValueChange={(value) => assignTruck(bon.bl_id, value)}
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue placeholder="Assigner camion" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">Non assigné</SelectItem>
+                  {camions.map(c => (
+                    <SelectItem key={c.id_camion} value={c.id_camion}>
+                      {c.id_camion} - {c.chauffeur || 'Sans chauffeur'}
+                      {c.statut !== 'Disponible' && ` (${c.statut})`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {!showTimeInput && bon.heure_prevue && (
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+            <Timer className="h-3 w-3" />
+            <span>Prévu: {bon.heure_prevue}</span>
+            {(bon.camion_assigne || bon.toupie_assignee) && (
+              <>
+                <span className="text-muted-foreground">•</span>
+                <Truck className="h-3 w-3" />
+                <span>{bon.camion_assigne || bon.toupie_assignee}</span>
+              </>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  const availableCamions = camions.filter(c => c.statut === 'Disponible').length;
+  const totalBonsToday = bons.length;
+  const pendingBons = bons.filter(b => ['planification', 'validation_technique'].includes(b.workflow_status)).length;
+
+  return (
+    <MainLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Planning & Dispatch</h1>
+            <p className="text-muted-foreground">Ordonnancement des livraisons</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <Input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-40"
+              />
+            </div>
+            <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
+              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+              Actualiser
+            </Button>
+          </div>
+        </div>
+
+        {/* Conflict Alert */}
+        {conflicts.length > 0 && (
+          <Card className="border-destructive bg-destructive/10">
+            <CardContent className="p-4 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="font-semibold text-destructive">⚠️ Conflit de Planning Détecté!</p>
+                <p className="text-sm text-muted-foreground">
+                  {conflicts.length} conflit(s) - Plusieurs livraisons planifiées dans un intervalle de 15 minutes.
+                </p>
+                <div className="mt-2 space-y-1">
+                  {conflicts.map((c, i) => (
+                    <p key={i} className="text-xs text-destructive">
+                      • {c.bl1.bl_id} ({c.bl1.heure_prevue}) ↔ {c.bl2.bl_id} ({c.bl2.heure_prevue})
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Calendar className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{totalBonsToday}</p>
+                <p className="text-xs text-muted-foreground">Livraisons aujourd'hui</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-warning/10">
+                <Clock className="h-5 w-5 text-warning" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{pendingBons}</p>
+                <p className="text-xs text-muted-foreground">En attente</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-success/10">
+                <Truck className="h-5 w-5 text-success" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{availableCamions}/{camions.length}</p>
+                <p className="text-xs text-muted-foreground">Camions dispo</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-accent/10">
+                <Navigation className="h-5 w-5 text-accent" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{enLivraison.length}</p>
+                <p className="text-xs text-muted-foreground">En route</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Live Dispatch Board */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* À Produire */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <div className="p-1.5 rounded bg-warning/10">
+                  <Factory className="h-4 w-4 text-warning" />
+                </div>
+                À Produire
+                <Badge variant="outline" className="ml-auto">{aProduire.length}</Badge>
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Prochaines 2 heures</p>
+            </CardHeader>
+            <CardContent className="max-h-[500px] overflow-y-auto">
+              {aProduire.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Aucune livraison planifiée
+                </p>
+              ) : (
+                aProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
+              )}
+            </CardContent>
+          </Card>
+
+          {/* En Chargement */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <div className="p-1.5 rounded bg-secondary">
+                  <Package className="h-4 w-4 text-secondary-foreground" />
+                </div>
+                En Chargement
+                <Badge variant="secondary" className="ml-auto">{enChargement.length}</Badge>
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Production en cours</p>
+            </CardHeader>
+            <CardContent className="max-h-[500px] overflow-y-auto">
+              {enChargement.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Aucun chargement en cours
+                </p>
+              ) : (
+                enChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
+              )}
+            </CardContent>
+          </Card>
+
+          {/* En Livraison */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <div className="p-1.5 rounded bg-primary/10">
+                  <Navigation className="h-4 w-4 text-primary" />
+                </div>
+                En Livraison
+                <Badge className="ml-auto">{enLivraison.length}</Badge>
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Camions en route</p>
+            </CardHeader>
+            <CardContent className="max-h-[500px] overflow-y-auto">
+              {enLivraison.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  Aucun camion en livraison
+                </p>
+              ) : (
+                enLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Full Day Schedule */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Planning Chronologique - {format(parseISO(selectedDate), 'EEEE d MMMM yyyy', { locale: fr })}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {bons.filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status)).length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                Aucune livraison planifiée pour cette date
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {bons
+                  .filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status))
+                  .sort((a, b) => {
+                    if (!a.heure_prevue && !b.heure_prevue) return 0;
+                    if (!a.heure_prevue) return 1;
+                    if (!b.heure_prevue) return -1;
+                    return a.heure_prevue.localeCompare(b.heure_prevue);
+                  })
+                  .map(bon => (
+                    <div 
+                      key={bon.bl_id}
+                      className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <div className="w-16 text-center">
+                        <p className="font-mono font-semibold text-lg">
+                          {bon.heure_prevue || '--:--'}
+                        </p>
+                      </div>
+                      <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
+                        <p className="font-medium">{bon.bl_id}</p>
+                        <p className="text-sm text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
+                        <p className="text-sm">{bon.formule_id} - {bon.volume_m3}m³</p>
+                        <div className="flex items-center gap-2">
+                          <Truck className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{bon.camion_assigne || bon.toupie_assignee || 'Non assigné'}</span>
+                        </div>
+                        {getStatusBadge(bon.workflow_status)}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </MainLayout>
+  );
+}
