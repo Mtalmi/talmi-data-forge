@@ -82,6 +82,7 @@ const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pret_production: { label: 'Prêt Production', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
   en_production: { label: 'En Production', color: 'bg-warning/10 text-warning border-warning/30', icon: <Loader2 className="h-3 w-3 animate-spin" /> },
+  termine: { label: 'Terminé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
 };
 

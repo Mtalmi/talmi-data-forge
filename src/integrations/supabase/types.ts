@@ -329,10 +329,13 @@ export type Database = {
           created_by: string | null
           date_livraison_souhaitee: string | null
           devis_id: string | null
+          facture_consolidee_id: string | null
+          facture_mode: string | null
           formule_id: string
           heure_livraison_souhaitee: string | null
           id: string
           mode_paiement: string | null
+          nb_livraisons: number | null
           notes: string | null
           pompe_requise: boolean | null
           prestataire_id: string | null
@@ -347,7 +350,9 @@ export type Database = {
           updated_at: string
           validated_at: string | null
           validated_by: string | null
+          volume_livre: number | null
           volume_m3: number
+          volume_restant: number | null
           zone_livraison_id: string | null
         }
         Insert: {
@@ -360,10 +365,13 @@ export type Database = {
           created_by?: string | null
           date_livraison_souhaitee?: string | null
           devis_id?: string | null
+          facture_consolidee_id?: string | null
+          facture_mode?: string | null
           formule_id: string
           heure_livraison_souhaitee?: string | null
           id?: string
           mode_paiement?: string | null
+          nb_livraisons?: number | null
           notes?: string | null
           pompe_requise?: boolean | null
           prestataire_id?: string | null
@@ -378,7 +386,9 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          volume_livre?: number | null
           volume_m3: number
+          volume_restant?: number | null
           zone_livraison_id?: string | null
         }
         Update: {
@@ -391,10 +401,13 @@ export type Database = {
           created_by?: string | null
           date_livraison_souhaitee?: string | null
           devis_id?: string | null
+          facture_consolidee_id?: string | null
+          facture_mode?: string | null
           formule_id?: string
           heure_livraison_souhaitee?: string | null
           id?: string
           mode_paiement?: string | null
+          nb_livraisons?: number | null
           notes?: string | null
           pompe_requise?: boolean | null
           prestataire_id?: string | null
@@ -409,7 +422,9 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          volume_livre?: number | null
           volume_m3?: number
+          volume_restant?: number | null
           zone_livraison_id?: string | null
         }
         Relationships: [
@@ -461,6 +476,7 @@ export type Database = {
           annule_at: string | null
           annule_par: string | null
           assignation_count: number | null
+          bc_id: string | null
           bl_id: string
           camion_assigne: string | null
           chauffeur_nom: string | null
@@ -516,6 +532,7 @@ export type Database = {
           annule_at?: string | null
           annule_par?: string | null
           assignation_count?: number | null
+          bc_id?: string | null
           bl_id: string
           camion_assigne?: string | null
           chauffeur_nom?: string | null
@@ -571,6 +588,7 @@ export type Database = {
           annule_at?: string | null
           annule_par?: string | null
           assignation_count?: number | null
+          bc_id?: string | null
           bl_id?: string
           camion_assigne?: string | null
           chauffeur_nom?: string | null
@@ -1115,7 +1133,9 @@ export type Database = {
       }
       factures: {
         Row: {
+          bc_id: string | null
           bl_id: string
+          bls_inclus: string[] | null
           client_id: string
           created_at: string
           created_by: string | null
@@ -1124,6 +1144,7 @@ export type Database = {
           facture_id: string
           formule_id: string
           id: string
+          is_consolidee: boolean | null
           marge_brute_dh: number | null
           marge_brute_pct: number | null
           mode_paiement: string | null
@@ -1137,7 +1158,9 @@ export type Database = {
           volume_m3: number
         }
         Insert: {
+          bc_id?: string | null
           bl_id: string
+          bls_inclus?: string[] | null
           client_id: string
           created_at?: string
           created_by?: string | null
@@ -1146,6 +1169,7 @@ export type Database = {
           facture_id: string
           formule_id: string
           id?: string
+          is_consolidee?: boolean | null
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -1159,7 +1183,9 @@ export type Database = {
           volume_m3: number
         }
         Update: {
+          bc_id?: string | null
           bl_id?: string
+          bls_inclus?: string[] | null
           client_id?: string
           created_at?: string
           created_by?: string | null
@@ -1168,6 +1194,7 @@ export type Database = {
           facture_id?: string
           formule_id?: string
           id?: string
+          is_consolidee?: boolean | null
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -2464,8 +2491,26 @@ export type Database = {
         Args: { _created_at: string }
         Returns: boolean
       }
-      create_bl_from_bc: {
-        Args: { p_bc_id: string; p_bl_id: string; p_date_livraison?: string }
+      create_bl_from_bc:
+        | {
+            Args: {
+              p_bc_id: string
+              p_bl_id: string
+              p_date_livraison?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_bc_id: string
+              p_bl_id: string
+              p_date_livraison?: string
+              p_volume_m3?: number
+            }
+            Returns: string
+          }
+      generate_consolidated_invoice: {
+        Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
       }
       has_role: {
