@@ -90,11 +90,13 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes', '/users'],
     
+    // Superviseur (Karim) - FULL access like CEO (all changes are audited)
+    superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
+          '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes'],
+    
     // Directeur Opérations - oversight of operations only
     directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
-    
-    // Superviseur - site supervision
-    superviseur: ['/', '/planning', '/bons', '/production', '/stocks', '/pointage'],
     
     // Responsable Technique - lab & quality ONLY
     responsable_technique: ['/laboratoire', '/formules'],
@@ -128,7 +130,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
   const showGestionSection = canAccess('/clients') || canAccess('/stocks') || canAccess('/laboratoire') || 
                               canAccess('/depenses') || canAccess('/fournisseurs') || canAccess('/prestataires') ||
                               canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/pointage') || canAccess('/prix');
-  const showCeoSection = isCeo;
+  const showCeoSection = isCeo || effectiveRole === 'superviseur';
 
   const getRoleBadge = () => {
     const roleConfig: Record<string, { label: string; className: string }> = {
@@ -136,7 +138,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
       operator: { label: 'Opérateur', className: 'bg-accent/20 text-accent' },
       accounting: { label: 'Comptabilité', className: 'bg-success/20 text-success' },
       commercial: { label: 'Commercial', className: 'bg-warning/20 text-warning' },
-      superviseur: { label: 'Superviseur', className: 'bg-blue-500/20 text-blue-500' },
+      superviseur: { label: 'Superviseur', className: 'bg-primary/20 text-primary' },
       responsable_technique: { label: 'Resp. Technique', className: 'bg-purple-500/20 text-purple-500' },
       directeur_operations: { label: 'Dir. Opérations', className: 'bg-orange-500/20 text-orange-500' },
       agent_administratif: { label: 'Agent Admin', className: 'bg-teal-500/20 text-teal-500' },
