@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -57,11 +57,15 @@ interface Camion {
 
 export default function Planning() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  
+  // Initialize date from URL param or default to today
+  const initialDate = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
+  const [selectedDate, setSelectedDate] = useState(initialDate);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
