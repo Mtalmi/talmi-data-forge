@@ -197,7 +197,7 @@ export function useBonWorkflow() {
 
             // Create Leakage Alert
             await supabase.from('alertes_systeme').insert([{
-              type_alerte: 'fuite_marge',
+              type_alerte: 'marge',
               niveau: 'critical',
               titre: 'FUITE DE MARGE',
               message: `BL ${blId}: CUR Réel ${curReel.toFixed(2)} DH/m³ - Marge insuffisante`,
@@ -208,7 +208,7 @@ export function useBonWorkflow() {
 
             // Also notify Superviseur
             await supabase.from('alertes_systeme').insert([{
-              type_alerte: 'fuite_marge',
+              type_alerte: 'marge',
               niveau: 'critical',
               titre: 'FUITE DE MARGE',
               message: `BL ${blId}: CUR Réel ${curReel.toFixed(2)} DH/m³ - Marge insuffisante`,

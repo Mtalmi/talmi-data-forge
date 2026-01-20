@@ -286,9 +286,9 @@ export function useStocks() {
         // Create alert if stock is low
         if (quantiteApres <= stock.seuil_alerte) {
           await supabase.from('alertes_systeme').insert({
-            type_alerte: 'stock_bas',
+            type_alerte: 'stock_critique',
             niveau: quantiteApres <= stock.seuil_alerte / 2 ? 'critical' : 'warning',
-            titre: 'Stock Bas',
+            titre: 'Stock Critique',
             message: `${stock.materiau}: ${quantiteApres.toFixed(0)} ${stock.unite} restant(s) (seuil: ${stock.seuil_alerte})`,
             reference_id: stock.id,
             reference_table: 'stocks',
