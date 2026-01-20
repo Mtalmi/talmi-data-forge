@@ -294,7 +294,8 @@ export function useSalesWorkflow() {
     }
   }, [fetchData]);
 
-  // Create BL from BC - The missing link!
+  // Create BL from BC - SECURE: Uses database function that bypasses RLS
+  // This ensures BL can ONLY be created from a valid BC, preventing theft/manual entry
   const createBlFromBc = useCallback(async (bc: BonCommande): Promise<string | null> => {
     try {
       // Generate BL ID
@@ -311,46 +312,28 @@ export function useSalesWorkflow() {
       const sequence = ((count || 0) + 1).toString().padStart(4, '0');
       const blId = `TB-${dateStr}-${sequence}`;
 
-      // Get formule to get theoretical values for initial ciment
-      const { data: formule } = await supabase
-        .from('formules_theoriques')
-        .select('ciment_kg_m3')
-        .eq('formule_id', bc.formule_id)
-        .single();
+      // Call the secure database function to create BL from BC
+      // This function enforces that:
+      // 1. A valid BC must exist
+      // 2. BC must be in 'pret_production' status
+      // 3. User must have proper role (CEO, Directeur, Commercial, Agent Admin)
+      const { data, error } = await supabase.rpc('create_bl_from_bc', {
+        p_bc_id: bc.bc_id,
+        p_bl_id: blId,
+        p_date_livraison: bc.date_livraison_souhaitee || format(today, 'yyyy-MM-dd'),
+      });
 
-      const cimentReel = formule ? formule.ciment_kg_m3 * bc.volume_m3 : bc.volume_m3 * 350; // Default 350kg/m³
-
-      // Create the BL entry - NOW INCLUDES ALL LOGISTICS & PAYMENT DATA
-      const { error: blError } = await supabase
-        .from('bons_livraison_reels')
-        .insert({
-          bl_id: blId,
-          client_id: bc.client_id,
-          formule_id: bc.formule_id,
-          volume_m3: bc.volume_m3,
-          ciment_reel_kg: cimentReel,
-          prix_vente_m3: bc.prix_vente_m3,
-          date_livraison: bc.date_livraison_souhaitee || format(today, 'yyyy-MM-dd'),
-          heure_prevue: bc.heure_livraison_souhaitee || null,
-          workflow_status: 'planification',
-          statut_paiement: 'En Attente',
-          // Propagate logistics & payment fields from BC
-          zone_livraison_id: bc.zone_livraison_id || null,
-          mode_paiement: bc.mode_paiement || 'virement',
-          prix_livraison_m3: bc.prix_livraison_m3 || 0,
-          prestataire_id: bc.prestataire_id || null,
-          created_by: user?.id,
-        });
-
-      if (blError) throw blError;
-
-      // Update BC status to en_production
-      const { error: bcError } = await supabase
-        .from('bons_commande')
-        .update({ statut: 'en_production' })
-        .eq('bc_id', bc.bc_id);
-
-      if (bcError) throw bcError;
+      if (error) {
+        console.error('Error from create_bl_from_bc:', error);
+        if (error.message.includes('Permission denied')) {
+          toast.error('Vous n\'avez pas la permission de lancer la production');
+        } else if (error.message.includes('pret_production')) {
+          toast.error('Le BC doit être en statut "Prêt Production"');
+        } else {
+          toast.error('Erreur lors de la création du BL');
+        }
+        return null;
+      }
 
       await fetchData();
       toast.success(`BL ${blId} créé - Prêt pour planification`);
@@ -360,7 +343,7 @@ export function useSalesWorkflow() {
       toast.error('Erreur lors de la création du BL');
       return null;
     }
-  }, [user, fetchData]);
+  }, [fetchData]);
 
   // Create Direct BC (without Devis) - Quick Order
   const createDirectBc = useCallback(async (data: {
