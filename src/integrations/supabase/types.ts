@@ -213,6 +213,51 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_superviseur: {
+        Row: {
+          action: string
+          changes: Json | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          notified: boolean | null
+          notified_at: string | null
+          old_data: Json | null
+          record_id: string | null
+          table_name: string
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          action: string
+          changes?: Json | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          notified?: boolean | null
+          notified_at?: string | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name: string
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          action?: string
+          changes?: Json | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          notified?: boolean | null
+          notified_at?: string | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name?: string
+          user_id?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       bank_transactions: {
         Row: {
           client_id_suggere: string | null
