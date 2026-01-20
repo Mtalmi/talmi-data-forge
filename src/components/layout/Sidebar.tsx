@@ -127,10 +127,16 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
         <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" onClick={onNavClick} />
         <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />
         <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />
-        <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />
-        <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />
-        <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />
-        <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />
+        
+        {/* Show advanced management only for supervisors and above */}
+        {(isCeo || role === 'superviseur' || role === 'directeur_operations' || role === 'accounting') && (
+          <>
+            <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />
+            <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />
+            <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />
+            <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />
+          </>
+        )}
         <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />
         {canReadPrix && (
           <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />
