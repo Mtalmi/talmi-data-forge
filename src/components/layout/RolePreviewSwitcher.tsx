@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Eye, EyeOff, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, X, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,12 +14,13 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
 
 const ROLE_OPTIONS = [
-  { value: null, label: 'Mon profil (CEO)', description: 'Vue complète' },
-  { value: 'centraliste', label: 'Centraliste', description: 'Production & Bons' },
-  { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement' },
-  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Facturation & Clients' },
-  { value: 'responsable_technique', label: 'Responsable Technique', description: 'Labo & Qualité' },
-  { value: 'superviseur', label: 'Superviseur', description: 'Vue superviseur' },
+  { value: null, label: 'Mon profil (CEO)', description: 'Vue complète', homePage: '/' },
+  { value: 'centraliste', label: 'Centraliste', description: 'Production & Bons', homePage: '/production' },
+  { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement', homePage: '/chauffeur' },
+  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Facturation & Clients', homePage: '/bons' },
+  { value: 'responsable_technique', label: 'Responsable Technique', description: 'Labo & Qualité', homePage: '/laboratoire' },
+  { value: 'superviseur', label: 'Superviseur', description: 'Vue superviseur', homePage: '/' },
+  { value: 'commercial', label: 'Commercial', description: 'Ventes & Devis', homePage: '/ventes' },
 ] as const;
 
 interface RolePreviewSwitcherProps {
@@ -28,11 +30,18 @@ interface RolePreviewSwitcherProps {
 
 export function RolePreviewSwitcher({ previewRole, onPreviewRoleChange }: RolePreviewSwitcherProps) {
   const { isCeo } = useAuth();
+  const navigate = useNavigate();
   
   // Only CEO can use this feature
   if (!isCeo) return null;
 
   const currentPreview = ROLE_OPTIONS.find(r => r.value === previewRole);
+
+  const handleRoleSelect = (role: typeof ROLE_OPTIONS[number]) => {
+    onPreviewRoleChange(role.value);
+    // Auto-navigate to that role's home page
+    navigate(role.homePage);
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -41,7 +50,10 @@ export function RolePreviewSwitcher({ previewRole, onPreviewRoleChange }: RolePr
           <Eye className="h-3 w-3" />
           Vue: {currentPreview?.label}
           <button 
-            onClick={() => onPreviewRoleChange(null)}
+            onClick={() => {
+              onPreviewRoleChange(null);
+              navigate('/');
+            }}
             className="ml-1 hover:bg-warning/20 rounded p-0.5"
           >
             <X className="h-3 w-3" />
@@ -52,23 +64,32 @@ export function RolePreviewSwitcher({ previewRole, onPreviewRoleChange }: RolePr
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="gap-2">
-            {previewRole ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {previewRole ? <Navigation className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             <span className="hidden sm:inline">
-              {previewRole ? 'Changer vue' : 'Voir comme...'}
+              {previewRole ? 'Tester un rôle' : 'Voir comme...'}
             </span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Prévisualiser l'interface</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-64">
+          <DropdownMenuLabel className="flex items-center gap-2">
+            <Navigation className="h-4 w-4" />
+            Tester l'interface employé
+          </DropdownMenuLabel>
+          <p className="px-2 pb-2 text-xs text-muted-foreground">
+            Naviguez comme un employé pour tester son workflow
+          </p>
           <DropdownMenuSeparator />
           {ROLE_OPTIONS.map((role) => (
             <DropdownMenuItem
               key={role.value ?? 'ceo'}
-              onClick={() => onPreviewRoleChange(role.value)}
+              onClick={() => handleRoleSelect(role)}
               className={previewRole === role.value ? 'bg-muted' : ''}
             >
-              <div className="flex flex-col">
-                <span className="font-medium">{role.label}</span>
+              <div className="flex flex-col flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{role.label}</span>
+                  <span className="text-xs text-muted-foreground">{role.homePage}</span>
+                </div>
                 <span className="text-xs text-muted-foreground">{role.description}</span>
               </div>
             </DropdownMenuItem>
@@ -87,19 +108,24 @@ export function RolePreviewBanner({
   previewRole: string; 
   onExit: () => void;
 }) {
-  const roleLabel = ROLE_OPTIONS.find(r => r.value === previewRole)?.label || previewRole;
+  const navigate = useNavigate();
+  const roleOption = ROLE_OPTIONS.find(r => r.value === previewRole);
+  const roleLabel = roleOption?.label || previewRole;
   
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-warning text-warning-foreground py-2 px-4 flex items-center justify-center gap-4 text-sm font-medium">
       <Eye className="h-4 w-4" />
-      <span>Mode prévisualisation: Vous voyez l'interface comme un <strong>{roleLabel}</strong></span>
+      <span>Mode Test: Vous naviguez comme <strong>{roleLabel}</strong></span>
       <Button 
         size="sm" 
         variant="secondary" 
-        onClick={onExit}
+        onClick={() => {
+          onExit();
+          navigate('/');
+        }}
         className="h-7 px-3"
       >
-        Quitter
+        Quitter le test
       </Button>
     </div>
   );
