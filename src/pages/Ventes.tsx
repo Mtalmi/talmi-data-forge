@@ -974,7 +974,7 @@ export default function Ventes() {
                   type="number"
                   step="0.5"
                   min="1"
-                  max="12"
+                  max="100"
                   value={orderVolume}
                   onChange={(e) => setOrderVolume(e.target.value)}
                   placeholder="Ex: 8"
