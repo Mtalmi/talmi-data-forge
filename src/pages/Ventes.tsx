@@ -271,7 +271,9 @@ export default function Ventes() {
         setDirectOrderOpen(false);
         resetFormState();
         if (blId) {
-          navigate('/planning');
+          // Navigate to Planning page with the delivery date
+          const deliveryDateStr = format(deliveryDate, 'yyyy-MM-dd');
+          navigate(`/planning?date=${deliveryDateStr}`);
         }
       } else {
         setCreatingOrder(false);
