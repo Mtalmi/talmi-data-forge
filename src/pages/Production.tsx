@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useMachineSync } from '@/hooks/useMachineSync';
 import { useStocks } from '@/hooks/useStocks';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { ProductionComparePanel } from '@/components/production/ProductionComparePanel';
 import { ApiDocumentation } from '@/components/production/ApiDocumentation';
 import { Button } from '@/components/ui/button';
@@ -88,7 +89,8 @@ export default function Production() {
   const [searchParams] = useSearchParams();
   const blFromUrl = searchParams.get('bl');
   
-  const { isCeo, isCentraliste, isResponsableTechnique } = useAuth();
+  const { role, isCeo, isCentraliste, isResponsableTechnique } = useAuth();
+  const { previewRole } = usePreviewRole();
   const { transitionWorkflow } = useBonWorkflow();
   const { syncing, lastSync, simulateMachineSync, updateBonWithMachineData, requiresJustification } = useMachineSync();
   const { deductConsumption, fetchStocks } = useStocks();
@@ -110,12 +112,18 @@ export default function Production() {
   const [deviations, setDeviations] = useState<{ field: string; percent: number }[]>([]);
   const [saving, setSaving] = useState(false);
 
+  // In “Mode Test”, permissions should reflect the previewed role (not the real logged-in role)
+  const effectiveRole = (previewRole ?? role) as string | null;
+  const effectiveIsCeo = effectiveRole === 'ceo';
+  const effectiveIsCentraliste = effectiveRole === 'centraliste';
+  const effectiveIsResponsableTechnique = effectiveRole === 'responsable_technique';
+
   // Who can interact with production orders
-  const canEdit = isCeo || isCentraliste || isResponsableTechnique;
-  // Who can manually edit consumption values (others must use machine sync)
-  const canManuallyEditConsumption = isCeo;
+  const canEdit = !!(effectiveIsCeo || effectiveIsCentraliste || effectiveIsResponsableTechnique);
+  // Centraliste can adjust real consumption + justification in production (as per ops needs)
+  const canManuallyEditConsumption = !!(effectiveIsCeo || effectiveIsCentraliste);
   // Who can validate and advance to next workflow step
-  const canValidate = isCeo || isCentraliste || isResponsableTechnique;
+  const canValidate = !!(effectiveIsCeo || effectiveIsCentraliste || effectiveIsResponsableTechnique);
 
   useEffect(() => {
     fetchData();
@@ -674,14 +682,21 @@ export default function Production() {
                   Enregistrer
                 </Button>
                 {selectedBon.workflow_status === 'production' && canValidate && (
-                  <Button
-                    onClick={handleAdvanceToValidation}
-                    disabled={saving || (deviations.length > 0 && !justification.trim())}
-                    className="gap-2"
-                  >
-                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                    Valider Production
-                  </Button>
+                  <div className="flex flex-col items-end gap-1">
+                    <Button
+                      onClick={handleAdvanceToValidation}
+                      disabled={saving || (deviations.length > 0 && !justification.trim())}
+                      className="gap-2"
+                    >
+                      {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                      Valider Production
+                    </Button>
+                    {deviations.length > 0 && !justification.trim() && (
+                      <span className="text-xs text-muted-foreground">
+                        Justification obligatoire (écart &gt; 5%)
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
