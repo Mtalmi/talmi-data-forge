@@ -55,8 +55,8 @@ const ROLE_CONFIG: Record<string, { label: string; description: string; classNam
   },
   superviseur: { 
     label: 'Superviseur (Karim)', 
-    description: 'Lecture tout sauf prix • Ajustements logistique', 
-    className: 'bg-blue-500/20 text-blue-500' 
+    description: 'Accès complet • Toutes modifications auditées → CEO', 
+    className: 'bg-primary/20 text-primary' 
   },
   responsable_technique: { 
     label: 'Resp. Technique (Abdel)', 
@@ -380,12 +380,12 @@ export default function Users() {
                   <td className="text-center py-2 px-2 text-success">✓ TOUT</td>
                 </tr>
                 <tr className="border-b border-border/50">
-                  <td className="py-2 px-2 font-medium">Superviseur</td>
-                  <td className="text-center py-2 px-2 text-destructive">✗</td>
-                  <td className="text-center py-2 px-2 text-warning">R</td>
-                  <td className="text-center py-2 px-2 text-warning">Logistique</td>
-                  <td className="text-center py-2 px-2 text-warning">R</td>
-                  <td className="text-center py-2 px-2 text-warning">Dosage</td>
+                  <td className="py-2 px-2 font-medium">Superviseur (Karim)</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W*</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W*</td>
+                  <td className="text-center py-2 px-2 text-success">✓ TOUT*</td>
+                  <td className="text-center py-2 px-2 text-success">✓ R/W*</td>
+                  <td className="text-center py-2 px-2 text-success">✓ TOUT*</td>
                 </tr>
                 <tr className="border-b border-border/50">
                   <td className="py-2 px-2 font-medium">Resp. Technique</td>
@@ -421,6 +421,9 @@ export default function Users() {
                 </tr>
               </tbody>
             </table>
+            <p className="text-xs text-muted-foreground mt-4">
+              * Superviseur (Karim) : Accès complet avec audit trail. Toutes les modifications sont enregistrées et notifiées au CEO en temps réel.
+            </p>
           </div>
         </div>
       </div>
