@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import * as React from 'react';
+const { useState, useRef } = React;
 import MainLayout from '@/components/layout/MainLayout';
 import { useReportingData } from '@/hooks/useReportingData';
 import { MonthlyReportPdfGenerator } from '@/components/reports/MonthlyReportPdfGenerator';

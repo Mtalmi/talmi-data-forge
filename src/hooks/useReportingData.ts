@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   startOfMonth, 
@@ -9,6 +9,8 @@ import {
   startOfYear,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
+
+const { useState, useEffect, useCallback } = React;
 
 export interface ClientPL {
   client_id: string;
