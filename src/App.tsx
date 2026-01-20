@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { PreviewRoleProvider } from "@/hooks/usePreviewRole";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Formules from "./pages/Formules";
@@ -38,33 +39,35 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/formules" element={<Formules />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/prix" element={<Prix />} />
-            <Route path="/bons" element={<Bons />} />
-            <Route path="/planning" element={<Planning />} />
-            <Route path="/production" element={<Production />} />
-            <Route path="/stocks" element={<Stocks />} />
-            <Route path="/logistique" element={<Logistique />} />
-            <Route path="/laboratoire" element={<Laboratoire />} />
-            <Route path="/depenses" element={<Depenses />} />
-            <Route path="/ventes" element={<Ventes />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/approbations" element={<Approbations />} />
-            <Route path="/alertes" element={<Alertes />} />
-            <Route path="/rapports" element={<Rapports />} />
-            <Route path="/fournisseurs" element={<Fournisseurs />} />
-            <Route path="/pointage" element={<Pointage />} />
-            <Route path="/prestataires" element={<Prestataires />} />
-            <Route path="/paiements" element={<Paiements />} />
-            <Route path="/rapprochement" element={<Rapprochement />} />
-            <Route path="/chauffeur" element={<DriverView />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <PreviewRoleProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/formules" element={<Formules />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/prix" element={<Prix />} />
+              <Route path="/bons" element={<Bons />} />
+              <Route path="/planning" element={<Planning />} />
+              <Route path="/production" element={<Production />} />
+              <Route path="/stocks" element={<Stocks />} />
+              <Route path="/logistique" element={<Logistique />} />
+              <Route path="/laboratoire" element={<Laboratoire />} />
+              <Route path="/depenses" element={<Depenses />} />
+              <Route path="/ventes" element={<Ventes />} />
+              <Route path="/users" element={<Users />} />
+              <Route path="/approbations" element={<Approbations />} />
+              <Route path="/alertes" element={<Alertes />} />
+              <Route path="/rapports" element={<Rapports />} />
+              <Route path="/fournisseurs" element={<Fournisseurs />} />
+              <Route path="/pointage" element={<Pointage />} />
+              <Route path="/prestataires" element={<Prestataires />} />
+              <Route path="/paiements" element={<Paiements />} />
+              <Route path="/rapprochement" element={<Rapprochement />} />
+              <Route path="/chauffeur" element={<DriverView />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </PreviewRoleProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
