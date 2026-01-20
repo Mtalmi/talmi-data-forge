@@ -657,6 +657,57 @@ export type Database = {
         }
         Relationships: []
       }
+      consommation_energie: {
+        Row: {
+          carburant_groupe_l: number | null
+          compteur_eau_m3: number | null
+          compteur_electrique_kwh: number | null
+          cout_carburant_dh: number | null
+          cout_eau_dh: number | null
+          cout_electricite_dh: number | null
+          created_at: string
+          created_by: string | null
+          date_releve: string
+          eau_par_m3: number | null
+          id: string
+          kwh_par_m3: number | null
+          notes: string | null
+          volume_produit_m3: number | null
+        }
+        Insert: {
+          carburant_groupe_l?: number | null
+          compteur_eau_m3?: number | null
+          compteur_electrique_kwh?: number | null
+          cout_carburant_dh?: number | null
+          cout_eau_dh?: number | null
+          cout_electricite_dh?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_releve?: string
+          eau_par_m3?: number | null
+          id?: string
+          kwh_par_m3?: number | null
+          notes?: string | null
+          volume_produit_m3?: number | null
+        }
+        Update: {
+          carburant_groupe_l?: number | null
+          compteur_eau_m3?: number | null
+          compteur_electrique_kwh?: number | null
+          cout_carburant_dh?: number | null
+          cout_eau_dh?: number | null
+          cout_electricite_dh?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_releve?: string
+          eau_par_m3?: number | null
+          id?: string
+          kwh_par_m3?: number | null
+          notes?: string | null
+          volume_produit_m3?: number | null
+        }
+        Relationships: []
+      }
       credit_score_history: {
         Row: {
           account_age_score: number | null
@@ -879,6 +930,143 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      equipements: {
+        Row: {
+          code_equipement: string
+          created_at: string
+          criticite: string
+          date_installation: string | null
+          dernier_etalonnage_at: string | null
+          derniere_maintenance_at: string | null
+          heures_fonctionnement: number | null
+          id: string
+          marque: string | null
+          modele: string | null
+          nom: string
+          notes: string | null
+          numero_serie: string | null
+          photo_url: string | null
+          prochain_etalonnage_at: string | null
+          prochaine_maintenance_at: string | null
+          statut: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          code_equipement: string
+          created_at?: string
+          criticite?: string
+          date_installation?: string | null
+          dernier_etalonnage_at?: string | null
+          derniere_maintenance_at?: string | null
+          heures_fonctionnement?: number | null
+          id?: string
+          marque?: string | null
+          modele?: string | null
+          nom: string
+          notes?: string | null
+          numero_serie?: string | null
+          photo_url?: string | null
+          prochain_etalonnage_at?: string | null
+          prochaine_maintenance_at?: string | null
+          statut?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          code_equipement?: string
+          created_at?: string
+          criticite?: string
+          date_installation?: string | null
+          dernier_etalonnage_at?: string | null
+          derniere_maintenance_at?: string | null
+          heures_fonctionnement?: number | null
+          id?: string
+          marque?: string | null
+          modele?: string | null
+          nom?: string
+          notes?: string | null
+          numero_serie?: string | null
+          photo_url?: string | null
+          prochain_etalonnage_at?: string | null
+          prochaine_maintenance_at?: string | null
+          statut?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      etalonnages: {
+        Row: {
+          ajustements_effectues: string | null
+          certificat_url: string | null
+          conforme: boolean
+          created_at: string
+          created_by: string | null
+          date_etalonnage: string
+          ecart_pct: number | null
+          equipement_id: string
+          id: string
+          notes: string | null
+          organisme_certificateur: string | null
+          prochaine_date: string | null
+          reference_certificat: string | null
+          technicien: string
+          tolerance_pct: number | null
+          type_etalonnage: string
+          valeur_mesuree: number | null
+          valeur_reference: number | null
+        }
+        Insert: {
+          ajustements_effectues?: string | null
+          certificat_url?: string | null
+          conforme?: boolean
+          created_at?: string
+          created_by?: string | null
+          date_etalonnage?: string
+          ecart_pct?: number | null
+          equipement_id: string
+          id?: string
+          notes?: string | null
+          organisme_certificateur?: string | null
+          prochaine_date?: string | null
+          reference_certificat?: string | null
+          technicien: string
+          tolerance_pct?: number | null
+          type_etalonnage: string
+          valeur_mesuree?: number | null
+          valeur_reference?: number | null
+        }
+        Update: {
+          ajustements_effectues?: string | null
+          certificat_url?: string | null
+          conforme?: boolean
+          created_at?: string
+          created_by?: string | null
+          date_etalonnage?: string
+          ecart_pct?: number | null
+          equipement_id?: string
+          id?: string
+          notes?: string | null
+          organisme_certificateur?: string | null
+          prochaine_date?: string | null
+          reference_certificat?: string | null
+          technicien?: string
+          tolerance_pct?: number | null
+          type_etalonnage?: string
+          valeur_mesuree?: number | null
+          valeur_reference?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "etalonnages_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       factures: {
         Row: {
@@ -1174,6 +1362,83 @@ export type Database = {
         }
         Relationships: []
       }
+      incidents_centrale: {
+        Row: {
+          actions_correctives: string | null
+          cause_racine: string | null
+          created_at: string
+          date_incident: string
+          description: string
+          duree_arret_heures: number | null
+          equipement_id: string | null
+          id: string
+          impact_production: boolean | null
+          niveau_gravite: string
+          photos: string[] | null
+          resolu: boolean
+          resolu_at: string | null
+          resolu_par: string | null
+          resolution_description: string | null
+          signale_par: string
+          titre: string
+          type_incident: string
+          updated_at: string
+          volume_perdu_m3: number | null
+        }
+        Insert: {
+          actions_correctives?: string | null
+          cause_racine?: string | null
+          created_at?: string
+          date_incident?: string
+          description: string
+          duree_arret_heures?: number | null
+          equipement_id?: string | null
+          id?: string
+          impact_production?: boolean | null
+          niveau_gravite?: string
+          photos?: string[] | null
+          resolu?: boolean
+          resolu_at?: string | null
+          resolu_par?: string | null
+          resolution_description?: string | null
+          signale_par: string
+          titre: string
+          type_incident: string
+          updated_at?: string
+          volume_perdu_m3?: number | null
+        }
+        Update: {
+          actions_correctives?: string | null
+          cause_racine?: string | null
+          created_at?: string
+          date_incident?: string
+          description?: string
+          duree_arret_heures?: number | null
+          equipement_id?: string | null
+          id?: string
+          impact_production?: boolean | null
+          niveau_gravite?: string
+          photos?: string[] | null
+          resolu?: boolean
+          resolu_at?: string | null
+          resolu_par?: string | null
+          resolution_description?: string | null
+          signale_par?: string
+          titre?: string
+          type_incident?: string
+          updated_at?: string
+          volume_perdu_m3?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incidents_centrale_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       incidents_flotte: {
         Row: {
           created_at: string
@@ -1210,6 +1475,78 @@ export type Database = {
           resolu_at?: string | null
           resolution_notes?: string | null
           type_incident?: string
+        }
+        Relationships: []
+      }
+      inspections_securite: {
+        Row: {
+          actions_requises: string | null
+          created_at: string
+          date_inspection: string
+          eclairage_ok: boolean | null
+          epi_disponibles: boolean | null
+          extincteurs_ok: boolean | null
+          garde_corps_ok: boolean | null
+          id: string
+          inspecteur: string
+          issues_secours_ok: boolean | null
+          non_conformites_details: string | null
+          non_conformites_detectees: number | null
+          photos: string[] | null
+          score_global: number | null
+          signalisation_ok: boolean | null
+          sol_propre_antiderapant: boolean | null
+          stockage_produits_ok: boolean | null
+          type_inspection: string
+          valide: boolean
+          valide_at: string | null
+          valide_par: string | null
+        }
+        Insert: {
+          actions_requises?: string | null
+          created_at?: string
+          date_inspection?: string
+          eclairage_ok?: boolean | null
+          epi_disponibles?: boolean | null
+          extincteurs_ok?: boolean | null
+          garde_corps_ok?: boolean | null
+          id?: string
+          inspecteur: string
+          issues_secours_ok?: boolean | null
+          non_conformites_details?: string | null
+          non_conformites_detectees?: number | null
+          photos?: string[] | null
+          score_global?: number | null
+          signalisation_ok?: boolean | null
+          sol_propre_antiderapant?: boolean | null
+          stockage_produits_ok?: boolean | null
+          type_inspection: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+        }
+        Update: {
+          actions_requises?: string | null
+          created_at?: string
+          date_inspection?: string
+          eclairage_ok?: boolean | null
+          epi_disponibles?: boolean | null
+          extincteurs_ok?: boolean | null
+          garde_corps_ok?: boolean | null
+          id?: string
+          inspecteur?: string
+          issues_secours_ok?: boolean | null
+          non_conformites_details?: string | null
+          non_conformites_detectees?: number | null
+          photos?: string[] | null
+          score_global?: number | null
+          signalisation_ok?: boolean | null
+          sol_propre_antiderapant?: boolean | null
+          stockage_produits_ok?: boolean | null
+          type_inspection?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
         }
         Relationships: []
       }
@@ -1250,6 +1587,86 @@ export type Database = {
             columns: ["achat_id"]
             isOneToOne: false
             referencedRelation: "achats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_records: {
+        Row: {
+          cout_main_oeuvre: number | null
+          cout_pieces: number | null
+          cout_total: number | null
+          created_at: string
+          created_by: string | null
+          date_executee: string | null
+          date_planifiee: string | null
+          description: string
+          duree_heures: number | null
+          equipement_id: string
+          executant_interne: string | null
+          id: string
+          photos_apres: string[] | null
+          photos_avant: string[] | null
+          pieces_utilisees: string[] | null
+          prestataire_externe: string | null
+          prochaine_maintenance_jours: number | null
+          rapport_intervention: string | null
+          statut: string
+          type_maintenance: string
+          updated_at: string
+        }
+        Insert: {
+          cout_main_oeuvre?: number | null
+          cout_pieces?: number | null
+          cout_total?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_executee?: string | null
+          date_planifiee?: string | null
+          description: string
+          duree_heures?: number | null
+          equipement_id: string
+          executant_interne?: string | null
+          id?: string
+          photos_apres?: string[] | null
+          photos_avant?: string[] | null
+          pieces_utilisees?: string[] | null
+          prestataire_externe?: string | null
+          prochaine_maintenance_jours?: number | null
+          rapport_intervention?: string | null
+          statut?: string
+          type_maintenance: string
+          updated_at?: string
+        }
+        Update: {
+          cout_main_oeuvre?: number | null
+          cout_pieces?: number | null
+          cout_total?: number | null
+          created_at?: string
+          created_by?: string | null
+          date_executee?: string | null
+          date_planifiee?: string | null
+          description?: string
+          duree_heures?: number | null
+          equipement_id?: string
+          executant_interne?: string | null
+          id?: string
+          photos_apres?: string[] | null
+          photos_avant?: string[] | null
+          pieces_utilisees?: string[] | null
+          prestataire_externe?: string | null
+          prochaine_maintenance_jours?: number | null
+          rapport_intervention?: string | null
+          statut?: string
+          type_maintenance?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_records_equipement_id_fkey"
+            columns: ["equipement_id"]
+            isOneToOne: false
+            referencedRelation: "equipements"
             referencedColumns: ["id"]
           },
         ]
@@ -1299,6 +1716,102 @@ export type Database = {
           reference_id?: string | null
           reference_table?: string | null
           type_mouvement?: string
+        }
+        Relationships: []
+      }
+      nettoyage_quotidien: {
+        Row: {
+          convoyeurs_nettoyes: boolean
+          convoyeurs_photo_url: string | null
+          created_at: string
+          date_nettoyage: string
+          effectue_par: string
+          goulotte_commentaire: string | null
+          goulotte_heure: string | null
+          goulotte_nettoyee: boolean
+          goulotte_photo_url: string | null
+          id: string
+          malaxeur_commentaire: string | null
+          malaxeur_heure: string | null
+          malaxeur_nettoye: boolean
+          malaxeur_photo_url: string | null
+          notes_generales: string | null
+          residus_ciment_enleves: boolean
+          residus_commentaire: string | null
+          residus_heure: string | null
+          residus_photo_url: string | null
+          score_proprete: number | null
+          silos_inspectes: boolean
+          silos_photo_url: string | null
+          systeme_eau_verifie: boolean
+          updated_at: string
+          valide: boolean
+          valide_at: string | null
+          valide_par: string | null
+          zone_centrale_propre: boolean
+          zone_photo_url: string | null
+        }
+        Insert: {
+          convoyeurs_nettoyes?: boolean
+          convoyeurs_photo_url?: string | null
+          created_at?: string
+          date_nettoyage?: string
+          effectue_par: string
+          goulotte_commentaire?: string | null
+          goulotte_heure?: string | null
+          goulotte_nettoyee?: boolean
+          goulotte_photo_url?: string | null
+          id?: string
+          malaxeur_commentaire?: string | null
+          malaxeur_heure?: string | null
+          malaxeur_nettoye?: boolean
+          malaxeur_photo_url?: string | null
+          notes_generales?: string | null
+          residus_ciment_enleves?: boolean
+          residus_commentaire?: string | null
+          residus_heure?: string | null
+          residus_photo_url?: string | null
+          score_proprete?: number | null
+          silos_inspectes?: boolean
+          silos_photo_url?: string | null
+          systeme_eau_verifie?: boolean
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+          zone_centrale_propre?: boolean
+          zone_photo_url?: string | null
+        }
+        Update: {
+          convoyeurs_nettoyes?: boolean
+          convoyeurs_photo_url?: string | null
+          created_at?: string
+          date_nettoyage?: string
+          effectue_par?: string
+          goulotte_commentaire?: string | null
+          goulotte_heure?: string | null
+          goulotte_nettoyee?: boolean
+          goulotte_photo_url?: string | null
+          id?: string
+          malaxeur_commentaire?: string | null
+          malaxeur_heure?: string | null
+          malaxeur_nettoye?: boolean
+          malaxeur_photo_url?: string | null
+          notes_generales?: string | null
+          residus_ciment_enleves?: boolean
+          residus_commentaire?: string | null
+          residus_heure?: string | null
+          residus_photo_url?: string | null
+          score_proprete?: number | null
+          silos_inspectes?: boolean
+          silos_photo_url?: string | null
+          systeme_eau_verifie?: boolean
+          updated_at?: string
+          valide?: boolean
+          valide_at?: string | null
+          valide_par?: string | null
+          zone_centrale_propre?: boolean
+          zone_photo_url?: string | null
         }
         Relationships: []
       }

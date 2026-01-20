@@ -28,6 +28,7 @@ import Prestataires from "./pages/Prestataires";
 import Paiements from "./pages/Paiements";
 import Rapprochement from "./pages/Rapprochement";
 import DriverView from "./pages/DriverView";
+import Maintenance from "./pages/Maintenance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
               <Route path="/paiements" element={<Paiements />} />
               <Route path="/rapprochement" element={<Rapprochement />} />
               <Route path="/chauffeur" element={<DriverView />} />
+              <Route path="/maintenance" element={<Maintenance />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
