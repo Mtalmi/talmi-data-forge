@@ -78,14 +78,19 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
 
   // Use preview role if set, otherwise use actual role
   const effectiveRole = previewRole || actualRole;
-  const isCeo = previewRole ? false : actualIsCeo; // In preview mode, never show as CEO
+  
+  // In preview mode, determine permissions based on the previewed role
+  const isCeo = previewRole 
+    ? previewRole === 'ceo' 
+    : actualIsCeo;
+  
   const canReadPrix = previewRole 
-    ? (previewRole === 'superviseur' || previewRole === 'directeur_operations')
+    ? ['ceo', 'superviseur', 'directeur_operations'].includes(previewRole)
     : actualCanReadPrix;
   
   // Determine what navigation items to show based on effective role
   const showAdvancedManagement = previewRole 
-    ? ['superviseur', 'directeur_operations', 'accounting'].includes(previewRole)
+    ? ['ceo', 'superviseur', 'directeur_operations', 'accounting'].includes(previewRole)
     : (actualIsCeo || actualRole === 'superviseur' || actualRole === 'directeur_operations' || actualRole === 'accounting');
 
   const getRoleBadge = () => {
