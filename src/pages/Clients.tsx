@@ -7,6 +7,7 @@ import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { CreditScoreDashboard } from '@/components/clients/CreditScoreDashboard';
 import CreditScoreTrendDashboard from '@/components/clients/CreditScoreTrendDashboard';
+import { ClientInvoicesDialog } from '@/components/clients/ClientInvoicesDialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,7 +49,8 @@ import {
   CheckCircle,
   Copy,
   TrendingUp,
-  History
+  History,
+  Receipt
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -80,6 +82,10 @@ export default function Clients() {
   const [noticeDialogOpen, setNoticeDialogOpen] = useState(false);
   const [noticeContent, setNoticeContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  
+  // Invoice dialog state
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<{ id: string; name: string } | null>(null);
 
   // Form state
   const [clientId, setClientId] = useState('');
@@ -517,6 +523,20 @@ export default function Clients() {
                       {canEdit && (
                         <TableCell>
                           <div className="flex items-center gap-1">
+                            {/* View Invoices Button */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-primary hover:text-primary"
+                              onClick={() => {
+                                setSelectedClient({ id: c.client_id, name: c.nom_client });
+                                setInvoiceDialogOpen(true);
+                              }}
+                              title="Voir les factures"
+                            >
+                              <Receipt className="h-4 w-4" />
+                            </Button>
+                            
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                               <Edit className="h-4 w-4" />
                             </Button>
@@ -577,6 +597,16 @@ export default function Clients() {
             <CreditScoreTrendDashboard />
           </TabsContent>
         </Tabs>
+
+        {/* Client Invoices Dialog */}
+        {selectedClient && (
+          <ClientInvoicesDialog
+            open={invoiceDialogOpen}
+            onOpenChange={setInvoiceDialogOpen}
+            clientId={selectedClient.id}
+            clientName={selectedClient.name}
+          />
+        )}
 
         {/* Mise en Demeure Dialog */}
         <Dialog open={noticeDialogOpen} onOpenChange={setNoticeDialogOpen}>
