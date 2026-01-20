@@ -82,42 +82,39 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
   // In preview mode, determine permissions based on the previewed role
   const isCeo = previewRole ? previewRole === 'ceo' : actualIsCeo;
 
-  // Define strict role-based navigation access
+  // Define STRICT role-based navigation - MINIMAL access only
   const roleNavConfig: Record<string, string[]> = {
-    // CEO sees everything
+    // CEO - unrestricted access
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/rapports', '/approbations', '/alertes', '/users'],
     
-    // Superviseur - management level
-    superviseur: ['/', '/planning', '/bons', '/production', '/logistique', '/formules', '/ventes',
-                  '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
-                  '/paiements', '/pointage', '/prix'],
+    // Directeur Opérations - oversight of operations only
+    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage'],
     
-    // Directeur Operations - operations focus
-    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/formules',
-                           '/clients', '/stocks', '/depenses', '/fournisseurs', '/prestataires', '/pointage', '/prix'],
+    // Superviseur - site supervision
+    superviseur: ['/', '/planning', '/bons', '/production', '/stocks', '/pointage'],
     
-    // Responsable Technique - lab & quality focus
-    responsable_technique: ['/', '/production', '/formules', '/laboratoire', '/stocks'],
+    // Responsable Technique - lab & quality ONLY
+    responsable_technique: ['/laboratoire', '/formules'],
     
-    // Agent Administratif - admin & billing focus
-    agent_administratif: ['/', '/bons', '/clients', '/ventes', '/depenses'],
+    // Agent Administratif - billing & client admin ONLY
+    agent_administratif: ['/bons', '/clients', '/depenses'],
     
-    // Centraliste - production only
-    centraliste: ['/', '/production', '/stocks', '/formules'],
+    // Centraliste - production console ONLY
+    centraliste: ['/production'],
     
-    // Chauffeur - driver view only
+    // Chauffeur - driver view ONLY
     chauffeur: ['/chauffeur'],
     
-    // Commercial - sales focus
-    commercial: ['/', '/ventes', '/clients', '/bons'],
+    // Commercial - sales ONLY
+    commercial: ['/ventes', '/clients'],
     
-    // Operator - production focus
-    operator: ['/', '/production', '/stocks', '/formules', '/logistique'],
+    // Operator - production ONLY
+    operator: ['/production', '/stocks'],
     
-    // Accounting - financial focus
-    accounting: ['/', '/bons', '/clients', '/paiements', '/rapprochement', '/depenses', '/fournisseurs'],
+    // Accounting - finance ONLY
+    accounting: ['/paiements', '/rapprochement', '/depenses'],
   };
 
   // Get allowed routes for effective role
