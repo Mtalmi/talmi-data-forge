@@ -88,7 +88,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
     // CEO - unrestricted access
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
-          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes', '/users'],
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes', '/audit-superviseur', '/users'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are audited)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
@@ -216,7 +216,8 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
             <NavItem to="/rapports" icon={<BarChart3 className="h-5 w-5" />} label="Rapports & BI" onClick={onNavClick} />
             <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" onClick={onNavClick} />
             <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" onClick={onNavClick} />
-            <NavItem to="/users" icon={<Shield className="h-5 w-5" />} label="Utilisateurs" onClick={onNavClick} />
+            {isCeo && <NavItem to="/audit-superviseur" icon={<Shield className="h-5 w-5" />} label="Audit Superviseur" onClick={onNavClick} />}
+            {isCeo && <NavItem to="/users" icon={<Users className="h-5 w-5" />} label="Utilisateurs" onClick={onNavClick} />}
           </>
         )}
       </nav>
