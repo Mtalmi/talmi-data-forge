@@ -111,7 +111,8 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
           </p>
         </div>
         <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />
-        <NavItem to="/bons" icon={<Truck className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />
+        <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />
+        <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />
         <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />
         <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />
         <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />
