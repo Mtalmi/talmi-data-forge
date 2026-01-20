@@ -68,8 +68,25 @@ function NavItem({ to, icon, label, badge, onClick }: NavItemProps) {
   );
 }
 
-function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
-  const { user, role, signOut, isCeo, canReadPrix } = useAuth();
+interface SidebarContentProps {
+  onNavClick?: () => void;
+  previewRole?: string | null;
+}
+
+function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
+  const { user, role: actualRole, signOut, isCeo: actualIsCeo, canReadPrix: actualCanReadPrix } = useAuth();
+
+  // Use preview role if set, otherwise use actual role
+  const effectiveRole = previewRole || actualRole;
+  const isCeo = previewRole ? false : actualIsCeo; // In preview mode, never show as CEO
+  const canReadPrix = previewRole 
+    ? (previewRole === 'superviseur' || previewRole === 'directeur_operations')
+    : actualCanReadPrix;
+  
+  // Determine what navigation items to show based on effective role
+  const showAdvancedManagement = previewRole 
+    ? ['superviseur', 'directeur_operations', 'accounting'].includes(previewRole)
+    : (actualIsCeo || actualRole === 'superviseur' || actualRole === 'directeur_operations' || actualRole === 'accounting');
 
   const getRoleBadge = () => {
     const roleConfig: Record<string, { label: string; className: string }> = {
@@ -82,12 +99,12 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
       directeur_operations: { label: 'Dir. Opérations', className: 'bg-orange-500/20 text-orange-500' },
       agent_administratif: { label: 'Agent Admin', className: 'bg-teal-500/20 text-teal-500' },
       centraliste: { label: 'Centraliste', className: 'bg-pink-500/20 text-pink-500' },
+      chauffeur: { label: 'Chauffeur', className: 'bg-emerald-500/20 text-emerald-500' },
     };
-    return role ? roleConfig[role] : { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
+    return effectiveRole ? roleConfig[effectiveRole] : { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
   };
 
   const roleBadge = getRoleBadge();
-
   return (
     <>
       {/* Logo */}
@@ -129,7 +146,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
         <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />
         
         {/* Show advanced management only for supervisors and above */}
-        {(isCeo || role === 'superviseur' || role === 'directeur_operations' || role === 'accounting') && (
+        {showAdvancedManagement && (
           <>
             <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />
             <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />
@@ -189,7 +206,7 @@ function SidebarContent({ onNavClick }: { onNavClick?: () => void }) {
 }
 
 // Mobile Sidebar with Sheet
-export function MobileSidebar() {
+export function MobileSidebar({ previewRole }: { previewRole?: string | null }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -206,7 +223,7 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-72 bg-sidebar">
         <div className="flex flex-col h-full">
-          <SidebarContent onNavClick={() => setOpen(false)} />
+          <SidebarContent onNavClick={() => setOpen(false)} previewRole={previewRole} />
         </div>
       </SheetContent>
     </Sheet>
@@ -214,7 +231,7 @@ export function MobileSidebar() {
 }
 
 // Desktop Sidebar
-export default function Sidebar() {
+export default function Sidebar({ previewRole }: { previewRole?: string | null }) {
   const { isMobile, isTablet } = useDeviceType();
 
   // Hide sidebar on mobile/tablet - use MobileSidebar instead
@@ -224,7 +241,7 @@ export default function Sidebar() {
 
   return (
     <aside className="hidden lg:flex flex-col w-64 h-screen bg-sidebar border-r border-sidebar-border">
-      <SidebarContent />
+      <SidebarContent previewRole={previewRole} />
     </aside>
   );
 }
