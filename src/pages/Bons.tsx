@@ -496,10 +496,10 @@ export default function Bons() {
             <h1 className={cn(
               "font-bold tracking-tight",
               isTouchDevice ? "text-xl" : "text-2xl"
-            )}>Bons de Livraison</h1>
+            )}>Archive Bons de Livraison</h1>
             {!isTouchDevice && (
               <p className="text-muted-foreground mt-1">
-                Workflow complet de la commande à la facturation
+                Historique et recherche des livraisons passées
               </p>
             )}
           </div>
@@ -554,7 +554,8 @@ export default function Bons() {
                 filename="bons_livraison"
               />
             )}
-            {canCreateBons && (
+            {/* Manual BL creation - CEO only exception */}
+            {isCeo && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
