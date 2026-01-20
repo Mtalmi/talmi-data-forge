@@ -110,8 +110,12 @@ export default function Production() {
   const [deviations, setDeviations] = useState<{ field: string; percent: number }[]>([]);
   const [saving, setSaving] = useState(false);
 
-  const canEdit = isCeo || isCentraliste;
-  const canManuallyEditConsumption = isCeo; // Only CEO can manually edit - others must use machine sync
+  // Who can interact with production orders
+  const canEdit = isCeo || isCentraliste || isResponsableTechnique;
+  // Who can manually edit consumption values (others must use machine sync)
+  const canManuallyEditConsumption = isCeo;
+  // Who can validate and advance to next workflow step
+  const canValidate = isCeo || isCentraliste || isResponsableTechnique;
 
   useEffect(() => {
     fetchData();
@@ -669,13 +673,14 @@ export default function Production() {
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                   Enregistrer
                 </Button>
-                {selectedBon.workflow_status === 'production' && (
+                {selectedBon.workflow_status === 'production' && canValidate && (
                   <Button
                     onClick={handleAdvanceToValidation}
                     disabled={saving || (deviations.length > 0 && !justification.trim())}
+                    className="gap-2"
                   >
-                    <ArrowRight className="h-4 w-4 mr-2" />
-                    Valider & Avancer
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                    Valider Production
                   </Button>
                 )}
               </div>
