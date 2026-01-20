@@ -74,24 +74,63 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
-  const { user, role: actualRole, signOut, isCeo: actualIsCeo, canReadPrix: actualCanReadPrix } = useAuth();
+  const { user, role: actualRole, signOut, isCeo: actualIsCeo } = useAuth();
 
   // Use preview role if set, otherwise use actual role
   const effectiveRole = previewRole || actualRole;
   
   // In preview mode, determine permissions based on the previewed role
-  const isCeo = previewRole 
-    ? previewRole === 'ceo' 
-    : actualIsCeo;
-  
-  const canReadPrix = previewRole 
-    ? ['ceo', 'superviseur', 'directeur_operations'].includes(previewRole)
-    : actualCanReadPrix;
-  
-  // Determine what navigation items to show based on effective role
-  const showAdvancedManagement = previewRole 
-    ? ['ceo', 'superviseur', 'directeur_operations', 'accounting'].includes(previewRole)
-    : (actualIsCeo || actualRole === 'superviseur' || actualRole === 'directeur_operations' || actualRole === 'accounting');
+  const isCeo = previewRole ? previewRole === 'ceo' : actualIsCeo;
+
+  // Define strict role-based navigation access
+  const roleNavConfig: Record<string, string[]> = {
+    // CEO sees everything
+    ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
+          '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/rapports', '/approbations', '/alertes', '/users'],
+    
+    // Superviseur - management level
+    superviseur: ['/', '/planning', '/bons', '/production', '/logistique', '/formules', '/ventes',
+                  '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
+                  '/paiements', '/pointage', '/prix'],
+    
+    // Directeur Operations - operations focus
+    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/formules',
+                           '/clients', '/stocks', '/depenses', '/fournisseurs', '/prestataires', '/pointage', '/prix'],
+    
+    // Responsable Technique - lab & quality focus
+    responsable_technique: ['/', '/production', '/formules', '/laboratoire', '/stocks'],
+    
+    // Agent Administratif - admin & billing focus
+    agent_administratif: ['/', '/bons', '/clients', '/ventes', '/depenses'],
+    
+    // Centraliste - production only
+    centraliste: ['/', '/production', '/stocks', '/formules'],
+    
+    // Chauffeur - driver view only
+    chauffeur: ['/chauffeur'],
+    
+    // Commercial - sales focus
+    commercial: ['/', '/ventes', '/clients', '/bons'],
+    
+    // Operator - production focus
+    operator: ['/', '/production', '/stocks', '/formules', '/logistique'],
+    
+    // Accounting - financial focus
+    accounting: ['/', '/bons', '/clients', '/paiements', '/rapprochement', '/depenses', '/fournisseurs'],
+  };
+
+  // Get allowed routes for effective role
+  const allowedRoutes = roleNavConfig[effectiveRole || ''] || ['/'];
+  const canAccess = (route: string) => allowedRoutes.includes(route);
+
+  // Section visibility helpers
+  const showProductionSection = canAccess('/planning') || canAccess('/chauffeur') || canAccess('/bons') || 
+                                 canAccess('/production') || canAccess('/logistique') || canAccess('/formules') || canAccess('/ventes');
+  const showGestionSection = canAccess('/clients') || canAccess('/stocks') || canAccess('/laboratoire') || 
+                              canAccess('/depenses') || canAccess('/fournisseurs') || canAccess('/prestataires') ||
+                              canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/pointage') || canAccess('/prix');
+  const showCeoSection = isCeo;
 
   const getRoleBadge = () => {
     const roleConfig: Record<string, { label: string; className: string }> = {
@@ -125,46 +164,48 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} label="Tableau de bord" onClick={onNavClick} />
+        {canAccess('/') && (
+          <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} label="Tableau de bord" onClick={onNavClick} />
+        )}
         
-        <div className="pt-4 pb-2">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Production
-          </p>
-        </div>
-        <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />
-        <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />
-        <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />
-        <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />
-        <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />
-        <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />
-        <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" onClick={onNavClick} />
-        
-        <div className="pt-4 pb-2">
-          <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Gestion
-          </p>
-        </div>
-        <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" onClick={onNavClick} />
-        <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" onClick={onNavClick} />
-        <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />
-        <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />
-        
-        {/* Show advanced management only for supervisors and above */}
-        {showAdvancedManagement && (
+        {showProductionSection && (
           <>
-            <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />
-            <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />
-            <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />
-            <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Production
+              </p>
+            </div>
+            {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />}
+            {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
+            {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />}
+            {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
+            {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
+            {canAccess('/formules') && <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />}
+            {canAccess('/ventes') && <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" onClick={onNavClick} />}
           </>
         )}
-        <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />
-        {canReadPrix && (
-          <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />
+        
+        {showGestionSection && (
+          <>
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Gestion
+              </p>
+            </div>
+            {canAccess('/clients') && <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" onClick={onNavClick} />}
+            {canAccess('/stocks') && <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" onClick={onNavClick} />}
+            {canAccess('/laboratoire') && <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />}
+            {canAccess('/depenses') && <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />}
+            {canAccess('/fournisseurs') && <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />}
+            {canAccess('/prestataires') && <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />}
+            {canAccess('/paiements') && <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />}
+            {canAccess('/rapprochement') && <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />}
+            {canAccess('/pointage') && <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />}
+            {canAccess('/prix') && <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />}
+          </>
         )}
         
-        {isCeo && (
+        {showCeoSection && (
           <>
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
