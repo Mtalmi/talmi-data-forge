@@ -101,8 +101,8 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
     // Agent Administratif - billing & client admin ONLY
     agent_administratif: ['/bons', '/clients', '/depenses'],
     
-    // Centraliste - central/plant operations (NO formulas)
-    centraliste: ['/production', '/stocks', '/logistique'],
+    // Centraliste - plant operations (production + stocks + maintenance)
+    centraliste: ['/production', '/stocks', '/maintenance'],
     
     // Chauffeur - driver view ONLY
     chauffeur: ['/chauffeur'],
