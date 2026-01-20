@@ -15,13 +15,12 @@ import { useAuth } from '@/hooks/useAuth';
 
 const ROLE_OPTIONS = [
   { value: null, label: 'Mon profil (CEO)', description: 'Vue complète', homePage: '/' },
-  { value: 'directeur_operations', label: 'Directeur Opérations', description: 'Planning & Supervision', homePage: '/' },
-  { value: 'superviseur', label: 'Superviseur', description: 'Site & Pointage', homePage: '/' },
-  { value: 'responsable_technique', label: 'Responsable Technique', description: 'Labo uniquement', homePage: '/laboratoire' },
-  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Bons & Clients', homePage: '/bons' },
-  { value: 'centraliste', label: 'Centraliste', description: 'Production uniquement', homePage: '/production' },
+  { value: 'superviseur', label: 'Karim Talmi (Superviseur)', description: 'Accès complet audité', homePage: '/' },
+  { value: 'directeur_operations', label: 'Imad (Dir. Opérations)', description: 'Planning & Supervision', homePage: '/planning' },
+  { value: 'responsable_technique', label: 'Abdel Sadek (Resp. Technique)', description: 'Labo & Validation QC', homePage: '/laboratoire' },
+  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Bons, Clients & Paiements', homePage: '/bons' },
+  { value: 'centraliste', label: 'Centraliste', description: 'Production & Stocks', homePage: '/production' },
   { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement', homePage: '/chauffeur' },
-  { value: 'commercial', label: 'Commercial', description: 'Ventes uniquement', homePage: '/ventes' },
 ] as const;
 
 interface RolePreviewSwitcherProps {
