@@ -50,7 +50,7 @@ import {
   Copy,
   TrendingUp,
   History,
-  Receipt
+  ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -467,6 +467,7 @@ export default function Clients() {
                   <TableHead>Délai</TableHead>
                   <TableHead>Statut</TableHead>
                   {(isCeo || isAgentAdministratif) && <TableHead className="text-right">Solde Dû</TableHead>}
+                  <TableHead className="w-8"></TableHead>
                   {canEdit && <TableHead className="w-32">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -530,21 +531,15 @@ export default function Clients() {
                           )}
                         </TableCell>
                       )}
+                      {/* Chevron indicator for clickable row */}
+                      <TableCell className="w-8 pr-0">
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </TableCell>
                       {canEdit && (
                         <TableCell onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1">
-                            {/* View Invoices Button - now redundant but kept for explicit action */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-primary hover:text-primary"
-                              onClick={() => {
-                                setSelectedClient({ id: c.client_id, name: c.nom_client });
-                                setInvoiceDialogOpen(true);
-                              }}
-                              title="Voir les factures"
-                            >
-                              <Receipt className="h-4 w-4" />
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <Edit className="h-4 w-4" />
                             </Button>
                             
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
