@@ -83,6 +83,8 @@ interface Formule {
   ciment_kg_m3: number;
   adjuvant_l_m3: number;
   eau_l_m3: number;
+  sable_m3?: number;
+  gravette_m3?: number;
 }
 
 export default function Production() {
@@ -102,8 +104,14 @@ export default function Production() {
   const [selectedFormule, setSelectedFormule] = useState<Formule | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   
-  // Edit state
-  const [editValues, setEditValues] = useState({
+  // Edit state - includes sable/gravette for machine sync
+  const [editValues, setEditValues] = useState<{
+    ciment_reel_kg: number;
+    adjuvant_reel_l: number;
+    eau_reel_l: number;
+    sable_reel_kg?: number;
+    gravette_reel_kg?: number;
+  }>({
     ciment_reel_kg: 0,
     adjuvant_reel_l: 0,
     eau_reel_l: 0,
@@ -261,6 +269,8 @@ export default function Production() {
         ciment_reel_kg: result.data.ciment_reel_kg,
         adjuvant_reel_l: result.data.adjuvant_reel_l,
         eau_reel_l: result.data.eau_reel_l,
+        sable_reel_kg: result.data.sable_reel_kg,
+        gravette_reel_kg: result.data.gravette_reel_kg,
       });
       
       // Update the BL with machine data
@@ -356,13 +366,18 @@ export default function Production() {
 
       if (saveError) throw saveError;
 
-      // Deduct stock consumption
+      // Deduct stock consumption using real machine data when available
       const consumption = [
         { materiau: 'ciment', quantite: editValues.ciment_reel_kg / 1000 }, // Convert kg to tonnes
         { materiau: 'adjuvant', quantite: editValues.adjuvant_reel_l },
         { materiau: 'eau', quantite: editValues.eau_reel_l / 1000 }, // Convert L to m³
-        { materiau: 'sable', quantite: (selectedFormule.ciment_kg_m3 * selectedBon.volume_m3) / 1000 * 2 }, // Approximate
-        { materiau: 'gravier', quantite: (selectedFormule.ciment_kg_m3 * selectedBon.volume_m3) / 1000 * 3 }, // Approximate
+        // Use real sable/gravette if synced from machine, otherwise use theoretical
+        { materiau: 'sable', quantite: editValues.sable_reel_kg 
+          ? editValues.sable_reel_kg / 1600 // kg to m³ 
+          : (selectedFormule.sable_m3 || 0.4) * selectedBon.volume_m3 },
+        { materiau: 'gravette', quantite: editValues.gravette_reel_kg 
+          ? editValues.gravette_reel_kg / 1500 // kg to m³
+          : (selectedFormule.gravette_m3 || 0.8) * selectedBon.volume_m3 },
       ].filter(c => c.quantite > 0);
 
       await deductConsumption(selectedBon.bl_id, consumption);
