@@ -26,7 +26,6 @@ export const MODES_PAIEMENT = [
   { value: 'cash', label: 'Espèces' },
   { value: 'virement', label: 'Virement Bancaire' },
   { value: 'cheque', label: 'Chèque' },
-  { value: 'traite', label: 'Traite' },
   { value: 'credit', label: 'À Crédit' },
 ] as const;
 

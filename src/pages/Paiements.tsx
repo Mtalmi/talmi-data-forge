@@ -461,7 +461,6 @@ export default function Paiements() {
                     <SelectItem value="virement">Virement</SelectItem>
                     <SelectItem value="cheque">Chèque</SelectItem>
                     <SelectItem value="especes">Espèces</SelectItem>
-                    <SelectItem value="traite">Traite</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={agingFilter} onValueChange={setAgingFilter}>

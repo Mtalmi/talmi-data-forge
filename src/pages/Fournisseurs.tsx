@@ -675,7 +675,6 @@ export default function Fournisseurs() {
                       <SelectItem value="virement">Virement</SelectItem>
                       <SelectItem value="cheque">Chèque</SelectItem>
                       <SelectItem value="especes">Espèces</SelectItem>
-                      <SelectItem value="traite">Traite</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

@@ -54,7 +54,6 @@ const MODE_LABELS: Record<string, string> = {
   virement: 'Virement Bancaire',
   cheque: 'Chèque',
   especes: 'Espèces',
-  traite: 'Traite',
   cash: 'Cash',
 };
 
