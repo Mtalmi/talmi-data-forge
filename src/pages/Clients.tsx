@@ -474,7 +474,17 @@ export default function Clients() {
                 {clients.map((c) => {
                   const status = getClientStatus(c);
                   return (
-                    <TableRow key={c.client_id} className={c.credit_bloque ? 'opacity-60' : ''}>
+                    <TableRow 
+                      key={c.client_id} 
+                      className={cn(
+                        'cursor-pointer transition-colors hover:bg-muted/50',
+                        c.credit_bloque ? 'opacity-60' : ''
+                      )}
+                      onClick={() => {
+                        setSelectedClient({ id: c.client_id, name: c.nom_client });
+                        setInvoiceDialogOpen(true);
+                      }}
+                    >
                       <TableCell className="font-mono font-medium">{c.client_id}</TableCell>
                       <TableCell>
                         <div>
@@ -521,9 +531,9 @@ export default function Clients() {
                         </TableCell>
                       )}
                       {canEdit && (
-                        <TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1">
-                            {/* View Invoices Button */}
+                            {/* View Invoices Button - now redundant but kept for explicit action */}
                             <Button
                               variant="ghost"
                               size="sm"
