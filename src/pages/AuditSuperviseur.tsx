@@ -41,11 +41,13 @@ import {
   Calendar,
   User,
   Database,
+  Mail,
+  Send,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-
+import { toast } from 'sonner';
 interface AuditLog {
   id: string;
   user_id: string;
@@ -57,6 +59,8 @@ interface AuditLog {
   new_data: Record<string, unknown> | null;
   changes: Record<string, unknown> | null;
   created_at: string;
+  notified?: boolean;
+  notified_at?: string | null;
 }
 
 const TABLE_LABELS: Record<string, string> = {
@@ -214,6 +218,7 @@ export default function AuditSuperviseur() {
   const [search, setSearch] = useState('');
   const [tableFilter, setTableFilter] = useState<string>('all');
   const [actionFilter, setActionFilter] = useState<string>('all');
+  const [sendingEmails, setSendingEmails] = useState(false);
 
   const { data: logs = [], isLoading, refetch } = useQuery({
     queryKey: ['audit-superviseur'],
@@ -229,6 +234,29 @@ export default function AuditSuperviseur() {
     },
     refetchInterval: 30000, // Refresh every 30 seconds
   });
+
+  const sendPendingNotifications = async () => {
+    setSendingEmails(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('notify-ceo-audit', {
+        body: {},
+      });
+      
+      if (error) throw error;
+      
+      if (data?.sent > 0) {
+        toast.success(`${data.sent} email(s) envoyé(s) avec succès`);
+      } else {
+        toast.info('Aucune notification en attente');
+      }
+      refetch();
+    } catch (err) {
+      console.error('Error sending notifications:', err);
+      toast.error('Erreur lors de l\'envoi des notifications');
+    } finally {
+      setSendingEmails(false);
+    }
+  };
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {
@@ -259,6 +287,7 @@ export default function AuditSuperviseur() {
     inserts: logs.filter(l => l.action === 'INSERT').length,
     updates: logs.filter(l => l.action === 'UPDATE').length,
     deletes: logs.filter(l => l.action === 'DELETE').length,
+    pendingEmails: logs.filter(l => !l.notified && ['prix_achat_actuels', 'clients', 'factures', 'bons_livraison_reels'].includes(l.table_name)).length,
   }), [logs]);
 
   const uniqueTables = useMemo(() => 
@@ -279,10 +308,24 @@ export default function AuditSuperviseur() {
               Traçabilité complète des actions de Karim (Superviseur)
             </p>
           </div>
-          <Button variant="outline" onClick={() => refetch()}>
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="default" 
+              onClick={sendPendingNotifications}
+              disabled={sendingEmails || stats.pendingEmails === 0}
+            >
+              {sendingEmails ? (
+                <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Mail className="h-4 w-4 mr-2" />
+              )}
+              Envoyer Emails ({stats.pendingEmails})
+            </Button>
+            <Button variant="outline" onClick={() => refetch()}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Actualiser
+            </Button>
+          </div>
         </div>
 
         {/* Stats */}
