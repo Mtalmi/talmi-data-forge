@@ -61,6 +61,12 @@ export interface BonCommande {
   mode_paiement: string | null;
   prix_livraison_m3: number | null;
   prestataire_id: string | null;
+  // Multi-delivery tracking fields
+  volume_livre: number | null;
+  volume_restant: number | null;
+  nb_livraisons: number | null;
+  facture_consolidee_id: string | null;
+  facture_mode: string | null;
   // Joined data
   client?: { nom_client: string; adresse: string | null; telephone: string | null };
   formule?: { designation: string };
@@ -296,7 +302,8 @@ export function useSalesWorkflow() {
 
   // Create BL from BC - SECURE: Uses database function that bypasses RLS
   // This ensures BL can ONLY be created from a valid BC, preventing theft/manual entry
-  const createBlFromBc = useCallback(async (bc: BonCommande): Promise<string | null> => {
+  // Now supports partial volume for multi-delivery orders
+  const createBlFromBc = useCallback(async (bc: BonCommande, volumeOverride?: number): Promise<string | null> => {
     try {
       // Generate BL ID
       const today = new Date();
@@ -312,23 +319,30 @@ export function useSalesWorkflow() {
       const sequence = ((count || 0) + 1).toString().padStart(4, '0');
       const blId = `TB-${dateStr}-${sequence}`;
 
+      // Determine volume: use override, otherwise use remaining volume (max 12m³ per truck)
+      const remainingVolume = bc.volume_m3 - (bc.volume_livre || 0);
+      const deliveryVolume = volumeOverride || Math.min(remainingVolume, 12);
+
       // Call the secure database function to create BL from BC
       // This function enforces that:
       // 1. A valid BC must exist
-      // 2. BC must be in 'pret_production' status
+      // 2. BC must be in 'pret_production' or 'en_production' status (for multi-delivery)
       // 3. User must have proper role (CEO, Directeur, Commercial, Agent Admin)
       const { data, error } = await supabase.rpc('create_bl_from_bc', {
         p_bc_id: bc.bc_id,
         p_bl_id: blId,
         p_date_livraison: bc.date_livraison_souhaitee || format(today, 'yyyy-MM-dd'),
+        p_volume_m3: deliveryVolume,
       });
 
       if (error) {
         console.error('Error from create_bl_from_bc:', error);
         if (error.message.includes('Permission denied')) {
           toast.error('Vous n\'avez pas la permission de lancer la production');
-        } else if (error.message.includes('pret_production')) {
-          toast.error('Le BC doit être en statut "Prêt Production"');
+        } else if (error.message.includes('pret_production') || error.message.includes('en_production')) {
+          toast.error('Le BC doit être en statut "Prêt Production" ou "En Production"');
+        } else if (error.message.includes('No remaining volume')) {
+          toast.error('Tout le volume de cette commande a déjà été livré');
         } else {
           toast.error('Erreur lors de la création du BL');
         }
@@ -336,7 +350,7 @@ export function useSalesWorkflow() {
       }
 
       await fetchData();
-      toast.success(`BL ${blId} créé - Prêt pour planification`);
+      toast.success(`BL ${blId} créé (${deliveryVolume} m³) - Prêt pour planification`);
       return blId;
     } catch (error) {
       console.error('Error creating BL from BC:', error);
@@ -414,6 +428,42 @@ export function useSalesWorkflow() {
     }
   }, [user, generateBcId, fetchData]);
 
+  // Generate consolidated invoice for all delivered BLs of a BC
+  const generateConsolidatedInvoice = useCallback(async (bcId: string): Promise<string | null> => {
+    try {
+      const today = new Date();
+      const year = today.getFullYear().toString().slice(-2);
+      const month = (today.getMonth() + 1).toString().padStart(2, '0');
+      const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+      const factureId = `FAC-${year}${month}-${random}`;
+
+      const { data, error } = await supabase.rpc('generate_consolidated_invoice', {
+        p_bc_id: bcId,
+        p_facture_id: factureId,
+      });
+
+      if (error) {
+        console.error('Error generating consolidated invoice:', error);
+        if (error.message.includes('Permission denied')) {
+          toast.error('Vous n\'avez pas la permission de générer des factures');
+        } else if (error.message.includes('No delivered BLs')) {
+          toast.error('Aucun BL livré à facturer pour cette commande');
+        } else {
+          toast.error('Erreur lors de la génération de la facture consolidée');
+        }
+        return null;
+      }
+
+      await fetchData();
+      toast.success(`Facture consolidée ${factureId} générée avec succès`);
+      return factureId;
+    } catch (error) {
+      console.error('Error generating consolidated invoice:', error);
+      toast.error('Erreur lors de la génération de la facture');
+      return null;
+    }
+  }, [fetchData]);
+
   // Stats
   const stats = {
     devisEnAttente: devisList.filter(d => d.statut === 'en_attente').length,
@@ -422,7 +472,7 @@ export function useSalesWorkflow() {
     devisRefuses: devisList.filter(d => d.statut === 'refuse').length,
     bcPretProduction: bcList.filter(bc => bc.statut === 'pret_production').length,
     bcEnProduction: bcList.filter(bc => bc.statut === 'en_production').length,
-    bcLivre: bcList.filter(bc => bc.statut === 'livre').length,
+    bcLivre: bcList.filter(bc => bc.statut === 'livre' || bc.statut === 'termine').length,
     totalDevisHT: devisList
       .filter(d => d.statut === 'en_attente')
       .reduce((sum, d) => sum + (d.total_ht || 0), 0),
@@ -439,6 +489,7 @@ export function useSalesWorkflow() {
     convertToBc,
     createBlFromBc,
     createDirectBc,
+    generateConsolidatedInvoice,
     updateDevisStatus,
     updateBcStatus,
   };
