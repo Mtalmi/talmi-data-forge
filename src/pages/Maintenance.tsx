@@ -35,6 +35,7 @@ import {
   ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { EtalonnageForm } from '@/components/maintenance/EtalonnageForm';
 
 interface Equipement {
   id: string;
@@ -76,7 +77,8 @@ interface IncidentCentrale {
 }
 
 export default function Maintenance() {
-  const { user, isCeo } = useAuth();
+  const { user, isCeo, isResponsableTechnique } = useAuth();
+  const canManageCalibration = isCeo || isResponsableTechnique;
   const queryClient = useQueryClient();
   const [showCleaningForm, setShowCleaningForm] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState<string | null>(null);
@@ -697,16 +699,24 @@ export default function Maintenance() {
 
           <TabsContent value="etalonnage" className="mt-4">
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Équipements à Étalonner</CardTitle>
-                <CardDescription>
-                  Balances, doseurs et instruments de mesure nécessitant un étalonnage
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg">Équipements à Étalonner</CardTitle>
+                  <CardDescription>
+                    Balances, doseurs et instruments de mesure nécessitant un étalonnage
+                  </CardDescription>
+                </div>
+                {canManageCalibration && (
+                  <EtalonnageForm
+                    equipements={equipements}
+                    onSuccess={() => queryClient.invalidateQueries({ queryKey: ['equipements'] })}
+                  />
+                )}
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {equipements
-                    .filter(e => e.type === 'balance')
+                    .filter(e => ['balance', 'doseur', 'capteur'].includes(e.type))
                     .map((equip) => (
                       <div
                         key={equip.id}
