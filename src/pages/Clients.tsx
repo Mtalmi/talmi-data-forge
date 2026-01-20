@@ -538,11 +538,12 @@ export default function Clients() {
                       {canEdit && (
                         <TableCell onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0"
+                              title="Modifier le client"
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                             
@@ -553,7 +554,7 @@ export default function Clients() {
                                 size="sm"
                                 className={cn('h-8 w-8 p-0', c.credit_bloque ? 'text-success hover:text-success' : 'text-destructive hover:text-destructive')}
                                 onClick={() => handleBlock(c.client_id, c.credit_bloque)}
-                                title={c.credit_bloque ? 'Débloquer' : 'Bloquer'}
+                                title={c.credit_bloque ? 'Débloquer le client' : 'Bloquer le client'}
                               >
                                 {c.credit_bloque ? <Unlock className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
                               </Button>
@@ -566,7 +567,7 @@ export default function Clients() {
                                 size="sm"
                                 className="h-8 w-8 p-0 text-warning hover:text-warning"
                                 onClick={() => handleSendNotice(c.client_id)}
-                                title="Mise en Demeure"
+                                title="Envoyer une Mise en Demeure"
                               >
                                 <FileWarning className="h-4 w-4" />
                               </Button>
@@ -578,6 +579,7 @@ export default function Clients() {
                                 size="sm"
                                 className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                                 onClick={() => handleDelete(c.client_id)}
+                                title="Supprimer le client"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
