@@ -25,6 +25,7 @@ import {
   MapPin,
   Menu,
   X,
+  Wrench,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -87,10 +88,10 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
     // CEO - unrestricted access
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
-          '/paiements', '/rapprochement', '/pointage', '/prix', '/rapports', '/approbations', '/alertes', '/users'],
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes', '/users'],
     
     // Directeur Opérations - oversight of operations only
-    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage'],
+    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
     
     // Superviseur - site supervision
     superviseur: ['/', '/planning', '/bons', '/production', '/stocks', '/pointage'],
@@ -123,7 +124,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
 
   // Section visibility helpers
   const showProductionSection = canAccess('/planning') || canAccess('/chauffeur') || canAccess('/bons') || 
-                                 canAccess('/production') || canAccess('/logistique') || canAccess('/formules') || canAccess('/ventes');
+                                 canAccess('/production') || canAccess('/logistique') || canAccess('/formules') || canAccess('/ventes') || canAccess('/maintenance');
   const showGestionSection = canAccess('/clients') || canAccess('/stocks') || canAccess('/laboratoire') || 
                               canAccess('/depenses') || canAccess('/fournisseurs') || canAccess('/prestataires') ||
                               canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/pointage') || canAccess('/prix');
@@ -177,6 +178,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
             {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />}
             {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
             {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
+            {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}
             {canAccess('/formules') && <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />}
             {canAccess('/ventes') && <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" onClick={onNavClick} />}
           </>
