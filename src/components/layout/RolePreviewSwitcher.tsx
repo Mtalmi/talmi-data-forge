@@ -15,12 +15,13 @@ import { useAuth } from '@/hooks/useAuth';
 
 const ROLE_OPTIONS = [
   { value: null, label: 'Mon profil (CEO)', description: 'Vue complète', homePage: '/' },
-  { value: 'centraliste', label: 'Centraliste', description: 'Production & Bons', homePage: '/production' },
+  { value: 'directeur_operations', label: 'Directeur Opérations', description: 'Planning & Supervision', homePage: '/' },
+  { value: 'superviseur', label: 'Superviseur', description: 'Site & Pointage', homePage: '/' },
+  { value: 'responsable_technique', label: 'Responsable Technique', description: 'Labo uniquement', homePage: '/laboratoire' },
+  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Bons & Clients', homePage: '/bons' },
+  { value: 'centraliste', label: 'Centraliste', description: 'Production uniquement', homePage: '/production' },
   { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement', homePage: '/chauffeur' },
-  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Facturation & Clients', homePage: '/bons' },
-  { value: 'responsable_technique', label: 'Responsable Technique', description: 'Labo & Qualité', homePage: '/laboratoire' },
-  { value: 'superviseur', label: 'Superviseur', description: 'Vue superviseur', homePage: '/' },
-  { value: 'commercial', label: 'Commercial', description: 'Ventes & Devis', homePage: '/ventes' },
+  { value: 'commercial', label: 'Commercial', description: 'Ventes uniquement', homePage: '/ventes' },
 ] as const;
 
 interface RolePreviewSwitcherProps {
