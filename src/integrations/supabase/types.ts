@@ -2389,6 +2389,10 @@ export type Database = {
         Args: { _created_at: string }
         Returns: boolean
       }
+      create_bl_from_bc: {
+        Args: { p_bc_id: string; p_bl_id: string; p_date_livraison?: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
