@@ -124,6 +124,9 @@ export default function Ventes() {
   const [selectedZoneId, setSelectedZoneId] = useState('');
   const [modePaiement, setModePaiement] = useState('virement');
   const [selectedPrestataireId, setSelectedPrestataireId] = useState('');
+  
+  // Auto-launch production toggle - when enabled, creates BC + BL and goes to Planning
+  const [autoLaunchProduction, setAutoLaunchProduction] = useState(true);
 
   // Fetch clients and formules for dropdowns
   useEffect(() => {
@@ -156,6 +159,7 @@ export default function Ventes() {
     setSelectedZoneId('');
     setModePaiement('virement');
     setSelectedPrestataireId('');
+    setAutoLaunchProduction(true); // Default to auto-launch
   };
 
   // Get selected zone pricing
@@ -231,7 +235,7 @@ export default function Ventes() {
     setDirectOrderOpen(true);
   };
 
-  // Handle direct order creation
+  // Handle direct order creation - now with optional auto-launch to Planning
   const handleCreateDirectOrder = async () => {
     if (!orderClientId || !orderFormuleId || !orderVolume || !orderPrix || !deliveryDate) {
       return;
@@ -258,11 +262,24 @@ export default function Ventes() {
       prix_livraison_m3: prixLivraison,
       prestataire_id: selectedPrestataireId || undefined,
     });
-    setCreatingOrder(false);
     
     if (bc) {
-      setDirectOrderOpen(false);
-      resetFormState();
+      // If auto-launch is enabled, immediately create BL and navigate to Planning
+      if (autoLaunchProduction) {
+        const blId = await createBlFromBc(bc);
+        setCreatingOrder(false);
+        setDirectOrderOpen(false);
+        resetFormState();
+        if (blId) {
+          navigate('/planning');
+        }
+      } else {
+        setCreatingOrder(false);
+        setDirectOrderOpen(false);
+        resetFormState();
+      }
+    } else {
+      setCreatingOrder(false);
     }
   };
 
@@ -1217,6 +1234,23 @@ export default function Ventes() {
               </div>
             </div>
 
+            {/* Auto-Launch Production Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-lg border border-primary/30 bg-primary/5">
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <Factory className="h-4 w-4 text-primary" />
+                  <Label className="font-medium text-primary">Lancer Production Automatiquement</Label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Créer le BL et afficher dans le Planning immédiatement
+                </p>
+              </div>
+              <Switch
+                checked={autoLaunchProduction}
+                onCheckedChange={setAutoLaunchProduction}
+              />
+            </div>
+
             {/* Price Lock Warning */}
             <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
               <p className="text-sm text-warning flex items-center gap-2 font-medium">
@@ -1241,10 +1275,12 @@ export default function Ventes() {
             >
               {creatingOrder ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
+              ) : autoLaunchProduction ? (
+                <Factory className="h-4 w-4" />
               ) : (
                 <CheckCircle className="h-4 w-4" />
               )}
-              Créer la Commande
+              {autoLaunchProduction ? 'Créer & Lancer Production' : 'Créer la Commande'}
             </Button>
           </DialogFooter>
         </DialogContent>
