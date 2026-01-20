@@ -102,6 +102,7 @@ export default function Production() {
   const [saving, setSaving] = useState(false);
 
   const canEdit = isCeo || isCentraliste;
+  const canManuallyEditConsumption = isCeo; // Only CEO can manually edit - others must use machine sync
 
   useEffect(() => {
     fetchData();
@@ -531,7 +532,7 @@ export default function Production() {
                 </Button>
               </div>
 
-              {/* Compare Panel */}
+              {/* Compare Panel - Read-only for Centraliste, editable for CEO */}
               <ProductionComparePanel
                 formule={selectedFormule}
                 volume={selectedBon.volume_m3}
@@ -539,7 +540,17 @@ export default function Production() {
                 onValueChange={handleValueChange}
                 deviations={deviations}
                 disabled={saving}
+                readOnly={!canManuallyEditConsumption}
               />
+
+              {/* Info message for Centraliste */}
+              {!canManuallyEditConsumption && (
+                <div className="p-3 rounded-lg bg-muted/50 border text-sm text-muted-foreground flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  Les données de consommation sont synchronisées automatiquement avec la centrale. 
+                  Cliquez sur "Synchroniser" pour récupérer les valeurs réelles.
+                </div>
+              )}
 
               {/* Justification (required if deviations > 5%) */}
               {deviations.length > 0 && (

@@ -20,6 +20,7 @@ interface ProductionComparePanelProps {
   onValueChange: (field: keyof RealValues, value: number) => void;
   deviations: { field: string; percent: number }[];
   disabled?: boolean;
+  readOnly?: boolean; // If true, consumption values are display-only (machine sync required)
 }
 
 export function ProductionComparePanel({
@@ -29,6 +30,7 @@ export function ProductionComparePanel({
   onValueChange,
   deviations,
   disabled = false,
+  readOnly = false,
 }: ProductionComparePanelProps) {
   if (!formule || volume <= 0) {
     return (
@@ -138,18 +140,29 @@ export function ProductionComparePanel({
                   ) : null}
                 </div>
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={row.real || ''}
-                    onChange={(e) => onValueChange(row.realField, parseFloat(e.target.value) || 0)}
-                    disabled={disabled}
-                    className={cn(
-                      'w-24 px-2 py-1 text-right font-mono text-lg font-semibold rounded bg-background border',
-                      hasError ? 'border-destructive text-destructive' : 'border-border',
-                      disabled && 'opacity-60 cursor-not-allowed'
-                    )}
-                  />
+                  {readOnly ? (
+                    // Read-only display for non-CEO users
+                    <div className={cn(
+                      'w-24 px-2 py-1 text-right font-mono text-lg font-semibold rounded bg-muted/50 border',
+                      hasError ? 'border-destructive text-destructive' : 'border-border'
+                    )}>
+                      {row.real > 0 ? row.real.toFixed(1) : '—'}
+                    </div>
+                  ) : (
+                    // Editable input for CEO only
+                    <input
+                      type="number"
+                      step="0.1"
+                      value={row.real || ''}
+                      onChange={(e) => onValueChange(row.realField, parseFloat(e.target.value) || 0)}
+                      disabled={disabled}
+                      className={cn(
+                        'w-24 px-2 py-1 text-right font-mono text-lg font-semibold rounded bg-background border',
+                        hasError ? 'border-destructive text-destructive' : 'border-border',
+                        disabled && 'opacity-60 cursor-not-allowed'
+                      )}
+                    />
+                  )}
                   <span className="text-xs text-muted-foreground w-6">{row.unit}</span>
                 </div>
               </div>
