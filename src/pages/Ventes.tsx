@@ -69,6 +69,7 @@ import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
 import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
+import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
 import { cn } from '@/lib/utils';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -89,13 +90,17 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
 export default function Ventes() {
   const navigate = useNavigate();
   const { isCeo, canCreateBons } = useAuth();
-  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, updateDevisStatus } = useSalesWorkflow();
+  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, generateConsolidatedInvoice, updateDevisStatus } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
   const [converting, setConverting] = useState(false);
   const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
+  
+  // BC Detail Dialog State
+  const [selectedBc, setSelectedBc] = useState<BonCommande | null>(null);
+  const [bcDetailOpen, setBcDetailOpen] = useState(false);
   
   // Direct Order Dialog State
   const [directOrderOpen, setDirectOrderOpen] = useState(false);
@@ -210,6 +215,18 @@ export default function Ventes() {
       // Navigate to Planning page
       navigate('/planning');
     }
+  };
+
+  // Handle opening BC detail dialog
+  const handleOpenBcDetail = (bc: BonCommande) => {
+    setSelectedBc(bc);
+    setBcDetailOpen(true);
+  };
+
+  // Handle adding delivery from BC detail dialog
+  const handleAddDeliveryFromDialog = async (bc: BonCommande) => {
+    setBcDetailOpen(false);
+    await handleLaunchProduction(bc);
   };
 
   // Handle copying a BC to a new order (pre-fill form)
@@ -567,7 +584,11 @@ export default function Ventes() {
                       {bcList.map((bc) => {
                         const statusConfig = BC_STATUS_CONFIG[bc.statut] || BC_STATUS_CONFIG.pret_production;
                         return (
-                          <TableRow key={bc.id}>
+                          <TableRow 
+                            key={bc.id} 
+                            className="cursor-pointer hover:bg-muted/50"
+                            onClick={() => handleOpenBcDetail(bc)}
+                          >
                             <TableCell className="font-mono font-medium">{bc.bc_id}</TableCell>
                             <TableCell>{bc.client?.nom_client || '—'}</TableCell>
                             <TableCell>
@@ -1288,6 +1309,16 @@ export default function Ventes() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* BC Detail Dialog */}
+      <BcDetailDialog
+        bc={selectedBc}
+        open={bcDetailOpen}
+        onOpenChange={setBcDetailOpen}
+        onAddDelivery={handleAddDeliveryFromDialog}
+        onGenerateInvoice={generateConsolidatedInvoice}
+        onRefresh={fetchData}
+      />
     </MainLayout>
   );
 }
