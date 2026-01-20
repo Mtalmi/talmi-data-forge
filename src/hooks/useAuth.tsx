@@ -145,8 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isDirecteurOperations,
     isAgentAdministratif,
     isCentraliste,
-    // Derived permissions
-    canCreateBons: isCeo || isAgentAdministratif || isDirecteurOperations,
+    // Derived permissions - CEO ONLY for BL creation
+    canCreateBons: isCeo,
     canReadPrix: isCeo,
     canManageClients: isCeo || isAgentAdministratif || isCommercial,
     canValidateTechnique: isCeo || isResponsableTechnique,
