@@ -65,6 +65,15 @@ interface BonProduction {
   justification_ecart: string | null;
   validation_technique: boolean | null;
   alerte_ecart: boolean | null;
+  // BC linkage
+  bc_id: string | null;
+  bon_commande?: {
+    volume_m3: number;
+    volume_livre: number | null;
+    nb_livraisons: number | null;
+    client_nom: string | null;
+  } | null;
+  client?: { nom_client: string } | null;
 }
 
 interface Formule {
@@ -123,7 +132,10 @@ export default function Production() {
       const [bonsRes, formulesRes] = await Promise.all([
         supabase
           .from('bons_livraison_reels')
-          .select('*')
+          .select(`
+            *,
+            client:clients(nom_client)
+          `)
           .in('workflow_status', ['production', 'validation_technique'])
           .order('created_at', { ascending: false }),
         supabase
@@ -134,7 +146,45 @@ export default function Production() {
       if (bonsRes.error) throw bonsRes.error;
       if (formulesRes.error) throw formulesRes.error;
 
-      setBons(bonsRes.data || []);
+      // Fetch BC data for linked BLs
+      const bcIds = (bonsRes.data || [])
+        .map(bl => bl.bc_id)
+        .filter((id): id is string => !!id);
+
+      let bcMap: Record<string, { volume_m3: number; volume_livre: number | null; nb_livraisons: number | null; client_nom: string | null }> = {};
+      
+      if (bcIds.length > 0) {
+        const { data: bcData } = await supabase
+          .from('bons_commande')
+          .select(`
+            bc_id,
+            volume_m3,
+            volume_livre,
+            nb_livraisons,
+            client:clients(nom_client)
+          `)
+          .in('bc_id', bcIds);
+
+        if (bcData) {
+          bcMap = bcData.reduce((acc, bc) => {
+            acc[bc.bc_id] = {
+              volume_m3: bc.volume_m3,
+              volume_livre: bc.volume_livre,
+              nb_livraisons: bc.nb_livraisons,
+              client_nom: bc.client?.nom_client || null,
+            };
+            return acc;
+          }, {} as typeof bcMap);
+        }
+      }
+
+      // Merge BC data into bons
+      const enrichedBons = (bonsRes.data || []).map(bon => ({
+        ...bon,
+        bon_commande: bon.bc_id ? bcMap[bon.bc_id] || null : null,
+      }));
+
+      setBons(enrichedBons as BonProduction[]);
       setFormules(formulesRes.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -419,6 +469,7 @@ export default function Production() {
               <TableHeader>
                 <TableRow>
                   <TableHead>N° Bon</TableHead>
+                  <TableHead>Commande</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Client</TableHead>
                   <TableHead>Formule</TableHead>
@@ -447,9 +498,27 @@ export default function Production() {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {bon.bc_id ? (
+                        <div className="space-y-0.5">
+                          <span className="font-mono text-xs text-primary">{bon.bc_id}</span>
+                          {bon.bon_commande && bon.bon_commande.nb_livraisons && bon.bon_commande.nb_livraisons > 1 && (
+                            <div className="text-[10px] text-muted-foreground">
+                              Liv. {bon.bon_commande.nb_livraisons} / {bon.bon_commande.volume_m3}m³
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       {format(new Date(bon.date_livraison), 'dd/MM/yyyy', { locale: fr })}
                     </TableCell>
-                    <TableCell>{bon.client_id}</TableCell>
+                    <TableCell>
+                      <span className="text-sm">
+                        {bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id}
+                      </span>
+                    </TableCell>
                     <TableCell className="font-mono text-sm">{bon.formule_id}</TableCell>
                     <TableCell className="text-right font-semibold">{bon.volume_m3} m³</TableCell>
                     <TableCell>{getSourceBadge(bon.source_donnees)}</TableCell>
