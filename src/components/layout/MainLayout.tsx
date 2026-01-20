@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import Sidebar, { MobileSidebar } from './Sidebar';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
+import { QuickActionFAB } from './QuickActionFAB';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { Building2 } from 'lucide-react';
 
@@ -43,6 +44,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </div>
         <div className="p-3 sm:p-4 lg:p-6 min-w-0">{children}</div>
       </main>
+
+      {/* Quick Action FAB for employees */}
+      <QuickActionFAB />
     </div>
   );
 }
