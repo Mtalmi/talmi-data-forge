@@ -6,7 +6,7 @@ import {
   subMonths, 
   format,
   eachMonthOfInterval,
-  subDays,
+  startOfYear,
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -55,6 +55,17 @@ export interface ForecastData {
   trend: 'up' | 'down' | 'stable';
 }
 
+export interface PeriodSummary {
+  totalCA: number;
+  totalMarge: number;
+  avgMargePct: number;
+  totalVolume: number;
+  totalDepenses: number;
+  profitNet: number;
+  nbClients: number;
+  nbLivraisons: number;
+}
+
 export interface ReportingData {
   clientsPL: ClientPL[];
   formulasPL: FormulaPL[];
@@ -62,30 +73,81 @@ export interface ReportingData {
   forecast: ForecastData[];
   topClients: ClientPL[];
   bottomClients: ClientPL[];
-  summary: {
-    totalCA: number;
-    totalMarge: number;
-    avgMargePct: number;
-    totalVolume: number;
-    totalDepenses: number;
-    profitNet: number;
-    nbClients: number;
-    nbLivraisons: number;
-  };
+  summary: PeriodSummary;
 }
 
 export function useReportingData(monthsBack: number = 12) {
   const [data, setData] = useState<ReportingData | null>(null);
+  const [previousPeriodData, setPreviousPeriodData] = useState<PeriodSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState<'6m' | '12m' | 'ytd'>('12m');
+
+  const fetchPeriodData = useCallback(async (startDate: Date, endDate: Date) => {
+    // Fetch factures for the period
+    const { data: factures } = await supabase
+      .from('factures')
+      .select('client_id, formule_id, date_facture, volume_m3, total_ht, cur_reel, marge_brute_dh')
+      .gte('date_facture', format(startDate, 'yyyy-MM-dd'))
+      .lte('date_facture', format(endDate, 'yyyy-MM-dd'));
+
+    // Fetch depenses
+    const { data: depenses } = await supabase
+      .from('depenses')
+      .select('date_depense, montant')
+      .gte('date_depense', format(startDate, 'yyyy-MM-dd'))
+      .lte('date_depense', format(endDate, 'yyyy-MM-dd'));
+
+    const totalCA = factures?.reduce((s, f) => s + (f.total_ht || 0), 0) || 0;
+    const totalCout = factures?.reduce((s, f) => s + ((f.cur_reel || 0) * (f.volume_m3 || 0)), 0) || 0;
+    const totalMarge = totalCA - totalCout;
+    const totalVolume = factures?.reduce((s, f) => s + (f.volume_m3 || 0), 0) || 0;
+    const totalDepenses = depenses?.reduce((s, d) => s + (d.montant || 0), 0) || 0;
+    const uniqueClients = new Set(factures?.map(f => f.client_id) || []);
+
+    return {
+      totalCA: Math.round(totalCA),
+      totalMarge: Math.round(totalMarge),
+      avgMargePct: totalCA > 0 ? Math.round((totalMarge / totalCA) * 1000) / 10 : 0,
+      totalVolume: Math.round(totalVolume * 10) / 10,
+      totalDepenses: Math.round(totalDepenses),
+      profitNet: Math.round(totalMarge - totalDepenses),
+      nbClients: uniqueClients.size,
+      nbLivraisons: factures?.length || 0,
+    };
+  }, []);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const now = new Date();
-      const months = selectedPeriod === '6m' ? 6 : selectedPeriod === 'ytd' ? now.getMonth() + 1 : 12;
-      const startDate = startOfMonth(subMonths(now, months - 1));
+      let months: number;
+      let startDate: Date;
+      let prevStartDate: Date;
+      let prevEndDate: Date;
+
+      if (selectedPeriod === '6m') {
+        months = 6;
+        startDate = startOfMonth(subMonths(now, months - 1));
+        prevStartDate = startOfMonth(subMonths(now, months * 2 - 1));
+        prevEndDate = endOfMonth(subMonths(now, months));
+      } else if (selectedPeriod === 'ytd') {
+        startDate = startOfYear(now);
+        months = now.getMonth() + 1;
+        // Previous period is same months last year
+        prevStartDate = startOfYear(subMonths(now, 12));
+        prevEndDate = endOfMonth(subMonths(now, 12 - months + 1));
+      } else {
+        months = 12;
+        startDate = startOfMonth(subMonths(now, months - 1));
+        prevStartDate = startOfMonth(subMonths(now, months * 2 - 1));
+        prevEndDate = endOfMonth(subMonths(now, months));
+      }
+
       const endDate = endOfMonth(now);
+
+      // Fetch previous period data for comparison
+      const prevData = await fetchPeriodData(prevStartDate, prevEndDate);
+      setPreviousPeriodData(prevData);
 
       // Fetch all BLs with client and formula data
       const { data: bls } = await supabase
@@ -279,11 +341,11 @@ export function useReportingData(monthsBack: number = 12) {
     } finally {
       setLoading(false);
     }
-  }, [selectedPeriod]);
+  }, [selectedPeriod, fetchPeriodData]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  return { data, loading, selectedPeriod, setSelectedPeriod, refresh: fetchData };
+  return { data, loading, selectedPeriod, setSelectedPeriod, refresh: fetchData, previousPeriodData };
 }
