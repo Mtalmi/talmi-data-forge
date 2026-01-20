@@ -103,6 +103,7 @@ export default function Production() {
   const [selectedBon, setSelectedBon] = useState<BonProduction | null>(null);
   const [selectedFormule, setSelectedFormule] = useState<Formule | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [validationDialogOpen, setValidationDialogOpen] = useState(false);
   
   // Edit state - includes sable/gravette for machine sync
   const [editValues, setEditValues] = useState<{
@@ -214,6 +215,7 @@ export default function Production() {
     }
   };
 
+  // Opens VALIDATION dialog for "Production" status, SYNC dialog for "validation_technique"
   const handleSelectBon = (bon: BonProduction) => {
     setSelectedBon(bon);
     const formule = formules.find(f => f.formule_id === bon.formule_id);
@@ -225,7 +227,14 @@ export default function Production() {
     });
     setJustification(bon.justification_ecart || '');
     updateDeviations(bon, formule);
-    setDialogOpen(true);
+    
+    // Orders in "production" status -> show validation dialog
+    // Orders in "validation_technique" status -> show sync/edit dialog
+    if (bon.workflow_status === 'production') {
+      setValidationDialogOpen(true);
+    } else {
+      setDialogOpen(true);
+    }
   };
 
   const updateDeviations = (bon: BonProduction, formule: Formule | null) => {
@@ -713,6 +722,119 @@ export default function Production() {
                     )}
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Validation Dialog - Simple confirm to validate production */}
+      <Dialog open={validationDialogOpen} onOpenChange={setValidationDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <CheckCircle className="h-5 w-5 text-success" />
+              Valider Commande
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedBon && selectedFormule && (
+            <div className="space-y-4 mt-4">
+              {/* Order summary */}
+              <div className="p-4 rounded-lg bg-muted/30 space-y-3">
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">N° Bon:</span>
+                    <p className="font-mono font-medium">{selectedBon.bl_id}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Client:</span>
+                    <p className="font-medium">{selectedBon.client?.nom_client || selectedBon.client_id}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Formule:</span>
+                    <p className="font-mono">{selectedBon.formule_id}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Volume:</span>
+                    <p className="font-semibold">{selectedBon.volume_m3} m³</p>
+                  </div>
+                </div>
+                
+                {selectedBon.bc_id && (
+                  <div className="pt-2 border-t border-border">
+                    <span className="text-xs text-muted-foreground">Commande liée:</span>
+                    <p className="font-mono text-xs text-primary">{selectedBon.bc_id}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Consumption summary */}
+              <div className="p-3 rounded-lg border space-y-2">
+                <h4 className="text-sm font-medium">Consommation Réelle</h4>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                    <span className="text-muted-foreground">Ciment</span>
+                    <span className="font-mono font-medium">{editValues.ciment_reel_kg} kg</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                    <span className="text-muted-foreground">Adjuvant</span>
+                    <span className="font-mono font-medium">{editValues.adjuvant_reel_l} L</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                    <span className="text-muted-foreground">Eau</span>
+                    <span className="font-mono font-medium">{editValues.eau_reel_l} L</span>
+                  </div>
+                </div>
+                {selectedBon.source_donnees === 'machine_sync' && (
+                  <div className="flex items-center gap-1 text-xs text-success mt-1">
+                    <Wifi className="h-3 w-3" />
+                    Données synchronisées depuis la centrale
+                  </div>
+                )}
+              </div>
+
+              {/* Warning if deviations */}
+              {deviations.length > 0 && (
+                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive" />
+                    <span className="text-sm font-medium text-destructive">Écarts détectés</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {deviations.map(d => `${d.field}: +${d.percent.toFixed(1)}%`).join(', ')}
+                  </p>
+                  {!justification.trim() && (
+                    <div className="space-y-1">
+                      <Label className="text-xs">Justification requise</Label>
+                      <Textarea
+                        value={justification}
+                        onChange={(e) => setJustification(e.target.value)}
+                        placeholder="Expliquez l'écart..."
+                        rows={2}
+                        className="text-sm"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex justify-end gap-3 pt-2">
+                <Button variant="outline" onClick={() => setValidationDialogOpen(false)}>
+                  Annuler
+                </Button>
+                <Button
+                  onClick={async () => {
+                    await handleAdvanceToValidation();
+                    setValidationDialogOpen(false);
+                  }}
+                  disabled={saving || (deviations.length > 0 && !justification.trim())}
+                  className="gap-2"
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                  Valider Production
+                </Button>
               </div>
             </div>
           )}
