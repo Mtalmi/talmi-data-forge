@@ -40,7 +40,8 @@ export default function Stocks() {
     getCriticalStocks,
   } = useStocks();
 
-  const canManage = isCeo || isAgentAdministratif;
+  // Only CEO can add receptions - Centraliste is read-only for stock management
+  const canAddReception = isCeo;
   const criticalStocks = getCriticalStocks();
 
   const getMovementIcon = (type: string) => {
@@ -92,7 +93,7 @@ export default function Stocks() {
               <RefreshCw className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
-            {canManage && (
+            {canAddReception && (
               <ReceptionForm stocks={stocks} onSubmit={addReception} />
             )}
           </div>
