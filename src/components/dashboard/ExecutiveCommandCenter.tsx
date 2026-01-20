@@ -1,3 +1,4 @@
+import React, { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExecutiveMetrics } from '@/hooks/useExecutiveMetrics';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,8 @@ interface GaugeProps {
   thresholds: { green: number; yellow: number; reverse?: boolean };
 }
 
-function ExecutiveGauge({ value, label, subtitle, icon, thresholds }: GaugeProps) {
+const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
+  ({ value, label, subtitle, icon, thresholds }, ref) => {
   const getColor = () => {
     if (thresholds.reverse) {
       // Lower is better (e.g., leakage)
@@ -46,7 +48,7 @@ function ExecutiveGauge({ value, label, subtitle, icon, thresholds }: GaugeProps
   const offset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-card to-muted/30 border border-border/50">
+    <div ref={ref} className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-card to-muted/30 border border-border/50">
       <div className="relative">
         <svg width={size} height={size} className="transform -rotate-90">
           {/* Background circle */}
@@ -107,7 +109,9 @@ function ExecutiveGauge({ value, label, subtitle, icon, thresholds }: GaugeProps
       </div>
     </div>
   );
-}
+});
+
+ExecutiveGauge.displayName = 'ExecutiveGauge';
 
 export function ExecutiveCommandCenter() {
   const navigate = useNavigate();
