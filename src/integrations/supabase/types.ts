@@ -1671,6 +1671,36 @@ export type Database = {
           },
         ]
       }
+      maintenance_schedules: {
+        Row: {
+          calibration_interval_days: number | null
+          created_at: string
+          description: string | null
+          equipment_type: string
+          id: string
+          maintenance_interval_days: number
+          updated_at: string
+        }
+        Insert: {
+          calibration_interval_days?: number | null
+          created_at?: string
+          description?: string | null
+          equipment_type: string
+          id?: string
+          maintenance_interval_days?: number
+          updated_at?: string
+        }
+        Update: {
+          calibration_interval_days?: number | null
+          created_at?: string
+          description?: string | null
+          equipment_type?: string
+          id?: string
+          maintenance_interval_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       mouvements_stock: {
         Row: {
           created_at: string
