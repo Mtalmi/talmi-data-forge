@@ -1,17 +1,32 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { 
   Clock, 
   Package,
   MapPin,
-  Phone,
   CheckCircle,
   Navigation,
-  Factory
+  Factory,
+  ExternalLink
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const openNavigation = (destination: string, app: 'google' | 'waze') => {
+  const encodedDestination = encodeURIComponent(destination);
+  
+  if (app === 'google') {
+    window.open(`https://www.google.com/maps/search/?api=1&query=${encodedDestination}`, '_blank');
+  } else {
+    window.open(`https://waze.com/ul?q=${encodedDestination}&navigate=yes`, '_blank');
+  }
+};
 interface DriverDeliveryCardProps {
   bon: {
     bl_id: string;
@@ -129,9 +144,30 @@ export function DriverDeliveryCard({ bon, onMarkDelivered }: DriverDeliveryCardP
               <span className="font-semibold">Zone {bon.zones_livraison.code_zone}:</span>{' '}
               <span className="text-muted-foreground">{bon.zones_livraison.nom_zone}</span>
             </div>
-            <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
-              <Navigation className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="default" size="sm" className="h-10 px-3 gap-2 shrink-0 bg-primary">
+                  <Navigation className="h-4 w-4" />
+                  <span className="text-sm">GPS</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem 
+                  onClick={() => openNavigation(bon.zones_livraison!.nom_zone, 'google')}
+                  className="py-3 text-base cursor-pointer"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Google Maps
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => openNavigation(bon.zones_livraison!.nom_zone, 'waze')}
+                  className="py-3 text-base cursor-pointer"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Waze
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
 
