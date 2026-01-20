@@ -128,36 +128,37 @@ export default function Logistique() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-              <Truck className="h-7 w-7 text-primary" />
-              Logistique & Flotte
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
+              <Truck className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
+              <span className="truncate">Logistique & Flotte</span>
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
               Gestion des véhicules, rotations et performance prestataires
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={() => {
               fetchVehicules();
               fetchCarburant();
-            }}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+            }} className="min-h-[40px]">
+              <RefreshCw className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Actualiser</span>
             </Button>
             <FuelEntryForm vehicules={vehicules} onSubmit={addFuelEntry} />
             {canManage && (
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau Véhicule
+                  <Button className="min-h-[40px]">
+                    <Plus className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Nouveau Véhicule</span>
+                    <span className="sm:hidden">Véhicule</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Ajouter un Véhicule</DialogTitle>
                   </DialogHeader>
@@ -229,41 +230,44 @@ export default function Logistique() {
         </div>
 
         {/* Fleet Status Summary */}
-        <div className="grid grid-cols-4 gap-4">
-          <div className="kpi-card">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Véhicules</p>
-            <p className="text-3xl font-bold mt-1">{vehicules.length}</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+          <div className="kpi-card p-3 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Total</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1">{vehicules.length}</p>
           </div>
-          <div className="kpi-card positive">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Disponibles</p>
-            <p className="text-3xl font-bold mt-1 text-success">{disponibles}</p>
+          <div className="kpi-card positive p-3 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Disponibles</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1 text-success">{disponibles}</p>
           </div>
-          <div className="kpi-card">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">En Livraison</p>
-            <p className="text-3xl font-bold mt-1 text-primary">{enLivraison}</p>
+          <div className="kpi-card p-3 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">En Livraison</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1 text-primary">{enLivraison}</p>
           </div>
-          <div className="kpi-card warning">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Maintenance</p>
-            <p className="text-3xl font-bold mt-1 text-warning">{maintenance}</p>
+          <div className="kpi-card warning p-3 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Maintenance</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1 text-warning">{maintenance}</p>
           </div>
         </div>
 
         {/* Tabs */}
         <Tabs defaultValue="flotte" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="flotte" className="gap-2">
-              <Truck className="h-4 w-4" />
-              Flotte
-            </TabsTrigger>
-            <TabsTrigger value="performance" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Performance Prestataires
-            </TabsTrigger>
-            <TabsTrigger value="carburant" className="gap-2">
-              <Fuel className="h-4 w-4" />
-              Carburant
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-full sm:w-auto">
+              <TabsTrigger value="flotte" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <Truck className="h-3 w-3 sm:h-4 sm:w-4" />
+                Flotte
+              </TabsTrigger>
+              <TabsTrigger value="performance" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Performance</span>
+                <span className="sm:hidden">Perf.</span>
+              </TabsTrigger>
+              <TabsTrigger value="carburant" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <Fuel className="h-3 w-3 sm:h-4 sm:w-4" />
+                Carburant
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Fleet Tab */}
           <TabsContent value="flotte">

@@ -72,25 +72,25 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-              <Warehouse className="h-7 w-7 text-primary" />
-              Gestion des Stocks
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
+              <Warehouse className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
+              <span className="truncate">Gestion des Stocks</span>
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
               Suivi en temps réel des niveaux de matières premières
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button variant="outline" size="sm" onClick={() => {
               fetchStocks();
               fetchMouvements();
-            }}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+            }} className="min-h-[40px]">
+              <RefreshCw className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Actualiser</span>
             </Button>
             {canManage && (
               <ReceptionForm stocks={stocks} onSubmit={addReception} />

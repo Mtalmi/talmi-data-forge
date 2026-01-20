@@ -131,21 +131,21 @@ export default function Fournisseurs() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Gestion Fournisseurs</h1>
-            <p className="text-muted-foreground">Achats, paiements et réapprovisionnement</p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-3xl font-bold text-foreground">Gestion Fournisseurs</h1>
+            <p className="text-xs sm:text-base text-muted-foreground">Achats, paiements et réapprovisionnement</p>
           </div>
-          <Button onClick={refresh} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Actualiser
+          <Button onClick={refresh} variant="outline" size="sm" className="min-h-[40px] self-start sm:self-auto">
+            <RefreshCw className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">Actualiser</span>
           </Button>
         </div>
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {/* KPI Cards - Horizontal scroll on mobile */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4">
           <Card>
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">

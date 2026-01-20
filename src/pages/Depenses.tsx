@@ -89,16 +89,16 @@ export default function Depenses() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Gestion des Dépenses</h1>
-            <p className="text-muted-foreground mt-1">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Gestion des Dépenses</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
               Suivi des dépenses avec justificatifs obligatoires
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <ExportButton
               data={depenses.map(d => ({
                 date: d.date_depense,
@@ -114,9 +114,9 @@ export default function Depenses() {
               ]}
               filename="depenses"
             />
-            <Button variant="outline" size="sm" onClick={refresh}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+            <Button variant="outline" size="sm" onClick={refresh} className="min-h-[40px]">
+              <RefreshCw className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Actualiser</span>
             </Button>
             <ExpenseForm onSuccess={refresh} />
           </div>
