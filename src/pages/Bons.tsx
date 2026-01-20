@@ -845,7 +845,8 @@ export default function Bons() {
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        {b.validation_technique && (
+                        {/* Print allowed: validated OR completed (livre/facture) */}
+                        {(b.validation_technique || ['livre', 'facture'].includes(b.workflow_status || '')) && (
                           <BlPrintable 
                             bl={{
                               bl_id: b.bl_id,
