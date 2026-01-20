@@ -15,7 +15,8 @@ import {
   Navigation, 
   RefreshCw,
   Calendar,
-  AlertTriangle
+  AlertTriangle,
+  CheckCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -41,6 +42,7 @@ interface TabletPlanningViewProps {
   aProduire: BonLivraison[];
   enChargement: BonLivraison[];
   enLivraison: BonLivraison[];
+  livresAujourdhui?: BonLivraison[];
   conflicts: { bl1: BonLivraison; bl2: BonLivraison }[];
   totalBonsToday: number;
   pendingBons: number;
@@ -59,6 +61,7 @@ export function TabletPlanningView({
   aProduire,
   enChargement,
   enLivraison,
+  livresAujourdhui = [],
   conflicts,
   totalBonsToday,
   pendingBons,
@@ -259,6 +262,47 @@ export function TabletPlanningView({
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Livraisons Terminées - Shows at bottom */}
+      {livresAujourdhui.length > 0 && (
+        <Card className="border-success/30 bg-success/5 mt-4">
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <CheckCircle className="h-5 w-5 text-success" />
+              Livrées Aujourd'hui
+              <Badge variant="outline" className="ml-auto border-success/30 text-success">
+                {livresAujourdhui.length}
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-2">
+              {livresAujourdhui.slice(0, 5).map(bon => (
+                <div 
+                  key={bon.bl_id}
+                  className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                >
+                  <div>
+                    <span className="font-mono font-medium text-sm">{bon.bl_id}</span>
+                    <p className="text-xs text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-semibold text-sm">{bon.volume_m3} m³</span>
+                    <Badge variant="outline" className="ml-2 text-success border-success/30 text-xs">
+                      ✓
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+              {livresAujourdhui.length > 5 && (
+                <p className="text-xs text-center text-muted-foreground">
+                  +{livresAujourdhui.length - 5} autres livraisons
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

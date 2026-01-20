@@ -177,7 +177,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
             </div>
             {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />}
             {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
-            {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Bons de Livraison" onClick={onNavClick} />}
+            {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Archive BL" onClick={onNavClick} />}
             {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
             {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
             {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}

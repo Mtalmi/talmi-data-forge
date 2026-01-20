@@ -21,7 +21,8 @@ import {
   Package,
   Users,
   Timer,
-  ArrowRight
+  ArrowRight,
+  CheckCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -128,13 +129,14 @@ export default function Planning() {
 
 
   // Categorize BLs for the dispatch board
-  const { aProduire, enChargement, enLivraison, conflicts } = useMemo(() => {
+  const { aProduire, enChargement, enLivraison, livresAujourdhui, conflicts } = useMemo(() => {
     const now = new Date();
     const in2Hours = addHours(now, 2);
     
     const aProduire: BonLivraison[] = [];
     const enChargement: BonLivraison[] = [];
     const enLivraison: BonLivraison[] = [];
+    const livresAujourdhui: BonLivraison[] = [];
     const scheduledTimes: { bl: BonLivraison; time: Date }[] = [];
 
     bons.forEach(bon => {
@@ -142,6 +144,8 @@ export default function Planning() {
         enChargement.push(bon);
       } else if (bon.workflow_status === 'en_livraison') {
         enLivraison.push(bon);
+      } else if (['livre', 'facture'].includes(bon.workflow_status)) {
+        livresAujourdhui.push(bon);
       } else if (['planification', 'validation_technique'].includes(bon.workflow_status)) {
         // Check if scheduled within next 2 hours
         if (bon.heure_prevue) {
@@ -170,7 +174,7 @@ export default function Planning() {
       }
     }
 
-    return { aProduire, enChargement, enLivraison, conflicts };
+    return { aProduire, enChargement, enLivraison, livresAujourdhui, conflicts };
   }, [bons, selectedDate]);
 
   const updateBonTime = async (blId: string, time: string) => {
@@ -377,6 +381,7 @@ export default function Planning() {
           aProduire={aProduire}
           enChargement={enChargement}
           enLivraison={enLivraison}
+          livresAujourdhui={livresAujourdhui}
           conflicts={conflicts}
           totalBonsToday={totalBonsToday}
           pendingBons={pendingBons}
@@ -561,6 +566,42 @@ export default function Planning() {
               )}
             </CardContent>
           </Card>
+
+          {/* Livraisons Terminées */}
+          {livresAujourdhui.length > 0 && (
+            <Card className="border-success/30 bg-success/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="p-1.5 rounded bg-success/10">
+                    <CheckCircle className="h-4 w-4 text-success" />
+                  </div>
+                  Livrées Aujourd'hui
+                  <Badge variant="outline" className="ml-auto border-success/30 text-success">{livresAujourdhui.length}</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {livresAujourdhui.map(bon => (
+                    <div 
+                      key={bon.bl_id}
+                      className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono font-medium">{bon.bl_id}</span>
+                        <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{bon.volume_m3} m³</span>
+                        <Badge variant="outline" className="text-success border-success/30 text-xs">
+                          {bon.workflow_status === 'facture' ? 'Facturé' : 'Livré'}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Full Day Schedule */}
