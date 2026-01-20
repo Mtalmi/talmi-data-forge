@@ -357,46 +357,46 @@ export default function Production() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-              <Factory className="h-7 w-7 text-primary" />
-              Centre de Commande Production
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
+              <Factory className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
+              <span className="truncate">Centre Production</span>
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
               Interface Centraliste - Comparaison Théorique vs Réel
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {lastSync && (
-              <span className="text-xs text-muted-foreground">
-                Dernière sync: {format(lastSync, 'HH:mm:ss', { locale: fr })}
+              <span className="text-[10px] sm:text-xs text-muted-foreground hidden sm:inline">
+                Sync: {format(lastSync, 'HH:mm:ss', { locale: fr })}
               </span>
             )}
-            <Button variant="outline" size="sm" onClick={fetchData}>
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+            <Button variant="outline" size="sm" onClick={fetchData} className="min-h-[40px]">
+              <RefreshCw className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Actualiser</span>
             </Button>
           </div>
         </div>
 
-        {/* Status Legend */}
-        <div className="flex flex-wrap gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-warning/10 text-warning border border-warning/30">
+        {/* Status Legend - Scrollable on mobile */}
+        <div className="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
+          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-warning/10 text-warning border border-warning/30 whitespace-nowrap flex-shrink-0">
             <Play className="h-3 w-3" />
-            En Production
+            Production
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/30">
+          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/30 whitespace-nowrap flex-shrink-0">
             <CheckCircle className="h-3 w-3" />
-            En Validation
+            Validation
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-success/10 text-success border border-success/30">
+          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-success/10 text-success border border-success/30 whitespace-nowrap flex-shrink-0">
             <Wifi className="h-3 w-3" />
-            Sync Machine
+            Machine
           </span>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-destructive/10 text-destructive border border-destructive/30">
+          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-destructive/10 text-destructive border border-destructive/30 whitespace-nowrap flex-shrink-0">
             <AlertTriangle className="h-3 w-3" />
             Écart &gt; 5%
           </span>

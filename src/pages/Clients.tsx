@@ -232,16 +232,16 @@ export default function Clients() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Clients</h1>
-            <p className="text-muted-foreground mt-1">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clients</h1>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
               Gestion des clients, conditions de paiement et scores de crédit
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <ExportButton
               data={clients.map(c => ({
                 id: c.client_id,
@@ -381,20 +381,23 @@ export default function Clients() {
 
         {/* Tabs for List and Credit Scores */}
         <Tabs defaultValue="list" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="list" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Liste Clients
-            </TabsTrigger>
-            <TabsTrigger value="credit-scores" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Scores de Crédit
-            </TabsTrigger>
-            <TabsTrigger value="credit-history" className="flex items-center gap-2">
-              <History className="h-4 w-4" />
-              Historique & Tendances
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
+            <TabsList className="w-full sm:w-auto inline-flex">
+              <TabsTrigger value="list" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Liste</span> Clients
+              </TabsTrigger>
+              <TabsTrigger value="credit-scores" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Scores de</span> Crédit
+              </TabsTrigger>
+              <TabsTrigger value="credit-history" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <History className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Historique</span>
+                <span className="sm:hidden">Hist.</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="list" className="space-y-4">
             {/* CEO Quick Stats */}
