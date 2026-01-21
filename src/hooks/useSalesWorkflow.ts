@@ -305,19 +305,27 @@ export function useSalesWorkflow() {
   // Now supports partial volume for multi-delivery orders
   const createBlFromBc = useCallback(async (bc: BonCommande, volumeOverride?: number): Promise<string | null> => {
     try {
-      // Generate BL ID
+      // Generate BL ID with more unique sequence
       const today = new Date();
       const dateStr = format(today, 'yyMMdd');
       
-      // Get count for today to generate sequence
-      const { count } = await supabase
+      // Get max sequence for today's BLs to avoid duplicates
+      const { data: existingBls } = await supabase
         .from('bons_livraison_reels')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', format(today, 'yyyy-MM-dd'))
-        .lt('created_at', format(new Date(today.getTime() + 86400000), 'yyyy-MM-dd'));
+        .select('bl_id')
+        .like('bl_id', `TB-${dateStr}-%`)
+        .order('bl_id', { ascending: false })
+        .limit(1);
       
-      const sequence = ((count || 0) + 1).toString().padStart(4, '0');
-      const blId = `TB-${dateStr}-${sequence}`;
+      let sequence = 1;
+      if (existingBls && existingBls.length > 0) {
+        const lastBlId = existingBls[0].bl_id;
+        const lastSeq = parseInt(lastBlId.split('-')[2], 10);
+        if (!isNaN(lastSeq)) {
+          sequence = lastSeq + 1;
+        }
+      }
+      const blId = `TB-${dateStr}-${sequence.toString().padStart(4, '0')}`;
 
       // Determine volume: use override, otherwise use remaining volume (max 12m³ per truck)
       const remainingVolume = bc.volume_m3 - (bc.volume_livre || 0);
