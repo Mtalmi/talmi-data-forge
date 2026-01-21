@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DriverDispatchCard } from './DriverDispatchCard';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
@@ -16,12 +17,19 @@ import {
   RefreshCw,
   Calendar,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  ClipboardCheck,
+  ChevronDown,
+  ChevronUp,
+  X,
+  Package,
+  Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface BonLivraison {
   bl_id: string;
+  bc_id?: string | null;
   client_id: string;
   formule_id: string;
   volume_m3: number;
@@ -39,6 +47,7 @@ interface BonLivraison {
 }
 
 interface TabletPlanningViewProps {
+  pendingValidation?: BonLivraison[];
   aProduire: BonLivraison[];
   enChargement: BonLivraison[];
   enLivraison: BonLivraison[];
@@ -54,10 +63,13 @@ interface TabletPlanningViewProps {
   onStartProduction: (bon: BonLivraison) => void;
   onMarkDelivered: (bon: BonLivraison) => void;
   onOpenDetails: (bon: BonLivraison) => void;
+  onConfirmBl?: (bon: BonLivraison) => void;
+  onRejectBl?: (bon: BonLivraison) => void;
   loading?: boolean;
 }
 
 export function TabletPlanningView({
+  pendingValidation = [],
   aProduire,
   enChargement,
   enLivraison,
@@ -73,9 +85,12 @@ export function TabletPlanningView({
   onStartProduction,
   onMarkDelivered,
   onOpenDetails,
+  onConfirmBl,
+  onRejectBl,
   loading = false,
 }: TabletPlanningViewProps) {
   const [activeTab, setActiveTab] = useState('produire');
+  const [pendingOpen, setPendingOpen] = useState(true);
 
   const handleRefresh = useCallback(async () => {
     await new Promise<void>((resolve) => {
@@ -157,6 +172,86 @@ export function TabletPlanningView({
           </div>
         </div>
       </div>
+
+      {/* 🆕 Pending Validation Section - Mobile/Tablet */}
+      {pendingValidation.length > 0 && onConfirmBl && onRejectBl && (
+        <Collapsible open={pendingOpen} onOpenChange={setPendingOpen}>
+          <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer active:bg-muted/30 transition-colors pb-2 touch-manipulation">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="p-1.5 rounded-lg bg-amber-500/20 animate-pulse">
+                    <ClipboardCheck className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span>À Confirmer</span>
+                      <Badge className="bg-amber-500 text-white">{pendingValidation.length}</Badge>
+                      <Sparkles className="h-4 w-4 text-amber-500" />
+                    </div>
+                  </div>
+                  {pendingOpen ? (
+                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </CardTitle>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="pt-0 space-y-3">
+                {pendingValidation.map(bon => (
+                  <Card key={bon.bl_id} className="border border-amber-500/30">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <p className="font-semibold">{bon.bl_id}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {bon.clients?.nom_client || bon.client_id}
+                          </p>
+                        </div>
+                        <Badge variant="outline" className="border-amber-500 text-amber-600">
+                          Nouveau
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 text-sm mb-4">
+                        <div className="flex items-center gap-1.5">
+                          <Package className="h-4 w-4 text-muted-foreground" />
+                          <span>{bon.formule_id}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Factory className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-semibold">{bon.volume_m3} m³</span>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button 
+                          size="lg" 
+                          className="flex-1 h-12 bg-success hover:bg-success/90 text-white gap-2 touch-manipulation"
+                          onClick={() => onConfirmBl(bon)}
+                        >
+                          <CheckCircle className="h-5 w-5" />
+                          Confirmer
+                        </Button>
+                        <Button 
+                          size="lg" 
+                          variant="outline"
+                          className="h-12 w-12 p-0 border-destructive/50 text-destructive hover:bg-destructive/10 touch-manipulation"
+                          onClick={() => onRejectBl(bon)}
+                        >
+                          <X className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
+      )}
 
       {/* Conflict Alert */}
       {conflicts.length > 0 && (

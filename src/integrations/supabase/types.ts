@@ -2557,6 +2557,7 @@ export type Database = {
             }
             Returns: string
           }
+        | { Args: { p_bc_id: string; p_volume_m3?: number }; Returns: string }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
