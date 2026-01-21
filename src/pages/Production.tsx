@@ -275,16 +275,30 @@ export default function Production() {
     const formule = formules.find(f => f.formule_id === bon.formule_id);
     setSelectedFormule(formule || null);
     
-    // If values are 0/null (not synced), default to theoretical formula values
-    // This prevents false "100% deviation" alerts for orders not yet synced
+    // Calculate theoretical values
     const theoreticalCiment = formule ? formule.ciment_kg_m3 * bon.volume_m3 : 0;
     const theoreticalAdjuvant = formule ? formule.adjuvant_l_m3 * bon.volume_m3 : 0;
     const theoreticalEau = formule ? formule.eau_l_m3 * bon.volume_m3 : 0;
     
+    // For manual entries (not machine-synced), check if stored values are realistic
+    // This prevents false deviation alerts from placeholder or incomplete data
+    const isMachineSynced = bon.source_donnees === 'machine_sync';
+    
+    // Check if stored values are realistic (within 50% of theoretical)
+    const isRealisticCiment = bon.ciment_reel_kg && theoreticalCiment > 0 &&
+      bon.ciment_reel_kg >= theoreticalCiment * 0.5 && 
+      bon.ciment_reel_kg <= theoreticalCiment * 1.5;
+    const isRealisticAdjuvant = bon.adjuvant_reel_l && theoreticalAdjuvant > 0 &&
+      bon.adjuvant_reel_l >= theoreticalAdjuvant * 0.5 && 
+      bon.adjuvant_reel_l <= theoreticalAdjuvant * 1.5;
+    const isRealisticEau = bon.eau_reel_l && theoreticalEau > 0 &&
+      bon.eau_reel_l >= theoreticalEau * 0.5 && 
+      bon.eau_reel_l <= theoreticalEau * 1.5;
+    
     setEditValues({
-      ciment_reel_kg: bon.ciment_reel_kg || theoreticalCiment,
-      adjuvant_reel_l: bon.adjuvant_reel_l || theoreticalAdjuvant,
-      eau_reel_l: bon.eau_reel_l || theoreticalEau,
+      ciment_reel_kg: (isMachineSynced || isRealisticCiment) ? bon.ciment_reel_kg : theoreticalCiment,
+      adjuvant_reel_l: (isMachineSynced || isRealisticAdjuvant) ? (bon.adjuvant_reel_l ?? theoreticalAdjuvant) : theoreticalAdjuvant,
+      eau_reel_l: (isMachineSynced || isRealisticEau) ? (bon.eau_reel_l ?? theoreticalEau) : theoreticalEau,
     });
     setJustification(bon.justification_ecart || '');
     updateDeviations(bon, formule);
