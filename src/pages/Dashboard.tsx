@@ -118,58 +118,78 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
-        {/* Header with Period Selector - Right Aligned */}
+        {/* Premium Dashboard Header */}
         <div
           ref={kpiSectionRef}
-          className="sticky top-14 sm:top-16 z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-background/90 backdrop-blur"
+          className="dashboard-header sticky top-14 sm:top-16 z-10 p-4 sm:p-5"
         >
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
-            <p className="text-sm text-muted-foreground truncate">
-              Vue d'ensemble des opérations Talmi Beton
-            </p>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <PeriodSelector
-              value={period}
-              onChange={(newPeriod) => {
-                setPeriod(newPeriod);
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            {/* Title Section */}
+            <div className="min-w-0">
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+                  <Package className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text">
+                    Tableau de Bord
+                  </h1>
+                  <p className="text-sm text-muted-foreground truncate">
+                    Vue d'ensemble • Talmi Beton
+                  </p>
+                </div>
+              </div>
+            </div>
 
-                // Scroll to KPI grid (even if you're far down the page) and keep the header row visible.
-                requestAnimationFrame(() => {
-                  const grid = kpiGridRef.current;
-                  if (!grid) return;
+            {/* Controls Section */}
+            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+              {/* Premium Period Selector */}
+              <div className="period-selector-premium">
+                {[
+                  { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
+                  { value: 'week' as Period, label: 'Cette Semaine', shortLabel: 'Sem.' },
+                  { value: 'month' as Period, label: 'Ce Mois', shortLabel: 'Mois' },
+                ].map((p) => (
+                  <button
+                    key={p.value}
+                    onClick={() => {
+                      setPeriod(p.value);
+                      requestAnimationFrame(() => {
+                        const grid = kpiGridRef.current;
+                        if (!grid) return;
+                        const scrollContainer = grid.closest('main') as HTMLElement | null;
+                        if (!scrollContainer) {
+                          grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          return;
+                        }
+                        const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
+                        const headerHeight = kpiSectionRef.current?.offsetHeight ?? 0;
+                        const containerRect = scrollContainer.getBoundingClientRect();
+                        const gridRect = grid.getBoundingClientRect();
+                        const relativeTop = gridRect.top - containerRect.top + scrollContainer.scrollTop;
+                        const targetTop = Math.max(0, relativeTop - topBarHeight - headerHeight - 12);
+                        scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
+                      });
+                    }}
+                    className={`period-btn ${period === p.value ? 'active' : ''}`}
+                  >
+                    <span className="hidden sm:inline">{p.label}</span>
+                    <span className="sm:hidden">{p.shortLabel}</span>
+                  </button>
+                ))}
+              </div>
 
-                  const scrollContainer = grid.closest('main') as HTMLElement | null;
-                  if (!scrollContainer) {
-                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    return;
-                  }
-
-                  const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
-                  const headerHeight = kpiSectionRef.current?.offsetHeight ?? 0;
-
-                  const containerRect = scrollContainer.getBoundingClientRect();
-                  const gridRect = grid.getBoundingClientRect();
-                  const relativeTop = gridRect.top - containerRect.top + scrollContainer.scrollTop;
-
-                  // Place the KPI grid just below (topbar + sticky header) with a small gap.
-                  const targetTop = Math.max(0, relativeTop - topBarHeight - headerHeight - 12);
-                  scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
-                });
-              }}
-            />
-            {isCeo && <DailyReportGenerator />}
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="min-h-[40px]"
-            >
-              <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline ml-2">Actualiser</span>
-            </Button>
+              {/* Action Buttons */}
+              {isCeo && <DailyReportGenerator />}
+              <button 
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="btn-premium min-h-[40px]"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Actualiser</span>
+              </button>
+            </div>
           </div>
         </div>
 
