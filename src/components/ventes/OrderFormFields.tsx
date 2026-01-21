@@ -87,8 +87,29 @@ interface OrderFormFieldsProps {
   addressAsTextarea?: boolean;
 }
 
-// DEMO: 24/24h operations - all hours available
-const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+// Helper to validate and format time input (5-minute intervals)
+const formatTimeInput = (value: string): string => {
+  // Remove non-numeric characters except colon
+  const cleaned = value.replace(/[^\d:]/g, '');
+  
+  // Auto-insert colon after 2 digits if not present
+  if (cleaned.length >= 2 && !cleaned.includes(':')) {
+    return cleaned.slice(0, 2) + ':' + cleaned.slice(2, 4);
+  }
+  
+  return cleaned.slice(0, 5);
+};
+
+const validateTime = (value: string): boolean => {
+  const match = value.match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return false;
+  
+  const hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  
+  // Hours 0-23, minutes in 5-minute intervals (00, 05, 10, 15, etc.)
+  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 55 && minutes % 5 === 0;
+};
 
 const PUMP_TYPES = [
   { value: 'pompe_automotrice', label: 'Pompe automotrice' },
@@ -174,22 +195,24 @@ export function OrderFormFields({
             </Popover>
           </div>
 
-          {/* Time Picker */}
+          {/* Time Picker - Free entry with 5-min intervals */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
               Heure souhaitée
             </Label>
-            <Select value={deliveryTime} onValueChange={setDeliveryTime}>
-              <SelectTrigger>
-                <SelectValue placeholder="Heure" />
-              </SelectTrigger>
-              <SelectContent>
-                {TIME_OPTIONS.map(time => (
-                  <SelectItem key={time} value={time}>{time}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input
+              value={deliveryTime}
+              onChange={(e) => setDeliveryTime(formatTimeInput(e.target.value))}
+              placeholder="HH:MM (ex: 08:15)"
+              maxLength={5}
+              className={cn(
+                deliveryTime && !validateTime(deliveryTime) && "border-destructive focus-visible:ring-destructive"
+              )}
+            />
+            {deliveryTime && !validateTime(deliveryTime) && (
+              <p className="text-xs text-destructive">Format: HH:MM en intervalles de 5 min (ex: 08:00, 08:05, 08:10)</p>
+            )}
           </div>
 
           {/* Address */}
