@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
@@ -21,6 +21,7 @@ export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
+  const kpiSectionRef = useRef<HTMLDivElement>(null);
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
   const [refreshing, setRefreshing] = useState(false);
@@ -125,7 +126,13 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <PeriodSelector value={period} onChange={setPeriod} />
+            <PeriodSelector value={period} onChange={(newPeriod) => {
+              setPeriod(newPeriod);
+              // Scroll to KPI section after period change
+              setTimeout(() => {
+                kpiSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 100);
+            }} />
             {isCeo && <DailyReportGenerator />}
             <Button 
               variant="outline" 
@@ -162,7 +169,7 @@ export default function Dashboard() {
         />
 
         {/* Period-Aware KPI Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div ref={kpiSectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-4">
           <PeriodKPICard
             title="Volume Total"
             value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
