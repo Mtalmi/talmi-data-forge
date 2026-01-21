@@ -166,15 +166,8 @@ export function OrderFormFields({
                   mode="single"
                   selected={deliveryDate}
                   onSelect={setDeliveryDate}
-                  disabled={(date) => {
-                    // DEMO: Allow Jan 21, 2026 for testing purposes
-                    const demoDate = new Date(2026, 0, 21); // Jan 21, 2026
-                    const isDemo = date.toDateString() === demoDate.toDateString();
-                    if (isDemo) return false;
-                    return date < new Date();
-                  }}
                   initialFocus
-                  className="p-3 pointer-events-auto"
+                  className="pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
