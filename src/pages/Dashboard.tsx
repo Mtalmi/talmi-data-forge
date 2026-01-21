@@ -118,7 +118,7 @@ export default function Dashboard() {
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
         {/* Header with Period Selector - Right Aligned */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div ref={kpiSectionRef} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 scroll-mt-4">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
             <p className="text-sm text-muted-foreground truncate">
@@ -169,7 +169,7 @@ export default function Dashboard() {
         />
 
         {/* Period-Aware KPI Grid */}
-        <div ref={kpiSectionRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <PeriodKPICard
             title="Volume Total"
             value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
