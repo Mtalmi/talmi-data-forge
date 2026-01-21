@@ -93,6 +93,15 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
     setOpen(false);
   };
 
+  // Force wheel scrolling inside the dropdown (prevents the page behind from scrolling)
+  const handleWheel: React.WheelEventHandler<HTMLDivElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTop += e.deltaY;
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   const isValid = !inputValue || validateTime(inputValue);
 
   // Show all times - no filtering to ensure full 24h coverage
@@ -139,14 +148,20 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
             </p>
           )}
         </div>
-        <div 
+        <div
           ref={scrollRef}
-          className="h-[280px] overflow-y-auto overscroll-contain touch-pan-y"
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          tabIndex={0}
+          onWheel={handleWheel}
+          className={cn(
+            "max-h-[320px] overflow-y-scroll overscroll-contain touch-pan-y outline-none",
+            "bg-popover"
+          )}
+          style={{ WebkitOverflowScrolling: "touch" }}
         >
           <div className="p-1">
             {filteredTimes.map((time) => (
               <button
+                type="button"
                 key={time}
                 data-time={time}
                 onClick={() => handleSelectTime(time)}
