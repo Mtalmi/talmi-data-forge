@@ -22,6 +22,7 @@ import { BcTable } from '@/components/ventes/BcTable';
 import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
 import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
 import { VentesFilters } from '@/components/ventes/VentesFilters';
+import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/components/ventes/BulkActionsToolbar';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -45,6 +46,10 @@ export default function Ventes() {
   
   // Tab control state
   const [activeTab, setActiveTab] = useState('devis');
+  
+  // Bulk selection state
+  const [selectedDevisIds, setSelectedDevisIds] = useState<string[]>([]);
+  const [selectedBcIds, setSelectedBcIds] = useState<string[]>([]);
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
@@ -345,7 +350,27 @@ export default function Ventes() {
             </TabsList>
 
             {/* Devis Tab */}
-            <TabsContent value="devis">
+            <TabsContent value="devis" className="space-y-4">
+              {/* Bulk Actions Toolbar */}
+              <BulkActionsToolbar
+                selectedCount={selectedDevisIds.length}
+                type="devis"
+                onMarkRefused={async () => {
+                  // Mark selected devis as refused
+                  for (const id of selectedDevisIds) {
+                    const devis = filteredDevis.find(d => d.id === id);
+                    if (devis) {
+                      await supabase
+                        .from('devis')
+                        .update({ statut: 'refuse' })
+                        .eq('id', id);
+                    }
+                  }
+                  await fetchData();
+                }}
+                onExportCSV={() => exportDevisToCSV(filteredDevis, selectedDevisIds)}
+                onClearSelection={() => setSelectedDevisIds([])}
+              />
               <Card>
                 <CardContent className="pt-6">
                   <DevisTable
@@ -353,13 +378,32 @@ export default function Ventes() {
                     loading={loading}
                     onConvert={openConvertDialog}
                     getExpirationInfo={getExpirationInfo}
+                    selectedIds={selectedDevisIds}
+                    onSelectionChange={setSelectedDevisIds}
                   />
                 </CardContent>
               </Card>
             </TabsContent>
 
             {/* BC Tab */}
-            <TabsContent value="bc">
+            <TabsContent value="bc" className="space-y-4">
+              {/* Bulk Actions Toolbar */}
+              <BulkActionsToolbar
+                selectedCount={selectedBcIds.length}
+                type="bc"
+                onCancel={async () => {
+                  // Cancel selected BC (update status)
+                  for (const id of selectedBcIds) {
+                    await supabase
+                      .from('bons_commande')
+                      .update({ statut: 'annule' })
+                      .eq('id', id);
+                  }
+                  await fetchData();
+                }}
+                onExportCSV={() => exportBcToCSV(filteredBc, selectedBcIds)}
+                onClearSelection={() => setSelectedBcIds([])}
+              />
               <Card>
                 <CardContent className="pt-6">
                   <BcTable
@@ -369,6 +413,8 @@ export default function Ventes() {
                     onLaunchProduction={handleLaunchProduction}
                     onCopyBc={handleCopyBc}
                     onOpenDetail={handleOpenBcDetail}
+                    selectedIds={selectedBcIds}
+                    onSelectionChange={setSelectedBcIds}
                   />
                 </CardContent>
               </Card>

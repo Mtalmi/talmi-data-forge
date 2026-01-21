@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -22,6 +24,9 @@ import {
   AlertTriangle,
   Loader2,
   Timer,
+  Star,
+  Zap,
+  Mail,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
@@ -38,6 +43,10 @@ const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: 
   expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <AlertTriangle className="h-3 w-3" /> },
 };
 
+// Priority thresholds
+const HIGH_VALUE_THRESHOLD = 50000; // DH
+const HIGH_VOLUME_THRESHOLD = 50; // m³
+
 interface ExpirationInfo {
   isExpiring: boolean;
   isExpired: boolean;
@@ -49,9 +58,51 @@ interface DevisTableProps {
   loading: boolean;
   onConvert: (devis: Devis) => void;
   getExpirationInfo?: (devis: Devis) => ExpirationInfo;
+  selectedIds: string[];
+  onSelectionChange: (ids: string[]) => void;
+  onQuickSend?: (devis: Devis) => void;
 }
 
-export function DevisTable({ devisList, loading, onConvert, getExpirationInfo }: DevisTableProps) {
+// Helper to determine if devis is high priority
+const isHighPriority = (devis: Devis): { isPriority: boolean; reason: string } => {
+  if (devis.total_ht >= HIGH_VALUE_THRESHOLD) {
+    return { isPriority: true, reason: `Valeur élevée (${devis.total_ht.toLocaleString()} DH)` };
+  }
+  if (devis.volume_m3 >= HIGH_VOLUME_THRESHOLD) {
+    return { isPriority: true, reason: `Volume important (${devis.volume_m3} m³)` };
+  }
+  return { isPriority: false, reason: '' };
+};
+
+export function DevisTable({ 
+  devisList, 
+  loading, 
+  onConvert, 
+  getExpirationInfo,
+  selectedIds,
+  onSelectionChange,
+  onQuickSend,
+}: DevisTableProps) {
+  
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      onSelectionChange(devisList.map(d => d.id));
+    } else {
+      onSelectionChange([]);
+    }
+  };
+
+  const handleSelectOne = (id: string, checked: boolean) => {
+    if (checked) {
+      onSelectionChange([...selectedIds, id]);
+    } else {
+      onSelectionChange(selectedIds.filter(i => i !== id));
+    }
+  };
+
+  const allSelected = devisList.length > 0 && selectedIds.length === devisList.length;
+  const someSelected = selectedIds.length > 0 && selectedIds.length < devisList.length;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -128,18 +179,49 @@ export function DevisTable({ devisList, loading, onConvert, getExpirationInfo }:
     return null;
   };
 
+  const renderPriorityBadge = (devis: Devis) => {
+    const priority = isHighPriority(devis);
+    if (!priority.isPriority) return null;
+    
+    return (
+      <Tooltip>
+        <TooltipTrigger>
+          <Badge 
+            variant="outline" 
+            className="gap-1 bg-amber-500/10 text-amber-600 border-amber-500/30"
+          >
+            <Star className="h-3 w-3 fill-current" />
+          </Badge>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="flex items-center gap-1">
+            <Zap className="h-3 w-3" />
+            Priorité: {priority.reason}
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead className="w-10">
+            <Checkbox 
+              checked={allSelected}
+              onCheckedChange={handleSelectAll}
+              aria-label="Tout sélectionner"
+              className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
+            />
+          </TableHead>
           <TableHead>N° Devis</TableHead>
           <TableHead>Client</TableHead>
           <TableHead>Formule</TableHead>
           <TableHead className="text-right">Volume</TableHead>
-          <TableHead className="text-right">Prix/m³</TableHead>
           <TableHead className="text-right">Total HT</TableHead>
           <TableHead>Statut</TableHead>
-          <TableHead>Expiration</TableHead>
+          <TableHead>Priorité</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -147,42 +229,58 @@ export function DevisTable({ devisList, loading, onConvert, getExpirationInfo }:
         {devisList.map((devis) => {
           const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
           const expirationBadge = renderExpirationBadge(devis);
+          const priorityBadge = renderPriorityBadge(devis);
+          const isSelected = selectedIds.includes(devis.id);
           
           return (
             <TableRow 
               key={devis.id}
               className={cn(
-                getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30"
+                getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
+                isSelected && "bg-primary/5"
               )}
             >
+              <TableCell>
+                <Checkbox 
+                  checked={isSelected}
+                  onCheckedChange={(checked) => handleSelectOne(devis.id, !!checked)}
+                  aria-label={`Sélectionner ${devis.devis_id}`}
+                />
+              </TableCell>
               <TableCell className="font-mono font-medium">{devis.devis_id}</TableCell>
               <TableCell>{devis.client?.nom_client || '—'}</TableCell>
               <TableCell>
                 <span className="text-xs">{devis.formule_id}</span>
               </TableCell>
               <TableCell className="text-right font-mono">{devis.volume_m3} m³</TableCell>
-              <TableCell className="text-right font-mono">{devis.prix_vente_m3.toLocaleString()} DH</TableCell>
               <TableCell className="text-right font-mono font-medium">
                 {devis.total_ht.toLocaleString()} DH
               </TableCell>
               <TableCell>
-                <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
-                  {statusConfig.icon}
-                  {statusConfig.label}
-                </Badge>
+                <div className="flex items-center gap-1">
+                  <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                    {statusConfig.icon}
+                    {statusConfig.label}
+                  </Badge>
+                  {expirationBadge}
+                </div>
               </TableCell>
               <TableCell>
-                {expirationBadge || (
-                  devis.date_expiration && devis.statut === 'en_attente' ? (
-                    <span className="text-xs text-muted-foreground">
-                      {format(new Date(devis.date_expiration), 'dd/MM/yy')}
-                    </span>
-                  ) : '—'
-                )}
+                {priorityBadge || <span className="text-muted-foreground">—</span>}
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
-                  <DevisSendDialog devis={devis} />
+                  {/* Quick Send Button - prominent for pending devis */}
+                  {devis.statut === 'en_attente' && devis.client_id && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <DevisSendDialog devis={devis} />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>Envoyer au client</TooltipContent>
+                    </Tooltip>
+                  )}
                   <DevisPdfGenerator devis={devis} />
                   {devis.statut === 'en_attente' && devis.client_id && (
                     <Button
