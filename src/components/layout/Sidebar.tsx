@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
+import { forwardRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
@@ -42,32 +43,37 @@ interface NavItemProps {
   onClick?: () => void;
 }
 
-function NavItem({ to, icon, label, badge, onClick }: NavItemProps) {
-  const location = useLocation();
-  const isActive = location.pathname === to;
+const NavItem = forwardRef<HTMLAnchorElement, NavItemProps>(
+  ({ to, icon, label, badge, onClick }, ref) => {
+    const location = useLocation();
+    const isActive = location.pathname === to;
 
-  return (
-    <NavLink
-      to={to}
-      onClick={onClick}
-      className={cn(
-        'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200',
-        'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-        'min-h-[44px]', // Touch-friendly minimum height
-        isActive && 'bg-primary/10 text-primary border-l-2 border-primary -ml-[2px] pl-[14px]'
-      )}
-    >
-      <span className={cn('flex-shrink-0', isActive && 'text-primary')}>{icon}</span>
-      <span className="flex-1">{label}</span>
-      {badge !== undefined && badge > 0 && (
-        <span className="flex-shrink-0 h-5 min-w-[20px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-semibold px-1.5">
-          {badge}
-        </span>
-      )}
-      {isActive && <ChevronRight className="h-4 w-4 text-primary" />}
-    </NavLink>
-  );
-}
+    return (
+      <NavLink
+        ref={ref}
+        to={to}
+        onClick={onClick}
+        className={cn(
+          'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200',
+          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+          'min-h-[44px]', // Touch-friendly minimum height
+          isActive && 'bg-primary/10 text-primary border-l-2 border-primary -ml-[2px] pl-[14px]'
+        )}
+      >
+        <span className={cn('flex-shrink-0', isActive && 'text-primary')}>{icon}</span>
+        <span className="flex-1">{label}</span>
+        {badge !== undefined && badge > 0 && (
+          <span className="flex-shrink-0 h-5 min-w-[20px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-semibold px-1.5">
+            {badge}
+          </span>
+        )}
+        {isActive && <ChevronRight className="h-4 w-4 text-primary" />}
+      </NavLink>
+    );
+  }
+);
+
+NavItem.displayName = 'NavItem';
 
 interface SidebarContentProps {
   onNavClick?: () => void;
