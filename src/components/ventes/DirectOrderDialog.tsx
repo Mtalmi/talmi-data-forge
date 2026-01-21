@@ -26,6 +26,7 @@ import {
   Factory,
 } from 'lucide-react';
 import { OrderFormFields } from './OrderFormFields';
+import { QuickClientCreate } from './QuickClientCreate';
 
 interface Client {
   client_id: string;
@@ -59,6 +60,7 @@ interface DirectOrderDialogProps {
   creatingOrder: boolean;
   onCreateOrder: () => void;
   onCancel: () => void;
+  onClientCreated?: (clientId: string, clientName: string) => void;
   
   // Client & Product
   orderClientId: string;
@@ -115,6 +117,7 @@ export function DirectOrderDialog({
   creatingOrder,
   onCreateOrder,
   onCancel,
+  onClientCreated,
   orderClientId,
   onClientSelect,
   orderFormuleId,
@@ -176,18 +179,26 @@ export function DirectOrderDialog({
                 <Building2 className="h-4 w-4 text-muted-foreground" />
                 Client *
               </Label>
-              <Select value={orderClientId} onValueChange={onClientSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un client" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clients.map((client) => (
-                    <SelectItem key={client.client_id} value={client.client_id}>
-                      {client.nom_client}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex gap-2">
+                <Select value={orderClientId} onValueChange={onClientSelect}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Sélectionner un client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((client) => (
+                      <SelectItem key={client.client_id} value={client.client_id}>
+                        {client.nom_client}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <QuickClientCreate
+                  onClientCreated={(clientId, clientName) => {
+                    onClientCreated?.(clientId, clientName);
+                    onClientSelect(clientId);
+                  }}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
