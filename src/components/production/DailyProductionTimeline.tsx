@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
-import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, MapPin, Truck } from 'lucide-react';
-import { format, parseISO, isToday, isBefore, isAfter, set } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send } from 'lucide-react';
+import { format, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { getStatusConfig as getSharedStatusConfig, buildPlanningUrl } from '@/lib/workflowStatus';
 
 interface BonProduction {
   bl_id: string;
@@ -18,6 +20,8 @@ interface BonProduction {
   bc_id?: string | null;
   camion_assigne?: string | null;
   chauffeur_nom?: string | null;
+  zone_livraison_id?: string | null;
+  zones_livraison?: { nom_zone: string; code_zone: string } | null;
   client?: { nom_client: string } | null;
   bon_commande?: {
     client_nom: string | null;
@@ -29,19 +33,41 @@ interface DailyProductionTimelineProps {
   selectedDate: Date;
   onSelectBon?: (bon: BonProduction) => void;
   onStartProduction?: (bon: BonProduction) => void;
+  onSendToDelivery?: (blId: string) => void;
   className?: string;
 }
 
 // Generate hours from 6:00 to 18:00
 const WORK_HOURS = Array.from({ length: 13 }, (_, i) => i + 6);
 
+// Map workflow status to consistent UI config (uses shared config)
+const getStatusUIConfig = (status: string | null) => {
+  const shared = getSharedStatusConfig(status);
+  const iconMap: Record<string, typeof Clock> = {
+    planification: Clock,
+    production: Factory,
+    validation_technique: CheckCircle,
+  };
+  
+  return {
+    label: shared.label,
+    shortLabel: shared.shortLabel,
+    color: shared.color,
+    textColor: shared.textColor,
+    bgLight: shared.bgLight,
+    icon: iconMap[status || ''] || Clock,
+  };
+};
+
 export function DailyProductionTimeline({
   bons,
   selectedDate,
   onSelectBon,
   onStartProduction,
+  onSendToDelivery,
   className,
 }: DailyProductionTimelineProps) {
+  const navigate = useNavigate();
   const currentHour = new Date().getHours();
   const isViewingToday = isToday(selectedDate);
 
@@ -75,43 +101,6 @@ export function DailyProductionTimeline({
     return { grouped, unscheduled };
   }, [bons]);
 
-  const getStatusConfig = (status: string | null) => {
-    switch (status) {
-      case 'planification':
-        return { 
-          label: 'À Démarrer', 
-          color: 'bg-blue-500', 
-          textColor: 'text-blue-600',
-          bgLight: 'bg-blue-500/10',
-          icon: Clock 
-        };
-      case 'production':
-        return { 
-          label: 'En Cours', 
-          color: 'bg-warning', 
-          textColor: 'text-warning',
-          bgLight: 'bg-warning/10',
-          icon: Factory 
-        };
-      case 'validation_technique':
-        return { 
-          label: 'À Valider', 
-          color: 'bg-purple-500', 
-          textColor: 'text-purple-600',
-          bgLight: 'bg-purple-500/10',
-          icon: CheckCircle 
-        };
-      default:
-        return { 
-          label: 'En Attente', 
-          color: 'bg-muted', 
-          textColor: 'text-muted-foreground',
-          bgLight: 'bg-muted/50',
-          icon: Clock 
-        };
-    }
-  };
-
   const totalBons = bons.length;
   const completedBons = bons.filter(b => b.workflow_status === 'validation_technique').length;
   const inProgressBons = bons.filter(b => b.workflow_status === 'production').length;
@@ -126,12 +115,24 @@ export function DailyProductionTimeline({
             <Clock className="h-5 w-5 text-primary" />
             <h3 className="font-semibold">Planning Horaire</h3>
           </div>
-          <Badge variant="outline" className="font-mono">
-            {format(selectedDate, 'EEEE d MMM', { locale: fr })}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="font-mono">
+              {format(selectedDate, 'EEEE d MMM', { locale: fr })}
+            </Badge>
+            {/* Quick link to Planning page */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => navigate(buildPlanningUrl(selectedDate))}
+            >
+              <ExternalLink className="h-3 w-3" />
+              Planning
+            </Button>
+          </div>
         </div>
         
-        {/* Quick stats */}
+        {/* Quick stats - using shared status colors */}
         <div className="flex gap-4 text-sm">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-blue-500" />
@@ -139,12 +140,12 @@ export function DailyProductionTimeline({
             <span className="font-semibold">{pendingBons}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-warning" />
-            <span className="text-muted-foreground">En cours:</span>
+            <div className="w-2 h-2 rounded-full bg-violet-500" />
+            <span className="text-muted-foreground">En chargement:</span>
             <span className="font-semibold">{inProgressBons}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-purple-500" />
+            <div className="w-2 h-2 rounded-full bg-amber-500" />
             <span className="text-muted-foreground">À valider:</span>
             <span className="font-semibold">{completedBons}</span>
           </div>
@@ -168,9 +169,10 @@ export function DailyProductionTimeline({
                   <BonTimelineCard
                     key={bon.bl_id}
                     bon={bon}
-                    statusConfig={getStatusConfig(bon.workflow_status)}
+                    statusConfig={getStatusUIConfig(bon.workflow_status)}
                     onSelect={() => onSelectBon?.(bon)}
                     onStart={() => onStartProduction?.(bon)}
+                    onSendToDelivery={() => onSendToDelivery?.(bon.bl_id)}
                   />
                 ))}
               </div>
@@ -182,7 +184,6 @@ export function DailyProductionTimeline({
             const hourBons = bonsByHour.grouped[hour] || [];
             const isPastHour = isViewingToday && hour < currentHour;
             const isCurrentHour = isViewingToday && hour === currentHour;
-            const isFutureHour = isViewingToday && hour > currentHour;
             const hasOrders = hourBons.length > 0;
 
             return (
@@ -215,8 +216,8 @@ export function DailyProductionTimeline({
                       isCurrentHour && "bg-primary border-primary animate-pulse",
                       isPastHour && hasOrders && "bg-success border-success",
                       isPastHour && !hasOrders && "bg-muted border-muted-foreground/30",
-                      isFutureHour && hasOrders && "bg-blue-500 border-blue-500",
-                      isFutureHour && !hasOrders && "bg-background border-muted-foreground/30",
+                      !isPastHour && !isCurrentHour && hasOrders && "bg-blue-500 border-blue-500",
+                      !isPastHour && !isCurrentHour && !hasOrders && "bg-background border-muted-foreground/30",
                       !isViewingToday && hasOrders && "bg-primary border-primary",
                       !isViewingToday && !hasOrders && "bg-muted border-muted-foreground/30"
                     )} />
@@ -235,14 +236,16 @@ export function DailyProductionTimeline({
                         {hourBons.map(bon => {
                           const bonIsLate = isViewingToday && 
                             isPastHour && 
-                            bon.workflow_status !== 'validation_technique';
+                            bon.workflow_status !== 'validation_technique' &&
+                            bon.workflow_status !== 'en_livraison';
                           return (
                             <BonTimelineCard
                               key={bon.bl_id}
                               bon={bon}
-                              statusConfig={getStatusConfig(bon.workflow_status)}
+                              statusConfig={getStatusUIConfig(bon.workflow_status)}
                               onSelect={() => onSelectBon?.(bon)}
                               onStart={() => onStartProduction?.(bon)}
+                              onSendToDelivery={() => onSendToDelivery?.(bon.bl_id)}
                               isCurrentHour={isCurrentHour}
                               isLate={bonIsLate}
                             />
@@ -277,48 +280,12 @@ export function DailyProductionTimeline({
 
 interface BonTimelineCardProps {
   bon: BonProduction;
-  statusConfig: ReturnType<typeof getStatusConfig>;
+  statusConfig: ReturnType<typeof getStatusUIConfig>;
   onSelect?: () => void;
   onStart?: () => void;
+  onSendToDelivery?: () => void;
   isCurrentHour?: boolean;
   isLate?: boolean;
-}
-
-function getStatusConfig(status: string | null) {
-  switch (status) {
-    case 'planification':
-      return { 
-        label: 'À Démarrer', 
-        color: 'bg-blue-500', 
-        textColor: 'text-blue-600',
-        bgLight: 'bg-blue-500/10',
-        icon: Clock 
-      };
-    case 'production':
-      return { 
-        label: 'En Cours', 
-        color: 'bg-warning', 
-        textColor: 'text-warning',
-        bgLight: 'bg-warning/10',
-        icon: Factory 
-      };
-    case 'validation_technique':
-      return { 
-        label: 'À Valider', 
-        color: 'bg-purple-500', 
-        textColor: 'text-purple-600',
-        bgLight: 'bg-purple-500/10',
-        icon: CheckCircle 
-      };
-    default:
-      return { 
-        label: 'En Attente', 
-        color: 'bg-muted', 
-        textColor: 'text-muted-foreground',
-        bgLight: 'bg-muted/50',
-        icon: Clock 
-      };
-  }
 }
 
 function BonTimelineCard({ 
@@ -326,12 +293,14 @@ function BonTimelineCard({
   statusConfig, 
   onSelect, 
   onStart,
+  onSendToDelivery,
   isCurrentHour,
   isLate 
 }: BonTimelineCardProps) {
   const StatusIcon = statusConfig.icon;
   const clientName = bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id;
   const canStart = bon.workflow_status === 'planification';
+  const canSendToDelivery = bon.workflow_status === 'validation_technique';
   const hasTruck = !!bon.camion_assigne;
 
   return (
@@ -395,19 +364,36 @@ function BonTimelineCard({
               )}
             </div>
             
-            {canStart && (
-              <Button
-                size="sm"
-                className="h-7 gap-1 text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onStart?.();
-                }}
-              >
-                <Play className="h-3 w-3" />
-                Démarrer
-              </Button>
-            )}
+            {/* Action buttons */}
+            <div className="flex items-center gap-1.5">
+              {canStart && (
+                <Button
+                  size="sm"
+                  className="h-7 gap-1 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onStart?.();
+                  }}
+                >
+                  <Play className="h-3 w-3" />
+                  Démarrer
+                </Button>
+              )}
+              {canSendToDelivery && (
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="h-7 gap-1 text-xs bg-rose-500 hover:bg-rose-600"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSendToDelivery?.();
+                  }}
+                >
+                  <Send className="h-3 w-3" />
+                  Livraison
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -48,6 +48,7 @@ import { ETATracker } from '@/components/planning/ETATracker';
 import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
 import { CommandCenterSection } from '@/components/planning/CommandCenterSection';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
+import { buildProductionUrl } from '@/lib/workflowStatus';
 
 interface BonLivraison {
   bl_id: string;
@@ -402,17 +403,17 @@ export default function Planning() {
       if (error) throw error;
       
       toast.success('Production lancée! Redirection vers le Centre Production...');
-      // Navigate to Production page with BL ID as search param
-      navigate(`/production?bl=${bon.bl_id}`);
+      // Navigate to Production page with BL ID and date context
+      navigate(buildProductionUrl(bon.bl_id, parseISO(selectedDate)));
     } catch (error) {
       console.error('Error starting production:', error);
       toast.error('Erreur lors du lancement');
     }
   };
 
-  // View in production center without starting
+  // View in production center without starting - preserves date context
   const viewInProduction = (bon: BonLivraison) => {
-    navigate(`/production?bl=${bon.bl_id}`);
+    navigate(buildProductionUrl(bon.bl_id, parseISO(selectedDate)));
   };
 
   // Confirm a pending BL - moves to planification status
@@ -488,14 +489,16 @@ export default function Planning() {
     }
   };
 
+  // Unified status badge - using shared config for consistency with Production
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
       en_attente_validation: { label: 'À Confirmer', variant: 'outline' },
-      planification: { label: 'Prêt', variant: 'outline', className: 'border-blue-500 text-blue-600' },
-      production: { label: 'Chargement', variant: 'secondary', className: 'bg-violet-500/20 text-violet-700 border-violet-500/30' },
-      validation_technique: { label: 'Validation Tech', variant: 'secondary', className: 'bg-amber-500/20 text-amber-700 border-amber-500/30' },
+      planification: { label: 'À Démarrer', variant: 'outline', className: 'border-blue-500 text-blue-600' },
+      production: { label: 'En Chargement', variant: 'secondary', className: 'bg-violet-500/20 text-violet-700 border-violet-500/30' },
+      validation_technique: { label: 'À Valider', variant: 'secondary', className: 'bg-amber-500/20 text-amber-700 border-amber-500/30' },
       en_livraison: { label: 'En Route', variant: 'default', className: 'bg-rose-500 text-white' },
       livre: { label: 'Livré', variant: 'default', className: 'bg-emerald-500 text-white' },
+      facture: { label: 'Facturé', variant: 'default', className: 'bg-emerald-600 text-white' },
     };
     const config = statusConfig[status] || { label: status, variant: 'outline' as const };
     return <Badge variant={config.variant} className={config.className}>{config.label}</Badge>;
