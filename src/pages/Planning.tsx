@@ -33,6 +33,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useDeviceType';
+import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
 import { PlanningCalendarHeader } from '@/components/planning/PlanningCalendarHeader';
 
@@ -69,11 +70,13 @@ export default function Planning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
+  const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const pendingValidationRef = useRef<HTMLDivElement>(null);
+  const [focusPending, setFocusPending] = useState(() => searchParams.get('focus') === 'pending');
   const [monthlyDeliveryData, setMonthlyDeliveryData] = useState<{
     date: string;
     totalVolume: number;
@@ -84,6 +87,34 @@ export default function Planning() {
   // Initialize date from URL param or default to today
   const initialDate = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
   const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  // If user navigated to /planning?focus=pending (e.g. by clicking the sidebar badge),
+  // jump to the earliest pending date and scroll to the "À Confirmer" section.
+  useEffect(() => {
+    if (searchParams.get('focus') === 'pending') {
+      setFocusPending(true);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (!focusPending) return;
+    if (!pendingEarliestDate || pendingBLCount <= 0) return;
+
+    // Step 1: switch date first
+    if (selectedDate !== pendingEarliestDate) {
+      setSelectedDate(pendingEarliestDate);
+      return;
+    }
+
+    // Step 2: after data for that date is loaded and there is pending, expand + scroll
+    if (!loading && pendingValidation.length > 0) {
+      setPendingValidationOpen(true);
+      setTimeout(() => {
+        pendingValidationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+      setFocusPending(false);
+    }
+  }, [focusPending, pendingEarliestDate, pendingBLCount, selectedDate, pendingValidation.length, loading]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -555,21 +586,18 @@ export default function Planning() {
             <p className="text-muted-foreground">Ordonnancement des livraisons</p>
           </div>
           <div className="flex items-center gap-3">
-            {pendingValidation.length > 0 && (
+            {pendingBLCount > 0 && pendingEarliestDate && (
               <Button 
                 variant="outline" 
                 size="sm" 
                 className="gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10 relative"
                 onClick={() => {
-                  setPendingValidationOpen(true);
-                  setTimeout(() => {
-                    pendingValidationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }, 100);
+                  setFocusPending(true);
                 }}
               >
                 <BellRing className="h-4 w-4" />
                 À Confirmer
-                <Badge className="bg-amber-500 text-white ml-1">{pendingValidation.length}</Badge>
+                <Badge className="bg-amber-500 text-white ml-1">{pendingBLCount}</Badge>
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>

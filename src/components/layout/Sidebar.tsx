@@ -46,7 +46,8 @@ interface NavItemProps {
 const NavItem = forwardRef<HTMLAnchorElement, NavItemProps>(
   ({ to, icon, label, badge, onClick }, ref) => {
     const location = useLocation();
-    const isActive = location.pathname === to;
+    const toPath = to.split('?')[0];
+    const isActive = location.pathname === toPath;
 
     return (
       <NavLink
@@ -134,6 +135,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
   // CEO section visibility
   const showCeoSection = isCeo || effectiveRole === 'superviseur';
 
+  const planningHref = pendingBLCount > 0 ? '/planning?focus=pending' : '/planning';
+
   const getRoleBadge = () => {
     const roleConfig: Record<string, { label: string; className: string }> = {
       ceo: { label: 'CEO', className: 'bg-primary/20 text-primary' },
@@ -197,7 +200,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
                 </p>
               </div>
             </div>
-            {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" badge={pendingBLCount} onClick={onNavClick} />}
+            {canAccess('/planning') && <NavItem to={planningHref} icon={<CalendarClock className="h-5 w-5" />} label="Planning" badge={pendingBLCount} onClick={onNavClick} />}
             {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
             {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
             {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
