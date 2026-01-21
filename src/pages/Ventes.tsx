@@ -4,14 +4,16 @@ import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
 import { useSalesWorkflow, Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { useZonesLivraison } from '@/hooks/useZonesLivraison';
+import { useVentesFilters } from '@/hooks/useVentesFilters';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, ShoppingCart, RefreshCw } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { FileText, ShoppingCart, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
-import { cn } from '@/lib/utils';
 
 // Refactored components
 import { PipelineStats } from '@/components/ventes/PipelineStats';
@@ -19,11 +21,27 @@ import { DevisTable } from '@/components/ventes/DevisTable';
 import { BcTable } from '@/components/ventes/BcTable';
 import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
 import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
+import { VentesFilters } from '@/components/ventes/VentesFilters';
 
 export default function Ventes() {
   const navigate = useNavigate();
   const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
+  
+  // Use the new filters hook
+  const {
+    filters,
+    setFilters,
+    filteredDevis,
+    filteredBc,
+    autoRefreshEnabled,
+    toggleAutoRefresh,
+    lastRefresh,
+    isRefreshing,
+    handleRefresh,
+    getExpirationInfo,
+    expiringDevisCount,
+  } = useVentesFilters(devisList, bcList, fetchData);
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
@@ -248,81 +266,97 @@ export default function Ventes() {
   };
 
   return (
-    <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Pipeline Commercial</h1>
-            <p className="text-muted-foreground">
-              Gestion des devis et bons de commande
-            </p>
+    <TooltipProvider>
+      <MainLayout>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Pipeline Commercial</h1>
+              <p className="text-muted-foreground">
+                Gestion des devis et bons de commande
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button 
+                onClick={() => setDirectOrderOpen(true)}
+                className="gap-2"
+              >
+                <ShoppingCart className="h-4 w-4" />
+                Nouvelle Commande
+              </Button>
+              <SmartQuoteCalculator />
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button 
-              onClick={() => setDirectOrderOpen(true)}
-              className="gap-2"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              Nouvelle Commande
-            </Button>
-            <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
-              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              Actualiser
-            </Button>
-            <SmartQuoteCalculator />
-          </div>
+
+          {/* Filters & Search */}
+          <VentesFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            clients={clients}
+            formules={formules}
+            isRefreshing={isRefreshing || loading}
+            lastRefresh={lastRefresh}
+            onRefresh={handleRefresh}
+            autoRefreshEnabled={autoRefreshEnabled}
+            onAutoRefreshToggle={toggleAutoRefresh}
+          />
+
+          {/* Stats & Pipeline Visualization */}
+          <PipelineStats stats={stats} />
+
+          {/* Tabs for Devis and BC */}
+          <Tabs defaultValue="devis" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="devis" className="gap-2">
+                <FileText className="h-4 w-4" />
+                Devis ({filteredDevis.length})
+                {expiringDevisCount > 0 && (
+                  <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
+                    <AlertTriangle className="h-3 w-3" />
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="bc" className="gap-2">
+                <ShoppingCart className="h-4 w-4" />
+                Bons de Commande ({filteredBc.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Devis Tab */}
+            <TabsContent value="devis">
+              <Card>
+                <CardContent className="pt-6">
+                  <DevisTable
+                    devisList={filteredDevis}
+                    loading={loading}
+                    onConvert={openConvertDialog}
+                    getExpirationInfo={getExpirationInfo}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* BC Tab */}
+            <TabsContent value="bc">
+              <Card>
+                <CardContent className="pt-6">
+                  <BcTable
+                    bcList={filteredBc}
+                    loading={loading}
+                    launchingProduction={launchingProduction}
+                    onLaunchProduction={handleLaunchProduction}
+                    onCopyBc={handleCopyBc}
+                    onOpenDetail={handleOpenBcDetail}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
-        {/* Stats & Pipeline Visualization */}
-        <PipelineStats stats={stats} />
-
-        {/* Tabs for Devis and BC */}
-        <Tabs defaultValue="devis" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="devis" className="gap-2">
-              <FileText className="h-4 w-4" />
-              Devis ({devisList.length})
-            </TabsTrigger>
-            <TabsTrigger value="bc" className="gap-2">
-              <ShoppingCart className="h-4 w-4" />
-              Bons de Commande ({bcList.length})
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Devis Tab */}
-          <TabsContent value="devis">
-            <Card>
-              <CardContent className="pt-6">
-                <DevisTable
-                  devisList={devisList}
-                  loading={loading}
-                  onConvert={openConvertDialog}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* BC Tab */}
-          <TabsContent value="bc">
-            <Card>
-              <CardContent className="pt-6">
-                <BcTable
-                  bcList={bcList}
-                  loading={loading}
-                  launchingProduction={launchingProduction}
-                  onLaunchProduction={handleLaunchProduction}
-                  onCopyBc={handleCopyBc}
-                  onOpenDetail={handleOpenBcDetail}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      {/* Convert to BC Dialog */}
-      <ConvertToBcDialog
+        {/* Convert to BC Dialog */}
+        <ConvertToBcDialog
         open={convertDialogOpen}
         onOpenChange={setConvertDialogOpen}
         selectedDevis={selectedDevis}
@@ -407,15 +441,16 @@ export default function Ventes() {
         prestataires={prestataires}
       />
 
-      {/* BC Detail Dialog */}
-      <BcDetailDialog
-        bc={selectedBc}
-        open={bcDetailOpen}
-        onOpenChange={setBcDetailOpen}
-        onAddDelivery={handleAddDeliveryFromDialog}
-        onGenerateInvoice={async (bcId: string) => bcId}
-        onRefresh={fetchData}
-      />
-    </MainLayout>
+        {/* BC Detail Dialog */}
+        <BcDetailDialog
+          bc={selectedBc}
+          open={bcDetailOpen}
+          onOpenChange={setBcDetailOpen}
+          onAddDelivery={handleAddDeliveryFromDialog}
+          onGenerateInvoice={async (bcId: string) => bcId}
+          onRefresh={fetchData}
+        />
+      </MainLayout>
+    </TooltipProvider>
   );
 }
