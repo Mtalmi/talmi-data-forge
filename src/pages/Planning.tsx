@@ -37,6 +37,12 @@ import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
 import { PlanningCalendarHeader } from '@/components/planning/PlanningCalendarHeader';
 import { DailyPlanningReport } from '@/components/planning/DailyPlanningReport';
+import { DailyTimeline } from '@/components/planning/DailyTimeline';
+import { FleetCapacityOptimizer } from '@/components/planning/FleetCapacityOptimizer';
+import { PerformanceKPIs } from '@/components/planning/PerformanceKPIs';
+import { BulkConfirmAction } from '@/components/planning/BulkConfirmAction';
+import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
+import { ETATracker } from '@/components/planning/ETATracker';
 
 interface BonLivraison {
   bl_id: string;
@@ -65,6 +71,7 @@ interface Camion {
   chauffeur: string | null;
   statut: string;
   capacite_m3: number | null;
+  telephone_chauffeur?: string | null;
 }
 
 export default function Planning() {
@@ -132,7 +139,7 @@ export default function Planning() {
       // Fetch available trucks
       const { data: camionData, error: camionError } = await supabase
         .from('flotte')
-        .select('id_camion, immatriculation, chauffeur, statut, capacite_m3')
+        .select('id_camion, immatriculation, chauffeur, statut, capacite_m3, telephone_chauffeur')
         .eq('type', 'Toupie')
         .order('id_camion');
 
@@ -410,6 +417,21 @@ export default function Planning() {
     }
   };
 
+  const confirmAllPending = async (blIds: string[]) => {
+    try {
+      for (const blId of blIds) {
+        await supabase
+          .from('bons_livraison_reels')
+          .update({ workflow_status: 'planification' })
+          .eq('bl_id', blId);
+      }
+      fetchData();
+    } catch (error) {
+      console.error('Error confirming all:', error);
+      throw error;
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
       en_attente_validation: { label: 'À Confirmer', variant: 'outline' },
@@ -656,6 +678,12 @@ export default function Planning() {
                         <span>À Confirmer</span>
                         <Badge className="bg-amber-500 text-white animate-bounce">{pendingValidation.length}</Badge>
                         <Sparkles className="h-4 w-4 text-amber-500" />
+                        <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
+                          <BulkConfirmAction
+                            pendingBLs={pendingValidation}
+                            onConfirmAll={confirmAllPending}
+                          />
+                        </div>
                       </div>
                       <p className="text-xs text-muted-foreground font-normal mt-0.5">
                         Nouvelles livraisons en attente de validation dispatcher
