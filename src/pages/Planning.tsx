@@ -44,6 +44,7 @@ import { BulkConfirmAction } from '@/components/planning/BulkConfirmAction';
 import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
 import { ETATracker } from '@/components/planning/ETATracker';
 import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
+import { CommandCenterSection } from '@/components/planning/CommandCenterSection';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 
 interface BonLivraison {
@@ -58,6 +59,8 @@ interface BonLivraison {
   toupie_assignee: string | null;
   date_livraison: string;
   heure_depart_centrale: string | null;
+  heure_retour_centrale: string | null;
+  temps_rotation_minutes: number | null;
   created_at: string;
   // Logistics fields
   zone_livraison_id: string | null;
@@ -125,6 +128,8 @@ export default function Planning() {
           toupie_assignee,
           date_livraison,
           heure_depart_centrale,
+          heure_retour_centrale,
+          temps_rotation_minutes,
           created_at,
           zone_livraison_id,
           mode_paiement,
@@ -928,74 +933,10 @@ export default function Planning() {
         </div>
 
         {/* 🆕 Command Center - Intelligence Dashboard */}
-        <Collapsible defaultOpen>
-          <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors">
-                <CardTitle className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/20">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <span>Centre de Commande</span>
-                    <p className="text-xs text-muted-foreground font-normal mt-0.5">
-                      Timeline, Capacité Flotte & Performance KPIs
-                    </p>
-                  </div>
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-6 pt-0">
-                {/* Timeline Gantt View */}
-                <DailyTimeline 
-                  bons={bons.filter(b => !['annule', 'livre', 'facture', 'en_attente_validation'].includes(b.workflow_status)).map(b => ({
-                    bl_id: b.bl_id,
-                    client_id: b.client_id,
-                    clients: b.clients,
-                    heure_prevue: b.heure_prevue,
-                    volume_m3: b.volume_m3,
-                    workflow_status: b.workflow_status,
-                    toupie_assignee: b.camion_assigne || b.toupie_assignee,
-                  }))}
-                />
-
-                {/* Fleet & KPIs Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <FleetCapacityOptimizer 
-                    camions={camions.map(c => ({
-                      id_camion: c.id_camion,
-                      immatriculation: c.immatriculation,
-                      chauffeur: c.chauffeur,
-                      capacite_m3: c.capacite_m3,
-                      statut: c.statut,
-                    }))}
-                    bons={bons.filter(b => b.camion_assigne || b.toupie_assignee).map(b => ({
-                      bl_id: b.bl_id,
-                      volume_m3: b.volume_m3,
-                      toupie_assignee: b.camion_assigne || b.toupie_assignee,
-                      workflow_status: b.workflow_status,
-                    }))}
-                  />
-                  <PerformanceKPIs 
-                    bons={bons.map(b => ({
-                      bl_id: b.bl_id,
-                      toupie_assignee: b.camion_assigne || b.toupie_assignee,
-                      workflow_status: b.workflow_status,
-                      heure_depart_centrale: b.heure_depart_centrale,
-                      volume_m3: b.volume_m3,
-                    }))}
-                    camions={camions.map(c => ({
-                      id_camion: c.id_camion,
-                      chauffeur: c.chauffeur,
-                    }))}
-                  />
-                </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
+        <CommandCenterSection 
+          bons={bons}
+          camions={camions}
+        />
 
         {/* Live Dispatch Board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
