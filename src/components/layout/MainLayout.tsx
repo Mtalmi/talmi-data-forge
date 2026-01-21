@@ -4,6 +4,7 @@ import { GlobalSearch } from '@/components/search/GlobalSearch';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { QuickActionFAB } from './QuickActionFAB';
 import { RolePreviewSwitcher, RolePreviewBanner } from './RolePreviewSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { Building2 } from 'lucide-react';
@@ -55,6 +56,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
               previewRole={previewRole} 
               onPreviewRoleChange={setPreviewRole} 
             />
+            
+            {/* Theme Toggle */}
+            <ThemeToggle />
             
             <NotificationCenter />
           </div>
