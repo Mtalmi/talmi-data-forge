@@ -276,7 +276,7 @@ export function BcTable({
                 </Badge>
               </TableCell>
               <TableCell>
-                <OrderStatusTimeline bc={bc} compact />
+                <OrderStatusTimeline bc={bc} compact showDeliveryProgress />
               </TableCell>
               <TableCell>
                 {priorityBadge || <span className="text-muted-foreground">—</span>}
