@@ -453,14 +453,14 @@ export default function BankCSVImport({ onImport }: BankCSVImportProps) {
                 <div className="space-y-2">
                   <Label>Référence (optionnel)</Label>
                   <Select 
-                    value={columnMapping.reference || ''} 
-                    onValueChange={(v) => setColumnMapping({ ...columnMapping, reference: v })}
+                    value={columnMapping.reference || 'none'} 
+                    onValueChange={(v) => setColumnMapping({ ...columnMapping, reference: v === 'none' ? '' : v })}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Aucune" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Aucune</SelectItem>
+                      <SelectItem value="none">Aucune</SelectItem>
                       {headers.map(h => (
                         <SelectItem key={h} value={h}>{h}</SelectItem>
                       ))}

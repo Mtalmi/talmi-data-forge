@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, forwardRef } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, addMonths, subMonths, startOfWeek, endOfWeek, isSameMonth, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,13 +27,14 @@ interface PlanningCalendarHeaderProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function PlanningCalendarHeader({
-  selectedDate,
-  onDateChange,
-  deliveryData,
-  isOpen,
-  onOpenChange,
-}: PlanningCalendarHeaderProps) {
+export const PlanningCalendarHeader = forwardRef<HTMLDivElement, PlanningCalendarHeaderProps>(
+  function PlanningCalendarHeader({
+    selectedDate,
+    onDateChange,
+    deliveryData,
+    isOpen,
+    onOpenChange,
+  }, ref) {
   const currentDate = parseISO(selectedDate);
   const [viewMonth, setViewMonth] = useState(startOfMonth(currentDate));
 
@@ -206,4 +207,4 @@ export function PlanningCalendarHeader({
       </Card>
     </Collapsible>
   );
-}
+});
