@@ -75,7 +75,7 @@ export const PlanningCalendarHeader = forwardRef<HTMLDivElement, PlanningCalenda
 
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
-      <Card className="border-primary/20">
+      <Card ref={ref} className="border-primary/20">
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-3">
