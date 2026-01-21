@@ -640,8 +640,7 @@ export default function Planning() {
         )}
       </CardContent>
     </Card>
-    </Card>
-    );
+  );
   };
 
   const availableCamions = camions.filter(c => c.statut === 'Disponible').length;
