@@ -821,6 +821,7 @@ export default function Production() {
               variant="ghost" 
               size="sm" 
               className="gap-2 text-muted-foreground hover:text-foreground"
+              data-testid="production-to-planning-link"
               onClick={() => navigate(buildPlanningUrl(selectedDate))}
             >
               <Clock className="h-4 w-4" />
@@ -1633,6 +1634,7 @@ export default function Production() {
                     onClick={handleStartProduction}
                     disabled={saving}
                     className="gap-2 bg-primary hover:bg-primary/90"
+                    data-testid="dialog-start-production"
                   >
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
                     Démarrer Production
@@ -1645,6 +1647,7 @@ export default function Production() {
                     }}
                     disabled={saving || (deviations.length > 0 && !justification.trim())}
                     className="gap-2"
+                    data-testid="dialog-validate-production"
                   >
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
                     Valider Production

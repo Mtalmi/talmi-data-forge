@@ -530,10 +530,13 @@ export default function Planning() {
     };
 
     return (
-      <Card className={cn(
-        "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
-        isTouchDevice && "active:scale-[0.98]"
-      )}>
+      <Card
+        data-testid={`planning-bon-card-${bon.bl_id}`}
+        className={cn(
+          "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
+          isTouchDevice && "active:scale-[0.98]"
+        )}
+      >
         <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">
           <div>
@@ -625,6 +628,7 @@ export default function Planning() {
                   "w-full mt-2 gap-2",
                   isTouchDevice && "min-h-[52px] text-base"
                 )}
+                data-testid={`launch-production-${bon.bl_id}`}
                 onClick={() => startProduction(bon)}
               >
                 <Factory className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
@@ -658,6 +662,7 @@ export default function Planning() {
             variant="outline" 
             size="sm" 
             className="w-full mt-3 gap-2 border-violet-500/50 text-violet-600 hover:bg-violet-500/10"
+            data-testid={`view-in-production-${bon.bl_id}`}
             onClick={() => viewInProduction(bon)}
           >
             <Eye className="h-4 w-4" />
@@ -1032,6 +1037,7 @@ export default function Planning() {
                     variant="ghost" 
                     size="sm" 
                     className="ml-auto gap-1.5 text-violet-600 hover:bg-violet-500/10 h-7 text-xs"
+                    data-testid="centre-production-link"
                     onClick={() => navigate(`/production?date=${selectedDate}`)}
                   >
                     <Eye className="h-3 w-3" />
