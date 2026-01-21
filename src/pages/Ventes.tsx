@@ -33,6 +33,7 @@ import { SavedFilterViews } from '@/components/ventes/SavedFilterViews';
 import { ExpiringQuotesAlert } from '@/components/ventes/ExpiringQuotesAlert';
 import { RevenueForecastChart } from '@/components/ventes/RevenueForecastChart';
 import { BatchReminderDialog } from '@/components/ventes/BatchReminderDialog';
+import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDrawer';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -367,6 +368,7 @@ export default function Ventes() {
                 <ShoppingCart className="h-4 w-4" />
                 Commande Directe
               </Button>
+              <CommunicationLogDrawer />
               <ActivityHistoryDrawer />
               <KeyboardShortcutsHint />
             </div>
