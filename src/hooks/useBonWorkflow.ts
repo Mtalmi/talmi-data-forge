@@ -28,16 +28,20 @@ interface PrixAchat {
 // Workflow transitions allowed by role
 const WORKFLOW_TRANSITIONS: Record<string, { from: string[]; to: string; roles: string[] }[]> = {
   planification: [
-    { from: ['planification'], to: 'production', roles: ['ceo', 'directeur_operations'] }
+    // Dispatcher or Centraliste can start production
+    { from: ['planification'], to: 'production', roles: ['ceo', 'directeur_operations', 'centraliste'] }
   ],
   production: [
+    // Centraliste validates production data
     { from: ['production'], to: 'validation_technique', roles: ['ceo', 'centraliste'] }
   ],
   validation_technique: [
-    { from: ['validation_technique'], to: 'en_livraison', roles: ['ceo', 'responsable_technique'] }
+    // Tech lead or dispatcher sends to delivery
+    { from: ['validation_technique'], to: 'en_livraison', roles: ['ceo', 'responsable_technique', 'directeur_operations'] }
   ],
   en_livraison: [
-    { from: ['en_livraison'], to: 'livre', roles: ['ceo', 'directeur_operations', 'agent_administratif'] }
+    // Driver/dispatcher marks as delivered
+    { from: ['en_livraison'], to: 'livre', roles: ['ceo', 'directeur_operations', 'agent_administratif', 'superviseur'] }
   ],
   livre: [
     { from: ['livre'], to: 'facture', roles: ['ceo', 'agent_administratif'] }
@@ -164,6 +168,14 @@ export function useBonWorkflow() {
         updateData.validation_technique = true;
         updateData.validated_by = user?.id;
         updateData.validated_at = new Date().toISOString();
+      }
+
+      if (newStatus === 'production') {
+        updateData.heure_depart_centrale = new Date().toISOString();
+      }
+
+      if (newStatus === 'en_livraison') {
+        updateData.heure_depart_reelle = new Date().toISOString().split('T')[1].substring(0, 5);
       }
 
       if (newStatus === 'livre') {
