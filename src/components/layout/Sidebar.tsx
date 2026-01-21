@@ -135,7 +135,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
   // CEO section visibility
   const showCeoSection = isCeo || effectiveRole === 'superviseur';
 
-  const planningHref = pendingBLCount > 0 ? '/planning?focus=pending' : '/planning';
+  // Planning link always goes to today - badge provides quick access to pending
+  const planningHref = '/planning';
 
   const getRoleBadge = () => {
     const roleConfig: Record<string, { label: string; className: string }> = {
