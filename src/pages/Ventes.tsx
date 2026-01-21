@@ -78,10 +78,27 @@ export default function Ventes() {
     onNewQuote: () => document.querySelector<HTMLButtonElement>('[data-quote-calculator]')?.click(),
     onNewOrder: () => setDirectOrderOpen(true),
     onFocusSearch: () => searchInputRef.current?.focus(),
-    onNextItem: () => setSelectedRowIndex(prev => prev + 1),
+    onNextItem: () => {
+      const currentList = activeTab === 'devis' ? filteredDevis : filteredBc;
+      setSelectedRowIndex(prev => Math.min(prev + 1, currentList.length - 1));
+    },
     onPrevItem: () => setSelectedRowIndex(prev => Math.max(0, prev - 1)),
+    onEditSelected: () => {
+      if (selectedRowIndex >= 0) {
+        if (activeTab === 'devis' && filteredDevis[selectedRowIndex]) {
+          setSelectedDevis(filteredDevis[selectedRowIndex]);
+          setDevisDetailOpen(true);
+        } else if (activeTab === 'bc' && filteredBc[selectedRowIndex]) {
+          setSelectedBc(filteredBc[selectedRowIndex]);
+          setBcDetailOpen(true);
+        }
+      }
+    },
     onRefresh: handleRefresh,
-    onToggleTab: () => setActiveTab(activeTab === 'devis' ? 'bc' : 'devis'),
+    onToggleTab: () => {
+      setSelectedRowIndex(-1);
+      setActiveTab(activeTab === 'devis' ? 'bc' : 'devis');
+    },
   });
   
   // Handle pipeline stage click - update filters and switch tab
@@ -380,6 +397,7 @@ export default function Ventes() {
                 onRefresh={handleRefresh}
                 autoRefreshEnabled={autoRefreshEnabled}
                 onAutoRefreshToggle={toggleAutoRefresh}
+                searchInputRef={searchInputRef}
               />
             </div>
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +41,7 @@ interface VentesFiltersProps {
   onRefresh: () => void;
   autoRefreshEnabled: boolean;
   onAutoRefreshToggle: () => void;
+  searchInputRef?: React.RefObject<HTMLInputElement>;
 }
 
 export const defaultFilters: VentesFilterState = {
@@ -64,6 +65,7 @@ export function VentesFilters({
   onRefresh,
   autoRefreshEnabled,
   onAutoRefreshToggle,
+  searchInputRef,
 }: VentesFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -96,6 +98,7 @@ export function VentesFilters({
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
+            ref={searchInputRef}
             placeholder="Rechercher par n° devis, BC, client..."
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
