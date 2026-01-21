@@ -236,14 +236,13 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
                     <p className="text-lg font-semibold">Total: <span className="text-primary">{quoteResult.total_quote.toLocaleString()} DH</span></p>
                   </div>
                 </div>
-                <div className="space-y-1 text-sm">
-                  <div className="flex justify-between p-2 bg-muted/30 rounded"><span>CUT</span><span className="font-mono">{quoteResult.cut_per_m3.toFixed(2)} DH</span></div>
-                  <div className="flex justify-between p-2 bg-muted/30 rounded"><span>Frais fixes</span><span className="font-mono">{quoteResult.fixed_cost_per_m3.toFixed(2)} DH</span></div>
-                  {quoteResult.transport_extra_per_m3 > 0 && (
-                    <div className="flex justify-between p-2 bg-warning/10 rounded"><span>Transport</span><span className="font-mono text-warning">{quoteResult.transport_extra_per_m3.toFixed(2)} DH</span></div>
-                  )}
-                  <div className="flex justify-between p-2 border rounded font-medium"><span>Coût Total</span><span className="font-mono">{quoteResult.total_cost_per_m3.toFixed(2)} DH/m³</span></div>
-                  <div className="flex justify-between p-2 bg-success/10 rounded"><span>Marge ({quoteResult.margin_pct}%)</span><span className="font-mono text-success">+{(quoteResult.prix_vente_minimum - quoteResult.total_cost_per_m3).toFixed(2)} DH</span></div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between p-2 bg-muted/30 rounded"><span>CUT</span><span className="font-mono">{quoteResult.cut_per_m3.toFixed(2)} DH</span></div>
+                    <div className="flex justify-between p-2 bg-muted/30 rounded"><span>Frais fixes</span><span className="font-mono">{quoteResult.fixed_cost_per_m3.toFixed(2)} DH</span></div>
+                    {quoteResult.transport_extra_per_m3 > 0 && (
+                      <div className="flex justify-between p-2 bg-warning/10 rounded"><span>Transport</span><span className="font-mono text-warning">{quoteResult.transport_extra_per_m3.toFixed(2)} DH</span></div>
+                    )}
+                    <div className="flex justify-between p-2 border rounded font-medium"><span>Coût Total</span><span className="font-mono">{quoteResult.total_cost_per_m3.toFixed(2)} DH/m³</span></div>
                 </div>
                 <div className="flex gap-2">
                   <Button onClick={handleSaveDevis} disabled={saving} className="flex-1 gap-2">
