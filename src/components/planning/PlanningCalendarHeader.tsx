@@ -1,4 +1,4 @@
-import { useState, useMemo, forwardRef } from 'react';
+import { useState, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, addMonths, subMonths, startOfWeek, endOfWeek, isSameMonth, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,14 +27,13 @@ interface PlanningCalendarHeaderProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const PlanningCalendarHeader = forwardRef<HTMLDivElement, PlanningCalendarHeaderProps>(
-  function PlanningCalendarHeader({
-    selectedDate,
-    onDateChange,
-    deliveryData,
-    isOpen,
-    onOpenChange,
-  }, ref) {
+const PlanningCalendarHeaderComponent = ({
+  selectedDate,
+  onDateChange,
+  deliveryData,
+  isOpen,
+  onOpenChange,
+}: PlanningCalendarHeaderProps) => {
   const currentDate = parseISO(selectedDate);
   const [viewMonth, setViewMonth] = useState(startOfMonth(currentDate));
 
@@ -75,7 +74,7 @@ export const PlanningCalendarHeader = forwardRef<HTMLDivElement, PlanningCalenda
 
   return (
     <Collapsible open={isOpen} onOpenChange={onOpenChange}>
-      <Card ref={ref} className="border-primary/20">
+      <Card className="border-primary/20">
         <CollapsibleTrigger asChild>
           <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors">
             <div className="flex items-center gap-3">
@@ -207,4 +206,6 @@ export const PlanningCalendarHeader = forwardRef<HTMLDivElement, PlanningCalenda
       </Card>
     </Collapsible>
   );
-});
+};
+
+export const PlanningCalendarHeader = PlanningCalendarHeaderComponent;
