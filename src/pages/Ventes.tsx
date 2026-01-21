@@ -23,6 +23,7 @@ import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
 import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
 import { VentesFilters } from '@/components/ventes/VentesFilters';
 import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/components/ventes/BulkActionsToolbar';
+import { DevisDetailDialog } from '@/components/ventes/DevisDetailDialog';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ export default function Ventes() {
   
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
+  const [devisDetailOpen, setDevisDetailOpen] = useState(false);
   const [converting, setConverting] = useState(false);
   const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
   
@@ -378,6 +380,10 @@ export default function Ventes() {
                     devisList={filteredDevis}
                     loading={loading}
                     onConvert={openConvertDialog}
+                    onRowClick={(devis) => {
+                      setSelectedDevis(devis);
+                      setDevisDetailOpen(true);
+                    }}
                     getExpirationInfo={getExpirationInfo}
                     selectedIds={selectedDevisIds}
                     onSelectionChange={setSelectedDevisIds}
@@ -508,6 +514,14 @@ export default function Ventes() {
         zones={zones}
         prestataires={prestataires}
       />
+
+        {/* Devis Detail Dialog */}
+        <DevisDetailDialog
+          devis={selectedDevis}
+          open={devisDetailOpen}
+          onOpenChange={setDevisDetailOpen}
+          onConvert={openConvertDialog}
+        />
 
         {/* BC Detail Dialog */}
         <BcDetailDialog

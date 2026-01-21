@@ -57,6 +57,7 @@ interface DevisTableProps {
   devisList: Devis[];
   loading: boolean;
   onConvert: (devis: Devis) => void;
+  onRowClick?: (devis: Devis) => void;
   getExpirationInfo?: (devis: Devis) => ExpirationInfo;
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
@@ -74,10 +75,11 @@ const isHighPriority = (devis: Devis): { isPriority: boolean; reason: string } =
   return { isPriority: false, reason: '' };
 };
 
-export function DevisTable({ 
-  devisList, 
-  loading, 
-  onConvert, 
+export function DevisTable({
+  devisList,
+  loading,
+  onConvert,
+  onRowClick,
   getExpirationInfo,
   selectedIds,
   onSelectionChange,
@@ -236,11 +238,13 @@ export function DevisTable({
             <TableRow 
               key={devis.id}
               className={cn(
+                "cursor-pointer hover:bg-muted/50 transition-colors",
                 getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
                 isSelected && "bg-primary/5"
               )}
+              onClick={() => onRowClick?.(devis)}
             >
-              <TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
                 <Checkbox 
                   checked={isSelected}
                   onCheckedChange={(checked) => handleSelectOne(devis.id, !!checked)}
@@ -268,7 +272,7 @@ export function DevisTable({
               <TableCell>
                 {priorityBadge || <span className="text-muted-foreground">—</span>}
               </TableCell>
-              <TableCell>
+              <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-1">
                   {/* Quick Send Button - prominent for pending devis */}
                   {devis.statut === 'en_attente' && devis.client_id && (
