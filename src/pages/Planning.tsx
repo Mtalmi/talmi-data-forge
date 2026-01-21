@@ -43,6 +43,7 @@ import { PerformanceKPIs } from '@/components/planning/PerformanceKPIs';
 import { BulkConfirmAction } from '@/components/planning/BulkConfirmAction';
 import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
 import { ETATracker } from '@/components/planning/ETATracker';
+import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
 
 interface BonLivraison {
   bl_id: string;
@@ -489,25 +490,46 @@ export default function Planning() {
                 className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Truck className="h-4 w-4 text-muted-foreground" />
-              <Select
-                value={bon.camion_assigne || bon.toupie_assignee || 'none'}
-                onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
-              >
-                <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
-                  <SelectValue placeholder="Assigner camion" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Non assigné</SelectItem>
-                  {camions.map(c => (
-                    <SelectItem key={c.id_camion} value={c.id_camion}>
-                      {c.id_camion} - {c.chauffeur || 'Sans chauffeur'}
-                      {c.statut !== 'Disponible' && ` (${c.statut})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Truck className="h-4 w-4 text-muted-foreground" />
+                <Select
+                  value={bon.camion_assigne || bon.toupie_assignee || 'none'}
+                  onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
+                >
+                  <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
+                    <SelectValue placeholder="Assigner camion" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Non assigné</SelectItem>
+                    {camions.map(c => (
+                      <SelectItem key={c.id_camion} value={c.id_camion}>
+                        {c.id_camion} - {c.chauffeur || 'Sans chauffeur'}
+                        {c.statut !== 'Disponible' && ` (${c.statut})`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Smart Truck Assignment */}
+              <Collapsible>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm" className="w-full h-7 text-xs gap-1 text-muted-foreground hover:text-foreground">
+                    <Sparkles className="h-3 w-3" />
+                    Suggestion intelligente
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="pt-2">
+                  <SmartTruckAssignment
+                    bon={bon}
+                    camions={camions}
+                    assignedTrucks={bons.filter(b => b.camion_assigne || b.toupie_assignee).map(b => b.camion_assigne || b.toupie_assignee || '')}
+                    onAssign={(camionId) => assignTruck(bon.bl_id, camionId)}
+                    currentAssignment={bon.camion_assigne || bon.toupie_assignee}
+                  />
+                </CollapsibleContent>
+              </Collapsible>
             </div>
             {/* Launch Production Button */}
             {bon.workflow_status === 'planification' && bon.heure_prevue && (bon.camion_assigne || bon.toupie_assignee) && (

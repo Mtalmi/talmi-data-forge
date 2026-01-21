@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -7,7 +8,7 @@ import {
 import { Phone, MessageCircle, User } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface DriverQuickContactProps {
+export interface DriverQuickContactProps {
   driverName: string | null;
   phoneNumber: string | null;
   blId: string;
