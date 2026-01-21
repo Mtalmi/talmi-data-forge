@@ -44,6 +44,7 @@ import { BulkConfirmAction } from '@/components/planning/BulkConfirmAction';
 import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
 import { ETATracker } from '@/components/planning/ETATracker';
 import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
+import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 
 interface BonLivraison {
   bl_id: string;
@@ -250,10 +251,15 @@ export default function Planning() {
         enLivraison.push(bon);
       } else if (['livre', 'facture'].includes(bon.workflow_status)) {
         livresAujourdhui.push(bon);
-      } else if (['planification', 'validation_technique'].includes(bon.workflow_status)) {
+        } else if (['planification', 'validation_technique'].includes(bon.workflow_status)) {
         // Check if scheduled within next 2 hours
         if (bon.heure_prevue) {
-          const [hours, minutes] = bon.heure_prevue.split(':').map(Number);
+            const hhmm = formatTimeHHmm(bon.heure_prevue);
+            if (!hhmm) {
+              aProduire.push(bon);
+              return;
+            }
+            const [hours, minutes] = hhmm.split(':').map(Number);
           const scheduledTime = new Date(selectedDate);
           scheduledTime.setHours(hours, minutes, 0, 0);
           
@@ -304,9 +310,15 @@ export default function Planning() {
 
   const updateBonTime = async (blId: string, time: string) => {
     try {
+      const trimmed = (time || '').trim();
+      const normalized = trimmed ? normalizeTimeHHmm(trimmed) : null;
+      if (trimmed && !normalized) {
+        toast.error('Heure invalide. Format attendu: HH:mm');
+        return;
+      }
       const { error } = await supabase
         .from('bons_livraison_reels')
-        .update({ heure_prevue: time || null })
+        .update({ heure_prevue: normalized })
         .eq('bl_id', blId);
 
       if (error) throw error;
@@ -446,12 +458,37 @@ export default function Planning() {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => (
-    <Card className={cn(
-      "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
-      isTouchDevice && "active:scale-[0.98]"
-    )}>
-      <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
+  const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => {
+    const [timeDraft, setTimeDraft] = useState(() => formatTimeHHmm(bon.heure_prevue) || '');
+
+    useEffect(() => {
+      setTimeDraft(formatTimeHHmm(bon.heure_prevue) || '');
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [bon.heure_prevue]);
+
+    const commitTime = async () => {
+      const trimmed = timeDraft.trim();
+      if (!trimmed) {
+        await updateBonTime(bon.bl_id, '');
+        return;
+      }
+      const normalized = normalizeTimeHHmm(trimmed);
+      if (!normalized) {
+        toast.error('Heure invalide. Format attendu: HH:mm');
+        setTimeDraft(formatTimeHHmm(bon.heure_prevue) || '');
+        return;
+      }
+      if (normalized !== (formatTimeHHmm(bon.heure_prevue) || '')) {
+        await updateBonTime(bon.bl_id, normalized);
+      }
+    };
+
+    return (
+      <Card className={cn(
+        "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
+        isTouchDevice && "active:scale-[0.98]"
+      )}>
+        <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">
           <div>
             <p className={cn("font-semibold", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
@@ -484,9 +521,12 @@ export default function Planning() {
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
               <Input
-                type="time"
-                value={bon.heure_prevue || ''}
-                onChange={(e) => updateBonTime(bon.bl_id, e.target.value)}
+                type="text"
+                inputMode="numeric"
+                placeholder="HH:mm"
+                value={timeDraft}
+                onChange={(e) => setTimeDraft(e.target.value)}
+                onBlur={commitTime}
                 className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}
               />
             </div>
@@ -555,7 +595,7 @@ export default function Planning() {
             isTouchDevice ? "text-sm" : "text-xs"
           )}>
             <Timer className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
-            <span>Prévu: {bon.heure_prevue}</span>
+            <span>Prévu: {formatTimeHHmm(bon.heure_prevue) || bon.heure_prevue}</span>
             {(bon.camion_assigne || bon.toupie_assignee) && (
               <>
                 <span className="text-muted-foreground">•</span>
@@ -600,7 +640,9 @@ export default function Planning() {
         )}
       </CardContent>
     </Card>
-  );
+    </Card>
+    );
+  };
 
   const availableCamions = camions.filter(c => c.statut === 'Disponible').length;
   const totalBonsToday = bons.length;
@@ -1082,10 +1124,12 @@ export default function Planning() {
                 {bons
                   .filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status))
                   .sort((a, b) => {
-                    if (!a.heure_prevue && !b.heure_prevue) return 0;
-                    if (!a.heure_prevue) return 1;
-                    if (!b.heure_prevue) return -1;
-                    return a.heure_prevue.localeCompare(b.heure_prevue);
+                    const am = timeToMinutes(a.heure_prevue);
+                    const bm = timeToMinutes(b.heure_prevue);
+                    if (am === null && bm === null) return 0;
+                    if (am === null) return 1;
+                    if (bm === null) return -1;
+                    return am - bm;
                   })
                   .map(bon => (
                     <div 
@@ -1094,7 +1138,7 @@ export default function Planning() {
                     >
                       <div className="w-16 text-center">
                         <p className="font-mono font-semibold text-lg">
-                          {bon.heure_prevue || '--:--'}
+                          {formatTimeHHmm(bon.heure_prevue) || '--:--'}
                         </p>
                       </div>
                       <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
