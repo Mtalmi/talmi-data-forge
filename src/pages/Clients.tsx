@@ -63,6 +63,12 @@ interface Client {
   telephone: string | null;
   email: string | null;
   adresse: string | null;
+  ville: string | null;
+  code_postal: string | null;
+  rc: string | null;
+  ice: string | null;
+  identifiant_fiscal: string | null;
+  patente: string | null;
   solde_du: number | null;
   limite_credit_dh: number | null;
   credit_bloque: boolean | null;
@@ -95,6 +101,12 @@ export default function Clients() {
   const [telephone, setTelephone] = useState('');
   const [email, setEmail] = useState('');
   const [adresse, setAdresse] = useState('');
+  const [ville, setVille] = useState('');
+  const [codePostal, setCodePostal] = useState('');
+  const [rc, setRc] = useState('');
+  const [ice, setIce] = useState('');
+  const [identifiantFiscal, setIdentifiantFiscal] = useState('');
+  const [patente, setPatente] = useState('');
 
   useEffect(() => {
     fetchClients();
@@ -129,6 +141,12 @@ export default function Clients() {
     setTelephone('');
     setEmail('');
     setAdresse('');
+    setVille('');
+    setCodePostal('');
+    setRc('');
+    setIce('');
+    setIdentifiantFiscal('');
+    setPatente('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -150,6 +168,12 @@ export default function Clients() {
         telephone: telephone || null,
         email: email || null,
         adresse: adresse || null,
+        ville: ville || null,
+        code_postal: codePostal || null,
+        rc: rc || null,
+        ice: ice || null,
+        identifiant_fiscal: identifiantFiscal || null,
+        patente: patente || null,
       }]);
 
       if (error) {
@@ -361,6 +385,69 @@ export default function Clients() {
                       value={adresse}
                       onChange={(e) => setAdresse(e.target.value)}
                     />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="form-label-industrial">Ville</Label>
+                      <Input
+                        placeholder="Casablanca"
+                        value={ville}
+                        onChange={(e) => setVille(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="form-label-industrial">Code Postal</Label>
+                      <Input
+                        placeholder="20000"
+                        value={codePostal}
+                        onChange={(e) => setCodePostal(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Business Identifiers Section */}
+                  <div className="border-t pt-4 mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      Identifiants Légaux
+                    </p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="form-label-industrial">RC</Label>
+                        <Input
+                          placeholder="123456"
+                          value={rc}
+                          onChange={(e) => setRc(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="form-label-industrial">ICE</Label>
+                        <Input
+                          placeholder="001234567890123"
+                          value={ice}
+                          onChange={(e) => setIce(e.target.value)}
+                          maxLength={15}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="space-y-2">
+                        <Label className="form-label-industrial">IF</Label>
+                        <Input
+                          placeholder="12345678"
+                          value={identifiantFiscal}
+                          onChange={(e) => setIdentifiantFiscal(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="form-label-industrial">Patente</Label>
+                        <Input
+                          placeholder="12345678"
+                          value={patente}
+                          onChange={(e) => setPatente(e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4">
