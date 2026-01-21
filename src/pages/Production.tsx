@@ -58,13 +58,18 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   ArrowUpDown,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay, parseISO, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface BonProduction {
   bl_id: string;
@@ -125,9 +130,13 @@ export default function Production() {
   type FilterType = 'all' | 'planification' | 'production' | 'validation' | 'machine' | 'ecart';
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   
-  // Search and date range
+  // Search and date selection - default to today
   const [searchQuery, setSearchQuery] = useState('');
-  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ 
+    from: startOfDay(new Date()), 
+    to: endOfDay(new Date()) 
+  });
   
   // Batch selection
   const [selectedBls, setSelectedBls] = useState<Set<string>>(new Set());
@@ -723,6 +732,87 @@ export default function Production() {
               <RefreshCw className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
+          </div>
+        </div>
+
+        {/* Date Selector - Prominent position */}
+        <div className="flex items-center justify-between bg-card border rounded-lg p-3 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => {
+                const prevDay = new Date(selectedDate);
+                prevDay.setDate(prevDay.getDate() - 1);
+                setSelectedDate(prevDay);
+                setDateRange({ from: startOfDay(prevDay), to: endOfDay(prevDay) });
+              }}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="gap-2 min-w-[180px] justify-start">
+                  <CalendarIcon className="h-4 w-4 text-primary" />
+                  <span className="font-medium">
+                    {isSameDay(selectedDate, new Date()) 
+                      ? "Aujourd'hui" 
+                      : format(selectedDate, 'EEEE d MMMM', { locale: fr })}
+                  </span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => {
+                    if (date) {
+                      setSelectedDate(date);
+                      setDateRange({ from: startOfDay(date), to: endOfDay(date) });
+                    }
+                  }}
+                  locale={fr}
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9"
+              onClick={() => {
+                const nextDay = new Date(selectedDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                setSelectedDate(nextDay);
+                setDateRange({ from: startOfDay(nextDay), to: endOfDay(nextDay) });
+              }}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {!isSameDay(selectedDate, new Date()) && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  const today = new Date();
+                  setSelectedDate(today);
+                  setDateRange({ from: startOfDay(today), to: endOfDay(today) });
+                }}
+                className="gap-1.5"
+              >
+                <CalendarIcon className="h-3.5 w-3.5" />
+                Aujourd'hui
+              </Button>
+            )}
+            <span className="text-sm text-muted-foreground">
+              {format(selectedDate, 'dd/MM/yyyy', { locale: fr })}
+            </span>
           </div>
         </div>
 
