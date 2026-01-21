@@ -95,10 +95,8 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
 
   const isValid = !inputValue || validateTime(inputValue);
 
-  // Filter times based on input
-  const filteredTimes = inputValue 
-    ? TIME_SLOTS.filter(t => t.startsWith(inputValue.split(':')[0] || ''))
-    : TIME_SLOTS;
+  // Show all times - no filtering to ensure full 24h coverage
+  const filteredTimes = TIME_SLOTS;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
