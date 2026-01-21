@@ -32,7 +32,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       
       <main className={`flex-1 min-w-0 overflow-y-auto ${previewRole ? 'pt-10' : ''}`}>
         {/* Top Bar with Global Search and Notifications */}
-        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-3 py-2 sm:px-4 sm:py-3 lg:px-6">
+        <div id="app-topbar" className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-3 py-2 sm:px-4 sm:py-3 lg:px-6">
           <div className="flex items-center justify-between gap-2 sm:gap-4 min-w-0">
             {/* Mobile: Hamburger + Logo */}
             {showMobileNav && (
