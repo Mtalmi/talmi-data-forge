@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useExecutiveMetrics } from '@/hooks/useExecutiveMetrics';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CashCreditDrawer } from './CashCreditDrawer';
 
 interface GaugeProps {
   value: number;
@@ -19,10 +20,11 @@ interface GaugeProps {
   subtitle: string;
   icon: React.ReactNode;
   thresholds: { green: number; yellow: number; reverse?: boolean };
+  onClick?: () => void;
 }
 
 const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
-  ({ value, label, subtitle, icon, thresholds }, ref) => {
+  ({ value, label, subtitle, icon, thresholds, onClick }, ref) => {
   const getColor = () => {
     if (thresholds.reverse) {
       // Lower is better (e.g., leakage)
@@ -48,7 +50,16 @@ const ExecutiveGauge = forwardRef<HTMLDivElement, GaugeProps>(
   const offset = circumference - (percentage / 100) * circumference;
 
   return (
-    <div ref={ref} className="flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-card to-muted/30 border border-border/50">
+    <div 
+      ref={ref} 
+      className={cn(
+        "flex flex-col items-center p-3 rounded-lg bg-gradient-to-br from-card to-muted/30 border border-border/50",
+        onClick && "cursor-pointer hover:border-primary/50 hover:shadow-md transition-all active:scale-95"
+      )}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+    >
       <div className="relative">
         <svg width={size} height={size} className="transform -rotate-90">
           {/* Background circle */}
@@ -116,6 +127,7 @@ ExecutiveGauge.displayName = 'ExecutiveGauge';
 export function ExecutiveCommandCenter() {
   const navigate = useNavigate();
   const { metrics, loading, refresh } = useExecutiveMetrics();
+  const [cashCreditOpen, setCashCreditOpen] = useState(false);
 
   if (loading) {
     return (
@@ -153,6 +165,7 @@ export function ExecutiveCommandCenter() {
           subtitle={`${metrics.cashPayments} payés`}
           icon={<Banknote className="h-3.5 w-3.5" />}
           thresholds={{ green: 90, yellow: 70 }}
+          onClick={() => setCashCreditOpen(true)}
         />
         <ExecutiveGauge
           value={metrics.qualityIndex}
@@ -219,6 +232,9 @@ export function ExecutiveCommandCenter() {
           <ArrowRight className="h-3 w-3" />
         </Button>
       </div>
+
+      {/* Cash/Credit Detail Drawer */}
+      <CashCreditDrawer open={cashCreditOpen} onOpenChange={setCashCreditOpen} />
     </div>
   );
 }
