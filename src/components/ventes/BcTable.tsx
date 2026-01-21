@@ -402,25 +402,64 @@ export function BcTable({
                       Lancer
                     </Button>
                   )}
-                  {/* Add Delivery - for multi-delivery orders in production */}
-                  {bc.statut === 'en_production' && bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (bc.volume_m3 - (bc.volume_livre || 0)) > 0 && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          variant="secondary"
-                          onClick={() => onOpenDetail(bc)}
-                          className="gap-1"
-                        >
-                          <Truck className="h-3 w-3" />
-                          +BL
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Ajouter une livraison ({(bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1)} m³ restants)
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
+                  {/* Add Delivery - only show when ALL linked BLs are validated or past production */}
+                  {(() => {
+                    const hasRemainingVolume = bc.statut === 'en_production' && 
+                      bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && 
+                      (bc.volume_m3 - (bc.volume_livre || 0)) > 0;
+                    
+                    if (!hasRemainingVolume) return null;
+                    
+                    // Check if all linked BLs are validated (past production phase)
+                    const linkedBls = bc.linkedBls || [];
+                    const validatedStatuses = ['validation_technique', 'en_livraison', 'livre', 'facture', 'annule'];
+                    const allBlsValidated = linkedBls.length === 0 || 
+                      linkedBls.every(bl => validatedStatuses.includes(bl.workflow_status));
+                    
+                    if (!allBlsValidated) {
+                      // Show disabled state with explanation
+                      return (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled
+                              className="gap-1 opacity-50"
+                            >
+                              <Truck className="h-3 w-3" />
+                              +BL
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="font-medium">En attente validation</p>
+                            <p className="text-xs text-muted-foreground">
+                              Le BL en cours doit être validé par le centraliste avant d'ajouter une nouvelle livraison
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    }
+                    
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => onOpenDetail(bc)}
+                            className="gap-1"
+                          >
+                            <Truck className="h-3 w-3" />
+                            +BL
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Ajouter une livraison ({(bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1)} m³ restants)
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })()}
                   <WhatsAppShareButton bc={bc} compact />
                   <Tooltip>
                     <TooltipTrigger asChild>
