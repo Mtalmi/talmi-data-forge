@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send } from 'lucide-react';
 import { format, isToday } from 'date-fns';
@@ -288,115 +288,126 @@ interface BonTimelineCardProps {
   isLate?: boolean;
 }
 
-function BonTimelineCard({ 
-  bon, 
-  statusConfig, 
-  onSelect, 
-  onStart,
-  onSendToDelivery,
-  isCurrentHour,
-  isLate 
-}: BonTimelineCardProps) {
-  const StatusIcon = statusConfig.icon;
-  const clientName = bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id;
-  const canStart = bon.workflow_status === 'planification';
-  const canSendToDelivery = bon.workflow_status === 'validation_technique';
-  const hasTruck = !!bon.camion_assigne;
+const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
+  function BonTimelineCard(
+    { bon, statusConfig, onSelect, onStart, onSendToDelivery, isCurrentHour, isLate },
+    ref
+  ) {
+    const StatusIcon = statusConfig.icon;
+    const clientName = bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id;
+    const canStart = bon.workflow_status === 'planification';
+    const canSendToDelivery = bon.workflow_status === 'validation_technique';
+    const hasTruck = !!bon.camion_assigne;
 
-  return (
-    <div 
-      className={cn(
-        "p-3 rounded-lg border transition-all cursor-pointer",
-        "hover:shadow-md hover:border-primary/30",
-        isLate ? "bg-destructive/10 border-destructive/30" : statusConfig.bgLight,
-        isCurrentHour && "ring-2 ring-primary/20"
-      )}
-      onClick={onSelect}
-    >
-      <div className="flex items-start gap-3">
-        {/* Status indicator */}
-        <div className={cn(
-          "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-          isLate ? "bg-destructive" : statusConfig.color,
-          "text-white"
-        )}>
-          {isLate ? <AlertTriangle className="h-5 w-5" /> : <StatusIcon className="h-5 w-5" />}
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono font-semibold text-sm">{bon.bl_id}</span>
-            <Badge variant="outline" className={cn("text-[10px]", isLate ? "text-destructive border-destructive/30" : statusConfig.textColor)}>
-              {isLate ? 'En Retard' : statusConfig.label}
-            </Badge>
+    return (
+      <div
+        ref={ref}
+        data-testid={`production-bon-card-${bon.bl_id}`}
+        className={cn(
+          "p-3 rounded-lg border transition-all cursor-pointer",
+          "hover:shadow-md hover:border-primary/30",
+          isLate ? "bg-destructive/10 border-destructive/30" : statusConfig.bgLight,
+          isCurrentHour && "ring-2 ring-primary/20"
+        )}
+        onClick={onSelect}
+      >
+        <div className="flex items-start gap-3">
+          {/* Status indicator */}
+          <div
+            className={cn(
+              "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
+              isLate ? "bg-destructive" : statusConfig.color,
+              "text-white"
+            )}
+          >
+            {isLate ? <AlertTriangle className="h-5 w-5" /> : <StatusIcon className="h-5 w-5" />}
           </div>
 
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-            <span className="flex items-center gap-1 truncate">
-              <User className="h-3 w-3" />
-              {clientName}
-            </span>
-            <span className="font-mono">{bon.formule_id}</span>
-          </div>
-
-          {/* Truck Assignment Row */}
-          {hasTruck && (
-            <div className="flex items-center gap-2 text-xs mb-2 p-1.5 bg-muted/50 rounded">
-              <Truck className="h-3 w-3 text-primary" />
-              <span className="font-medium">{bon.camion_assigne}</span>
-              {bon.chauffeur_nom && (
-                <>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="text-muted-foreground">{bon.chauffeur_nom}</span>
-                </>
-              )}
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-mono font-semibold text-sm">{bon.bl_id}</span>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-[10px]",
+                  isLate ? "text-destructive border-destructive/30" : statusConfig.textColor
+                )}
+              >
+                {isLate ? "En Retard" : statusConfig.label}
+              </Badge>
             </div>
-          )}
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">{bon.volume_m3} m³</span>
-              {!hasTruck && bon.workflow_status === 'planification' && (
-                <Badge variant="outline" className="text-[10px] text-warning border-warning/30">
-                  Sans toupie
-                </Badge>
-              )}
+            <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
+              <span className="flex items-center gap-1 truncate">
+                <User className="h-3 w-3" />
+                {clientName}
+              </span>
+              <span className="font-mono">{bon.formule_id}</span>
             </div>
-            
-            {/* Action buttons */}
-            <div className="flex items-center gap-1.5">
-              {canStart && (
-                <Button
-                  size="sm"
-                  className="h-7 gap-1 text-xs"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onStart?.();
-                  }}
-                >
-                  <Play className="h-3 w-3" />
-                  Démarrer
-                </Button>
-              )}
-              {canSendToDelivery && (
-                <Button
-                  size="sm"
-                  variant="default"
-                  className="h-7 gap-1 text-xs bg-rose-500 hover:bg-rose-600"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSendToDelivery?.();
-                  }}
-                >
-                  <Send className="h-3 w-3" />
-                  Livraison
-                </Button>
-              )}
+
+            {/* Truck Assignment Row */}
+            {hasTruck && (
+              <div className="flex items-center gap-2 text-xs mb-2 p-1.5 bg-muted/50 rounded">
+                <Truck className="h-3 w-3 text-primary" />
+                <span className="font-medium">{bon.camion_assigne}</span>
+                {bon.chauffeur_nom && (
+                  <>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-muted-foreground">{bon.chauffeur_nom}</span>
+                  </>
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold">{bon.volume_m3} m³</span>
+                {!hasTruck && bon.workflow_status === "planification" && (
+                  <Badge variant="outline" className="text-[10px] text-warning border-warning/30">
+                    Sans toupie
+                  </Badge>
+                )}
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-1.5">
+                {canStart && (
+                  <Button
+                    size="sm"
+                    className="h-7 gap-1 text-xs"
+                    data-testid={`start-production-${bon.bl_id}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onStart?.();
+                    }}
+                  >
+                    <Play className="h-3 w-3" />
+                    Démarrer
+                  </Button>
+                )}
+                {canSendToDelivery && (
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="h-7 gap-1 text-xs bg-rose-500 hover:bg-rose-600"
+                    data-testid={`send-to-delivery-${bon.bl_id}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSendToDelivery?.();
+                    }}
+                  >
+                    <Send className="h-3 w-3" />
+                    Livraison
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+);
+
+BonTimelineCard.displayName = "BonTimelineCard";
