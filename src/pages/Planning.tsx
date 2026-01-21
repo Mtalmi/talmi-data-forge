@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { format, addHours, parseISO, isWithinInterval, differenceInMinutes } from 'date-fns';
+import { format, addHours, parseISO, isWithinInterval, differenceInMinutes, startOfMonth, endOfMonth } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { 
   Clock, 
@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
+import { PlanningCalendarHeader } from '@/components/planning/PlanningCalendarHeader';
 
 interface BonLivraison {
   bl_id: string;
@@ -63,6 +64,13 @@ export default function Planning() {
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [monthlyDeliveryData, setMonthlyDeliveryData] = useState<{
+    date: string;
+    totalVolume: number;
+    count: number;
+    statuses: { planification: number; production: number; livre: number };
+  }[]>([]);
   
   // Initialize date from URL param or default to today
   const initialDate = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
@@ -126,6 +134,65 @@ export default function Planning() {
     const autoRefreshInterval = setInterval(fetchData, 15000);
     return () => clearInterval(autoRefreshInterval);
   }, [fetchData]);
+
+  // Fetch monthly summary for calendar
+  const fetchMonthlyData = useCallback(async () => {
+    try {
+      const currentDate = parseISO(selectedDate);
+      const monthStart = format(startOfMonth(currentDate), 'yyyy-MM-dd');
+      const monthEnd = format(endOfMonth(currentDate), 'yyyy-MM-dd');
+
+      const { data, error } = await supabase
+        .from('bons_livraison_reels')
+        .select('date_livraison, volume_m3, workflow_status')
+        .gte('date_livraison', monthStart)
+        .lte('date_livraison', monthEnd);
+
+      if (error) throw error;
+
+      // Aggregate by date
+      const aggregated = new Map<string, {
+        totalVolume: number;
+        count: number;
+        statuses: { planification: number; production: number; livre: number };
+      }>();
+
+      (data || []).forEach(bl => {
+        const dateKey = bl.date_livraison;
+        const existing = aggregated.get(dateKey) || {
+          totalVolume: 0,
+          count: 0,
+          statuses: { planification: 0, production: 0, livre: 0 }
+        };
+
+        existing.totalVolume += bl.volume_m3 || 0;
+        existing.count += 1;
+
+        if (['planification', 'validation_technique'].includes(bl.workflow_status)) {
+          existing.statuses.planification += 1;
+        } else if (['production', 'en_livraison'].includes(bl.workflow_status)) {
+          existing.statuses.production += 1;
+        } else if (['livre', 'facture'].includes(bl.workflow_status)) {
+          existing.statuses.livre += 1;
+        }
+
+        aggregated.set(dateKey, existing);
+      });
+
+      setMonthlyDeliveryData(
+        Array.from(aggregated.entries()).map(([date, data]) => ({
+          date,
+          ...data
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching monthly data:', error);
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    fetchMonthlyData();
+  }, [fetchMonthlyData]);
 
 
   // Categorize BLs for the dispatch board
@@ -410,21 +477,21 @@ export default function Planning() {
             <p className="text-muted-foreground">Ordonnancement des livraisons</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-              <Input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="w-40"
-              />
-            </div>
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               Actualiser
             </Button>
           </div>
         </div>
+
+        {/* Collapsible Calendar Header */}
+        <PlanningCalendarHeader
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+          deliveryData={monthlyDeliveryData}
+          isOpen={calendarOpen}
+          onOpenChange={setCalendarOpen}
+        />
 
         {/* Conflict Alert */}
         {conflicts.length > 0 && (
