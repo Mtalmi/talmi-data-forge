@@ -23,7 +23,8 @@ import {
   Truck,
   Send,
   CheckCircle,
-  Package
+  Package,
+  FileDown
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -58,6 +59,7 @@ interface DailyPlanningReportProps {
 export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningReportProps) {
   const [open, setOpen] = useState(false);
   const [printing, setPrinting] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const formattedDate = format(date, "EEEE d MMMM yyyy", { locale: fr });
 
@@ -295,6 +297,47 @@ export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningRe
     }
   };
 
+  const handlePdfExport = async () => {
+    setExporting(true);
+    try {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      const pdfContent = generatePrintContent();
+      
+      // Create a new window for PDF export with save dialog trigger
+      const pdfWindow = window.open('', '_blank');
+      if (pdfWindow) {
+        // Add download-specific styles and auto-trigger print for PDF save
+        const pdfHtml = pdfContent.replace(
+          '</style>',
+          `
+          @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
+          </style>
+          <script>
+            window.onload = function() {
+              document.title = 'Planning_TALMI_${dateStr}';
+              setTimeout(function() {
+                window.print();
+              }, 500);
+            };
+          </script>`
+        );
+        
+        pdfWindow.document.write(pdfHtml);
+        pdfWindow.document.close();
+        toast.success('PDF prêt - Utilisez "Enregistrer en PDF" dans la boîte de dialogue');
+      } else {
+        toast.error("Impossible d'ouvrir la fenêtre d'export");
+      }
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      toast.error("Erreur lors de l'export PDF");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const handleWhatsAppShare = () => {
     const deliveryList = deliveries.slice(0, 10).map(d => 
       `• ${d.heure_prevue || '--:--'} - ${d.client_name} (${d.volume_m3}m³)`
@@ -457,6 +500,25 @@ export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningRe
             )}
             Imprimer
           </Button>
+          
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="outline" 
+                onClick={handlePdfExport}
+                disabled={exporting}
+                className="gap-2"
+              >
+                {exporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileDown className="h-4 w-4" />
+                )}
+                PDF
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Télécharger en PDF</TooltipContent>
+          </Tooltip>
           
           <Tooltip>
             <TooltipTrigger asChild>
