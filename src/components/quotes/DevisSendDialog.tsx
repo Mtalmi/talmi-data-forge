@@ -10,9 +10,10 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Send, Mail, MessageCircle, Loader2, Check } from 'lucide-react';
+import { Send, Mail, MessageCircle, Loader2, Check, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DevisSendDialogProps {
@@ -35,6 +36,8 @@ export function DevisSendDialog({ devis }: DevisSendDialogProps) {
   const [email, setEmail] = useState(devis.client?.email || '');
   const [recipientName, setRecipientName] = useState(devis.client?.nom_client || '');
   const [phone, setPhone] = useState(devis.client?.telephone || '');
+  const [includeCgv, setIncludeCgv] = useState(true);
+  const [fullCgv, setFullCgv] = useState(devis.volume_m3 >= 500);
 
   const handleSendEmail = async () => {
     if (!email || !recipientName) {
@@ -65,6 +68,8 @@ export function DevisSendDialog({ devis }: DevisSendDialogProps) {
           date_expiration: devis.date_expiration,
           client_name: devis.client?.nom_client || '',
           client_address: devis.client?.adresse || null,
+          include_cgv: includeCgv,
+          full_cgv: fullCgv,
         },
       });
 
@@ -169,6 +174,46 @@ export function DevisSendDialog({ devis }: DevisSendDialogProps) {
                 placeholder="client@example.com"
               />
             </div>
+            
+            {/* CGV Options */}
+            <div className="space-y-3 p-3 bg-muted/50 rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <Label htmlFor="include-cgv" className="cursor-pointer">
+                    Inclure les CGV
+                  </Label>
+                </div>
+                <Switch
+                  id="include-cgv"
+                  checked={includeCgv}
+                  onCheckedChange={setIncludeCgv}
+                />
+              </div>
+              
+              {includeCgv && (
+                <div className="flex items-center justify-between pl-6">
+                  <Label htmlFor="full-cgv" className="text-sm text-muted-foreground cursor-pointer">
+                    Version complète (5 articles)
+                  </Label>
+                  <Switch
+                    id="full-cgv"
+                    checked={fullCgv}
+                    onCheckedChange={setFullCgv}
+                  />
+                </div>
+              )}
+              
+              {includeCgv && (
+                <p className="text-xs text-muted-foreground pl-6">
+                  {fullCgv 
+                    ? 'CGV complètes avec les 5 articles détaillés' 
+                    : 'Version courte: Les 7 Règles d\'Or'
+                  }
+                </p>
+              )}
+            </div>
+            
             <Button
               onClick={handleSendEmail}
               disabled={sending || sent}
