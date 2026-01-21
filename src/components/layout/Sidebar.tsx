@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import {
   LayoutDashboard,
   FlaskConical,
@@ -33,7 +34,6 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { useDeviceType } from '@/hooks/useDeviceType';
-import { useState } from 'react';
 
 interface NavItemProps {
   to: string;
@@ -78,9 +78,10 @@ NavItem.displayName = 'NavItem';
 interface SidebarContentProps {
   onNavClick?: () => void;
   previewRole?: string | null;
+  pendingBLCount?: number;
 }
 
-function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
+function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: SidebarContentProps) {
   const { user, role: actualRole, signOut, isCeo: actualIsCeo } = useAuth();
 
   // Use preview role if set, otherwise use actual role
@@ -196,7 +197,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
                 </p>
               </div>
             </div>
-            {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />}
+            {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" badge={pendingBLCount} onClick={onNavClick} />}
             {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
             {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
             {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
@@ -291,6 +292,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
 // Mobile Sidebar with Sheet
 export function MobileSidebar({ previewRole }: { previewRole?: string | null }) {
   const [open, setOpen] = useState(false);
+  const { count: pendingBLCount } = usePendingBLCount();
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -298,15 +300,20 @@ export function MobileSidebar({ previewRole }: { previewRole?: string | null }) 
         <Button 
           variant="ghost" 
           size="icon" 
-          className="lg:hidden min-h-[44px] min-w-[44px]"
+          className="lg:hidden min-h-[44px] min-w-[44px] relative"
         >
           <Menu className="h-6 w-6" />
+          {pendingBLCount > 0 && (
+            <span className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-semibold px-1">
+              {pendingBLCount}
+            </span>
+          )}
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="p-0 w-72 bg-sidebar">
         <div className="flex flex-col h-full">
-          <SidebarContent onNavClick={() => setOpen(false)} previewRole={previewRole} />
+          <SidebarContent onNavClick={() => setOpen(false)} previewRole={previewRole} pendingBLCount={pendingBLCount} />
         </div>
       </SheetContent>
     </Sheet>
@@ -316,6 +323,7 @@ export function MobileSidebar({ previewRole }: { previewRole?: string | null }) 
 // Desktop Sidebar
 export default function Sidebar({ previewRole }: { previewRole?: string | null }) {
   const { isMobile, isTablet } = useDeviceType();
+  const { count: pendingBLCount } = usePendingBLCount();
 
   // Hide sidebar on mobile/tablet - use MobileSidebar instead
   if (isMobile || isTablet) {
@@ -324,7 +332,7 @@ export default function Sidebar({ previewRole }: { previewRole?: string | null }
 
   return (
     <aside className="hidden lg:flex flex-col w-64 h-screen bg-sidebar border-r border-sidebar-border">
-      <SidebarContent previewRole={previewRole} />
+      <SidebarContent previewRole={previewRole} pendingBLCount={pendingBLCount} />
     </aside>
   );
 }
