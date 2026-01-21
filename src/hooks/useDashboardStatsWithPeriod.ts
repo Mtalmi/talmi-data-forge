@@ -119,14 +119,16 @@ export function useDashboardStatsWithPeriod(period: Period) {
   });
   const [loading, setLoading] = useState(true);
 
-  const fetchStats = useCallback(async () => {
+  const fetchStats = useCallback(async (currentPeriod: Period) => {
     setLoading(true);
     try {
-      const { start, end, prevStart, prevEnd } = getPeriodDates(period);
+      const { start, end, prevStart, prevEnd } = getPeriodDates(currentPeriod);
       const startStr = format(start, 'yyyy-MM-dd');
       const endStr = format(end, 'yyyy-MM-dd');
       const prevStartStr = format(prevStart, 'yyyy-MM-dd');
       const prevEndStr = format(prevEnd, 'yyyy-MM-dd');
+
+      console.log(`[Period Stats] Fetching for ${currentPeriod}: ${startStr} to ${endStr}`);
 
       // Fetch current period deliveries
       const { data: currentDeliveries } = await supabase
@@ -199,6 +201,8 @@ export function useDashboardStatsWithPeriod(period: Period) {
       const curTrend = prevCurMoyen > 0 ? ((curMoyen - prevCurMoyen) / prevCurMoyen) * 100 : 0;
       const margeTrend = prevMargeMoyen > 0 ? ((margeMoyen - prevMargeMoyen) / prevMargeMoyen) * 100 : 0;
 
+      console.log(`[Period Stats] Results for ${currentPeriod}: Volume=${totalVolume}, CA=${chiffreAffaires}`);
+
       setStats({
         totalVolume,
         chiffreAffaires,
@@ -214,19 +218,24 @@ export function useDashboardStatsWithPeriod(period: Period) {
         caTrend,
         curTrend,
         margeTrend,
-        periodLabel: getPeriodLabel(period),
-        previousPeriodLabel: getPreviousPeriodLabel(period),
+        periodLabel: getPeriodLabel(currentPeriod),
+        previousPeriodLabel: getPreviousPeriodLabel(currentPeriod),
       });
     } catch (error) {
       console.error('Error fetching period stats:', error);
     } finally {
       setLoading(false);
     }
-  }, [period]);
+  }, []);
 
+  // Re-fetch when period changes
   useEffect(() => {
-    fetchStats();
-  }, [fetchStats]);
+    fetchStats(period);
+  }, [period, fetchStats]);
 
-  return { stats, loading, refresh: fetchStats };
+  const refresh = useCallback(() => {
+    fetchStats(period);
+  }, [period, fetchStats]);
+
+  return { stats, loading, refresh };
 }
