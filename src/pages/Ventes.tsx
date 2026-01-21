@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -27,6 +27,8 @@ import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/component
 import { DevisDetailDialog } from '@/components/ventes/DevisDetailDialog';
 import { ActivityHistoryDrawer } from '@/components/ventes/ActivityHistoryDrawer';
 import { OrderCalendarView } from '@/components/ventes/OrderCalendarView';
+import { WorkflowStepper, WorkflowStage } from '@/components/ventes/WorkflowStepper';
+import { FacturesTable } from '@/components/ventes/FacturesTable';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -428,6 +430,22 @@ export default function Ventes() {
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
           </div>
 
+          {/* Workflow Stepper */}
+          <Card className="p-4">
+            <WorkflowStepper 
+              currentStage={activeTab === 'factures' ? 'facture' : activeTab === 'calendar' ? undefined : activeTab as WorkflowStage}
+              onStageClick={(stage) => {
+                if (stage === 'bl') {
+                  navigate('/planning');
+                } else if (stage === 'facture') {
+                  setActiveTab('factures');
+                } else {
+                  setActiveTab(stage);
+                }
+              }}
+            />
+          </Card>
+
           {/* Stats & Pipeline + Revenue Forecast */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
@@ -462,7 +480,7 @@ export default function Ventes() {
             </div>
           )}
 
-          {/* Tabs for Devis and BC */}
+          {/* Tabs for Devis, BC, Factures and Calendar */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
               <TabsTrigger value="devis" className="gap-2">
@@ -477,6 +495,10 @@ export default function Ventes() {
               <TabsTrigger value="bc" className="gap-2">
                 <ShoppingCart className="h-4 w-4" />
                 Bons de Commande ({filteredBc.length})
+              </TabsTrigger>
+              <TabsTrigger value="factures" className="gap-2">
+                <Receipt className="h-4 w-4" />
+                Factures
               </TabsTrigger>
               <TabsTrigger value="calendar" className="gap-2">
                 <Calendar className="h-4 w-4" />
@@ -553,9 +575,19 @@ export default function Ventes() {
                     onLaunchProduction={handleLaunchProduction}
                     onCopyBc={handleCopyBc}
                     onOpenDetail={handleOpenBcDetail}
+                    onGenerateInvoice={generateConsolidatedInvoice}
                     selectedIds={selectedBcIds}
                     onSelectionChange={setSelectedBcIds}
                   />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Factures Tab */}
+            <TabsContent value="factures" className="space-y-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <FacturesTable />
                 </CardContent>
               </Card>
             </TabsContent>

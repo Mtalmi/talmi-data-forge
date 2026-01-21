@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -25,6 +26,8 @@ import {
   Star,
   Zap,
   AlertCircle,
+  Clock,
+  Receipt,
 } from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -43,6 +46,13 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
   facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
 };
 
+// Invoice status for BC
+const BC_INVOICE_STATUS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+  pending: { label: 'En attente', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-3 w-3" /> },
+  partial: { label: 'Partiel', color: 'bg-warning/10 text-warning border-warning/30', icon: <AlertCircle className="h-3 w-3" /> },
+  invoiced: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30', icon: <Receipt className="h-3 w-3" /> },
+};
+
 // Priority thresholds
 const HIGH_VALUE_THRESHOLD = 50000; // DH
 const HIGH_VOLUME_THRESHOLD = 50; // m³
@@ -55,6 +65,7 @@ interface BcTableProps {
   onLaunchProduction: (bc: BonCommande) => void;
   onCopyBc: (bc: BonCommande) => void;
   onOpenDetail: (bc: BonCommande) => void;
+  onGenerateInvoice?: (bcId: string) => Promise<string | null>;
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
 }
@@ -95,9 +106,18 @@ export function BcTable({
   onLaunchProduction,
   onCopyBc,
   onOpenDetail,
+  onGenerateInvoice,
   selectedIds,
   onSelectionChange,
 }: BcTableProps) {
+  const [generatingInvoice, setGeneratingInvoice] = useState<string | null>(null);
+
+  const handleGenerateInvoice = async (bc: BonCommande) => {
+    if (!onGenerateInvoice) return;
+    setGeneratingInvoice(bc.bc_id);
+    await onGenerateInvoice(bc.bc_id);
+    setGeneratingInvoice(null);
+  };
   
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -228,6 +248,7 @@ export function BcTable({
           <TableHead className="text-right">Volume</TableHead>
           <TableHead className="text-right">Total HT</TableHead>
           <TableHead>Statut</TableHead>
+          <TableHead>Facture</TableHead>
           <TableHead>Progression</TableHead>
           <TableHead>Priorité</TableHead>
           <TableHead>Actions</TableHead>
@@ -285,6 +306,29 @@ export function BcTable({
                   {statusConfig.icon}
                   {statusConfig.label}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                {/* Invoice Status */}
+                {bc.facture_consolidee_id ? (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Badge variant="outline" className={cn("gap-1", BC_INVOICE_STATUS.invoiced.color)}>
+                        {BC_INVOICE_STATUS.invoiced.icon}
+                        {BC_INVOICE_STATUS.invoiced.label}
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Facture: {bc.facture_consolidee_id}
+                    </TooltipContent>
+                  </Tooltip>
+                ) : bc.statut === 'livre' || bc.statut === 'termine' ? (
+                  <Badge variant="outline" className={cn("gap-1", BC_INVOICE_STATUS.pending.color)}>
+                    {BC_INVOICE_STATUS.pending.icon}
+                    À facturer
+                  </Badge>
+                ) : (
+                  <span className="text-muted-foreground text-xs">—</span>
+                )}
               </TableCell>
               <TableCell>
                 <OrderStatusTimeline bc={bc} compact showDeliveryProgress />
