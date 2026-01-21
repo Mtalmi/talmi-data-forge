@@ -689,6 +689,7 @@ export type Database = {
           nom_client: string
           patente: string | null
           rc: string | null
+          rc_document_url: string | null
           solde_du: number | null
           telephone: string | null
           updated_at: string
@@ -710,6 +711,7 @@ export type Database = {
           nom_client: string
           patente?: string | null
           rc?: string | null
+          rc_document_url?: string | null
           solde_du?: number | null
           telephone?: string | null
           updated_at?: string
@@ -731,6 +733,7 @@ export type Database = {
           nom_client?: string
           patente?: string | null
           rc?: string | null
+          rc_document_url?: string | null
           solde_du?: number | null
           telephone?: string | null
           updated_at?: string
