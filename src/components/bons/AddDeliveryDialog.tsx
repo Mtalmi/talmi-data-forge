@@ -297,12 +297,12 @@ export function AddDeliveryDialog({
               <Truck className="h-4 w-4" />
               Toupie (optionnel)
             </Label>
-            <Select value={selectedTruck} onValueChange={setSelectedTruck}>
+            <Select value={selectedTruck} onValueChange={(val) => setSelectedTruck(val === 'none' ? '' : val)}>
               <SelectTrigger>
                 <SelectValue placeholder={loadingTrucks ? "Chargement..." : "Assigner une toupie"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Non assigné</SelectItem>
+                <SelectItem value="none">Non assigné</SelectItem>
                 {camions.map((camion) => (
                   <SelectItem key={camion.id} value={camion.id_camion}>
                     <div className="flex items-center justify-between gap-4 w-full">
