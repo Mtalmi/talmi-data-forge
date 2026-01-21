@@ -68,6 +68,14 @@ export function DeliveryRotationProgress({
   // Find current active step
   const activeStepIndex = steps.findIndex(s => !s.completed);
 
+  const activeClassesByColor: Record<string, string> = {
+    primary: 'bg-primary/20 text-primary ring-2 ring-primary/50',
+    warning: 'bg-warning/20 text-warning ring-2 ring-warning/50',
+    success: 'bg-success/20 text-success ring-2 ring-success/50',
+  };
+
+  const getActiveClasses = (color: string) => activeClassesByColor[color] || activeClassesByColor.primary;
+
   if (compact) {
     // Compact view: just show progress dots
     return (
@@ -135,7 +143,7 @@ export function DeliveryRotationProgress({
               className={cn(
                 "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium z-10 transition-all",
                 isCompleted && `bg-success text-white`,
-                isActive && `bg-${step.color}/20 text-${step.color} ring-2 ring-${step.color}/50 animate-pulse`,
+                isActive && cn(getActiveClasses(step.color), 'animate-pulse'),
                 !isCompleted && !isActive && "bg-muted text-muted-foreground"
               )}
             >

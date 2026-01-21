@@ -174,15 +174,16 @@ export function DriverDispatchCard({
               heureArrivee={bon.heure_arrivee_chantier}
               heureRetour={bon.heure_retour_centrale}
               workflowStatus={bon.workflow_status}
-              compact
             />
-            <ETATracker 
-              departureTime={bon.heure_depart_centrale}
-              scheduledTime={bon.heure_prevue}
-              zoneCode={bon.zones_livraison?.code_zone}
-              status={bon.workflow_status}
-              deliveryDate={bon.date_livraison}
-            />
+            {bon.date_livraison && (
+              <ETATracker 
+                departureTime={bon.heure_depart_centrale ?? null}
+                scheduledTime={bon.heure_prevue}
+                zoneCode={bon.zones_livraison?.code_zone}
+                status={bon.workflow_status}
+                deliveryDate={bon.date_livraison}
+              />
+            )}
           </div>
         )}
 
