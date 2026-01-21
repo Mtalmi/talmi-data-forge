@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -24,6 +24,8 @@ import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
 import { VentesFilters } from '@/components/ventes/VentesFilters';
 import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/components/ventes/BulkActionsToolbar';
 import { DevisDetailDialog } from '@/components/ventes/DevisDetailDialog';
+import { ActivityHistoryDrawer } from '@/components/ventes/ActivityHistoryDrawer';
+import { OrderCalendarView } from '@/components/ventes/OrderCalendarView';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -315,6 +317,7 @@ export default function Ventes() {
                 <ShoppingCart className="h-4 w-4" />
                 Commande Directe
               </Button>
+              <ActivityHistoryDrawer />
             </div>
           </div>
 
@@ -375,6 +378,10 @@ export default function Ventes() {
               <TabsTrigger value="bc" className="gap-2">
                 <ShoppingCart className="h-4 w-4" />
                 Bons de Commande ({filteredBc.length})
+              </TabsTrigger>
+              <TabsTrigger value="calendar" className="gap-2">
+                <Calendar className="h-4 w-4" />
+                Calendrier
               </TabsTrigger>
             </TabsList>
 
@@ -452,6 +459,14 @@ export default function Ventes() {
                 </CardContent>
               </Card>
             </TabsContent>
+
+            {/* Calendar Tab */}
+            <TabsContent value="calendar">
+              <OrderCalendarView
+                bcList={filteredBc}
+                onSelectBc={handleOpenBcDetail}
+              />
+            </TabsContent>
           </Tabs>
         </div>
 
@@ -499,6 +514,13 @@ export default function Ventes() {
         creatingOrder={creatingOrder}
         onCreateOrder={handleCreateDirectOrder}
         onCancel={handleCancelDirectOrder}
+        onClientCreated={(clientId, clientName) => {
+          // Refresh client list to include newly created client
+          supabase.from('clients').select('client_id, nom_client, adresse, telephone').order('nom_client')
+            .then(({ data }) => {
+              if (data) setClients(data);
+            });
+        }}
         orderClientId={orderClientId}
         onClientSelect={handleClientSelect}
         orderFormuleId={orderFormuleId}
