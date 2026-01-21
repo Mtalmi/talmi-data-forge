@@ -566,13 +566,30 @@ export default function Production() {
 
       if (success) {
         toast.success('Production enregistrée & stocks mis à jour');
-        setDialogOpen(false);
+        closeAllDialogs();
         fetchData();
         fetchStocks();
       }
     } catch (error) {
       console.error('Error advancing to validation:', error);
       toast.error('Erreur lors de la validation');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Handler to send validated BL to delivery (validation_technique -> en_livraison)
+  const handleSendToDelivery = async (blId: string) => {
+    setSaving(true);
+    try {
+      const success = await transitionWorkflow(blId, 'validation_technique', 'en_livraison');
+      if (success) {
+        toast.success('Envoyé en livraison! Le dispatcher est notifié.');
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Error sending to delivery:', error);
+      toast.error('Erreur lors de l\'envoi en livraison');
     } finally {
       setSaving(false);
     }
@@ -774,6 +791,16 @@ export default function Production() {
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Quick link to Planning */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 text-muted-foreground hover:text-foreground"
+              onClick={() => navigate(`/planning?date=${format(selectedDate, 'yyyy-MM-dd')}`)}
+            >
+              <Clock className="h-4 w-4" />
+              <span className="hidden sm:inline">Planning</span>
+            </Button>
             {lastSync && (
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden sm:inline">
                 Sync: {format(lastSync, 'HH:mm:ss', { locale: fr })}
@@ -1246,10 +1273,41 @@ export default function Production() {
                             Démarrer
                           </Button>
                         )}
+                        {bon.workflow_status === 'production' && canEdit && (
+                          <Button 
+                            variant="secondary"
+                            size="sm"
+                            className="h-7 gap-1 text-xs bg-warning/20 text-warning hover:bg-warning/30"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectBon(bon);
+                            }}
+                          >
+                            <CheckCircle className="h-3 w-3" />
+                            Valider
+                          </Button>
+                        )}
+                        {bon.workflow_status === 'validation_technique' && canValidate && (
+                          <Button 
+                            variant="default"
+                            size="sm"
+                            className="h-7 gap-1 text-xs bg-purple-600 hover:bg-purple-700"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSendToDelivery(bon.bl_id);
+                            }}
+                            disabled={saving}
+                          >
+                            <ArrowRight className="h-3 w-3" />
+                            Livraison
+                          </Button>
+                        )}
                         <Button 
                           variant="ghost" 
                           size="sm"
+                          className="h-7 w-7 p-0"
                           onClick={() => navigate(`/planning?date=${bon.date_livraison}`)}
+                          title="Voir dans Planning"
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>

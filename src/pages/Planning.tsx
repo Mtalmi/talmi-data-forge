@@ -28,7 +28,9 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  BellRing
+  BellRing,
+  ExternalLink,
+  Eye
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -171,9 +173,34 @@ export default function Planning() {
     fetchData();
   }, [fetchData]);
 
-  // Auto-refresh every 15 seconds for live dispatch
+  // Realtime sync with Production page - listen for workflow changes
   useEffect(() => {
-    const autoRefreshInterval = setInterval(fetchData, 15000);
+    const channel = supabase
+      .channel('planning-production-sync')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'bons_livraison_reels',
+          filter: `date_livraison=eq.${selectedDate}`
+        },
+        (payload) => {
+          console.log('Planning received realtime update:', payload);
+          // Debounce the refetch slightly to batch rapid updates
+          setTimeout(() => fetchData(), 100);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [selectedDate, fetchData]);
+
+  // Auto-refresh every 30 seconds for live dispatch (reduced from 15s since we have realtime)
+  useEffect(() => {
+    const autoRefreshInterval = setInterval(fetchData, 30000);
     return () => clearInterval(autoRefreshInterval);
   }, [fetchData]);
 
@@ -374,13 +401,18 @@ export default function Planning() {
 
       if (error) throw error;
       
-      toast.success('Production lancée!');
+      toast.success('Production lancée! Redirection vers le Centre Production...');
       // Navigate to Production page with BL ID as search param
       navigate(`/production?bl=${bon.bl_id}`);
     } catch (error) {
       console.error('Error starting production:', error);
       toast.error('Erreur lors du lancement');
     }
+  };
+
+  // View in production center without starting
+  const viewInProduction = (bon: BonLivraison) => {
+    navigate(`/production?bl=${bon.bl_id}`);
   };
 
   // Confirm a pending BL - moves to planification status
@@ -615,6 +647,20 @@ export default function Planning() {
               </>
             )}
           </div>
+        )}
+
+        {/* Quick Link to Production for items in production/validation */}
+        {['production', 'validation_technique'].includes(bon.workflow_status) && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full mt-3 gap-2 border-violet-500/50 text-violet-600 hover:bg-violet-500/10"
+            onClick={() => viewInProduction(bon)}
+          >
+            <Eye className="h-4 w-4" />
+            Voir en Production
+            <ExternalLink className="h-3 w-3" />
+          </Button>
         )}
 
         {/* 🆕 ETA Tracker for en_livraison status */}
@@ -969,17 +1015,29 @@ export default function Planning() {
             </CardContent>
           </Card>
 
-          {/* En Chargement */}
-          <Card>
+          {/* En Chargement - Direct link to Production */}
+          <Card className="border-violet-500/30">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
                 <div className="p-1.5 rounded bg-violet-500/20">
                   <Package className="h-4 w-4 text-violet-600" />
                 </div>
                 En Chargement
-                <Badge variant="secondary" className="ml-auto bg-violet-500/20 text-violet-700">{enChargement.length}</Badge>
+                <Badge variant="secondary" className="bg-violet-500/20 text-violet-700">{enChargement.length}</Badge>
+                {enChargement.length > 0 && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-auto gap-1.5 text-violet-600 hover:bg-violet-500/10 h-7 text-xs"
+                    onClick={() => navigate(`/production?date=${selectedDate}`)}
+                  >
+                    <Eye className="h-3 w-3" />
+                    Centre Production
+                    <ExternalLink className="h-3 w-3" />
+                  </Button>
+                )}
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Production & Validation Technique</p>
+              <p className="text-xs text-muted-foreground">Production & Validation Technique • Sync en temps réel</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto">
               {enChargement.length === 0 ? (
