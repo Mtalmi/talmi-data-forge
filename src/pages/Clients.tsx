@@ -394,7 +394,7 @@ export default function Clients() {
                     Nouveau Client
                   </Button>
                 </DialogTrigger>
-              <DialogContent className="max-w-lg">
+              <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Créer un Client</DialogTitle>
                 </DialogHeader>
