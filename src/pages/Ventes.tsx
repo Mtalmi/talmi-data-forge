@@ -43,11 +43,32 @@ export default function Ventes() {
     expiringDevisCount,
   } = useVentesFilters(devisList, bcList, fetchData);
   
+  // Tab control state
+  const [activeTab, setActiveTab] = useState('devis');
+  
   const [selectedDevis, setSelectedDevis] = useState<Devis | null>(null);
   const [convertDialogOpen, setConvertDialogOpen] = useState(false);
   const [converting, setConverting] = useState(false);
   const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
   
+  // Handle pipeline stage click - update filters and switch tab
+  const handleStageClick = (stage: string) => {
+    // Devis-specific statuses
+    const devisStatuses = ['en_attente', 'accepte', 'converti', 'refuse', 'expire'];
+    // BC-specific statuses
+    const bcStatuses = ['pret_production', 'en_production', 'termine', 'livre'];
+    
+    // Update the status filter
+    setFilters({ ...filters, status: stage });
+    
+    // Switch to the appropriate tab
+    if (devisStatuses.includes(stage)) {
+      setActiveTab('devis');
+    } else if (bcStatuses.includes(stage)) {
+      setActiveTab('bc');
+    }
+  };
+
   // BC Detail Dialog State
   const [selectedBc, setSelectedBc] = useState<BonCommande | null>(null);
   const [bcDetailOpen, setBcDetailOpen] = useState(false);
@@ -303,10 +324,10 @@ export default function Ventes() {
           />
 
           {/* Stats & Pipeline Visualization */}
-          <PipelineStats stats={stats} />
+          <PipelineStats stats={stats} onStageClick={handleStageClick} />
 
           {/* Tabs for Devis and BC */}
-          <Tabs defaultValue="devis" className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
               <TabsTrigger value="devis" className="gap-2">
                 <FileText className="h-4 w-4" />
