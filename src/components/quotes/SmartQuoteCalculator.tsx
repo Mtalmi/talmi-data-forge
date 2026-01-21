@@ -177,6 +177,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
         <Button 
           variant={variant === 'prominent' ? 'default' : 'outline'} 
           className={variant === 'prominent' ? 'gap-2 bg-primary text-primary-foreground' : 'gap-2'}
+          data-quote-calculator
         >
           <Calculator className="h-4 w-4" />
           {variant === 'prominent' ? 'Nouveau Devis' : 'Calculateur de Devis'}
