@@ -40,6 +40,8 @@ interface BonLivraison {
   toupie_assignee: string | null;
   date_livraison: string;
   heure_depart_centrale: string | null;
+  heure_arrivee_chantier: string | null;
+  heure_retour_centrale: string | null;
   zone_livraison_id: string | null;
   mode_paiement: string | null;
   clients?: { nom_client: string } | null;
@@ -91,6 +93,8 @@ export default function DriverView() {
         toupie_assignee,
         date_livraison,
         heure_depart_centrale,
+        heure_arrivee_chantier,
+        heure_retour_centrale,
         zone_livraison_id,
         mode_paiement,
         clients!inner(nom_client),
@@ -127,24 +131,6 @@ export default function DriverView() {
     threshold: 80,
     disabled: loading,
   });
-
-  // Mark as delivered
-  const markDelivered = async (blId: string) => {
-    const { error } = await supabase
-      .from('bons_livraison_reels')
-      .update({ 
-        workflow_status: 'livre',
-        heure_retour_centrale: format(new Date(), 'HH:mm:ss')
-      })
-      .eq('bl_id', blId);
-
-    if (error) {
-      toast.error('Erreur: ' + error.message);
-    } else {
-      toast.success('Livraison confirmée!');
-      fetchDeliveries();
-    }
-  };
 
   // Get selected driver info
   const selectedDriver = camions.find(c => c.id_camion === selectedCamion);
@@ -294,7 +280,7 @@ export default function DriverView() {
             <DriverDeliveryCard
               key={bon.bl_id}
               bon={bon}
-              onMarkDelivered={() => markDelivered(bon.bl_id)}
+              onUpdate={fetchDeliveries}
             />
           ))
         )}

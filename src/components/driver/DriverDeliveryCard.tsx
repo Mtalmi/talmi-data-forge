@@ -11,12 +11,12 @@ import {
   Clock, 
   Package,
   MapPin,
-  CheckCircle,
   Navigation,
   Factory,
   ExternalLink
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DriverRotationTracker } from './DriverRotationTracker';
 
 const openNavigation = (destination: string, app: 'google' | 'waze') => {
   const encodedDestination = encodeURIComponent(destination);
@@ -27,6 +27,7 @@ const openNavigation = (destination: string, app: 'google' | 'waze') => {
     window.open(`https://waze.com/ul?q=${encodedDestination}&navigate=yes`, '_blank');
   }
 };
+
 interface DriverDeliveryCardProps {
   bon: {
     bl_id: string;
@@ -36,16 +37,20 @@ interface DriverDeliveryCardProps {
     workflow_status: string;
     heure_prevue: string | null;
     mode_paiement: string | null;
+    heure_depart_centrale?: string | null;
+    heure_arrivee_chantier?: string | null;
+    heure_retour_centrale?: string | null;
     clients?: { nom_client: string } | null;
     zones_livraison?: { nom_zone: string; code_zone: string } | null;
   };
-  onMarkDelivered: () => void;
+  onUpdate: () => void;
 }
 
-export function DriverDeliveryCard({ bon, onMarkDelivered }: DriverDeliveryCardProps) {
-  const isDelivered = bon.workflow_status === 'livre';
+export function DriverDeliveryCard({ bon, onUpdate }: DriverDeliveryCardProps) {
+  const isDelivered = bon.workflow_status === 'livre' || bon.workflow_status === 'facture';
   const isEnRoute = bon.workflow_status === 'en_livraison';
   const isProduction = bon.workflow_status === 'production';
+  const isValidation = bon.workflow_status === 'validation_technique';
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -183,32 +188,27 @@ export function DriverDeliveryCard({ bon, onMarkDelivered }: DriverDeliveryCardP
           </div>
         )}
 
-        {/* Action Button - Very Large */}
-        {isEnRoute && (
-          <Button 
-            size="lg"
-            className="w-full min-h-[56px] text-lg gap-3 bg-success hover:bg-success/90 touch-manipulation"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMarkDelivered();
-            }}
-          >
-            <CheckCircle className="h-6 w-6" />
-            Confirmer Livraison
-          </Button>
-        )}
-
-        {isProduction && (
-          <div className="flex items-center justify-center gap-2 p-3 bg-warning/10 rounded-lg">
-            <div className="h-3 w-3 bg-warning rounded-full animate-pulse" />
-            <span className="text-warning font-medium">En cours de chargement...</span>
+        {/* Rotation Tracker - Step by Step Actions */}
+        {(isEnRoute || isDelivered) && (
+          <div className="pt-3 border-t">
+            <DriverRotationTracker
+              blId={bon.bl_id}
+              heureDepart={bon.heure_depart_centrale || null}
+              heureArrivee={bon.heure_arrivee_chantier || null}
+              heureRetour={bon.heure_retour_centrale || null}
+              workflowStatus={bon.workflow_status}
+              onUpdate={onUpdate}
+            />
           </div>
         )}
 
-        {isDelivered && (
-          <div className="flex items-center justify-center gap-2 p-3 bg-success/10 rounded-lg">
-            <CheckCircle className="h-5 w-5 text-success" />
-            <span className="text-success font-medium">Livraison Confirmée</span>
+        {/* Production/Validation Status */}
+        {(isProduction || isValidation) && (
+          <div className="flex items-center justify-center gap-2 p-3 bg-warning/10 rounded-lg">
+            <div className="h-3 w-3 bg-warning rounded-full animate-pulse" />
+            <span className="text-warning font-medium">
+              {isProduction ? 'En cours de chargement...' : 'En validation technique...'}
+            </span>
           </div>
         )}
       </CardContent>
