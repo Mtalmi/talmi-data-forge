@@ -89,7 +89,8 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
       icon: <Truck className="h-6 w-6 md:h-7 md:w-7" />,
       bgColor: 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800/50',
       iconColor: 'text-green-600 dark:text-green-400',
-      tooltip: 'Commandes livrées / facturées',
+      route: '/rapports',
+      tooltip: 'Voir les analytics & rapports',
     },
   ];
 
