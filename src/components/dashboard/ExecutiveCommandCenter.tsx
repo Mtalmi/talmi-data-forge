@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CashCreditDrawer } from './CashCreditDrawer';
+import { LeakageDrawer } from './LeakageDrawer';
 
 interface GaugeProps {
   value: number;
@@ -128,6 +129,7 @@ export function ExecutiveCommandCenter() {
   const navigate = useNavigate();
   const { metrics, loading, refresh } = useExecutiveMetrics();
   const [cashCreditOpen, setCashCreditOpen] = useState(false);
+  const [leakageOpen, setLeakageOpen] = useState(false);
 
   if (loading) {
     return (
@@ -158,6 +160,7 @@ export function ExecutiveCommandCenter() {
           subtitle={`${metrics.leakageDeliveries}/${metrics.totalDeliveries} BL`}
           icon={<AlertTriangle className="h-3.5 w-3.5" />}
           thresholds={{ green: 3, yellow: 5, reverse: true }}
+          onClick={() => setLeakageOpen(true)}
         />
         <ExecutiveGauge
           value={metrics.cashCreditRatio}
@@ -235,6 +238,9 @@ export function ExecutiveCommandCenter() {
 
       {/* Cash/Credit Detail Drawer */}
       <CashCreditDrawer open={cashCreditOpen} onOpenChange={setCashCreditOpen} />
+      
+      {/* Leakage Detail Drawer */}
+      <LeakageDrawer open={leakageOpen} onOpenChange={setLeakageOpen} />
     </div>
   );
 }
