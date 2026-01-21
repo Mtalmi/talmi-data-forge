@@ -341,8 +341,11 @@ export default function Production() {
         }]);
       }
 
-      toast.success('Données de production enregistrées');
+      // Close dialog first to ensure UI updates immediately
       setDialogOpen(false);
+      setSelectedBon(null);
+      setSelectedFormule(null);
+      toast.success('Données de production enregistrées');
       fetchData();
     } catch (error) {
       console.error('Error saving:', error);
