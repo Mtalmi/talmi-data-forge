@@ -48,7 +48,11 @@ interface Prix {
   prix_unitaire_dh: number;
 }
 
-export default function SmartQuoteCalculator() {
+interface SmartQuoteCalculatorProps {
+  variant?: 'default' | 'prominent';
+}
+
+export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuoteCalculatorProps) {
   const { saveDevis } = useSalesWorkflow();
   const [formules, setFormules] = useState<Formule[]>([]);
   const [clients, setClients] = useState<{ client_id: string; nom_client: string }[]>([]);
@@ -170,9 +174,12 @@ export default function SmartQuoteCalculator() {
   return (
     <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetCalculator(); }}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button 
+          variant={variant === 'prominent' ? 'default' : 'outline'} 
+          className={variant === 'prominent' ? 'gap-2 bg-primary text-primary-foreground' : 'gap-2'}
+        >
           <Calculator className="h-4 w-4" />
-          Calculateur de Devis
+          {variant === 'prominent' ? 'Nouveau Devis' : 'Calculateur de Devis'}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">

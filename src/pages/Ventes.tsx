@@ -304,14 +304,15 @@ export default function Ventes() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              <SmartQuoteCalculator variant="prominent" />
               <Button 
                 onClick={() => setDirectOrderOpen(true)}
+                variant="outline"
                 className="gap-2"
               >
                 <ShoppingCart className="h-4 w-4" />
-                Nouvelle Commande
+                Commande Directe
               </Button>
-              <SmartQuoteCalculator />
             </div>
           </div>
 
