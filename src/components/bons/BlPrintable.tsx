@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Printer, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { toast } from 'sonner';
 import { CGV_SHORT } from '@/lib/cgvContent';
 
@@ -25,7 +25,8 @@ interface BlPrintableProps {
   disabled?: boolean;
 }
 
-export function BlPrintable({ bl, disabled = false }: BlPrintableProps) {
+export const BlPrintable = forwardRef<HTMLButtonElement, BlPrintableProps>(
+  function BlPrintable({ bl, disabled = false }, ref) {
   const [printing, setPrinting] = useState(false);
 
   const printBL = async () => {
@@ -377,4 +378,4 @@ export function BlPrintable({ bl, disabled = false }: BlPrintableProps) {
       <span className="hidden sm:inline">Imprimer BL</span>
     </Button>
   );
-}
+});

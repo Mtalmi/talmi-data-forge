@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
@@ -33,6 +34,8 @@ import {
   TrendingUp,
   AlertTriangle,
   Plus,
+  ExternalLink,
+  Calendar,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -76,6 +79,7 @@ export function BcDetailDialog({
   onGenerateInvoice,
   onRefresh,
 }: BcDetailDialogProps) {
+  const navigate = useNavigate();
   const { isCeo, isAgentAdministratif } = useAuth();
   const [linkedBLs, setLinkedBLs] = useState<LinkedBL[]>([]);
   const [loading, setLoading] = useState(false);
@@ -216,17 +220,32 @@ export function BcDetailDialog({
                 </div>
               </div>
 
-              {/* Add Delivery Button */}
-              {volumeRestant > 0 && (bc.statut === 'pret_production' || bc.statut === 'en_production') && (
-                <Button
-                  onClick={() => onAddDelivery(bc)}
-                  className="w-full gap-2"
-                  variant="outline"
-                >
-                  <Plus className="h-4 w-4" />
-                  Ajouter Livraison ({Math.min(volumeRestant, 12).toFixed(1)} m³ max)
-                </Button>
-              )}
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                {volumeRestant > 0 && (bc.statut === 'pret_production' || bc.statut === 'en_production') && (
+                  <Button
+                    onClick={() => onAddDelivery(bc)}
+                    className="flex-1 gap-2"
+                    variant="outline"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Ajouter Livraison ({Math.min(volumeRestant, 12).toFixed(1)} m³ max)
+                  </Button>
+                )}
+                {linkedBLs.some(bl => bl.workflow_status === 'production' || bl.workflow_status === 'en_livraison') && bc.date_livraison_souhaitee && (
+                  <Button
+                    onClick={() => {
+                      onOpenChange(false);
+                      navigate(`/planning?date=${bc.date_livraison_souhaitee}`);
+                    }}
+                    variant="secondary"
+                    className="gap-2"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Planning
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
 
