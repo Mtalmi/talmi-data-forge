@@ -31,6 +31,8 @@ import {
 import { Devis } from '@/hooks/useSalesWorkflow';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
+import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
+import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -252,7 +254,13 @@ export function DevisTable({
                 />
               </TableCell>
               <TableCell className="font-mono font-medium">{devis.devis_id}</TableCell>
-              <TableCell>{devis.client?.nom_client || '—'}</TableCell>
+              <TableCell>
+                {devis.client ? (
+                  <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
+                ) : (
+                  '—'
+                )}
+              </TableCell>
               <TableCell>
                 <span className="text-xs">{devis.formule_id}</span>
               </TableCell>
@@ -276,14 +284,17 @@ export function DevisTable({
                 <div className="flex items-center gap-1">
                   {/* Quick Send Button - prominent for pending devis */}
                   {devis.statut === 'en_attente' && devis.client_id && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span>
-                          <DevisSendDialog devis={devis} />
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>Envoyer au client</TooltipContent>
-                    </Tooltip>
+                    <>
+                      <WhatsAppShareButton devis={devis} compact />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <DevisSendDialog devis={devis} />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>Envoyer par email</TooltipContent>
+                      </Tooltip>
+                    </>
                   )}
                   <DevisPdfGenerator devis={devis} />
                   {devis.statut === 'en_attente' && devis.client_id && (

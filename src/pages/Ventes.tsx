@@ -355,16 +355,30 @@ export default function Ventes() {
             </div>
           </div>
 
-          {/* Filters & Search */}
-          <VentesFilters
-            filters={filters}
-            onFiltersChange={setFilters}
-            clients={clients}
-            formules={formules}
-            isRefreshing={isRefreshing || loading}
-            lastRefresh={lastRefresh}
-            onRefresh={handleRefresh}
-            autoRefreshEnabled={autoRefreshEnabled}
+          {/* Expiring Quotes Alert */}
+          {showExpiringAlert && expiringDevisCount > 0 && (
+            <ExpiringQuotesAlert
+              devisList={devisList}
+              onViewExpiring={() => {
+                setFilters({ ...filters, status: 'en_attente' });
+                setActiveTab('devis');
+              }}
+              onDismiss={() => setShowExpiringAlert(false)}
+            />
+          )}
+
+          {/* Filters & Saved Views */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <VentesFilters
+                filters={filters}
+                onFiltersChange={setFilters}
+                clients={clients}
+                formules={formules}
+                isRefreshing={isRefreshing || loading}
+                lastRefresh={lastRefresh}
+                onRefresh={handleRefresh}
+                autoRefreshEnabled={autoRefreshEnabled}
                 onAutoRefreshToggle={toggleAutoRefresh}
               />
             </div>
@@ -378,9 +392,6 @@ export default function Ventes() {
             </div>
             <RevenueForecastChart bcList={bcList} devisList={devisList} />
           </div>
-
-          {/* Active Status Filter Indicator - kept for reference */}
-          <PipelineStats stats={stats} onStageClick={handleStageClick} />
 
           {/* Active Status Filter Indicator */}
           {filters.status !== 'all' && (
@@ -624,6 +635,14 @@ export default function Ventes() {
           onAddDelivery={handleAddDeliveryFromDialog}
           onGenerateInvoice={async (bcId: string) => bcId}
           onRefresh={fetchData}
+        />
+
+        {/* Batch Reminder Dialog */}
+        <BatchReminderDialog
+          open={batchReminderOpen}
+          onOpenChange={setBatchReminderOpen}
+          devisList={devisList}
+          onSuccess={fetchData}
         />
       </MainLayout>
     </TooltipProvider>
