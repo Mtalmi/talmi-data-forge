@@ -232,6 +232,13 @@ export default function Clients() {
         return;
       }
 
+      // Validate ICE format (must be exactly 15 digits if provided)
+      if (ice && !/^\d{15}$/.test(ice)) {
+        toast.error('ICE invalide: doit contenir exactement 15 chiffres');
+        setSubmitting(false);
+        return;
+      }
+
       // Upload RC document first if provided
       let rcDocumentUrl: string | null = null;
       if (rcDocument) {
@@ -500,13 +507,34 @@ export default function Clients() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">ICE</Label>
+                        <Label className="form-label-industrial">
+                          ICE <span className="text-xs text-muted-foreground font-normal">(15 chiffres)</span>
+                        </Label>
                         <Input
                           placeholder="001234567890123"
                           value={ice}
-                          onChange={(e) => setIce(e.target.value)}
+                          onChange={(e) => {
+                            // Only allow digits
+                            const value = e.target.value.replace(/\D/g, '');
+                            setIce(value);
+                          }}
                           maxLength={15}
+                          className={cn(
+                            ice && ice.length > 0 && ice.length !== 15 && "border-warning focus-visible:ring-warning"
+                          )}
                         />
+                        {ice && ice.length > 0 && ice.length !== 15 && (
+                          <p className="text-xs text-warning flex items-center gap-1">
+                            <AlertTriangle className="h-3 w-3" />
+                            {15 - ice.length} chiffres restants
+                          </p>
+                        )}
+                        {ice && ice.length === 15 && (
+                          <p className="text-xs text-success flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3" />
+                            Format valide
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-4">
