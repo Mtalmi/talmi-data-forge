@@ -470,6 +470,31 @@ export default function Production() {
     }
   };
 
+  // Handler to start production (transition from planification to production)
+  const handleStartProduction = async () => {
+    if (!selectedBon) return;
+
+    setSaving(true);
+    try {
+      const success = await transitionWorkflow(
+        selectedBon.bl_id,
+        'planification',
+        'production'
+      );
+
+      if (success) {
+        toast.success('Production démarrée');
+        closeAllDialogs();
+        fetchData();
+      }
+    } catch (error) {
+      console.error('Error starting production:', error);
+      toast.error('Erreur lors du démarrage de la production');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleAdvanceToValidation = async () => {
     if (!selectedBon || !selectedFormule) return;
 
@@ -1117,13 +1142,32 @@ export default function Production() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => navigate(`/planning?date=${bon.date_livraison}`)}
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        {bon.workflow_status === 'planification' && canEdit && (
+                          <Button 
+                            variant="default"
+                            size="sm"
+                            className="h-7 gap-1 text-xs"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedBon(bon);
+                              const formule = formules.find(f => f.formule_id === bon.formule_id);
+                              setSelectedFormule(formule || null);
+                              setValidationDialogOpen(true);
+                            }}
+                          >
+                            <Play className="h-3 w-3" />
+                            Démarrer
+                          </Button>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => navigate(`/planning?date=${bon.date_livraison}`)}
+                        >
+                          <ExternalLink className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -1283,7 +1327,7 @@ export default function Production() {
         </DialogContent>
       </Dialog>
 
-      {/* Validation Dialog - Simple confirm to validate production */}
+      {/* Validation Dialog - Start production or validate based on status */}
       <Dialog
         open={validationDialogOpen}
         onOpenChange={(open) => {
@@ -1294,8 +1338,17 @@ export default function Production() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
-              <CheckCircle className="h-5 w-5 text-success" />
-              Valider Commande
+              {selectedBon?.workflow_status === 'planification' ? (
+                <>
+                  <Play className="h-5 w-5 text-primary" />
+                  Démarrer Production
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-5 w-5 text-success" />
+                  Valider Production
+                </>
+              )}
             </DialogTitle>
           </DialogHeader>
 
@@ -1330,54 +1383,72 @@ export default function Production() {
                 )}
               </div>
 
-              {/* Consumption summary */}
-              <div className="p-3 rounded-lg border space-y-2">
-                <h4 className="text-sm font-medium">Consommation Réelle</h4>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                    <span className="text-muted-foreground">Ciment</span>
-                    <span className="font-mono font-medium">{editValues.ciment_reel_kg} kg</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                    <span className="text-muted-foreground">Adjuvant</span>
-                    <span className="font-mono font-medium">{editValues.adjuvant_reel_l} L</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                    <span className="text-muted-foreground">Eau</span>
-                    <span className="font-mono font-medium">{editValues.eau_reel_l} L</span>
-                  </div>
-                </div>
-                {selectedBon.source_donnees === 'machine_sync' && (
-                  <div className="flex items-center gap-1 text-xs text-success mt-1">
-                    <Wifi className="h-3 w-3" />
-                    Données synchronisées depuis la centrale
-                  </div>
-                )}
-              </div>
-
-              {/* Warning if deviations */}
-              {deviations.length > 0 && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 space-y-2">
+              {/* Planification status - Show start production info */}
+              {selectedBon.workflow_status === 'planification' && (
+                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 space-y-2">
                   <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 text-destructive" />
-                    <span className="text-sm font-medium text-destructive">Écarts détectés</span>
+                    <Clock className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-600">Commande Planifiée</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {deviations.map(d => `${d.field}: +${d.percent.toFixed(1)}%`).join(', ')}
+                    Cette commande est en attente de démarrage. Cliquez sur "Démarrer Production" 
+                    pour commencer le malaxage.
                   </p>
-                  {!justification.trim() && (
-                    <div className="space-y-1">
-                      <Label className="text-xs">Justification requise</Label>
-                      <Textarea
-                        value={justification}
-                        onChange={(e) => setJustification(e.target.value)}
-                        placeholder="Expliquez l'écart..."
-                        rows={2}
-                        className="text-sm"
-                      />
+                </div>
+              )}
+
+              {/* Production status - Show consumption summary */}
+              {selectedBon.workflow_status === 'production' && (
+                <>
+                  <div className="p-3 rounded-lg border space-y-2">
+                    <h4 className="text-sm font-medium">Consommation Théorique</h4>
+                    <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                        <span className="text-muted-foreground">Ciment</span>
+                        <span className="font-mono font-medium">{editValues.ciment_reel_kg.toFixed(0)} kg</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                        <span className="text-muted-foreground">Adjuvant</span>
+                        <span className="font-mono font-medium">{editValues.adjuvant_reel_l.toFixed(1)} L</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
+                        <span className="text-muted-foreground">Eau</span>
+                        <span className="font-mono font-medium">{editValues.eau_reel_l.toFixed(0)} L</span>
+                      </div>
+                    </div>
+                    {selectedBon.source_donnees === 'machine_sync' && (
+                      <div className="flex items-center gap-1 text-xs text-success mt-1">
+                        <Wifi className="h-3 w-3" />
+                        Données synchronisées depuis la centrale
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Warning if deviations */}
+                  {deviations.length > 0 && (
+                    <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="h-4 w-4 text-destructive" />
+                        <span className="text-sm font-medium text-destructive">Écarts détectés</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {deviations.map(d => `${d.field}: +${d.percent.toFixed(1)}%`).join(', ')}
+                      </p>
+                      {!justification.trim() && (
+                        <div className="space-y-1">
+                          <Label className="text-xs">Justification requise</Label>
+                          <Textarea
+                            value={justification}
+                            onChange={(e) => setJustification(e.target.value)}
+                            placeholder="Expliquez l'écart..."
+                            rows={2}
+                            className="text-sm"
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
+                </>
               )}
 
               {/* Actions */}
@@ -1385,17 +1456,29 @@ export default function Production() {
                 <Button variant="outline" onClick={() => setValidationDialogOpen(false)}>
                   Annuler
                 </Button>
-                <Button
-                  onClick={async () => {
-                    await handleAdvanceToValidation();
-                    setValidationDialogOpen(false);
-                  }}
-                  disabled={saving || (deviations.length > 0 && !justification.trim())}
-                  className="gap-2"
-                >
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                  Valider Production
-                </Button>
+                
+                {selectedBon.workflow_status === 'planification' ? (
+                  <Button
+                    onClick={handleStartProduction}
+                    disabled={saving}
+                    className="gap-2 bg-primary hover:bg-primary/90"
+                  >
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                    Démarrer Production
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={async () => {
+                      await handleAdvanceToValidation();
+                      setValidationDialogOpen(false);
+                    }}
+                    disabled={saving || (deviations.length > 0 && !justification.trim())}
+                    className="gap-2"
+                  >
+                    {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+                    Valider Production
+                  </Button>
+                )}
               </div>
             </div>
           )}
