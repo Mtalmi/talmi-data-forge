@@ -32,6 +32,7 @@ import { BonCommande } from '@/hooks/useSalesWorkflow';
 import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
+import { OrderStatusTimeline } from '@/components/ventes/OrderStatusTimeline';
 import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -225,6 +226,7 @@ export function BcTable({
           <TableHead className="text-right">Volume</TableHead>
           <TableHead className="text-right">Total HT</TableHead>
           <TableHead>Statut</TableHead>
+          <TableHead>Progression</TableHead>
           <TableHead>Priorité</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -272,6 +274,9 @@ export function BcTable({
                   {statusConfig.icon}
                   {statusConfig.label}
                 </Badge>
+              </TableCell>
+              <TableCell>
+                <OrderStatusTimeline bc={bc} compact />
               </TableCell>
               <TableCell>
                 {priorityBadge || <span className="text-muted-foreground">—</span>}

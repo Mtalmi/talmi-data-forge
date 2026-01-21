@@ -33,6 +33,7 @@ import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
+import { DuplicateDevisButton } from '@/components/ventes/DuplicateDevisButton';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -64,6 +65,7 @@ interface DevisTableProps {
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   onQuickSend?: (devis: Devis) => void;
+  onRefresh?: () => void;
 }
 
 // Helper to determine if devis is high priority
@@ -86,6 +88,7 @@ export function DevisTable({
   selectedIds,
   onSelectionChange,
   onQuickSend,
+  onRefresh,
 }: DevisTableProps) {
   
   const handleSelectAll = (checked: boolean) => {
@@ -282,6 +285,9 @@ export function DevisTable({
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-1">
+                  {/* Duplicate Button */}
+                  <DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact />
+                  
                   {/* Quick Send Button - prominent for pending devis */}
                   {devis.statut === 'en_attente' && devis.client_id && (
                     <>

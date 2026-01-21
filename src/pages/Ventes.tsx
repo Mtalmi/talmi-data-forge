@@ -34,6 +34,8 @@ import { ExpiringQuotesAlert } from '@/components/ventes/ExpiringQuotesAlert';
 import { RevenueForecastChart } from '@/components/ventes/RevenueForecastChart';
 import { BatchReminderDialog } from '@/components/ventes/BatchReminderDialog';
 import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDrawer';
+import { ScheduledRemindersDialog } from '@/components/ventes/ScheduledRemindersDialog';
+import { ExportReportsDialog } from '@/components/ventes/ExportReportsDialog';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -351,6 +353,13 @@ export default function Ventes() {
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <SmartQuoteCalculator variant="prominent" />
+              <ExportReportsDialog 
+                devisList={devisList}
+                bcList={bcList}
+                selectedDevisIds={selectedDevisIds}
+                selectedBcIds={selectedBcIds}
+              />
+              <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
               <Button 
                 onClick={() => setBatchReminderOpen(true)}
                 variant="outline"
@@ -496,6 +505,7 @@ export default function Ventes() {
                     getExpirationInfo={getExpirationInfo}
                     selectedIds={selectedDevisIds}
                     onSelectionChange={setSelectedDevisIds}
+                    onRefresh={fetchData}
                   />
                 </CardContent>
               </Card>
