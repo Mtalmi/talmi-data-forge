@@ -8,7 +8,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 
 // Generate time slots in 5-minute intervals
 const generateTimeSlots = () => {
@@ -139,7 +139,11 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
             </p>
           )}
         </div>
-        <ScrollArea className="h-[200px]" ref={scrollRef}>
+        <div 
+          ref={scrollRef}
+          className="h-[280px] overflow-y-auto overscroll-contain touch-pan-y"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           <div className="p-1">
             {filteredTimes.map((time) => (
               <button
@@ -147,9 +151,10 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
                 data-time={time}
                 onClick={() => handleSelectTime(time)}
                 className={cn(
-                  "w-full text-left px-3 py-2 text-sm rounded-md transition-colors",
+                  "w-full text-left px-3 py-2.5 text-sm rounded-md transition-colors",
                   "hover:bg-accent hover:text-accent-foreground",
                   "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+                  "active:bg-accent/80",
                   value === time && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                 )}
               >
@@ -157,7 +162,7 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
               </button>
             ))}
           </div>
-        </ScrollArea>
+        </div>
       </PopoverContent>
     </Popover>
   );
