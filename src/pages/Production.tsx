@@ -104,6 +104,10 @@ export default function Production() {
   const [selectedFormule, setSelectedFormule] = useState<Formule | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [validationDialogOpen, setValidationDialogOpen] = useState(false);
+  
+  // Filter state
+  type FilterType = 'all' | 'production' | 'validation' | 'machine' | 'ecart';
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
   const clearBlFromUrl = useCallback(() => {
     if (!searchParams.get('bl')) return;
@@ -494,54 +498,132 @@ export default function Production() {
           </div>
         </div>
 
-        {/* Status Legend - Scrollable on mobile */}
+        {/* Status Filters - Clickable */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
-          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-warning/10 text-warning border border-warning/30 whitespace-nowrap flex-shrink-0">
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'production' ? 'all' : 'production')}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all cursor-pointer",
+              activeFilter === 'production'
+                ? "bg-warning text-warning-foreground border-2 border-warning shadow-md"
+                : "bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20"
+            )}
+          >
             <Play className="h-3 w-3" />
             Production
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-purple-500/10 text-purple-500 border border-purple-500/30 whitespace-nowrap flex-shrink-0">
+            {activeFilter !== 'production' && (
+              <span className="ml-1 bg-warning/30 px-1.5 rounded-full text-[10px]">
+                {bons.filter(b => b.workflow_status === 'production').length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'validation' ? 'all' : 'validation')}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all cursor-pointer",
+              activeFilter === 'validation'
+                ? "bg-purple-500 text-white border-2 border-purple-500 shadow-md"
+                : "bg-purple-500/10 text-purple-500 border border-purple-500/30 hover:bg-purple-500/20"
+            )}
+          >
             <CheckCircle className="h-3 w-3" />
             Validation
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-success/10 text-success border border-success/30 whitespace-nowrap flex-shrink-0">
+            {activeFilter !== 'validation' && (
+              <span className="ml-1 bg-purple-500/30 px-1.5 rounded-full text-[10px]">
+                {bons.filter(b => b.workflow_status === 'validation_technique').length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'machine' ? 'all' : 'machine')}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all cursor-pointer",
+              activeFilter === 'machine'
+                ? "bg-success text-success-foreground border-2 border-success shadow-md"
+                : "bg-success/10 text-success border border-success/30 hover:bg-success/20"
+            )}
+          >
             <Wifi className="h-3 w-3" />
             Machine
-          </span>
-          <span className="inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium bg-destructive/10 text-destructive border border-destructive/30 whitespace-nowrap flex-shrink-0">
+            {activeFilter !== 'machine' && (
+              <span className="ml-1 bg-success/30 px-1.5 rounded-full text-[10px]">
+                {bons.filter(b => b.source_donnees === 'machine_sync').length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'ecart' ? 'all' : 'ecart')}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all cursor-pointer",
+              activeFilter === 'ecart'
+                ? "bg-destructive text-destructive-foreground border-2 border-destructive shadow-md"
+                : "bg-destructive/10 text-destructive border border-destructive/30 hover:bg-destructive/20"
+            )}
+          >
             <AlertTriangle className="h-3 w-3" />
             Écart &gt; 5%
-          </span>
+            {activeFilter !== 'ecart' && (
+              <span className="ml-1 bg-destructive/30 px-1.5 rounded-full text-[10px]">
+                {bons.filter(b => b.alerte_ecart).length}
+              </span>
+            )}
+          </button>
         </div>
 
         {/* Production Queue */}
-        <div className="card-industrial overflow-x-auto">
-          {loading ? (
-            <div className="p-8 text-center">
-              <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
-            </div>
-          ) : bons.length === 0 ? (
-            <div className="p-8 text-center">
-              <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucun bon en production</p>
-            </div>
-          ) : (
-            <Table className="data-table-industrial">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>N° Bon</TableHead>
-                  <TableHead>Commande</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="w-20"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {bons.map((bon) => (
+        {(() => {
+          // Apply filter
+          const filteredBons = bons.filter(bon => {
+            if (activeFilter === 'all') return true;
+            if (activeFilter === 'production') return bon.workflow_status === 'production';
+            if (activeFilter === 'validation') return bon.workflow_status === 'validation_technique';
+            if (activeFilter === 'machine') return bon.source_donnees === 'machine_sync';
+            if (activeFilter === 'ecart') return bon.alerte_ecart === true;
+            return true;
+          });
+          
+          return (
+            <div className="card-industrial overflow-x-auto">
+              {loading ? (
+                <div className="p-8 text-center">
+                  <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredBons.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                  <p className="text-muted-foreground">
+                    {activeFilter !== 'all' 
+                      ? `Aucun bon correspondant au filtre "${activeFilter}"`
+                      : 'Aucun bon en production'}
+                  </p>
+                  {activeFilter !== 'all' && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setActiveFilter('all')}
+                      className="mt-2"
+                    >
+                      Voir tous les bons
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <Table className="data-table-industrial">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>N° Bon</TableHead>
+                      <TableHead>Commande</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Formule</TableHead>
+                      <TableHead className="text-right">Volume</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead className="w-20"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredBons.map((bon) => (
                   <TableRow
                     key={bon.bl_id}
                     className={cn(
@@ -607,6 +689,8 @@ export default function Production() {
             </Table>
           )}
         </div>
+          );
+        })()}
 
         {/* API Documentation (Hidden/Collapsible) */}
         {isCeo && (
