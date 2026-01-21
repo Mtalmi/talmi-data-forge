@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { FileDown, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { toast } from 'sonner';
 import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
 
@@ -28,7 +28,7 @@ interface BcPdfGeneratorProps {
   compact?: boolean;
 }
 
-export function BcPdfGenerator({ bc, compact = false }: BcPdfGeneratorProps) {
+export const BcPdfGenerator = forwardRef<HTMLDivElement, BcPdfGeneratorProps>(function BcPdfGenerator({ bc, compact = false }, ref) {
   const [generating, setGenerating] = useState(false);
   const [useFullCGV, setUseFullCGV] = useState(bc.volume_m3 >= 500);
 
@@ -184,15 +184,17 @@ export function BcPdfGenerator({ bc, compact = false }: BcPdfGeneratorProps) {
 
   if (compact) {
     return (
-      <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
-        {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-        PDF
-      </Button>
+      <div ref={ref}>
+        <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
+          {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+          PDF
+        </Button>
+      </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div ref={ref} className="flex items-center gap-3">
       <div className="flex items-center gap-2">
         <Switch 
           id="bc-cgv-toggle" 
@@ -210,4 +212,4 @@ export function BcPdfGenerator({ bc, compact = false }: BcPdfGeneratorProps) {
       </Button>
     </div>
   );
-}
+});
