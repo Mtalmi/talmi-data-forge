@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -26,6 +26,13 @@ import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/component
 import { DevisDetailDialog } from '@/components/ventes/DevisDetailDialog';
 import { ActivityHistoryDrawer } from '@/components/ventes/ActivityHistoryDrawer';
 import { OrderCalendarView } from '@/components/ventes/OrderCalendarView';
+
+// Phase 5-7 Components
+import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
+import { SavedFilterViews } from '@/components/ventes/SavedFilterViews';
+import { ExpiringQuotesAlert } from '@/components/ventes/ExpiringQuotesAlert';
+import { RevenueForecastChart } from '@/components/ventes/RevenueForecastChart';
+import { BatchReminderDialog } from '@/components/ventes/BatchReminderDialog';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -59,6 +66,23 @@ export default function Ventes() {
   const [devisDetailOpen, setDevisDetailOpen] = useState(false);
   const [converting, setConverting] = useState(false);
   const [launchingProduction, setLaunchingProduction] = useState<string | null>(null);
+  
+  // Phase 5-7 State
+  const [batchReminderOpen, setBatchReminderOpen] = useState(false);
+  const [showExpiringAlert, setShowExpiringAlert] = useState(true);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [selectedRowIndex, setSelectedRowIndex] = useState(-1);
+
+  // Keyboard shortcuts
+  useVentesKeyboardShortcuts({
+    onNewQuote: () => document.querySelector<HTMLButtonElement>('[data-quote-calculator]')?.click(),
+    onNewOrder: () => setDirectOrderOpen(true),
+    onFocusSearch: () => searchInputRef.current?.focus(),
+    onNextItem: () => setSelectedRowIndex(prev => prev + 1),
+    onPrevItem: () => setSelectedRowIndex(prev => Math.max(0, prev - 1)),
+    onRefresh: handleRefresh,
+    onToggleTab: () => setActiveTab(activeTab === 'devis' ? 'bc' : 'devis'),
+  });
   
   // Handle pipeline stage click - update filters and switch tab
   const handleStageClick = (stage: string) => {
@@ -310,6 +334,15 @@ export default function Ventes() {
             <div className="flex flex-wrap items-center gap-2">
               <SmartQuoteCalculator variant="prominent" />
               <Button 
+                onClick={() => setBatchReminderOpen(true)}
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <Mail className="h-4 w-4" />
+                Relances
+              </Button>
+              <Button 
                 onClick={() => setDirectOrderOpen(true)}
                 variant="outline"
                 className="gap-2"
@@ -318,6 +351,7 @@ export default function Ventes() {
                 Commande Directe
               </Button>
               <ActivityHistoryDrawer />
+              <KeyboardShortcutsHint />
             </div>
           </div>
 
@@ -331,10 +365,21 @@ export default function Ventes() {
             lastRefresh={lastRefresh}
             onRefresh={handleRefresh}
             autoRefreshEnabled={autoRefreshEnabled}
-            onAutoRefreshToggle={toggleAutoRefresh}
-          />
+                onAutoRefreshToggle={toggleAutoRefresh}
+              />
+            </div>
+            <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
+          </div>
 
-          {/* Stats & Pipeline Visualization */}
+          {/* Stats & Pipeline + Revenue Forecast */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <PipelineStats stats={stats} onStageClick={handleStageClick} />
+            </div>
+            <RevenueForecastChart bcList={bcList} devisList={devisList} />
+          </div>
+
+          {/* Active Status Filter Indicator - kept for reference */}
           <PipelineStats stats={stats} onStageClick={handleStageClick} />
 
           {/* Active Status Filter Indicator */}
