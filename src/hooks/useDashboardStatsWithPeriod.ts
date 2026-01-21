@@ -118,124 +118,130 @@ export function useDashboardStatsWithPeriod(period: Period) {
     previousPeriodLabel: '',
   });
   const [loading, setLoading] = useState(true);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const fetchStats = useCallback(async (currentPeriod: Period) => {
-    setLoading(true);
-    try {
-      const { start, end, prevStart, prevEnd } = getPeriodDates(currentPeriod);
-      const startStr = format(start, 'yyyy-MM-dd');
-      const endStr = format(end, 'yyyy-MM-dd');
-      const prevStartStr = format(prevStart, 'yyyy-MM-dd');
-      const prevEndStr = format(prevEnd, 'yyyy-MM-dd');
-
-      console.log(`[Period Stats] Fetching for ${currentPeriod}: ${startStr} to ${endStr}`);
-
-      // Fetch current period deliveries
-      const { data: currentDeliveries } = await supabase
-        .from('bons_livraison_reels')
-        .select('volume_m3, cur_reel, prix_vente_m3, marge_brute_pct, client_id, workflow_status')
-        .gte('date_livraison', startStr)
-        .lte('date_livraison', endStr)
-        .in('workflow_status', ['livre', 'facture']);
-
-      // Fetch previous period deliveries
-      const { data: prevDeliveries } = await supabase
-        .from('bons_livraison_reels')
-        .select('volume_m3, cur_reel, prix_vente_m3, marge_brute_pct')
-        .gte('date_livraison', prevStartStr)
-        .lte('date_livraison', prevEndStr)
-        .in('workflow_status', ['livre', 'facture']);
-
-      // Fetch current period factures
-      const { data: currentFactures } = await supabase
-        .from('factures')
-        .select('total_ht, cur_reel, volume_m3, marge_brute_dh')
-        .gte('date_facture', startStr)
-        .lte('date_facture', endStr);
-
-      // Fetch previous period factures
-      const { data: prevFactures } = await supabase
-        .from('factures')
-        .select('total_ht, cur_reel, volume_m3')
-        .gte('date_facture', prevStartStr)
-        .lte('date_facture', prevEndStr);
-
-      // Fetch current period expenses
-      const { data: currentDepenses } = await supabase
-        .from('depenses')
-        .select('montant')
-        .gte('date_depense', startStr)
-        .lte('date_depense', endStr);
-
-      // Calculate current period metrics
-      const totalVolume = currentDeliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
-      const chiffreAffaires = currentFactures?.reduce((sum, f) => sum + (f.total_ht || 0), 0) || 0;
-      const totalCoutReel = currentFactures?.reduce((sum, f) => sum + ((f.cur_reel || 0) * (f.volume_m3 || 0)), 0) || 0;
-      const totalDepenses = currentDepenses?.reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
-      
-      const margeBrute = chiffreAffaires - totalCoutReel;
-      const margeBrutePct = chiffreAffaires > 0 ? (margeBrute / chiffreAffaires) * 100 : 0;
-      const profitNet = margeBrute - totalDepenses;
-      
-      const curValues = currentDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
-      const curMoyen = curValues.length > 0 ? curValues.reduce((a, b) => a + b, 0) / curValues.length : 0;
-      
-      const nbLivraisons = currentDeliveries?.length || 0;
-      const nbFactures = currentFactures?.length || 0;
-      const nbClients = new Set(currentDeliveries?.map(d => d.client_id) || []).size;
-
-      // Calculate previous period metrics
-      const prevVolume = prevDeliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
-      const prevCA = prevFactures?.reduce((sum, f) => sum + (f.total_ht || 0), 0) || 0;
-      const prevCurValues = prevDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
-      const prevCurMoyen = prevCurValues.length > 0 ? prevCurValues.reduce((a, b) => a + b, 0) / prevCurValues.length : 0;
-      const prevMargeValues = prevDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
-      const prevMargeMoyen = prevMargeValues.length > 0 ? prevMargeValues.reduce((a, b) => a + b, 0) / prevMargeValues.length : 0;
-
-      const margeValues = currentDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
-      const margeMoyen = margeValues.length > 0 ? margeValues.reduce((a, b) => a + b, 0) / margeValues.length : 0;
-
-      // Calculate trends
-      const volumeTrend = prevVolume > 0 ? ((totalVolume - prevVolume) / prevVolume) * 100 : 0;
-      const caTrend = prevCA > 0 ? ((chiffreAffaires - prevCA) / prevCA) * 100 : 0;
-      const curTrend = prevCurMoyen > 0 ? ((curMoyen - prevCurMoyen) / prevCurMoyen) * 100 : 0;
-      const margeTrend = prevMargeMoyen > 0 ? ((margeMoyen - prevMargeMoyen) / prevMargeMoyen) * 100 : 0;
-
-      console.log(`[Period Stats] Results for ${currentPeriod}: Volume=${totalVolume}, CA=${chiffreAffaires}`);
-
-      setStats({
-        totalVolume,
-        chiffreAffaires,
-        curMoyen,
-        margeBrute,
-        margeBrutePct,
-        profitNet,
-        totalDepenses,
-        nbLivraisons,
-        nbFactures,
-        nbClients,
-        volumeTrend,
-        caTrend,
-        curTrend,
-        margeTrend,
-        periodLabel: getPeriodLabel(currentPeriod),
-        previousPeriodLabel: getPreviousPeriodLabel(currentPeriod),
-      });
-    } catch (error) {
-      console.error('Error fetching period stats:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  // Re-fetch when period changes
   useEffect(() => {
-    fetchStats(period);
-  }, [period, fetchStats]);
+    let isMounted = true;
+    
+    const fetchStats = async () => {
+      setLoading(true);
+      try {
+        const { start, end, prevStart, prevEnd } = getPeriodDates(period);
+        const startStr = format(start, 'yyyy-MM-dd');
+        const endStr = format(end, 'yyyy-MM-dd');
+        const prevStartStr = format(prevStart, 'yyyy-MM-dd');
+        const prevEndStr = format(prevEnd, 'yyyy-MM-dd');
+
+        // Fetch current period deliveries
+        const { data: currentDeliveries } = await supabase
+          .from('bons_livraison_reels')
+          .select('volume_m3, cur_reel, prix_vente_m3, marge_brute_pct, client_id, workflow_status')
+          .gte('date_livraison', startStr)
+          .lte('date_livraison', endStr)
+          .in('workflow_status', ['livre', 'facture']);
+
+        // Fetch previous period deliveries
+        const { data: prevDeliveries } = await supabase
+          .from('bons_livraison_reels')
+          .select('volume_m3, cur_reel, prix_vente_m3, marge_brute_pct')
+          .gte('date_livraison', prevStartStr)
+          .lte('date_livraison', prevEndStr)
+          .in('workflow_status', ['livre', 'facture']);
+
+        // Fetch current period factures
+        const { data: currentFactures } = await supabase
+          .from('factures')
+          .select('total_ht, cur_reel, volume_m3, marge_brute_dh')
+          .gte('date_facture', startStr)
+          .lte('date_facture', endStr);
+
+        // Fetch previous period factures
+        const { data: prevFactures } = await supabase
+          .from('factures')
+          .select('total_ht, cur_reel, volume_m3')
+          .gte('date_facture', prevStartStr)
+          .lte('date_facture', prevEndStr);
+
+        // Fetch current period expenses
+        const { data: currentDepenses } = await supabase
+          .from('depenses')
+          .select('montant')
+          .gte('date_depense', startStr)
+          .lte('date_depense', endStr);
+
+        if (!isMounted) return;
+
+        // Calculate current period metrics
+        const totalVolume = currentDeliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
+        const chiffreAffaires = currentFactures?.reduce((sum, f) => sum + (f.total_ht || 0), 0) || 0;
+        const totalCoutReel = currentFactures?.reduce((sum, f) => sum + ((f.cur_reel || 0) * (f.volume_m3 || 0)), 0) || 0;
+        const totalDepenses = currentDepenses?.reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
+        
+        const margeBrute = chiffreAffaires - totalCoutReel;
+        const margeBrutePct = chiffreAffaires > 0 ? (margeBrute / chiffreAffaires) * 100 : 0;
+        const profitNet = margeBrute - totalDepenses;
+        
+        const curValues = currentDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
+        const curMoyen = curValues.length > 0 ? curValues.reduce((a, b) => a + b, 0) / curValues.length : 0;
+        
+        const nbLivraisons = currentDeliveries?.length || 0;
+        const nbFactures = currentFactures?.length || 0;
+        const nbClients = new Set(currentDeliveries?.map(d => d.client_id) || []).size;
+
+        // Calculate previous period metrics
+        const prevVolume = prevDeliveries?.reduce((sum, d) => sum + (d.volume_m3 || 0), 0) || 0;
+        const prevCA = prevFactures?.reduce((sum, f) => sum + (f.total_ht || 0), 0) || 0;
+        const prevCurValues = prevDeliveries?.filter(d => d.cur_reel).map(d => d.cur_reel!) || [];
+        const prevCurMoyen = prevCurValues.length > 0 ? prevCurValues.reduce((a, b) => a + b, 0) / prevCurValues.length : 0;
+        const prevMargeValues = prevDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
+        const prevMargeMoyen = prevMargeValues.length > 0 ? prevMargeValues.reduce((a, b) => a + b, 0) / prevMargeValues.length : 0;
+
+        const margeValues = currentDeliveries?.filter(d => d.marge_brute_pct !== null).map(d => d.marge_brute_pct!) || [];
+        const margeMoyen = margeValues.length > 0 ? margeValues.reduce((a, b) => a + b, 0) / margeValues.length : 0;
+
+        // Calculate trends
+        const volumeTrend = prevVolume > 0 ? ((totalVolume - prevVolume) / prevVolume) * 100 : 0;
+        const caTrend = prevCA > 0 ? ((chiffreAffaires - prevCA) / prevCA) * 100 : 0;
+        const curTrend = prevCurMoyen > 0 ? ((curMoyen - prevCurMoyen) / prevCurMoyen) * 100 : 0;
+        const margeTrend = prevMargeMoyen > 0 ? ((margeMoyen - prevMargeMoyen) / prevMargeMoyen) * 100 : 0;
+
+        setStats({
+          totalVolume,
+          chiffreAffaires,
+          curMoyen,
+          margeBrute,
+          margeBrutePct,
+          profitNet,
+          totalDepenses,
+          nbLivraisons,
+          nbFactures,
+          nbClients,
+          volumeTrend,
+          caTrend,
+          curTrend,
+          margeTrend,
+          periodLabel: getPeriodLabel(period),
+          previousPeriodLabel: getPreviousPeriodLabel(period),
+        });
+      } catch (error) {
+        console.error('Error fetching period stats:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchStats();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [period, refreshTrigger]);
 
   const refresh = useCallback(() => {
-    fetchStats(period);
-  }, [period, fetchStats]);
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
 
   return { stats, loading, refresh };
 }
