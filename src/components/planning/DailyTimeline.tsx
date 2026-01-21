@@ -28,11 +28,20 @@ interface DailyTimelineProps {
 
 const STATUS_COLORS: Record<string, string> = {
   'en_attente_validation': 'bg-amber-500',
-  'planification': 'bg-blue-500',
+  'planification': 'bg-blue-600',
   'production': 'bg-orange-500',
-  'en_chargement': 'bg-purple-500',
-  'en_livraison': 'bg-primary',
-  'livre': 'bg-success',
+  'en_chargement': 'bg-violet-600',
+  'en_livraison': 'bg-rose-600',
+  'livre': 'bg-emerald-600',
+};
+
+const STATUS_GRADIENTS: Record<string, string> = {
+  'en_attente_validation': 'bg-gradient-to-r from-amber-500 to-amber-400',
+  'planification': 'bg-gradient-to-r from-blue-600 to-sky-500',
+  'production': 'bg-gradient-to-r from-orange-500 to-amber-400',
+  'en_chargement': 'bg-gradient-to-r from-violet-600 to-purple-500',
+  'en_livraison': 'bg-gradient-to-r from-rose-600 to-pink-500',
+  'livre': 'bg-gradient-to-r from-emerald-600 to-teal-500',
 };
 
 export function DailyTimeline({
@@ -122,13 +131,13 @@ export function DailyTimeline({
                   <span className="font-mono">{truck}</span>
                 </div>
 
-                {/* Timeline bar */}
-                <div className="relative h-10 bg-muted/50 rounded-lg border overflow-visible">
+                  {/* Timeline bar */}
+                <div className="relative h-10 bg-slate-100 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700 overflow-visible">
                   {/* Hour grid lines */}
                   {hours.map((hour, i) => (
                     <div
                       key={hour}
-                      className="absolute top-0 bottom-0 w-px bg-border"
+                      className="absolute top-0 bottom-0 w-px bg-slate-200 dark:bg-slate-700"
                       style={{ left: `${(i / (hours.length - 1)) * 100}%` }}
                     />
                   ))}
@@ -136,10 +145,10 @@ export function DailyTimeline({
                   {/* Now indicator */}
                   {showNowLine && (
                     <div
-                      className="absolute top-0 bottom-0 w-0.5 bg-destructive z-20"
+                      className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-20"
                       style={{ left: `${nowPosition}%` }}
                     >
-                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-destructive" />
+                      <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-red-500 ring-2 ring-red-500/30" />
                     </div>
                   )}
 
@@ -149,9 +158,9 @@ export function DailyTimeline({
                       <TooltipTrigger asChild>
                         <div
                           className={cn(
-                            "absolute top-1 bottom-1 rounded cursor-pointer transition-all hover:scale-105 hover:z-10",
-                            STATUS_COLORS[bon.workflow_status] || 'bg-muted',
-                            "min-w-[60px]"
+                            "absolute top-1 bottom-1 rounded-md cursor-pointer transition-all hover:scale-105 hover:z-10 shadow-sm hover:shadow-md",
+                            STATUS_GRADIENTS[bon.workflow_status] || 'bg-slate-400',
+                            "min-w-[60px] ring-1 ring-white/20"
                           )}
                           style={{ 
                             left: `${bon.position}%`,
@@ -159,12 +168,12 @@ export function DailyTimeline({
                           }}
                           onClick={() => onBonClick?.(bon)}
                         >
-                          <div className="px-1.5 h-full flex items-center justify-center text-[10px] font-medium text-white truncate">
+                          <div className="px-1.5 h-full flex items-center justify-center text-[10px] font-bold text-white truncate drop-shadow-sm">
                             {bon.volume_m3}m³
                           </div>
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent className="bg-slate-900 text-white border-slate-700">
                         <div className="space-y-1 text-xs">
                           <p className="font-semibold">{bon.bl_id}</p>
                           <p>{bon.clients?.nom_client || bon.client_id}</p>
