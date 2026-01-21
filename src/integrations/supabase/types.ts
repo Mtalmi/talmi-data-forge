@@ -676,47 +676,65 @@ export type Database = {
         Row: {
           adresse: string | null
           client_id: string
+          code_postal: string | null
           contact_personne: string | null
           created_at: string
           credit_bloque: boolean | null
           delai_paiement_jours: number | null
           derniere_commande_at: string | null
           email: string | null
+          ice: string | null
+          identifiant_fiscal: string | null
           limite_credit_dh: number | null
           nom_client: string
+          patente: string | null
+          rc: string | null
           solde_du: number | null
           telephone: string | null
           updated_at: string
+          ville: string | null
         }
         Insert: {
           adresse?: string | null
           client_id: string
+          code_postal?: string | null
           contact_personne?: string | null
           created_at?: string
           credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
           derniere_commande_at?: string | null
           email?: string | null
+          ice?: string | null
+          identifiant_fiscal?: string | null
           limite_credit_dh?: number | null
           nom_client: string
+          patente?: string | null
+          rc?: string | null
           solde_du?: number | null
           telephone?: string | null
           updated_at?: string
+          ville?: string | null
         }
         Update: {
           adresse?: string | null
           client_id?: string
+          code_postal?: string | null
           contact_personne?: string | null
           created_at?: string
           credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
           derniere_commande_at?: string | null
           email?: string | null
+          ice?: string | null
+          identifiant_fiscal?: string | null
           limite_credit_dh?: number | null
           nom_client?: string
+          patente?: string | null
+          rc?: string | null
           solde_du?: number | null
           telephone?: string | null
           updated_at?: string
+          ville?: string | null
         }
         Relationships: []
       }
