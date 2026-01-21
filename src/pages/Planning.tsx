@@ -97,9 +97,10 @@ export default function Planning() {
     statuses: { planification: number; production: number; livre: number };
   }[]>([]);
   
-  // Initialize date from URL param or default to today
-  const initialDate = searchParams.get('date') || format(new Date(), 'yyyy-MM-dd');
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  // Initialize date: always default to today unless explicit date param provided
+  const todayFormatted = format(new Date(), 'yyyy-MM-dd');
+  const urlDate = searchParams.get('date');
+  const [selectedDate, setSelectedDate] = useState(urlDate || todayFormatted);
 
   // If user navigated to /planning?focus=pending (e.g. by clicking the sidebar badge),
   // jump to the earliest pending date and scroll to the "À Confirmer" section.
@@ -107,7 +108,11 @@ export default function Planning() {
     if (searchParams.get('focus') === 'pending') {
       setFocusPending(true);
     }
-  }, [searchParams]);
+    // Reset to today if no date param and not focusing pending
+    if (!urlDate && !searchParams.get('focus')) {
+      setSelectedDate(todayFormatted);
+    }
+  }, [searchParams, urlDate, todayFormatted]);
 
 
   const fetchData = useCallback(async () => {
