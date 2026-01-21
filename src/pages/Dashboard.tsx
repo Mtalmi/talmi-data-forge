@@ -9,6 +9,13 @@ import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandC
 import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
 import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
+import { 
+  PendingApprovalsWidget, 
+  TodaysPipelineWidget, 
+  ARAgingWidget, 
+  StockLevelsWidget, 
+  SalesFunnelWidget 
+} from '@/components/dashboard/DashboardWidgets';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
@@ -292,6 +299,17 @@ export default function Dashboard() {
               variant="default"
               className={periodLoading ? 'opacity-50 animate-pulse' : ''}
             />
+          </div>
+        )}
+
+        {/* Quick Access Widgets - CEO Only */}
+        {(isCeo || isAccounting) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <PendingApprovalsWidget />
+            <TodaysPipelineWidget />
+            <ARAgingWidget />
+            <StockLevelsWidget />
+            <SalesFunnelWidget />
           </div>
         )}
 
