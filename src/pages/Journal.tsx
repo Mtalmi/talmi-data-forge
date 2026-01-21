@@ -203,6 +203,7 @@ export default function Journal() {
                     }
                   }}
                   locale={fr}
+                  className="pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
