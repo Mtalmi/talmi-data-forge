@@ -16,6 +16,7 @@ import { ProductionDistributionStepper } from '@/components/production/Productio
 import { ProductionSearchBar } from '@/components/production/ProductionSearchBar';
 import { ProductionDeviationChart } from '@/components/production/ProductionDeviationChart';
 import { DailyProductionTimeline } from '@/components/production/DailyProductionTimeline';
+import { ProductionLiveMetrics } from '@/components/production/ProductionLiveMetrics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -888,6 +889,19 @@ export default function Production() {
               setActiveFilter(activeFilter === stage ? 'all' : stage);
             }
           }}
+        />
+
+        {/* Live Metrics Dashboard */}
+        <ProductionLiveMetrics
+          bons={filteredAndSortedBons}
+          selectedDate={selectedDate}
+          dailyTarget={100}
+          stocks={kpiData.criticalStocks.length > 0 ? kpiData.criticalStocks : stocks.map(s => ({
+            materiau: s.materiau,
+            quantite: s.quantite_actuelle,
+            seuil: s.seuil_alerte,
+            unite: s.unite,
+          }))}
         />
 
         {/* Daily Production Timeline - Primary view for centraliste */}
