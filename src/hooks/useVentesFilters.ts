@@ -80,14 +80,14 @@ export function useVentesFilters(
       }
 
       // Status filter (for devis-specific statuses)
+      // When 'all' is selected OR a BC-specific status is selected, show all devis
       if (filters.status !== 'all') {
         const devisStatuses = ['en_attente', 'accepte', 'converti', 'refuse', 'expire'];
         if (devisStatuses.includes(filters.status)) {
+          // Only filter if a devis-specific status is selected
           if (devis.statut !== filters.status) return false;
-        } else {
-          // BC-specific status selected, show no devis
-          return false;
         }
+        // If a BC-specific status is selected, still show all devis (don't filter them out)
       }
 
       // Client filter
@@ -137,14 +137,14 @@ export function useVentesFilters(
       }
 
       // Status filter (for BC-specific statuses)
+      // When 'all' is selected OR a devis-specific status is selected, show all BCs
       if (filters.status !== 'all') {
         const bcStatuses = ['pret_production', 'en_production', 'termine', 'livre'];
         if (bcStatuses.includes(filters.status)) {
+          // Only filter if a BC-specific status is selected
           if (bc.statut !== filters.status) return false;
-        } else {
-          // Devis-specific status selected, show no BC
-          return false;
         }
+        // If a devis-specific status is selected, still show all BCs (don't filter them out)
       }
 
       // Client filter
