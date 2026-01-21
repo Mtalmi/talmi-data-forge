@@ -2552,8 +2552,8 @@ export type Database = {
             Args: {
               p_bc_id: string
               p_bl_id: string
-              p_date_livraison?: string
-              p_volume_m3?: number
+              p_date_livraison: string
+              p_volume_m3: number
             }
             Returns: string
           }
