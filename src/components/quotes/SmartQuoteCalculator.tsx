@@ -40,7 +40,9 @@ interface QuoteResult {
   total_cost_per_m3: number;
   margin_pct: number;
   prix_vente_minimum: number;
-  total_quote: number;
+  total_ht: number;
+  tva: number;
+  total_ttc: number;
 }
 
 interface Prix {
@@ -125,6 +127,9 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
       const transportExtra = distanceKm > 20 ? (distanceKm - 20) * 5 : 0;
       const totalCost = cut + fixedCost + transportExtra;
       const pvm = totalCost / (1 - marginPct);
+      const totalHT = Math.round(pvm * volumeM3 * 100) / 100;
+      const tva = Math.round(totalHT * 0.20 * 100) / 100; // 20% TVA Morocco
+      const totalTTC = Math.round((totalHT + tva) * 100) / 100;
       setQuoteResult({
         cut_per_m3: cut,
         fixed_cost_per_m3: fixedCost,
@@ -132,7 +137,9 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
         total_cost_per_m3: totalCost,
         margin_pct: marginPct * 100,
         prix_vente_minimum: Math.round(pvm * 100) / 100,
-        total_quote: Math.round(pvm * volumeM3 * 100) / 100,
+        total_ht: totalHT,
+        tva,
+        total_ttc: totalTTC,
       });
       toast.success('Devis calculé');
     } finally {
@@ -162,7 +169,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
       total_cost_per_m3: quoteResult.total_cost_per_m3,
       margin_pct: quoteResult.margin_pct,
       prix_vente_m3: quoteResult.prix_vente_minimum,
-      total_ht: quoteResult.total_quote,
+      total_ht: quoteResult.total_ht,
     });
     setSaving(false);
     if (result) {
@@ -233,8 +240,20 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
                 <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
                   <p className="text-xs font-semibold uppercase text-primary mb-1">Prix de Vente Minimum</p>
                   <p className="text-3xl font-bold text-primary">{quoteResult.prix_vente_minimum.toLocaleString()} DH/m³</p>
-                  <div className="mt-2 pt-2 border-t border-primary/20">
-                    <p className="text-lg font-semibold">Total: <span className="text-primary">{quoteResult.total_quote.toLocaleString()} DH</span></p>
+                  <p className="text-xs text-muted-foreground">Hors Taxe</p>
+                  <div className="mt-3 pt-3 border-t border-primary/20 space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span>Total HT</span>
+                      <span className="font-mono font-medium">{quoteResult.total_ht.toLocaleString()} DH</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>TVA (20%)</span>
+                      <span className="font-mono">{quoteResult.tva.toLocaleString()} DH</span>
+                    </div>
+                    <div className="flex justify-between text-lg font-bold pt-1 border-t border-primary/20">
+                      <span>Total TTC</span>
+                      <span className="text-primary">{quoteResult.total_ttc.toLocaleString()} DH</span>
+                    </div>
                   </div>
                 </div>
                   <div className="space-y-1 text-sm">
