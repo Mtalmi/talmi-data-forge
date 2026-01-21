@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
@@ -121,8 +121,8 @@ export default function Production() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [validationDialogOpen, setValidationDialogOpen] = useState(false);
   
-  // Filter state
-  type FilterType = 'all' | 'production' | 'validation' | 'machine' | 'ecart';
+  // Filter state - includes planification for newly launched BLs
+  type FilterType = 'all' | 'planification' | 'production' | 'validation' | 'machine' | 'ecart';
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   
   // Search and date range
@@ -188,8 +188,43 @@ export default function Production() {
   // Who can validate and advance to next workflow step
   const canValidate = !!(effectiveIsCeo || effectiveIsCentraliste || effectiveIsResponsableTechnique);
 
+  const realtimeDebounceRef = React.useRef<number | null>(null);
+
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Keep Production synced with Ventes/Planning updates via realtime
+  useEffect(() => {
+    const scheduleRefetch = () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      realtimeDebounceRef.current = window.setTimeout(() => {
+        fetchData();
+      }, 300);
+    };
+
+    const channel = supabase
+      .channel('production-workflow-sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_livraison_reels' },
+        scheduleRefetch
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_commande' },
+        scheduleRefetch
+      )
+      .subscribe();
+
+    return () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Auto-open dialog if BL is passed in URL
@@ -211,7 +246,8 @@ export default function Production() {
             *,
             client:clients(nom_client)
           `)
-          .in('workflow_status', ['production', 'validation_technique'])
+          // Show all active production workflow stages - from planification through validation
+          .in('workflow_status', ['planification', 'production', 'validation_technique'])
           .order('created_at', { ascending: false }),
         supabase
           .from('formules_theoriques')
@@ -303,9 +339,13 @@ export default function Production() {
     setJustification(bon.justification_ecart || '');
     updateDeviations(bon, formule);
     
-    // Orders in "production" status -> show validation dialog
+    // Orders in "planification" -> show info only (waiting for dispatcher)
+    // Orders in "production" status -> show validation dialog (centraliste entry)
     // Orders in "validation_technique" status -> show sync/edit dialog
-    if (bon.workflow_status === 'production') {
+    if (bon.workflow_status === 'planification') {
+      // Planification BLs are just for visibility - can transition to production
+      setValidationDialogOpen(true);
+    } else if (bon.workflow_status === 'production') {
       setValidationDialogOpen(true);
     } else {
       setDialogOpen(true);
@@ -507,6 +547,8 @@ export default function Production() {
     const avgCUR = 0; // Would need cur_reel data
     const deviationCount = bons.filter(b => b.alerte_ecart).length;
     const machineSyncCount = bons.filter(b => b.source_donnees === 'machine_sync').length;
+    const planificationCount = bons.filter(b => b.workflow_status === 'planification').length;
+    const productionCount = bons.filter(b => b.workflow_status === 'production').length;
     const validatedCount = bons.filter(b => b.workflow_status === 'validation_technique').length;
     const criticalStocks = stocks.filter(s => s.quantite_actuelle <= s.seuil_alerte).map(s => ({
       materiau: s.materiau,
@@ -515,7 +557,7 @@ export default function Production() {
       unite: s.unite,
     }));
     
-    return { totalVolume, avgCUR, deviationCount, machineSyncCount, validatedCount, criticalStocks };
+    return { totalVolume, avgCUR, deviationCount, machineSyncCount, planificationCount, productionCount, validatedCount, criticalStocks };
   }, [bons, stocks]);
 
   // Filtered and sorted bons
@@ -525,6 +567,7 @@ export default function Production() {
     // Apply status filter
     if (activeFilter !== 'all') {
       result = result.filter(bon => {
+        if (activeFilter === 'planification') return bon.workflow_status === 'planification';
         if (activeFilter === 'production') return bon.workflow_status === 'production';
         if (activeFilter === 'validation') return bon.workflow_status === 'validation_technique';
         if (activeFilter === 'machine') return bon.source_donnees === 'machine_sync';
@@ -753,6 +796,24 @@ export default function Production() {
 
         {/* Status Filters - Clickable */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
+          {/* Planification Filter - new BLs from Ventes */}
+          <button
+            onClick={() => setActiveFilter(activeFilter === 'planification' ? 'all' : 'planification')}
+            className={cn(
+              "inline-flex items-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-md text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all cursor-pointer",
+              activeFilter === 'planification'
+                ? "bg-blue-500 text-white border-2 border-blue-500 shadow-md"
+                : "bg-blue-500/10 text-blue-600 border border-blue-500/30 hover:bg-blue-500/20"
+            )}
+          >
+            <Clock className="h-3 w-3" />
+            Planifiés
+            {activeFilter !== 'planification' && (
+              <span className="ml-1 bg-blue-500/30 px-1.5 rounded-full text-[10px]">
+                {kpiData.planificationCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setActiveFilter(activeFilter === 'production' ? 'all' : 'production')}
             className={cn(
@@ -766,7 +827,7 @@ export default function Production() {
             Production
             {activeFilter !== 'production' && (
               <span className="ml-1 bg-warning/30 px-1.5 rounded-full text-[10px]">
-                {bons.filter(b => b.workflow_status === 'production').length}
+                {kpiData.productionCount}
               </span>
             )}
           </button>
@@ -783,7 +844,7 @@ export default function Production() {
             Validation
             {activeFilter !== 'validation' && (
               <span className="ml-1 bg-purple-500/30 px-1.5 rounded-full text-[10px]">
-                {bons.filter(b => b.workflow_status === 'validation_technique').length}
+                {kpiData.validatedCount}
               </span>
             )}
           </button>
@@ -800,7 +861,7 @@ export default function Production() {
             Machine
             {activeFilter !== 'machine' && (
               <span className="ml-1 bg-success/30 px-1.5 rounded-full text-[10px]">
-                {bons.filter(b => b.source_donnees === 'machine_sync').length}
+                {kpiData.machineSyncCount}
               </span>
             )}
           </button>
@@ -817,7 +878,7 @@ export default function Production() {
             Écart &gt; 5%
             {activeFilter !== 'ecart' && (
               <span className="ml-1 bg-destructive/30 px-1.5 rounded-full text-[10px]">
-                {bons.filter(b => b.alerte_ecart).length}
+                {kpiData.deviationCount}
               </span>
             )}
           </button>
@@ -957,10 +1018,12 @@ export default function Production() {
                     <TableCell>
                       <span className={cn(
                         'inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium',
+                        bon.workflow_status === 'planification' && 'bg-blue-500/20 text-blue-600',
                         bon.workflow_status === 'production' && 'bg-warning/20 text-warning',
                         bon.workflow_status === 'validation_technique' && 'bg-purple-500/20 text-purple-500'
                       )}>
-                        {bon.workflow_status === 'production' ? 'Prod' : 'Valid'}
+                        {bon.workflow_status === 'planification' ? 'Planifié' : 
+                         bon.workflow_status === 'production' ? 'Prod' : 'Valid'}
                       </span>
                     </TableCell>
                     <TableCell>
