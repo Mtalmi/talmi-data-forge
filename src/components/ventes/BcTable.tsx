@@ -274,10 +274,14 @@ export function BcTable({
           // Get the most advanced BL workflow status for display
           const linkedBls = bc.linkedBls || [];
           const blStatusOrder = ['facture', 'livre', 'en_livraison', 'validation_technique', 'production', 'planification', 'en_attente_validation'];
+          const getBlRank = (status: string) => {
+            const idx = blStatusOrder.indexOf(status);
+            return idx === -1 ? blStatusOrder.length : idx;
+          };
           const mostAdvancedBl = linkedBls.length > 0 
             ? linkedBls.reduce((best, bl) => {
-                const bestIndex = blStatusOrder.indexOf(best.workflow_status);
-                const currentIndex = blStatusOrder.indexOf(bl.workflow_status);
+                const bestIndex = getBlRank(best.workflow_status);
+                const currentIndex = getBlRank(bl.workflow_status);
                 return currentIndex < bestIndex ? bl : best;
               })
             : null;
@@ -414,7 +418,7 @@ export function BcTable({
                     const linkedBls = bc.linkedBls || [];
                     const validatedStatuses = ['validation_technique', 'en_livraison', 'livre', 'facture', 'annule'];
                     const allBlsValidated = linkedBls.length === 0 || 
-                      linkedBls.every(bl => validatedStatuses.includes(bl.workflow_status));
+                      linkedBls.every(bl => validatedStatuses.includes(bl.workflow_status) || bl.validation_technique === true);
                     
                     if (!allBlsValidated) {
                       // Show disabled state with explanation
