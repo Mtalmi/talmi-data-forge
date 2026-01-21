@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
@@ -88,7 +88,7 @@ interface Formule {
 }
 
 export default function Production() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const blFromUrl = searchParams.get('bl');
   
   const { role, isCeo, isCentraliste, isResponsableTechnique } = useAuth();
@@ -104,6 +104,23 @@ export default function Production() {
   const [selectedFormule, setSelectedFormule] = useState<Formule | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [validationDialogOpen, setValidationDialogOpen] = useState(false);
+
+  const clearBlFromUrl = useCallback(() => {
+    if (!searchParams.get('bl')) return;
+    const next = new URLSearchParams(searchParams);
+    next.delete('bl');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  const closeAllDialogs = useCallback(() => {
+    setDialogOpen(false);
+    setValidationDialogOpen(false);
+    setSelectedBon(null);
+    setSelectedFormule(null);
+    setJustification('');
+    setDeviations([]);
+    clearBlFromUrl();
+  }, [clearBlFromUrl]);
   
   // Edit state - includes sable/gravette for machine sync
   const [editValues, setEditValues] = useState<{
@@ -342,9 +359,7 @@ export default function Production() {
       }
 
       // Close dialog first to ensure UI updates immediately
-      setDialogOpen(false);
-      setSelectedBon(null);
-      setSelectedFormule(null);
+      closeAllDialogs();
       toast.success('Données de production enregistrées');
       fetchData();
     } catch (error) {
@@ -600,7 +615,13 @@ export default function Production() {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) closeAllDialogs();
+        }}
+      >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
@@ -704,7 +725,7 @@ export default function Production() {
 
               {/* Actions */}
               <div className="flex justify-end gap-3 pt-4 border-t border-border">
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                <Button variant="outline" onClick={closeAllDialogs}>
                   Annuler
                 </Button>
                 <Button
@@ -739,7 +760,13 @@ export default function Production() {
       </Dialog>
 
       {/* Validation Dialog - Simple confirm to validate production */}
-      <Dialog open={validationDialogOpen} onOpenChange={setValidationDialogOpen}>
+      <Dialog
+        open={validationDialogOpen}
+        onOpenChange={(open) => {
+          setValidationDialogOpen(open);
+          if (!open) closeAllDialogs();
+        }}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
