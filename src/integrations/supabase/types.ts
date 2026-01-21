@@ -720,6 +720,54 @@ export type Database = {
         }
         Relationships: []
       }
+      communication_logs: {
+        Row: {
+          category: string
+          client_id: string
+          created_at: string
+          id: string
+          message_preview: string | null
+          metadata: Json | null
+          recipient: string | null
+          reference_id: string | null
+          reference_table: string | null
+          sent_by: string | null
+          status: string
+          subject: string | null
+          type: string
+        }
+        Insert: {
+          category: string
+          client_id: string
+          created_at?: string
+          id?: string
+          message_preview?: string | null
+          metadata?: Json | null
+          recipient?: string | null
+          reference_id?: string | null
+          reference_table?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          type: string
+        }
+        Update: {
+          category?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          message_preview?: string | null
+          metadata?: Json | null
+          recipient?: string | null
+          reference_id?: string | null
+          reference_table?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
       consommation_energie: {
         Row: {
           carburant_groupe_l: number | null

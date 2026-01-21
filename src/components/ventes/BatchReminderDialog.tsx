@@ -20,6 +20,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { logCommunication } from '@/lib/communicationLogger';
 
 interface BatchReminderDialogProps {
   open: boolean;
@@ -94,6 +95,20 @@ export function BatchReminderDialog({
         });
 
         if (error) throw error;
+        
+        // Log the communication
+        await logCommunication({
+          clientId: devis.client_id || '',
+          type: 'email',
+          category: 'devis_reminder',
+          referenceId: devis.devis_id,
+          referenceTable: 'devis',
+          recipient: devis.client?.nom_client,
+          subject: `Relance: Devis ${devis.devis_id}`,
+          messagePreview: customMessage || 'Rappel automatique pour devis en attente',
+          status: 'sent',
+        });
+        
         success.push(devis.devis_id);
       } catch (error) {
         console.error(`Failed to send reminder for ${devis.devis_id}:`, error);

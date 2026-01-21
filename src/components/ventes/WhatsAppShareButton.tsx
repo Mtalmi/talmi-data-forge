@@ -9,6 +9,7 @@ import { Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { logCommunication } from '@/lib/communicationLogger';
 
 interface WhatsAppShareButtonProps {
   devis?: Devis;
@@ -68,16 +69,25 @@ export function WhatsAppShareButton({ devis, bc, phoneNumber, compact }: WhatsAp
     return lines.join('\n');
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
     let message = '';
     let phone = phoneNumber;
+    let clientId = '';
+    let referenceId = '';
+    let category: 'devis_send' | 'bc_confirmation' = 'devis_send';
 
     if (devis) {
       message = generateDevisMessage(devis);
       phone = phone || (devis.client as any)?.telephone || '';
+      clientId = devis.client_id || '';
+      referenceId = devis.devis_id;
+      category = 'devis_send';
     } else if (bc) {
       message = generateBcMessage(bc);
       phone = phone || bc.client?.telephone || bc.telephone_chantier || '';
+      clientId = bc.client_id;
+      referenceId = bc.bc_id;
+      category = 'bc_confirmation';
     }
 
     if (!message) {
@@ -106,6 +116,21 @@ export function WhatsAppShareButton({ devis, bc, phoneNumber, compact }: WhatsAp
 
     // Open in new tab
     window.open(whatsappUrl, '_blank');
+
+    // Log communication
+    if (clientId) {
+      await logCommunication({
+        clientId,
+        type: 'whatsapp',
+        category,
+        referenceId,
+        referenceTable: devis ? 'devis' : 'bons_commande',
+        recipient: formattedPhone || 'Non spécifié',
+        subject: devis ? `Devis ${referenceId}` : `BC ${referenceId}`,
+        messagePreview: message.substring(0, 200),
+        status: 'sent',
+      });
+    }
 
     toast.success('WhatsApp ouvert');
   };
