@@ -430,21 +430,31 @@ export default function Ventes() {
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
           </div>
 
-          {/* Workflow Stepper */}
-          <Card className="p-4">
-            <WorkflowStepper 
-              currentStage={activeTab === 'factures' ? 'facture' : activeTab === 'calendar' ? undefined : activeTab as WorkflowStage}
-              onStageClick={(stage) => {
-                if (stage === 'bl') {
-                  navigate('/planning');
-                } else if (stage === 'facture') {
-                  setActiveTab('factures');
-                } else {
-                  setActiveTab(stage);
-                }
-              }}
-            />
-          </Card>
+          {/* Workflow Stepper - Sticky */}
+          <div className="sticky top-14 sm:top-16 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6">
+            <Card className="p-4 shadow-lg border-b-2 border-primary/10 backdrop-blur-sm bg-card/95">
+              <WorkflowStepper 
+                currentStage={activeTab === 'factures' ? 'facture' : activeTab === 'calendar' ? undefined : activeTab as WorkflowStage}
+                onStageClick={(stage) => {
+                  if (stage === 'bl') {
+                    navigate('/planning');
+                  } else if (stage === 'facture') {
+                    setActiveTab('factures');
+                    // Scroll to tabs section after a brief delay
+                    setTimeout(() => {
+                      document.getElementById('ventes-tabs-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                  } else {
+                    setActiveTab(stage);
+                    // Scroll to tabs section after a brief delay
+                    setTimeout(() => {
+                      document.getElementById('ventes-tabs-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                  }
+                }}
+              />
+            </Card>
+          </div>
 
           {/* Stats & Pipeline + Revenue Forecast */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -481,7 +491,8 @@ export default function Ventes() {
           )}
 
           {/* Tabs for Devis, BC, Factures and Calendar */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <div id="ventes-tabs-section" className="scroll-mt-36">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
               <TabsTrigger value="devis" className="gap-2">
                 <FileText className="h-4 w-4" />
@@ -600,6 +611,7 @@ export default function Ventes() {
               />
             </TabsContent>
           </Tabs>
+          </div>
         </div>
 
         {/* Convert to BC Dialog */}
