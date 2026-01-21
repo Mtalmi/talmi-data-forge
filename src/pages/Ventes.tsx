@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -333,6 +333,32 @@ export default function Ventes() {
 
           {/* Stats & Pipeline Visualization */}
           <PipelineStats stats={stats} onStageClick={handleStageClick} />
+
+          {/* Active Status Filter Indicator */}
+          {filters.status !== 'all' && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+              <span className="text-sm text-muted-foreground">Filtre actif:</span>
+              <Badge variant="secondary" className="gap-1">
+                {filters.status === 'en_attente' && 'En Attente'}
+                {filters.status === 'accepte' && 'Accepté'}
+                {filters.status === 'converti' && 'Converti'}
+                {filters.status === 'refuse' && 'Refusé'}
+                {filters.status === 'pret_production' && 'Prêt Production'}
+                {filters.status === 'en_production' && 'En Production'}
+                {filters.status === 'termine' && 'Terminé'}
+                {filters.status === 'livre' && 'Livré'}
+              </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setFilters({ ...filters, status: 'all' })}
+                className="ml-auto gap-1 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3 w-3" />
+                Voir tout
+              </Button>
+            </div>
+          )}
 
           {/* Tabs for Devis and BC */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
