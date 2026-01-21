@@ -15,6 +15,7 @@ import { ProductionWorkflowStepper } from '@/components/production/ProductionWor
 import { ProductionDistributionStepper } from '@/components/production/ProductionDistributionStepper';
 import { ProductionSearchBar } from '@/components/production/ProductionSearchBar';
 import { ProductionDeviationChart } from '@/components/production/ProductionDeviationChart';
+import { DailyProductionTimeline } from '@/components/production/DailyProductionTimeline';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -888,6 +889,29 @@ export default function Production() {
             }
           }}
         />
+
+        {/* Daily Production Timeline - Primary view for centraliste */}
+        <div className="grid lg:grid-cols-3 gap-4">
+          <DailyProductionTimeline
+            bons={filteredAndSortedBons}
+            selectedDate={selectedDate}
+            onSelectBon={(bon) => {
+              handleSelectBon(bon as BonProduction);
+            }}
+            onStartProduction={(bon) => {
+              setSelectedBon(bon as BonProduction);
+              const formule = formules.find(f => f.formule_id === bon.formule_id);
+              setSelectedFormule(formule || null);
+              setValidationDialogOpen(true);
+            }}
+            className="lg:col-span-2"
+          />
+          
+          {/* Quick Stats Panel */}
+          <div className="space-y-4">
+            <ProductionStockAlerts stocks={stocks} />
+          </div>
+        </div>
 
         {/* KPI Cards - Collapsible */}
         <Collapsible open={kpiExpanded} onOpenChange={setKpiExpanded}>
