@@ -30,7 +30,8 @@ import {
   Sparkles,
   BellRing,
   ExternalLink,
-  Eye
+  Eye,
+  Receipt
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -47,6 +48,8 @@ import { DriverQuickContact } from '@/components/planning/DriverQuickContact';
 import { ETATracker } from '@/components/planning/ETATracker';
 import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment';
 import { CommandCenterSection } from '@/components/planning/CommandCenterSection';
+import { DeliveryRotationProgress } from '@/components/planning/DeliveryRotationProgress';
+import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
 
@@ -62,8 +65,16 @@ interface BonLivraison {
   toupie_assignee: string | null;
   date_livraison: string;
   heure_depart_centrale: string | null;
+  heure_arrivee_chantier: string | null;
   heure_retour_centrale: string | null;
   temps_rotation_minutes: number | null;
+  temps_attente_chantier_minutes: number | null;
+  facturer_attente: boolean | null;
+  prix_vente_m3: number | null;
+  cur_reel: number | null;
+  marge_brute_pct: number | null;
+  prix_livraison_m3: number | null;
+  facture_generee: boolean | null;
   created_at: string;
   // Logistics fields
   zone_livraison_id: string | null;
@@ -136,8 +147,16 @@ export default function Planning() {
           toupie_assignee,
           date_livraison,
           heure_depart_centrale,
+          heure_arrivee_chantier,
           heure_retour_centrale,
           temps_rotation_minutes,
+          temps_attente_chantier_minutes,
+          facturer_attente,
+          prix_vente_m3,
+          cur_reel,
+          marge_brute_pct,
+          prix_livraison_m3,
+          facture_generee,
           created_at,
           zone_livraison_id,
           mode_paiement,
@@ -266,9 +285,12 @@ export default function Planning() {
 
   // State for pending validation section
   const [pendingValidationOpen, setPendingValidationOpen] = useState(true);
-
+  
+  // State for smart invoice dialog
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+  const [selectedDeliveryForInvoice, setSelectedDeliveryForInvoice] = useState<BonLivraison | null>(null);
   // Categorize BLs for the dispatch board - NOW EXCLUDES pending validation BLs from main board
-  const { pendingValidation, aProduire, enChargement, enLivraison, livresAujourdhui, conflicts } = useMemo(() => {
+  const { pendingValidation, aProduire, enChargement, enLivraison, aFacturer, facturesAujourdhui, conflicts } = useMemo(() => {
     const now = new Date();
     const in2Hours = addHours(now, 2);
     
@@ -276,7 +298,8 @@ export default function Planning() {
     const aProduire: BonLivraison[] = [];
     const enChargement: BonLivraison[] = [];
     const enLivraison: BonLivraison[] = [];
-    const livresAujourdhui: BonLivraison[] = [];
+    const aFacturer: BonLivraison[] = []; // Delivered but not invoiced
+    const facturesAujourdhui: BonLivraison[] = []; // Invoiced
     const scheduledTimes: { bl: BonLivraison; time: Date }[] = [];
 
     bons.forEach(bon => {
@@ -288,8 +311,12 @@ export default function Planning() {
         enChargement.push(bon);
       } else if (bon.workflow_status === 'en_livraison') {
         enLivraison.push(bon);
-      } else if (['livre', 'facture'].includes(bon.workflow_status)) {
-        livresAujourdhui.push(bon);
+      } else if (bon.workflow_status === 'livre') {
+        // Delivered but NOT yet invoiced - needs attention
+        aFacturer.push(bon);
+      } else if (bon.workflow_status === 'facture') {
+        // Invoiced - can be archived
+        facturesAujourdhui.push(bon);
       } else if (bon.workflow_status === 'planification') {
         // Only planification goes to À Produire (ready to start production)
         if (bon.heure_prevue) {
@@ -323,7 +350,7 @@ export default function Planning() {
       }
     }
 
-    return { pendingValidation, aProduire, enChargement, enLivraison, livresAujourdhui, conflicts };
+    return { pendingValidation, aProduire, enChargement, enLivraison, aFacturer, facturesAujourdhui, conflicts };
   }, [bons, selectedDate]);
 
   // Focus pending effect - must be after useMemo that defines pendingValidation
@@ -671,9 +698,15 @@ export default function Planning() {
           </Button>
         )}
 
-        {/* 🆕 ETA Tracker for en_livraison status */}
+        {/* 🆕 Rotation Progress Tracker for en_livraison status */}
         {bon.workflow_status === 'en_livraison' && (
-          <div className="mt-3 pt-3 border-t">
+          <div className="mt-3 pt-3 border-t space-y-2">
+            <DeliveryRotationProgress
+              heureDepart={bon.heure_depart_centrale}
+              heureArrivee={bon.heure_arrivee_chantier}
+              heureRetour={bon.heure_retour_centrale}
+              workflowStatus={bon.workflow_status}
+            />
             <ETATracker 
               departureTime={bon.heure_depart_centrale}
               scheduledTime={bon.heure_prevue}
@@ -741,7 +774,7 @@ export default function Planning() {
           aProduire={aProduire}
           enChargement={enChargement}
           enLivraison={enLivraison}
-          livresAujourdhui={livresAujourdhui}
+          livresAujourdhui={[...aFacturer, ...facturesAujourdhui]}
           conflicts={conflicts}
           totalBonsToday={totalBonsToday}
           pendingBons={pendingBons}
@@ -795,7 +828,7 @@ export default function Planning() {
                 trucksTotal: camions.length,
                 enRouteCount: enLivraison.length,
                 totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
-                deliveredCount: livresAujourdhui.length,
+                deliveredCount: aFacturer.length + facturesAujourdhui.length,
               }}
               deliveries={bons.map(b => ({
                 bl_id: b.bl_id,
@@ -1082,21 +1115,69 @@ export default function Planning() {
             </CardContent>
           </Card>
 
-          {/* Livraisons Terminées */}
-          {livresAujourdhui.length > 0 && (
-            <Card className="border-success/30 bg-success/5">
+          {/* 🆕 À Facturer - Livrées mais pas encore facturées (PRIORITÉ!) */}
+          {aFacturer.length > 0 && (
+            <Card className="border-2 border-warning/50 bg-warning/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="p-1.5 rounded bg-warning/20 animate-pulse">
+                    <Receipt className="h-4 w-4 text-warning" />
+                  </div>
+                  À Facturer
+                  <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">Livrées - En attente de facturation</p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {aFacturer.map(bon => (
+                    <div 
+                      key={bon.bl_id}
+                      className="flex items-center justify-between p-3 bg-warning/10 border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors cursor-pointer"
+                      onClick={() => {
+                        setSelectedDeliveryForInvoice(bon);
+                        setInvoiceDialogOpen(true);
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono font-semibold">{bon.bl_id}</span>
+                        <span className="text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="font-semibold">{bon.volume_m3} m³</span>
+                        {bon.facturer_attente && (
+                          <Badge variant="outline" className="border-warning text-warning text-xs gap-1">
+                            <Clock className="h-3 w-3" />
+                            Attente
+                          </Badge>
+                        )}
+                        <Button size="sm" className="gap-1 bg-success hover:bg-success/90">
+                          <Receipt className="h-4 w-4" />
+                          Facturer
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Facturées Aujourd'hui - Archivable */}
+          {facturesAujourdhui.length > 0 && (
+            <Card className="border-success/30 bg-success/5 opacity-80">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <div className="p-1.5 rounded bg-success/10">
                     <CheckCircle className="h-4 w-4 text-success" />
                   </div>
-                  Livrées Aujourd'hui
-                  <Badge variant="outline" className="ml-auto border-success/30 text-success">{livresAujourdhui.length}</Badge>
+                  Facturées
+                  <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {livresAujourdhui.map(bon => (
+                  {facturesAujourdhui.map(bon => (
                     <div 
                       key={bon.bl_id}
                       className="flex items-center justify-between p-2 bg-muted/30 rounded text-sm"
@@ -1108,7 +1189,7 @@ export default function Planning() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{bon.volume_m3} m³</span>
                         <Badge variant="outline" className="text-success border-success/30 text-xs">
-                          {bon.workflow_status === 'facture' ? 'Facturé' : 'Livré'}
+                          Facturé ✓
                         </Badge>
                       </div>
                     </div>
@@ -1170,6 +1251,16 @@ export default function Planning() {
             )}
           </CardContent>
         </Card>
+
+        {/* Smart Invoice Dialog */}
+        {selectedDeliveryForInvoice && (
+          <SmartInvoiceDialog
+            open={invoiceDialogOpen}
+            onOpenChange={setInvoiceDialogOpen}
+            delivery={selectedDeliveryForInvoice}
+            onInvoiceGenerated={fetchData}
+          />
+        )}
       </div>
     </MainLayout>
   );
