@@ -75,42 +75,69 @@
   }
 
   .light {
-    --background: 220 20% 96%;
-    --foreground: 220 15% 15%;
+    /* Warm, friendly off-white background */
+    --background: 30 20% 98%;
+    --foreground: 220 25% 20%;
 
+    /* Pure white cards with warmth */
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 15%;
+    --card-foreground: 220 25% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 15%;
+    --popover-foreground: 220 25% 20%;
 
-    --primary: 210 80% 45%;
+    /* Warm coral/rose primary - friendly & modern */
+    --primary: 350 80% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 15% 90%;
-    --secondary-foreground: 220 15% 25%;
+    /* Soft lavender secondary */
+    --secondary: 250 30% 95%;
+    --secondary-foreground: 250 30% 35%;
 
-    --muted: 220 15% 92%;
-    --muted-foreground: 220 10% 45%;
+    /* Warm muted tones */
+    --muted: 30 15% 94%;
+    --muted-foreground: 220 15% 50%;
 
-    --accent: 200 60% 40%;
+    /* Soft teal accent */
+    --accent: 175 50% 45%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    /* Soft coral destructive */
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 85%;
-    --input: 220 15% 88%;
-    --ring: 210 80% 45%;
+    /* Softer success - mint green */
+    --success: 160 55% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --sidebar-background: 220 15% 98%;
-    --sidebar-foreground: 220 15% 35%;
-    --sidebar-primary: 210 80% 45%;
+    /* Warm amber warning */
+    --warning: 35 90% 55%;
+    --warning-foreground: 35 90% 15%;
+
+    /* Very soft borders */
+    --border: 220 15% 90%;
+    --input: 30 15% 95%;
+    --ring: 350 80% 55%;
+
+    /* KPI Colors - softer */
+    --kpi-positive: 160 55% 45%;
+    --kpi-negative: 0 65% 55%;
+    --kpi-neutral: 350 80% 55%;
+
+    /* Status Colors - softer */
+    --status-paid: 160 55% 45%;
+    --status-pending: 35 90% 55%;
+    --status-late: 0 65% 55%;
+
+    /* Sidebar - warm tones */
+    --sidebar-background: 30 20% 99%;
+    --sidebar-foreground: 220 20% 40%;
+    --sidebar-primary: 350 80% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 15% 94%;
-    --sidebar-accent-foreground: 220 15% 20%;
-    --sidebar-border: 220 15% 88%;
-    --sidebar-ring: 210 80% 45%;
+    --sidebar-accent: 30 20% 96%;
+    --sidebar-accent-foreground: 220 20% 25%;
+    --sidebar-border: 30 15% 92%;
+    --sidebar-ring: 350 80% 55%;
   }
 }
 
@@ -219,78 +246,89 @@
       0 0 0 1px hsl(var(--primary) / 0.3);
   }
 
-  /* Light theme overrides for premium dashboard */
+  /* Light theme overrides for premium dashboard - Warm & Friendly */
   .light .dashboard-header {
     background: linear-gradient(
       135deg,
       hsl(0 0% 100%) 0%,
-      hsl(220 20% 98%) 50%,
-      hsl(210 30% 97%) 100%
+      hsl(30 30% 99%) 50%,
+      hsl(350 20% 98%) 100%
     );
-    border: 1px solid hsl(220 15% 88%);
+    border: 1px solid hsl(30 20% 92%);
+    border-radius: 1rem;
     box-shadow: 
-      0 4px 24px -4px rgba(0, 0, 0, 0.08),
-      0 0 0 1px rgba(0, 0, 0, 0.02),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 4px 32px -8px hsl(350 50% 50% / 0.08),
+      0 2px 8px -2px hsl(0 0% 0% / 0.04),
+      inset 0 1px 0 hsl(0 0% 100% / 0.9);
   }
 
   .light .dashboard-header::before {
     background: radial-gradient(
-      ellipse 80% 50% at 50% -20%,
-      hsl(var(--primary) / 0.08),
-      transparent
+      ellipse 100% 60% at 80% -10%,
+      hsl(350 80% 70% / 0.06),
+      transparent 60%
     );
   }
 
   .light .period-selector-premium {
-    background: hsl(220 20% 96% / 0.9);
-    border: 1px solid hsl(220 15% 88%);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(30 20% 90%);
+    border-radius: 0.75rem;
+    box-shadow: 
+      inset 0 1px 3px hsl(0 0% 0% / 0.03),
+      0 1px 2px hsl(0 0% 0% / 0.02);
   }
 
   .light .period-btn {
-    color: hsl(220 15% 45%);
+    color: hsl(220 20% 50%);
+    border-radius: 0.5rem;
   }
 
   .light .period-btn:hover:not(.active) {
-    color: hsl(220 15% 20%);
-    background: hsl(0 0% 100% / 0.8);
+    color: hsl(220 25% 30%);
+    background: hsl(30 30% 97%);
   }
 
   .light .period-btn.active {
     color: hsl(0 0% 100%);
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(210 85% 50%));
+    background: linear-gradient(135deg, hsl(350 75% 55%), hsl(350 85% 60%));
+    border-radius: 0.5rem;
     box-shadow: 
-      0 2px 8px hsl(var(--primary) / 0.25),
-      0 0 0 1px hsl(var(--primary) / 0.15);
+      0 2px 12px hsl(350 80% 55% / 0.3),
+      0 1px 4px hsl(350 80% 55% / 0.2);
   }
 
   .light .btn-premium {
-    background: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 15% 98%));
-    border: 1px solid hsl(220 15% 88%);
-    color: hsl(220 15% 25%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(30 20% 90%);
+    border-radius: 0.625rem;
+    color: hsl(220 25% 30%);
+    box-shadow: 
+      0 1px 3px hsl(0 0% 0% / 0.04),
+      0 1px 2px hsl(0 0% 0% / 0.02);
   }
 
   .light .btn-premium:hover {
-    background: linear-gradient(135deg, hsl(0 0% 100%), hsl(220 15% 96%));
-    border-color: hsl(var(--primary) / 0.4);
+    background: hsl(30 30% 99%);
+    border-color: hsl(350 60% 70%);
     box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.08),
-      0 0 0 1px hsl(var(--primary) / 0.15);
+      0 4px 16px hsl(350 80% 55% / 0.12),
+      0 2px 4px hsl(0 0% 0% / 0.04);
   }
 
   .light .btn-premium-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)), hsl(210 80% 50%));
-    border-color: hsl(var(--primary));
+    background: linear-gradient(135deg, hsl(350 75% 55%), hsl(350 85% 60%));
+    border-color: hsl(350 80% 55%);
+    border-radius: 0.625rem;
     color: hsl(0 0% 100%);
+    box-shadow: 0 2px 8px hsl(350 80% 55% / 0.25);
   }
 
   .light .btn-premium-primary:hover {
-    background: linear-gradient(135deg, hsl(210 80% 55%), hsl(var(--primary)));
+    background: linear-gradient(135deg, hsl(350 80% 60%), hsl(350 75% 55%));
     box-shadow: 
-      0 4px 16px hsl(var(--primary) / 0.25),
-      0 0 0 1px hsl(var(--primary) / 0.2);
+      0 4px 20px hsl(350 80% 55% / 0.35),
+      0 2px 6px hsl(350 80% 55% / 0.2);
   }
 
   /* Industrial Card Style */
@@ -308,15 +346,21 @@
   }
 
   .light .card-industrial {
-    background: linear-gradient(
-      145deg,
-      hsl(0 0% 100%) 0%,
-      hsl(220 15% 98%) 100%
-    );
+    background: hsl(0 0% 100%);
+    border: 1px solid hsl(30 20% 92%);
+    border-radius: 0.875rem;
     box-shadow: 
-      0 4px 6px -1px rgba(0, 0, 0, 0.06),
-      0 2px 4px -2px rgba(0, 0, 0, 0.04),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 2px 16px -4px hsl(350 50% 50% / 0.06),
+      0 1px 4px -1px hsl(0 0% 0% / 0.03),
+      inset 0 1px 0 hsl(0 0% 100% / 0.9);
+  }
+
+  .light .kpi-card {
+    border-radius: 0.875rem;
+  }
+
+  .light .kpi-card::before {
+    border-radius: 0.875rem 0 0 0.875rem;
   }
 
   /* KPI Card */
