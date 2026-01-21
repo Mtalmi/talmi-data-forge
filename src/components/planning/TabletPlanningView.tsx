@@ -42,6 +42,8 @@ interface BonLivraison {
   toupie_assignee: string | null;
   date_livraison: string;
   heure_depart_centrale: string | null;
+  heure_arrivee_chantier: string | null;
+  heure_retour_centrale: string | null;
   zone_livraison_id: string | null;
   mode_paiement: string | null;
   prestataire_id: string | null;

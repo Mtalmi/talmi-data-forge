@@ -5,15 +5,15 @@ import {
   Clock, 
   Truck, 
   Factory, 
-  Navigation, 
   Package,
   MapPin,
-  Phone,
   ArrowRight,
   Play,
   CheckCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { DeliveryRotationProgress } from './DeliveryRotationProgress';
+import { ETATracker } from './ETATracker';
 
 interface DriverDispatchCardProps {
   bon: {
@@ -25,6 +25,10 @@ interface DriverDispatchCardProps {
     heure_prevue: string | null;
     camion_assigne: string | null;
     toupie_assignee: string | null;
+    date_livraison?: string;
+    heure_depart_centrale?: string | null;
+    heure_arrivee_chantier?: string | null;
+    heure_retour_centrale?: string | null;
     zone_livraison_id: string | null;
     mode_paiement: string | null;
     clients?: { nom_client: string } | null;
@@ -159,6 +163,26 @@ export function DriverDispatchCard({
             <Badge variant="outline" className="text-xs">
               💰 {bon.mode_paiement}
             </Badge>
+          </div>
+        )}
+
+        {/* 🆕 Rotation Progress for en_livraison status */}
+        {bon.workflow_status === 'en_livraison' && (
+          <div className="mb-4 p-3 bg-muted/30 rounded-lg space-y-2">
+            <DeliveryRotationProgress
+              heureDepart={bon.heure_depart_centrale}
+              heureArrivee={bon.heure_arrivee_chantier}
+              heureRetour={bon.heure_retour_centrale}
+              workflowStatus={bon.workflow_status}
+              compact
+            />
+            <ETATracker 
+              departureTime={bon.heure_depart_centrale}
+              scheduledTime={bon.heure_prevue}
+              zoneCode={bon.zones_livraison?.code_zone}
+              status={bon.workflow_status}
+              deliveryDate={bon.date_livraison}
+            />
           </div>
         )}
 
