@@ -99,9 +99,16 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
       navigate(stage.route);
       return;
     }
-    // Otherwise trigger filter callback
+    // Otherwise trigger filter callback and scroll to tabs section
     if (onStageClick) {
       onStageClick(stage.id);
+      // Scroll to tabs section after a brief delay to let the tab switch
+      setTimeout(() => {
+        document.getElementById('ventes-tabs-section')?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }, 100);
     }
   };
 
