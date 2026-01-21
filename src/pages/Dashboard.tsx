@@ -22,6 +22,7 @@ export default function Dashboard() {
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
   const kpiSectionRef = useRef<HTMLDivElement>(null);
+  const kpiGridRef = useRef<HTMLDivElement>(null);
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
   const [refreshing, setRefreshing] = useState(false);
@@ -118,7 +119,10 @@ export default function Dashboard() {
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
         {/* Header with Period Selector - Right Aligned */}
-        <div ref={kpiSectionRef} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div
+          ref={kpiSectionRef}
+          className="sticky top-14 sm:top-16 z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-background/90 backdrop-blur"
+        >
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
             <p className="text-sm text-muted-foreground truncate">
@@ -131,24 +135,27 @@ export default function Dashboard() {
               onChange={(newPeriod) => {
                 setPeriod(newPeriod);
 
-                // Robust scroll: first scroll the dashboard header into view, then nudge it down
-                // so the sticky top bar doesn't cover it and you still see the KPIs below.
+                // Scroll to KPI grid (even if you're far down the page) and keep the header row visible.
                 requestAnimationFrame(() => {
-                  const element = kpiSectionRef.current;
-                  if (!element) return;
+                  const grid = kpiGridRef.current;
+                  if (!grid) return;
 
-                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  const scrollContainer = grid.closest('main') as HTMLElement | null;
+                  if (!scrollContainer) {
+                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    return;
+                  }
 
-                  // Nudge after scroll starts
-                  setTimeout(() => {
-                    const scrollContainer = element.closest('main') as HTMLElement | null;
-                    if (!scrollContainer) return;
+                  const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
+                  const headerHeight = kpiSectionRef.current?.offsetHeight ?? 0;
 
-                    const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
-                    const extraDrop = 24; // user asked to “drop a little” and keep header row visible
-                    const nextTop = Math.max(0, scrollContainer.scrollTop - topBarHeight - extraDrop);
-                    scrollContainer.scrollTo({ top: nextTop, behavior: 'smooth' });
-                  }, 250);
+                  const containerRect = scrollContainer.getBoundingClientRect();
+                  const gridRect = grid.getBoundingClientRect();
+                  const relativeTop = gridRect.top - containerRect.top + scrollContainer.scrollTop;
+
+                  // Place the KPI grid just below (topbar + sticky header) with a small gap.
+                  const targetTop = Math.max(0, relativeTop - topBarHeight - headerHeight - 12);
+                  scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
                 });
               }}
             />
@@ -188,7 +195,7 @@ export default function Dashboard() {
         />
 
         {/* Period-Aware KPI Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div ref={kpiGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <PeriodKPICard
             title="Volume Total"
             value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
