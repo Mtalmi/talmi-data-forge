@@ -37,7 +37,10 @@ export function DeliveryRotationProgress({
       icon: Play,
       timestamp: heureDepart,
       completed: !!heureDepart,
-      color: 'primary',
+      gradient: 'from-emerald-500 to-teal-500',
+      bgLight: 'bg-emerald-500/10',
+      textColor: 'text-emerald-600 dark:text-emerald-400',
+      ringColor: 'ring-emerald-500/40',
     },
     {
       key: 'arrivee',
@@ -45,7 +48,10 @@ export function DeliveryRotationProgress({
       icon: MapPin,
       timestamp: heureArrivee,
       completed: !!heureArrivee,
-      color: 'warning',
+      gradient: 'from-amber-500 to-orange-500',
+      bgLight: 'bg-amber-500/10',
+      textColor: 'text-amber-600 dark:text-amber-400',
+      ringColor: 'ring-amber-500/40',
     },
     {
       key: 'livre',
@@ -53,7 +59,10 @@ export function DeliveryRotationProgress({
       icon: FileSignature,
       timestamp: isDelivered ? 'done' : null,
       completed: isDelivered,
-      color: 'success',
+      gradient: 'from-green-500 to-emerald-500',
+      bgLight: 'bg-green-500/10',
+      textColor: 'text-green-600 dark:text-green-400',
+      ringColor: 'ring-green-500/40',
     },
     {
       key: 'retour',
@@ -61,25 +70,20 @@ export function DeliveryRotationProgress({
       icon: Home,
       timestamp: heureRetour,
       completed: !!heureRetour,
-      color: 'primary',
+      gradient: 'from-rose-500 to-pink-500',
+      bgLight: 'bg-rose-500/10',
+      textColor: 'text-rose-600 dark:text-rose-400',
+      ringColor: 'ring-rose-500/40',
     },
   ];
 
   // Find current active step
   const activeStepIndex = steps.findIndex(s => !s.completed);
 
-  const activeClassesByColor: Record<string, string> = {
-    primary: 'bg-primary/20 text-primary ring-2 ring-primary/50',
-    warning: 'bg-warning/20 text-warning ring-2 ring-warning/50',
-    success: 'bg-success/20 text-success ring-2 ring-success/50',
-  };
-
-  const getActiveClasses = (color: string) => activeClassesByColor[color] || activeClassesByColor.primary;
-
   if (compact) {
-    // Compact view: just show progress dots
+    // Premium compact view with gradient indicators
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {steps.map((step, idx) => {
           const Icon = step.icon;
           const isActive = idx === activeStepIndex;
@@ -90,25 +94,41 @@ export function DeliveryRotationProgress({
               <TooltipTrigger asChild>
                 <div
                   className={cn(
-                    "w-5 h-5 rounded-full flex items-center justify-center transition-all",
-                    isCompleted && "bg-success text-white",
-                    isActive && "bg-primary/20 text-primary animate-pulse",
-                    !isCompleted && !isActive && "bg-muted text-muted-foreground"
+                    "relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
+                    isCompleted && `bg-gradient-to-br ${step.gradient} shadow-lg`,
+                    isActive && cn(step.bgLight, `ring-2 ${step.ringColor}`),
+                    !isCompleted && !isActive && "bg-muted/60 border border-border/50"
                   )}
                 >
                   {isCompleted ? (
-                    <CheckCircle className="h-3 w-3" />
+                    <CheckCircle className="h-4 w-4 text-white drop-shadow-sm" />
                   ) : (
-                    <Icon className="h-2.5 w-2.5" />
+                    <Icon className={cn(
+                      "h-3.5 w-3.5 transition-all",
+                      isActive ? step.textColor : "text-muted-foreground/60"
+                    )} />
+                  )}
+                  {isActive && (
+                    <span className="absolute inset-0 rounded-full animate-ping opacity-20 bg-current" 
+                          style={{ animationDuration: '2s' }} />
                   )}
                 </div>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                <p className="font-medium">{step.label}</p>
-                {step.timestamp && step.timestamp !== 'done' && (
-                  <p className="text-muted-foreground">{formatTime(step.timestamp)}</p>
-                )}
-                {step.completed && <p className="text-success">✓ Complété</p>}
+              <TooltipContent 
+                side="bottom" 
+                className="bg-popover/95 backdrop-blur-sm border-border/50 shadow-xl"
+              >
+                <div className="flex flex-col gap-0.5">
+                  <p className="font-semibold text-sm">{step.label}</p>
+                  {step.timestamp && step.timestamp !== 'done' && (
+                    <p className="text-xs text-muted-foreground font-mono">
+                      {formatTime(step.timestamp)}
+                    </p>
+                  )}
+                  {step.completed && (
+                    <p className="text-xs text-success font-medium">✓ Complété</p>
+                  )}
+                </div>
               </TooltipContent>
             </Tooltip>
           );
@@ -117,56 +137,81 @@ export function DeliveryRotationProgress({
     );
   }
 
-  // Full view with timestamps
+  // Premium full view with elegant styling
   return (
-    <div className="flex items-center justify-between gap-1 py-1">
-      {steps.map((step, idx) => {
-        const Icon = step.icon;
-        const isActive = idx === activeStepIndex;
-        const isCompleted = step.completed;
-        const timeStr = step.timestamp && step.timestamp !== 'done' ? formatTime(step.timestamp) : null;
-        
-        return (
-          <div key={step.key} className="flex flex-col items-center flex-1 relative">
-            {/* Connector line */}
-            {idx < steps.length - 1 && (
+    <div className="relative py-2">
+      {/* Background connector line */}
+      <div className="absolute top-[22px] left-[16%] right-[16%] h-[2px] bg-gradient-to-r from-muted via-muted to-muted rounded-full" />
+      
+      {/* Completed progress line overlay */}
+      {activeStepIndex > 0 && (
+        <div 
+          className="absolute top-[22px] left-[16%] h-[2px] bg-gradient-to-r from-emerald-500 via-amber-500 to-green-500 rounded-full transition-all duration-500"
+          style={{ 
+            width: `${Math.min((activeStepIndex / (steps.length - 1)) * 68, 68)}%`
+          }}
+        />
+      )}
+      
+      <div className="flex items-start justify-between relative">
+        {steps.map((step, idx) => {
+          const Icon = step.icon;
+          const isActive = idx === activeStepIndex;
+          const isCompleted = step.completed;
+          const timeStr = step.timestamp && step.timestamp !== 'done' ? formatTime(step.timestamp) : null;
+          
+          return (
+            <div key={step.key} className="flex flex-col items-center flex-1">
+              {/* Step indicator */}
               <div
                 className={cn(
-                  "absolute top-3 left-1/2 w-full h-0.5 -z-10",
-                  isCompleted ? "bg-success" : "bg-muted"
+                  "relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300",
+                  isCompleted && `bg-gradient-to-br ${step.gradient} shadow-lg shadow-${step.gradient.split('-')[1]}-500/25`,
+                  isActive && cn(step.bgLight, `ring-2 ${step.ringColor} backdrop-blur-sm`),
+                  !isCompleted && !isActive && "bg-muted/40 border-2 border-dashed border-border/60"
                 )}
-              />
-            )}
-            
-            {/* Step indicator */}
-            <div
-              className={cn(
-                "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium z-10 transition-all",
-                isCompleted && `bg-success text-white`,
-                isActive && cn(getActiveClasses(step.color), 'animate-pulse'),
-                !isCompleted && !isActive && "bg-muted text-muted-foreground"
-              )}
-            >
-              {isCompleted ? (
-                <CheckCircle className="h-3.5 w-3.5" />
-              ) : (
-                <Icon className="h-3 w-3" />
+              >
+                {isCompleted ? (
+                  <CheckCircle className="h-4.5 w-4.5 text-white drop-shadow-sm" />
+                ) : (
+                  <Icon className={cn(
+                    "h-4 w-4 transition-all",
+                    isActive ? step.textColor : "text-muted-foreground/50"
+                  )} />
+                )}
+                
+                {/* Active pulse ring */}
+                {isActive && (
+                  <span 
+                    className={cn("absolute inset-0 rounded-full animate-ping", step.bgLight)}
+                    style={{ animationDuration: '2.5s', opacity: 0.4 }} 
+                  />
+                )}
+              </div>
+              
+              {/* Label */}
+              <span className={cn(
+                "text-[11px] font-medium mt-1.5 transition-colors",
+                isCompleted ? step.textColor : isActive ? step.textColor : "text-muted-foreground/70"
+              )}>
+                {step.label}
+              </span>
+              
+              {/* Time badge */}
+              {timeStr && (
+                <span className={cn(
+                  "text-[10px] font-mono px-1.5 py-0.5 rounded-md mt-0.5",
+                  isCompleted 
+                    ? `${step.bgLight} ${step.textColor}` 
+                    : "bg-muted/50 text-muted-foreground"
+                )}>
+                  {timeStr}
+                </span>
               )}
             </div>
-            
-            {/* Label and time */}
-            <span className={cn(
-              "text-[10px] mt-1",
-              isCompleted ? "text-success font-medium" : "text-muted-foreground"
-            )}>
-              {step.label}
-            </span>
-            {timeStr && (
-              <span className="text-[9px] text-muted-foreground font-mono">{timeStr}</span>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }

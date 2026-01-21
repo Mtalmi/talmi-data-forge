@@ -516,19 +516,47 @@ export default function Planning() {
     }
   };
 
-  // Unified status badge - using shared config for consistency with Production
+  // Premium status badge with gradient styling
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
-      en_attente_validation: { label: 'À Confirmer', variant: 'outline' },
-      planification: { label: 'À Démarrer', variant: 'outline', className: 'border-blue-500 text-blue-600' },
-      production: { label: 'En Chargement', variant: 'secondary', className: 'bg-violet-500/20 text-violet-700 border-violet-500/30' },
-      validation_technique: { label: 'À Valider', variant: 'secondary', className: 'bg-amber-500/20 text-amber-700 border-amber-500/30' },
-      en_livraison: { label: 'En Route', variant: 'default', className: 'bg-rose-500 text-white' },
-      livre: { label: 'Livré', variant: 'default', className: 'bg-emerald-500 text-white' },
-      facture: { label: 'Facturé', variant: 'default', className: 'bg-emerald-600 text-white' },
+      en_attente_validation: { 
+        label: 'À Confirmer', 
+        variant: 'outline', 
+        className: 'border-amber-400/60 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30' 
+      },
+      planification: { 
+        label: 'À Démarrer', 
+        variant: 'outline', 
+        className: 'border-blue-400/60 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/30' 
+      },
+      production: { 
+        label: 'En Chargement', 
+        variant: 'secondary', 
+        className: 'bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-700 dark:text-violet-300 border border-violet-400/30' 
+      },
+      validation_technique: { 
+        label: 'À Valider', 
+        variant: 'secondary', 
+        className: 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30' 
+      },
+      en_livraison: { 
+        label: 'En Route', 
+        variant: 'default', 
+        className: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-rose-500/25 border-0' 
+      },
+      livre: { 
+        label: 'Livré', 
+        variant: 'default', 
+        className: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/25 border-0' 
+      },
+      facture: { 
+        label: 'Facturé', 
+        variant: 'default', 
+        className: 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md shadow-emerald-600/25 border-0' 
+      },
     };
     const config = statusConfig[status] || { label: status, variant: 'outline' as const };
-    return <Badge variant={config.variant} className={config.className}>{config.label}</Badge>;
+    return <Badge variant={config.variant} className={cn("font-medium", config.className)}>{config.label}</Badge>;
   };
 
   const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => {
@@ -556,11 +584,26 @@ export default function Planning() {
       }
     };
 
+    // Get dynamic border color based on status
+    const getBorderColor = (status: string) => {
+      const colors: Record<string, string> = {
+        en_attente_validation: 'border-l-amber-400',
+        planification: 'border-l-blue-400',
+        production: 'border-l-violet-500',
+        validation_technique: 'border-l-amber-500',
+        en_livraison: 'border-l-rose-500',
+        livre: 'border-l-emerald-500',
+        facture: 'border-l-emerald-600',
+      };
+      return colors[status] || 'border-l-primary/50';
+    };
+
     return (
       <Card
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
-          "mb-3 border-l-4 border-l-primary/50 hover:shadow-md transition-shadow",
+          "mb-3 border-l-4 hover:shadow-lg hover:shadow-black/5 transition-all duration-200 bg-card/80 backdrop-blur-sm",
+          getBorderColor(bon.workflow_status),
           isTouchDevice && "active:scale-[0.98]"
         )}
       >
@@ -1033,38 +1076,49 @@ export default function Planning() {
 
         {/* Live Dispatch Board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* À Produire */}
-          <Card>
+          {/* À Produire - Premium styling */}
+          <Card className="border-amber-200/50 dark:border-amber-900/30 bg-gradient-to-b from-amber-50/30 to-card dark:from-amber-950/10">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded bg-warning/10">
-                  <Factory className="h-4 w-4 text-warning" />
+                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
+                  <Factory className="h-4 w-4 text-white" />
                 </div>
-                À Produire
-                <Badge variant="outline" className="ml-auto">{aProduire.length}</Badge>
+                <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent dark:from-amber-400 dark:to-orange-400">
+                  À Produire
+                </span>
+                <Badge className="ml-auto bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-md shadow-amber-500/20">
+                  {aProduire.length}
+                </Badge>
               </CardTitle>
               <p className="text-xs text-muted-foreground">Prochaines 2 heures</p>
             </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto">
+            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {aProduire.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Aucune livraison planifiée
-                </p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                    <Factory className="h-8 w-8 text-amber-300 dark:text-amber-700" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Aucune livraison planifiée</p>
+                </div>
               ) : (
                 aProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
               )}
             </CardContent>
           </Card>
 
-          {/* En Chargement - Direct link to Production */}
-          <Card className="border-violet-500/30">
+          {/* En Chargement - Premium styling */}
+          <Card className="border-violet-200/50 dark:border-violet-900/30 bg-gradient-to-b from-violet-50/30 to-card dark:from-violet-950/10">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded bg-violet-500/20">
-                  <Package className="h-4 w-4 text-violet-600" />
+                <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 shadow-lg shadow-violet-500/20">
+                  <Package className="h-4 w-4 text-white" />
                 </div>
-                En Chargement
-                <Badge variant="secondary" className="bg-violet-500/20 text-violet-700">{enChargement.length}</Badge>
+                <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400">
+                  En Chargement
+                </span>
+                <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 shadow-md shadow-violet-500/20">
+                  {enChargement.length}
+                </Badge>
                 {enChargement.length > 0 && (
                   <Button 
                     variant="ghost" 
@@ -1081,34 +1135,44 @@ export default function Planning() {
               </CardTitle>
               <p className="text-xs text-muted-foreground">Production & Validation Technique • Sync en temps réel</p>
             </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto">
+            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enChargement.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Aucun chargement en cours
-                </p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                    <Package className="h-8 w-8 text-violet-300 dark:text-violet-700" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Aucun chargement en cours</p>
+                </div>
               ) : (
                 enChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
               )}
             </CardContent>
           </Card>
 
-          {/* En Livraison */}
-          <Card>
+          {/* En Livraison - Premium styling */}
+          <Card className="border-rose-200/50 dark:border-rose-900/30 bg-gradient-to-b from-rose-50/30 to-card dark:from-rose-950/10">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded bg-primary/10">
-                  <Navigation className="h-4 w-4 text-primary" />
+                <div className="p-2 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 shadow-lg shadow-rose-500/20">
+                  <Navigation className="h-4 w-4 text-white" />
                 </div>
-                En Livraison
-                <Badge className="ml-auto">{enLivraison.length}</Badge>
+                <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent dark:from-rose-400 dark:to-pink-400">
+                  En Livraison
+                </span>
+                <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0 shadow-md shadow-rose-500/20">
+                  {enLivraison.length}
+                </Badge>
               </CardTitle>
               <p className="text-xs text-muted-foreground">Camions en route</p>
             </CardHeader>
-            <CardContent className="max-h-[500px] overflow-y-auto">
+            <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enLivraison.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Aucun camion en livraison
-                </p>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
+                    <Navigation className="h-8 w-8 text-rose-300 dark:text-rose-700" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">Aucun camion en livraison</p>
+                </div>
               ) : (
                 enLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
               )}
