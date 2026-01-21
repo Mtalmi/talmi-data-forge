@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +27,8 @@ import {
   X,
   ChevronDown,
   ChevronUp,
-  Sparkles
+  Sparkles,
+  BellRing
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -72,6 +73,7 @@ export default function Planning() {
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const pendingValidationRef = useRef<HTMLDivElement>(null);
   const [monthlyDeliveryData, setMonthlyDeliveryData] = useState<{
     date: string;
     totalVolume: number;
@@ -553,6 +555,23 @@ export default function Planning() {
             <p className="text-muted-foreground">Ordonnancement des livraisons</p>
           </div>
           <div className="flex items-center gap-3">
+            {pendingValidation.length > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10 relative"
+                onClick={() => {
+                  setPendingValidationOpen(true);
+                  setTimeout(() => {
+                    pendingValidationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+                }}
+              >
+                <BellRing className="h-4 w-4" />
+                À Confirmer
+                <Badge className="bg-amber-500 text-white ml-1">{pendingValidation.length}</Badge>
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               Actualiser
@@ -571,6 +590,7 @@ export default function Planning() {
 
         {/* 🆕 Pending Validation Section - NEW BLs awaiting dispatcher confirmation */}
         {pendingValidation.length > 0 && (
+          <div ref={pendingValidationRef}>
           <Collapsible open={pendingValidationOpen} onOpenChange={setPendingValidationOpen}>
             <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
               <CollapsibleTrigger asChild>
@@ -658,6 +678,7 @@ export default function Planning() {
               </CollapsibleContent>
             </Card>
           </Collapsible>
+          </div>
         )}
 
         {/* Conflict Alert */}
