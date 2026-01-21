@@ -50,7 +50,11 @@ import {
   Copy,
   TrendingUp,
   History,
-  ChevronRight
+  ChevronRight,
+  Upload,
+  FileText,
+  X,
+  Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -69,6 +73,7 @@ interface Client {
   ice: string | null;
   identifiant_fiscal: string | null;
   patente: string | null;
+  rc_document_url: string | null;
   solde_du: number | null;
   limite_credit_dh: number | null;
   credit_bloque: boolean | null;
@@ -107,6 +112,9 @@ export default function Clients() {
   const [ice, setIce] = useState('');
   const [identifiantFiscal, setIdentifiantFiscal] = useState('');
   const [patente, setPatente] = useState('');
+  const [rcDocument, setRcDocument] = useState<File | null>(null);
+  const [rcDocumentPreview, setRcDocumentPreview] = useState<string | null>(null);
+  const [uploadingDocument, setUploadingDocument] = useState(false);
 
   useEffect(() => {
     fetchClients();
@@ -147,6 +155,70 @@ export default function Clients() {
     setIce('');
     setIdentifiantFiscal('');
     setPatente('');
+    setRcDocument(null);
+    setRcDocumentPreview(null);
+  };
+
+  const handleRcDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Format non supporté. Utilisez JPG, PNG, WebP ou PDF.');
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Fichier trop volumineux. Maximum 5 Mo.');
+        return;
+      }
+      setRcDocument(file);
+      // Create preview for images
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setRcDocumentPreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setRcDocumentPreview(null);
+      }
+    }
+  };
+
+  const uploadRcDocument = async (clientIdForUpload: string): Promise<string | null> => {
+    if (!rcDocument) return null;
+    
+    try {
+      setUploadingDocument(true);
+      const fileExt = rcDocument.name.split('.').pop();
+      const fileName = `${clientIdForUpload}-rc-${Date.now()}.${fileExt}`;
+      const filePath = `rc/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('client-documents')
+        .upload(filePath, rcDocument);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('client-documents')
+        .getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error uploading RC document:', error);
+      toast.error('Erreur lors de l\'upload du document RC');
+      return null;
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  const removeRcDocument = () => {
+    setRcDocument(null);
+    setRcDocumentPreview(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,6 +230,12 @@ export default function Clients() {
         toast.error('ID et Nom du client requis');
         setSubmitting(false);
         return;
+      }
+
+      // Upload RC document first if provided
+      let rcDocumentUrl: string | null = null;
+      if (rcDocument) {
+        rcDocumentUrl = await uploadRcDocument(clientId);
       }
 
       const { error } = await supabase.from('clients').insert([{
@@ -174,6 +252,7 @@ export default function Clients() {
         ice: ice || null,
         identifiant_fiscal: identifiantFiscal || null,
         patente: patente || null,
+        rc_document_url: rcDocumentUrl,
       }]);
 
       if (error) {
@@ -447,6 +526,61 @@ export default function Clients() {
                           onChange={(e) => setPatente(e.target.value)}
                         />
                       </div>
+                    </div>
+
+                    {/* RC Document Upload */}
+                    <div className="mt-4 space-y-2">
+                      <Label className="form-label-industrial">Document RC (Photo/Scan)</Label>
+                      {!rcDocument ? (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp,application/pdf"
+                            onChange={handleRcDocumentChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          />
+                          <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
+                            <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
+                            <p className="text-sm text-muted-foreground">
+                              Cliquez ou déposez votre fichier
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              JPG, PNG, WebP ou PDF (max 5 Mo)
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="relative border rounded-lg p-3 bg-muted/30">
+                          <div className="flex items-center gap-3">
+                            {rcDocumentPreview ? (
+                              <img 
+                                src={rcDocumentPreview} 
+                                alt="Aperçu RC" 
+                                className="w-16 h-16 object-cover rounded border"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 flex items-center justify-center bg-muted rounded border">
+                                <FileText className="h-8 w-8 text-muted-foreground" />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{rcDocument.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {(rcDocument.size / 1024).toFixed(1)} Ko
+                              </p>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={removeRcDocument}
+                              className="shrink-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
 
