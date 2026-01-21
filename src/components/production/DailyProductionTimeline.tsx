@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, MapPin } from 'lucide-react';
+import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, MapPin, Truck } from 'lucide-react';
 import { format, parseISO, isToday, isBefore, isAfter, set } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -16,6 +16,8 @@ interface BonProduction {
   heure_prevue?: string | null;
   workflow_status: string | null;
   bc_id?: string | null;
+  camion_assigne?: string | null;
+  chauffeur_nom?: string | null;
   client?: { nom_client: string } | null;
   bon_commande?: {
     client_nom: string | null;
@@ -230,16 +232,22 @@ export function DailyProductionTimeline({
                   <div className="flex-1 min-w-0">
                     {hasOrders ? (
                       <div className="space-y-2">
-                        {hourBons.map(bon => (
-                          <BonTimelineCard
-                            key={bon.bl_id}
-                            bon={bon}
-                            statusConfig={getStatusConfig(bon.workflow_status)}
-                            onSelect={() => onSelectBon?.(bon)}
-                            onStart={() => onStartProduction?.(bon)}
-                            isCurrentHour={isCurrentHour}
-                          />
-                        ))}
+                        {hourBons.map(bon => {
+                          const bonIsLate = isViewingToday && 
+                            isPastHour && 
+                            bon.workflow_status !== 'validation_technique';
+                          return (
+                            <BonTimelineCard
+                              key={bon.bl_id}
+                              bon={bon}
+                              statusConfig={getStatusConfig(bon.workflow_status)}
+                              onSelect={() => onSelectBon?.(bon)}
+                              onStart={() => onStartProduction?.(bon)}
+                              isCurrentHour={isCurrentHour}
+                              isLate={bonIsLate}
+                            />
+                          );
+                        })}
                       </div>
                     ) : (
                       <span className="text-xs text-muted-foreground/50">
@@ -273,6 +281,7 @@ interface BonTimelineCardProps {
   onSelect?: () => void;
   onStart?: () => void;
   isCurrentHour?: boolean;
+  isLate?: boolean;
 }
 
 function getStatusConfig(status: string | null) {
@@ -317,18 +326,20 @@ function BonTimelineCard({
   statusConfig, 
   onSelect, 
   onStart,
-  isCurrentHour 
+  isCurrentHour,
+  isLate 
 }: BonTimelineCardProps) {
   const StatusIcon = statusConfig.icon;
   const clientName = bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id;
   const canStart = bon.workflow_status === 'planification';
+  const hasTruck = !!bon.camion_assigne;
 
   return (
     <div 
       className={cn(
         "p-3 rounded-lg border transition-all cursor-pointer",
         "hover:shadow-md hover:border-primary/30",
-        statusConfig.bgLight,
+        isLate ? "bg-destructive/10 border-destructive/30" : statusConfig.bgLight,
         isCurrentHour && "ring-2 ring-primary/20"
       )}
       onClick={onSelect}
@@ -337,18 +348,18 @@ function BonTimelineCard({
         {/* Status indicator */}
         <div className={cn(
           "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-          statusConfig.color,
+          isLate ? "bg-destructive" : statusConfig.color,
           "text-white"
         )}>
-          <StatusIcon className="h-5 w-5" />
+          {isLate ? <AlertTriangle className="h-5 w-5" /> : <StatusIcon className="h-5 w-5" />}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="font-mono font-semibold text-sm">{bon.bl_id}</span>
-            <Badge variant="outline" className={cn("text-[10px]", statusConfig.textColor)}>
-              {statusConfig.label}
+            <Badge variant="outline" className={cn("text-[10px]", isLate ? "text-destructive border-destructive/30" : statusConfig.textColor)}>
+              {isLate ? 'En Retard' : statusConfig.label}
             </Badge>
           </div>
 
@@ -360,8 +371,29 @@ function BonTimelineCard({
             <span className="font-mono">{bon.formule_id}</span>
           </div>
 
+          {/* Truck Assignment Row */}
+          {hasTruck && (
+            <div className="flex items-center gap-2 text-xs mb-2 p-1.5 bg-muted/50 rounded">
+              <Truck className="h-3 w-3 text-primary" />
+              <span className="font-medium">{bon.camion_assigne}</span>
+              {bon.chauffeur_nom && (
+                <>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="text-muted-foreground">{bon.chauffeur_nom}</span>
+                </>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
-            <span className="text-lg font-bold">{bon.volume_m3} m³</span>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold">{bon.volume_m3} m³</span>
+              {!hasTruck && bon.workflow_status === 'planification' && (
+                <Badge variant="outline" className="text-[10px] text-warning border-warning/30">
+                  Sans toupie
+                </Badge>
+              )}
+            </div>
             
             {canStart && (
               <Button
