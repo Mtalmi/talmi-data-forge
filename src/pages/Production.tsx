@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -9,10 +9,16 @@ import { useStocks } from '@/hooks/useStocks';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { ProductionComparePanel } from '@/components/production/ProductionComparePanel';
 import { ApiDocumentation } from '@/components/production/ApiDocumentation';
+import { ProductionKPICards } from '@/components/production/ProductionKPICards';
+import { ProductionStockAlerts } from '@/components/production/ProductionStockAlerts';
+import { ProductionWorkflowStepper } from '@/components/production/ProductionWorkflowStepper';
+import { ProductionSearchBar } from '@/components/production/ProductionSearchBar';
+import { ProductionDeviationChart } from '@/components/production/ProductionDeviationChart';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -35,6 +41,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
   Factory,
   Loader2,
   RefreshCw,
@@ -45,9 +56,13 @@ import {
   WifiOff,
   Play,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  ArrowUpDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, isWithinInterval, startOfDay, endOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
@@ -89,13 +104,14 @@ interface Formule {
 
 export default function Production() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const blFromUrl = searchParams.get('bl');
   
   const { role, isCeo, isCentraliste, isResponsableTechnique } = useAuth();
   const { previewRole } = usePreviewRole();
   const { transitionWorkflow } = useBonWorkflow();
   const { syncing, lastSync, simulateMachineSync, updateBonWithMachineData, requiresJustification } = useMachineSync();
-  const { deductConsumption, fetchStocks } = useStocks();
+  const { stocks, deductConsumption, fetchStocks, getCriticalStocks } = useStocks();
 
   const [bons, setBons] = useState<BonProduction[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -108,6 +124,23 @@ export default function Production() {
   // Filter state
   type FilterType = 'all' | 'production' | 'validation' | 'machine' | 'ecart';
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  
+  // Search and date range
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
+  
+  // Batch selection
+  const [selectedBls, setSelectedBls] = useState<Set<string>>(new Set());
+  const [batchValidating, setBatchValidating] = useState(false);
+  
+  // Sorting
+  type SortField = 'date' | 'client' | 'volume' | 'formule';
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  
+  // Collapsible sections
+  const [kpiExpanded, setKpiExpanded] = useState(true);
+  const [chartExpanded, setChartExpanded] = useState(true);
 
   const clearBlFromUrl = useCallback(() => {
     if (!searchParams.get('bl')) return;
@@ -454,6 +487,144 @@ export default function Production() {
     }
   };
 
+  // Computed KPIs
+  const kpiData = useMemo(() => {
+    const totalVolume = bons.reduce((sum, b) => sum + b.volume_m3, 0);
+    const avgCUR = 0; // Would need cur_reel data
+    const deviationCount = bons.filter(b => b.alerte_ecart).length;
+    const machineSyncCount = bons.filter(b => b.source_donnees === 'machine_sync').length;
+    const validatedCount = bons.filter(b => b.workflow_status === 'validation_technique').length;
+    const criticalStocks = stocks.filter(s => s.quantite_actuelle <= s.seuil_alerte).map(s => ({
+      materiau: s.materiau,
+      quantite: s.quantite_actuelle,
+      seuil: s.seuil_alerte,
+      unite: s.unite,
+    }));
+    
+    return { totalVolume, avgCUR, deviationCount, machineSyncCount, validatedCount, criticalStocks };
+  }, [bons, stocks]);
+
+  // Filtered and sorted bons
+  const filteredAndSortedBons = useMemo(() => {
+    let result = [...bons];
+    
+    // Apply status filter
+    if (activeFilter !== 'all') {
+      result = result.filter(bon => {
+        if (activeFilter === 'production') return bon.workflow_status === 'production';
+        if (activeFilter === 'validation') return bon.workflow_status === 'validation_technique';
+        if (activeFilter === 'machine') return bon.source_donnees === 'machine_sync';
+        if (activeFilter === 'ecart') return bon.alerte_ecart === true;
+        return true;
+      });
+    }
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(bon => 
+        bon.bl_id.toLowerCase().includes(q) ||
+        (bon.bc_id?.toLowerCase().includes(q)) ||
+        (bon.client?.nom_client?.toLowerCase().includes(q)) ||
+        (bon.bon_commande?.client_nom?.toLowerCase().includes(q)) ||
+        bon.formule_id.toLowerCase().includes(q)
+      );
+    }
+    
+    // Apply date range filter
+    if (dateRange.from) {
+      result = result.filter(bon => {
+        const bonDate = new Date(bon.date_livraison);
+        const from = startOfDay(dateRange.from!);
+        const to = dateRange.to ? endOfDay(dateRange.to) : endOfDay(dateRange.from!);
+        return isWithinInterval(bonDate, { start: from, end: to });
+      });
+    }
+    
+    // Apply sorting
+    result.sort((a, b) => {
+      let comparison = 0;
+      switch (sortField) {
+        case 'date':
+          comparison = new Date(a.date_livraison).getTime() - new Date(b.date_livraison).getTime();
+          break;
+        case 'client':
+          const clientA = a.bon_commande?.client_nom || a.client?.nom_client || '';
+          const clientB = b.bon_commande?.client_nom || b.client?.nom_client || '';
+          comparison = clientA.localeCompare(clientB);
+          break;
+        case 'volume':
+          comparison = a.volume_m3 - b.volume_m3;
+          break;
+        case 'formule':
+          comparison = a.formule_id.localeCompare(b.formule_id);
+          break;
+      }
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+    
+    return result;
+  }, [bons, activeFilter, searchQuery, dateRange, sortField, sortDirection]);
+
+  // Batch actions
+  const handleToggleSelect = (blId: string) => {
+    const newSet = new Set(selectedBls);
+    if (newSet.has(blId)) {
+      newSet.delete(blId);
+    } else {
+      newSet.add(blId);
+    }
+    setSelectedBls(newSet);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedBls.size === filteredAndSortedBons.length) {
+      setSelectedBls(new Set());
+    } else {
+      setSelectedBls(new Set(filteredAndSortedBons.map(b => b.bl_id)));
+    }
+  };
+
+  const handleBatchValidate = async () => {
+    if (selectedBls.size === 0) return;
+    
+    setBatchValidating(true);
+    let successCount = 0;
+    
+    for (const blId of selectedBls) {
+      const bon = bons.find(b => b.bl_id === blId);
+      if (!bon || bon.workflow_status !== 'validation_technique') continue;
+      
+      try {
+        const success = await transitionWorkflow(blId, 'validation_technique', 'en_livraison');
+        if (success) successCount++;
+      } catch (error) {
+        console.error(`Error validating ${blId}:`, error);
+      }
+    }
+    
+    setBatchValidating(false);
+    setSelectedBls(new Set());
+    toast.success(`${successCount} bon(s) validé(s) et envoyé(s) en livraison`);
+    fetchData();
+  };
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleNavigate = (target: 'bc' | 'planning' | 'facture') => {
+    if (target === 'planning') {
+      navigate('/planning');
+    }
+    // BC and Facture navigation would go to Ventes with appropriate tab
+  };
+
   const getSourceBadge = (source: string | null) => {
     if (source === 'machine_sync') {
       return (
@@ -497,6 +668,74 @@ export default function Production() {
             </Button>
           </div>
         </div>
+
+        {/* KPI Cards - Collapsible */}
+        <Collapsible open={kpiExpanded} onOpenChange={setKpiExpanded}>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" size="sm" className="w-full justify-between mb-2">
+              <span className="text-sm font-medium">Tableau de Bord</span>
+              {kpiExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="space-y-4">
+              <ProductionKPICards
+                totalBons={bons.length}
+                totalVolume={kpiData.totalVolume}
+                avgCUR={kpiData.avgCUR}
+                deviationCount={kpiData.deviationCount}
+                machineSyncCount={kpiData.machineSyncCount}
+                validatedCount={kpiData.validatedCount}
+                criticalStocks={kpiData.criticalStocks}
+              />
+              <div className="grid md:grid-cols-3 gap-4">
+                <ProductionDeviationChart 
+                  bons={bons} 
+                  formules={formules} 
+                  className="md:col-span-2"
+                />
+                <ProductionStockAlerts stocks={stocks} />
+              </div>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+
+        {/* Search Bar */}
+        <ProductionSearchBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+        />
+
+        {/* Batch Actions Bar */}
+        {selectedBls.size > 0 && (
+          <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
+            <span className="text-sm font-medium">
+              {selectedBls.size} sélectionné(s)
+            </span>
+            <Button
+              size="sm"
+              onClick={handleBatchValidate}
+              disabled={batchValidating}
+              className="gap-2"
+            >
+              {batchValidating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle className="h-4 w-4" />
+              )}
+              Valider & Envoyer en Livraison
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSelectedBls(new Set())}
+            >
+              Annuler
+            </Button>
+          </div>
+        )}
 
         {/* Status Filters - Clickable */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:flex-wrap sm:overflow-visible">
@@ -571,68 +810,107 @@ export default function Production() {
         </div>
 
         {/* Production Queue */}
-        {(() => {
-          // Apply filter
-          const filteredBons = bons.filter(bon => {
-            if (activeFilter === 'all') return true;
-            if (activeFilter === 'production') return bon.workflow_status === 'production';
-            if (activeFilter === 'validation') return bon.workflow_status === 'validation_technique';
-            if (activeFilter === 'machine') return bon.source_donnees === 'machine_sync';
-            if (activeFilter === 'ecart') return bon.alerte_ecart === true;
-            return true;
-          });
-          
-          return (
-            <div className="card-industrial overflow-x-auto">
-              {loading ? (
-                <div className="p-8 text-center">
-                  <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
-                </div>
-              ) : filteredBons.length === 0 ? (
-                <div className="p-8 text-center">
-                  <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                  <p className="text-muted-foreground">
-                    {activeFilter !== 'all' 
-                      ? `Aucun bon correspondant au filtre "${activeFilter}"`
-                      : 'Aucun bon en production'}
-                  </p>
-                  {activeFilter !== 'all' && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setActiveFilter('all')}
-                      className="mt-2"
-                    >
-                      Voir tous les bons
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <Table className="data-table-industrial">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>N° Bon</TableHead>
-                      <TableHead>Commande</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Formule</TableHead>
-                      <TableHead className="text-right">Volume</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead className="w-20"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredBons.map((bon) => (
+        <div className="card-industrial overflow-x-auto">
+          {loading ? (
+            <div className="p-8 text-center">
+              <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredAndSortedBons.length === 0 ? (
+            <div className="p-8 text-center">
+              <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+              <p className="text-muted-foreground">
+                {activeFilter !== 'all' || searchQuery || dateRange.from
+                  ? 'Aucun bon correspondant aux filtres'
+                  : 'Aucun bon en production'}
+              </p>
+              {(activeFilter !== 'all' || searchQuery || dateRange.from) && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => {
+                    setActiveFilter('all');
+                    setSearchQuery('');
+                    setDateRange({ from: null, to: null });
+                  }}
+                  className="mt-2"
+                >
+                  Effacer les filtres
+                </Button>
+              )}
+            </div>
+          ) : (
+            <Table className="data-table-industrial">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10">
+                    <Checkbox
+                      checked={selectedBls.size === filteredAndSortedBons.length && filteredAndSortedBons.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>N° Bon</TableHead>
+                  <TableHead>Commande</TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleSort('date')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Date
+                      <ArrowUpDown className="h-3 w-3" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleSort('client')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Client
+                      <ArrowUpDown className="h-3 w-3" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleSort('formule')}
+                  >
+                    <div className="flex items-center gap-1">
+                      Formule
+                      <ArrowUpDown className="h-3 w-3" />
+                    </div>
+                  </TableHead>
+                  <TableHead 
+                    className="text-right cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleSort('volume')}
+                  >
+                    <div className="flex items-center gap-1 justify-end">
+                      Volume
+                      <ArrowUpDown className="h-3 w-3" />
+                    </div>
+                  </TableHead>
+                  <TableHead>Source</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead className="w-20">Lien</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredAndSortedBons.map((bon) => (
                   <TableRow
                     key={bon.bl_id}
                     className={cn(
                       'cursor-pointer hover:bg-muted/30',
-                      bon.alerte_ecart && 'bg-destructive/5'
+                      bon.alerte_ecart && 'bg-destructive/5',
+                      selectedBls.has(bon.bl_id) && 'bg-primary/10'
                     )}
-                    onClick={() => canEdit && handleSelectBon(bon)}
                   >
-                    <TableCell className="font-mono font-medium">
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedBls.has(bon.bl_id)}
+                        onCheckedChange={() => handleToggleSelect(bon.bl_id)}
+                      />
+                    </TableCell>
+                    <TableCell 
+                      className="font-mono font-medium"
+                      onClick={() => canEdit && handleSelectBon(bon)}
+                    >
                       <div className="flex items-center gap-2">
                         {bon.bl_id}
                         {bon.alerte_ecart && (
@@ -640,30 +918,27 @@ export default function Production() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={() => canEdit && handleSelectBon(bon)}>
                       {bon.bc_id ? (
-                        <div className="space-y-0.5">
-                          <span className="font-mono text-xs text-primary">{bon.bc_id}</span>
-                          {bon.bon_commande && bon.bon_commande.nb_livraisons && bon.bon_commande.nb_livraisons > 1 && (
-                            <div className="text-[10px] text-muted-foreground">
-                              Liv. {bon.bon_commande.nb_livraisons} / {bon.bon_commande.volume_m3}m³
-                            </div>
-                          )}
-                        </div>
+                        <span className="font-mono text-xs text-primary">{bon.bc_id}</span>
                       ) : (
                         <span className="text-muted-foreground text-xs">—</span>
                       )}
                     </TableCell>
-                    <TableCell>
-                      {format(new Date(bon.date_livraison), 'dd/MM/yyyy', { locale: fr })}
+                    <TableCell onClick={() => canEdit && handleSelectBon(bon)}>
+                      {format(new Date(bon.date_livraison), 'dd/MM', { locale: fr })}
                     </TableCell>
-                    <TableCell>
-                      <span className="text-sm">
+                    <TableCell onClick={() => canEdit && handleSelectBon(bon)}>
+                      <span className="text-sm truncate max-w-[120px] block">
                         {bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id}
                       </span>
                     </TableCell>
-                    <TableCell className="font-mono text-sm">{bon.formule_id}</TableCell>
-                    <TableCell className="text-right font-semibold">{bon.volume_m3} m³</TableCell>
+                    <TableCell className="font-mono text-sm" onClick={() => canEdit && handleSelectBon(bon)}>
+                      {bon.formule_id}
+                    </TableCell>
+                    <TableCell className="text-right font-semibold" onClick={() => canEdit && handleSelectBon(bon)}>
+                      {bon.volume_m3} m³
+                    </TableCell>
                     <TableCell>{getSourceBadge(bon.source_donnees)}</TableCell>
                     <TableCell>
                       <span className={cn(
@@ -671,17 +946,17 @@ export default function Production() {
                         bon.workflow_status === 'production' && 'bg-warning/20 text-warning',
                         bon.workflow_status === 'validation_technique' && 'bg-purple-500/20 text-purple-500'
                       )}>
-                        {bon.workflow_status === 'production' && <Play className="h-3 w-3" />}
-                        {bon.workflow_status === 'validation_technique' && <CheckCircle className="h-3 w-3" />}
-                        {bon.workflow_status === 'production' ? 'Production' : 'Validation'}
+                        {bon.workflow_status === 'production' ? 'Prod' : 'Valid'}
                       </span>
                     </TableCell>
                     <TableCell>
-                      {canEdit && (
-                        <Button variant="ghost" size="sm">
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => navigate(`/planning?date=${bon.date_livraison}`)}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -689,8 +964,6 @@ export default function Production() {
             </Table>
           )}
         </div>
-          );
-        })()}
 
         {/* API Documentation (Hidden/Collapsible) */}
         {isCeo && (
