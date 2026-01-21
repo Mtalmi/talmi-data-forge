@@ -71,6 +71,7 @@ import { toast } from 'sonner';
 import { format, isWithinInterval, startOfDay, endOfDay, parseISO, isSameDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { buildPlanningUrl } from '@/lib/workflowStatus';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
@@ -114,6 +115,7 @@ export default function Production() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const blFromUrl = searchParams.get('bl');
+  const dateFromUrl = searchParams.get('date');
   
   const { role, isCeo, isCentraliste, isResponsableTechnique } = useAuth();
   const { previewRole } = usePreviewRole();
@@ -133,12 +135,19 @@ export default function Production() {
   type FilterType = 'all' | 'planification' | 'production' | 'validation' | 'machine' | 'ecart';
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   
-  // Search and date selection - default to today
+  // Search and date selection - initialize from URL or default to today
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ 
-    from: startOfDay(new Date()), 
-    to: endOfDay(new Date()) 
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    if (dateFromUrl) {
+      const parsed = parseISO(dateFromUrl);
+      return isNaN(parsed.getTime()) ? new Date() : parsed;
+    }
+    return new Date();
+  });
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>(() => {
+    const initialDate = dateFromUrl ? parseISO(dateFromUrl) : new Date();
+    const validDate = isNaN(initialDate.getTime()) ? new Date() : initialDate;
+    return { from: startOfDay(validDate), to: endOfDay(validDate) };
   });
   
   // Batch selection
@@ -754,7 +763,7 @@ export default function Production() {
 
   const handleNavigate = (target: 'bc' | 'planning' | 'facture') => {
     if (target === 'planning') {
-      navigate('/planning');
+      navigate(buildPlanningUrl(selectedDate));
     }
     // BC and Facture navigation would go to Ventes with appropriate tab
   };
@@ -791,15 +800,16 @@ export default function Production() {
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Quick link to Planning */}
+            {/* Quick link to Planning - maintains date sync */}
             <Button 
               variant="ghost" 
               size="sm" 
               className="gap-2 text-muted-foreground hover:text-foreground"
-              onClick={() => navigate(`/planning?date=${format(selectedDate, 'yyyy-MM-dd')}`)}
+              onClick={() => navigate(buildPlanningUrl(selectedDate))}
             >
               <Clock className="h-4 w-4" />
               <span className="hidden sm:inline">Planning</span>
+              <ExternalLink className="h-3 w-3 hidden sm:inline" />
             </Button>
             {lastSync && (
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden sm:inline">
@@ -945,6 +955,7 @@ export default function Production() {
               setSelectedFormule(formule || null);
               setValidationDialogOpen(true);
             }}
+            onSendToDelivery={(blId) => handleSendToDelivery(blId)}
             className="lg:col-span-2"
           />
           
