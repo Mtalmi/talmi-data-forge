@@ -19,6 +19,7 @@ import {
   Warehouse,
   Route,
   Receipt,
+  BookOpen,
   CalendarClock,
   ShoppingCart,
   BarChart3,
@@ -96,12 +97,14 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // CEO - unrestricted access
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
-          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes', '/audit-superviseur', '/users'],
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
+          '/approbations', '/alertes', '/audit-superviseur', '/users'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are audited)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
-          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/approbations', '/alertes'],
+          '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
+          '/approbations', '/alertes'],
     
     // Directeur Opérations - oversight of operations only
     directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
@@ -125,7 +128,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     operator: ['/production', '/stocks'],
     
     // Accounting - finance ONLY
-    accounting: ['/paiements', '/rapprochement', '/depenses'],
+    accounting: ['/paiements', '/rapprochement', '/depenses', '/journal'],
   };
 
   // Get allowed routes for effective role
@@ -209,7 +212,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
         )}
 
         {/* STEP 3: FACTURATION & FINANCE */}
-        {(canAccess('/bons') || canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/depenses')) && (
+        {(canAccess('/bons') || canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/depenses') || canAccess('/journal')) && (
           <>
             <div className="pt-4 pb-2">
               <div className="flex items-center gap-2 px-3">
@@ -219,6 +222,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
                 </p>
               </div>
             </div>
+            {canAccess('/journal') && <NavItem to="/journal" icon={<BookOpen className="h-5 w-5" />} label="Journal Quotidien" onClick={onNavClick} />}
             {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Archive BL & Factures" onClick={onNavClick} />}
             {canAccess('/paiements') && <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />}
             {canAccess('/rapprochement') && <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement" onClick={onNavClick} />}
