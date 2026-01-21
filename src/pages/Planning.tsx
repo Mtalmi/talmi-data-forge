@@ -22,8 +22,14 @@ import {
   Users,
   Timer,
   ArrowRight,
-  CheckCircle
+  CheckCircle,
+  ClipboardCheck,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Sparkles
 } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
@@ -31,6 +37,7 @@ import { PlanningCalendarHeader } from '@/components/planning/PlanningCalendarHe
 
 interface BonLivraison {
   bl_id: string;
+  bc_id: string | null;
   client_id: string;
   formule_id: string;
   volume_m3: number;
@@ -84,6 +91,7 @@ export default function Planning() {
         .from('bons_livraison_reels')
         .select(`
           bl_id,
+          bc_id,
           client_id,
           formule_id,
           volume_m3,
@@ -194,12 +202,15 @@ export default function Planning() {
     fetchMonthlyData();
   }, [fetchMonthlyData]);
 
+  // State for pending validation section
+  const [pendingValidationOpen, setPendingValidationOpen] = useState(true);
 
-  // Categorize BLs for the dispatch board
-  const { aProduire, enChargement, enLivraison, livresAujourdhui, conflicts } = useMemo(() => {
+  // Categorize BLs for the dispatch board - NOW EXCLUDES pending validation BLs from main board
+  const { pendingValidation, aProduire, enChargement, enLivraison, livresAujourdhui, conflicts } = useMemo(() => {
     const now = new Date();
     const in2Hours = addHours(now, 2);
     
+    const pendingValidation: BonLivraison[] = [];
     const aProduire: BonLivraison[] = [];
     const enChargement: BonLivraison[] = [];
     const enLivraison: BonLivraison[] = [];
@@ -207,7 +218,10 @@ export default function Planning() {
     const scheduledTimes: { bl: BonLivraison; time: Date }[] = [];
 
     bons.forEach(bon => {
-      if (bon.workflow_status === 'production') {
+      // NEW: Pending validation goes to separate section
+      if (bon.workflow_status === 'en_attente_validation') {
+        pendingValidation.push(bon);
+      } else if (bon.workflow_status === 'production') {
         enChargement.push(bon);
       } else if (bon.workflow_status === 'en_livraison') {
         enLivraison.push(bon);
@@ -241,7 +255,7 @@ export default function Planning() {
       }
     }
 
-    return { aProduire, enChargement, enLivraison, livresAujourdhui, conflicts };
+    return { pendingValidation, aProduire, enChargement, enLivraison, livresAujourdhui, conflicts };
   }, [bons, selectedDate]);
 
   const updateBonTime = async (blId: string, time: string) => {
@@ -302,8 +316,67 @@ export default function Planning() {
     }
   };
 
+  // Confirm a pending BL - moves to planification status
+  const confirmBl = async (bon: BonLivraison) => {
+    try {
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ workflow_status: 'planification' })
+        .eq('bl_id', bon.bl_id);
+
+      if (error) throw error;
+      toast.success(`${bon.bl_id} confirmé et ajouté au dispatch!`);
+      fetchData();
+    } catch (error) {
+      console.error('Error confirming BL:', error);
+      toast.error('Erreur lors de la confirmation');
+    }
+  };
+
+  // Reject a pending BL - cancels it and reverts BC
+  const rejectBl = async (bon: BonLivraison) => {
+    try {
+      // Delete the BL
+      const { error: deleteError } = await supabase
+        .from('bons_livraison_reels')
+        .delete()
+        .eq('bl_id', bon.bl_id);
+
+      if (deleteError) throw deleteError;
+
+      // If there's a BC linked, revert the volume
+      if (bon.bc_id) {
+        const { data: bc } = await supabase
+          .from('bons_commande')
+          .select('volume_livre, volume_m3, nb_livraisons')
+          .eq('bc_id', bon.bc_id)
+          .single();
+
+        if (bc) {
+          const newVolumeLivre = Math.max(0, (bc.volume_livre || 0) - bon.volume_m3);
+          await supabase
+            .from('bons_commande')
+            .update({
+              volume_livre: newVolumeLivre,
+              volume_restant: bc.volume_m3 - newVolumeLivre,
+              nb_livraisons: Math.max(0, (bc.nb_livraisons || 1) - 1),
+              statut: 'pret_production'
+            })
+            .eq('bc_id', bon.bc_id);
+        }
+      }
+
+      toast.success(`${bon.bl_id} rejeté`);
+      fetchData();
+    } catch (error) {
+      console.error('Error rejecting BL:', error);
+      toast.error('Erreur lors du rejet');
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+      en_attente_validation: { label: 'À Confirmer', variant: 'outline' },
       planification: { label: 'Planification', variant: 'outline' },
       production: { label: 'Production', variant: 'secondary' },
       validation_technique: { label: 'Validation', variant: 'secondary' },
@@ -445,6 +518,7 @@ export default function Planning() {
     return (
       <MainLayout>
         <TabletPlanningView
+          pendingValidation={pendingValidation}
           aProduire={aProduire}
           enChargement={enChargement}
           enLivraison={enLivraison}
@@ -460,6 +534,8 @@ export default function Planning() {
           onStartProduction={startProduction}
           onMarkDelivered={markDelivered}
           onOpenDetails={(bon) => navigate(`/bons?bl=${bon.bl_id}`)}
+          onConfirmBl={confirmBl}
+          onRejectBl={rejectBl}
           loading={loading}
         />
       </MainLayout>
@@ -492,6 +568,97 @@ export default function Planning() {
           isOpen={calendarOpen}
           onOpenChange={setCalendarOpen}
         />
+
+        {/* 🆕 Pending Validation Section - NEW BLs awaiting dispatcher confirmation */}
+        {pendingValidation.length > 0 && (
+          <Collapsible open={pendingValidationOpen} onOpenChange={setPendingValidationOpen}>
+            <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
+              <CollapsibleTrigger asChild>
+                <CardHeader className="cursor-pointer hover:bg-muted/30 transition-colors pb-3">
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-amber-500/20 animate-pulse">
+                      <ClipboardCheck className="h-5 w-5 text-amber-600" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span>À Confirmer</span>
+                        <Badge className="bg-amber-500 text-white animate-bounce">{pendingValidation.length}</Badge>
+                        <Sparkles className="h-4 w-4 text-amber-500" />
+                      </div>
+                      <p className="text-xs text-muted-foreground font-normal mt-0.5">
+                        Nouvelles livraisons en attente de validation dispatcher
+                      </p>
+                    </div>
+                    {pendingValidationOpen ? (
+                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                    )}
+                  </CardTitle>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="pt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {pendingValidation.map(bon => (
+                      <Card key={bon.bl_id} className="border border-amber-500/30 bg-card hover:shadow-lg transition-all">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start mb-3">
+                            <div>
+                              <p className="font-semibold text-sm">{bon.bl_id}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {bon.clients?.nom_client || bon.client_id}
+                              </p>
+                            </div>
+                            <Badge variant="outline" className="border-amber-500 text-amber-600 text-xs">
+                              Nouveau
+                            </Badge>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <Package className="h-3 w-3" />
+                              <span>{bon.formule_id}</span>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              <Factory className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-semibold">{bon.volume_m3} m³</span>
+                            </div>
+                            {bon.zones_livraison && (
+                              <div className="flex items-center gap-1.5 text-muted-foreground col-span-2">
+                                <Navigation className="h-3 w-3" />
+                                <span>Zone {bon.zones_livraison.code_zone}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button 
+                              size="sm" 
+                              className="flex-1 bg-success hover:bg-success/90 text-white gap-1.5"
+                              onClick={() => confirmBl(bon)}
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                              Confirmer
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              className="border-destructive/50 text-destructive hover:bg-destructive/10"
+                              onClick={() => rejectBl(bon)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+        )}
 
         {/* Conflict Alert */}
         {conflicts.length > 0 && (
