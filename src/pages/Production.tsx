@@ -220,10 +220,17 @@ export default function Production() {
     setSelectedBon(bon);
     const formule = formules.find(f => f.formule_id === bon.formule_id);
     setSelectedFormule(formule || null);
+    
+    // If values are 0/null (not synced), default to theoretical formula values
+    // This prevents false "100% deviation" alerts for orders not yet synced
+    const theoreticalCiment = formule ? formule.ciment_kg_m3 * bon.volume_m3 : 0;
+    const theoreticalAdjuvant = formule ? formule.adjuvant_l_m3 * bon.volume_m3 : 0;
+    const theoreticalEau = formule ? formule.eau_l_m3 * bon.volume_m3 : 0;
+    
     setEditValues({
-      ciment_reel_kg: bon.ciment_reel_kg || 0,
-      adjuvant_reel_l: bon.adjuvant_reel_l || 0,
-      eau_reel_l: bon.eau_reel_l || 0,
+      ciment_reel_kg: bon.ciment_reel_kg || theoreticalCiment,
+      adjuvant_reel_l: bon.adjuvant_reel_l || theoreticalAdjuvant,
+      eau_reel_l: bon.eau_reel_l || theoreticalEau,
     });
     setJustification(bon.justification_ecart || '');
     updateDeviations(bon, formule);
