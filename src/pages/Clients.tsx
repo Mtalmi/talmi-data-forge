@@ -97,6 +97,10 @@ export default function Clients() {
   // Invoice dialog state
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<{ id: string; name: string } | null>(null);
+  
+  // Edit mode state
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Form state
   const [clientId, setClientId] = useState('');
@@ -157,6 +161,28 @@ export default function Clients() {
     setPatente('');
     setRcDocument(null);
     setRcDocumentPreview(null);
+    setEditingClient(null);
+    setIsEditMode(false);
+  };
+
+  const openEditDialog = (client: Client) => {
+    setEditingClient(client);
+    setIsEditMode(true);
+    setClientId(client.client_id);
+    setNomClient(client.nom_client);
+    setDelaiPaiement(String(client.delai_paiement_jours || 30));
+    setContactPersonne(client.contact_personne || '');
+    setTelephone(client.telephone || '');
+    setEmail(client.email || '');
+    setAdresse(client.adresse || '');
+    setVille(client.ville || '');
+    setCodePostal(client.code_postal || '');
+    setRc(client.rc || '');
+    setIce(client.ice || '');
+    setIdentifiantFiscal(client.identifiant_fiscal || '');
+    setPatente(client.patente || '');
+    setRcDocumentPreview(client.rc_document_url || null);
+    setDialogOpen(true);
   };
 
   const handleRcDocumentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,14 +265,13 @@ export default function Clients() {
         return;
       }
 
-      // Upload RC document first if provided
-      let rcDocumentUrl: string | null = null;
+      // Upload RC document first if provided (new upload)
+      let rcDocumentUrl: string | null = editingClient?.rc_document_url || null;
       if (rcDocument) {
         rcDocumentUrl = await uploadRcDocument(clientId);
       }
 
-      const { error } = await supabase.from('clients').insert([{
-        client_id: clientId,
+      const clientData = {
         nom_client: nomClient,
         delai_paiement_jours: parseInt(delaiPaiement),
         contact_personne: contactPersonne || null,
@@ -260,25 +285,42 @@ export default function Clients() {
         identifiant_fiscal: identifiantFiscal || null,
         patente: patente || null,
         rc_document_url: rcDocumentUrl,
-      }]);
+      };
 
-      if (error) {
-        if (error.code === '23505') {
-          toast.error('Ce client existe déjà');
-        } else {
-          throw error;
+      if (isEditMode && editingClient) {
+        // Update existing client
+        const { error } = await supabase
+          .from('clients')
+          .update(clientData)
+          .eq('client_id', editingClient.client_id);
+
+        if (error) throw error;
+        toast.success('Client mis à jour avec succès');
+      } else {
+        // Create new client
+        const { error } = await supabase.from('clients').insert([{
+          client_id: clientId,
+          ...clientData,
+        }]);
+
+        if (error) {
+          if (error.code === '23505') {
+            toast.error('Ce client existe déjà');
+          } else {
+            throw error;
+          }
+          setSubmitting(false);
+          return;
         }
-        setSubmitting(false);
-        return;
+        toast.success('Client créé avec succès');
       }
 
-      toast.success('Client créé avec succès');
       resetForm();
       setDialogOpen(false);
       fetchClients();
     } catch (error) {
-      console.error('Error creating client:', error);
-      toast.error('Erreur lors de la création');
+      console.error('Error saving client:', error);
+      toast.error(isEditMode ? 'Erreur lors de la mise à jour' : 'Erreur lors de la création');
     } finally {
       setSubmitting(false);
     }
@@ -387,16 +429,19 @@ export default function Clients() {
             {/* Smart Quote Calculator */}
             <SmartQuoteCalculator />
             {canEdit && (
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <Dialog open={dialogOpen} onOpenChange={(open) => {
+                setDialogOpen(open);
+                if (!open) resetForm();
+              }}>
                 <DialogTrigger asChild>
-                  <Button>
+                  <Button onClick={() => { resetForm(); }}>
                     <Plus className="h-4 w-4 mr-2" />
                     Nouveau Client
                   </Button>
                 </DialogTrigger>
               <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Créer un Client</DialogTitle>
+                  <DialogTitle>{isEditMode ? 'Modifier le Client' : 'Créer un Client'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -407,6 +452,8 @@ export default function Clients() {
                         value={clientId}
                         onChange={(e) => setClientId(e.target.value)}
                         required
+                        disabled={isEditMode}
+                        className={isEditMode ? 'bg-muted' : ''}
                       />
                     </div>
                     <div className="space-y-2">
@@ -616,14 +663,14 @@ export default function Clients() {
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                       Annuler
                     </Button>
-                    <Button type="submit" disabled={submitting}>
-                      {submitting ? (
+                    <Button type="submit" disabled={submitting || uploadingDocument}>
+                      {submitting || uploadingDocument ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Création...
+                          {uploadingDocument ? 'Upload...' : (isEditMode ? 'Mise à jour...' : 'Création...')}
                         </>
                       ) : (
-                        'Créer'
+                        isEditMode ? 'Enregistrer' : 'Créer'
                       )}
                     </Button>
                   </div>
@@ -792,6 +839,7 @@ export default function Clients() {
                               size="sm" 
                               className="h-8 w-8 p-0"
                               title="Modifier le client"
+                              onClick={() => openEditDialog(c)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
