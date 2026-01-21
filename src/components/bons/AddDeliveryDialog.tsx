@@ -281,7 +281,8 @@ export function AddDeliveryDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 12 }, (_, i) => i + 6).map((hour) => (
+                  {/* DEMO: 24/24h operations - all hours available */}
+                  {Array.from({ length: 24 }, (_, i) => i).map((hour) => (
                     <SelectItem key={hour} value={`${hour.toString().padStart(2, '0')}:00`}>
                       {hour.toString().padStart(2, '0')}:00
                     </SelectItem>

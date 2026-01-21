@@ -87,7 +87,8 @@ interface OrderFormFieldsProps {
   addressAsTextarea?: boolean;
 }
 
-const TIME_OPTIONS = ['06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+// DEMO: 24/24h operations - all hours available
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
 const PUMP_TYPES = [
   { value: 'pompe_automotrice', label: 'Pompe automotrice' },
