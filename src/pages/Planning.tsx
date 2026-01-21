@@ -294,14 +294,14 @@ export default function Planning() {
             <div className="flex items-center gap-2">
               <Truck className="h-4 w-4 text-muted-foreground" />
               <Select
-                value={bon.camion_assigne || bon.toupie_assignee || ''}
-                onValueChange={(value) => assignTruck(bon.bl_id, value)}
+                value={bon.camion_assigne || bon.toupie_assignee || 'none'}
+                onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
               >
                 <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
                   <SelectValue placeholder="Assigner camion" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Non assigné</SelectItem>
+                  <SelectItem value="none">Non assigné</SelectItem>
                   {camions.map(c => (
                     <SelectItem key={c.id_camion} value={c.id_camion}>
                       {c.id_camion} - {c.chauffeur || 'Sans chauffeur'}
