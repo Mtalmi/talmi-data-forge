@@ -30,6 +30,14 @@ export interface Devis {
   formule?: { designation: string };
 }
 
+// Linked BL summary for BC display
+export interface LinkedBlSummary {
+  bl_id: string;
+  workflow_status: string;
+  volume_m3: number;
+  validation_technique: boolean;
+}
+
 export interface BonCommande {
   id: string;
   bc_id: string;
@@ -70,6 +78,8 @@ export interface BonCommande {
   // Joined data
   client?: { nom_client: string; adresse: string | null; telephone: string | null };
   formule?: { designation: string };
+  // Linked BL statuses (aggregated from bons_livraison_reels)
+  linkedBls?: LinkedBlSummary[];
 }
 
 export function useSalesWorkflow() {
@@ -81,7 +91,7 @@ export function useSalesWorkflow() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [devisRes, bcRes] = await Promise.all([
+      const [devisRes, bcRes, blsRes] = await Promise.all([
         supabase
           .from('devis')
           .select(`
@@ -98,13 +108,42 @@ export function useSalesWorkflow() {
             formule:formules_theoriques(designation)
           `)
           .order('created_at', { ascending: false }),
+        // Fetch linked BLs for each BC to show workflow status
+        supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, bc_id, workflow_status, volume_m3, validation_technique')
+          .not('bc_id', 'is', null)
+          .order('created_at', { ascending: false }),
       ]);
 
       if (devisRes.error) throw devisRes.error;
       if (bcRes.error) throw bcRes.error;
+      // BLs fetch is optional, don't fail if it errors
+      
+      // Aggregate BLs by BC
+      const blsByBc: Record<string, LinkedBlSummary[]> = {};
+      if (!blsRes.error && blsRes.data) {
+        for (const bl of blsRes.data) {
+          if (bl.bc_id) {
+            if (!blsByBc[bl.bc_id]) blsByBc[bl.bc_id] = [];
+            blsByBc[bl.bc_id].push({
+              bl_id: bl.bl_id,
+              workflow_status: bl.workflow_status || 'planification',
+              volume_m3: bl.volume_m3,
+              validation_technique: bl.validation_technique || false,
+            });
+          }
+        }
+      }
+
+      // Attach linked BLs to each BC
+      const bcWithBls = (bcRes.data || []).map(bc => ({
+        ...bc,
+        linkedBls: blsByBc[bc.bc_id] || [],
+      }));
 
       setDevisList(devisRes.data || []);
-      setBcList(bcRes.data || []);
+      setBcList(bcWithBls);
     } catch (error) {
       console.error('Error fetching sales data:', error);
       toast.error('Erreur lors du chargement des données');

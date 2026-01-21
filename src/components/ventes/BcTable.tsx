@@ -46,6 +46,17 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
   facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
 };
 
+// BL workflow status display for linked BLs
+const BL_WORKFLOW_STATUS: Record<string, { label: string; color: string }> = {
+  en_attente_validation: { label: 'À Confirmer', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
+  planification: { label: 'Planifié', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30' },
+  production: { label: 'Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
+  validation_technique: { label: 'Validé Tech', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' },
+  en_livraison: { label: 'En Livraison', color: 'bg-violet-500/10 text-violet-600 border-violet-500/30' },
+  livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30' },
+  facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30' },
+};
+
 // Invoice status for BC
 const BC_INVOICE_STATUS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending: { label: 'En attente', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-3 w-3" /> },
@@ -260,6 +271,17 @@ export function BcTable({
           const isSelected = selectedIds.includes(bc.id);
           const priorityBadge = renderPriorityBadge(bc);
           
+          // Get the most advanced BL workflow status for display
+          const linkedBls = bc.linkedBls || [];
+          const blStatusOrder = ['facture', 'livre', 'en_livraison', 'validation_technique', 'production', 'planification', 'en_attente_validation'];
+          const mostAdvancedBl = linkedBls.length > 0 
+            ? linkedBls.reduce((best, bl) => {
+                const bestIndex = blStatusOrder.indexOf(best.workflow_status);
+                const currentIndex = blStatusOrder.indexOf(bl.workflow_status);
+                return currentIndex < bestIndex ? bl : best;
+              })
+            : null;
+          
           return (
             <TableRow 
               key={bc.id} 
@@ -302,10 +324,35 @@ export function BcTable({
                 {bc.total_ht.toLocaleString()} DH
               </TableCell>
               <TableCell>
-                <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
-                  {statusConfig.icon}
-                  {statusConfig.label}
-                </Badge>
+                <div className="flex flex-col gap-1">
+                  <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                    {statusConfig.icon}
+                    {statusConfig.label}
+                  </Badge>
+                  {/* Show linked BL status if in production */}
+                  {mostAdvancedBl && bc.statut === 'en_production' && (
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Badge 
+                          variant="outline" 
+                          className={cn("gap-1 text-[10px]", BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.color || '')}
+                        >
+                          BL: {BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.label || mostAdvancedBl.workflow_status}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="text-xs space-y-1">
+                          <p className="font-medium">{linkedBls.length} BL(s) liés</p>
+                          {linkedBls.slice(0, 3).map(bl => (
+                            <p key={bl.bl_id} className="text-muted-foreground">
+                              {bl.bl_id}: {BL_WORKFLOW_STATUS[bl.workflow_status]?.label || bl.workflow_status}
+                            </p>
+                          ))}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 {/* Invoice Status */}
