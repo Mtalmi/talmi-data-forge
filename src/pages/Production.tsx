@@ -12,6 +12,7 @@ import { ApiDocumentation } from '@/components/production/ApiDocumentation';
 import { ProductionKPICards } from '@/components/production/ProductionKPICards';
 import { ProductionStockAlerts } from '@/components/production/ProductionStockAlerts';
 import { ProductionWorkflowStepper } from '@/components/production/ProductionWorkflowStepper';
+import { ProductionDistributionStepper } from '@/components/production/ProductionDistributionStepper';
 import { ProductionSearchBar } from '@/components/production/ProductionSearchBar';
 import { ProductionDeviationChart } from '@/components/production/ProductionDeviationChart';
 import { Button } from '@/components/ui/button';
@@ -581,9 +582,20 @@ export default function Production() {
     const avgCUR = 0; // Would need cur_reel data
     const deviationCount = bons.filter(b => b.alerte_ecart).length;
     const machineSyncCount = bons.filter(b => b.source_donnees === 'machine_sync').length;
-    const planificationCount = bons.filter(b => b.workflow_status === 'planification').length;
-    const productionCount = bons.filter(b => b.workflow_status === 'production').length;
-    const validatedCount = bons.filter(b => b.workflow_status === 'validation_technique').length;
+    
+    // Count and volume by stage
+    const planificationBons = bons.filter(b => b.workflow_status === 'planification');
+    const productionBons = bons.filter(b => b.workflow_status === 'production');
+    const validationBons = bons.filter(b => b.workflow_status === 'validation_technique');
+    
+    const planificationCount = planificationBons.length;
+    const productionCount = productionBons.length;
+    const validatedCount = validationBons.length;
+    
+    const planificationVolume = planificationBons.reduce((sum, b) => sum + b.volume_m3, 0);
+    const productionVolume = productionBons.reduce((sum, b) => sum + b.volume_m3, 0);
+    const validationVolume = validationBons.reduce((sum, b) => sum + b.volume_m3, 0);
+    
     const criticalStocks = stocks.filter(s => s.quantite_actuelle <= s.seuil_alerte).map(s => ({
       materiau: s.materiau,
       quantite: s.quantite_actuelle,
@@ -591,7 +603,19 @@ export default function Production() {
       unite: s.unite,
     }));
     
-    return { totalVolume, avgCUR, deviationCount, machineSyncCount, planificationCount, productionCount, validatedCount, criticalStocks };
+    return { 
+      totalVolume, 
+      avgCUR, 
+      deviationCount, 
+      machineSyncCount, 
+      planificationCount, 
+      productionCount, 
+      validatedCount, 
+      planificationVolume,
+      productionVolume,
+      validationVolume,
+      criticalStocks 
+    };
   }, [bons, stocks]);
 
   // Filtered and sorted bons
@@ -840,6 +864,30 @@ export default function Production() {
             </span>
           </div>
         </div>
+
+        {/* Workflow Distribution Stepper */}
+        <ProductionDistributionStepper
+          data={{
+            planification: kpiData.planificationCount,
+            production: kpiData.productionCount,
+            validation: kpiData.validatedCount,
+          }}
+          totalVolume={{
+            planification: kpiData.planificationVolume,
+            production: kpiData.productionVolume,
+            validation: kpiData.validationVolume,
+          }}
+          activeStage={activeFilter === 'planification' || activeFilter === 'production' || activeFilter === 'validation' 
+            ? (activeFilter === 'validation' ? 'validation' : activeFilter) 
+            : null}
+          onStageClick={(stage) => {
+            if (stage === 'validation') {
+              setActiveFilter(activeFilter === 'validation' ? 'all' : 'validation');
+            } else {
+              setActiveFilter(activeFilter === stage ? 'all' : stage);
+            }
+          }}
+        />
 
         {/* KPI Cards - Collapsible */}
         <Collapsible open={kpiExpanded} onOpenChange={setKpiExpanded}>
