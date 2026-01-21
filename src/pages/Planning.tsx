@@ -96,25 +96,6 @@ export default function Planning() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    if (!focusPending) return;
-    if (!pendingEarliestDate || pendingBLCount <= 0) return;
-
-    // Step 1: switch date first
-    if (selectedDate !== pendingEarliestDate) {
-      setSelectedDate(pendingEarliestDate);
-      return;
-    }
-
-    // Step 2: after data for that date is loaded and there is pending, expand + scroll
-    if (!loading && pendingValidation.length > 0) {
-      setPendingValidationOpen(true);
-      setTimeout(() => {
-        pendingValidationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-      setFocusPending(false);
-    }
-  }, [focusPending, pendingEarliestDate, pendingBLCount, selectedDate, pendingValidation.length, loading]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -290,6 +271,27 @@ export default function Planning() {
 
     return { pendingValidation, aProduire, enChargement, enLivraison, livresAujourdhui, conflicts };
   }, [bons, selectedDate]);
+
+  // Focus pending effect - must be after useMemo that defines pendingValidation
+  useEffect(() => {
+    if (!focusPending) return;
+    if (!pendingEarliestDate || pendingBLCount <= 0) return;
+
+    // Step 1: switch date first
+    if (selectedDate !== pendingEarliestDate) {
+      setSelectedDate(pendingEarliestDate);
+      return;
+    }
+
+    // Step 2: after data for that date is loaded and there is pending, expand + scroll
+    if (!loading && pendingValidation.length > 0) {
+      setPendingValidationOpen(true);
+      setTimeout(() => {
+        pendingValidationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+      setFocusPending(false);
+    }
+  }, [focusPending, pendingEarliestDate, pendingBLCount, selectedDate, pendingValidation.length, loading]);
 
   const updateBonTime = async (blId: string, time: string) => {
     try {
