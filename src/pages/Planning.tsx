@@ -250,21 +250,22 @@ export default function Planning() {
       // NEW: Pending validation goes to separate section
       if (bon.workflow_status === 'en_attente_validation') {
         pendingValidation.push(bon);
-      } else if (bon.workflow_status === 'production') {
+      } else if (['production', 'validation_technique'].includes(bon.workflow_status)) {
+        // Both production and validation_technique go to "En Chargement"
         enChargement.push(bon);
       } else if (bon.workflow_status === 'en_livraison') {
         enLivraison.push(bon);
       } else if (['livre', 'facture'].includes(bon.workflow_status)) {
         livresAujourdhui.push(bon);
-        } else if (['planification', 'validation_technique'].includes(bon.workflow_status)) {
-        // Check if scheduled within next 2 hours
+      } else if (bon.workflow_status === 'planification') {
+        // Only planification goes to À Produire (ready to start production)
         if (bon.heure_prevue) {
-            const hhmm = formatTimeHHmm(bon.heure_prevue);
-            if (!hhmm) {
-              aProduire.push(bon);
-              return;
-            }
-            const [hours, minutes] = hhmm.split(':').map(Number);
+          const hhmm = formatTimeHHmm(bon.heure_prevue);
+          if (!hhmm) {
+            aProduire.push(bon);
+            return;
+          }
+          const [hours, minutes] = hhmm.split(':').map(Number);
           const scheduledTime = new Date(selectedDate);
           scheduledTime.setHours(hours, minutes, 0, 0);
           
@@ -451,16 +452,16 @@ export default function Planning() {
   };
 
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }> = {
+    const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
       en_attente_validation: { label: 'À Confirmer', variant: 'outline' },
-      planification: { label: 'Planification', variant: 'outline' },
-      production: { label: 'Production', variant: 'secondary' },
-      validation_technique: { label: 'Validation', variant: 'secondary' },
-      en_livraison: { label: 'En Livraison', variant: 'default' },
-      livre: { label: 'Livré', variant: 'default' },
+      planification: { label: 'Prêt', variant: 'outline', className: 'border-blue-500 text-blue-600' },
+      production: { label: 'Chargement', variant: 'secondary', className: 'bg-violet-500/20 text-violet-700 border-violet-500/30' },
+      validation_technique: { label: 'Validation Tech', variant: 'secondary', className: 'bg-amber-500/20 text-amber-700 border-amber-500/30' },
+      en_livraison: { label: 'En Route', variant: 'default', className: 'bg-rose-500 text-white' },
+      livre: { label: 'Livré', variant: 'default', className: 'bg-emerald-500 text-white' },
     };
     const config = statusConfig[status] || { label: status, variant: 'outline' as const };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
+    return <Badge variant={config.variant} className={config.className}>{config.label}</Badge>;
   };
 
   const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => {
@@ -967,13 +968,13 @@ export default function Planning() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-1.5 rounded bg-secondary">
-                  <Package className="h-4 w-4 text-secondary-foreground" />
+                <div className="p-1.5 rounded bg-violet-500/20">
+                  <Package className="h-4 w-4 text-violet-600" />
                 </div>
                 En Chargement
-                <Badge variant="secondary" className="ml-auto">{enChargement.length}</Badge>
+                <Badge variant="secondary" className="ml-auto bg-violet-500/20 text-violet-700">{enChargement.length}</Badge>
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Production en cours</p>
+              <p className="text-xs text-muted-foreground">Production & Validation Technique</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto">
               {enChargement.length === 0 ? (
