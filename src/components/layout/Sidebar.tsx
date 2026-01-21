@@ -124,12 +124,7 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
   const allowedRoutes = roleNavConfig[effectiveRole || ''] || ['/'];
   const canAccess = (route: string) => allowedRoutes.includes(route);
 
-  // Section visibility helpers
-  const showProductionSection = canAccess('/planning') || canAccess('/chauffeur') || canAccess('/bons') || 
-                                 canAccess('/production') || canAccess('/logistique') || canAccess('/formules') || canAccess('/ventes') || canAccess('/maintenance');
-  const showGestionSection = canAccess('/clients') || canAccess('/stocks') || canAccess('/laboratoire') || 
-                              canAccess('/depenses') || canAccess('/fournisseurs') || canAccess('/prestataires') ||
-                              canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/pointage') || canAccess('/prix');
+  // CEO section visibility
   const showCeoSection = isCeo || effectiveRole === 'superviseur';
 
   const getRoleBadge = () => {
@@ -162,50 +157,84 @@ function SidebarContent({ onNavClick, previewRole }: SidebarContentProps) {
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - Organized by WORKFLOW SEQUENCE */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {canAccess('/') && (
           <NavItem to="/" icon={<LayoutDashboard className="h-5 w-5" />} label="Tableau de bord" onClick={onNavClick} />
         )}
         
-        {showProductionSection && (
+        {/* STEP 1: COMMERCIAL - Quote & Order Entry */}
+        {(canAccess('/ventes') || canAccess('/clients')) && (
           <>
             <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Production
-              </p>
+              <div className="flex items-center gap-2 px-3">
+                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/20 text-primary text-xs font-bold">1</span>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Commercial
+                </p>
+              </div>
+            </div>
+            {canAccess('/ventes') && <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Devis → BC)" onClick={onNavClick} />}
+            {canAccess('/clients') && <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" onClick={onNavClick} />}
+          </>
+        )}
+
+        {/* STEP 2: PLANNING & OPERATIONS */}
+        {(canAccess('/planning') || canAccess('/production') || canAccess('/logistique') || canAccess('/chauffeur')) && (
+          <>
+            <div className="pt-4 pb-2">
+              <div className="flex items-center gap-2 px-3">
+                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/20 text-primary text-xs font-bold">2</span>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Opérations
+                </p>
+              </div>
             </div>
             {canAccess('/planning') && <NavItem to="/planning" icon={<CalendarClock className="h-5 w-5" />} label="Planning" onClick={onNavClick} />}
-            {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
-            {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Archive BL" onClick={onNavClick} />}
             {canAccess('/production') && <NavItem to="/production" icon={<Factory className="h-5 w-5" />} label="Centre Production" onClick={onNavClick} />}
             {canAccess('/logistique') && <NavItem to="/logistique" icon={<Route className="h-5 w-5" />} label="Logistique" onClick={onNavClick} />}
-            {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}
-            {canAccess('/formules') && <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />}
-            {canAccess('/ventes') && <NavItem to="/ventes" icon={<ShoppingCart className="h-5 w-5" />} label="Ventes (Pipeline)" onClick={onNavClick} />}
+            {canAccess('/chauffeur') && <NavItem to="/chauffeur" icon={<Truck className="h-5 w-5" />} label="Vue Chauffeur" onClick={onNavClick} />}
           </>
         )}
-        
-        {showGestionSection && (
+
+        {/* STEP 3: FACTURATION & FINANCE */}
+        {(canAccess('/bons') || canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/depenses')) && (
+          <>
+            <div className="pt-4 pb-2">
+              <div className="flex items-center gap-2 px-3">
+                <span className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/20 text-primary text-xs font-bold">3</span>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Facturation
+                </p>
+              </div>
+            </div>
+            {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Archive BL & Factures" onClick={onNavClick} />}
+            {canAccess('/paiements') && <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />}
+            {canAccess('/rapprochement') && <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement" onClick={onNavClick} />}
+            {canAccess('/depenses') && <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />}
+          </>
+        )}
+
+        {/* SUPPORT: Stocks, Formules, Lab, Maintenance */}
+        {(canAccess('/stocks') || canAccess('/formules') || canAccess('/laboratoire') || canAccess('/maintenance') || canAccess('/prix') || canAccess('/fournisseurs') || canAccess('/prestataires') || canAccess('/pointage')) && (
           <>
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Gestion
+                Support & Ressources
               </p>
             </div>
-            {canAccess('/clients') && <NavItem to="/clients" icon={<Users className="h-5 w-5" />} label="Clients" onClick={onNavClick} />}
-            {canAccess('/stocks') && <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks" onClick={onNavClick} />}
+            {canAccess('/stocks') && <NavItem to="/stocks" icon={<Warehouse className="h-5 w-5" />} label="Stocks (Silos)" onClick={onNavClick} />}
+            {canAccess('/formules') && <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />}
             {canAccess('/laboratoire') && <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />}
-            {canAccess('/depenses') && <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />}
+            {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}
             {canAccess('/fournisseurs') && <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />}
             {canAccess('/prestataires') && <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />}
-            {canAccess('/paiements') && <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />}
-            {canAccess('/rapprochement') && <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement Bancaire" onClick={onNavClick} />}
-            {canAccess('/pointage') && <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />}
             {canAccess('/prix') && <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />}
+            {canAccess('/pointage') && <NavItem to="/pointage" icon={<Clock className="h-5 w-5" />} label="Pointage" onClick={onNavClick} />}
           </>
         )}
         
+        {/* CEO CONTROL PANEL */}
         {showCeoSection && (
           <>
             <div className="pt-4 pb-2">
