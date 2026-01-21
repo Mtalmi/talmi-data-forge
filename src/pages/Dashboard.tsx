@@ -116,15 +116,15 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
-        {/* Header with Period Selector */}
-        <div className="flex flex-col gap-3">
-          <div>
+        {/* Header with Period Selector - Right Aligned */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground truncate">
               Vue d'ensemble des opérations Talmi Beton
             </p>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <PeriodSelector value={period} onChange={setPeriod} />
             {isCeo && <DailyReportGenerator />}
             <Button 
