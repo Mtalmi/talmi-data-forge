@@ -23,6 +23,7 @@ import Users from "./pages/Users";
 import Approbations from "./pages/Approbations";
 import Alertes from "./pages/Alertes";
 import Rapports from "./pages/Rapports";
+import Journal from "./pages/Journal";
 import Fournisseurs from "./pages/Fournisseurs";
 import Pointage from "./pages/Pointage";
 import Prestataires from "./pages/Prestataires";
@@ -62,6 +63,7 @@ const App = () => (
               <Route path="/approbations" element={<Approbations />} />
               <Route path="/alertes" element={<Alertes />} />
               <Route path="/rapports" element={<Rapports />} />
+              <Route path="/journal" element={<Journal />} />
               <Route path="/fournisseurs" element={<Fournisseurs />} />
               <Route path="/pointage" element={<Pointage />} />
               <Route path="/prestataires" element={<Prestataires />} />
