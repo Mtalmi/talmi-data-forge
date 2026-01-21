@@ -30,6 +30,8 @@ import { format, isToday, isTomorrow, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
 import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
+import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
+import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
 import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -250,7 +252,13 @@ export function BcTable({
                 />
               </TableCell>
               <TableCell className="font-mono font-medium">{bc.bc_id}</TableCell>
-              <TableCell>{bc.client?.nom_client || '—'}</TableCell>
+              <TableCell>
+                {bc.client ? (
+                  <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />
+                ) : (
+                  '—'
+                )}
+              </TableCell>
               <TableCell>
                 <span className="text-xs">{bc.formule_id}</span>
               </TableCell>
@@ -286,6 +294,7 @@ export function BcTable({
                       Lancer
                     </Button>
                   )}
+                  <WhatsAppShareButton bc={bc} compact />
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
