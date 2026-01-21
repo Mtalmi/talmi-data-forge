@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { CashCreditDrawer } from './CashCreditDrawer';
 import { LeakageDrawer } from './LeakageDrawer';
+import { QualityDrawer } from './QualityDrawer';
 
 interface GaugeProps {
   value: number;
@@ -130,6 +131,7 @@ export function ExecutiveCommandCenter() {
   const { metrics, loading, refresh } = useExecutiveMetrics();
   const [cashCreditOpen, setCashCreditOpen] = useState(false);
   const [leakageOpen, setLeakageOpen] = useState(false);
+  const [qualityOpen, setQualityOpen] = useState(false);
 
   if (loading) {
     return (
@@ -176,6 +178,7 @@ export function ExecutiveCommandCenter() {
           subtitle={`${metrics.conformTests}/${metrics.totalTests} tests`}
           icon={<ShieldCheck className="h-3.5 w-3.5" />}
           thresholds={{ green: 100, yellow: 95 }}
+          onClick={() => setQualityOpen(true)}
         />
       </div>
 
@@ -241,6 +244,9 @@ export function ExecutiveCommandCenter() {
       
       {/* Leakage Detail Drawer */}
       <LeakageDrawer open={leakageOpen} onOpenChange={setLeakageOpen} />
+      
+      {/* Quality Detail Drawer */}
+      <QualityDrawer open={qualityOpen} onOpenChange={setQualityOpen} />
     </div>
   );
 }
