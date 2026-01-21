@@ -1,4 +1,4 @@
-import { FileText, ShoppingCart, Truck, Receipt, CheckCircle } from 'lucide-react';
+import { FileText, ShoppingCart, Truck, Receipt, CheckCircle, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type WorkflowStage = 'devis' | 'bc' | 'bl' | 'facture';
@@ -9,10 +9,10 @@ interface WorkflowStepperProps {
   compact?: boolean;
 }
 
-const WORKFLOW_STAGES: { id: WorkflowStage; label: string; icon: React.ReactNode; description: string }[] = [
+const WORKFLOW_STAGES: { id: WorkflowStage; label: string; icon: React.ReactNode; description: string; isExternal?: boolean }[] = [
   { id: 'devis', label: 'Devis', icon: <FileText className="h-5 w-5" />, description: 'Proposition commerciale' },
   { id: 'bc', label: 'Bon de Commande', icon: <ShoppingCart className="h-5 w-5" />, description: 'Commande validée' },
-  { id: 'bl', label: 'Bon de Livraison', icon: <Truck className="h-5 w-5" />, description: 'Production & Livraison' },
+  { id: 'bl', label: 'Bon de Livraison', icon: <Truck className="h-5 w-5" />, description: 'Planning & Dispatch', isExternal: true },
   { id: 'facture', label: 'Facture', icon: <Receipt className="h-5 w-5" />, description: 'Facturation' },
 ];
 
@@ -54,7 +54,7 @@ export function WorkflowStepper({ currentStage, onStageClick, compact = false }:
               </div>
               <span
                 className={cn(
-                  "text-center transition-colors",
+                  "text-center transition-colors flex items-center gap-0.5",
                   compact ? "text-[10px]" : "text-xs",
                   isActive && "text-primary font-semibold",
                   isCompleted && "text-success font-medium",
@@ -62,6 +62,7 @@ export function WorkflowStepper({ currentStage, onStageClick, compact = false }:
                 )}
               >
                 {stage.label}
+                {stage.isExternal && <ExternalLink className="h-3 w-3 ml-0.5 opacity-60" />}
               </span>
               {!compact && (
                 <span className="text-[10px] text-muted-foreground text-center hidden sm:block">
