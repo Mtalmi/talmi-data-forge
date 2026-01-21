@@ -211,55 +211,17 @@ export default function Production() {
 
   const realtimeDebounceRef = React.useRef<number | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const setUrlDate = useCallback((date: Date) => {
+    const next = new URLSearchParams(searchParams);
+    next.set('date', format(date, 'yyyy-MM-dd'));
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
-  // Keep Production synced with Ventes/Planning updates via realtime
-  useEffect(() => {
-    const scheduleRefetch = () => {
-      if (realtimeDebounceRef.current) {
-        window.clearTimeout(realtimeDebounceRef.current);
-      }
-      realtimeDebounceRef.current = window.setTimeout(() => {
-        fetchData();
-      }, 300);
-    };
-
-    const channel = supabase
-      .channel('production-workflow-sync')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'bons_livraison_reels' },
-        scheduleRefetch
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'bons_commande' },
-        scheduleRefetch
-      )
-      .subscribe();
-
-    return () => {
-      if (realtimeDebounceRef.current) {
-        window.clearTimeout(realtimeDebounceRef.current);
-      }
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  // Auto-open dialog if BL is passed in URL
-  useEffect(() => {
-    if (blFromUrl && bons.length > 0 && formules.length > 0) {
-      const bon = bons.find(b => b.bl_id === blFromUrl);
-      if (bon) {
-        handleSelectBon(bon);
-      }
-    }
-  }, [blFromUrl, bons, formules]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
+      setLoading(true);
+      const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+
       const [bonsRes, formulesRes] = await Promise.all([
         supabase
           .from('bons_livraison_reels')
@@ -267,6 +229,8 @@ export default function Production() {
             *,
             client:clients(nom_client)
           `)
+          // Keep Production in lockstep with Planning date
+          .eq('date_livraison', selectedDateStr)
           // Show all active production workflow stages - from planification through validation
           .in('workflow_status', ['planification', 'production', 'validation_technique'])
           .order('created_at', { ascending: false }),
@@ -284,7 +248,7 @@ export default function Production() {
         .filter((id): id is string => !!id);
 
       let bcMap: Record<string, { volume_m3: number; volume_livre: number | null; nb_livraisons: number | null; client_nom: string | null }> = {};
-      
+
       if (bcIds.length > 0) {
         const { data: bcData } = await supabase
           .from('bons_commande')
@@ -324,7 +288,59 @@ export default function Production() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedDate]);
+
+  // Initial fetch and when date changes
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Keep Production synced with Planning updates via realtime (date-aware)
+  useEffect(() => {
+    const scheduleRefetch = () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      realtimeDebounceRef.current = window.setTimeout(() => {
+        fetchData();
+      }, 250);
+    };
+
+    const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+
+    const channel = supabase
+      .channel(`production-workflow-sync:${selectedDateStr}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_livraison_reels', filter: `date_livraison=eq.${selectedDateStr}` },
+        scheduleRefetch
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_commande' },
+        scheduleRefetch
+      )
+      .subscribe();
+
+    return () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      supabase.removeChannel(channel);
+    };
+  }, [selectedDate, fetchData]);
+
+  // Auto-open dialog if BL is passed in URL
+  useEffect(() => {
+    if (blFromUrl && bons.length > 0 && formules.length > 0) {
+      const bon = bons.find(b => b.bl_id === blFromUrl);
+      if (bon) {
+        handleSelectBon(bon);
+      }
+    }
+  }, [blFromUrl, bons, formules]);
+
+  // fetchData moved to useCallback above (date-aware)
 
   // Opens VALIDATION dialog for "Production" status, SYNC dialog for "validation_technique"
   const handleSelectBon = (bon: BonProduction) => {
