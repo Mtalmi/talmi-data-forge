@@ -118,7 +118,7 @@ export default function Dashboard() {
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
         {/* Header with Period Selector - Right Aligned */}
-        <div ref={kpiSectionRef} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 scroll-mt-4">
+        <div ref={kpiSectionRef} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Tableau de Bord</h1>
             <p className="text-sm text-muted-foreground truncate">
@@ -128,10 +128,14 @@ export default function Dashboard() {
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <PeriodSelector value={period} onChange={(newPeriod) => {
               setPeriod(newPeriod);
-              // Scroll to KPI section after period change
+              // Scroll to header section after period change
               setTimeout(() => {
-                kpiSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }, 100);
+                const element = kpiSectionRef.current;
+                if (element) {
+                  const offsetTop = element.getBoundingClientRect().top + window.scrollY - 16;
+                  window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                }
+              }, 150);
             }} />
             {isCeo && <DailyReportGenerator />}
             <Button 
