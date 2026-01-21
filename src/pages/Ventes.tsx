@@ -243,7 +243,9 @@ export default function Ventes() {
     setLaunchingProduction(null);
     
     if (blId) {
-      navigate('/planning');
+      // Navigate to Planning with the delivery date and focus on pending section
+      const deliveryDate = bc.date_livraison_souhaitee || new Date().toISOString().split('T')[0];
+      navigate(`/planning?date=${deliveryDate}&focus=pending`);
     }
   };
 
