@@ -37,14 +37,16 @@ import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pret_production: { label: 'Prêt Production', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
-  en_production: { label: 'En Production', color: 'bg-warning/10 text-warning border-warning/30', icon: <Loader2 className="h-3 w-3 animate-spin" /> },
+  en_production: { label: 'En Production', color: 'bg-warning/10 text-warning border-warning/30', icon: <Factory className="h-3 w-3" /> },
   termine: { label: 'Terminé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
+  facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
 };
 
 // Priority thresholds
 const HIGH_VALUE_THRESHOLD = 50000; // DH
 const HIGH_VOLUME_THRESHOLD = 50; // m³
+const MULTI_DELIVERY_THRESHOLD = 12; // m³ - orders above this are multi-delivery
 
 interface BcTableProps {
   bcList: BonCommande[];
@@ -265,7 +267,16 @@ export function BcTable({
                 <span className="text-xs">{bc.formule_id}</span>
               </TableCell>
               <TableCell>{renderDeliveryDate(bc)}</TableCell>
-              <TableCell className="text-right font-mono">{bc.volume_m3} m³</TableCell>
+              <TableCell className="text-right">
+                <div className="flex flex-col items-end">
+                  <span className="font-mono">{bc.volume_m3} m³</span>
+                  {bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (
+                    <span className="text-[10px] text-muted-foreground">
+                      {bc.volume_livre || 0}/{bc.volume_m3} livré
+                    </span>
+                  )}
+                </div>
+              </TableCell>
               <TableCell className="text-right font-mono font-medium">
                 {bc.total_ht.toLocaleString()} DH
               </TableCell>
@@ -283,6 +294,7 @@ export function BcTable({
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                  {/* Launch Production - for new orders */}
                   {bc.statut === 'pret_production' && (
                     <Button
                       size="sm"
@@ -298,6 +310,25 @@ export function BcTable({
                       )}
                       Lancer
                     </Button>
+                  )}
+                  {/* Add Delivery - for multi-delivery orders in production */}
+                  {bc.statut === 'en_production' && bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (bc.volume_m3 - (bc.volume_livre || 0)) > 0 && (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => onOpenDetail(bc)}
+                          className="gap-1"
+                        >
+                          <Truck className="h-3 w-3" />
+                          +BL
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Ajouter une livraison ({(bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1)} m³ restants)
+                      </TooltipContent>
+                    </Tooltip>
                   )}
                   <WhatsAppShareButton bc={bc} compact />
                   <Tooltip>
