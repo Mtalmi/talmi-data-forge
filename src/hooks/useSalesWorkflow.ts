@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -87,9 +87,10 @@ export function useSalesWorkflow() {
   const [devisList, setDevisList] = useState<Devis[]>([]);
   const [bcList, setBcList] = useState<BonCommande[]>([]);
   const [loading, setLoading] = useState(true);
+  const realtimeDebounceRef = useRef<number | null>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
+  const fetchData = useCallback(async (opts?: { silent?: boolean }) => {
+    if (!opts?.silent) setLoading(true);
     try {
       const [devisRes, bcRes, blsRes] = await Promise.all([
         supabase
@@ -126,9 +127,17 @@ export function useSalesWorkflow() {
         for (const bl of blsRes.data) {
           if (bl.bc_id) {
             if (!blsByBc[bl.bc_id]) blsByBc[bl.bc_id] = [];
+
+            // Normalize status for cross-module consistency:
+            // some screens set validation_technique=true before (or without) changing workflow_status.
+            const rawStatus = bl.workflow_status || 'planification';
+            const normalizedStatus = bl.validation_technique && ['en_attente_validation', 'planification', 'production'].includes(rawStatus)
+              ? 'validation_technique'
+              : rawStatus;
+
             blsByBc[bl.bc_id].push({
               bl_id: bl.bl_id,
-              workflow_status: bl.workflow_status || 'planification',
+              workflow_status: normalizedStatus,
               volume_m3: bl.volume_m3,
               validation_technique: bl.validation_technique || false,
             });
@@ -148,12 +157,50 @@ export function useSalesWorkflow() {
       console.error('Error fetching sales data:', error);
       toast.error('Erreur lors du chargement des données');
     } finally {
-      setLoading(false);
+      if (!opts?.silent) setLoading(false);
     }
   }, []);
 
   useEffect(() => {
     fetchData();
+  }, [fetchData]);
+
+  // Keep Ventes synced when Production/Planning updates BLs (no manual refresh needed)
+  useEffect(() => {
+    const scheduleRefetch = () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      realtimeDebounceRef.current = window.setTimeout(() => {
+        fetchData({ silent: true });
+      }, 250);
+    };
+
+    const channel = supabase
+      .channel('sales-workflow-sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_livraison_reels' },
+        scheduleRefetch
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_commande' },
+        scheduleRefetch
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'devis' },
+        scheduleRefetch
+      )
+      .subscribe();
+
+    return () => {
+      if (realtimeDebounceRef.current) {
+        window.clearTimeout(realtimeDebounceRef.current);
+      }
+      supabase.removeChannel(channel);
+    };
   }, [fetchData]);
 
   const generateDevisId = useCallback(() => {
