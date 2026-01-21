@@ -36,6 +36,7 @@ import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import { TabletPlanningView } from '@/components/planning/TabletPlanningView';
 import { PlanningCalendarHeader } from '@/components/planning/PlanningCalendarHeader';
+import { DailyPlanningReport } from '@/components/planning/DailyPlanningReport';
 
 interface BonLivraison {
   bl_id: string;
@@ -602,6 +603,27 @@ export default function Planning() {
                 <Badge className="bg-amber-500 text-white ml-1">{pendingBLCount}</Badge>
               </Button>
             )}
+            <DailyPlanningReport
+              date={parseISO(selectedDate)}
+              stats={{
+                totalDeliveries: bons.length,
+                pendingCount: pendingValidation.length + aProduire.length,
+                trucksAvailable: availableCamions,
+                trucksTotal: camions.length,
+                enRouteCount: enLivraison.length,
+                totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
+                deliveredCount: livresAujourdhui.length,
+              }}
+              deliveries={bons.map(b => ({
+                bl_id: b.bl_id,
+                client_name: b.clients?.nom_client || b.client_id,
+                formule_id: b.formule_id,
+                volume_m3: b.volume_m3,
+                heure_prevue: b.heure_prevue,
+                toupie_assignee: b.toupie_assignee || b.camion_assigne,
+                workflow_status: b.workflow_status,
+              }))}
+            />
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               Actualiser

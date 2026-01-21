@@ -7,8 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DriverDispatchCard } from './DriverDispatchCard';
+import { DailyPlanningReport } from './DailyPlanningReport';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
+import { parseISO } from 'date-fns';
 import { 
   Clock, 
   Truck, 
@@ -23,7 +25,8 @@ import {
   ChevronUp,
   X,
   Package,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -122,6 +125,27 @@ export function TabletPlanningView({
         <div className="flex items-center justify-between gap-3 mb-4">
           <h1 className="text-xl font-bold">Dispatch</h1>
           <div className="flex items-center gap-2">
+            <DailyPlanningReport
+              date={parseISO(selectedDate)}
+              stats={{
+                totalDeliveries: totalBonsToday,
+                pendingCount: pendingBons,
+                trucksAvailable: availableCamions,
+                trucksTotal: totalCamions,
+                enRouteCount: enLivraison.length,
+                totalVolume: [...pendingValidation, ...aProduire, ...enChargement, ...enLivraison, ...livresAujourdhui].reduce((sum, b) => sum + b.volume_m3, 0),
+                deliveredCount: livresAujourdhui.length,
+              }}
+              deliveries={[...pendingValidation, ...aProduire, ...enChargement, ...enLivraison, ...livresAujourdhui].map(b => ({
+                bl_id: b.bl_id,
+                client_name: b.clients?.nom_client || b.client_id,
+                formule_id: b.formule_id,
+                volume_m3: b.volume_m3,
+                heure_prevue: b.heure_prevue,
+                toupie_assignee: b.toupie_assignee || b.camion_assigne,
+                workflow_status: b.workflow_status,
+              }))}
+            />
             <Input
               type="date"
               value={selectedDate}
