@@ -126,17 +126,32 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <PeriodSelector value={period} onChange={(newPeriod) => {
-              setPeriod(newPeriod);
-              // Scroll to header section after period change
-              setTimeout(() => {
-                const element = kpiSectionRef.current;
-                if (element) {
-                  const offsetTop = element.getBoundingClientRect().top + window.scrollY - 16;
-                  window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-                }
-              }, 150);
-            }} />
+            <PeriodSelector
+              value={period}
+              onChange={(newPeriod) => {
+                setPeriod(newPeriod);
+
+                // Robust scroll: first scroll the dashboard header into view, then nudge it down
+                // so the sticky top bar doesn't cover it and you still see the KPIs below.
+                requestAnimationFrame(() => {
+                  const element = kpiSectionRef.current;
+                  if (!element) return;
+
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                  // Nudge after scroll starts
+                  setTimeout(() => {
+                    const scrollContainer = element.closest('main') as HTMLElement | null;
+                    if (!scrollContainer) return;
+
+                    const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
+                    const extraDrop = 24; // user asked to “drop a little” and keep header row visible
+                    const nextTop = Math.max(0, scrollContainer.scrollTop - topBarHeight - extraDrop);
+                    scrollContainer.scrollTo({ top: nextTop, behavior: 'smooth' });
+                  }, 250);
+                });
+              }}
+            />
             {isCeo && <DailyReportGenerator />}
             <Button 
               variant="outline" 
