@@ -1,12 +1,15 @@
+import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { Truck, AlertCircle } from 'lucide-react';
+import { Truck, AlertCircle, RefreshCw } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Delivery {
   bl_id: string;
   date_livraison: string;
   client_id: string;
+  client_name?: string;
   formule_id: string;
   volume_m3: number;
   statut_paiement: string;
@@ -14,12 +17,88 @@ interface Delivery {
   alerte_ecart: boolean;
 }
 
-interface RecentDeliveriesProps {
-  deliveries: Delivery[];
-  loading?: boolean;
-}
+export default function RecentDeliveries() {
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-export default function RecentDeliveries({ deliveries, loading }: RecentDeliveriesProps) {
+  const fetchDeliveries = useCallback(async () => {
+    try {
+      // Fetch deliveries with client names via join
+      const { data, error } = await supabase
+        .from('bons_livraison_reels')
+        .select(`
+          bl_id, 
+          date_livraison, 
+          client_id, 
+          formule_id, 
+          volume_m3, 
+          statut_paiement, 
+          ecart_marge, 
+          alerte_ecart,
+          clients!bons_livraison_reels_client_id_fkey(nom_client)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      
+      // Map data to include client_name
+      const mappedDeliveries = (data || []).map(d => ({
+        bl_id: d.bl_id,
+        date_livraison: d.date_livraison,
+        client_id: d.client_id,
+        client_name: d.clients?.nom_client || d.client_id,
+        formule_id: d.formule_id,
+        volume_m3: d.volume_m3,
+        statut_paiement: d.statut_paiement,
+        ecart_marge: d.ecart_marge,
+        alerte_ecart: d.alerte_ecart,
+      }));
+      
+      setDeliveries(mappedDeliveries);
+      setLastUpdate(new Date());
+    } catch (error) {
+      console.error('Error fetching recent deliveries:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    fetchDeliveries();
+    const interval = setInterval(fetchDeliveries, 30000);
+    return () => clearInterval(interval);
+  }, [fetchDeliveries]);
+
+  // Subscribe to realtime updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('recent-deliveries')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'bons_livraison_reels' },
+        () => {
+          fetchDeliveries();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchDeliveries]);
+
+  const getStatusPill = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'Payé': 'paid',
+      'En Attente': 'pending',
+      'Retard': 'late',
+    };
+    return statusMap[status] || 'pending';
+  };
+
   if (loading) {
     return (
       <div className="card-industrial p-6 animate-fade-in">
@@ -33,20 +112,19 @@ export default function RecentDeliveries({ deliveries, loading }: RecentDeliveri
     );
   }
 
-  const getStatusPill = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'Payé': 'paid',
-      'En Attente': 'pending',
-      'Retard': 'late',
-    };
-    return statusMap[status] || 'pending';
-  };
-
   return (
     <div className="card-industrial p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Dernières Livraisons</h3>
-        <Truck className="h-5 w-5 text-muted-foreground" />
+        <div>
+          <h3 className="text-lg font-semibold">Dernières Livraisons</h3>
+          <p className="text-xs text-muted-foreground">
+            Mise à jour: {format(lastUpdate, 'HH:mm:ss', { locale: fr })}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" title="Auto-actualisation active" />
+          <Truck className="h-5 w-5 text-muted-foreground" />
+        </div>
       </div>
       
       {deliveries.length === 0 ? (
@@ -76,8 +154,8 @@ export default function RecentDeliveries({ deliveries, loading }: RecentDeliveri
                       <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {delivery.client_id} • {delivery.volume_m3} m³
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                    <span className="font-medium text-foreground">{delivery.client_name}</span> • {delivery.volume_m3} m³
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">

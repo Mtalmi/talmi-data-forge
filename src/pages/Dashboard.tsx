@@ -17,25 +17,12 @@ import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Dr
 import { Button } from '@/components/ui/button';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 
-interface Delivery {
-  bl_id: string;
-  date_livraison: string;
-  client_id: string;
-  formule_id: string;
-  volume_m3: number;
-  statut_paiement: string;
-  ecart_marge: number | null;
-  alerte_ecart: boolean;
-}
-
 export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
-  const [recentDeliveries, setRecentDeliveries] = useState<Delivery[]>([]);
-  const [deliveriesLoading, setDeliveriesLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [productionStats, setProductionStats] = useState({
     formulesActives: 0,
@@ -46,7 +33,6 @@ export default function Dashboard() {
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
-    fetchRecentDeliveries();
     fetchProductionStats();
     // Check payment delays on load (for CEO/Admin)
     if (isCeo) {
@@ -57,28 +43,10 @@ export default function Dashboard() {
     const autoRefreshInterval = setInterval(() => {
       refresh();
       refreshPeriod();
-      fetchRecentDeliveries();
     }, 30000); // 30 seconds
 
     return () => clearInterval(autoRefreshInterval);
   }, [isCeo]);
-
-  const fetchRecentDeliveries = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('bons_livraison_reels')
-        .select('bl_id, date_livraison, client_id, formule_id, volume_m3, statut_paiement, ecart_marge, alerte_ecart')
-        .order('created_at', { ascending: false })
-        .limit(10);
-
-      if (error) throw error;
-      setRecentDeliveries(data || []);
-    } catch (error) {
-      console.error('Error fetching recent deliveries:', error);
-    } finally {
-      setDeliveriesLoading(false);
-    }
-  };
 
   const fetchProductionStats = async () => {
     try {
@@ -124,7 +92,6 @@ export default function Dashboard() {
     await Promise.all([
       refresh(),
       refreshPeriod(),
-      fetchRecentDeliveries(),
       fetchProductionStats(),
       isCeo ? checkPaymentDelays() : Promise.resolve(),
     ]);
@@ -270,7 +237,7 @@ export default function Dashboard() {
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentDeliveries deliveries={recentDeliveries} loading={deliveriesLoading} />
+          <RecentDeliveries />
           
           {/* Daily Profit Summary - CEO Only */}
           {isCeo ? (
