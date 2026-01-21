@@ -32,6 +32,7 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { FacturePdfGenerator } from '@/components/documents/FacturePdfGenerator';
+import { FactureDetailDialog } from '@/components/ventes/FactureDetailDialog';
 
 interface Facture {
   id: string;
@@ -80,6 +81,14 @@ export function FacturesTable({
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFacture, setSelectedFacture] = useState<Facture | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+
+  const handleOpenDetail = (facture: Facture) => {
+    setSelectedFacture(facture);
+    setDetailDialogOpen(true);
+    onViewDetail?.(facture);
+  };
 
   const fetchFactures = useCallback(async () => {
     setLoading(true);
@@ -174,6 +183,7 @@ export function FacturesTable({
   }
 
   return (
+    <>
     <div className="space-y-4">
       {/* Search & Stats Bar */}
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -269,7 +279,7 @@ export function FacturesTable({
                     "cursor-pointer hover:bg-muted/50",
                     isSelected && "bg-primary/5"
                   )}
-                  onClick={() => onViewDetail?.(facture)}
+                  onClick={() => handleOpenDetail(facture)}
                 >
                   {onSelectionChange && (
                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -365,5 +375,13 @@ export function FacturesTable({
         </Table>
       )}
     </div>
+
+      {/* Facture Detail Dialog */}
+      <FactureDetailDialog
+        facture={selectedFacture}
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+      />
+    </>
   );
 }
