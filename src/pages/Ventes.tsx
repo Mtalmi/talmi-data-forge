@@ -18,6 +18,7 @@ import { AddDeliveryDialog } from '@/components/bons/AddDeliveryDialog';
 
 // Refactored components
 import { PipelineStats } from '@/components/ventes/PipelineStats';
+import { FluxCommercialWidget } from '@/components/ventes/FluxCommercialWidget';
 import { DevisTable } from '@/components/ventes/DevisTable';
 import { BcTable } from '@/components/ventes/BcTable';
 import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
@@ -458,7 +459,10 @@ export default function Ventes() {
             </Card>
           </div>
 
-          {/* Stats & Pipeline + Revenue Forecast */}
+          {/* Flux Commercial Widget */}
+          <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
+
+          {/* Stats Cards + Revenue Forecast */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
               <PipelineStats stats={stats} onStageClick={handleStageClick} />
