@@ -14,6 +14,7 @@ import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail } from 'lucide
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
+import { AddDeliveryDialog } from '@/components/bons/AddDeliveryDialog';
 
 // Refactored components
 import { PipelineStats } from '@/components/ventes/PipelineStats';
@@ -39,7 +40,7 @@ import { ExportReportsDialog } from '@/components/ventes/ExportReportsDialog';
 
 export default function Ventes() {
   const navigate = useNavigate();
-  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc } = useSalesWorkflow();
+  const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, generateConsolidatedInvoice } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
   
   // Use the new filters hook
@@ -125,6 +126,10 @@ export default function Ventes() {
   // BC Detail Dialog State
   const [selectedBc, setSelectedBc] = useState<BonCommande | null>(null);
   const [bcDetailOpen, setBcDetailOpen] = useState(false);
+  
+  // Add Delivery Dialog State
+  const [addDeliveryOpen, setAddDeliveryOpen] = useState(false);
+  const [addDeliveryBc, setAddDeliveryBc] = useState<BonCommande | null>(null);
   
   // Direct Order Dialog State
   const [directOrderOpen, setDirectOrderOpen] = useState(false);
@@ -246,10 +251,19 @@ export default function Ventes() {
     setBcDetailOpen(true);
   };
 
-  // Handle adding delivery from BC detail dialog
-  const handleAddDeliveryFromDialog = async (bc: BonCommande) => {
+  // Handle adding delivery from BC detail dialog - opens the new AddDeliveryDialog
+  const handleAddDeliveryFromDialog = (bc: BonCommande) => {
     setBcDetailOpen(false);
-    await handleLaunchProduction(bc);
+    setAddDeliveryBc(bc);
+    setAddDeliveryOpen(true);
+  };
+
+  // Handle creating a delivery with specific volume
+  const handleCreateDelivery = async (bc: BonCommande, volume: number): Promise<string | null> => {
+    setLaunchingProduction(bc.bc_id);
+    const blId = await createBlFromBc(bc, volume);
+    setLaunchingProduction(null);
+    return blId;
   };
 
   // Handle copying a BC to a new order
@@ -663,7 +677,16 @@ export default function Ventes() {
           open={bcDetailOpen}
           onOpenChange={setBcDetailOpen}
           onAddDelivery={handleAddDeliveryFromDialog}
-          onGenerateInvoice={async (bcId: string) => bcId}
+          onGenerateInvoice={generateConsolidatedInvoice}
+          onRefresh={fetchData}
+        />
+
+        {/* Add Delivery Dialog - for multi-delivery orders */}
+        <AddDeliveryDialog
+          bc={addDeliveryBc}
+          open={addDeliveryOpen}
+          onOpenChange={setAddDeliveryOpen}
+          onCreateDelivery={handleCreateDelivery}
           onRefresh={fetchData}
         />
 
