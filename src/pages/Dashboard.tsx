@@ -165,39 +165,43 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <PeriodKPICard
             title="Volume Total"
-            value={`${periodStats.totalVolume.toFixed(0)} m³`}
-            subtitle={periodStats.periodLabel}
+            value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
+            subtitle={periodStats.periodLabel || 'Chargement...'}
             icon={Package}
             trend={periodStats.volumeTrend}
             trendLabel={periodStats.previousPeriodLabel}
             variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
+            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
           />
           <PeriodKPICard
             title="Chiffre d'Affaires"
-            value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
+            value={periodLoading ? '...' : `${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
             subtitle={`${periodStats.nbFactures} factures`}
             icon={DollarSign}
             trend={periodStats.caTrend}
             trendLabel={periodStats.previousPeriodLabel}
             variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
+            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
           />
           <PeriodKPICard
             title="CUR Moyen"
-            value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
+            value={periodLoading ? '...' : (periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—')}
             subtitle="Coût Unitaire Réel"
             icon={Gauge}
             trend={periodStats.curTrend}
             trendLabel={periodStats.previousPeriodLabel}
             variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
+            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
           />
           <PeriodKPICard
             title="Marge Brute"
-            value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
+            value={periodLoading ? '...' : (periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—')}
             subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
             icon={TrendingUp}
             trend={periodStats.margeTrend}
             trendLabel={periodStats.previousPeriodLabel}
             variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
+            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
           />
         </div>
 
@@ -206,17 +210,19 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <PeriodKPICard
               title="Profit Net"
-              value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
+              value={periodLoading ? '...' : `${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
               subtitle="CA - Coûts - Dépenses"
               icon={Calculator}
               variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
+              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
             />
             <PeriodKPICard
               title="Total Dépenses"
-              value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
+              value={periodLoading ? '...' : `${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
               subtitle={periodStats.periodLabel}
               icon={Receipt}
               variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
+              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
             />
             <KPICard
               title="Alertes Marge"
@@ -225,12 +231,13 @@ export default function Dashboard() {
               icon={AlertTriangle}
               variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
             />
-            <KPICard
+            <PeriodKPICard
               title="Clients Actifs"
-              value={periodStats.nbClients}
+              value={periodLoading ? '...' : periodStats.nbClients}
               subtitle={periodStats.periodLabel}
               icon={Users}
               variant="default"
+              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
             />
           </div>
         )}
