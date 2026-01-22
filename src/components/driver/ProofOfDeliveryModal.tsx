@@ -36,7 +36,7 @@ interface ProofOfDeliveryModalProps {
     signatureDataUrl: string;
     signerName: string;
     signedAt: string;
-  }) => void;
+  }) => Promise<void> | void;
 }
 
 export function ProofOfDeliveryModal({
@@ -85,22 +85,27 @@ export function ProofOfDeliveryModal({
     // the common confusion: users think “Confirmer” in the signature modal
     // already marks the BL as delivered.
     if (!photoFile) {
-      setIsSubmitting(true);
-      try {
-        onComplete({
-          signatureDataUrl: data.signatureDataUrl,
-          signerName: data.signerName,
-          signedAt: data.signedAt,
-        });
+      (async () => {
+        setIsSubmitting(true);
+        try {
+          await onComplete({
+            signatureDataUrl: data.signatureDataUrl,
+            signerName: data.signerName,
+            signedAt: data.signedAt,
+          });
 
-        // Reset state + close
-        setPhotoFile(null);
-        setPhotoPreview(null);
-        setSignatureData(null);
-        onOpenChange(false);
-      } finally {
-        setIsSubmitting(false);
-      }
+          // Reset state + close
+          setPhotoFile(null);
+          setPhotoPreview(null);
+          setSignatureData(null);
+          onOpenChange(false);
+        } catch (error) {
+          console.error('Auto proof finalize error:', error);
+          toast.error('Erreur lors de la validation');
+        } finally {
+          setIsSubmitting(false);
+        }
+      })();
     }
   };
 
@@ -150,7 +155,7 @@ export function ProofOfDeliveryModal({
         }
       }
 
-      onComplete({
+      await onComplete({
         photoUrl,
         signatureDataUrl: signatureData.signatureDataUrl,
         signerName: signatureData.signerName,

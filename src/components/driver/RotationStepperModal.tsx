@@ -332,7 +332,8 @@ export function RotationStepperModal({
     } catch (error) {
       console.error('Error completing proof:', error);
       toast.error("Erreur lors de l'enregistrement");
-      setProofModalOpen(false);
+      // Keep the proof modal open so the dispatcher can retry.
+      throw error;
     } finally {
       setUpdating(null);
     }
