@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { getStatusConfig, deriveRotationStatus } from '@/lib/workflowStatus';
 
 interface RotationEntry {
   bl_id: string;
@@ -315,41 +316,32 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
     return consumption > avg * 1.2; // 20% above average
   };
 
-  const getStatusBadge = (status: string, hasRetour: boolean, hasDepart: boolean, debriefValide: boolean) => {
-    // Complete cycle with validated debrief
+  // Unified status badge using centralized config
+  const getStatusBadge = (
+    status: string, 
+    hasDepart: boolean, 
+    hasArrivee: boolean, 
+    hasRetour: boolean, 
+    debriefValide: boolean
+  ) => {
+    const derivedStatus = deriveRotationStatus(status, hasDepart, hasArrivee, hasRetour, debriefValide);
+    const config = getStatusConfig(derivedStatus);
+    
+    // Special case: show checkmark for validated debriefs
     if (hasRetour && debriefValide) {
       return (
-        <Badge className="bg-success/20 text-success border-success/30 gap-1">
+        <Badge className={cn(config.bgLight, config.textColor, config.borderColor, "gap-1 border")}>
           <CheckCircle2 className="h-3 w-3" />
           Validé
         </Badge>
       );
     }
-    // Complete cycle but no debrief (legacy data)
-    if (hasRetour) {
-      return <Badge className="bg-success/20 text-success border-success/30">Complète</Badge>;
-    }
-    // Delivered but waiting for return
-    if (status === 'livre' || status === 'facture') {
-      return <Badge className="bg-warning/20 text-warning border-warning/30">Retour Attendu</Badge>;
-    }
-    // En route
-    if (status === 'en_livraison' && hasDepart) {
-      return <Badge className="bg-primary/20 text-primary border-primary/30">En Route</Badge>;
-    }
-    // In production/loading
-    if (status === 'en_chargement' || status === 'chargement') {
-      return <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Chargement</Badge>;
-    }
-    // Validation technique
-    if (status === 'validation_technique') {
-      return <Badge variant="outline" className="text-muted-foreground">validation_technique</Badge>;
-    }
-    // Production phase
-    if (status === 'production' || status === 'a_produire') {
-      return <Badge variant="outline" className="text-muted-foreground">production</Badge>;
-    }
-    return <Badge variant="outline">{status}</Badge>;
+    
+    return (
+      <Badge className={cn(config.bgLight, config.textColor, config.borderColor, "border")}>
+        {config.shortLabel}
+      </Badge>
+    );
   };
 
   return (
@@ -512,7 +504,7 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
                       ) : '—'}
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(r.workflow_status, !!r.heure_retour_centrale, !!r.heure_depart_centrale, r.debrief_valide)}
+                      {getStatusBadge(r.workflow_status, !!r.heure_depart_centrale, !!r.heure_arrivee_chantier, !!r.heure_retour_centrale, r.debrief_valide)}
                     </TableCell>
                   </TableRow>
                 );

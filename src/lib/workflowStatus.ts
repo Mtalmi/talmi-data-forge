@@ -1,12 +1,15 @@
-// Shared workflow status configuration for Planning and Production sync
-// This ensures consistent status labels, colors, and badges across modules
+// Shared workflow status configuration for the entire ERP
+// This ensures consistent status labels, colors, and badges across all modules:
+// Planning, Production, Logistics, and Ventes (BC)
 
 export type WorkflowStatus = 
   | 'en_attente_validation'
   | 'planification'
   | 'production'
+  | 'en_chargement'
   | 'validation_technique'
   | 'en_livraison'
+  | 'en_retour'
   | 'livre'
   | 'facture';
 
@@ -20,81 +23,133 @@ export interface StatusConfig {
   badgeVariant: 'default' | 'secondary' | 'destructive' | 'outline';
 }
 
+// UNIFIED STATUS PALETTE (per user spec):
+// - En Production/Chargement: ORANGE
+// - En Livraison: PINK/ROSE
+// - En Retour: LIGHT ORANGE (Amber)
+// - Terminé/Livré: GREEN
 export const WORKFLOW_STATUS_CONFIG: Record<WorkflowStatus, StatusConfig> = {
   en_attente_validation: {
     label: 'À Confirmer',
     shortLabel: 'À Confirmer',
-    color: 'bg-muted',
-    bgLight: 'bg-muted/50',
-    textColor: 'text-muted-foreground',
-    borderColor: 'border-muted-foreground/30',
+    color: 'bg-slate-500',
+    bgLight: 'bg-slate-500/10',
+    textColor: 'text-slate-600',
+    borderColor: 'border-slate-500/30',
     badgeVariant: 'outline',
   },
   planification: {
-    label: 'À Démarrer',
-    shortLabel: 'Prêt',
+    label: 'Planifié',
+    shortLabel: 'Planifié',
     color: 'bg-blue-500',
     bgLight: 'bg-blue-500/10',
     textColor: 'text-blue-600',
-    borderColor: 'border-blue-500',
+    borderColor: 'border-blue-500/30',
     badgeVariant: 'outline',
   },
   production: {
+    label: 'En Production',
+    shortLabel: 'Production',
+    color: 'bg-orange-500',
+    bgLight: 'bg-orange-500/10',
+    textColor: 'text-orange-600',
+    borderColor: 'border-orange-500/30',
+    badgeVariant: 'secondary',
+  },
+  en_chargement: {
     label: 'En Chargement',
     shortLabel: 'Chargement',
-    color: 'bg-violet-500',
-    bgLight: 'bg-violet-500/10',
-    textColor: 'text-violet-600',
-    borderColor: 'border-violet-500/30',
+    color: 'bg-orange-500',
+    bgLight: 'bg-orange-500/10',
+    textColor: 'text-orange-600',
+    borderColor: 'border-orange-500/30',
     badgeVariant: 'secondary',
   },
   validation_technique: {
-    label: 'Validation Tech',
-    shortLabel: 'À Valider',
+    label: 'Prêt Départ',
+    shortLabel: 'Validé Tech',
+    color: 'bg-emerald-500',
+    bgLight: 'bg-emerald-500/10',
+    textColor: 'text-emerald-600',
+    borderColor: 'border-emerald-500/30',
+    badgeVariant: 'secondary',
+  },
+  en_livraison: {
+    label: 'En Livraison',
+    shortLabel: 'En Route',
+    color: 'bg-rose-500',
+    bgLight: 'bg-rose-500/10',
+    textColor: 'text-rose-600',
+    borderColor: 'border-rose-500/30',
+    badgeVariant: 'default',
+  },
+  en_retour: {
+    label: 'En Retour',
+    shortLabel: 'Retour',
     color: 'bg-amber-500',
     bgLight: 'bg-amber-500/10',
     textColor: 'text-amber-600',
     borderColor: 'border-amber-500/30',
     badgeVariant: 'secondary',
   },
-  en_livraison: {
-    label: 'En Route',
-    shortLabel: 'En Route',
-    color: 'bg-rose-500',
-    bgLight: 'bg-rose-500/10',
-    textColor: 'text-rose-600',
-    borderColor: 'border-rose-500',
-    badgeVariant: 'default',
-  },
   livre: {
     label: 'Livré',
     shortLabel: 'Livré',
-    color: 'bg-emerald-500',
-    bgLight: 'bg-emerald-500/10',
-    textColor: 'text-emerald-600',
-    borderColor: 'border-emerald-500',
+    color: 'bg-success',
+    bgLight: 'bg-success/10',
+    textColor: 'text-success',
+    borderColor: 'border-success/30',
     badgeVariant: 'default',
   },
   facture: {
     label: 'Facturé',
     shortLabel: 'Facturé',
-    color: 'bg-emerald-600',
-    bgLight: 'bg-emerald-600/10',
-    textColor: 'text-emerald-700',
-    borderColor: 'border-emerald-600',
+    color: 'bg-success',
+    bgLight: 'bg-success/10',
+    textColor: 'text-success',
+    borderColor: 'border-success/30',
     badgeVariant: 'default',
   },
 };
+
+// Helper to derive status from rotation timestamps (for Logistics module)
+export function deriveRotationStatus(
+  workflowStatus: string,
+  hasDepart: boolean,
+  hasArrivee: boolean,
+  hasRetour: boolean,
+  debriefValide: boolean
+): WorkflowStatus {
+  // Completed rotation with debrief
+  if (hasRetour && debriefValide) return 'facture'; // Use facture as "completed/validated"
+  if (hasRetour) return 'livre';
+  
+  // Delivered but waiting for return
+  if (workflowStatus === 'livre' || workflowStatus === 'facture') return 'en_retour';
+  
+  // En route to client
+  if (hasDepart && hasArrivee) return 'en_livraison';
+  if (hasDepart) return 'en_livraison';
+  
+  // Pre-departure statuses
+  if (workflowStatus === 'en_livraison') return 'en_livraison';
+  if (workflowStatus === 'en_chargement' || workflowStatus === 'chargement') return 'en_chargement';
+  if (workflowStatus === 'validation_technique') return 'validation_technique';
+  if (workflowStatus === 'production' || workflowStatus === 'a_produire') return 'production';
+  if (workflowStatus === 'planification') return 'planification';
+  
+  return 'en_attente_validation';
+}
 
 export function getStatusConfig(status: string | null): StatusConfig {
   const key = status as WorkflowStatus;
   return WORKFLOW_STATUS_CONFIG[key] || {
     label: status || 'Inconnu',
-    shortLabel: status || 'Inconnu',
+    shortLabel: status || '?',
     color: 'bg-muted',
-    bgLight: 'bg-muted/50',
+    bgLight: 'bg-muted/10',
     textColor: 'text-muted-foreground',
-    borderColor: 'border-muted-foreground/30',
+    borderColor: 'border-muted/30',
     badgeVariant: 'outline' as const,
   };
 }
