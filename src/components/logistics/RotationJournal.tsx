@@ -111,14 +111,17 @@ export function RotationJournal() {
           heure_depart_centrale,
           heure_arrivee_chantier,
           heure_retour_centrale,
+          heure_prevue,
           workflow_status,
           validated_at,
+          validation_technique,
           km_parcourus,
-          clients (nom_client)
+          formule_id,
+          clients (nom_client),
+          flotte:camion_assigne (chauffeur)
         `)
         .eq('date_livraison', dateFilter)
-        .not('heure_depart_centrale', 'is', null)
-        .order('heure_depart_centrale', { ascending: true });
+        .order('heure_prevue', { ascending: true, nullsFirst: false });
 
       if (truckFilter !== 'all') {
         query = query.or(`toupie_assignee.eq.${truckFilter},camion_assigne.eq.${truckFilter}`);
@@ -128,57 +131,36 @@ export function RotationJournal() {
 
       if (error) throw error;
 
-      // For each rotation, fetch km/fuel data from suivi_carburant if exists
-      const enrichedRotations: RotationEntry[] = await Promise.all(
-        (data || []).map(async (bl) => {
-          const camionId = bl.toupie_assignee || bl.camion_assigne;
-          
-          // Try to find matching fuel entry for this BL's date
-          let kmDepart: number | null = null;
-          let kmRetour: number | null = null;
-          let litres: number | null = null;
-          let consommation: number | null = null;
+      // Enrich rotations with all data
+      const enrichedRotations: RotationEntry[] = (data || []).map((bl) => {
+        const camionId = bl.toupie_assignee || bl.camion_assigne;
+        const chauffeurFromFlotte = bl.flotte?.chauffeur;
+        
+        // Derive status for display
+        let derivedStatus = bl.workflow_status || 'planification';
+        if (bl.validation_technique && derivedStatus === 'planification') {
+          derivedStatus = 'validation_technique';
+        }
 
-          if (camionId && bl.heure_retour_centrale) {
-            // Get closest fuel entry after departure
-            const { data: fuelData } = await supabase
-              .from('suivi_carburant')
-              .select('km_compteur, litres, consommation_l_100km')
-              .eq('id_camion', camionId)
-              .gte('created_at', bl.heure_depart_centrale || '')
-              .order('created_at', { ascending: true })
-              .limit(1);
-
-            if (fuelData && fuelData.length > 0) {
-              kmRetour = fuelData[0].km_compteur;
-              litres = fuelData[0].litres;
-              consommation = fuelData[0].consommation_l_100km;
-            }
-          }
-
-          // Calculate km traveled from bl.km_parcourus if available
-          const kmTraveled = bl.km_parcourus;
-
-          return {
-            bl_id: bl.bl_id,
-            client_id: bl.client_id,
-            client_nom: bl.clients?.nom_client || null,
-            date_livraison: bl.date_livraison,
-            volume_m3: bl.volume_m3,
-            camion_id: camionId,
-            chauffeur: bl.chauffeur_nom || null,
-            heure_depart_centrale: bl.heure_depart_centrale,
-            heure_arrivee_chantier: bl.heure_arrivee_chantier,
-            heure_retour_centrale: bl.heure_retour_centrale,
-            workflow_status: bl.workflow_status || 'planification',
-            validated_at: bl.validated_at,
-            km_depart: kmTraveled ? (kmRetour ? kmRetour - kmTraveled : null) : null,
-            km_retour: kmRetour,
-            litres_carburant: litres,
-            consommation_l_100km: consommation,
-          };
-        })
-      );
+        return {
+          bl_id: bl.bl_id,
+          client_id: bl.client_id,
+          client_nom: bl.clients?.nom_client || null,
+          date_livraison: bl.date_livraison,
+          volume_m3: bl.volume_m3,
+          camion_id: camionId,
+          chauffeur: bl.chauffeur_nom || chauffeurFromFlotte || null,
+          heure_depart_centrale: bl.heure_depart_centrale,
+          heure_arrivee_chantier: bl.heure_arrivee_chantier,
+          heure_retour_centrale: bl.heure_retour_centrale,
+          workflow_status: derivedStatus,
+          validated_at: bl.validated_at,
+          km_depart: null,
+          km_retour: bl.km_parcourus,
+          litres_carburant: null,
+          consommation_l_100km: null,
+        };
+      });
 
       setRotations(enrichedRotations);
     } catch (error) {
@@ -193,7 +175,6 @@ export function RotationJournal() {
     const { data } = await supabase
       .from('flotte')
       .select('id_camion, chauffeur')
-      .eq('type', 'Toupie')
       .order('id_camion');
     setTrucks(data || []);
   }, []);
@@ -205,6 +186,26 @@ export function RotationJournal() {
 
   useEffect(() => {
     fetchRotations();
+
+    // Subscribe to realtime updates
+    const channel = supabase
+      .channel('rotation-journal-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bons_livraison_reels',
+        },
+        () => {
+          fetchRotations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [fetchRotations]);
 
   // Calculate times
@@ -242,15 +243,30 @@ export function RotationJournal() {
     return consumption > avg * 1.2; // 20% above average
   };
 
-  const getStatusBadge = (status: string, hasRetour: boolean) => {
+  const getStatusBadge = (status: string, hasRetour: boolean, hasDepart: boolean) => {
+    // Complete cycle
+    if (hasRetour) {
+      return <Badge className="bg-success/20 text-success border-success/30">Complète</Badge>;
+    }
+    // Delivered but waiting for return
     if (status === 'livre' || status === 'facture') {
-      if (hasRetour) {
-        return <Badge className="bg-success/20 text-success border-success/30">Complète</Badge>;
-      }
       return <Badge className="bg-warning/20 text-warning border-warning/30">Retour Attendu</Badge>;
     }
-    if (status === 'en_livraison') {
+    // En route
+    if (status === 'en_livraison' && hasDepart) {
       return <Badge className="bg-primary/20 text-primary border-primary/30">En Route</Badge>;
+    }
+    // In production/loading
+    if (status === 'en_chargement' || status === 'chargement') {
+      return <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Chargement</Badge>;
+    }
+    // Validation technique
+    if (status === 'validation_technique') {
+      return <Badge variant="outline" className="text-muted-foreground">validation_technique</Badge>;
+    }
+    // Production phase
+    if (status === 'production' || status === 'a_produire') {
+      return <Badge variant="outline" className="text-muted-foreground">production</Badge>;
     }
     return <Badge variant="outline">{status}</Badge>;
   };
@@ -415,7 +431,7 @@ export function RotationJournal() {
                       ) : '—'}
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(r.workflow_status, !!r.heure_retour_centrale)}
+                      {getStatusBadge(r.workflow_status, !!r.heure_retour_centrale, !!r.heure_depart_centrale)}
                     </TableCell>
                   </TableRow>
                 );
