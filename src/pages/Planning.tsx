@@ -278,7 +278,6 @@ export default function Planning() {
           filter: `date_livraison=eq.${selectedDate}`
         },
         (payload) => {
-          console.log('Planning received realtime update:', payload);
           // Debounce the refetch slightly to batch rapid updates
           setTimeout(() => fetchData(), 100);
         }

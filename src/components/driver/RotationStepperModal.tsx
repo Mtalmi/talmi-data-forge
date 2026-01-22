@@ -512,7 +512,8 @@ export function RotationStepperModal({
                         }}
                         disabled={isUpdating}
                         className={cn(
-                          "h-11 px-5 text-sm font-semibold rounded-xl shadow-lg transition-all",
+                          // Mobile-first: 44px minimum touch target for drivers
+                          "min-h-[44px] min-w-[44px] h-11 px-5 text-sm font-semibold rounded-xl shadow-lg transition-all",
                           "hover:scale-105 active:scale-95",
                           step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground shadow-warning/20",
                           step.color === 'success' && "bg-success hover:bg-success/90 shadow-success/20",
@@ -673,10 +674,10 @@ export function RotationStepperModal({
                     </div>
                   </div>
 
-                  {/* Submit Button */}
+                  {/* Submit Button - 52px touch target for industrial use */}
                   <Button
                     className={cn(
-                      "w-full h-14 text-lg font-bold rounded-xl",
+                      "w-full min-h-[52px] h-14 text-lg font-bold rounded-xl",
                       "bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70",
                       "shadow-xl shadow-success/20",
                       "transition-all hover:scale-[1.02] active:scale-[0.98]"

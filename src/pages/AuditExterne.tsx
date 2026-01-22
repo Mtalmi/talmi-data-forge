@@ -366,7 +366,7 @@ export default function AuditExterne() {
                 size="sm"
                 onClick={fetchAuditData} 
                 disabled={loading}
-                className="glass-card"
+                className="glass-card min-h-[44px]"
               >
                 <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
                 Rafraîchir
@@ -720,7 +720,7 @@ export default function AuditExterne() {
                     size="lg"
                     onClick={handleSubmit}
                     disabled={submitting || requiresCashComment}
-                    className="min-w-[200px]"
+                    className="min-w-[200px] min-h-[52px] h-14 text-base font-semibold"
                   >
                     {submitting ? (
                       <>
