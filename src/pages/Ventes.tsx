@@ -41,8 +41,38 @@ import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDraw
 import { ScheduledRemindersDialog } from '@/components/ventes/ScheduledRemindersDialog';
 import { ExportReportsDialog } from '@/components/ventes/ExportReportsDialog';
 
+import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+import { Lock, Shield } from 'lucide-react';
+
 export default function Ventes() {
   const navigate = useNavigate();
+  const { isCentraliste, isCeo, isSuperviseur, isAgentAdministratif, isCommercial } = useAuth();
+  
+  // =====================================================
+  // HARD PERMISSION WALL - Centraliste TOTAL BLOCK
+  // Centraliste has ZERO access to Ventes module
+  // =====================================================
+  if (isCentraliste && !isCeo && !isSuperviseur) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <div className="p-6 rounded-full bg-destructive/10">
+            <Lock className="h-12 w-12 text-destructive" />
+          </div>
+          <h1 className="text-2xl font-bold text-destructive">Accès Refusé</h1>
+          <p className="text-muted-foreground text-center max-w-md">
+            Le module Ventes n'est pas accessible pour votre rôle.<br />
+            Veuillez contacter l'administrateur si vous pensez qu'il s'agit d'une erreur.
+          </p>
+          <Button variant="outline" onClick={() => navigate('/production')}>
+            Retour à Production
+          </Button>
+        </div>
+      </MainLayout>
+    );
+  }
+  
   const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, generateConsolidatedInvoice } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
   
