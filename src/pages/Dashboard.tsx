@@ -9,6 +9,8 @@ import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandC
 import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
 import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
+import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
+import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
 import { 
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -202,10 +204,19 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Executive Command Center - CEO Only */}
+        {/* CEO Hawaii Command Center */}
         {isCeo && (
-          <div className="card-industrial p-3 sm:p-6">
-            <ExecutiveCommandCenter />
+          <div className="space-y-4">
+            {/* Real-Time Profit Ticker */}
+            <RealTimeProfitTicker />
+            
+            {/* Executive Command Center */}
+            <div className="card-industrial p-3 sm:p-6">
+              <ExecutiveCommandCenter />
+            </div>
+            
+            {/* Audit Health Widget */}
+            <AuditHealthWidget />
           </div>
         )}
 
