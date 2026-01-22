@@ -12,6 +12,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  // Role booleans
   isCeo: boolean;
   isOperator: boolean;
   isAccounting: boolean;
@@ -22,15 +23,22 @@ interface AuthContextType {
   isAgentAdministratif: boolean;
   isCentraliste: boolean;
   isAuditeur: boolean;
+  // Granular permissions - MATRICE DES PERMISSIONS
   canCreateBons: boolean;
   canReadPrix: boolean;
   canManageClients: boolean;
-  canValidateTechnique: boolean;
   canEditClients: boolean;
   canEditFormules: boolean;
-  // Planning permissions
+  canValidateTechnique: boolean;
   canEditPlanning: boolean;
   canOverrideCreditBlock: boolean;
+  // New granular workflow permissions
+  canUpdateConsumption: boolean;
+  canAssignTrucks: boolean;
+  canGenerateInvoice: boolean;
+  canApproveDerogations: boolean;
+  canRequestDerogations: boolean;
+  canAccessAuditPortal: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -124,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
   };
 
+  // Role booleans
   const isCeo = role === 'ceo';
   const isOperator = role === 'operator';
   const isAccounting = role === 'accounting';
@@ -134,6 +143,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAgentAdministratif = role === 'agent_administratif';
   const isCentraliste = role === 'centraliste';
   const isAuditeur = role === 'auditeur';
+
+  // ===================================================================
+  // MATRICE DES PERMISSIONS - Granular Role-Based Access Control
+  // ===================================================================
+  
+  // Prix d'Achat: CEO & Superviseur ONLY
+  const canReadPrix = isCeo || isSuperviseur;
+  
+  // Formules: CEO & Superviseur can edit; Others read-only
+  const canEditFormules = isCeo || isSuperviseur;
+  
+  // Clients: CEO/Superviseur/Agent Admin/Commercial can manage; Dir Ops read-only
+  const canManageClients = isCeo || isSuperviseur || isAgentAdministratif || isCommercial;
+  const canEditClients = isCeo || isSuperviseur || isAgentAdministratif || isCommercial;
+  
+  // Bons Creation: CEO/Superviseur/Agent Admin
+  const canCreateBons = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // Validation Technique: CEO/Superviseur/Resp Technique
+  const canValidateTechnique = isCeo || isSuperviseur || isResponsableTechnique;
+  
+  // Consumption Updates: CEO/Superviseur/Centraliste
+  const canUpdateConsumption = isCeo || isSuperviseur || isCentraliste;
+  
+  // Truck Assignment: CEO/Superviseur/Dir Ops/Agent Admin
+  const canAssignTrucks = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
+  
+  // Invoice Generation: CEO/Superviseur/Agent Admin/Accounting
+  const canGenerateInvoice = isCeo || isSuperviseur || isAgentAdministratif || isAccounting;
+  
+  // Planning Edit: CEO/Superviseur/Agent Admin (Dir Ops is READ-ONLY)
+  const canEditPlanning = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // Credit Block Override: CEO/Superviseur/Agent Admin
+  const canOverrideCreditBlock = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // Derogations: CEO can approve; Dir Ops can only request
+  const canApproveDerogations = isCeo || isSuperviseur;
+  const canRequestDerogations = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
+  
+  // Audit Portal: CEO/Auditeur ONLY
+  const canAccessAuditPortal = isCeo || isAuditeur;
 
   const value: AuthContextType = {
     user,
@@ -153,18 +204,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAgentAdministratif,
     isCentraliste,
     isAuditeur,
-    // Derived permissions - CEO ONLY for BL creation
-    canCreateBons: isCeo,
-    canReadPrix: isCeo,
-    canManageClients: isCeo || isAgentAdministratif || isCommercial,
-    // Directeur Opérations gets read-only on Clients and Formules
-    canEditClients: isCeo || isAgentAdministratif || isCommercial,
-    canEditFormules: isCeo,
-    canValidateTechnique: isCeo || isResponsableTechnique,
-    // Planning permissions - Agent Admin is PRIMARY OWNER, Directeur Ops is READ-ONLY
-    canEditPlanning: isCeo || isSuperviseur || isAgentAdministratif,
-    // Only Agent Admin and CEO can override credit blocks
-    canOverrideCreditBlock: isCeo || isAgentAdministratif,
+    // Permissions
+    canCreateBons,
+    canReadPrix,
+    canManageClients,
+    canEditClients,
+    canEditFormules,
+    canValidateTechnique,
+    canEditPlanning,
+    canOverrideCreditBlock,
+    canUpdateConsumption,
+    canAssignTrucks,
+    canGenerateInvoice,
+    canApproveDerogations,
+    canRequestDerogations,
+    canAccessAuditPortal,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

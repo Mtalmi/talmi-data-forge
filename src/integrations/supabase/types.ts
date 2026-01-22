@@ -2743,6 +2743,14 @@ export type Database = {
         Args: { _created_at: string }
         Returns: boolean
       }
+      can_update_workflow_status: {
+        Args: {
+          p_current_status: string
+          p_new_status: string
+          p_user_id?: string
+        }
+        Returns: boolean
+      }
       create_bl_from_bc:
         | {
             Args: {

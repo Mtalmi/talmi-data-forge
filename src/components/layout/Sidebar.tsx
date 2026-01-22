@@ -92,31 +92,39 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
   // In preview mode, determine permissions based on the previewed role
   const isCeo = previewRole ? previewRole === 'ceo' : actualIsCeo;
 
-  // Define STRICT role-based navigation - MINIMAL access only
+  // ===================================================================
+  // MATRICE DES PERMISSIONS - STRICT Role-Based Navigation
+  // ===================================================================
   const roleNavConfig: Record<string, string[]> = {
-    // CEO - unrestricted access
+    // CEO - FULL UNRESTRICTED ACCESS
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes', '/audit-superviseur', '/users'],
     
-    // Superviseur (Karim) - FULL access like CEO (all changes are audited)
+    // Superviseur (Karim) - FULL access like CEO (all changes are AUDITED)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes'],
     
-    // Directeur Opérations - Planning & Logistics authority ONLY (NO Facturation, Archive BL, Prix)
-    directeur_operations: ['/', '/planning', '/production', '/logistique', '/stocks', '/pointage', '/maintenance', '/formules', '/clients'],
+    // Resp. Technique (Abdel Sadek) - Formules READ-ONLY, Bons VALIDATION ONLY
+    // BLOCKED: Prix, Clients, Approbations
+    responsable_technique: ['/laboratoire', '/formules', '/bons'],
     
-    // Responsable Technique - lab & quality ONLY
-    responsable_technique: ['/laboratoire', '/formules'],
+    // Dir. Opérations (Imad) - Formules & Clients READ-ONLY, Bons PLANIFICATION/ASSIGNATION ONLY
+    // BLOCKED: Prix, Approbations (can only REQUEST dérogations, not approve)
+    directeur_operations: ['/', '/planning', '/production', '/logistique', '/stocks', '/pointage', 
+                           '/maintenance', '/formules', '/clients'],
     
-    // Agent Administratif - PRIMARY OWNER of Planning, Dispatch & Production
-    agent_administratif: ['/', '/planning', '/production', '/bons', '/clients', '/depenses'],
+    // Agent Administratif - PRIMARY OWNER of Planning, Dispatch, Facturation
+    // Formules READ-ONLY, Clients FULL, Bons PAIEMENT/FACTURATION
+    // BLOCKED: Prix, Approbations (except invoice generation)
+    agent_administratif: ['/', '/planning', '/production', '/bons', '/clients', '/depenses', '/paiements'],
     
-    // Centraliste - plant operations (production + stocks + maintenance)
-    centraliste: ['/production', '/stocks', '/maintenance'],
+    // Centraliste (Hassan) - Formules READ-ONLY (Daily Mix), Bons CONSOMMATION ONLY
+    // BLOCKED: Prix, Clients, Approbations
+    centraliste: ['/production', '/stocks', '/maintenance', '/formules'],
     
     // Chauffeur - driver view ONLY
     chauffeur: ['/chauffeur'],
@@ -130,7 +138,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // Accounting - finance ONLY
     accounting: ['/paiements', '/rapprochement', '/depenses', '/journal'],
     
-    // Auditeur - External Audit Portal ONLY (no access to prices, clients, planning)
+    // Auditeur Externe - STRICTLY LOCKED to /audit-externe
+    // NO ACCESS to any other part of the system
     auditeur: ['/audit-externe'],
   };
 
