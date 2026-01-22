@@ -103,7 +103,7 @@ export default function Planning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
-  const { isDirecteurOperations, isCeo, isAgentAdministratif, user, canEditPlanning, canOverrideCreditBlock } = useAuth();
+  const { isDirecteurOperations, isCeo, isAgentAdministratif, isSuperviseur, user, canEditPlanning, canOverrideCreditBlock, role } = useAuth();
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
@@ -568,16 +568,30 @@ export default function Planning() {
     return null;
   };
 
-  // Log planning action for audit trail
+  // Determine current user role for audit tagging
+  const getCurrentRole = (): string => {
+    if (isCeo) return 'ceo';
+    if (isAgentAdministratif) return 'agent_administratif';
+    if (isDirecteurOperations) return 'directeur_operations';
+    if (isSuperviseur) return 'superviseur';
+    return role || 'unknown';
+  };
+
+  // Log planning action for audit trail with role tagging
   const logPlanningAction = async (action: string, blId: string, details?: Record<string, any>) => {
     try {
+      const userRole = getCurrentRole();
       await supabase.from('audit_superviseur').insert({
         user_id: user?.id,
         user_name: user?.email,
         table_name: 'bons_livraison_reels',
         record_id: blId,
         action: action,
-        new_data: details || {},
+        new_data: {
+          ...details,
+          created_by_role: userRole,
+          user_role: userRole,
+        },
       });
     } catch (error) {
       console.error('Error logging action:', error);
