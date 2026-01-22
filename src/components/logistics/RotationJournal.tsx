@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMinutes } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -24,11 +24,8 @@ import {
   RefreshCw, 
   Loader2, 
   AlertTriangle, 
-  Clock, 
   Fuel,
   Truck,
-  CheckCircle,
-  XCircle,
   Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -47,25 +44,29 @@ interface RotationEntry {
   heure_retour_centrale: string | null;
   workflow_status: string;
   validated_at: string | null;
-  km_depart: number | null;
-  km_retour: number | null;
+  km_parcourus: number | null;
   litres_carburant: number | null;
   consommation_l_100km: number | null;
 }
 
-interface TruckAverage {
+interface FuelEntry {
   id_camion: string;
-  avg_consumption: number;
+  litres: number;
+  km_parcourus: number | null;
+  consommation_l_100km: number | null;
+  created_at: string;
 }
 
-export function RotationJournal() {
+export const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
   const [rotations, setRotations] = useState<RotationEntry[]>([]);
   const [truckAverages, setTruckAverages] = useState<Map<string, number>>(new Map());
+  const [truckDrivers, setTruckDrivers] = useState<Map<string, string>>(new Map());
   const [loading, setLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState(() => format(new Date(), 'yyyy-MM-dd'));
   const [truckFilter, setTruckFilter] = useState<string>('all');
   const [trucks, setTrucks] = useState<{ id_camion: string; chauffeur: string | null }[]>([]);
 
+  // Fetch truck averages from suivi_carburant
   const fetchTruckAverages = useCallback(async () => {
     try {
       const { data, error } = await supabase
@@ -95,9 +96,54 @@ export function RotationJournal() {
     }
   }, []);
 
+  // Fetch trucks with their assigned drivers
+  const fetchTrucks = useCallback(async () => {
+    const { data } = await supabase
+      .from('flotte')
+      .select('id_camion, chauffeur')
+      .order('id_camion');
+    
+    setTrucks(data || []);
+    
+    // Build driver map
+    const driverMap = new Map<string, string>();
+    (data || []).forEach(t => {
+      if (t.chauffeur) {
+        driverMap.set(t.id_camion, t.chauffeur);
+      }
+    });
+    setTruckDrivers(driverMap);
+  }, []);
+
+  // Fetch fuel entries for the date to link with rotations
+  const fetchFuelForDate = useCallback(async (date: string): Promise<Map<string, FuelEntry>> => {
+    const fuelMap = new Map<string, FuelEntry>();
+    
+    try {
+      const { data } = await supabase
+        .from('suivi_carburant')
+        .select('id_camion, litres, km_parcourus, consommation_l_100km, created_at')
+        .eq('date_releve', date);
+
+      (data || []).forEach(entry => {
+        // Store latest entry per truck for this date
+        const existing = fuelMap.get(entry.id_camion);
+        if (!existing || entry.created_at > existing.created_at) {
+          fuelMap.set(entry.id_camion, entry);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching fuel entries:', error);
+    }
+
+    return fuelMap;
+  }, []);
+
+  // Main fetch function
   const fetchRotations = useCallback(async () => {
     setLoading(true);
     try {
+      // Fetch BLs
       let query = supabase
         .from('bons_livraison_reels')
         .select(`
@@ -116,9 +162,7 @@ export function RotationJournal() {
           validated_at,
           validation_technique,
           km_parcourus,
-          formule_id,
-          clients (nom_client),
-          flotte:camion_assigne (chauffeur)
+          clients (nom_client)
         `)
         .eq('date_livraison', dateFilter)
         .order('heure_prevue', { ascending: true, nullsFirst: false });
@@ -131,10 +175,18 @@ export function RotationJournal() {
 
       if (error) throw error;
 
+      // Fetch fuel data for this date
+      const fuelMap = await fetchFuelForDate(dateFilter);
+
       // Enrich rotations with all data
       const enrichedRotations: RotationEntry[] = (data || []).map((bl) => {
         const camionId = bl.toupie_assignee || bl.camion_assigne;
-        const chauffeurFromFlotte = bl.flotte?.chauffeur;
+        
+        // Get driver from BL first, then fallback to fleet data
+        const chauffeur = bl.chauffeur_nom || (camionId ? truckDrivers.get(camionId) : null) || null;
+        
+        // Get fuel data for this truck on this date
+        const fuelEntry = camionId ? fuelMap.get(camionId) : undefined;
         
         // Derive status for display
         let derivedStatus = bl.workflow_status || 'planification';
@@ -149,16 +201,15 @@ export function RotationJournal() {
           date_livraison: bl.date_livraison,
           volume_m3: bl.volume_m3,
           camion_id: camionId,
-          chauffeur: bl.chauffeur_nom || chauffeurFromFlotte || null,
+          chauffeur,
           heure_depart_centrale: bl.heure_depart_centrale,
           heure_arrivee_chantier: bl.heure_arrivee_chantier,
           heure_retour_centrale: bl.heure_retour_centrale,
           workflow_status: derivedStatus,
           validated_at: bl.validated_at,
-          km_depart: null,
-          km_retour: bl.km_parcourus,
-          litres_carburant: null,
-          consommation_l_100km: null,
+          km_parcourus: bl.km_parcourus || fuelEntry?.km_parcourus || null,
+          litres_carburant: fuelEntry?.litres || null,
+          consommation_l_100km: fuelEntry?.consommation_l_100km || null,
         };
       });
 
@@ -169,25 +220,23 @@ export function RotationJournal() {
     } finally {
       setLoading(false);
     }
-  }, [dateFilter, truckFilter]);
+  }, [dateFilter, truckFilter, truckDrivers, fetchFuelForDate]);
 
-  const fetchTrucks = useCallback(async () => {
-    const { data } = await supabase
-      .from('flotte')
-      .select('id_camion, chauffeur')
-      .order('id_camion');
-    setTrucks(data || []);
-  }, []);
-
+  // Initial load
   useEffect(() => {
     fetchTrucks();
     fetchTruckAverages();
   }, [fetchTrucks, fetchTruckAverages]);
 
+  // Fetch rotations when filters or truck data changes
   useEffect(() => {
-    fetchRotations();
+    if (truckDrivers.size >= 0) { // Wait for drivers to load
+      fetchRotations();
+    }
+  }, [fetchRotations, truckDrivers.size]);
 
-    // Subscribe to realtime updates
+  // Realtime subscription
+  useEffect(() => {
     const channel = supabase
       .channel('rotation-journal-updates')
       .on(
@@ -201,14 +250,26 @@ export function RotationJournal() {
           fetchRotations();
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'suivi_carburant',
+        },
+        () => {
+          fetchRotations();
+          fetchTruckAverages();
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchRotations]);
+  }, [fetchRotations, fetchTruckAverages]);
 
-  // Calculate times
+  // Helper functions
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return '—';
     try {
@@ -272,7 +333,7 @@ export function RotationJournal() {
   };
 
   return (
-    <div className="space-y-4">
+    <div ref={ref} className="space-y-4">
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
@@ -401,7 +462,7 @@ export function RotationJournal() {
                     <TableCell className="text-center">
                       {cycleTime !== null ? (
                         <span className="font-mono text-sm">
-                          {Math.floor(cycleTime / 60)}h{String(cycleTime % 60).padStart(2, '0')}
+                          {cycleTime}min
                         </span>
                       ) : '—'}
                     </TableCell>
@@ -417,7 +478,7 @@ export function RotationJournal() {
                       ) : '—'}
                     </TableCell>
                     <TableCell className="text-right font-mono text-sm">
-                      {r.km_retour ? `${r.km_retour} km` : '—'}
+                      {r.km_parcourus ? `${r.km_parcourus} km` : '—'}
                     </TableCell>
                     <TableCell className="text-right">
                       {r.consommation_l_100km !== null ? (
@@ -454,4 +515,6 @@ export function RotationJournal() {
       </div>
     </div>
   );
-}
+});
+
+RotationJournal.displayName = 'RotationJournal';
