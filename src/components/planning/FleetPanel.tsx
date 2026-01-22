@@ -10,11 +10,13 @@ import {
   ChevronRight,
   ChevronLeft,
   RefreshCw,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { TruckRescueModal } from '@/components/logistics/TruckRescueModal';
 
 interface FleetVehicle {
   id_camion: string;
@@ -26,7 +28,9 @@ interface FleetVehicle {
 
 interface ActiveDelivery {
   bl_id: string;
+  bc_id: string | null;
   client_nom: string | null;
+  volume_m3: number;
   workflow_status: string;
 }
 
@@ -42,6 +46,11 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
   const [activeDeliveries, setActiveDeliveries] = useState<ActiveDeliveriesMap>({});
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
+  
+  // Incident/Rescue modal state
+  const [rescueModalOpen, setRescueModalOpen] = useState(false);
+  const [incidentTruckId, setIncidentTruckId] = useState<string>('');
+  const [incidentDelivery, setIncidentDelivery] = useState<ActiveDelivery | null>(null);
 
   const fetchFleetData = useCallback(async () => {
     try {
@@ -60,6 +69,8 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
         .from('bons_livraison_reels')
         .select(`
           bl_id,
+          bc_id,
+          volume_m3,
           workflow_status,
           camion_assigne,
           toupie_assignee,
@@ -75,7 +86,9 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
       (blData || []).forEach((bl) => {
         const delivery: ActiveDelivery = {
           bl_id: bl.bl_id,
+          bc_id: bl.bc_id || null,
           client_nom: bl.clients?.nom_client || null,
+          volume_m3: bl.volume_m3 || 0,
           workflow_status: bl.workflow_status || 'planification',
         };
         if (bl.camion_assigne) deliveryMap[bl.camion_assigne] = delivery;
@@ -259,12 +272,27 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
 
                 {/* Active Delivery Info */}
                 {isOnDelivery && (
-                  <div className="text-[10px] bg-primary/10 rounded px-1.5 py-1 mb-1.5 flex items-center gap-1">
-                    <Truck className="h-2.5 w-2.5 animate-pulse text-primary" />
-                    <span className="font-medium text-primary">{activeDelivery.bl_id}</span>
-                    {activeDelivery.client_nom && (
-                      <span className="text-muted-foreground truncate">• {activeDelivery.client_nom}</span>
-                    )}
+                  <div className="text-[10px] bg-primary/10 rounded px-1.5 py-1 mb-1.5 flex items-center justify-between">
+                    <div className="flex items-center gap-1 min-w-0">
+                      <Truck className="h-2.5 w-2.5 animate-pulse text-primary flex-shrink-0" />
+                      <span className="font-medium text-primary font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
+                      <span className="text-muted-foreground">({activeDelivery.volume_m3}m³)</span>
+                    </div>
+                    {/* Incident Button for active deliveries */}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 px-1.5 text-[9px] text-destructive hover:bg-destructive/20 hover:text-destructive"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIncidentTruckId(v.id_camion);
+                        setIncidentDelivery(activeDelivery);
+                        setRescueModalOpen(true);
+                      }}
+                    >
+                      <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+                      Incident
+                    </Button>
                   </div>
                 )}
 
@@ -321,6 +349,15 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
           })
         )}
       </div>
+      
+      {/* Truck Rescue Modal */}
+      <TruckRescueModal
+        open={rescueModalOpen}
+        onOpenChange={setRescueModalOpen}
+        truckId={incidentTruckId}
+        activeDelivery={incidentDelivery}
+        onComplete={fetchFleetData}
+      />
     </div>
   );
 }
