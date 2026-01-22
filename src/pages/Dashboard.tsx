@@ -11,6 +11,7 @@ import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
 import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
+import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { 
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -236,6 +237,11 @@ export default function Dashboard() {
             {/* Audit Health Widget */}
             <div className="bento-wide">
               <AuditHealthWidget />
+            </div>
+            
+            {/* Live Quality Feed - Hawaii Transparency */}
+            <div className="bento-wide">
+              <LiveQualityFeed />
             </div>
             
             {/* Executive Command Center - Full width */}

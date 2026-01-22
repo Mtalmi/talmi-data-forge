@@ -1038,6 +1038,149 @@ export type Database = {
         }
         Relationships: []
       }
+      controles_depart: {
+        Row: {
+          affaissement_conforme: boolean
+          affaissement_mm: number
+          bl_id: string
+          correction_eau_appliquee_l: number | null
+          created_at: string
+          geo_validated: boolean | null
+          geo_validation_notes: string | null
+          humidite_sable_pct: number | null
+          id: string
+          notes: string | null
+          photo_slump_latitude: number | null
+          photo_slump_longitude: number | null
+          photo_slump_timestamp: string
+          photo_slump_url: string
+          photo_texture_latitude: number | null
+          photo_texture_longitude: number | null
+          photo_texture_timestamp: string
+          photo_texture_url: string
+          texture_conforme: boolean
+          valide_at: string
+          valide_par: string
+          valide_par_name: string | null
+        }
+        Insert: {
+          affaissement_conforme: boolean
+          affaissement_mm: number
+          bl_id: string
+          correction_eau_appliquee_l?: number | null
+          created_at?: string
+          geo_validated?: boolean | null
+          geo_validation_notes?: string | null
+          humidite_sable_pct?: number | null
+          id?: string
+          notes?: string | null
+          photo_slump_latitude?: number | null
+          photo_slump_longitude?: number | null
+          photo_slump_timestamp?: string
+          photo_slump_url: string
+          photo_texture_latitude?: number | null
+          photo_texture_longitude?: number | null
+          photo_texture_timestamp?: string
+          photo_texture_url: string
+          texture_conforme?: boolean
+          valide_at?: string
+          valide_par: string
+          valide_par_name?: string | null
+        }
+        Update: {
+          affaissement_conforme?: boolean
+          affaissement_mm?: number
+          bl_id?: string
+          correction_eau_appliquee_l?: number | null
+          created_at?: string
+          geo_validated?: boolean | null
+          geo_validation_notes?: string | null
+          humidite_sable_pct?: number | null
+          id?: string
+          notes?: string | null
+          photo_slump_latitude?: number | null
+          photo_slump_longitude?: number | null
+          photo_slump_timestamp?: string
+          photo_slump_url?: string
+          photo_texture_latitude?: number | null
+          photo_texture_longitude?: number | null
+          photo_texture_timestamp?: string
+          photo_texture_url?: string
+          texture_conforme?: boolean
+          valide_at?: string
+          valide_par?: string
+          valide_par_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_bl"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "bons_livraison_reels"
+            referencedColumns: ["bl_id"]
+          },
+        ]
+      }
+      controles_humidite: {
+        Row: {
+          correction_eau_l_m3: number | null
+          created_at: string
+          created_by: string
+          ecart_humidite_pct: number | null
+          id: string
+          materiau: string
+          notes: string | null
+          photo_latitude: number | null
+          photo_longitude: number | null
+          photo_timestamp: string
+          photo_url: string
+          reception_id: string | null
+          taux_humidite_pct: number
+          taux_standard_pct: number
+          type_controle: string
+          verified_by: string | null
+          verified_by_name: string | null
+        }
+        Insert: {
+          correction_eau_l_m3?: number | null
+          created_at?: string
+          created_by: string
+          ecart_humidite_pct?: number | null
+          id?: string
+          materiau?: string
+          notes?: string | null
+          photo_latitude?: number | null
+          photo_longitude?: number | null
+          photo_timestamp?: string
+          photo_url: string
+          reception_id?: string | null
+          taux_humidite_pct: number
+          taux_standard_pct?: number
+          type_controle: string
+          verified_by?: string | null
+          verified_by_name?: string | null
+        }
+        Update: {
+          correction_eau_l_m3?: number | null
+          created_at?: string
+          created_by?: string
+          ecart_humidite_pct?: number | null
+          id?: string
+          materiau?: string
+          notes?: string | null
+          photo_latitude?: number | null
+          photo_longitude?: number | null
+          photo_timestamp?: string
+          photo_url?: string
+          reception_id?: string | null
+          taux_humidite_pct?: number
+          taux_standard_pct?: number
+          type_controle?: string
+          verified_by?: string | null
+          verified_by_name?: string | null
+        }
+        Relationships: []
+      }
       credit_score_history: {
         Row: {
           account_age_score: number | null
@@ -2815,7 +2958,25 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      v_quality_feed: {
+        Row: {
+          camion: string | null
+          client: string | null
+          conforme: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          latitude: number | null
+          longitude: number | null
+          operateur: string | null
+          photo_timestamp: string | null
+          photo_url: string | null
+          reference_id: string | null
+          type: string | null
+          valeur: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       acquire_edit_lock: {
@@ -2856,6 +3017,15 @@ export type Database = {
           total_quote: number
           transport_extra_per_m3: number
         }[]
+      }
+      calculate_water_correction: {
+        Args: {
+          p_densite_sable_kg_m3?: number
+          p_humidite_reelle_pct: number
+          p_humidite_standard_pct?: number
+          p_volume_sable_m3?: number
+        }
+        Returns: number
       }
       can_modify_bon_within_time: {
         Args: { _created_at: string }
