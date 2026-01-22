@@ -102,7 +102,7 @@ export default function Planning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
-  const { isDirecteurOperations, isCeo } = useAuth();
+  const { isDirecteurOperations, isCeo, isAgentAdministratif, user, canEditPlanning, canOverrideCreditBlock } = useAuth();
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
@@ -117,6 +117,9 @@ export default function Planning() {
     statuses: { planification: number; production: number; livre: number };
   }[]>([]);
   
+  // Directeur Opérations is READ-ONLY on Planning board
+  const isReadOnly = isDirecteurOperations && !isCeo && !isAgentAdministratif;
+  
   // CEO Approval Dialog State
   const [ceoApprovalOpen, setCeoApprovalOpen] = useState(false);
   const [pendingCreditApproval, setPendingCreditApproval] = useState<{
@@ -126,12 +129,13 @@ export default function Planning() {
     limite: number;
   } | null>(null);
   
-  // Client credit data cache for checking limits
+  // Client credit data cache for checking limits (now includes overdue invoice status)
   const [clientCreditData, setClientCreditData] = useState<Record<string, {
     nom_client: string;
     solde_du: number;
     limite_credit_dh: number;
     credit_bloque: boolean;
+    has_overdue_invoice: boolean;
   }>>({});
   
   // Initialize date: always default to today unless explicit date param provided
@@ -203,13 +207,23 @@ export default function Planning() {
       if (camionError) throw camionError;
       setCamions(camionData || []);
 
-      // Fetch client credit data for credit limit checks
+      // Fetch client credit data for credit limit checks (including overdue invoice status)
       const uniqueClientIds = [...new Set((blData || []).map(bl => bl.client_id))];
       if (uniqueClientIds.length > 0) {
         const { data: clientData } = await supabase
           .from('clients')
           .select('client_id, nom_client, solde_du, limite_credit_dh, credit_bloque')
           .in('client_id', uniqueClientIds);
+        
+        // Check for overdue invoices per client
+        const { data: overdueData } = await supabase
+          .from('factures')
+          .select('client_id')
+          .in('client_id', uniqueClientIds)
+          .eq('statut', 'emise')
+          .lt('date_facture', format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'));
+        
+        const overdueClients = new Set((overdueData || []).map(f => f.client_id));
         
         if (clientData) {
           const creditMap: Record<string, any> = {};
@@ -219,6 +233,7 @@ export default function Planning() {
               solde_du: c.solde_du || 0,
               limite_credit_dh: c.limite_credit_dh || 50000,
               credit_bloque: c.credit_bloque || false,
+              has_overdue_invoice: overdueClients.has(c.client_id),
             };
           });
           setClientCreditData(creditMap);
@@ -420,6 +435,12 @@ export default function Planning() {
   }, [focusPending, pendingEarliestDate, pendingBLCount, selectedDate, pendingValidation.length, loading]);
 
   const updateBonTime = async (blId: string, time: string) => {
+    // Block if read-only
+    if (isReadOnly) {
+      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour modifier.');
+      return;
+    }
+    
     try {
       const trimmed = (time || '').trim();
       const normalized = trimmed ? normalizeTimeHHmm(trimmed) : null;
@@ -433,6 +454,15 @@ export default function Planning() {
         .eq('bl_id', blId);
 
       if (error) throw error;
+      
+      // Log the action
+      await logPlanningAction('UPDATE_TIME', blId, {
+        action: 'Updated delivery time',
+        new_time: normalized,
+        scheduled_by: user?.email,
+        timestamp: new Date().toISOString(),
+      });
+      
       toast.success('Heure mise à jour');
       fetchData();
     } catch (error) {
@@ -442,6 +472,12 @@ export default function Planning() {
   };
 
   const assignTruck = async (blId: string, camionId: string) => {
+    // Block if read-only
+    if (isReadOnly) {
+      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour assigner.');
+      return;
+    }
+    
     try {
       const { error } = await supabase
         .from('bons_livraison_reels')
@@ -452,6 +488,15 @@ export default function Planning() {
         .eq('bl_id', blId);
 
       if (error) throw error;
+      
+      // Log the action
+      await logPlanningAction('ASSIGN_TRUCK', blId, {
+        action: 'Assigned truck',
+        camion_id: camionId,
+        assigned_by: user?.email,
+        timestamp: new Date().toISOString(),
+      });
+      
       toast.success('Camion assigné');
       fetchData();
     } catch (error) {
@@ -462,6 +507,12 @@ export default function Planning() {
 
   // Start production: advance to 'production' status and navigate to Production page
   const startProduction = async (bon: BonLivraison) => {
+    // Block if read-only
+    if (isReadOnly) {
+      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour lancer.');
+      return;
+    }
+    
     try {
       // Update workflow status to production
       const { error } = await supabase
@@ -473,6 +524,15 @@ export default function Planning() {
         .eq('bl_id', bon.bl_id);
 
       if (error) throw error;
+      
+      // Log the action
+      await logPlanningAction('START_PRODUCTION', bon.bl_id, {
+        action: 'Started production',
+        client_id: bon.client_id,
+        volume_m3: bon.volume_m3,
+        started_by: user?.email,
+        timestamp: new Date().toISOString(),
+      });
       
       toast.success('Production lancée! Redirection vers le Centre Production...');
       // Navigate to Production page with BL ID and date context
@@ -507,30 +567,61 @@ export default function Planning() {
     return null;
   };
 
+  // Log planning action for audit trail
+  const logPlanningAction = async (action: string, blId: string, details?: Record<string, any>) => {
+    try {
+      await supabase.from('audit_superviseur').insert({
+        user_id: user?.id,
+        user_name: user?.email,
+        table_name: 'bons_livraison_reels',
+        record_id: blId,
+        action: action,
+        new_data: details || {},
+      });
+    } catch (error) {
+      console.error('Error logging action:', error);
+    }
+  };
+
+  // Get credit status for visual indicator
+  const getClientCreditStatus = (clientId: string): 'green' | 'red' | 'blocked' => {
+    const creditInfo = clientCreditData[clientId];
+    if (!creditInfo) return 'green';
+    if (creditInfo.credit_bloque) return 'blocked';
+    if (creditInfo.has_overdue_invoice || creditInfo.solde_du > creditInfo.limite_credit_dh) return 'red';
+    return 'green';
+  };
+
   // Confirm a pending BL - moves to planification status
-  // For Directeur Opérations: block if client is over credit limit (requires CEO approval)
+  // Read-only users (Directeur Opérations) cannot perform this action
   const confirmBl = async (bon: BonLivraison) => {
-    // Directeur Opérations must get CEO approval for over-limit clients
-    if (isDirecteurOperations && !isCeo) {
-      const creditCheck = checkClientCreditLimit(bon.client_id);
-      if (creditCheck?.exceeded) {
-        // Block the action and show CEO approval dialog
-        setPendingCreditApproval({
-          bon,
-          clientName: creditCheck.clientName,
-          solde: creditCheck.solde,
-          limite: creditCheck.limite,
-        });
-        setCeoApprovalOpen(true);
-        return;
-      }
+    // Block if read-only
+    if (isReadOnly) {
+      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour planifier.');
+      return;
+    }
+
+    // Check credit status
+    const creditStatus = getClientCreditStatus(bon.client_id);
+    const creditInfo = clientCreditData[bon.client_id];
+    
+    // If client has issues, only Agent Admin or CEO can override
+    if (creditStatus !== 'green' && !canOverrideCreditBlock) {
+      setPendingCreditApproval({
+        bon,
+        clientName: creditInfo?.nom_client || bon.client_id,
+        solde: creditInfo?.solde_du || 0,
+        limite: creditInfo?.limite_credit_dh || 50000,
+      });
+      setCeoApprovalOpen(true);
+      return;
     }
     
     // Proceed with confirmation
     await executeConfirmBl(bon);
   };
 
-  // Execute the actual BL confirmation
+  // Execute the actual BL confirmation with logging
   const executeConfirmBl = async (bon: BonLivraison) => {
     try {
       const { error } = await supabase
@@ -539,6 +630,16 @@ export default function Planning() {
         .eq('bl_id', bon.bl_id);
 
       if (error) throw error;
+      
+      // Log the action with user signature
+      await logPlanningAction('CONFIRM_BL', bon.bl_id, {
+        action: 'Confirmed delivery',
+        client_id: bon.client_id,
+        volume_m3: bon.volume_m3,
+        scheduled_by: user?.email,
+        timestamp: new Date().toISOString(),
+      });
+      
       toast.success(`${bon.bl_id} confirmé et ajouté au dispatch!`);
       fetchData();
     } catch (error) {
@@ -547,9 +648,19 @@ export default function Planning() {
     }
   };
 
-  // Handle CEO approval callback
+  // Handle CEO/Agent Admin approval callback
   const handleCeoApprovalSuccess = async () => {
     if (pendingCreditApproval) {
+      // Log the override
+      await logPlanningAction('CREDIT_OVERRIDE', pendingCreditApproval.bon.bl_id, {
+        action: 'Credit limit override approved',
+        client_id: pendingCreditApproval.bon.client_id,
+        solde: pendingCreditApproval.solde,
+        limite: pendingCreditApproval.limite,
+        approved_by: user?.email,
+        timestamp: new Date().toISOString(),
+      });
+      
       await executeConfirmBl(pendingCreditApproval.bon);
       setPendingCreditApproval(null);
     }
@@ -656,6 +767,7 @@ export default function Planning() {
 
   const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => {
     const [timeDraft, setTimeDraft] = useState(() => formatTimeHHmm(bon.heure_prevue) || '');
+    const creditStatus = getClientCreditStatus(bon.client_id);
 
     useEffect(() => {
       setTimeDraft(formatTimeHHmm(bon.heure_prevue) || '');
@@ -693,22 +805,53 @@ export default function Planning() {
       return colors[status] || 'border-l-primary/50';
     };
 
+    // Credit status indicator component
+    const CreditIndicator = () => {
+      if (creditStatus === 'green') {
+        return (
+          <div className="flex items-center gap-1" title="Client en règle">
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
+          </div>
+        );
+      } else if (creditStatus === 'blocked') {
+        return (
+          <div className="flex items-center gap-1" title="Client bloqué">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-sm shadow-red-600/50 animate-pulse" />
+            <span className="text-[10px] text-red-500 font-medium">BLOQUÉ</span>
+          </div>
+        );
+      } else {
+        return (
+          <div className="flex items-center gap-1" title="Facture en retard">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500/50" />
+            <span className="text-[10px] text-red-400 font-medium">IMPAYÉ</span>
+          </div>
+        );
+      }
+    };
+
     return (
       <Card
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
           "mb-3 border-l-4 hover:shadow-lg hover:shadow-black/5 transition-all duration-200 bg-card/80 backdrop-blur-sm",
           getBorderColor(bon.workflow_status),
-          isTouchDevice && "active:scale-[0.98]"
+          isTouchDevice && "active:scale-[0.98]",
+          // Add red ring for credit issues
+          creditStatus !== 'green' && "ring-1 ring-red-500/30"
         )}
       >
         <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">
-          <div>
-            <p className={cn("font-semibold", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
-            <p className={cn("text-muted-foreground", isTouchDevice ? "text-sm" : "text-xs")}>
-              {bon.clients?.nom_client || bon.client_id}
-            </p>
+          <div className="flex items-center gap-2">
+            {/* Credit Status Indicator - Red/Green Light */}
+            <CreditIndicator />
+            <div>
+              <p className={cn("font-semibold", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
+              <p className={cn("text-muted-foreground", isTouchDevice ? "text-sm" : "text-xs")}>
+                {bon.clients?.nom_client || bon.client_id}
+              </p>
+            </div>
           </div>
           {getStatusBadge(bon.workflow_status)}
         </div>
@@ -990,6 +1133,21 @@ export default function Planning() {
   return (
     <MainLayout>
       <div className="space-y-6">
+        {/* Read-Only Banner for Directeur Opérations */}
+        {isReadOnly && (
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
+            <Eye className="h-5 w-5 text-amber-500" />
+            <div>
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                Mode Lecture Seule
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Vous pouvez consulter le planning mais pas le modifier. Contactez l'Agent Administratif pour planifier les livraisons.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>

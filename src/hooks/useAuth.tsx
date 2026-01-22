@@ -27,6 +27,9 @@ interface AuthContextType {
   canValidateTechnique: boolean;
   canEditClients: boolean;
   canEditFormules: boolean;
+  // Planning permissions
+  canEditPlanning: boolean;
+  canOverrideCreditBlock: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -155,6 +158,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     canEditClients: isCeo || isAgentAdministratif || isCommercial,
     canEditFormules: isCeo,
     canValidateTechnique: isCeo || isResponsableTechnique,
+    // Planning permissions - Agent Admin is PRIMARY OWNER, Directeur Ops is READ-ONLY
+    canEditPlanning: isCeo || isSuperviseur || isAgentAdministratif,
+    // Only Agent Admin and CEO can override credit blocks
+    canOverrideCreditBlock: isCeo || isAgentAdministratif,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

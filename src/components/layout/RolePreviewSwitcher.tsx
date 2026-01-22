@@ -16,9 +16,9 @@ import { useAuth } from '@/hooks/useAuth';
 const ROLE_OPTIONS = [
   { value: null, label: 'Mon profil (CEO)', description: 'Vue complète', homePage: '/' },
   { value: 'superviseur', label: 'Karim Talmi (Superviseur)', description: 'Accès complet audité', homePage: '/' },
-  { value: 'directeur_operations', label: 'Imad (Dir. Opérations)', description: 'Planning & Supervision', homePage: '/planning' },
+  { value: 'agent_administratif', label: 'Agent Admin (Planning Owner)', description: 'Planning, Bons, Clients', homePage: '/planning' },
+  { value: 'directeur_operations', label: 'Imad (Dir. Opérations)', description: 'Logistique (Lecture seule Planning)', homePage: '/logistique' },
   { value: 'responsable_technique', label: 'Abdel Sadek (Resp. Technique)', description: 'Labo & Validation QC', homePage: '/laboratoire' },
-  { value: 'agent_administratif', label: 'Agent Administratif', description: 'Bons, Clients & Paiements', homePage: '/bons' },
   { value: 'centraliste', label: 'Centraliste', description: 'Production & Stocks', homePage: '/production' },
   { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement', homePage: '/chauffeur' },
 ] as const;
