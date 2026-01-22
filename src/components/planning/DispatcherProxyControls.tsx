@@ -28,6 +28,7 @@ import {
   CheckCircle,
   AlertTriangle,
 } from 'lucide-react';
+import { ProofOfDeliveryModal } from '@/components/driver/ProofOfDeliveryModal';
 
 interface DispatcherProxyControlsProps {
   blId: string;
@@ -35,6 +36,7 @@ interface DispatcherProxyControlsProps {
   heureArrivee: string | null;
   heureRetour: string | null;
   workflowStatus: string;
+  clientName?: string;
   onUpdate: () => void;
 }
 
@@ -46,12 +48,15 @@ export function DispatcherProxyControls({
   heureArrivee,
   heureRetour,
   workflowStatus,
+  clientName = 'Client',
   onUpdate,
 }: DispatcherProxyControlsProps) {
   const [updating, setUpdating] = useState<StepKey | null>(null);
   const [manualTimeDialogOpen, setManualTimeDialogOpen] = useState(false);
   const [pendingStep, setPendingStep] = useState<StepKey | null>(null);
   const [manualTime, setManualTime] = useState('');
+  const [proofModalOpen, setProofModalOpen] = useState(false);
+  const [proofModalManualTime, setProofModalManualTime] = useState<string | null>(null);
 
   const isDelivered = ['livre', 'facture'].includes(workflowStatus);
 
@@ -67,6 +72,14 @@ export function DispatcherProxyControls({
   const activeStep = getActiveStep();
 
   const recordStep = async (step: StepKey, customTime?: string) => {
+    // For 'livre' step, open the Proof of Delivery modal instead
+    if (step === 'livre') {
+      setProofModalManualTime(customTime || null);
+      setProofModalOpen(true);
+      setManualTimeDialogOpen(false);
+      return;
+    }
+
     setUpdating(step);
     try {
       const timestamp = customTime 
@@ -81,12 +94,6 @@ export function DispatcherProxyControls({
           break;
         case 'arrivee':
           updateData = { heure_arrivee_chantier: timestamp };
-          break;
-        case 'livre':
-          updateData = { 
-            workflow_status: 'livre',
-            validated_at: timestamp,
-          };
           break;
         case 'retour':
           updateData = { heure_retour_centrale: timestamp };
@@ -119,6 +126,49 @@ export function DispatcherProxyControls({
       setManualTimeDialogOpen(false);
       setPendingStep(null);
       setManualTime('');
+    }
+  };
+
+  const handleProofComplete = async (proofData: {
+    photoUrl?: string;
+    signatureDataUrl: string;
+    signerName: string;
+    signedAt: string;
+  }) => {
+    setUpdating('livre');
+    try {
+      const timestamp = proofModalManualTime 
+        ? new Date(`${new Date().toISOString().split('T')[0]}T${proofModalManualTime}:00`).toISOString()
+        : proofData.signedAt;
+
+      const justificationParts = [
+        `Signé par: ${proofData.signerName}`,
+        proofData.photoUrl ? `Photo BL: ${proofData.photoUrl}` : 'Sans photo BL',
+        'Signature digitale capturée',
+        'Mode: Proxy Dispatch',
+      ];
+
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({ 
+          workflow_status: 'livre',
+          validated_at: timestamp,
+          justification_ecart: justificationParts.join(' | '),
+        })
+        .eq('bl_id', blId);
+
+      if (error) throw error;
+
+      toast.success('✅ Livraison confirmée & archivée (Proxy)', {
+        description: `Signé par ${proofData.signerName}`,
+      });
+      onUpdate();
+    } catch (error) {
+      console.error('Error completing delivery proof:', error);
+      toast.error("Erreur lors de l'enregistrement");
+    } finally {
+      setUpdating(null);
+      setProofModalManualTime(null);
     }
   };
 
@@ -229,21 +279,25 @@ export function DispatcherProxyControls({
                   <Icon className="h-4 w-4" />
                 )}
                 <span>{currentStep.label}</span>
-                <span className="text-xs opacity-75 ml-auto">Maintenant</span>
+                <span className="text-xs opacity-75 ml-auto">
+                  {activeStep === 'livre' ? 'Ouvrir modal' : 'Maintenant'}
+                </span>
               </Button>
 
-              {/* Manual Time Entry */}
-              <Button
-                size="sm"
-                variant="outline"
-                className="w-full gap-2 justify-start"
-                onClick={() => openManualTimeDialog(activeStep)}
-                disabled={updating !== null}
-              >
-                <Clock className="h-4 w-4" />
-                <span>{currentStep.label}</span>
-                <span className="text-xs text-muted-foreground ml-auto">Heure manuelle</span>
-              </Button>
+              {/* Manual Time Entry - Only for non-livre steps */}
+              {activeStep !== 'livre' && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full gap-2 justify-start"
+                  onClick={() => openManualTimeDialog(activeStep)}
+                  disabled={updating !== null}
+                >
+                  <Clock className="h-4 w-4" />
+                  <span>{currentStep.label}</span>
+                  <span className="text-xs text-muted-foreground ml-auto">Heure manuelle</span>
+                </Button>
+              )}
             </div>
 
             {/* Warning */}
@@ -314,6 +368,15 @@ export function DispatcherProxyControls({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Proof of Delivery Modal */}
+      <ProofOfDeliveryModal
+        open={proofModalOpen}
+        onOpenChange={setProofModalOpen}
+        blId={blId}
+        clientName={clientName}
+        onComplete={handleProofComplete}
+      />
     </>
   );
 }
