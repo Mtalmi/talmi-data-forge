@@ -6,7 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,22 +24,37 @@ import {
   AlertTriangle,
   CheckCircle,
   RefreshCw,
-  Calculator
+  Calculator,
+  Shield,
+  Lock,
+  FileCheck,
+  XCircle,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface SiloCheck {
+  silo_id: string;
+  materiau: string;
+  niveau_app: number;
+  niveau_physique: number;
+  variance: number;
+  variance_pct: number;
+}
+
 interface DocumentCheck {
   bl_id: string;
-  verified: boolean;
-  notes: string;
+  statut_document: 'present' | 'manquant';
+  signature_conforme: boolean;
 }
 
 interface TruckCheck {
   id_camion: string;
   chauffeur: string;
-  app_km: number;
-  physical_km: number;
+  km_app: number;
+  km_reel: number;
   variance: number;
+  anomaly: boolean;
 }
 
 export default function AuditExterne() {
@@ -45,20 +62,29 @@ export default function AuditExterne() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   
-  // Form state
-  const [siloAppLevel, setSiloAppLevel] = useState(0);
-  const [siloPhysicalLevel, setSiloPhysicalLevel] = useState(0);
+  // Section A: Silo Checks
+  const [siloChecks, setSiloChecks] = useState<SiloCheck[]>([]);
+  const [selectedSilo, setSelectedSilo] = useState<string>('');
+  
+  // Section B: Cash Audit
   const [cashAppAmount, setCashAppAmount] = useState(0);
   const [cashPhysicalAmount, setCashPhysicalAmount] = useState(0);
-  const [documentChecks, setDocumentChecks] = useState<DocumentCheck[]>([]);
-  const [truckChecks, setTruckChecks] = useState<TruckCheck[]>([]);
-  const [auditorNotes, setAuditorNotes] = useState('');
+  const [cashComment, setCashComment] = useState('');
   
-  // Calculated variances
-  const siloVariance = siloAppLevel - siloPhysicalLevel;
-  const siloVariancePct = siloAppLevel > 0 ? ((siloVariance / siloAppLevel) * 100).toFixed(2) : '0';
+  // Section C: Document Checks
+  const [documentChecks, setDocumentChecks] = useState<DocumentCheck[]>([]);
+  
+  // Section D: Truck Checks
+  const [truckChecks, setTruckChecks] = useState<TruckCheck[]>([]);
+  
+  // General
+  const [auditorNotes, setAuditorNotes] = useState('');
+  const [availableStocks, setAvailableStocks] = useState<{ materiau: string; quantite_actuelle: number }[]>([]);
+  
+  // Calculated values
   const cashVariance = cashAppAmount - cashPhysicalAmount;
-  const cashVariancePct = cashAppAmount > 0 ? ((cashVariance / cashAppAmount) * 100).toFixed(2) : '0';
+  const cashVariancePct = cashAppAmount > 0 ? (cashVariance / cashAppAmount) * 100 : 0;
+  const requiresCashComment = Math.abs(cashVariance) > 0 && !cashComment.trim();
   
   const currentPeriod = () => {
     const now = new Date();
@@ -67,7 +93,6 @@ export default function AuditExterne() {
     return day <= 15 ? `${month}-Q1` : `${month}-Q2`;
   };
 
-  // Fetch random BLs and Trucks for audit
   useEffect(() => {
     fetchAuditData();
   }, []);
@@ -75,23 +100,41 @@ export default function AuditExterne() {
   const fetchAuditData = async () => {
     setLoading(true);
     try {
-      // Fetch 5 random BLs from last 30 days
-      const thirtyDaysAgo = format(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
+      // Fetch stocks for silo selection
+      const { data: stockData } = await supabase
+        .from('stocks')
+        .select('materiau, quantite_actuelle')
+        .order('materiau');
+      
+      if (stockData) {
+        setAvailableStocks(stockData);
+        // Initialize silo checks with all materials
+        setSiloChecks(stockData.map(s => ({
+          silo_id: s.materiau,
+          materiau: s.materiau,
+          niveau_app: s.quantite_actuelle || 0,
+          niveau_physique: 0,
+          variance: 0,
+          variance_pct: 0,
+        })));
+      }
+
+      // Fetch 5 random BLs from last 15 days
+      const fifteenDaysAgo = format(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
       const { data: blData } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id')
-        .gte('date_livraison', thirtyDaysAgo)
-        .eq('workflow_status', 'livre')
+        .gte('date_livraison', fifteenDaysAgo)
+        .in('workflow_status', ['livre', 'facture'])
         .limit(50);
       
       if (blData && blData.length > 0) {
-        // Randomly select 5
         const shuffled = [...blData].sort(() => 0.5 - Math.random());
         const selected = shuffled.slice(0, 5);
         setDocumentChecks(selected.map(bl => ({
           bl_id: bl.bl_id,
-          verified: false,
-          notes: '',
+          statut_document: 'present',
+          signature_conforme: true,
         })));
       }
 
@@ -99,8 +142,7 @@ export default function AuditExterne() {
       const { data: truckData } = await supabase
         .from('flotte')
         .select('id_camion, chauffeur, km_compteur')
-        .eq('statut', 'Disponible')
-        .limit(10);
+        .limit(20);
       
       if (truckData && truckData.length > 0) {
         const shuffled = [...truckData].sort(() => 0.5 - Math.random());
@@ -108,28 +150,14 @@ export default function AuditExterne() {
         setTruckChecks(selected.map(t => ({
           id_camion: t.id_camion,
           chauffeur: t.chauffeur || 'N/A',
-          app_km: t.km_compteur || 0,
-          physical_km: 0,
+          km_app: t.km_compteur || 0,
+          km_reel: 0,
           variance: 0,
+          anomaly: false,
         })));
       }
 
-      // Estimate silo level from recent receptions (using type assertion)
-      const { data: stockData } = await (supabase
-        .from('reception_matieres' as any)
-        .select('quantite_tonnes')
-        .eq('materiau', 'Ciment')
-        .order('date_reception', { ascending: false })
-        .limit(1)
-        .single() as any);
-      
-      if (stockData) {
-        setSiloAppLevel(stockData.quantite_tonnes || 150);
-      } else {
-        setSiloAppLevel(150); // Default estimate for demo
-      }
-
-      // Fetch current cash from payments (approximation)
+      // Fetch current cash from Journal de Caisse (approximation from paid invoices)
       const { data: cashData } = await supabase
         .from('factures')
         .select('total_ttc')
@@ -149,23 +177,33 @@ export default function AuditExterne() {
     }
   };
 
-  const updateTruckKm = (index: number, physicalKm: number) => {
+  const updateSiloPhysical = (materiau: string, physicalValue: number) => {
+    setSiloChecks(prev => prev.map(s => {
+      if (s.materiau === materiau) {
+        const variance = physicalValue - s.niveau_app;
+        const variance_pct = s.niveau_app > 0 ? (variance / s.niveau_app) * 100 : 0;
+        return { ...s, niveau_physique: physicalValue, variance, variance_pct };
+      }
+      return s;
+    }));
+  };
+
+  const updateTruckKm = (index: number, kmReel: number) => {
     setTruckChecks(prev => prev.map((t, i) => {
       if (i === index) {
-        return {
-          ...t,
-          physical_km: physicalKm,
-          variance: t.app_km - physicalKm,
-        };
+        const variance = kmReel - t.km_app;
+        // Anomaly if physical km is LESS than app km (odometer tampering)
+        const anomaly = kmReel < t.km_app;
+        return { ...t, km_reel: kmReel, variance, anomaly };
       }
       return t;
     }));
   };
 
-  const toggleDocumentVerified = (index: number) => {
+  const updateDocumentStatus = (index: number, field: 'statut_document' | 'signature_conforme', value: any) => {
     setDocumentChecks(prev => prev.map((d, i) => {
       if (i === index) {
-        return { ...d, verified: !d.verified };
+        return { ...d, [field]: value };
       }
       return d;
     }));
@@ -174,31 +212,52 @@ export default function AuditExterne() {
   const handleSubmit = async () => {
     if (!user?.id) return;
     
+    // Validation
+    if (requiresCashComment) {
+      toast.error('Un commentaire est requis quand l\'écart de caisse n\'est pas zéro');
+      return;
+    }
+
+    const missingPhysicalSilo = siloChecks.some(s => s.niveau_physique === 0);
+    if (missingPhysicalSilo) {
+      toast.error('Veuillez saisir le niveau physique pour tous les silos');
+      return;
+    }
+
+    const missingTruckKm = truckChecks.some(t => t.km_reel === 0);
+    if (missingTruckKm) {
+      toast.error('Veuillez saisir le kilométrage réel pour tous les camions');
+      return;
+    }
+    
     setSubmitting(true);
     try {
-      const verifiedCount = documentChecks.filter(d => d.verified).length;
-      const missingCount = documentChecks.filter(d => !d.verified).length;
+      const verifiedCount = documentChecks.filter(d => d.statut_document === 'present').length;
+      const missingCount = documentChecks.filter(d => d.statut_document === 'manquant').length;
+      const truckAnomalyDetected = truckChecks.some(t => t.anomaly);
+      const maxSiloVariance = Math.max(...siloChecks.map(s => Math.abs(s.variance_pct)));
 
-      // Insert the audit record using type assertion for new table
-      const { data: auditData, error: insertError } = await (supabase
-        .from('audits_externes' as any)
+      // Insert the audit record - cast JSONB fields
+      const { data: auditData, error: insertError } = await supabase
+        .from('audits_externes')
         .insert([{
           audit_period: currentPeriod(),
-          silo_app_level_tonnes: siloAppLevel,
-          silo_physical_level_tonnes: siloPhysicalLevel,
+          silo_checks: JSON.parse(JSON.stringify(siloChecks)),
+          silo_variance_max_pct: maxSiloVariance,
           cash_app_amount: cashAppAmount,
           cash_physical_amount: cashPhysicalAmount,
-          document_checks: documentChecks,
+          cash_comment: cashComment,
+          document_checks: JSON.parse(JSON.stringify(documentChecks)),
           documents_verified_count: verifiedCount,
           documents_missing_count: missingCount,
-          truck_checks: truckChecks,
+          truck_checks: JSON.parse(JSON.stringify(truckChecks)),
+          truck_anomaly_detected: truckAnomalyDetected,
           auditor_id: user.id,
           auditor_notes: auditorNotes,
           status: 'submitted',
-          submitted_at: new Date().toISOString(),
         }])
         .select()
-        .single() as any);
+        .single();
 
       if (insertError) throw insertError;
 
@@ -207,19 +266,20 @@ export default function AuditExterne() {
         body: {
           auditId: auditData.id,
           auditPeriod: currentPeriod(),
-          siloAppLevel,
-          siloPhysicalLevel,
-          siloVariance,
-          siloVariancePct,
+          siloChecks,
+          maxSiloVariance,
           cashAppAmount,
           cashPhysicalAmount,
           cashVariance,
-          cashVariancePct,
+          cashVariancePct: cashVariancePct.toFixed(2),
+          cashComment,
           documentChecks,
           verifiedCount,
           missingCount,
           truckChecks,
+          truckAnomalyDetected,
           auditorNotes,
+          complianceScore: auditData.compliance_score,
           submittedAt: new Date().toISOString(),
         },
       });
@@ -228,14 +288,10 @@ export default function AuditExterne() {
         console.error('Email error:', emailError);
         toast.warning('Audit soumis mais erreur d\'envoi email');
       } else {
-        // Update the record to mark email as sent
-        await (supabase
-          .from('audits_externes' as any)
-          .update({ 
-            email_sent: true, 
-            email_sent_at: new Date().toISOString() 
-          })
-          .eq('id', auditData?.id) as any);
+        await supabase
+          .from('audits_externes')
+          .update({ email_sent: true, email_sent_at: new Date().toISOString() })
+          .eq('id', auditData.id);
       }
 
       toast.success('Audit soumis avec succès! Rapport envoyé au CEO.');
@@ -243,8 +299,8 @@ export default function AuditExterne() {
       // Reset form
       fetchAuditData();
       setAuditorNotes('');
-      setSiloPhysicalLevel(0);
       setCashPhysicalAmount(0);
+      setCashComment('');
 
     } catch (error) {
       console.error('Error submitting audit:', error);
@@ -254,14 +310,14 @@ export default function AuditExterne() {
     }
   };
 
-  const getVarianceBadge = (variance: number, pct: string) => {
-    const pctNum = parseFloat(pct);
-    if (Math.abs(pctNum) <= 2) {
-      return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30">OK ({pct}%)</Badge>;
-    } else if (Math.abs(pctNum) <= 5) {
-      return <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30">Attention ({pct}%)</Badge>;
+  const getVarianceBadge = (pct: number) => {
+    const absPct = Math.abs(pct);
+    if (absPct <= 2) {
+      return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 font-mono">✓ {pct.toFixed(1)}%</Badge>;
+    } else if (absPct <= 5) {
+      return <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/30 font-mono">⚠ {pct.toFixed(1)}%</Badge>;
     } else {
-      return <Badge className="bg-red-500/10 text-red-600 border-red-500/30">Critique ({pct}%)</Badge>;
+      return <Badge className="bg-red-500/10 text-red-600 border-red-500/30 font-mono">✗ {pct.toFixed(1)}%</Badge>;
     }
   };
 
@@ -269,12 +325,12 @@ export default function AuditExterne() {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-[60vh]">
-          <Card className="max-w-md">
+          <Card className="max-w-md border-2 border-destructive/20">
             <CardContent className="pt-6 text-center">
-              <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Accès Restreint</h2>
+              <Shield className="h-16 w-16 text-destructive/50 mx-auto mb-4" />
+              <h2 className="text-xl font-bold mb-2">Accès Restreint</h2>
               <p className="text-muted-foreground">
-                Cette page est réservée aux auditeurs externes et au CEO.
+                Ce portail est exclusivement réservé aux auditeurs externes accrédités.
               </p>
             </CardContent>
           </Card>
@@ -285,254 +341,397 @@ export default function AuditExterne() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <ClipboardCheck className="h-6 w-6 text-primary" />
-              Portail Audit Externe
-            </h1>
-            <p className="text-muted-foreground">
-              Audit Bi-Mensuel - Période: {currentPeriod()}
-            </p>
+      <div className="space-y-6 max-w-6xl mx-auto">
+        {/* Professional Header */}
+        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-6 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/10 rounded-lg">
+                <ClipboardCheck className="h-8 w-8" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">Portail Audit Externe</h1>
+                <p className="text-slate-300 text-sm">
+                  Audit Bi-Mensuel • Période: <span className="font-mono font-semibold">{currentPeriod()}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="border-white/30 text-white bg-white/10">
+                <Lock className="h-3 w-3 mr-1" />
+                Immutable après soumission
+              </Badge>
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={fetchAuditData} 
+                disabled={loading}
+              >
+                <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+                Rafraîchir
+              </Button>
+            </div>
           </div>
-          <Button variant="outline" onClick={fetchAuditData} disabled={loading}>
-            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-            Rafraîchir
-          </Button>
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <RefreshCw className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
-            <p className="mt-2 text-muted-foreground">Chargement des données d'audit...</p>
+          <div className="text-center py-16">
+            <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
+            <p className="mt-4 text-muted-foreground font-medium">Chargement des données d'audit...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Silo Verification */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Cylinder className="h-5 w-5 text-blue-500" />
-                  Vérification Silo Ciment
-                </CardTitle>
-                <CardDescription>Comparez le niveau système vs physique</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Niveau Système (tonnes)</Label>
-                    <Input 
-                      type="number" 
-                      value={siloAppLevel}
-                      onChange={(e) => setSiloAppLevel(parseFloat(e.target.value) || 0)}
-                      className="bg-muted"
-                    />
+          <div className="space-y-6">
+            {/* Section A: Silo Reconciliation */}
+            <Card className="border-2 border-blue-500/20">
+              <CardHeader className="bg-blue-500/5 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-500/10 rounded-lg">
+                    <Cylinder className="h-5 w-5 text-blue-600" />
                   </div>
-                  <div className="space-y-2">
-                    <Label>Niveau Physique (tonnes)</Label>
-                    <Input 
-                      type="number" 
-                      value={siloPhysicalLevel}
-                      onChange={(e) => setSiloPhysicalLevel(parseFloat(e.target.value) || 0)}
-                      placeholder="Entrez le niveau mesuré"
-                    />
+                  <div>
+                    <CardTitle className="text-lg">Section A: Réconciliation des Stocks (Silos)</CardTitle>
+                    <CardDescription>Comparez les niveaux système vs mesures physiques</CardDescription>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Calculator className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Écart:</span>
-                    <span className={cn(
-                      "font-semibold",
-                      Math.abs(siloVariance) > siloAppLevel * 0.05 ? "text-red-500" : "text-emerald-500"
-                    )}>
-                      {siloVariance.toFixed(2)} T
-                    </span>
-                  </div>
-                  {getVarianceBadge(siloVariance, siloVariancePct)}
+              </CardHeader>
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  {siloChecks.map((silo) => (
+                    <div 
+                      key={silo.materiau} 
+                      className={cn(
+                        "grid grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors",
+                        Math.abs(silo.variance_pct) > 5 
+                          ? "border-red-500/50 bg-red-500/5" 
+                          : "border-border bg-muted/30"
+                      )}
+                    >
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Silo</Label>
+                        <p className="font-semibold">{silo.materiau}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Niveau App</Label>
+                        <p className="font-mono text-lg">{silo.niveau_app.toFixed(1)}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Niveau Physique *</Label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={silo.niveau_physique || ''}
+                          onChange={(e) => updateSiloPhysical(silo.materiau, parseFloat(e.target.value) || 0)}
+                          placeholder="Mesure réelle"
+                          className="font-mono"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Écart</Label>
+                        <p className={cn(
+                          "font-mono text-lg font-semibold",
+                          Math.abs(silo.variance_pct) > 5 ? "text-red-600" : "text-emerald-600"
+                        )}>
+                          {silo.variance >= 0 ? '+' : ''}{silo.variance.toFixed(1)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        {silo.niveau_physique > 0 && getVarianceBadge(silo.variance_pct)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
 
-            {/* Cash Audit */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Coins className="h-5 w-5 text-emerald-500" />
-                  Audit Caisse
-                </CardTitle>
-                <CardDescription>Vérification encaissements période</CardDescription>
+            {/* Section B: Cash Audit */}
+            <Card className="border-2 border-emerald-500/20">
+              <CardHeader className="bg-emerald-500/5 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-500/10 rounded-lg">
+                    <Coins className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Section B: Audit de Caisse</CardTitle>
+                    <CardDescription>Vérification du solde Journal de Caisse vs comptage physique</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <Label>Montant Système (DH)</Label>
-                    <Input 
-                      type="number" 
-                      value={cashAppAmount}
-                      onChange={(e) => setCashAppAmount(parseFloat(e.target.value) || 0)}
-                      className="bg-muted"
-                    />
+                    <Label className="text-sm font-medium">Solde Caisse App (DH)</Label>
+                    <div className="p-4 bg-muted rounded-lg border">
+                      <p className="font-mono text-2xl font-semibold">{cashAppAmount.toLocaleString()}</p>
+                      <p className="text-xs text-muted-foreground mt-1">Lecture seule - Système</p>
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Montant Physique (DH)</Label>
-                    <Input 
-                      type="number" 
-                      value={cashPhysicalAmount}
+                    <Label className="text-sm font-medium">Comptage Physique (DH) *</Label>
+                    <Input
+                      type="number"
+                      value={cashPhysicalAmount || ''}
                       onChange={(e) => setCashPhysicalAmount(parseFloat(e.target.value) || 0)}
-                      placeholder="Entrez le montant compté"
+                      placeholder="Montant compté"
+                      className="font-mono text-lg h-14"
                     />
                   </div>
-                </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Calculator className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">Écart:</span>
-                    <span className={cn(
-                      "font-semibold",
-                      Math.abs(cashVariance) > cashAppAmount * 0.02 ? "text-red-500" : "text-emerald-500"
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Écart Caisse</Label>
+                    <div className={cn(
+                      "p-4 rounded-lg border-2",
+                      Math.abs(cashVariancePct) > 5 
+                        ? "bg-red-500/10 border-red-500/50" 
+                        : cashVariance === 0 
+                          ? "bg-emerald-500/10 border-emerald-500/50"
+                          : "bg-amber-500/10 border-amber-500/50"
                     )}>
-                      {cashVariance.toLocaleString()} DH
-                    </span>
+                      <p className={cn(
+                        "font-mono text-2xl font-semibold",
+                        cashVariance === 0 ? "text-emerald-600" : 
+                        Math.abs(cashVariancePct) > 5 ? "text-red-600" : "text-amber-600"
+                      )}>
+                        {cashVariance >= 0 ? '+' : ''}{cashVariance.toLocaleString()} DH
+                      </p>
+                      <p className="text-xs mt-1">{cashVariancePct.toFixed(2)}%</p>
+                    </div>
                   </div>
-                  {getVarianceBadge(cashVariance, cashVariancePct)}
                 </div>
+                
+                {Math.abs(cashVariance) > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <Label className={cn(
+                      "text-sm font-medium",
+                      requiresCashComment && "text-red-600"
+                    )}>
+                      Commentaire obligatoire (écart ≠ 0) *
+                    </Label>
+                    <Textarea
+                      value={cashComment}
+                      onChange={(e) => setCashComment(e.target.value)}
+                      placeholder="Expliquez l'écart constaté..."
+                      className={cn(requiresCashComment && "border-red-500")}
+                      rows={3}
+                    />
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* Document Check */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-amber-500" />
-                  Vérification Documents
-                </CardTitle>
-                <CardDescription>5 BL sélectionnés aléatoirement</CardDescription>
+            {/* Section C: Document Spot-Check */}
+            <Card className="border-2 border-amber-500/20">
+              <CardHeader className="bg-amber-500/5 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-amber-500/10 rounded-lg">
+                    <FileText className="h-5 w-5 text-amber-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Section C: Contrôle Documentaire (Spot-Check)</CardTitle>
+                    <CardDescription>5 BL sélectionnés aléatoirement des 15 derniers jours</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-3">
+                  <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-muted/50 rounded-lg text-sm font-medium text-muted-foreground">
+                    <span>Référence BL</span>
+                    <span>Statut Document</span>
+                    <span>Signature Conforme</span>
+                    <span className="text-right">Verdict</span>
+                  </div>
                   {documentChecks.map((doc, index) => (
                     <div 
                       key={doc.bl_id}
                       className={cn(
-                        "flex items-center justify-between p-3 rounded-lg border",
-                        doc.verified 
-                          ? "bg-emerald-500/5 border-emerald-500/30" 
-                          : "bg-muted/30"
+                        "grid grid-cols-4 gap-4 items-center p-4 rounded-lg border-2 transition-all",
+                        doc.statut_document === 'present' && doc.signature_conforme
+                          ? "border-emerald-500/30 bg-emerald-500/5" 
+                          : "border-red-500/30 bg-red-500/5"
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        <Checkbox
-                          checked={doc.verified}
-                          onCheckedChange={() => toggleDocumentVerified(index)}
-                        />
-                        <span className="font-mono text-sm">{doc.bl_id}</span>
+                      <div className="font-mono font-semibold">{doc.bl_id}</div>
+                      <div>
+                        <Select
+                          value={doc.statut_document}
+                          onValueChange={(v) => updateDocumentStatus(index, 'statut_document', v)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="present">
+                              <span className="flex items-center gap-2">
+                                <FileCheck className="h-4 w-4 text-emerald-600" />
+                                Présent
+                              </span>
+                            </SelectItem>
+                            <SelectItem value="manquant">
+                              <span className="flex items-center gap-2">
+                                <XCircle className="h-4 w-4 text-red-600" />
+                                Manquant
+                              </span>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <Badge variant={doc.verified ? "default" : "secondary"}>
-                        {doc.verified ? (
-                          <span className="flex items-center gap-1">
-                            <CheckCircle className="h-3 w-3" />
-                            Vérifié
-                          </span>
+                      <div className="flex items-center gap-3">
+                        <Switch
+                          checked={doc.signature_conforme}
+                          onCheckedChange={(v) => updateDocumentStatus(index, 'signature_conforme', v)}
+                        />
+                        <span className="text-sm">
+                          {doc.signature_conforme ? 'Oui' : 'Non'}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        {doc.statut_document === 'present' && doc.signature_conforme ? (
+                          <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Conforme
+                          </Badge>
                         ) : (
-                          'À vérifier'
+                          <Badge className="bg-red-500/10 text-red-600 border-red-500/30">
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Non-conforme
+                          </Badge>
                         )}
-                      </Badge>
+                      </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 flex items-center gap-4 text-sm">
-                  <span className="text-emerald-600">
-                    ✓ {documentChecks.filter(d => d.verified).length} vérifiés
+                <div className="mt-4 flex items-center gap-6 text-sm font-medium">
+                  <span className="text-emerald-600 flex items-center gap-1">
+                    <CheckCircle className="h-4 w-4" />
+                    {documentChecks.filter(d => d.statut_document === 'present' && d.signature_conforme).length} conformes
                   </span>
-                  <span className="text-red-500">
-                    ✗ {documentChecks.filter(d => !d.verified).length} manquants
+                  <span className="text-red-600 flex items-center gap-1">
+                    <XCircle className="h-4 w-4" />
+                    {documentChecks.filter(d => d.statut_document === 'manquant' || !d.signature_conforme).length} non-conformes
                   </span>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Truck Odometer Check */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Truck className="h-5 w-5 text-violet-500" />
-                  Vérification Compteurs Camions
-                </CardTitle>
-                <CardDescription>2 camions sélectionnés aléatoirement</CardDescription>
+            {/* Section D: Truck Odometer Check */}
+            <Card className="border-2 border-violet-500/20">
+              <CardHeader className="bg-violet-500/5 border-b">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-violet-500/10 rounded-lg">
+                    <Truck className="h-5 w-5 text-violet-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Section D: Audit Logistique (Compteurs)</CardTitle>
+                    <CardDescription>2 camions sélectionnés aléatoirement - Vérification odomètre</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="space-y-4">
                   {truckChecks.map((truck, index) => (
-                    <div key={truck.id_camion} className="p-3 rounded-lg border bg-muted/30">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <span className="font-semibold">{truck.id_camion}</span>
-                          <span className="text-sm text-muted-foreground ml-2">({truck.chauffeur})</span>
-                        </div>
-                        {truck.physical_km > 0 && (
-                          <Badge variant={Math.abs(truck.variance) > 100 ? "destructive" : "secondary"}>
-                            Écart: {truck.variance} km
-                          </Badge>
-                        )}
+                    <div 
+                      key={truck.id_camion}
+                      className={cn(
+                        "grid grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors",
+                        truck.anomaly 
+                          ? "border-red-500/50 bg-red-500/5" 
+                          : "border-border bg-muted/30"
+                      )}
+                    >
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Camion</Label>
+                        <p className="font-semibold">{truck.id_camion}</p>
+                        <p className="text-xs text-muted-foreground">{truck.chauffeur}</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs">KM Système</Label>
-                          <Input 
-                            type="number" 
-                            value={truck.app_km}
-                            disabled
-                            className="bg-muted h-9"
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs">KM Physique</Label>
-                          <Input 
-                            type="number" 
-                            value={truck.physical_km || ''}
-                            onChange={(e) => updateTruckKm(index, parseFloat(e.target.value) || 0)}
-                            placeholder="Compteur actuel"
-                            className="h-9"
-                          />
-                        </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">KM App</Label>
+                        <p className="font-mono text-lg">{truck.km_app.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">KM Réel (Odomètre) *</Label>
+                        <Input
+                          type="number"
+                          value={truck.km_reel || ''}
+                          onChange={(e) => updateTruckKm(index, parseFloat(e.target.value) || 0)}
+                          placeholder="Relevé compteur"
+                          className="font-mono"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground">Écart</Label>
+                        <p className={cn(
+                          "font-mono text-lg font-semibold",
+                          truck.anomaly ? "text-red-600" : "text-emerald-600"
+                        )}>
+                          {truck.variance >= 0 ? '+' : ''}{truck.variance.toLocaleString()} km
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        {truck.km_reel > 0 && (
+                          truck.anomaly ? (
+                            <Badge className="bg-red-500/10 text-red-600 border-red-500/30">
+                              <AlertTriangle className="h-3 w-3 mr-1" />
+                              ANOMALIE
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              OK
+                            </Badge>
+                          )
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
+                {truckChecks.some(t => t.anomaly) && (
+                  <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                    <p className="text-red-700 font-medium flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5" />
+                      ALERTE: Anomalie détectée - KM réel inférieur au KM système (manipulation possible)
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
             {/* Auditor Notes & Submit */}
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle>Notes & Observations</CardTitle>
+            <Card className="border-2">
+              <CardHeader className="border-b">
+                <CardTitle className="text-lg">Notes de l'Auditeur</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="pt-6 space-y-6">
                 <Textarea
                   value={auditorNotes}
                   onChange={(e) => setAuditorNotes(e.target.value)}
-                  placeholder="Ajoutez vos observations, anomalies constatées, recommandations..."
+                  placeholder="Observations générales, recommandations, points d'attention..."
                   rows={4}
                 />
+                
+                <Separator />
+                
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    Le rapport sera envoyé automatiquement à max.talmi@gmail.com
+                    <p className="flex items-center gap-2">
+                      <Lock className="h-4 w-4" />
+                      Une fois soumis, cet audit sera verrouillé et ne pourra plus être modifié.
+                    </p>
                   </div>
                   <Button 
-                    size="lg" 
+                    size="lg"
                     onClick={handleSubmit}
-                    disabled={submitting}
-                    className="gap-2"
+                    disabled={submitting || requiresCashComment}
+                    className="min-w-[200px]"
                   >
                     {submitting ? (
-                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      <>
+                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                        Envoi en cours...
+                      </>
                     ) : (
-                      <Send className="h-4 w-4" />
+                      <>
+                        <Send className="h-5 w-5 mr-2" />
+                        Soumettre l'Audit
+                      </>
                     )}
-                    Soumettre l'Audit
                   </Button>
                 </div>
               </CardContent>

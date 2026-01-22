@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ClipboardCheck, TrendingUp, TrendingDown, RefreshCw, AlertTriangle } from 'lucide-react';
+import { ClipboardCheck, TrendingUp, TrendingDown, RefreshCw, AlertTriangle, Shield, Award } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -12,12 +12,14 @@ import { cn } from '@/lib/utils';
 
 interface AuditRecord {
   id: string;
-  audit_date: string;
   audit_period: string;
-  silo_variance_pct: number;
+  compliance_score: number;
+  silo_variance_max_pct: number;
   cash_variance_pct: number;
   documents_verified_count: number;
   documents_missing_count: number;
+  truck_anomaly_detected: boolean;
+  submitted_at: string;
   status: string;
 }
 
@@ -35,15 +37,15 @@ export function AuditHistoryChart() {
   const fetchAudits = async () => {
     setLoading(true);
     try {
-      const { data, error } = await (supabase
-        .from('audits_externes' as any)
-        .select('id, audit_date, audit_period, silo_variance_pct, cash_variance_pct, documents_verified_count, documents_missing_count, status')
+      const { data, error } = await supabase
+        .from('audits_externes')
+        .select('id, audit_period, compliance_score, silo_variance_max_pct, cash_variance_pct, documents_verified_count, documents_missing_count, truck_anomaly_detected, submitted_at, status')
         .eq('status', 'submitted')
-        .order('audit_date', { ascending: true })
-        .limit(12) as any);
+        .order('submitted_at', { ascending: true })
+        .limit(12);
 
       if (error) throw error;
-      setAudits(data || []);
+      setAudits((data as AuditRecord[]) || []);
     } catch (error) {
       console.error('Error fetching audits:', error);
     } finally {
@@ -56,39 +58,48 @@ export function AuditHistoryChart() {
   // Transform data for chart
   const chartData = audits.map(a => ({
     period: a.audit_period,
-    siloVariance: Math.abs(a.silo_variance_pct || 0),
+    score: a.compliance_score || 0,
+    siloVariance: Math.abs(a.silo_variance_max_pct || 0),
     cashVariance: Math.abs(a.cash_variance_pct || 0),
-    docsVerified: a.documents_verified_count,
-    docsMissing: a.documents_missing_count,
   }));
 
-  // Calculate averages
-  const avgSiloVariance = audits.length > 0 
-    ? (audits.reduce((sum, a) => sum + Math.abs(a.silo_variance_pct || 0), 0) / audits.length).toFixed(2)
-    : '0';
-  const avgCashVariance = audits.length > 0 
-    ? (audits.reduce((sum, a) => sum + Math.abs(a.cash_variance_pct || 0), 0) / audits.length).toFixed(2)
-    : '0';
+  // Calculate averages from last 3 audits
+  const last3Audits = audits.slice(-3);
+  const avgScore = last3Audits.length > 0 
+    ? (last3Audits.reduce((sum, a) => sum + (a.compliance_score || 0), 0) / last3Audits.length)
+    : 0;
 
-  // Trend analysis
   const latestAudit = audits[audits.length - 1];
   const previousAudit = audits[audits.length - 2];
-  const siloTrend = latestAudit && previousAudit 
-    ? (Math.abs(latestAudit.silo_variance_pct) - Math.abs(previousAudit.silo_variance_pct))
-    : 0;
-  const cashTrend = latestAudit && previousAudit 
-    ? (Math.abs(latestAudit.cash_variance_pct) - Math.abs(previousAudit.cash_variance_pct))
+  const scoreTrend = latestAudit && previousAudit 
+    ? (latestAudit.compliance_score || 0) - (previousAudit.compliance_score || 0)
     : 0;
 
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-emerald-600';
+    if (score >= 70) return 'text-amber-600';
+    return 'text-red-600';
+  };
+
+  const getScoreGrade = (score: number) => {
+    if (score >= 90) return 'A';
+    if (score >= 80) return 'B';
+    if (score >= 70) return 'C';
+    if (score >= 60) return 'D';
+    return 'F';
+  };
+
   return (
-    <Card className="border-primary/20">
-      <CardHeader className="pb-2">
+    <Card className="border-2 border-primary/20">
+      <CardHeader className="pb-2 bg-primary/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ClipboardCheck className="h-5 w-5 text-primary" />
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Shield className="h-5 w-5 text-primary" />
+            </div>
             <div>
-              <CardTitle className="text-lg">Historique Audits Externes</CardTitle>
-              <CardDescription>Tendance des écarts bi-mensuels</CardDescription>
+              <CardTitle className="text-lg">Score de Conformité</CardTitle>
+              <CardDescription>Moyenne des 3 derniers audits externes</CardDescription>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={fetchAudits}>
@@ -96,109 +107,104 @@ export function AuditHistoryChart() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         {loading ? (
           <div className="h-[200px] flex items-center justify-center">
             <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : audits.length === 0 ? (
           <div className="h-[200px] flex flex-col items-center justify-center text-muted-foreground">
-            <ClipboardCheck className="h-8 w-8 mb-2 opacity-50" />
-            <p>Aucun audit soumis</p>
+            <ClipboardCheck className="h-10 w-10 mb-3 opacity-50" />
+            <p className="font-medium">Aucun audit soumis</p>
+            <p className="text-sm">Les audits bi-mensuels apparaîtront ici</p>
           </div>
         ) : (
           <>
-            {/* Summary Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">Moy. Écart Silo</p>
-                <p className="text-lg font-bold">{avgSiloVariance}%</p>
-                <div className="flex items-center gap-1 text-xs">
-                  {siloTrend > 0 ? (
-                    <TrendingUp className="h-3 w-3 text-red-500" />
-                  ) : (
-                    <TrendingDown className="h-3 w-3 text-emerald-500" />
-                  )}
-                  <span className={siloTrend > 0 ? 'text-red-500' : 'text-emerald-500'}>
-                    {siloTrend > 0 ? '+' : ''}{siloTrend.toFixed(1)}%
-                  </span>
+            {/* Compliance Score Summary */}
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl mb-4">
+              <div>
+                <p className="text-sm text-slate-300 mb-1">Score Moyen (3 derniers)</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold">{avgScore.toFixed(0)}</span>
+                  <span className="text-lg text-slate-400">/ 100</span>
                 </div>
               </div>
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">Moy. Écart Caisse</p>
-                <p className="text-lg font-bold">{avgCashVariance}%</p>
-                <div className="flex items-center gap-1 text-xs">
-                  {cashTrend > 0 ? (
-                    <TrendingUp className="h-3 w-3 text-red-500" />
-                  ) : (
-                    <TrendingDown className="h-3 w-3 text-emerald-500" />
-                  )}
-                  <span className={cashTrend > 0 ? 'text-red-500' : 'text-emerald-500'}>
-                    {cashTrend > 0 ? '+' : ''}{cashTrend.toFixed(1)}%
-                  </span>
+              <div className="text-center">
+                <div className={cn(
+                  "text-5xl font-black",
+                  avgScore >= 90 ? "text-emerald-400" : avgScore >= 70 ? "text-amber-400" : "text-red-400"
+                )}>
+                  {getScoreGrade(avgScore)}
                 </div>
+                <p className="text-xs text-slate-400 mt-1">Grade</p>
               </div>
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">Total Audits</p>
+              <div className="flex items-center gap-2">
+                {scoreTrend >= 0 ? (
+                  <TrendingUp className="h-5 w-5 text-emerald-400" />
+                ) : (
+                  <TrendingDown className="h-5 w-5 text-red-400" />
+                )}
+                <span className={scoreTrend >= 0 ? "text-emerald-400" : "text-red-400"}>
+                  {scoreTrend >= 0 ? '+' : ''}{scoreTrend.toFixed(0)} pts
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="p-2 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground">Audits</p>
                 <p className="text-lg font-bold">{audits.length}</p>
               </div>
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">Dernier Audit</p>
-                <p className="text-sm font-medium">
-                  {latestAudit ? format(new Date(latestAudit.audit_date), 'dd MMM', { locale: fr }) : '-'}
+              <div className="p-2 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground">Dernier</p>
+                <p className={cn("text-lg font-bold", getScoreColor(latestAudit?.compliance_score || 0))}>
+                  {latestAudit?.compliance_score?.toFixed(0) || '—'}
+                </p>
+              </div>
+              <div className="p-2 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground">Écart Max</p>
+                <p className="text-lg font-bold">{(latestAudit?.silo_variance_max_pct || 0).toFixed(1)}%</p>
+              </div>
+              <div className="p-2 bg-muted/50 rounded-lg text-center">
+                <p className="text-xs text-muted-foreground">Anomalies</p>
+                <p className="text-lg font-bold">
+                  {audits.filter(a => a.truck_anomaly_detected).length}
                 </p>
               </div>
             </div>
 
-            {/* Variance Trend Chart */}
-            <div className="h-[200px]">
+            {/* Trend Chart */}
+            <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis 
-                    dataKey="period" 
-                    tick={{ fontSize: 10 }}
-                    className="text-muted-foreground"
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 10 }}
-                    className="text-muted-foreground"
-                    unit="%"
-                  />
+                  <XAxis dataKey="period" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} domain={[0, 100]} />
                   <Tooltip 
                     contentStyle={{ 
                       backgroundColor: 'hsl(var(--background))', 
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`${value.toFixed(2)}%`, '']}
                   />
-                  <Legend />
                   <Line 
                     type="monotone" 
-                    dataKey="siloVariance" 
-                    name="Écart Silo" 
+                    dataKey="score" 
+                    name="Score Compliance" 
                     stroke="hsl(var(--primary))" 
-                    strokeWidth={2}
-                    dot={{ fill: 'hsl(var(--primary))' }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="cashVariance" 
-                    name="Écart Caisse" 
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    dot={{ fill: '#10b981' }}
+                    strokeWidth={3}
+                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Alert for high variance */}
-            {latestAudit && (Math.abs(latestAudit.silo_variance_pct) > 5 || Math.abs(latestAudit.cash_variance_pct) > 3) && (
-              <div className="mt-3 p-2 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 text-sm text-red-600">
+            {/* Alert for low score */}
+            {latestAudit && latestAudit.compliance_score < 70 && (
+              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 text-sm text-red-600">
                 <AlertTriangle className="h-4 w-4" />
-                <span>Écart élevé détecté dans le dernier audit</span>
+                <span className="font-medium">Score de conformité critique - Action requise</span>
               </div>
             )}
           </>
