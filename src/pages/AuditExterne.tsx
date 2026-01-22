@@ -342,30 +342,31 @@ export default function AuditExterne() {
   return (
     <MainLayout>
       <div className="space-y-6 max-w-6xl mx-auto">
-        {/* Professional Header */}
-        <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-6 shadow-lg">
-          <div className="flex items-center justify-between">
+        {/* Professional Header with Glassmorphism */}
+        <div className="glass-premium p-6 shadow-lg">
+          <div className="relative z-10 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/10 rounded-lg">
-                <ClipboardCheck className="h-8 w-8" />
+              <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <ClipboardCheck className="h-8 w-8 text-primary" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight">Portail Audit Externe</h1>
-                <p className="text-slate-300 text-sm">
-                  Audit Bi-Mensuel • Période: <span className="font-mono font-semibold">{currentPeriod()}</span>
+                <p className="text-muted-foreground text-sm">
+                  Audit Bi-Mensuel • Période: <span className="font-mono font-semibold text-primary">{currentPeriod()}</span>
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="border-white/30 text-white bg-white/10">
+              <Badge variant="outline" className="border-warning/30 text-warning bg-warning/10">
                 <Lock className="h-3 w-3 mr-1" />
                 Immutable après soumission
               </Badge>
               <Button 
-                variant="secondary" 
+                variant="outline" 
                 size="sm"
                 onClick={fetchAuditData} 
                 disabled={loading}
+                className="glass-card"
               >
                 <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
                 Rafraîchir
