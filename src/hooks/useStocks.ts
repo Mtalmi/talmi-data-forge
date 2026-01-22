@@ -283,17 +283,30 @@ export function useStocks() {
 
         if (moveError) throw moveError;
 
-        // Create alert if stock is low
+        // Create alert if stock is low and trigger email notification
         if (quantiteApres <= stock.seuil_alerte) {
-          await supabase.from('alertes_systeme').insert({
+          const alertLevel = quantiteApres <= stock.seuil_alerte / 2 ? 'critical' : 'warning';
+          
+          const { data: alertData } = await supabase.from('alertes_systeme').insert({
             type_alerte: 'stock_critique',
-            niveau: quantiteApres <= stock.seuil_alerte / 2 ? 'critical' : 'warning',
+            niveau: alertLevel,
             titre: 'Stock Critique',
             message: `${stock.materiau}: ${quantiteApres.toFixed(0)} ${stock.unite} restant(s) (seuil: ${stock.seuil_alerte})`,
             reference_id: stock.id,
             reference_table: 'stocks',
             destinataire_role: 'ceo',
-          });
+          }).select('id').single();
+
+          // Trigger email notification to Procurement Manager
+          if (alertData?.id) {
+            try {
+              await supabase.functions.invoke('notify-stock-critique', {
+                body: { alert_id: alertData.id }
+              });
+            } catch (emailError) {
+              console.error('Failed to send stock alert email:', emailError);
+            }
+          }
         }
       }
 

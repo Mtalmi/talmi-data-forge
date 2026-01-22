@@ -553,21 +553,11 @@ export default function Production() {
 
       if (saveError) throw saveError;
 
-      // Deduct stock consumption using real machine data when available
-      const consumption = [
-        { materiau: 'ciment', quantite: editValues.ciment_reel_kg / 1000 }, // Convert kg to tonnes
-        { materiau: 'adjuvant', quantite: editValues.adjuvant_reel_l },
-        { materiau: 'eau', quantite: editValues.eau_reel_l / 1000 }, // Convert L to m³
-        // Use real sable/gravette if synced from machine, otherwise use theoretical
-        { materiau: 'sable', quantite: editValues.sable_reel_kg 
-          ? editValues.sable_reel_kg / 1600 // kg to m³ 
-          : (selectedFormule.sable_m3 || 0.4) * selectedBon.volume_m3 },
-        { materiau: 'gravette', quantite: editValues.gravette_reel_kg 
-          ? editValues.gravette_reel_kg / 1500 // kg to m³
-          : (selectedFormule.gravette_m3 || 0.8) * selectedBon.volume_m3 },
-      ].filter(c => c.quantite > 0);
-
-      await deductConsumption(selectedBon.bl_id, consumption);
+      // NOTE: Stock deduction is handled automatically by database trigger (trigger_deduct_stock_on_production)
+      // when workflow_status transitions from 'production' to 'validation_technique'.
+      // This ensures single source of truth and prevents double deduction.
+      // The trigger uses the real consumption values (ciment_reel_kg, adjuvant_reel_l, eau_reel_l)
+      // that were just saved to the BL record above.
 
       // Create alert if there are deviations
       if (deviations.length > 0) {
