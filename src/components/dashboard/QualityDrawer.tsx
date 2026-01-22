@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Drawer,
@@ -44,7 +44,8 @@ interface LabTest {
   formule_id: string | null;
 }
 
-export function QualityDrawer({ open, onOpenChange }: QualityDrawerProps) {
+export const QualityDrawer = forwardRef<HTMLDivElement, QualityDrawerProps>(
+  function QualityDrawer({ open, onOpenChange }, ref) {
   const navigate = useNavigate();
   const [tests, setTests] = useState<LabTest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -314,4 +315,6 @@ export function QualityDrawer({ open, onOpenChange }: QualityDrawerProps) {
       </DrawerContent>
     </Drawer>
   );
-}
+});
+
+QualityDrawer.displayName = 'QualityDrawer';
