@@ -713,10 +713,32 @@
   /* ===== TOUCH TARGET UTILITIES ===== */
   .touch-target {
     @apply min-h-[48px] min-w-[48px];
+    @apply flex items-center justify-center;
   }
 
   .touch-target-lg {
     @apply min-h-[56px] min-w-[56px];
+    @apply flex items-center justify-center;
+  }
+
+  .touch-target-xl {
+    @apply min-h-[64px] min-w-[64px];
+    @apply flex items-center justify-center;
+  }
+
+  /* Apply touch targets to all interactive elements on mobile */
+  @media (max-width: 768px) {
+    button:not(.no-touch-target),
+    [role="button"]:not(.no-touch-target) {
+      min-height: 44px;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+      min-height: 48px;
+      font-size: 16px; /* Prevents iOS zoom */
+    }
   }
 
   /* ===== OLED-OPTIMIZED DARK THEME ===== */
@@ -782,9 +804,47 @@
 
   .btn-mobile-glow {
     @apply btn-mobile;
+    @apply min-h-[56px] px-6;
     @apply bg-gradient-to-r from-primary to-primary/80;
-    @apply text-primary-foreground;
+    @apply text-primary-foreground font-bold;
     animation: pulse-glow 2s ease-in-out infinite;
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.4), 0 8px 24px hsl(var(--primary) / 0.3);
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { 
+      box-shadow: 0 0 30px hsl(var(--primary) / 0.4), 0 8px 24px hsl(var(--primary) / 0.3);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.6), 0 12px 32px hsl(var(--primary) / 0.4);
+      transform: scale(1.02);
+    }
+  }
+
+  /* ===== PREMIUM INPUT FIELDS ===== */
+  .input-mobile {
+    @apply min-h-[48px] text-base px-4;
+    @apply rounded-xl border-2 border-border/50;
+    @apply focus:border-primary focus:ring-2 focus:ring-primary/20;
+    @apply transition-all duration-200;
+  }
+
+  /* ===== TABLET MASTER-DETAIL ===== */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .master-detail-tablet {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+  }
+
+  /* ===== PREMIUM CARD HOVER ===== */
+  .card-interactive {
+    @apply transition-all duration-200;
+    @apply hover:shadow-lg hover:shadow-primary/5;
+    @apply hover:border-primary/30;
+    @apply active:scale-[0.98];
   }
 
   /* ===== FULLSCREEN MODAL FOR MOBILE ===== */

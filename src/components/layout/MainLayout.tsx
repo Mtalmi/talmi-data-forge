@@ -65,7 +65,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
             <NotificationCenter />
           </div>
         </div>
-        <div className="p-3 sm:p-4 lg:p-6 min-w-0 mobile-content">{children}</div>
+        <div className="p-3 sm:p-4 lg:p-6 min-w-0 mobile-content safe-area-bottom">{children}</div>
       </main>
 
       {/* Quick Action FAB for employees */}
