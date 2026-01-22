@@ -369,10 +369,11 @@ export function useFlotte() {
     }
   }, [vehicules, incidents, calculateProviderStats]);
 
-  // Set up realtime subscription for delivery updates
+  // Set up realtime subscription for delivery AND fleet updates
   useEffect(() => {
-    const channel = supabase
-      .channel('flotte-deliveries')
+    // Realtime subscription for BL changes
+    const blChannel = supabase
+      .channel('flotte-deliveries-realtime')
       .on(
         'postgres_changes',
         {
@@ -381,16 +382,40 @@ export function useFlotte() {
           table: 'bons_livraison_reels',
         },
         () => {
-          // Refetch active deliveries when any BL changes
           fetchActiveDeliveries();
+          fetchVehicules();
         }
       )
       .subscribe();
 
+    // Realtime subscription for fleet status changes
+    const flotteChannel = supabase
+      .channel('flotte-status-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'flotte',
+        },
+        () => {
+          fetchVehicules();
+        }
+      )
+      .subscribe();
+
+    // Backup polling every 30 seconds for guaranteed sync
+    const pollInterval = setInterval(() => {
+      fetchVehicules();
+      fetchActiveDeliveries();
+    }, 30000);
+
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(blChannel);
+      supabase.removeChannel(flotteChannel);
+      clearInterval(pollInterval);
     };
-  }, [fetchActiveDeliveries]);
+  }, [fetchActiveDeliveries, fetchVehicules]);
 
   return {
     vehicules,
