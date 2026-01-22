@@ -112,8 +112,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // Responsable Technique - lab & quality ONLY
     responsable_technique: ['/laboratoire', '/formules'],
     
-    // Agent Administratif - billing & client admin ONLY
-    agent_administratif: ['/bons', '/clients', '/depenses'],
+    // Agent Administratif - PRIMARY OWNER of Planning & Dispatch + billing & client admin
+    agent_administratif: ['/', '/planning', '/bons', '/clients', '/depenses'],
     
     // Centraliste - plant operations (production + stocks + maintenance)
     centraliste: ['/production', '/stocks', '/maintenance'],
