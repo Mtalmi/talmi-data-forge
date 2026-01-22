@@ -57,7 +57,7 @@ const steps: Step[] = [
   { key: 'depart', label: 'Départ', sublabel: 'Quitter la centrale', icon: Play, color: 'primary' },
   { key: 'arrivee', label: 'Arrivée', sublabel: 'Sur le chantier', icon: MapPin, color: 'warning' },
   { key: 'signe', label: 'Signé', sublabel: 'Preuve de livraison', icon: FileCheck, color: 'success' },
-  { key: 'retour', label: 'Retour', sublabel: 'Centrale & libérer camion', icon: Home, color: 'primary' },
+  { key: 'retour', label: 'Retour', sublabel: 'KM + Carburant + Libérer', icon: Home, color: 'primary' },
 ];
 
 export function RotationStepperModal({
@@ -352,7 +352,7 @@ export function RotationStepperModal({
 
   return (
     <>
-      <Dialog open={open && !proofModalOpen} onOpenChange={onOpenChange}>
+      <Dialog open={open && !proofModalOpen && !retourFormOpen} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
