@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFlotte } from '@/hooks/useFlotte';
 import { ProviderLeaderboard } from '@/components/logistics/ProviderLeaderboard';
 import { FuelEntryForm } from '@/components/logistics/FuelEntryForm';
-import { RotationJournal } from '@/components/logistics/RotationJournal';
+import RotationJournal from '@/components/logistics/RotationJournal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

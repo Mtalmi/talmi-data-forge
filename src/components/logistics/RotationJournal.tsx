@@ -57,7 +57,7 @@ interface FuelEntry {
   created_at: string;
 }
 
-export const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
+const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
   const [rotations, setRotations] = useState<RotationEntry[]>([]);
   const [truckAverages, setTruckAverages] = useState<Map<string, number>>(new Map());
   const [truckDrivers, setTruckDrivers] = useState<Map<string, string>>(new Map());
@@ -518,3 +518,5 @@ export const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
 });
 
 RotationJournal.displayName = 'RotationJournal';
+
+export default RotationJournal;
