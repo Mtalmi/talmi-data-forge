@@ -33,7 +33,8 @@ import {
   Eye,
   Receipt,
   Phone,
-  Lock
+  Lock,
+  Shield
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -55,6 +56,7 @@ import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
 import { FleetPanel } from '@/components/planning/FleetPanel';
 import { DispatcherProxyControls } from '@/components/planning/DispatcherProxyControls';
 import { CeoApprovalCodeDialog } from '@/components/planning/CeoApprovalCodeDialog';
+import { CeoCodeRequestDialog } from '@/components/planning/CeoCodeRequestDialog';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
 import { useAuth } from '@/hooks/useAuth';
@@ -138,7 +140,16 @@ export default function Planning() {
     credit_bloque: boolean;
     has_overdue_invoice: boolean;
   }>>({});
-  
+
+  // CEO Code Request Dialog State
+  const [ceoCodeDialogOpen, setCeoCodeDialogOpen] = useState(false);
+  const [ceoCodeRequestData, setCeoCodeRequestData] = useState<{
+    blId: string;
+    clientId: string;
+    clientName: string;
+    solde: number;
+    limite: number;
+  } | null>(null);
   // Initialize date: always default to today unless explicit date param provided
   const todayFormatted = format(new Date(), 'yyyy-MM-dd');
   const urlDate = searchParams.get('date');
@@ -1023,18 +1034,42 @@ export default function Planning() {
                     <ArrowRight className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
                   </Button>
                 ) : (
-                  <Button 
-                    size={isTouchDevice ? "lg" : "sm"}
-                    variant="outline"
-                    disabled
-                    className={cn(
-                      "w-full gap-2 opacity-50 cursor-not-allowed border-red-500/30",
-                      isTouchDevice && "min-h-[52px] text-base"
+                  <div className="space-y-2">
+                    <Button 
+                      size={isTouchDevice ? "lg" : "sm"}
+                      variant="outline"
+                      disabled
+                      className={cn(
+                        "w-full gap-2 opacity-50 cursor-not-allowed border-red-500/30",
+                        isTouchDevice && "min-h-[52px] text-base"
+                      )}
+                    >
+                      <Lock className="h-4 w-4 text-red-500" />
+                      Production Bloquée
+                    </Button>
+                    {/* Request CEO Code Button - For non-override users */}
+                    {isAgentAdministratif && (
+                      <Button 
+                        size="sm"
+                        variant="outline"
+                        className="w-full gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
+                        onClick={() => {
+                          const creditInfo = clientCreditData[bon.client_id];
+                          setCeoCodeRequestData({
+                            blId: bon.bl_id,
+                            clientId: bon.client_id,
+                            clientName: creditInfo?.nom_client || bon.client_id,
+                            solde: creditInfo?.solde_du || 0,
+                            limite: creditInfo?.limite_credit_dh || 50000,
+                          });
+                          setCeoCodeDialogOpen(true);
+                        }}
+                      >
+                        <Shield className="h-4 w-4" />
+                        Demander Code CEO
+                      </Button>
                     )}
-                  >
-                    <Lock className="h-4 w-4 text-red-500" />
-                    Production Bloquée
-                  </Button>
+                  </div>
                 )}
               </div>
             )}
@@ -1708,6 +1743,34 @@ export default function Planning() {
             solde={pendingCreditApproval.solde}
             limite={pendingCreditApproval.limite}
             onApproved={handleCeoApprovalSuccess}
+          />
+        )}
+
+        {/* CEO Code Request Dialog for Agent Admin */}
+        {ceoCodeRequestData && (
+          <CeoCodeRequestDialog
+            open={ceoCodeDialogOpen}
+            onOpenChange={(open) => {
+              setCeoCodeDialogOpen(open);
+              if (!open) setCeoCodeRequestData(null);
+            }}
+            blId={ceoCodeRequestData.blId}
+            clientId={ceoCodeRequestData.clientId}
+            clientName={ceoCodeRequestData.clientName}
+            solde={ceoCodeRequestData.solde}
+            limite={ceoCodeRequestData.limite}
+            onCodeVerified={async () => {
+              // Find the bon and start production
+              const bon = bons.find(b => b.bl_id === ceoCodeRequestData.blId);
+              if (bon) {
+                await logPlanningAction('CEO_CODE_PRODUCTION', bon.bl_id, {
+                  action: 'Production started with CEO emergency code',
+                  client_id: bon.client_id,
+                  timestamp: new Date().toISOString(),
+                });
+                await startProduction(bon);
+              }
+            }}
           />
         )}
 

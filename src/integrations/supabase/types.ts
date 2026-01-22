@@ -693,6 +693,57 @@ export type Database = {
           },
         ]
       }
+      ceo_emergency_codes: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          bl_id: string
+          client_id: string
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          notes: string | null
+          reason: string | null
+          requested_at: string
+          requested_by: string
+          status: string
+          used_at: string | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bl_id: string
+          client_id: string
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          requested_at?: string
+          requested_by: string
+          status?: string
+          used_at?: string | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bl_id?: string
+          client_id?: string
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          reason?: string | null
+          requested_at?: string
+          requested_by?: string
+          status?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           adresse: string | null
