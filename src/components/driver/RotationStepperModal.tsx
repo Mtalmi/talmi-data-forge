@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +22,8 @@ import {
   Loader2,
   ChevronRight,
   Truck,
+  Fuel,
+  Gauge,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -72,6 +77,12 @@ export function RotationStepperModal({
   const [localWorkflowStatus, setLocalWorkflowStatus] = useState(workflowStatus);
   const [updating, setUpdating] = useState<StepKey | null>(null);
   const [proofModalOpen, setProofModalOpen] = useState(false);
+  const [retourFormOpen, setRetourFormOpen] = useState(false);
+  
+  // Retour form state
+  const [kmCompteur, setKmCompteur] = useState('');
+  const [didRefuel, setDidRefuel] = useState(false);
+  const [litresCarburant, setLitresCarburant] = useState('');
 
   // Sync props with local state when modal opens
   useEffect(() => {
@@ -113,22 +124,32 @@ export function RotationStepperModal({
       return;
     }
 
+    // For 'retour' step, open the retour form to collect KM/fuel data
+    if (stepKey === 'retour') {
+      setRetourFormOpen(true);
+      return;
+    }
+
+    await executeStep(stepKey);
+  };
+
+  const executeStep = async (stepKey: StepKey, extraData?: Record<string, unknown>) => {
     setUpdating(stepKey);
     try {
       const now = new Date().toISOString();
-      let updateData: Record<string, unknown> = {};
+      let updateData: Record<string, unknown> = { ...extraData };
 
       switch (stepKey) {
         case 'depart':
-          updateData = { heure_depart_centrale: now };
+          updateData.heure_depart_centrale = now;
           setLocalHeureDepart(now);
           break;
         case 'arrivee':
-          updateData = { heure_arrivee_chantier: now };
+          updateData.heure_arrivee_chantier = now;
           setLocalHeureArrivee(now);
           break;
         case 'retour':
-          updateData = { heure_retour_centrale: now };
+          updateData.heure_retour_centrale = now;
           setLocalHeureRetour(now);
           // Also free up the truck!
           if (camionId) {
@@ -167,6 +188,67 @@ export function RotationStepperModal({
     } finally {
       setUpdating(null);
     }
+  };
+
+  const handleRetourSubmit = async () => {
+    const kmVal = parseFloat(kmCompteur);
+    if (isNaN(kmVal) || kmVal <= 0) {
+      toast.error('Veuillez entrer le compteur kilométrique');
+      return;
+    }
+
+    // Record fuel entry if refueled
+    if (didRefuel && camionId) {
+      const litresVal = parseFloat(litresCarburant);
+      if (isNaN(litresVal) || litresVal <= 0) {
+        toast.error('Veuillez entrer les litres de carburant');
+        return;
+      }
+
+      // Get last km reading for this truck to calculate consumption
+      const { data: lastEntry } = await supabase
+        .from('suivi_carburant')
+        .select('km_compteur')
+        .eq('id_camion', camionId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      let kmParcourus: number | null = null;
+      let consommation: number | null = null;
+
+      if (lastEntry) {
+        kmParcourus = kmVal - lastEntry.km_compteur;
+        if (kmParcourus > 0) {
+          consommation = (litresVal / kmParcourus) * 100;
+        }
+      }
+
+      // Insert fuel entry
+      await supabase.from('suivi_carburant').insert([{
+        id_camion: camionId,
+        litres: litresVal,
+        km_compteur: kmVal,
+        km_parcourus: kmParcourus,
+        consommation_l_100km: consommation,
+      }]);
+
+      // Update truck km counter
+      await supabase
+        .from('flotte')
+        .update({ km_compteur: kmVal })
+        .eq('id_camion', camionId);
+    }
+
+    setRetourFormOpen(false);
+    
+    // Execute the retour step with km_parcourus (if we have previous km)
+    await executeStep('retour', { km_parcourus: kmVal });
+    
+    // Reset form
+    setKmCompteur('');
+    setDidRefuel(false);
+    setLitresCarburant('');
   };
 
   const handleProofComplete = async (proofData: {
@@ -378,6 +460,98 @@ export function RotationStepperModal({
         clientName={clientName}
         onComplete={handleProofComplete}
       />
+
+      {/* Retour Form Dialog for KM/Fuel Entry */}
+      <Dialog open={retourFormOpen} onOpenChange={setRetourFormOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Home className="h-5 w-5 text-primary" />
+              Retour à la Centrale
+            </DialogTitle>
+            <DialogDescription>
+              {blId} • {camionId}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* KM Counter - Required */}
+            <div className="space-y-2">
+              <Label htmlFor="km-compteur" className="flex items-center gap-2">
+                <Gauge className="h-4 w-4" />
+                Compteur Kilométrique <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="km-compteur"
+                type="number"
+                placeholder="Ex: 125430"
+                value={kmCompteur}
+                onChange={(e) => setKmCompteur(e.target.value)}
+                className="text-lg font-mono"
+              />
+            </div>
+
+            {/* Fuel Checkbox */}
+            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-lg">
+              <Checkbox
+                id="did-refuel"
+                checked={didRefuel}
+                onCheckedChange={(checked) => setDidRefuel(!!checked)}
+              />
+              <Label htmlFor="did-refuel" className="flex items-center gap-2 cursor-pointer">
+                <Fuel className="h-4 w-4" />
+                J'ai fait le plein de carburant
+              </Label>
+            </div>
+
+            {/* Fuel Amount - Conditional */}
+            {didRefuel && (
+              <div className="space-y-2 animate-in slide-in-from-top-2">
+                <Label htmlFor="litres-carburant" className="flex items-center gap-2">
+                  <Fuel className="h-4 w-4" />
+                  Litres de Carburant <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="litres-carburant"
+                  type="number"
+                  step="0.1"
+                  placeholder="Ex: 85.5"
+                  value={litresCarburant}
+                  onChange={(e) => setLitresCarburant(e.target.value)}
+                  className="text-lg font-mono"
+                />
+                <p className="text-xs text-muted-foreground">
+                  La consommation L/100km sera calculée automatiquement
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => setRetourFormOpen(false)}
+            >
+              Annuler
+            </Button>
+            <Button
+              className="flex-1 gap-2"
+              onClick={handleRetourSubmit}
+              disabled={updating === 'retour'}
+            >
+              {updating === 'retour' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <Check className="h-4 w-4" />
+                  Confirmer Retour
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
