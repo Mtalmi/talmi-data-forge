@@ -36,11 +36,14 @@ import {
   Plus,
   ExternalLink,
   Calendar,
+  Zap,
+  Shield,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
 
 interface LinkedBL {
   bl_id: string;
@@ -160,6 +163,26 @@ export function BcDetailDialog({
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Emergency Banner */}
+          {bc.notes?.includes('[URGENCE/EMERGENCY') && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center gap-2">
+              <Zap className="h-5 w-5 text-red-500" />
+              <div>
+                <p className="text-sm font-medium text-red-700">Commande d'Urgence (Nuit)</p>
+                <p className="text-xs text-muted-foreground">
+                  Créée en mode bypass - Alertes envoyées au CEO et Superviseur
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Approval Timeline */}
+          <Card className="border-muted">
+            <CardContent className="pt-4">
+              <BcApprovalTimeline bc={bc} />
+            </CardContent>
+          </Card>
+
           {/* BC Summary Card */}
           <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
             <CardContent className="pt-6">

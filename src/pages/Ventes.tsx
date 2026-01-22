@@ -290,6 +290,14 @@ export default function Ventes() {
     }
   };
 
+  // Handle submitting BC for validation (Dir Ops path)
+  const handleSubmitForValidation = async (bc: BonCommande) => {
+    // This is informational - the BC was already created in pending status
+    // Just show a toast confirmation
+    const { toast } = await import('sonner');
+    toast.info(`BC ${bc.bc_id} est en attente de validation par l'Agent Administratif`);
+  };
+
   // Handle opening BC detail dialog
   const handleOpenBcDetail = (bc: BonCommande) => {
     setSelectedBc(bc);
@@ -565,6 +573,11 @@ export default function Ventes() {
               <TabsTrigger value="bc" className="gap-2">
                 <ShoppingCart className="h-4 w-4" />
                 Bons de Commande ({filteredBc.length})
+                {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
+                  <Badge variant="outline" className="ml-1 h-5 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse">
+                    {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
+                  </Badge>
+                )}
               </TabsTrigger>
               <TabsTrigger value="factures" className="gap-2">
                 <Receipt className="h-4 w-4" />
@@ -643,6 +656,7 @@ export default function Ventes() {
                     loading={loading}
                     launchingProduction={launchingProduction}
                     onLaunchProduction={handleLaunchProduction}
+                    onSubmitForValidation={handleSubmitForValidation}
                     onCopyBc={handleCopyBc}
                     onOpenDetail={handleOpenBcDetail}
                     onGenerateInvoice={generateConsolidatedInvoice}
