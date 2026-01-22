@@ -353,36 +353,43 @@ export default function Logistique() {
                           </TableCell>
                           {canManage && (
                             <TableCell>
-                              {isOnActiveDelivery ? (
-                                // Show delivery info when truck is on active delivery
-                                <div className="flex flex-col gap-0.5">
-                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary cursor-not-allowed">
-                                    <Truck className="h-3 w-3 animate-pulse" />
-                                    {getDeliveryStatusLabel(activeDelivery.workflow_status)}
-                                  </span>
-                                  {activeDelivery.client_nom && (
-                                    <span className="text-[10px] text-muted-foreground truncate max-w-[120px]" title={activeDelivery.client_nom}>
-                                      {activeDelivery.client_nom}
-                                    </span>
-                                  )}
-                                </div>
-                              ) : (
-                                // Show regular dropdown when truck is available
+                              <div className="flex flex-col gap-1">
+                                {/* Always show dropdown for Master Override */}
                                 <Select
-                                  value={v.statut}
+                                  value={isOnActiveDelivery ? 'En Livraison' : v.statut}
                                   onValueChange={(val) => updateVehiculeStatus(v.id_camion, val)}
                                 >
-                                  <SelectTrigger className="h-8 w-28">
+                                  <SelectTrigger className={cn(
+                                    "h-8 w-32",
+                                    isOnActiveDelivery && "border-primary/50 bg-primary/5"
+                                  )}>
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value="Disponible">Disponible</SelectItem>
-                                    <SelectItem value="En Livraison">En Livraison</SelectItem>
+                                    <SelectItem value="En Livraison" disabled={isOnActiveDelivery}>
+                                      En Livraison
+                                    </SelectItem>
                                     <SelectItem value="Maintenance">Maintenance</SelectItem>
                                     <SelectItem value="Hors Service">Hors Service</SelectItem>
                                   </SelectContent>
                                 </Select>
-                              )}
+                                
+                                {/* Show active delivery info below dropdown */}
+                                {isOnActiveDelivery && (
+                                  <div className="flex items-center gap-1 text-[10px]">
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                                      <Truck className="h-2.5 w-2.5 animate-pulse" />
+                                      {activeDelivery.bl_id}
+                                    </span>
+                                    {activeDelivery.client_nom && (
+                                      <span className="text-muted-foreground truncate max-w-[80px]" title={activeDelivery.client_nom}>
+                                        • {activeDelivery.client_nom}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </TableCell>
                           )}
                         </TableRow>
