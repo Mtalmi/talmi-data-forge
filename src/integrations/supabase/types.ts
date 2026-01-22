@@ -519,6 +519,7 @@ export type Database = {
           validated_by: string | null
           validation_technique: boolean | null
           volume_m3: number
+          volume_perdu: number | null
           workflow_status: string | null
           zone_livraison_id: string | null
         }
@@ -575,6 +576,7 @@ export type Database = {
           validated_by?: string | null
           validation_technique?: boolean | null
           volume_m3: number
+          volume_perdu?: number | null
           workflow_status?: string | null
           zone_livraison_id?: string | null
         }
@@ -631,6 +633,7 @@ export type Database = {
           validated_by?: string | null
           validation_technique?: boolean | null
           volume_m3?: number
+          volume_perdu?: number | null
           workflow_status?: string | null
           zone_livraison_id?: string | null
         }
@@ -1588,6 +1591,11 @@ export type Database = {
       }
       incidents_flotte: {
         Row: {
+          bc_id: string | null
+          bl_id: string | null
+          camion_rescue: string | null
+          ceo_notified: boolean | null
+          ceo_notified_at: string | null
           created_at: string
           created_by: string | null
           date_incident: string
@@ -1598,8 +1606,14 @@ export type Database = {
           resolu_at: string | null
           resolution_notes: string | null
           type_incident: string
+          volume_perdu: number | null
         }
         Insert: {
+          bc_id?: string | null
+          bl_id?: string | null
+          camion_rescue?: string | null
+          ceo_notified?: boolean | null
+          ceo_notified_at?: string | null
           created_at?: string
           created_by?: string | null
           date_incident?: string
@@ -1610,8 +1624,14 @@ export type Database = {
           resolu_at?: string | null
           resolution_notes?: string | null
           type_incident: string
+          volume_perdu?: number | null
         }
         Update: {
+          bc_id?: string | null
+          bl_id?: string | null
+          camion_rescue?: string | null
+          ceo_notified?: boolean | null
+          ceo_notified_at?: string | null
           created_at?: string
           created_by?: string | null
           date_incident?: string
@@ -1622,6 +1642,7 @@ export type Database = {
           resolu_at?: string | null
           resolution_notes?: string | null
           type_incident?: string
+          volume_perdu?: number | null
         }
         Relationships: []
       }
