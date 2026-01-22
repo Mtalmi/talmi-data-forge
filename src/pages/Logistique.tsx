@@ -109,7 +109,7 @@ export default function Logistique() {
     setSubmitting(false);
   };
 
-  const getStatusBadge = (statut: string, activeBlId?: string) => {
+  const getStatusBadge = (statut: string, bcMissionId?: string | null, activeDelivery?: { bl_id: string; bc_id: string | null } | null) => {
     const config: Record<string, { icon: typeof CheckCircle; color: string; bg: string }> = {
       'Disponible': { icon: CheckCircle, color: 'text-success', bg: 'bg-success/10' },
       'En Livraison': { icon: Truck, color: 'text-primary', bg: 'bg-primary/10' },
@@ -118,11 +118,17 @@ export default function Logistique() {
     };
     const c = config[statut] || config['Disponible'];
     const Icon = c.icon;
+    
+    // Prefer BC ID from active delivery, fallback to stored bc_mission_id
+    const missionId = activeDelivery?.bc_id || bcMissionId;
+    
     return (
       <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium', c.bg, c.color)}>
         <Icon className="h-3 w-3" />
         {statut}
-        {activeBlId && <span className="ml-1 opacity-75">• {activeBlId}</span>}
+        {missionId && statut === 'En Livraison' && (
+          <span className="ml-1 font-mono opacity-90">• {missionId}</span>
+        )}
       </span>
     );
   };
@@ -345,7 +351,7 @@ export default function Logistique() {
                             {v.type === 'Toupie' ? `${v.capacite_m3} m³` : '—'}
                           </TableCell>
                           <TableCell>
-                            {getStatusBadge(displayStatus, isOnActiveDelivery ? activeDelivery.bl_id : undefined)}
+                            {getStatusBadge(displayStatus, v.bc_mission_id, isOnActiveDelivery ? activeDelivery : null)}
                           </TableCell>
                           <TableCell className="text-right">
                             {avgConso !== null ? (
@@ -384,15 +390,18 @@ export default function Logistique() {
                                 {/* Show active delivery info below dropdown */}
                                 {isOnActiveDelivery && (
                                   <div className="flex items-center gap-1 text-[10px]">
-                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium font-mono">
                                       <Truck className="h-2.5 w-2.5 animate-pulse" />
-                                      {activeDelivery.bl_id}
+                                      {activeDelivery.bc_id || activeDelivery.bl_id}
                                     </span>
                                     {activeDelivery.client_nom && (
                                       <span className="text-muted-foreground truncate max-w-[80px]" title={activeDelivery.client_nom}>
                                         • {activeDelivery.client_nom}
                                       </span>
                                     )}
+                                    <span className="text-muted-foreground">
+                                      ({activeDelivery.volume_m3}m³)
+                                    </span>
                                   </div>
                                 )}
                               </div>

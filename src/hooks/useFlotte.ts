@@ -16,6 +16,8 @@ interface Vehicule {
   immatriculation: string | null;
   km_compteur: number | null;
   notes: string | null;
+  bc_mission_id: string | null;
+  mission_updated_at: string | null;
 }
 
 interface SuiviCarburant {
@@ -52,6 +54,7 @@ interface ProviderStats {
 // Active delivery info for a truck
 export interface ActiveDelivery {
   bl_id: string;
+  bc_id: string | null;
   client_nom: string | null;
   volume_m3: number;
   workflow_status: string;
@@ -124,6 +127,7 @@ export function useFlotte() {
         .from('bons_livraison_reels')
         .select(`
           bl_id,
+          bc_id,
           volume_m3,
           workflow_status,
           camion_assigne,
@@ -143,6 +147,7 @@ export function useFlotte() {
       (data || []).forEach((bl) => {
         const delivery: ActiveDelivery = {
           bl_id: bl.bl_id,
+          bc_id: bl.bc_id || null,
           client_nom: bl.clients?.nom_client || null,
           volume_m3: bl.volume_m3,
           workflow_status: bl.workflow_status || 'production',
