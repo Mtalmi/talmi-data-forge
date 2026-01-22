@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 interface Vehicule {
   id: string;
@@ -48,11 +49,24 @@ interface ProviderStats {
   volume_total: number;
 }
 
+// Active delivery info for a truck
+export interface ActiveDelivery {
+  bl_id: string;
+  client_nom: string | null;
+  volume_m3: number;
+  workflow_status: string;
+  zone_nom: string | null;
+}
+
+// Map truck ID to active delivery
+export type ActiveDeliveriesMap = Record<string, ActiveDelivery>;
+
 export function useFlotte() {
   const [vehicules, setVehicules] = useState<Vehicule[]>([]);
   const [carburant, setCarburant] = useState<SuiviCarburant[]>([]);
   const [incidents, setIncidents] = useState<IncidentFlotte[]>([]);
   const [providerStats, setProviderStats] = useState<ProviderStats[]>([]);
+  const [activeDeliveries, setActiveDeliveries] = useState<ActiveDeliveriesMap>({});
   const [loading, setLoading] = useState(true);
 
   const fetchVehicules = useCallback(async () => {
@@ -96,6 +110,56 @@ export function useFlotte() {
       setIncidents(data || []);
     } catch (error) {
       console.error('Error fetching incidents:', error);
+    }
+  }, []);
+
+  // Fetch active deliveries for today to determine which trucks are in service
+  const fetchActiveDeliveries = useCallback(async () => {
+    try {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      
+      // Get all deliveries for today that are actively in progress
+      // (not yet completed - statuses: production, validation_technique, en_livraison)
+      const { data, error } = await supabase
+        .from('bons_livraison_reels')
+        .select(`
+          bl_id,
+          volume_m3,
+          workflow_status,
+          camion_assigne,
+          toupie_assignee,
+          clients (nom_client),
+          zones_livraison (nom_zone)
+        `)
+        .eq('date_livraison', today)
+        .in('workflow_status', ['production', 'validation_technique', 'en_livraison']);
+
+      if (error) throw error;
+
+      // Build a map of truck ID -> active delivery
+      const deliveryMap: ActiveDeliveriesMap = {};
+      
+      (data || []).forEach((bl) => {
+        const delivery: ActiveDelivery = {
+          bl_id: bl.bl_id,
+          client_nom: bl.clients?.nom_client || null,
+          volume_m3: bl.volume_m3,
+          workflow_status: bl.workflow_status || 'production',
+          zone_nom: bl.zones_livraison?.nom_zone || null,
+        };
+
+        // Map both camion_assigne and toupie_assignee
+        if (bl.camion_assigne) {
+          deliveryMap[bl.camion_assigne] = delivery;
+        }
+        if (bl.toupie_assignee) {
+          deliveryMap[bl.toupie_assignee] = delivery;
+        }
+      });
+
+      setActiveDeliveries(deliveryMap);
+    } catch (error) {
+      console.error('Error fetching active deliveries:', error);
     }
   }, []);
 
@@ -292,11 +356,11 @@ export function useFlotte() {
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await Promise.all([fetchVehicules(), fetchCarburant(), fetchIncidents()]);
+      await Promise.all([fetchVehicules(), fetchCarburant(), fetchIncidents(), fetchActiveDeliveries()]);
       setLoading(false);
     };
     loadData();
-  }, [fetchVehicules, fetchCarburant, fetchIncidents]);
+  }, [fetchVehicules, fetchCarburant, fetchIncidents, fetchActiveDeliveries]);
 
   useEffect(() => {
     if (vehicules.length > 0) {
@@ -304,15 +368,40 @@ export function useFlotte() {
     }
   }, [vehicules, incidents, calculateProviderStats]);
 
+  // Set up realtime subscription for delivery updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('flotte-deliveries')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bons_livraison_reels',
+        },
+        () => {
+          // Refetch active deliveries when any BL changes
+          fetchActiveDeliveries();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchActiveDeliveries]);
+
   return {
     vehicules,
     carburant,
     incidents,
     providerStats,
+    activeDeliveries,
     loading,
     fetchVehicules,
     fetchCarburant,
     fetchIncidents,
+    fetchActiveDeliveries,
     addVehicule,
     updateVehiculeStatus,
     addFuelEntry,

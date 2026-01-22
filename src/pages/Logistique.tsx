@@ -55,9 +55,11 @@ export default function Logistique() {
     carburant,
     incidents,
     providerStats,
+    activeDeliveries,
     loading,
     fetchVehicules,
     fetchCarburant,
+    fetchActiveDeliveries,
     addVehicule,
     updateVehiculeStatus,
     addFuelEntry,
@@ -105,7 +107,7 @@ export default function Logistique() {
     setSubmitting(false);
   };
 
-  const getStatusBadge = (statut: string) => {
+  const getStatusBadge = (statut: string, activeBlId?: string) => {
     const config: Record<string, { icon: typeof CheckCircle; color: string; bg: string }> = {
       'Disponible': { icon: CheckCircle, color: 'text-success', bg: 'bg-success/10' },
       'En Livraison': { icon: Truck, color: 'text-primary', bg: 'bg-primary/10' },
@@ -118,12 +120,31 @@ export default function Logistique() {
       <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium', c.bg, c.color)}>
         <Icon className="h-3 w-3" />
         {statut}
+        {activeBlId && <span className="ml-1 opacity-75">• {activeBlId}</span>}
       </span>
     );
   };
 
-  const disponibles = vehicules.filter(v => v.statut === 'Disponible').length;
-  const enLivraison = vehicules.filter(v => v.statut === 'En Livraison').length;
+  // Helper to get workflow status label
+  const getDeliveryStatusLabel = (status: string): string => {
+    const labels: Record<string, string> = {
+      'production': 'En Production',
+      'validation_technique': 'Validation Tech.',
+      'en_livraison': 'En Route',
+    };
+    return labels[status] || status;
+  };
+
+  // Calculate stats based on both manual status AND active deliveries from planning
+  const activeDeliveryTruckIds = Object.keys(activeDeliveries);
+  const enLivraisonCount = new Set([
+    ...vehicules.filter(v => v.statut === 'En Livraison').map(v => v.id_camion),
+    ...activeDeliveryTruckIds
+  ]).size;
+  
+  const disponibles = vehicules.filter(v => 
+    v.statut === 'Disponible' && !activeDeliveries[v.id_camion]
+  ).length;
   const maintenance = vehicules.filter(v => v.statut === 'Maintenance').length;
 
   return (
@@ -144,6 +165,7 @@ export default function Logistique() {
             <Button variant="outline" size="sm" onClick={() => {
               fetchVehicules();
               fetchCarburant();
+              fetchActiveDeliveries();
             }} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Actualiser</span>
@@ -241,7 +263,7 @@ export default function Logistique() {
           </div>
           <div className="kpi-card p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">En Livraison</p>
-            <p className="text-xl sm:text-3xl font-bold mt-1 text-primary">{enLivraison}</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1 text-primary">{enLivraisonCount}</p>
           </div>
           <div className="kpi-card warning p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Maintenance</p>
@@ -293,6 +315,12 @@ export default function Logistique() {
                   <TableBody>
                     {vehicules.map((v) => {
                       const avgConso = getAverageConsumption(v.id_camion);
+                      const activeDelivery = activeDeliveries[v.id_camion];
+                      const isOnActiveDelivery = !!activeDelivery;
+                      
+                      // Determine displayed status based on active delivery
+                      const displayStatus = isOnActiveDelivery ? 'En Livraison' : v.statut;
+                      
                       return (
                         <TableRow key={v.id_camion}>
                           <TableCell className="font-mono font-medium">{v.id_camion}</TableCell>
@@ -309,7 +337,9 @@ export default function Logistique() {
                           <TableCell className="text-right font-mono">
                             {v.type === 'Toupie' ? `${v.capacite_m3} m³` : '—'}
                           </TableCell>
-                          <TableCell>{getStatusBadge(v.statut)}</TableCell>
+                          <TableCell>
+                            {getStatusBadge(displayStatus, isOnActiveDelivery ? activeDelivery.bl_id : undefined)}
+                          </TableCell>
                           <TableCell className="text-right">
                             {avgConso !== null ? (
                               <span className={cn(
@@ -322,20 +352,36 @@ export default function Logistique() {
                           </TableCell>
                           {canManage && (
                             <TableCell>
-                              <Select
-                                value={v.statut}
-                                onValueChange={(val) => updateVehiculeStatus(v.id_camion, val)}
-                              >
-                                <SelectTrigger className="h-8 w-28">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="Disponible">Disponible</SelectItem>
-                                  <SelectItem value="En Livraison">En Livraison</SelectItem>
-                                  <SelectItem value="Maintenance">Maintenance</SelectItem>
-                                  <SelectItem value="Hors Service">Hors Service</SelectItem>
-                                </SelectContent>
-                              </Select>
+                              {isOnActiveDelivery ? (
+                                // Show delivery info when truck is on active delivery
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium bg-primary/10 text-primary cursor-not-allowed">
+                                    <Truck className="h-3 w-3 animate-pulse" />
+                                    {getDeliveryStatusLabel(activeDelivery.workflow_status)}
+                                  </span>
+                                  {activeDelivery.client_nom && (
+                                    <span className="text-[10px] text-muted-foreground truncate max-w-[120px]" title={activeDelivery.client_nom}>
+                                      {activeDelivery.client_nom}
+                                    </span>
+                                  )}
+                                </div>
+                              ) : (
+                                // Show regular dropdown when truck is available
+                                <Select
+                                  value={v.statut}
+                                  onValueChange={(val) => updateVehiculeStatus(v.id_camion, val)}
+                                >
+                                  <SelectTrigger className="h-8 w-28">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Disponible">Disponible</SelectItem>
+                                    <SelectItem value="En Livraison">En Livraison</SelectItem>
+                                    <SelectItem value="Maintenance">Maintenance</SelectItem>
+                                    <SelectItem value="Hors Service">Hors Service</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              )}
                             </TableCell>
                           )}
                         </TableRow>
