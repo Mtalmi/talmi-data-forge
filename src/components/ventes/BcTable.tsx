@@ -39,22 +39,26 @@ import { OrderStatusTimeline } from '@/components/ventes/OrderStatusTimeline';
 import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pret_production: { label: 'Prêt Production', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
-  en_production: { label: 'En Production', color: 'bg-warning/10 text-warning border-warning/30', icon: <Factory className="h-3 w-3" /> },
+  pret_production: { label: 'Prêt Production', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
+  en_production: { label: 'En Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30', icon: <Factory className="h-3 w-3" /> },
+  en_livraison: { label: 'En Livraison', color: 'bg-rose-500/10 text-rose-600 border-rose-500/30', icon: <Truck className="h-3 w-3" /> },
+  en_retour: { label: 'En Retour', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30', icon: <Truck className="h-3 w-3" /> },
   termine: { label: 'Terminé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
-  facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30', icon: <CheckCircle className="h-3 w-3" /> },
+  facture: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
 };
 
-// BL workflow status display for linked BLs
+// BL workflow status display for linked BLs - UNIFIED with workflowStatus.ts palette
 const BL_WORKFLOW_STATUS: Record<string, { label: string; color: string }> = {
-  en_attente_validation: { label: 'À Confirmer', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
+  en_attente_validation: { label: 'À Confirmer', color: 'bg-slate-500/10 text-slate-600 border-slate-500/30' },
   planification: { label: 'Planifié', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30' },
-  production: { label: 'Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
-  validation_technique: { label: 'Validé Tech', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' },
-  en_livraison: { label: 'En Livraison', color: 'bg-violet-500/10 text-violet-600 border-violet-500/30' },
+  production: { label: 'En Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
+  en_chargement: { label: 'En Chargement', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
+  validation_technique: { label: 'Prêt Départ', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' },
+  en_livraison: { label: 'En Livraison', color: 'bg-rose-500/10 text-rose-600 border-rose-500/30' },
+  en_retour: { label: 'En Retour', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30' },
-  facture: { label: 'Facturé', color: 'bg-primary/10 text-primary border-primary/30' },
+  facture: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30' },
 };
 
 // Invoice status for BC
