@@ -25,6 +25,19 @@ export interface Devis {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  // Workflow tracking fields
+  validated_by: string | null;
+  validated_by_name: string | null;
+  validated_by_role: string | null;
+  validated_at: string | null;
+  requires_technical_approval: boolean | null;
+  technical_approved_by: string | null;
+  technical_approved_by_name: string | null;
+  technical_approved_at: string | null;
+  is_special_formula: boolean | null;
+  locked_by: string | null;
+  locked_at: string | null;
+  lock_expires_at: string | null;
   // Joined data
   client?: { nom_client: string; adresse: string | null };
   formule?: { designation: string };

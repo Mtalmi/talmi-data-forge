@@ -27,19 +27,26 @@ import {
   Star,
   Zap,
   Mail,
+  Shield,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
+import { useAuth } from '@/hooks/useAuth';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
 import { DuplicateDevisButton } from '@/components/ventes/DuplicateDevisButton';
+import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
+import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
+  valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-3 w-3" /> },
   converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <ArrowRight className="h-3 w-3" /> },
@@ -90,6 +97,40 @@ export function DevisTable({
   onQuickSend,
   onRefresh,
 }: DevisTableProps) {
+  const { isCeo, isSuperviseur, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique } = useAuth();
+  const [validating, setValidating] = useState<string | null>(null);
+  
+  // Role-based button visibility
+  // Only CEO, Superviseur, Agent Admin can VALIDATE a devis
+  const canValidateDevis = isCeo || isSuperviseur || isAgentAdministratif;
+  // Dir Ops and Centraliste should NOT see validate button - they only see validated jobs
+  const isReadOnlyRole = isDirecteurOperations || isCentraliste;
+  // Resp Technique can approve technical aspects
+  const canApproveTechnical = isCeo || isResponsableTechnique;
+  
+  const handleValidateDevis = async (devis: Devis) => {
+    setValidating(devis.devis_id);
+    try {
+      const { data, error } = await supabase.rpc('validate_devis', {
+        p_devis_id: devis.devis_id,
+      });
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; error?: string; message?: string; validated_by?: string };
+      
+      if (result.success) {
+        toast.success(`Devis validé par ${result.validated_by}`);
+        onRefresh?.();
+      } else {
+        toast.error(result.error || 'Erreur lors de la validation');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la validation');
+    } finally {
+      setValidating(null);
+    }
+  };
   
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -284,7 +325,31 @@ export function DevisTable({
                 {priorityBadge || <span className="text-muted-foreground">—</span>}
               </TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
+                  {/* Technical Approval Badge for special formulas */}
+                  {(devis as any).requires_technical_approval && (
+                    <TechnicalApprovalBadge
+                      devisId={devis.devis_id}
+                      requiresApproval={(devis as any).requires_technical_approval}
+                      isApproved={!!(devis as any).technical_approved_at}
+                      approvedByName={(devis as any).technical_approved_by_name}
+                      approvedAt={(devis as any).technical_approved_at}
+                      canApprove={canApproveTechnical}
+                      onApproved={onRefresh}
+                    />
+                  )}
+                  
+                  {/* Responsibility Stamp if validated */}
+                  {(devis as any).validated_by_name && (
+                    <ResponsibilityStamp
+                      actionType="validated"
+                      userName={(devis as any).validated_by_name}
+                      userRole={(devis as any).validated_by_role}
+                      timestamp={(devis as any).validated_at}
+                      compact
+                    />
+                  )}
+                  
                   {/* Duplicate Button */}
                   <DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact />
                   
@@ -303,20 +368,48 @@ export function DevisTable({
                     </>
                   )}
                   <DevisPdfGenerator devis={devis} />
-                  {devis.statut === 'en_attente' && devis.client_id && (
+                  
+                  {/* VALIDATE BUTTON - Only for CEO, Superviseur, Agent Admin */}
+                  {/* Hidden for Dir Ops and Centraliste - they only see approved jobs */}
+                  {devis.statut === 'en_attente' && devis.client_id && !isReadOnlyRole && canValidateDevis && (
+                    <Button
+                      size="sm"
+                      onClick={() => handleValidateDevis(devis)}
+                      disabled={validating === devis.devis_id}
+                      className="gap-1 bg-success hover:bg-success/90"
+                    >
+                      {validating === devis.devis_id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-3 w-3" />
+                      )}
+                      Valider
+                    </Button>
+                  )}
+                  
+                  {/* Convert to BC Button after validation */}
+                  {(devis.statut === 'valide' || devis.statut === 'accepte') && devis.client_id && canValidateDevis && (
                     <Button
                       size="sm"
                       onClick={() => onConvert(devis)}
                       className="gap-1"
                     >
                       <ArrowRight className="h-3 w-3" />
-                      Valider BC
+                      Créer BC
                     </Button>
                   )}
+                  
                   {devis.statut === 'en_attente' && !devis.client_id && (
                     <span className="text-xs text-muted-foreground">
                       Client requis
                     </span>
+                  )}
+                  
+                  {/* Read-only indicator for Dir Ops / Centraliste */}
+                  {isReadOnlyRole && devis.statut === 'en_attente' && (
+                    <Badge variant="outline" className="text-xs text-muted-foreground">
+                      En attente validation
+                    </Badge>
                   )}
                 </div>
               </TableCell>

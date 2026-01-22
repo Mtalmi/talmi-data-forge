@@ -1,4 +1,5 @@
 import { Devis } from '@/hooks/useSalesWorkflow';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -21,12 +22,19 @@ import {
   XCircle,
   ArrowRight,
   Send,
+  Shield,
+  Loader2,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
+import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
+import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface DevisDetailDialogProps {
   devis: Devis | null;
