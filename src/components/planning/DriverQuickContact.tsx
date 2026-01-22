@@ -136,3 +136,6 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
     );
   }
 );
+
+// Default export for HMR stability
+export default DriverQuickContact;
