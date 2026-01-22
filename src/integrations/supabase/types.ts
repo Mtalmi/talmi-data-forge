@@ -1343,6 +1343,7 @@ export type Database = {
       }
       flotte: {
         Row: {
+          bc_mission_id: string | null
           capacite_m3: number | null
           chauffeur: string | null
           created_at: string
@@ -1352,6 +1353,7 @@ export type Database = {
           immatriculation: string | null
           is_interne: boolean
           km_compteur: number | null
+          mission_updated_at: string | null
           notes: string | null
           prochaine_maintenance_at: string | null
           proprietaire: string
@@ -1361,6 +1363,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bc_mission_id?: string | null
           capacite_m3?: number | null
           chauffeur?: string | null
           created_at?: string
@@ -1370,6 +1373,7 @@ export type Database = {
           immatriculation?: string | null
           is_interne?: boolean
           km_compteur?: number | null
+          mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
@@ -1379,6 +1383,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bc_mission_id?: string | null
           capacite_m3?: number | null
           chauffeur?: string | null
           created_at?: string
@@ -1388,6 +1393,7 @@ export type Database = {
           immatriculation?: string | null
           is_interne?: boolean
           km_compteur?: number | null
+          mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
