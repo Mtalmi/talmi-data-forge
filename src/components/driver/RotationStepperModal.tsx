@@ -321,7 +321,10 @@ export function RotationStepperModal({
 
       if (error) throw error;
 
+      // CRITICAL: Update local state AND close the proof modal
       setLocalWorkflowStatus('livre');
+      setProofModalOpen(false);
+      
       toast.success('✅ BL signé et archivé', {
         description: `Signé par ${proofData.signerName}`,
       });
@@ -329,6 +332,7 @@ export function RotationStepperModal({
     } catch (error) {
       console.error('Error completing proof:', error);
       toast.error("Erreur lors de l'enregistrement");
+      setProofModalOpen(false);
     } finally {
       setUpdating(null);
     }
