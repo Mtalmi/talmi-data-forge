@@ -17,6 +17,8 @@ import {
   X,
   PenTool,
   User,
+  Camera,
+  SwitchCamera,
 } from 'lucide-react';
 
 interface DigitalSignaturePadProps {
@@ -31,6 +33,8 @@ interface DigitalSignaturePadProps {
   }) => void;
 }
 
+type CaptureMode = 'draw' | 'camera';
+
 export function DigitalSignaturePad({
   open,
   onOpenChange,
@@ -39,35 +43,117 @@ export function DigitalSignaturePad({
   onSignatureComplete,
 }: DigitalSignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  
+  const [mode, setMode] = useState<CaptureMode>('draw');
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasSignature, setHasSignature] = useState(false);
   const [signerName, setSignerName] = useState('');
   const [lastPoint, setLastPoint] = useState<{ x: number; y: number } | null>(null);
+  const [cameraActive, setCameraActive] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+
+  // Stop camera stream when modal closes or mode changes
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setCameraActive(false);
+  }, []);
+
+  // Cleanup on unmount or close
+  useEffect(() => {
+    if (!open) {
+      stopCamera();
+      setCapturedImage(null);
+      setMode('draw');
+    }
+  }, [open, stopCamera]);
+
+  // Start camera when switching to camera mode
+  const startCamera = async () => {
+    try {
+      stopCamera();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+      }
+      setCameraActive(true);
+    } catch (err) {
+      console.error('Camera error:', err);
+      toast.error('Impossible d\'accéder à la caméra', {
+        description: 'Vérifiez les permissions de votre navigateur'
+      });
+      setMode('draw');
+    }
+  };
+
+  // Handle mode switch
+  const handleModeSwitch = async (newMode: CaptureMode) => {
+    if (newMode === 'camera') {
+      setMode('camera');
+      setCapturedImage(null);
+      await startCamera();
+    } else {
+      stopCamera();
+      setCapturedImage(null);
+      setMode('draw');
+    }
+  };
+
+  // Capture photo from camera
+  const capturePhoto = () => {
+    if (!videoRef.current) return;
+    
+    const video = videoRef.current;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      ctx.drawImage(video, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
+      setCapturedImage(dataUrl);
+      setHasSignature(true);
+      stopCamera();
+    }
+  };
+
+  // Retake photo
+  const retakePhoto = async () => {
+    setCapturedImage(null);
+    setHasSignature(false);
+    await startCamera();
+  };
 
   // Initialize canvas
   useEffect(() => {
-    if (open && canvasRef.current) {
+    if (open && mode === 'draw' && canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        // Set canvas size to match display size
         const rect = canvas.getBoundingClientRect();
         canvas.width = rect.width * window.devicePixelRatio;
         canvas.height = rect.height * window.devicePixelRatio;
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
         
-        // Set drawing styles
         ctx.strokeStyle = '#1a1a1a';
         ctx.lineWidth = 2.5;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         
-        // Fill white background
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, rect.width, rect.height);
       }
     }
-  }, [open]);
+  }, [open, mode]);
 
   const getCoordinates = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     const canvas = canvasRef.current;
@@ -136,7 +222,7 @@ export function DigitalSignaturePad({
 
   const handleConfirm = () => {
     if (!hasSignature) {
-      toast.error('Veuillez signer dans la zone prévue');
+      toast.error('Veuillez signer ou capturer une signature');
       return;
     }
     if (!signerName.trim()) {
@@ -144,10 +230,15 @@ export function DigitalSignaturePad({
       return;
     }
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const signatureDataUrl = canvas.toDataURL('image/png');
+    let signatureDataUrl: string;
+    
+    if (mode === 'camera' && capturedImage) {
+      signatureDataUrl = capturedImage;
+    } else {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      signatureDataUrl = canvas.toDataURL('image/png');
+    }
     
     onSignatureComplete({
       signatureDataUrl,
@@ -162,6 +253,8 @@ export function DigitalSignaturePad({
     // Reset and close
     clearSignature();
     setSignerName('');
+    setCapturedImage(null);
+    setMode('draw');
     onOpenChange(false);
   };
 
@@ -194,58 +287,144 @@ export function DigitalSignaturePad({
             />
           </div>
 
-          {/* Signature Canvas */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2">
-                <PenTool className="h-4 w-4" />
-                Signez ci-dessous
-              </Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={clearSignature}
-                className="h-8 px-2 gap-1 text-muted-foreground hover:text-destructive"
-              >
-                <Eraser className="h-4 w-4" />
-                Effacer
-              </Button>
-            </div>
-            
-            <div 
-              className={cn(
-                "relative rounded-lg border-2 border-dashed overflow-hidden touch-none",
-                hasSignature ? "border-primary/50 bg-white" : "border-muted-foreground/30 bg-muted/20"
-              )}
+          {/* Mode Toggle */}
+          <div className="flex gap-2 p-1 bg-muted rounded-lg">
+            <Button
+              variant={mode === 'draw' ? 'default' : 'ghost'}
+              size="sm"
+              className="flex-1 gap-2"
+              onClick={() => handleModeSwitch('draw')}
             >
-              <canvas
-                ref={canvasRef}
-                className="w-full h-48 cursor-crosshair"
-                onMouseDown={startDrawing}
-                onMouseMove={draw}
-                onMouseUp={stopDrawing}
-                onMouseLeave={stopDrawing}
-                onTouchStart={startDrawing}
-                onTouchMove={draw}
-                onTouchEnd={stopDrawing}
-              />
-              
-              {/* Placeholder text */}
-              {!hasSignature && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <p className="text-muted-foreground/50 text-sm">
-                    Signez avec votre doigt ou stylet
-                  </p>
-                </div>
-              )}
-              
-              {/* Signature line */}
-              <div className="absolute bottom-8 left-8 right-8 border-b border-muted-foreground/30" />
-              <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-                Signature du client
-              </p>
-            </div>
+              <PenTool className="h-4 w-4" />
+              Dessiner
+            </Button>
+            <Button
+              variant={mode === 'camera' ? 'default' : 'ghost'}
+              size="sm"
+              className="flex-1 gap-2"
+              onClick={() => handleModeSwitch('camera')}
+            >
+              <Camera className="h-4 w-4" />
+              Scanner
+            </Button>
           </div>
+
+          {/* Draw Mode - Signature Canvas */}
+          {mode === 'draw' && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="flex items-center gap-2">
+                  <PenTool className="h-4 w-4" />
+                  Signez ci-dessous
+                </Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSignature}
+                  className="h-8 px-2 gap-1 text-muted-foreground hover:text-destructive"
+                >
+                  <Eraser className="h-4 w-4" />
+                  Effacer
+                </Button>
+              </div>
+              
+              <div 
+                className={cn(
+                  "relative rounded-lg border-2 border-dashed overflow-hidden touch-none",
+                  hasSignature ? "border-primary/50 bg-white" : "border-muted-foreground/30 bg-muted/20"
+                )}
+              >
+                <canvas
+                  ref={canvasRef}
+                  className="w-full h-48 cursor-crosshair"
+                  onMouseDown={startDrawing}
+                  onMouseMove={draw}
+                  onMouseUp={stopDrawing}
+                  onMouseLeave={stopDrawing}
+                  onTouchStart={startDrawing}
+                  onTouchMove={draw}
+                  onTouchEnd={stopDrawing}
+                />
+                
+                {!hasSignature && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <p className="text-muted-foreground/50 text-sm">
+                      Signez avec votre doigt ou stylet
+                    </p>
+                  </div>
+                )}
+                
+                <div className="absolute bottom-8 left-8 right-8 border-b border-muted-foreground/30" />
+                <p className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
+                  Signature du client
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Camera Mode */}
+          {mode === 'camera' && (
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Camera className="h-4 w-4" />
+                {capturedImage ? 'Signature capturée' : 'Pointez vers la signature'}
+              </Label>
+              
+              <div className="relative rounded-lg border-2 border-dashed overflow-hidden bg-black">
+                {/* Live camera feed */}
+                {!capturedImage && (
+                  <>
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      muted
+                      className="w-full h-48 object-cover"
+                    />
+                    {!cameraActive && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                        <p className="text-muted-foreground text-sm">Chargement de la caméra...</p>
+                      </div>
+                    )}
+                    {/* Capture frame overlay */}
+                    <div className="absolute inset-4 border-2 border-white/50 border-dashed rounded pointer-events-none" />
+                  </>
+                )}
+                
+                {/* Captured image preview */}
+                {capturedImage && (
+                  <img 
+                    src={capturedImage} 
+                    alt="Signature capturée" 
+                    className="w-full h-48 object-contain bg-white"
+                  />
+                )}
+              </div>
+              
+              {/* Camera controls */}
+              <div className="flex gap-2">
+                {!capturedImage ? (
+                  <Button
+                    className="flex-1 gap-2"
+                    onClick={capturePhoto}
+                    disabled={!cameraActive}
+                  >
+                    <Camera className="h-4 w-4" />
+                    Capturer
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    className="flex-1 gap-2"
+                    onClick={retakePhoto}
+                  >
+                    <SwitchCamera className="h-4 w-4" />
+                    Reprendre
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Legal Notice */}
           <div className="p-3 bg-muted/50 rounded-lg border">
@@ -253,6 +432,11 @@ export function DigitalSignaturePad({
               En signant, vous confirmez la réception de {' '}
               <span className="font-medium text-foreground">BL {blId}</span> {' '}
               et attestez que la livraison est conforme.
+              {mode === 'camera' && (
+                <span className="block mt-1 text-amber-600">
+                  Note: La signature manuscrite (dessinée) a une valeur légale plus forte.
+                </span>
+              )}
             </p>
           </div>
         </div>
