@@ -312,17 +312,23 @@ const handler = async (req: Request): Promise<Response> => {
     // Parse request body for optional date override
     const body = await req.json().catch(() => ({}));
     
-    // Default to yesterday (since this runs at 01:00 AM for previous day)
+    // Determine target date:
+    // - If targetDate is provided (manual trigger from UI), use it
+    // - If date is provided (legacy), use it
+    // - Otherwise default to yesterday (for automated cron at 01:00 AM)
     let targetDate: Date;
-    if (body.date) {
+    if (body.targetDate) {
+      targetDate = new Date(body.targetDate + 'T00:00:00');
+    } else if (body.date) {
       targetDate = new Date(body.date);
     } else {
       targetDate = new Date();
       targetDate.setDate(targetDate.getDate() - 1);
     }
     const dateStr = targetDate.toISOString().split('T')[0];
+    const isManual = !!body.manual;
 
-    console.log(`Generating daily journal report for: ${dateStr}`);
+    console.log(`Generating daily journal report for: ${dateStr} (manual: ${isManual})`);
 
     // Fetch data
     const summary = await fetchDailyData(supabase, dateStr);
@@ -366,7 +372,7 @@ const handler = async (req: Request): Promise<Response> => {
     await supabase.from('alertes_systeme').insert({
       type_alerte: 'rapport_quotidien',
       niveau: 'info',
-      titre: `Journal Quotidien - ${dateStr}`,
+      titre: `Journal Quotidien - ${dateStr}${isManual ? ' (Manuel)' : ''}`,
       message: `Rapport envoyé: ${summary.deliveryCount} livraisons, ${formatNumber(summary.totalVolume)}m³, ${formatNumber(summary.totalCA)} DH. ${summary.unbilledBLs.length} BL(s) non facturés.`,
       destinataire_role: 'ceo',
     });

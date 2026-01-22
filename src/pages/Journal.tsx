@@ -29,8 +29,11 @@ import {
   AlertCircle,
   TrendingUp,
   Package,
+  Mail,
+  Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface JournalEntry {
   bl_id: string;
@@ -52,6 +55,7 @@ export default function Journal() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [sendingReport, setSendingReport] = useState(false);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -169,6 +173,29 @@ export default function Journal() {
     window.print();
   };
 
+  const handleSendReport = async () => {
+    setSendingReport(true);
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
+      
+      const { data, error } = await supabase.functions.invoke('send-daily-journal', {
+        body: { 
+          targetDate: dateStr,
+          manual: true 
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success(`Rapport du ${format(selectedDate, 'd MMMM yyyy', { locale: fr })} envoyé au CEO!`);
+    } catch (error: any) {
+      console.error('Error sending report:', error);
+      toast.error('Erreur lors de l\'envoi du rapport: ' + (error.message || 'Erreur inconnue'));
+    } finally {
+      setSendingReport(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6 print:space-y-4">
@@ -212,9 +239,22 @@ export default function Journal() {
               <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
             </Button>
             
-            <Button onClick={handlePrint} className="gap-2">
+            <Button onClick={handlePrint} variant="outline" className="gap-2">
               <Printer className="h-4 w-4" />
               Imprimer
+            </Button>
+            
+            <Button 
+              onClick={handleSendReport} 
+              disabled={sendingReport}
+              className="gap-2"
+            >
+              {sendingReport ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Mail className="h-4 w-4" />
+              )}
+              Envoyer Rapport
             </Button>
           </div>
         </div>
