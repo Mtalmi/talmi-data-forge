@@ -80,6 +80,28 @@ export function ProofOfDeliveryModal({
   }) => {
     setSignatureData(data);
     setShowSignaturePad(false);
+
+    // If the driver didn't attach a photo (optional), auto-finalize to avoid
+    // the common confusion: users think “Confirmer” in the signature modal
+    // already marks the BL as delivered.
+    if (!photoFile) {
+      setIsSubmitting(true);
+      try {
+        onComplete({
+          signatureDataUrl: data.signatureDataUrl,
+          signerName: data.signerName,
+          signedAt: data.signedAt,
+        });
+
+        // Reset state + close
+        setPhotoFile(null);
+        setPhotoPreview(null);
+        setSignatureData(null);
+        onOpenChange(false);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
   };
 
   const clearPhoto = () => {
@@ -296,6 +318,11 @@ export function ProofOfDeliveryModal({
                   <span className="text-sm">Obtenir la signature du client</span>
                 </Button>
               )}
+
+              {/* Small UX hint to reduce “why isn't it delivered?” confusion */}
+              <p className="text-[11px] text-muted-foreground">
+                Astuce: si vous ne joignez pas de photo, la livraison se valide automatiquement après la signature.
+              </p>
             </div>
 
             {/* Summary Info */}
