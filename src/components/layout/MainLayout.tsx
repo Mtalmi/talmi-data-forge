@@ -5,15 +5,17 @@ import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { QuickActionFAB } from './QuickActionFAB';
 import { RolePreviewSwitcher, RolePreviewBanner } from './RolePreviewSwitcher';
 import { ThemeToggle } from './ThemeToggle';
+import { MobileBottomNav } from './MobileBottomNav';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { Building2 } from 'lucide-react';
 
 interface MainLayoutProps {
   children: ReactNode;
+  hideBottomNav?: boolean;
 }
 
-export default function MainLayout({ children }: MainLayoutProps) {
+export default function MainLayout({ children, hideBottomNav = false }: MainLayoutProps) {
   const { isMobile, isTablet } = useDeviceType();
   const showMobileNav = isMobile || isTablet;
   const { previewRole, setPreviewRole } = usePreviewRole();
@@ -63,11 +65,14 @@ export default function MainLayout({ children }: MainLayoutProps) {
             <NotificationCenter />
           </div>
         </div>
-        <div className="p-3 sm:p-4 lg:p-6 min-w-0">{children}</div>
+        <div className="p-3 sm:p-4 lg:p-6 min-w-0 mobile-content">{children}</div>
       </main>
 
       {/* Quick Action FAB for employees */}
       <QuickActionFAB />
+
+      {/* Mobile Bottom Navigation */}
+      {!hideBottomNav && <MobileBottomNav />}
     </div>
   );
 }

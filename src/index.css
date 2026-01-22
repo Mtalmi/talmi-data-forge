@@ -644,6 +644,175 @@
       opacity: 0.6;
     }
   }
+
+  /* ===== MOBILE BOTTOM NAVIGATION ===== */
+  .mobile-bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50;
+    @apply lg:hidden; /* Hide on desktop */
+    background: linear-gradient(
+      180deg,
+      hsl(220 15% 6% / 0.95) 0%,
+      hsl(220 15% 4% / 0.98) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.4);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .light .mobile-bottom-nav {
+    background: linear-gradient(
+      180deg,
+      hsl(0 0% 100% / 0.95) 0%,
+      hsl(30 20% 98% / 0.98) 100%
+    );
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-bottom-nav-container {
+    @apply flex items-center justify-around;
+    @apply px-2 py-1;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .mobile-nav-item {
+    @apply relative flex flex-col items-center justify-center;
+    @apply min-h-[56px] min-w-[56px] px-3 py-2;
+    @apply text-muted-foreground transition-all duration-200;
+    @apply rounded-xl;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  .mobile-nav-item-active {
+    @apply text-primary;
+  }
+
+  .mobile-nav-icon {
+    @apply h-6 w-6 mb-0.5 transition-transform duration-200;
+  }
+
+  .mobile-nav-item-active .mobile-nav-icon {
+    transform: scale(1.1);
+  }
+
+  .mobile-nav-label {
+    @apply text-[10px] font-medium leading-tight;
+  }
+
+  .mobile-nav-indicator {
+    @apply absolute -bottom-0.5 left-1/2 -translate-x-1/2;
+    @apply w-4 h-1 rounded-full bg-primary;
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+  }
+
+  /* ===== TOUCH TARGET UTILITIES ===== */
+  .touch-target {
+    @apply min-h-[48px] min-w-[48px];
+  }
+
+  .touch-target-lg {
+    @apply min-h-[56px] min-w-[56px];
+  }
+
+  /* ===== OLED-OPTIMIZED DARK THEME ===== */
+  .oled-black {
+    background: hsl(0 0% 0%);
+  }
+
+  .oled-card {
+    background: linear-gradient(
+      135deg,
+      hsl(220 15% 4% / 0.95) 0%,
+      hsl(220 15% 2% / 0.98) 100%
+    );
+    border: 1px solid hsl(var(--border) / 0.2);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  /* ===== BENTO GRID FOR DASHBOARD ===== */
+  .bento-grid {
+    @apply grid gap-4;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .bento-grid .bento-wide {
+      grid-column: span 2;
+    }
+    
+    .bento-grid .bento-tall {
+      grid-row: span 2;
+    }
+    
+    .bento-grid .bento-full {
+      grid-column: span 4;
+    }
+  }
+
+  /* ===== MOBILE-FIRST BUTTON STYLES ===== */
+  .btn-mobile {
+    @apply min-h-[48px] px-4 py-3;
+    @apply text-sm font-semibold;
+    @apply rounded-xl;
+    @apply active:scale-95 transition-transform;
+  }
+
+  .btn-mobile-primary {
+    @apply btn-mobile;
+    @apply bg-primary text-primary-foreground;
+    box-shadow: 0 4px 14px hsl(var(--primary) / 0.3);
+  }
+
+  .btn-mobile-glow {
+    @apply btn-mobile;
+    @apply bg-gradient-to-r from-primary to-primary/80;
+    @apply text-primary-foreground;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* ===== FULLSCREEN MODAL FOR MOBILE ===== */
+  .modal-fullscreen-mobile {
+    @apply fixed inset-0 z-50 bg-background;
+  }
+
+  @media (min-width: 640px) {
+    .modal-fullscreen-mobile {
+      @apply relative inset-auto rounded-xl;
+      max-width: 520px;
+      max-height: 90vh;
+    }
+  }
+
+  /* ===== SAFE AREA PADDING ===== */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* ===== MOBILE CONTENT PADDING ===== */
+  .mobile-content {
+    @apply pb-24 lg:pb-4; /* Account for bottom nav on mobile */
+  }
 }
 
 /* Scrollbar styling */
@@ -663,4 +832,12 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
+}
+
+/* Hide scrollbar on mobile for cleaner look */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
 }
