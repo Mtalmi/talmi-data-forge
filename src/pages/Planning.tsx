@@ -50,6 +50,7 @@ import { SmartTruckAssignment } from '@/components/planning/SmartTruckAssignment
 import { CommandCenterSection } from '@/components/planning/CommandCenterSection';
 import { DeliveryRotationProgress } from '@/components/planning/DeliveryRotationProgress';
 import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
+import { FleetPanel } from '@/components/planning/FleetPanel';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
 
@@ -1324,6 +1325,11 @@ export default function Planning() {
             delivery={selectedDeliveryForInvoice}
             onInvoiceGenerated={fetchData}
           />
+        )}
+
+        {/* Fleet Panel - Right Sidebar (Desktop only) */}
+        {!isMobile && !isTablet && (
+          <FleetPanel selectedDate={selectedDate} />
         )}
       </div>
     </MainLayout>
