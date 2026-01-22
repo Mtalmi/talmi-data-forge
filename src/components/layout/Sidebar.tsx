@@ -156,8 +156,10 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
       agent_administratif: { label: 'Agent Admin', className: 'bg-teal-500/20 text-teal-500' },
       centraliste: { label: 'Centraliste', className: 'bg-pink-500/20 text-pink-500' },
       chauffeur: { label: 'Chauffeur', className: 'bg-emerald-500/20 text-emerald-500' },
+      auditeur: { label: 'Auditeur Externe', className: 'bg-blue-500/20 text-blue-500' },
     };
-    return effectiveRole ? roleConfig[effectiveRole] : { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
+    const defaultBadge = { label: 'Non assigné', className: 'bg-muted text-muted-foreground' };
+    return effectiveRole ? (roleConfig[effectiveRole] || defaultBadge) : defaultBadge;
   };
 
   const roleBadge = getRoleBadge();
