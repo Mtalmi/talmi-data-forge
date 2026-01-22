@@ -2988,6 +2988,7 @@ export type Database = {
         }
         Returns: Json
       }
+      approve_devis_with_stamp: { Args: { p_devis_id: string }; Returns: Json }
       approve_technical_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
         Returns: Json

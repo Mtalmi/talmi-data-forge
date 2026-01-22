@@ -97,36 +97,37 @@ export function DevisTable({
   onQuickSend,
   onRefresh,
 }: DevisTableProps) {
-  const { isCeo, isSuperviseur, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique } = useAuth();
+  const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo } = useAuth();
   const [validating, setValidating] = useState<string | null>(null);
   
-  // Role-based button visibility
-  // Only CEO, Superviseur, Agent Admin can VALIDATE a devis
-  const canValidateDevis = isCeo || isSuperviseur || isAgentAdministratif;
-  // Dir Ops and Centraliste should NOT see validate button - they only see validated jobs
+  // =====================================================
+  // HARD PERMISSION WALL - Devis Approval Authority
+  // ONLY CEO, Superviseur, Agent Administratif can APPROVE
+  // Dir Ops and Centraliste are READ-ONLY
+  // =====================================================
+  const canValidateDevis = canApproveDevis;
   const isReadOnlyRole = isDirecteurOperations || isCentraliste;
-  // Resp Technique can approve technical aspects
+  // Resp Technique can approve technical aspects only
   const canApproveTechnical = isCeo || isResponsableTechnique;
   
   const handleValidateDevis = async (devis: Devis) => {
     setValidating(devis.devis_id);
     try {
-      const { data, error } = await supabase.rpc('validate_devis', {
+      // Use the new approve_devis_with_stamp RPC for full responsibility tracking
+      const { data, error } = await supabase.rpc('approve_devis_with_stamp', {
         p_devis_id: devis.devis_id,
       });
       
       if (error) throw error;
       
-      const result = data as { success: boolean; error?: string; message?: string; validated_by?: string };
+      const result = data as { success: boolean; approved_by?: string; approved_role?: string };
       
       if (result.success) {
-        toast.success(`Devis validé par ${result.validated_by}`);
+        toast.success(`Devis approuvé par ${result.approved_by} (${result.approved_role})`);
         onRefresh?.();
-      } else {
-        toast.error(result.error || 'Erreur lors de la validation');
       }
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de la validation');
+      toast.error(error.message || 'Erreur lors de l\'approbation');
     } finally {
       setValidating(null);
     }
