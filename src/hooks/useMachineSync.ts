@@ -166,8 +166,7 @@ export function useMachineSync() {
       return realResult;
     }
     
-    // Fallback to simulation
-    console.log('Falling back to simulated data');
+    // Fallback to simulation when machine not available
     return simulateMachineSync(formule, volume);
   }, [fetchMachineData, simulateMachineSync]);
 

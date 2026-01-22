@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
 import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
+import { SystemManualPdf } from '@/components/documents/SystemManualPdf';
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
@@ -111,9 +112,28 @@ export default function Dashboard() {
     setRefreshing(false);
   };
 
+  // Persist dismissed alerts to localStorage
+  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('tbos_dismissed_alerts');
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
   const dismissAlert = (id: string) => {
-    // Alerts are managed by useDashboardStats, this is for UI dismissal only
+    setDismissedAlerts(prev => {
+      const updated = new Set(prev);
+      updated.add(id);
+      // Persist to localStorage
+      localStorage.setItem('tbos_dismissed_alerts', JSON.stringify([...updated]));
+      return updated;
+    });
   };
+
+  // Filter out dismissed alerts
+  const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
   const getTrendDirection = (value: number): 'up' | 'down' | 'neutral' => {
     if (value > 2) return 'up';
@@ -191,6 +211,7 @@ export default function Dashboard() {
               </div>
 
               {/* Action Buttons */}
+              {isCeo && <SystemManualPdf />}
               {isCeo && <DailyReportGenerator />}
               <button 
                 onClick={handleRefresh}
@@ -223,9 +244,9 @@ export default function Dashboard() {
         {/* Leakage Alert Banner - Critical */}
         {(isCeo || isAccounting) && <LeakageAlertBanner />}
 
-        {/* Alerts */}
+        {/* Alerts - uses persisted dismissal */}
         <AlertBanner 
-          alerts={stats.alerts.map(a => ({
+          alerts={visibleAlerts.map(a => ({
             id: a.id,
             type: a.type,
             message: `${a.title}: ${a.message}`,

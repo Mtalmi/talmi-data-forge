@@ -237,8 +237,7 @@ export function useNotifications() {
           table: 'alertes_systeme',
         },
         (payload) => {
-          console.log('Alert realtime update:', payload);
-          
+          // Real-time alert handling
           if (payload.eventType === 'INSERT') {
             const newAlert = payload.new as SystemAlert;
             // Check if this alert is for current user's role
