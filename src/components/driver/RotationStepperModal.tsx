@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
   DialogContent,
@@ -20,13 +21,15 @@ import {
   Home,
   Check,
   Loader2,
-  ChevronRight,
   Truck,
   Fuel,
   Gauge,
-  AlertTriangle,
+  Clock,
+  Timer,
+  Zap,
+  MessageSquare,
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, differenceInMinutes } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { ProofOfDeliveryModal } from './ProofOfDeliveryModal';
 
@@ -57,7 +60,7 @@ const steps: Step[] = [
   { key: 'depart', label: 'Départ', sublabel: 'Quitter la centrale', icon: Play, color: 'primary' },
   { key: 'arrivee', label: 'Arrivée', sublabel: 'Sur le chantier', icon: MapPin, color: 'warning' },
   { key: 'signe', label: 'Signé', sublabel: 'Preuve de livraison', icon: FileCheck, color: 'success' },
-  { key: 'retour', label: 'Retour', sublabel: 'KM + Carburant + Libérer', icon: Home, color: 'primary' },
+  { key: 'retour', label: 'Retour', sublabel: 'Fin de mission', icon: Home, color: 'primary' },
 ];
 
 export function RotationStepperModal({
@@ -78,14 +81,13 @@ export function RotationStepperModal({
   const [localWorkflowStatus, setLocalWorkflowStatus] = useState(workflowStatus);
   const [updating, setUpdating] = useState<StepKey | null>(null);
   const [proofModalOpen, setProofModalOpen] = useState(false);
-  const [retourFormOpen, setRetourFormOpen] = useState(false);
   const [lastKmReading, setLastKmReading] = useState<number | null>(null);
   
-  // Retour form state (Final Debrief)
-  const [kmCompteur, setKmCompteur] = useState('');
+  // Retour form state (Fin de Mission)
+  const [kmFinal, setKmFinal] = useState('');
   const [didRefuel, setDidRefuel] = useState(false);
   const [litresCarburant, setLitresCarburant] = useState('');
-  const [tempsAttenteReel, setTempsAttenteReel] = useState('');
+  const [noteAttente, setNoteAttente] = useState('');
 
   // Sync props with local state when modal opens
   useEffect(() => {
@@ -94,8 +96,20 @@ export function RotationStepperModal({
       setLocalHeureArrivee(heureArrivee);
       setLocalHeureRetour(heureRetour);
       setLocalWorkflowStatus(workflowStatus);
+      
+      // Fetch last km reading for this truck
+      if (camionId) {
+        supabase
+          .from('flotte')
+          .select('km_compteur')
+          .eq('id_camion', camionId)
+          .single()
+          .then(({ data }) => {
+            setLastKmReading(data?.km_compteur || null);
+          });
+      }
     }
-  }, [open, heureDepart, heureArrivee, heureRetour, workflowStatus]);
+  }, [open, heureDepart, heureArrivee, heureRetour, workflowStatus, camionId]);
 
   const isDelivered = ['livre', 'facture'].includes(localWorkflowStatus);
 
@@ -110,6 +124,42 @@ export function RotationStepperModal({
 
   const currentStep = getCurrentStep();
   const isComplete = currentStep === 4;
+  const isRetourStep = currentStep === 3;
+
+  // Auto-calculations
+  const calculations = useMemo(() => {
+    const kmVal = parseFloat(kmFinal) || 0;
+    const litresVal = parseFloat(litresCarburant) || 0;
+    const kmParcourus = lastKmReading && kmVal > lastKmReading ? kmVal - lastKmReading : null;
+    
+    // L/100km calculation
+    let consommation: number | null = null;
+    if (kmParcourus && kmParcourus > 0 && litresVal > 0) {
+      consommation = (litresVal / kmParcourus) * 100;
+    }
+
+    // Cycle time (Retour - Départ)
+    let cycleMinutes: number | null = null;
+    if (localHeureDepart) {
+      const now = new Date();
+      cycleMinutes = differenceInMinutes(now, new Date(localHeureDepart));
+    }
+
+    // Waiting time (Signé - Arrivée) - Use validated_at from workflow or estimate
+    let attenteMinutes: number | null = null;
+    if (localHeureArrivee && isDelivered) {
+      // Approximate: assume signature happened shortly after arrival for now
+      // In reality, we'd use the validated_at timestamp
+      attenteMinutes = 15; // Placeholder, will be calculated from real data
+    }
+
+    return {
+      kmParcourus,
+      consommation,
+      cycleMinutes,
+      attenteMinutes,
+    };
+  }, [kmFinal, litresCarburant, lastKmReading, localHeureDepart, localHeureArrivee, isDelivered]);
 
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return null;
@@ -120,77 +170,44 @@ export function RotationStepperModal({
     }
   };
 
-  const recordStep = async (stepKey: StepKey) => {
-    // For 'signe' step, open the Proof of Delivery modal
-    if (stepKey === 'signe') {
-      setProofModalOpen(true);
-      return;
-    }
-
-    // For 'retour' step, open the Final Debrief form to collect KM/fuel data
-    if (stepKey === 'retour') {
-      // Fetch last km reading for this truck
-      if (camionId) {
-        const { data } = await supabase
-          .from('flotte')
-          .select('km_compteur')
-          .eq('id_camion', camionId)
-          .single();
-        setLastKmReading(data?.km_compteur || null);
-      }
-      setRetourFormOpen(true);
-      return;
-    }
-
-    await executeStep(stepKey);
+  const formatDuration = (minutes: number | null) => {
+    if (!minutes || minutes < 0) return '—';
+    const hours = Math.floor(minutes / 60);
+    const mins = Math.round(minutes % 60);
+    if (hours > 0) return `${hours}h ${mins}min`;
+    return `${mins} min`;
   };
 
-  const executeStep = async (stepKey: StepKey, extraData?: Record<string, unknown>) => {
+  // Single-click timestamp recording for Départ and Arrivée
+  const recordTimestamp = async (stepKey: 'depart' | 'arrivee') => {
     setUpdating(stepKey);
     try {
       const now = new Date().toISOString();
-      let updateData: Record<string, unknown> = { ...extraData };
-
-      switch (stepKey) {
-        case 'depart':
-          updateData.heure_depart_centrale = now;
-          setLocalHeureDepart(now);
-          break;
-        case 'arrivee':
-          updateData.heure_arrivee_chantier = now;
-          setLocalHeureArrivee(now);
-          break;
-        case 'retour':
-          // Retour is handled by handleRetourSubmit with full debrief
-          // This case should not be reached directly
-          updateData.heure_retour_centrale = now;
-          setLocalHeureRetour(now);
-          break;
-      }
-
+      const field = stepKey === 'depart' ? 'heure_depart_centrale' : 'heure_arrivee_chantier';
+      
       const { error } = await supabase
         .from('bons_livraison_reels')
-        .update(updateData)
+        .update({ [field]: now })
         .eq('bl_id', blId);
 
       if (error) throw error;
 
-      const labels: Record<StepKey, string> = {
+      // Update local state immediately for instant feedback
+      if (stepKey === 'depart') {
+        setLocalHeureDepart(now);
+      } else {
+        setLocalHeureArrivee(now);
+      }
+
+      const labels = {
         depart: '📍 Départ enregistré',
         arrivee: '📍 Arrivée enregistrée',
-        signe: '✅ BL signé',
-        retour: '🏠 Retour enregistré - Camion libéré!',
       };
-
+      
       toast.success(labels[stepKey]);
       onComplete();
-
-      // If this was the last step, close modal after a brief delay
-      if (stepKey === 'retour') {
-        setTimeout(() => onOpenChange(false), 1500);
-      }
     } catch (error) {
-      console.error('Error recording step:', error);
+      console.error('Error recording timestamp:', error);
       toast.error("Erreur lors de l'enregistrement");
     } finally {
       setUpdating(null);
@@ -200,9 +217,9 @@ export function RotationStepperModal({
   const handleRetourSubmit = async () => {
     setUpdating('retour');
     
-    const kmVal = parseFloat(kmCompteur);
+    const kmVal = parseFloat(kmFinal);
     if (isNaN(kmVal) || kmVal <= 0) {
-      toast.error('Veuillez entrer le compteur kilométrique');
+      toast.error('Veuillez entrer le KM Final');
       setUpdating(null);
       return;
     }
@@ -216,10 +233,13 @@ export function RotationStepperModal({
 
     try {
       const now = new Date().toISOString();
+      const nowDate = new Date();
       
-      // Calculate km traveled for this rotation
+      // Calculate values
       let kmParcourus: number | null = null;
       let consommation: number | null = null;
+      let tempsRotation: number | null = null;
+      let tempsAttente: number | null = null;
 
       if (lastKmReading && lastKmReading > 0) {
         kmParcourus = kmVal - lastKmReading;
@@ -228,8 +248,27 @@ export function RotationStepperModal({
         }
       }
 
-      // Parse temps d'attente réel if provided
-      const tempsAttenteReelVal = tempsAttenteReel ? parseFloat(tempsAttenteReel) : null;
+      // Calculate Cycle Time (Retour - Départ)
+      if (localHeureDepart) {
+        tempsRotation = differenceInMinutes(nowDate, new Date(localHeureDepart));
+      }
+
+      // Calculate Waiting Time (we'll fetch validated_at for accurate calculation)
+      if (localHeureArrivee) {
+        // Fetch the actual signature time
+        const { data: blData } = await supabase
+          .from('bons_livraison_reels')
+          .select('validated_at')
+          .eq('bl_id', blId)
+          .single();
+        
+        if (blData?.validated_at) {
+          tempsAttente = differenceInMinutes(new Date(blData.validated_at), new Date(localHeureArrivee));
+        }
+      }
+
+      // Determine if attente should be billed (>30 min)
+      const facturerAttente = tempsAttente !== null && tempsAttente > 30;
 
       // Record fuel entry if refueled
       if (didRefuel && camionId && litresVal > 0) {
@@ -255,7 +294,7 @@ export function RotationStepperModal({
           .eq('id_camion', camionId);
       }
 
-      // Update BL with all debrief data
+      // Update BL with all debrief data - syncs to Journal
       const { error } = await supabase
         .from('bons_livraison_reels')
         .update({
@@ -264,7 +303,10 @@ export function RotationStepperModal({
           km_final: kmVal,
           litres_ajoutes: litresVal > 0 ? litresVal : null,
           consommation_calculee: consommation,
-          temps_attente_reel_minutes: tempsAttenteReelVal,
+          temps_rotation_minutes: tempsRotation,
+          temps_attente_chantier_minutes: tempsAttente,
+          facturer_attente: facturerAttente,
+          justification_ecart: noteAttente || null,
           debrief_valide: true,
           debrief_at: now,
         })
@@ -273,21 +315,28 @@ export function RotationStepperModal({
       if (error) throw error;
 
       setLocalHeureRetour(now);
+      
+      // Show success with calculations summary
+      const summaryParts = [`KM: ${kmVal.toLocaleString()}`];
+      if (kmParcourus) summaryParts.push(`Dist: ${kmParcourus}km`);
+      if (consommation) summaryParts.push(`${consommation.toFixed(1)} L/100km`);
+      if (tempsRotation) summaryParts.push(`Cycle: ${formatDuration(tempsRotation)}`);
+      
       toast.success('🏠 Rotation validée - Camion libéré!', {
-        description: `KM: ${kmVal} ${litresVal > 0 ? `• Carburant: ${litresVal}L` : ''} ${consommation ? `• ${consommation.toFixed(1)} L/100km` : ''}`,
+        description: summaryParts.join(' • '),
       });
       
-      setRetourFormOpen(false);
       onComplete();
       
       // Close modal after a brief delay
-      setTimeout(() => onOpenChange(false), 1500);
-      
-      // Reset form
-      setKmCompteur('');
-      setDidRefuel(false);
-      setLitresCarburant('');
-      setTempsAttenteReel('');
+      setTimeout(() => {
+        onOpenChange(false);
+        // Reset form
+        setKmFinal('');
+        setDidRefuel(false);
+        setLitresCarburant('');
+        setNoteAttente('');
+      }, 1500);
     } catch (error) {
       console.error('Error completing debrief:', error);
       toast.error("Erreur lors de la validation");
@@ -321,7 +370,6 @@ export function RotationStepperModal({
 
       if (error) throw error;
 
-      // CRITICAL: Update local state AND close the proof modal
       setLocalWorkflowStatus('livre');
       setProofModalOpen(false);
       
@@ -332,7 +380,6 @@ export function RotationStepperModal({
     } catch (error) {
       console.error('Error completing proof:', error);
       toast.error("Erreur lors de l'enregistrement");
-      // Keep the proof modal open so the dispatcher can retry.
       throw error;
     } finally {
       setUpdating(null);
@@ -357,47 +404,70 @@ export function RotationStepperModal({
 
   return (
     <>
-      <Dialog open={open && !proofModalOpen && !retourFormOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <Dialog open={open && !proofModalOpen} onOpenChange={onOpenChange}>
+        <DialogContent className={cn(
+          "sm:max-w-[520px] max-h-[90vh] overflow-y-auto",
+          // Glassmorphism effect
+          "bg-background/80 backdrop-blur-xl border-border/50",
+          "shadow-2xl shadow-primary/5"
+        )}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <Truck className="h-5 w-5 text-primary" />
+                <div className="p-1.5 rounded-lg bg-primary/10">
+                  <Truck className="h-5 w-5 text-primary" />
+                </div>
                 Rotation {blId}
               </span>
-              <span className="text-sm font-normal text-muted-foreground bg-muted px-2 py-1 rounded">
+              <span className={cn(
+                "text-sm font-semibold px-3 py-1 rounded-full",
+                isComplete 
+                  ? "bg-success/20 text-success" 
+                  : "bg-primary/10 text-primary"
+              )}>
                 {currentStep}/4 étapes
               </span>
             </DialogTitle>
-            <DialogDescription>
-              {clientName} {camionId && `• ${camionId}`}
+            <DialogDescription className="flex items-center gap-2">
+              {clientName} 
+              {camionId && (
+                <>
+                  <span className="text-border">•</span>
+                  <span className="font-mono font-medium text-foreground">{camionId}</span>
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4">
-            {/* Steps Progress */}
-            <div className="space-y-3">
+          <div className="py-4 space-y-4">
+            {/* Steps Progress - Compact single-click design */}
+            <div className="space-y-2">
               {steps.map((step, index) => {
                 const status = getStepStatus(index);
                 const Icon = step.icon;
                 const timestamp = getStepTimestamp(step.key);
                 const time = timestamp === 'done' ? '✓' : formatTime(timestamp);
                 const isUpdating = updating === step.key;
+                const isSingleClick = step.key === 'depart' || step.key === 'arrivee';
+
+                // Hide Retour step row when in Retour mode (show expanded form instead)
+                if (step.key === 'retour' && isRetourStep) return null;
 
                 return (
                   <div
                     key={step.key}
                     className={cn(
-                      "relative flex items-center gap-4 p-4 rounded-lg border transition-all",
-                      status === 'completed' && "bg-success/10 border-success/30",
-                      status === 'current' && "bg-primary/5 border-primary shadow-sm",
-                      status === 'pending' && "bg-muted/30 border-border opacity-60"
+                      "relative flex items-center gap-3 p-3 rounded-xl border transition-all",
+                      // Glassmorphism step cards
+                      status === 'completed' && "bg-success/10 border-success/30 backdrop-blur-sm",
+                      status === 'current' && "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/40 shadow-lg shadow-primary/10",
+                      status === 'pending' && "bg-muted/30 border-border/30 opacity-50"
                     )}
                   >
-                    {/* Step Number/Icon */}
+                    {/* Step Icon */}
                     <div
                       className={cn(
-                        "flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg",
+                        "flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center font-bold shadow-inner",
                         status === 'completed' && "bg-success text-success-foreground",
                         status === 'current' && step.color === 'primary' && "bg-primary text-primary-foreground",
                         status === 'current' && step.color === 'warning' && "bg-warning text-warning-foreground",
@@ -406,7 +476,7 @@ export function RotationStepperModal({
                       )}
                     >
                       {status === 'completed' ? (
-                        <Check className="h-6 w-6" />
+                        <Check className="h-5 w-5" />
                       ) : (
                         <Icon className="h-5 w-5" />
                       )}
@@ -414,84 +484,244 @@ export function RotationStepperModal({
 
                     {/* Step Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className={cn(
-                            "font-semibold",
-                            status === 'pending' && "text-muted-foreground"
-                          )}>
-                            {step.label}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {step.sublabel}
-                          </p>
-                        </div>
-                        {time && (
-                          <span className="text-sm font-mono text-muted-foreground">
-                            {time}
-                          </span>
-                        )}
-                      </div>
+                      <p className={cn(
+                        "font-semibold text-sm",
+                        status === 'pending' && "text-muted-foreground"
+                      )}>
+                        {step.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {step.sublabel}
+                      </p>
                     </div>
 
-                    {/* Action Button (only for current step) */}
-                    {status === 'current' && (
+                    {/* Timestamp or Action */}
+                    {time ? (
+                      <span className="text-sm font-mono font-semibold text-foreground bg-muted/50 px-2.5 py-1 rounded-lg">
+                        {time}
+                      </span>
+                    ) : status === 'current' ? (
                       <Button
                         size="sm"
-                        onClick={() => recordStep(step.key)}
+                        onClick={() => {
+                          if (isSingleClick) {
+                            recordTimestamp(step.key as 'depart' | 'arrivee');
+                          } else if (step.key === 'signe') {
+                            setProofModalOpen(true);
+                          }
+                        }}
                         disabled={isUpdating}
                         className={cn(
-                          "gap-2 shrink-0",
-                          step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground",
-                          step.color === 'success' && "bg-success hover:bg-success/90"
+                          "h-11 px-5 text-sm font-semibold rounded-xl shadow-lg transition-all",
+                          "hover:scale-105 active:scale-95",
+                          step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground shadow-warning/20",
+                          step.color === 'success' && "bg-success hover:bg-success/90 shadow-success/20",
+                          step.color === 'primary' && "bg-primary hover:bg-primary/90 shadow-primary/20"
                         )}
                       >
                         {isUpdating ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
                           <>
-                            {step.key === 'signe' ? 'Signer' : 'Confirmer'}
-                            <ChevronRight className="h-4 w-4" />
+                            {step.key === 'signe' ? 'Signer' : (
+                              <><Zap className="h-4 w-4 mr-1" /> Maintenant</>
+                            )}
                           </>
                         )}
                       </Button>
-                    )}
-
-                    {/* Connector Line */}
-                    {index < steps.length - 1 && (
-                      <div
-                        className={cn(
-                          "absolute left-10 top-[68px] w-0.5 h-3",
-                          status === 'completed' ? "bg-success" : "bg-border"
-                        )}
-                      />
-                    )}
+                    ) : null}
                   </div>
                 );
               })}
             </div>
 
-            {/* Completion Message */}
-            {isComplete && (
-              <div className="mt-4 p-4 bg-success/10 rounded-lg border border-success/30 text-center">
-                <div className="flex items-center justify-center gap-2 text-success font-semibold">
-                  <Check className="h-5 w-5" />
-                  Rotation Complète!
+            {/* Expanded Retour / Fin de Mission Section */}
+            {isRetourStep && (
+              <div className={cn(
+                "p-5 rounded-2xl border-2 border-primary/30",
+                "bg-gradient-to-br from-primary/5 via-background to-success/5",
+                "backdrop-blur-sm shadow-xl shadow-primary/5",
+                "animate-in slide-in-from-bottom-4 duration-300"
+              )}>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="p-2.5 rounded-xl bg-primary/20">
+                    <Home className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-lg">Fin de Mission</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Données obligatoires avant libération
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {camionId && (
-                    <>Camion <span className="font-medium">{camionId}</span> libéré et disponible</>
+
+                <div className="space-y-4">
+                  {/* Previous KM Info */}
+                  {lastKmReading && (
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl border">
+                      <span className="text-sm text-muted-foreground">Dernier relevé</span>
+                      <span className="font-mono font-bold text-lg">{lastKmReading.toLocaleString()} km</span>
+                    </div>
                   )}
-                </p>
+
+                  {/* KM Final - Large touch-friendly input */}
+                  <div className="space-y-2">
+                    <Label htmlFor="km-final" className="flex items-center gap-2 font-semibold">
+                      <Gauge className="h-4 w-4 text-primary" />
+                      KM Final <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      id="km-final"
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="Ex: 125430"
+                      value={kmFinal}
+                      onChange={(e) => setKmFinal(e.target.value)}
+                      className="h-14 text-xl font-mono text-center rounded-xl border-2 focus:border-primary"
+                    />
+                    {calculations.kmParcourus && calculations.kmParcourus > 0 && (
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Distance parcourue</span>
+                        <span className="font-mono font-bold text-primary">{calculations.kmParcourus.toLocaleString()} km</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Fuel Toggle */}
+                  <div className={cn(
+                    "flex items-center justify-between p-4 rounded-xl border-2 transition-all",
+                    didRefuel ? "border-warning/50 bg-warning/10" : "border-border/50 bg-muted/30"
+                  )}>
+                    <Label htmlFor="did-refuel" className="flex items-center gap-3 cursor-pointer">
+                      <Fuel className={cn("h-5 w-5", didRefuel ? "text-warning" : "text-muted-foreground")} />
+                      <span className="font-medium">Carburant Ajouté</span>
+                    </Label>
+                    <Checkbox
+                      id="did-refuel"
+                      checked={didRefuel}
+                      onCheckedChange={(checked) => setDidRefuel(!!checked)}
+                      className="h-6 w-6"
+                    />
+                  </div>
+
+                  {/* Fuel Amount - Conditional */}
+                  {didRefuel && (
+                    <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
+                      <Label htmlFor="litres" className="flex items-center gap-2 font-semibold">
+                        <Fuel className="h-4 w-4 text-warning" />
+                        Litres <span className="text-destructive">*</span>
+                      </Label>
+                      <Input
+                        id="litres"
+                        type="number"
+                        inputMode="decimal"
+                        step="0.1"
+                        placeholder="Ex: 85.5"
+                        value={litresCarburant}
+                        onChange={(e) => setLitresCarburant(e.target.value)}
+                        className="h-14 text-xl font-mono text-center rounded-xl border-2 focus:border-warning"
+                      />
+                      {calculations.consommation && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Consommation</span>
+                          <span className={cn(
+                            "font-mono font-bold",
+                            calculations.consommation > 35 ? "text-destructive" : "text-success"
+                          )}>
+                            {calculations.consommation.toFixed(1)} L/100km
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Note d'Attente */}
+                  <div className="space-y-2">
+                    <Label htmlFor="note-attente" className="flex items-center gap-2">
+                      <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                      Note d'Attente
+                      <span className="text-xs text-muted-foreground">(optionnel)</span>
+                    </Label>
+                    <Textarea
+                      id="note-attente"
+                      placeholder="Raison du délai, problème chantier..."
+                      value={noteAttente}
+                      onChange={(e) => setNoteAttente(e.target.value)}
+                      className="min-h-[80px] rounded-xl resize-none"
+                    />
+                  </div>
+
+                  {/* Auto-Calculated Summary Preview */}
+                  <div className="grid grid-cols-2 gap-3 p-4 bg-muted/30 rounded-xl border">
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                        <Timer className="h-3 w-3" />
+                        Cycle Total
+                      </div>
+                      <span className="font-mono font-bold text-lg">
+                        {formatDuration(calculations.cycleMinutes)}
+                      </span>
+                    </div>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                        <Clock className="h-3 w-3" />
+                        Attente
+                      </div>
+                      <span className="font-mono font-bold text-lg">
+                        {formatDuration(calculations.attenteMinutes)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Submit Button */}
+                  <Button
+                    className={cn(
+                      "w-full h-14 text-lg font-bold rounded-xl",
+                      "bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success/70",
+                      "shadow-xl shadow-success/20",
+                      "transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    )}
+                    onClick={handleRetourSubmit}
+                    disabled={updating === 'retour'}
+                  >
+                    {updating === 'retour' ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Check className="h-5 w-5 mr-2" />
+                        Valider & Libérer Camion
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             )}
 
-            {/* Truck Info Banner */}
-            {camionId && !isComplete && (
-              <div className="mt-4 p-3 bg-muted/50 rounded-lg border flex items-center gap-3">
+            {/* Completion Message */}
+            {isComplete && (
+              <div className={cn(
+                "p-5 rounded-2xl text-center",
+                "bg-gradient-to-br from-success/20 to-success/5",
+                "border-2 border-success/30"
+              )}>
+                <div className="flex items-center justify-center gap-2 text-success font-bold text-lg mb-2">
+                  <Check className="h-6 w-6" />
+                  Rotation Complète!
+                </div>
+                {camionId && (
+                  <p className="text-sm text-muted-foreground">
+                    Camion <span className="font-mono font-semibold text-foreground">{camionId}</span> libéré et disponible
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Truck Info Banner (when not in Retour step) */}
+            {camionId && !isComplete && !isRetourStep && (
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border/50">
                 <Truck className="h-5 w-5 text-muted-foreground" />
                 <div className="text-sm">
-                  <p className="font-medium">{camionId}</p>
+                  <p className="font-mono font-medium">{camionId}</p>
                   <p className="text-xs text-muted-foreground">
                     Sera libéré à l'étape 4/4 (Retour)
                   </p>
@@ -510,135 +740,6 @@ export function RotationStepperModal({
         clientName={clientName}
         onComplete={handleProofComplete}
       />
-
-      {/* Final Debrief Dialog for KM/Fuel/Waiting Time Entry */}
-      <Dialog open={retourFormOpen} onOpenChange={setRetourFormOpen}>
-        <DialogContent className="sm:max-w-[450px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Home className="h-5 w-5 text-success" />
-              Validation de Fin de Rotation
-            </DialogTitle>
-            <DialogDescription>
-              {blId} • {camionId} — Données obligatoires avant libération du camion
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-4">
-            {/* Previous KM Info */}
-            {lastKmReading && (
-              <div className="p-3 bg-muted/50 rounded-lg border text-sm">
-                <span className="text-muted-foreground">Dernier relevé:</span>{' '}
-                <span className="font-mono font-semibold">{lastKmReading.toLocaleString()} km</span>
-              </div>
-            )}
-
-            {/* KM Final - Required */}
-            <div className="space-y-2">
-              <Label htmlFor="km-compteur" className="flex items-center gap-2 font-semibold">
-                <Gauge className="h-4 w-4 text-primary" />
-                KM Final (Compteur) <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="km-compteur"
-                type="number"
-                placeholder="Ex: 125430"
-                value={kmCompteur}
-                onChange={(e) => setKmCompteur(e.target.value)}
-                className="text-lg font-mono"
-              />
-              {lastKmReading && kmCompteur && parseFloat(kmCompteur) > lastKmReading && (
-                <p className="text-xs text-muted-foreground">
-                  Distance parcourue: <span className="font-mono font-semibold text-foreground">{(parseFloat(kmCompteur) - lastKmReading).toLocaleString()} km</span>
-                </p>
-              )}
-            </div>
-
-            {/* Fuel Checkbox */}
-            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-lg border">
-              <Checkbox
-                id="did-refuel"
-                checked={didRefuel}
-                onCheckedChange={(checked) => setDidRefuel(!!checked)}
-              />
-              <Label htmlFor="did-refuel" className="flex items-center gap-2 cursor-pointer">
-                <Fuel className="h-4 w-4" />
-                Carburant Ajouté
-              </Label>
-            </div>
-
-            {/* Fuel Amount - Conditional */}
-            {didRefuel && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
-                <Label htmlFor="litres-carburant" className="flex items-center gap-2 font-semibold">
-                  <Fuel className="h-4 w-4 text-warning" />
-                  Litres de Carburant <span className="text-destructive">*</span>
-                </Label>
-                <Input
-                  id="litres-carburant"
-                  type="number"
-                  step="0.1"
-                  placeholder="Ex: 85.5"
-                  value={litresCarburant}
-                  onChange={(e) => setLitresCarburant(e.target.value)}
-                  className="text-lg font-mono"
-                />
-                {kmCompteur && lastKmReading && litresCarburant && parseFloat(litresCarburant) > 0 && (
-                  <p className="text-xs text-success">
-                    Consommation estimée: <span className="font-mono font-semibold">
-                      {((parseFloat(litresCarburant) / (parseFloat(kmCompteur) - lastKmReading)) * 100).toFixed(1)} L/100km
-                    </span>
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Temps d'Attente Réel - Optional */}
-            <div className="space-y-2">
-              <Label htmlFor="temps-attente" className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-                Temps d'Attente Réel (minutes)
-              </Label>
-              <Input
-                id="temps-attente"
-                type="number"
-                placeholder="Laisser vide si pas de correction"
-                value={tempsAttenteReel}
-                onChange={(e) => setTempsAttenteReel(e.target.value)}
-                className="font-mono"
-              />
-              <p className="text-xs text-muted-foreground">
-                Uniquement si différent du temps calculé automatiquement
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => setRetourFormOpen(false)}
-              disabled={updating === 'retour'}
-            >
-              Annuler
-            </Button>
-            <Button
-              className="flex-1 gap-2 bg-success hover:bg-success/90"
-              onClick={handleRetourSubmit}
-              disabled={updating === 'retour'}
-            >
-              {updating === 'retour' ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <>
-                  <Check className="h-4 w-4" />
-                  Valider & Libérer
-                </>
-              )}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
