@@ -11,9 +11,12 @@ import {
   Clock,
   CheckCircle,
   Loader2,
+  PenTool,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { DigitalSignaturePad } from './DigitalSignaturePad';
+import { PhotoWaiverOption } from './PhotoWaiverOption';
 
 interface DriverRotationTrackerProps {
   blId: string;
@@ -21,6 +24,7 @@ interface DriverRotationTrackerProps {
   heureArrivee: string | null;
   heureRetour: string | null;
   workflowStatus: string;
+  clientName?: string;
   onUpdate: () => void;
 }
 
@@ -30,9 +34,11 @@ export function DriverRotationTracker({
   heureArrivee,
   heureRetour,
   workflowStatus,
+  clientName = 'Client',
   onUpdate,
 }: DriverRotationTrackerProps) {
   const [updating, setUpdating] = useState<string | null>(null);
+  const [signaturePadOpen, setSignaturePadOpen] = useState(false);
 
   const recordStep = async (step: 'depart' | 'arrivee' | 'livre' | 'retour') => {
     setUpdating(step);
@@ -240,21 +246,68 @@ export function DriverRotationTracker({
         )}
 
         {activeStep === 2 && (
-          <Button
-            size="lg"
-            className="w-full min-h-[60px] text-lg gap-3 bg-success hover:bg-success/90 touch-manipulation"
-            onClick={() => recordStep('livre')}
-            disabled={updating !== null}
-          >
-            {updating === 'livre' ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <FileSignature className="h-6 w-6" />
-                BL Signé - Confirmer Livraison
-              </>
-            )}
-          </Button>
+          <div className="space-y-3">
+            {/* Main Confirm Button */}
+            <Button
+              size="lg"
+              className="w-full min-h-[60px] text-lg gap-3 bg-success hover:bg-success/90 touch-manipulation"
+              onClick={() => recordStep('livre')}
+              disabled={updating !== null}
+            >
+              {updating === 'livre' ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                <>
+                  <FileSignature className="h-6 w-6" />
+                  BL Signé - Confirmer Livraison
+                </>
+              )}
+            </Button>
+
+            {/* Alternative Options */}
+            <div className="flex items-center justify-center gap-2">
+              {/* Digital Signature Option */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-muted-foreground hover:text-primary"
+                onClick={() => setSignaturePadOpen(true)}
+                disabled={updating !== null}
+              >
+                <PenTool className="h-4 w-4" />
+                <span className="text-xs">Signature digitale</span>
+              </Button>
+
+              {/* Photo Waiver Option */}
+              <PhotoWaiverOption
+                blId={blId}
+                onWaiverComplete={async (data) => {
+                  // Record delivery with waiver note
+                  setUpdating('livre');
+                  try {
+                    const timestamp = new Date(`${new Date().toISOString().split('T')[0]}T${data.manualTimestamp}:00`).toISOString();
+                    const { error } = await supabase
+                      .from('bons_livraison_reels')
+                      .update({ 
+                        workflow_status: 'livre',
+                        validated_at: timestamp,
+                        justification_ecart: `Photo waiver: ${data.waiverReason}`,
+                      })
+                      .eq('bl_id', blId);
+                    
+                    if (error) throw error;
+                    toast.success('Livraison confirmée (sans photo)');
+                    onUpdate();
+                  } catch (error) {
+                    toast.error("Erreur lors de l'enregistrement");
+                  } finally {
+                    setUpdating(null);
+                  }
+                }}
+                disabled={updating !== null}
+              />
+            </div>
+          </div>
         )}
 
         {activeStep === 3 && (
@@ -298,6 +351,36 @@ export function DriverRotationTracker({
           </div>
         </div>
       )}
+
+      {/* Digital Signature Pad Dialog */}
+      <DigitalSignaturePad
+        open={signaturePadOpen}
+        onOpenChange={setSignaturePadOpen}
+        blId={blId}
+        clientName={clientName}
+        onSignatureComplete={async (data) => {
+          // Save signature and confirm delivery
+          setUpdating('livre');
+          try {
+            const { error } = await supabase
+              .from('bons_livraison_reels')
+              .update({ 
+                workflow_status: 'livre',
+                validated_at: data.signedAt,
+                justification_ecart: `Digital signature by: ${data.signerName}`,
+              })
+              .eq('bl_id', blId);
+            
+            if (error) throw error;
+            toast.success('Livraison confirmée avec signature digitale');
+            onUpdate();
+          } catch (error) {
+            toast.error("Erreur lors de l'enregistrement");
+          } finally {
+            setUpdating(null);
+          }
+        }}
+      />
     </div>
   );
 }

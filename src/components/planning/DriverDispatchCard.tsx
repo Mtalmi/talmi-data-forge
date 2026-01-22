@@ -14,6 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 import { DeliveryRotationProgress } from './DeliveryRotationProgress';
 import { ETATracker } from './ETATracker';
+import { DispatcherProxyControls } from './DispatcherProxyControls';
 
 interface DriverDispatchCardProps {
   bon: {
@@ -37,7 +38,9 @@ interface DriverDispatchCardProps {
   onStartProduction?: () => void;
   onMarkDelivered?: () => void;
   onOpenDetails?: () => void;
+  onRefresh?: () => void;
   showActions?: boolean;
+  showProxyControls?: boolean;
 }
 
 export function DriverDispatchCard({ 
@@ -45,7 +48,9 @@ export function DriverDispatchCard({
   onStartProduction, 
   onMarkDelivered,
   onOpenDetails,
-  showActions = true 
+  onRefresh,
+  showActions = true,
+  showProxyControls = true,
 }: DriverDispatchCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -168,7 +173,22 @@ export function DriverDispatchCard({
 
         {/* 🆕 Rotation Progress for en_livraison status */}
         {bon.workflow_status === 'en_livraison' && (
-          <div className="mb-4 p-3 bg-muted/30 rounded-lg space-y-2">
+          <div className="mb-4 p-3 bg-muted/30 rounded-lg space-y-3">
+            {/* Proxy Controls Header */}
+            {showProxyControls && (
+              <div className="flex items-center justify-between pb-2 border-b border-border/50">
+                <span className="text-xs font-medium text-muted-foreground">Suivi Rotation</span>
+                <DispatcherProxyControls
+                  blId={bon.bl_id}
+                  heureDepart={bon.heure_depart_centrale ?? null}
+                  heureArrivee={bon.heure_arrivee_chantier ?? null}
+                  heureRetour={bon.heure_retour_centrale ?? null}
+                  workflowStatus={bon.workflow_status}
+                  onUpdate={onRefresh || (() => {})}
+                />
+              </div>
+            )}
+            
             <DeliveryRotationProgress
               heureDepart={bon.heure_depart_centrale}
               heureArrivee={bon.heure_arrivee_chantier}

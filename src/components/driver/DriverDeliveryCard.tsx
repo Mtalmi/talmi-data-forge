@@ -197,6 +197,7 @@ export function DriverDeliveryCard({ bon, onUpdate }: DriverDeliveryCardProps) {
               heureArrivee={bon.heure_arrivee_chantier || null}
               heureRetour={bon.heure_retour_centrale || null}
               workflowStatus={bon.workflow_status}
+              clientName={bon.clients?.nom_client || bon.client_id}
               onUpdate={onUpdate}
             />
           </div>
