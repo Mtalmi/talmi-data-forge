@@ -53,8 +53,10 @@ import { DeliveryRotationProgress } from '@/components/planning/DeliveryRotation
 import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
 import { FleetPanel } from '@/components/planning/FleetPanel';
 import { DispatcherProxyControls } from '@/components/planning/DispatcherProxyControls';
+import { CeoApprovalCodeDialog } from '@/components/planning/CeoApprovalCodeDialog';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BonLivraison {
   bl_id: string;
@@ -100,6 +102,7 @@ export default function Planning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
+  const { isDirecteurOperations, isCeo } = useAuth();
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
@@ -113,6 +116,23 @@ export default function Planning() {
     count: number;
     statuses: { planification: number; production: number; livre: number };
   }[]>([]);
+  
+  // CEO Approval Dialog State
+  const [ceoApprovalOpen, setCeoApprovalOpen] = useState(false);
+  const [pendingCreditApproval, setPendingCreditApproval] = useState<{
+    bon: BonLivraison;
+    clientName: string;
+    solde: number;
+    limite: number;
+  } | null>(null);
+  
+  // Client credit data cache for checking limits
+  const [clientCreditData, setClientCreditData] = useState<Record<string, {
+    nom_client: string;
+    solde_du: number;
+    limite_credit_dh: number;
+    credit_bloque: boolean;
+  }>>({});
   
   // Initialize date: always default to today unless explicit date param provided
   const todayFormatted = format(new Date(), 'yyyy-MM-dd');
@@ -182,6 +202,28 @@ export default function Planning() {
 
       if (camionError) throw camionError;
       setCamions(camionData || []);
+
+      // Fetch client credit data for credit limit checks
+      const uniqueClientIds = [...new Set((blData || []).map(bl => bl.client_id))];
+      if (uniqueClientIds.length > 0) {
+        const { data: clientData } = await supabase
+          .from('clients')
+          .select('client_id, nom_client, solde_du, limite_credit_dh, credit_bloque')
+          .in('client_id', uniqueClientIds);
+        
+        if (clientData) {
+          const creditMap: Record<string, any> = {};
+          clientData.forEach(c => {
+            creditMap[c.client_id] = {
+              nom_client: c.nom_client,
+              solde_du: c.solde_du || 0,
+              limite_credit_dh: c.limite_credit_dh || 50000,
+              credit_bloque: c.credit_bloque || false,
+            };
+          });
+          setClientCreditData(creditMap);
+        }
+      }
 
     } catch (error) {
       console.error('Error fetching planning data:', error);
@@ -446,8 +488,50 @@ export default function Planning() {
     navigate(buildProductionUrl(bon.bl_id, parseISO(selectedDate)));
   };
 
+  // Check if client is over credit limit
+  const checkClientCreditLimit = (clientId: string): { exceeded: boolean; clientName: string; solde: number; limite: number } | null => {
+    const creditInfo = clientCreditData[clientId];
+    if (!creditInfo) return null;
+    
+    const solde = creditInfo.solde_du;
+    const limite = creditInfo.limite_credit_dh;
+    
+    if (creditInfo.credit_bloque || solde > limite) {
+      return {
+        exceeded: true,
+        clientName: creditInfo.nom_client,
+        solde,
+        limite,
+      };
+    }
+    return null;
+  };
+
   // Confirm a pending BL - moves to planification status
+  // For Directeur Opérations: block if client is over credit limit (requires CEO approval)
   const confirmBl = async (bon: BonLivraison) => {
+    // Directeur Opérations must get CEO approval for over-limit clients
+    if (isDirecteurOperations && !isCeo) {
+      const creditCheck = checkClientCreditLimit(bon.client_id);
+      if (creditCheck?.exceeded) {
+        // Block the action and show CEO approval dialog
+        setPendingCreditApproval({
+          bon,
+          clientName: creditCheck.clientName,
+          solde: creditCheck.solde,
+          limite: creditCheck.limite,
+        });
+        setCeoApprovalOpen(true);
+        return;
+      }
+    }
+    
+    // Proceed with confirmation
+    await executeConfirmBl(bon);
+  };
+
+  // Execute the actual BL confirmation
+  const executeConfirmBl = async (bon: BonLivraison) => {
     try {
       const { error } = await supabase
         .from('bons_livraison_reels')
@@ -460,6 +544,14 @@ export default function Planning() {
     } catch (error) {
       console.error('Error confirming BL:', error);
       toast.error('Erreur lors de la confirmation');
+    }
+  };
+
+  // Handle CEO approval callback
+  const handleCeoApprovalSuccess = async () => {
+    if (pendingCreditApproval) {
+      await executeConfirmBl(pendingCreditApproval.bon);
+      setPendingCreditApproval(null);
     }
   };
 
@@ -1380,6 +1472,22 @@ export default function Planning() {
             onOpenChange={setInvoiceDialogOpen}
             delivery={selectedDeliveryForInvoice}
             onInvoiceGenerated={fetchData}
+          />
+        )}
+
+        {/* CEO Approval Dialog for Credit Limit Override */}
+        {pendingCreditApproval && (
+          <CeoApprovalCodeDialog
+            open={ceoApprovalOpen}
+            onOpenChange={(open) => {
+              setCeoApprovalOpen(open);
+              if (!open) setPendingCreditApproval(null);
+            }}
+            clientName={pendingCreditApproval.clientName}
+            clientId={pendingCreditApproval.bon.client_id}
+            solde={pendingCreditApproval.solde}
+            limite={pendingCreditApproval.limite}
+            onApproved={handleCeoApprovalSuccess}
           />
         )}
 

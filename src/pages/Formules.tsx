@@ -51,8 +51,10 @@ interface Formule {
 }
 
 export default function Formules() {
-  const { isCeo } = useAuth();
+  const { isCeo, isDirecteurOperations, canEditFormules } = useAuth();
   const { calculateCUT, fetchPrices } = useFinancialCalculations();
+  // Directeur Opérations can VIEW formules but not EDIT
+  const canManageFormules = canEditFormules && !isDirecteurOperations;
   const [formules, setFormules] = useState<Formule[]>([]);
   const [formuleCuts, setFormuleCuts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -254,7 +256,7 @@ export default function Formules() {
               Gestion des formules de béton • Référence qualité
             </p>
           </div>
-          {isCeo && (
+          {canManageFormules && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -409,7 +411,7 @@ export default function Formules() {
                       CUT
                     </span>
                   </TableHead>
-                  {isCeo && <TableHead className="w-24">Actions</TableHead>}
+                  {canManageFormules && <TableHead className="w-24">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -430,7 +432,7 @@ export default function Formules() {
                         {formuleCuts[f.formule_id] ? `${formuleCuts[f.formule_id].toFixed(2)} DH` : '—'}
                       </span>
                     </TableCell>
-                    {isCeo && (
+                    {canManageFormules && (
                       <TableCell>
                         <div className="flex items-center gap-1">
                           <Button 

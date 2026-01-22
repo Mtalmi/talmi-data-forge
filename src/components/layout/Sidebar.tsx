@@ -106,8 +106,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes'],
     
-    // Directeur Opérations - oversight of operations only
-    directeur_operations: ['/', '/planning', '/bons', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
+    // Directeur Opérations - Planning & Logistics authority ONLY (NO Facturation, Archive BL, Prix)
+    directeur_operations: ['/', '/planning', '/production', '/logistique', '/stocks', '/pointage', '/maintenance', '/formules', '/clients'],
     
     // Responsable Technique - lab & quality ONLY
     responsable_technique: ['/laboratoire', '/formules'],
