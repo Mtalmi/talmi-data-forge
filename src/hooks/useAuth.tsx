@@ -25,6 +25,8 @@ interface AuthContextType {
   canReadPrix: boolean;
   canManageClients: boolean;
   canValidateTechnique: boolean;
+  canEditClients: boolean;
+  canEditFormules: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -149,6 +151,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     canCreateBons: isCeo,
     canReadPrix: isCeo,
     canManageClients: isCeo || isAgentAdministratif || isCommercial,
+    // Directeur Opérations gets read-only on Clients and Formules
+    canEditClients: isCeo || isAgentAdministratif || isCommercial,
+    canEditFormules: isCeo,
     canValidateTechnique: isCeo || isResponsableTechnique,
   };
 

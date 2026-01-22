@@ -81,9 +81,10 @@ interface Client {
 }
 
 export default function Clients() {
-  const { isCeo, isCommercial, isAgentAdministratif } = useAuth();
+  const { isCeo, isCommercial, isAgentAdministratif, canEditClients, isDirecteurOperations } = useAuth();
   const { blockClient, unblockClient, generateMiseEnDemeure, checkPaymentDelays } = usePaymentDelays();
-  const canEdit = isCeo || isCommercial || isAgentAdministratif;
+  // Directeur Opérations can VIEW but not EDIT
+  const canEdit = canEditClients && !isDirecteurOperations;
   const canBlock = isCeo;
   const canSendNotice = isCeo || isAgentAdministratif;
   
