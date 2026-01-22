@@ -3112,6 +3112,7 @@ export type Database = {
         }
         Returns: number
       }
+      can_approve_devis: { Args: { _user_id: string }; Returns: boolean }
       can_modify_bon_within_time: {
         Args: { _created_at: string }
         Returns: boolean
