@@ -791,6 +791,7 @@ export default function Planning() {
                 heureRetour={bon.heure_retour_centrale ?? null}
                 workflowStatus={bon.workflow_status}
                 clientName={bon.clients?.nom_client ?? 'Client'}
+                camionId={bon.camion_assigne || bon.toupie_assignee || null}
                 onUpdate={fetchData}
               />
             </div>
