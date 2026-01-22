@@ -31,7 +31,8 @@ import {
   BellRing,
   ExternalLink,
   Eye,
-  Receipt
+  Receipt,
+  Phone
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -51,6 +52,7 @@ import { CommandCenterSection } from '@/components/planning/CommandCenterSection
 import { DeliveryRotationProgress } from '@/components/planning/DeliveryRotationProgress';
 import { SmartInvoiceDialog } from '@/components/planning/SmartInvoiceDialog';
 import { FleetPanel } from '@/components/planning/FleetPanel';
+import { DispatcherProxyControls } from '@/components/planning/DispatcherProxyControls';
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
 
@@ -774,9 +776,29 @@ export default function Planning() {
           </Button>
         )}
 
+        {/* 🆕 PROXY DISPATCH BUTTON - Visible for En Chargement & En Livraison */}
+        {['production', 'validation_technique', 'en_livraison'].includes(bon.workflow_status) && (
+          <div className="mt-3 pt-3 border-t">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                <Phone className="h-3 w-3" />
+                Contrôle Manuel (Radio/Tél)
+              </span>
+              <DispatcherProxyControls
+                blId={bon.bl_id}
+                heureDepart={bon.heure_depart_centrale ?? null}
+                heureArrivee={bon.heure_arrivee_chantier ?? null}
+                heureRetour={bon.heure_retour_centrale ?? null}
+                workflowStatus={bon.workflow_status}
+                onUpdate={fetchData}
+              />
+            </div>
+          </div>
+        )}
+
         {/* 🆕 Rotation Progress Tracker for en_livraison status */}
         {bon.workflow_status === 'en_livraison' && (
-          <div className="mt-3 pt-3 border-t space-y-2">
+          <div className="mt-2 space-y-2">
             <DeliveryRotationProgress
               heureDepart={bon.heure_depart_centrale}
               heureArrivee={bon.heure_arrivee_chantier}
@@ -1359,8 +1381,8 @@ export default function Planning() {
           />
         )}
 
-        {/* Fleet Panel - Right Sidebar (Desktop only) */}
-        {!isMobile && !isTablet && (
+        {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
+        {!isMobile && (
           <FleetPanel selectedDate={selectedDate} />
         )}
       </div>
