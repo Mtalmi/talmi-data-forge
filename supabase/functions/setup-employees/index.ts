@@ -63,6 +63,12 @@ serve(async (req) => {
         role: "centraliste",
         password: "TalmiCentral2024!",
       },
+      {
+        email: "auditeur@talmi-beton.ma",
+        full_name: "Auditeur Externe",
+        role: "auditeur",
+        password: "TalmiAudit2024!",
+      },
     ];
 
     const results = [];

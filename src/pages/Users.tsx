@@ -32,7 +32,7 @@ import { toast } from 'sonner';
 import { Navigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
-type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste';
+type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste' | 'auditeur';
 
 interface UserRole {
   id: string;
@@ -92,6 +92,11 @@ const ROLE_CONFIG: Record<string, { label: string; description: string; classNam
     label: 'Commercial (Legacy)', 
     description: 'Gestion clients', 
     className: 'bg-warning/20 text-warning' 
+  },
+  auditeur: { 
+    label: 'Auditeur Externe', 
+    description: 'Audit bimensuel • Aucun accès aux prix/clients', 
+    className: 'bg-blue-500/20 text-blue-500' 
   },
 };
 
@@ -411,13 +416,21 @@ export default function Users() {
                   <td className="text-center py-2 px-2 text-success">R/W</td>
                   <td className="text-center py-2 px-2 text-warning">Facture</td>
                 </tr>
-                <tr>
+                <tr className="border-b border-border/50">
                   <td className="py-2 px-2 font-medium">Centraliste</td>
                   <td className="text-center py-2 px-2 text-destructive">✗</td>
                   <td className="text-center py-2 px-2 text-warning">R (jour)</td>
                   <td className="text-center py-2 px-2 text-warning">Conso.</td>
                   <td className="text-center py-2 px-2 text-destructive">✗</td>
                   <td className="text-center py-2 px-2 text-destructive">✗</td>
+                </tr>
+                <tr>
+                  <td className="py-2 px-2 font-medium">Auditeur Externe</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">Vérif.</td>
+                  <td className="text-center py-2 px-2 text-destructive">✗</td>
+                  <td className="text-center py-2 px-2 text-warning">Audit</td>
                 </tr>
               </tbody>
             </table>
