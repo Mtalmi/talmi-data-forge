@@ -660,14 +660,46 @@ export default function Planning() {
                   <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
                     <SelectValue placeholder="Assigner camion" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-background border shadow-lg z-50">
                     <SelectItem value="none">Non assigné</SelectItem>
-                    {camions.map(c => (
-                      <SelectItem key={c.id_camion} value={c.id_camion}>
-                        {c.id_camion} - {c.chauffeur || 'Sans chauffeur'}
-                        {c.statut !== 'Disponible' && ` (${c.statut})`}
-                      </SelectItem>
-                    ))}
+                    {camions.map(c => {
+                      const isCurrentlyAssigned = c.id_camion === (bon.camion_assigne || bon.toupie_assignee);
+                      const isAvailable = c.statut === 'Disponible';
+                      const isBlocked = !isAvailable && !isCurrentlyAssigned;
+                      
+                      // Determine reason for blocking
+                      const blockReason = c.statut === 'En Livraison' 
+                        ? '🚛 En Mission' 
+                        : c.statut === 'Maintenance' 
+                          ? '🔧 Maintenance'
+                          : c.statut === 'Hors Service'
+                            ? '⛔ Hors Service'
+                            : c.statut;
+
+                      return (
+                        <SelectItem 
+                          key={c.id_camion} 
+                          value={c.id_camion}
+                          disabled={isBlocked}
+                          className={cn(
+                            isBlocked && "opacity-50 cursor-not-allowed",
+                            isCurrentlyAssigned && "bg-primary/10 font-medium"
+                          )}
+                        >
+                          <div className="flex items-center justify-between w-full gap-2">
+                            <span>{c.id_camion} - {c.chauffeur || 'Sans chauffeur'}</span>
+                            {isBlocked && (
+                              <span className="text-xs text-muted-foreground ml-2">
+                                {blockReason}
+                              </span>
+                            )}
+                            {isAvailable && !isCurrentlyAssigned && (
+                              <span className="text-xs text-emerald-600 ml-2">✓ Dispo</span>
+                            )}
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
