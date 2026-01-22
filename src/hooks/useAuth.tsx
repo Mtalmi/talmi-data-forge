@@ -38,6 +38,7 @@ interface AuthContextType {
   canGenerateInvoice: boolean;
   canApproveDerogations: boolean;
   canRequestDerogations: boolean;
+  canApproveDevis: boolean;
   canAccessAuditPortal: boolean;
   // Stock management permissions
   canAddStockReception: boolean;
@@ -187,6 +188,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const canApproveDerogations = isCeo || isSuperviseur;
   const canRequestDerogations = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
   
+  // DEVIS APPROVAL: Only CEO, Superviseur, or Agent Administratif
+  const canApproveDevis = isCeo || isSuperviseur || isAgentAdministratif;
+  
   // Audit Portal: CEO/Auditeur ONLY
   const canAccessAuditPortal = isCeo || isAuditeur;
   
@@ -238,6 +242,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     canApproveDerogations,
     canRequestDerogations,
     canAccessAuditPortal,
+    canApproveDevis,
     // Stock management
     canAddStockReception,
     canAdjustStockManually,
