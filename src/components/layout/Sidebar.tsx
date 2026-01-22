@@ -129,6 +129,9 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     
     // Accounting - finance ONLY
     accounting: ['/paiements', '/rapprochement', '/depenses', '/journal'],
+    
+    // Auditeur - External Audit Portal ONLY (no access to prices, clients, planning)
+    auditeur: ['/audit-externe'],
   };
 
   // Get allowed routes for effective role

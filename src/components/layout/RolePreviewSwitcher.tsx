@@ -21,6 +21,7 @@ const ROLE_OPTIONS = [
   { value: 'responsable_technique', label: 'Abdel Sadek (Resp. Technique)', description: 'Labo & Validation QC', homePage: '/laboratoire' },
   { value: 'centraliste', label: 'Centraliste', description: 'Production & Stocks', homePage: '/production' },
   { value: 'chauffeur', label: 'Chauffeur', description: 'Livraisons uniquement', homePage: '/chauffeur' },
+  { value: 'auditeur', label: 'Auditeur Externe', description: 'Portail Audit UNIQUEMENT', homePage: '/audit-externe' },
 ] as const;
 
 interface RolePreviewSwitcherProps {

@@ -32,6 +32,7 @@ import Rapprochement from "./pages/Rapprochement";
 import DriverView from "./pages/DriverView";
 import Maintenance from "./pages/Maintenance";
 import AuditSuperviseur from "./pages/AuditSuperviseur";
+import AuditExterne from "./pages/AuditExterne";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/chauffeur" element={<DriverView />} />
               <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/audit-superviseur" element={<AuditSuperviseur />} />
+              <Route path="/audit-externe" element={<AuditExterne />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
