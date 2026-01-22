@@ -32,7 +32,8 @@ import {
   ExternalLink,
   Eye,
   Receipt,
-  Phone
+  Phone,
+  Lock
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -960,21 +961,68 @@ export default function Planning() {
                 </CollapsibleContent>
               </Collapsible>
             </div>
-            {/* Launch Production Button */}
+            {/* Launch Production Button - CREDIT GATE LOGIC */}
             {bon.workflow_status === 'planification' && bon.heure_prevue && (bon.camion_assigne || bon.toupie_assignee) && (
-              <Button 
-                size={isTouchDevice ? "lg" : "sm"}
-                className={cn(
-                  "w-full mt-2 gap-2",
-                  isTouchDevice && "min-h-[52px] text-base"
+              <div className="space-y-2 mt-2">
+                {/* Credit Status Badge */}
+                {creditStatus !== 'green' && (
+                  <div className={cn(
+                    "flex items-center gap-2 p-2 rounded-md text-xs",
+                    creditStatus === 'blocked' 
+                      ? "bg-red-500/10 border border-red-500/30 text-red-600" 
+                      : "bg-amber-500/10 border border-amber-500/30 text-amber-600"
+                  )}>
+                    <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>
+                      {creditStatus === 'blocked' 
+                        ? 'Client bloqué - Crédit suspendu' 
+                        : 'Factures impayées > 30j ou dépassement crédit'}
+                    </span>
+                  </div>
                 )}
-                data-testid={`launch-production-${bon.bl_id}`}
-                onClick={() => startProduction(bon)}
-              >
-                <Factory className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
-                Lancer Production
-                <ArrowRight className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
-              </Button>
+                
+                {/* Production Button - Disabled for Red status unless can override */}
+                {creditStatus === 'green' || canOverrideCreditBlock ? (
+                  <Button 
+                    size={isTouchDevice ? "lg" : "sm"}
+                    className={cn(
+                      "w-full gap-2",
+                      isTouchDevice && "min-h-[52px] text-base",
+                      creditStatus !== 'green' && "bg-amber-600 hover:bg-amber-700"
+                    )}
+                    data-testid={`launch-production-${bon.bl_id}`}
+                    onClick={() => {
+                      if (creditStatus !== 'green') {
+                        // Log the override action
+                        logPlanningAction('CREDIT_OVERRIDE_PRODUCTION', bon.bl_id, {
+                          action: 'Credit override for production start',
+                          credit_status: creditStatus,
+                          overridden_by: user?.email,
+                          timestamp: new Date().toISOString(),
+                        });
+                      }
+                      startProduction(bon);
+                    }}
+                  >
+                    <Factory className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
+                    {creditStatus !== 'green' ? 'Override & Lancer' : 'Lancer Production'}
+                    <ArrowRight className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
+                  </Button>
+                ) : (
+                  <Button 
+                    size={isTouchDevice ? "lg" : "sm"}
+                    variant="outline"
+                    disabled
+                    className={cn(
+                      "w-full gap-2 opacity-50 cursor-not-allowed border-red-500/30",
+                      isTouchDevice && "min-h-[52px] text-base"
+                    )}
+                  >
+                    <Lock className="h-4 w-4 text-red-500" />
+                    Production Bloquée
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         )}
