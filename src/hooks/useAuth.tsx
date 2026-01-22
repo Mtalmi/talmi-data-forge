@@ -44,6 +44,12 @@ interface AuthContextType {
   canAddStockReception: boolean;
   canAdjustStockManually: boolean;
   canViewStockModule: boolean;
+  // BC Workflow permissions
+  canCreateBcDirect: boolean;
+  canValidateBcPrice: boolean;
+  canUseEmergencyBypass: boolean;
+  canViewEmergencyBcs: boolean;
+  isInEmergencyWindow: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -209,6 +215,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Centraliste's stock deduction is AUTOMATIC via production triggers
   const canViewStockModule = isCeo || isSuperviseur || isAgentAdministratif || isDirecteurOperations || isOperator;
 
+  // ===================================================================
+  // BC WORKFLOW PERMISSIONS - DUAL-PATH CREATION
+  // ===================================================================
+  
+  // Direct BC Creation: CEO/Superviseur/Agent Admin (standard path)
+  const canCreateBcDirect = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // BC Price Validation: CEO/Superviseur/Agent Admin can approve pending BCs
+  const canValidateBcPrice = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // Emergency Window Check: 18:00 - 00:00 (Midnight Emergency Protocol)
+  const currentHour = new Date().getHours();
+  const isInEmergencyWindow = currentHour >= 18 || currentHour < 0;
+  
+  // Emergency Bypass: Dir Ops can use emergency bypass ONLY during 18:00-00:00
+  const canUseEmergencyBypass = (isCeo || isSuperviseur || isDirecteurOperations) && isInEmergencyWindow;
+  
+  // Emergency BC View: Resp. Technique needs to see emergency BCs for quality checks
+  const canViewEmergencyBcs = isCeo || isSuperviseur || isResponsableTechnique || isDirecteurOperations || isAgentAdministratif;
+
   const value: AuthContextType = {
     user,
     session,
@@ -247,6 +273,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     canAddStockReception,
     canAdjustStockManually,
     canViewStockModule,
+    // BC Workflow
+    canCreateBcDirect,
+    canValidateBcPrice,
+    canUseEmergencyBypass,
+    canViewEmergencyBcs,
+    isInEmergencyWindow,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

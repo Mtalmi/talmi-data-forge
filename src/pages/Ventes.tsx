@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap } from 'lucide-react';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -41,13 +41,22 @@ import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDraw
 import { ScheduledRemindersDialog } from '@/components/ventes/ScheduledRemindersDialog';
 import { ExportReportsDialog } from '@/components/ventes/ExportReportsDialog';
 
+// Strategic BC Workflow Components
+import { EmergencyBcDialog } from '@/components/ventes/EmergencyBcDialog';
+import { PendingBcValidation } from '@/components/ventes/PendingBcValidation';
+import { EmergencyBcQualityView } from '@/components/ventes/EmergencyBcQualityView';
+
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Lock, Shield } from 'lucide-react';
 
 export default function Ventes() {
   const navigate = useNavigate();
-  const { isCentraliste, isCeo, isSuperviseur, isAgentAdministratif, isCommercial } = useAuth();
+  const { 
+    isCentraliste, isCeo, isSuperviseur, isAgentAdministratif, isCommercial, 
+    isDirecteurOperations, isResponsableTechnique,
+    canCreateBcDirect, canValidateBcPrice, isInEmergencyWindow 
+  } = useAuth();
   
   // =====================================================
   // HARD PERMISSION WALL - Centraliste TOTAL BLOCK
@@ -166,6 +175,7 @@ export default function Ventes() {
   
   // Direct Order Dialog State
   const [directOrderOpen, setDirectOrderOpen] = useState(false);
+  const [emergencyBcOpen, setEmergencyBcOpen] = useState(false);
   const [creatingOrder, setCreatingOrder] = useState(false);
   const [clients, setClients] = useState<{client_id: string; nom_client: string; adresse: string | null; telephone: string | null}[]>([]);
   const [formules, setFormules] = useState<{formule_id: string; designation: string; cut_dh_m3: number | null}[]>([]);
@@ -418,14 +428,21 @@ export default function Ventes() {
                 <Mail className="h-4 w-4" />
                 Relances
               </Button>
-              <Button 
-                onClick={() => setDirectOrderOpen(true)}
-                variant="outline"
-                className="gap-2"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                Commande Directe
-              </Button>
+              {/* Strategic BC Creation - Role-Based */}
+              {(canCreateBcDirect || isDirecteurOperations) && (
+                <Button 
+                  onClick={() => setEmergencyBcOpen(true)}
+                  variant={isInEmergencyWindow && isDirecteurOperations ? "default" : "outline"}
+                  className={`gap-2 ${isInEmergencyWindow && isDirecteurOperations ? 'bg-amber-500 hover:bg-amber-600' : ''}`}
+                >
+                  {isInEmergencyWindow && isDirecteurOperations ? (
+                    <Zap className="h-4 w-4" />
+                  ) : (
+                    <ShoppingCart className="h-4 w-4" />
+                  )}
+                  {isDirecteurOperations && !canCreateBcDirect ? 'Nouvelle Commande' : 'Commande Directe'}
+                </Button>
+              )}
               <CommunicationLogDrawer />
               <ActivityHistoryDrawer />
               <KeyboardShortcutsHint />
@@ -491,6 +508,12 @@ export default function Ventes() {
 
           {/* Flux Commercial Widget */}
           <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
+
+          {/* Pending BC Validation - For Admin/CEO */}
+          <PendingBcValidation onRefresh={fetchData} />
+
+          {/* Emergency BC Quality View - For Resp. Technique */}
+          <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
 
           {/* Stats Cards + Revenue Forecast */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -776,6 +799,23 @@ export default function Ventes() {
           onOpenChange={setBatchReminderOpen}
           devisList={devisList}
           onSuccess={fetchData}
+        />
+
+        {/* Strategic Emergency BC Dialog */}
+        <EmergencyBcDialog
+          open={emergencyBcOpen}
+          onOpenChange={setEmergencyBcOpen}
+          clients={clients.map(c => ({ ...c, credit_bloque: false }))}
+          formules={formules}
+          zones={zones}
+          prestataires={prestataires}
+          onSuccess={(bcId, isEmergency) => {
+            fetchData();
+            if (isEmergency) {
+              // Navigate to planning for emergency BCs
+              navigate(`/planning?date=${format(new Date(), 'yyyy-MM-dd')}&focus=pending`);
+            }
+          }}
         />
       </MainLayout>
     </TooltipProvider>
