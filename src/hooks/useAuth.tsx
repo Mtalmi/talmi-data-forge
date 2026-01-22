@@ -39,6 +39,10 @@ interface AuthContextType {
   canApproveDerogations: boolean;
   canRequestDerogations: boolean;
   canAccessAuditPortal: boolean;
+  // Stock management permissions
+  canAddStockReception: boolean;
+  canAdjustStockManually: boolean;
+  canViewStockModule: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -185,6 +189,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Audit Portal: CEO/Auditeur ONLY
   const canAccessAuditPortal = isCeo || isAuditeur;
+  
+  // ===================================================================
+  // STOCK MANAGEMENT PERMISSIONS - SEPARATION OF POWERS
+  // ===================================================================
+  
+  // Stock Reception: CEO/Superviseur/Agent Admin ONLY
+  // Centraliste has ZERO manual access
+  const canAddStockReception = isCeo || isSuperviseur || isAgentAdministratif;
+  
+  // Manual Stock Adjustment: CEO/Superviseur ONLY (requires reason code)
+  const canAdjustStockManually = isCeo || isSuperviseur;
+  
+  // View Stock Module: Everyone EXCEPT Centraliste (who has no access to /stocks route)
+  // Centraliste's stock deduction is AUTOMATIC via production triggers
+  const canViewStockModule = isCeo || isSuperviseur || isAgentAdministratif || isDirecteurOperations || isOperator;
 
   const value: AuthContextType = {
     user,
@@ -219,6 +238,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     canApproveDerogations,
     canRequestDerogations,
     canAccessAuditPortal,
+    // Stock management
+    canAddStockReception,
+    canAdjustStockManually,
+    canViewStockModule,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

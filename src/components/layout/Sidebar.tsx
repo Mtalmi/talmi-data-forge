@@ -123,8 +123,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     agent_administratif: ['/', '/planning', '/production', '/bons', '/clients', '/depenses', '/paiements'],
     
     // Centraliste (Hassan) - Formules READ-ONLY (Daily Mix), Bons CONSOMMATION ONLY
-    // BLOCKED: Prix, Clients, Approbations
-    centraliste: ['/production', '/stocks', '/maintenance', '/formules'],
+    // BLOCKED: Prix, Clients, Approbations, STOCKS (zero manual access)
+    centraliste: ['/production', '/maintenance', '/formules'],
     
     // Chauffeur - driver view ONLY
     chauffeur: ['/chauffeur'],
