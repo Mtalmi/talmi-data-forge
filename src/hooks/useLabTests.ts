@@ -207,14 +207,48 @@ export function useLabTests() {
     technicien?: string
   ): Promise<boolean> => {
     try {
+      // First get the test to access formule_id and bl_id
+      const { data: testData, error: fetchError } = await supabase
+        .from('tests_laboratoire')
+        .select('bl_id, formule_id')
+        .eq('id', testId)
+        .single();
+
+      if (fetchError || !testData) {
+        throw new Error('Test not found');
+      }
+
+      // Get the target resistance from the formula
+      const { data: formule, error: formuleError } = await supabase
+        .from('formules_theoriques')
+        .select('resistance_cible_28j_mpa')
+        .eq('formule_id', testData.formule_id)
+        .single();
+
+      const targetResistance = formule?.resistance_cible_28j_mpa || 25;
+      
+      // For 7-day test, target is typically ~70% of 28-day target
+      const effectiveTarget = type === '7j' 
+        ? Math.round(targetResistance * 0.7) 
+        : targetResistance;
+
+      const isConform = value >= effectiveTarget;
+      const hasAlert = !isConform;
+
       const updateData: Record<string, unknown> = {
         technicien_test: technicien,
       };
 
       if (type === '7j') {
         updateData.resistance_7j_mpa = value;
+        // For 7-day, we set alerte_qualite if below threshold
+        if (hasAlert) {
+          updateData.alerte_qualite = true;
+        }
       } else {
         updateData.resistance_28j_mpa = value;
+        updateData.resistance_conforme = isConform;
+        updateData.alerte_qualite = hasAlert;
       }
 
       const { error } = await supabase
@@ -224,7 +258,40 @@ export function useLabTests() {
 
       if (error) throw error;
 
-      toast.success(`Résistance ${type} enregistrée`);
+      // If resistance is below target, create system alert and send email
+      if (hasAlert) {
+        // Create in-app alert
+        await supabase.from('alertes_systeme').insert({
+          type_alerte: 'qualite_critique',
+          niveau: 'critical',
+          titre: `ALERTE QUALITÉ - Résistance ${type} Insuffisante`,
+          message: `BL ${testData.bl_id} - Résistance ${type}: ${value} MPa < Cible: ${effectiveTarget} MPa (Formule: ${testData.formule_id})`,
+          reference_id: testData.bl_id,
+          reference_table: 'tests_laboratoire',
+          destinataire_role: 'ceo',
+        });
+
+        // Send email notification to CEO
+        try {
+          await supabase.functions.invoke('notify-quality-alert', {
+            body: {
+              test_id: testId,
+              bl_id: testData.bl_id,
+              formule_id: testData.formule_id,
+              test_type: type,
+              resistance_value: value,
+              target_value: effectiveTarget,
+            }
+          });
+        } catch (emailError) {
+          console.error('Failed to send quality alert email:', emailError);
+        }
+
+        toast.warning(`⚠️ ALERTE: Résistance ${type} en dessous du seuil (${value} < ${effectiveTarget} MPa)`);
+      } else {
+        toast.success(`Résistance ${type} enregistrée ✓ (Conforme)`);
+      }
+
       fetchTests();
       return true;
     } catch (error) {
