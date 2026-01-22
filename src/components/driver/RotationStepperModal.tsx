@@ -406,10 +406,15 @@ export function RotationStepperModal({
     <>
       <Dialog open={open && !proofModalOpen} onOpenChange={onOpenChange}>
         <DialogContent className={cn(
-          "sm:max-w-[520px] max-h-[90vh] overflow-y-auto",
+          // Fullscreen on mobile, modal on desktop
+          "fixed inset-0 sm:relative sm:inset-auto",
+          "w-full h-full sm:h-auto sm:max-w-[520px] sm:max-h-[90vh]",
+          "overflow-y-auto rounded-none sm:rounded-xl",
           // Glassmorphism effect
-          "bg-background/80 backdrop-blur-xl border-border/50",
-          "shadow-2xl shadow-primary/5"
+          "bg-background/95 sm:bg-background/80 backdrop-blur-xl border-0 sm:border sm:border-border/50",
+          "shadow-none sm:shadow-2xl sm:shadow-primary/5",
+          // OLED optimization for mobile
+          "dark:bg-background"
         )}>
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
@@ -457,52 +462,54 @@ export function RotationStepperModal({
                   <div
                     key={step.key}
                     className={cn(
-                      "relative flex items-center gap-3 p-3 rounded-xl border transition-all",
+                      // Larger touch targets on mobile
+                      "relative flex items-center gap-4 p-4 sm:p-3 rounded-xl border transition-all",
                       // Glassmorphism step cards
                       status === 'completed' && "bg-success/10 border-success/30 backdrop-blur-sm",
                       status === 'current' && "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/40 shadow-lg shadow-primary/10",
                       status === 'pending' && "bg-muted/30 border-border/30 opacity-50"
                     )}
                   >
-                    {/* Step Icon */}
+                    {/* Step Icon - Larger on mobile */}
                     <div
                       className={cn(
-                        "flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center font-bold shadow-inner",
+                        // 48px+ touch targets
+                        "flex-shrink-0 w-12 h-12 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold shadow-inner",
                         status === 'completed' && "bg-success text-success-foreground",
-                        status === 'current' && step.color === 'primary' && "bg-primary text-primary-foreground",
+                        status === 'current' && step.color === 'primary' && "bg-primary text-primary-foreground animate-pulse-glow",
                         status === 'current' && step.color === 'warning' && "bg-warning text-warning-foreground",
                         status === 'current' && step.color === 'success' && "bg-success text-success-foreground",
                         status === 'pending' && "bg-muted text-muted-foreground"
                       )}
                     >
                       {status === 'completed' ? (
-                        <Check className="h-5 w-5" />
+                        <Check className="h-6 w-6 sm:h-5 sm:w-5" />
                       ) : (
-                        <Icon className="h-5 w-5" />
+                        <Icon className="h-6 w-6 sm:h-5 sm:w-5" />
                       )}
                     </div>
 
                     {/* Step Info */}
                     <div className="flex-1 min-w-0">
                       <p className={cn(
-                        "font-semibold text-sm",
+                        "font-semibold text-base sm:text-sm",
                         status === 'pending' && "text-muted-foreground"
                       )}>
                         {step.label}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm sm:text-xs text-muted-foreground">
                         {step.sublabel}
                       </p>
                     </div>
 
                     {/* Timestamp or Action */}
                     {time ? (
-                      <span className="text-sm font-mono font-semibold text-foreground bg-muted/50 px-2.5 py-1 rounded-lg">
+                      <span className="text-sm font-mono font-semibold text-foreground bg-muted/50 px-3 py-2 rounded-lg">
                         {time}
                       </span>
                     ) : status === 'current' ? (
                       <Button
-                        size="sm"
+                        size="lg"
                         onClick={() => {
                           if (isSingleClick) {
                             recordTimestamp(step.key as 'depart' | 'arrivee');
@@ -512,20 +519,22 @@ export function RotationStepperModal({
                         }}
                         disabled={isUpdating}
                         className={cn(
-                          // Mobile-first: 44px minimum touch target for drivers
-                          "min-h-[44px] min-w-[44px] h-11 px-5 text-sm font-semibold rounded-xl shadow-lg transition-all",
+                          // Large glowing touch target for drivers (56px)
+                          "min-h-[56px] min-w-[56px] h-14 sm:h-11 px-6 sm:px-5",
+                          "text-base sm:text-sm font-bold rounded-xl shadow-xl transition-all",
                           "hover:scale-105 active:scale-95",
-                          step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground shadow-warning/20",
-                          step.color === 'success' && "bg-success hover:bg-success/90 shadow-success/20",
-                          step.color === 'primary' && "bg-primary hover:bg-primary/90 shadow-primary/20"
+                          // Glow effect for current action
+                          step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground glow-warning",
+                          step.color === 'success' && "bg-success hover:bg-success/90 glow-success",
+                          step.color === 'primary' && "bg-primary hover:bg-primary/90 glow-primary"
                         )}
                       >
                         {isUpdating ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
                           <>
                             {step.key === 'signe' ? 'Signer' : (
-                              <><Zap className="h-4 w-4 mr-1" /> Maintenant</>
+                              <><Zap className="h-5 w-5 mr-2 sm:mr-1" /> Maintenant</>
                             )}
                           </>
                         )}

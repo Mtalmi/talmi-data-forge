@@ -117,7 +117,8 @@ export function RealTimeProfitTicker() {
       )} />
       
       <CardContent className="relative pt-4 pb-3">
-        <div className="flex items-center justify-between gap-4">
+        {/* Mobile-first responsive layout */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           {/* Main Profit Display */}
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -132,7 +133,7 @@ export function RealTimeProfitTicker() {
             </div>
             <div className="flex items-baseline gap-3">
               <span className={cn(
-                "text-3xl font-bold tabular-nums tracking-tight transition-all",
+                "text-2xl sm:text-3xl font-bold tabular-nums tracking-tight transition-all",
                 trend.color,
                 animating && "scale-105"
               )}>
@@ -147,32 +148,32 @@ export function RealTimeProfitTicker() {
             </div>
           </div>
 
-          {/* Breakdown Mini-Cards */}
-          <div className="flex gap-2">
-            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[80px]">
+          {/* Breakdown Mini-Cards - Horizontal scroll on mobile */}
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-2 px-2 sm:mx-0 sm:px-0 sm:overflow-visible">
+            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <DollarSign className="h-3 w-3 text-success" />
                 <span className="text-[10px] text-muted-foreground">CA</span>
               </div>
-              <span className="text-xs font-semibold text-success">
+              <span className="text-[11px] sm:text-xs font-semibold text-success">
                 {formatCurrency(data.totalRevenue)}
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[80px]">
+            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <Fuel className="h-3 w-3 text-warning" />
                 <span className="text-[10px] text-muted-foreground">Fuel</span>
               </div>
-              <span className="text-xs font-semibold text-warning">
+              <span className="text-[11px] sm:text-xs font-semibold text-warning">
                 -{formatCurrency(data.fuelCost)}
               </span>
             </div>
-            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[80px]">
+            <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <Truck className="h-3 w-3 text-orange-500" />
                 <span className="text-[10px] text-muted-foreground">Pompe</span>
               </div>
-              <span className="text-xs font-semibold text-orange-500">
+              <span className="text-[11px] sm:text-xs font-semibold text-orange-500">
                 -{formatCurrency(data.pumpFees)}
               </span>
             </div>

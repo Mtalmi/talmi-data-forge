@@ -186,32 +186,33 @@ export function AuditHealthWidget() {
         </div>
       </CardHeader>
       <CardContent className="pt-4">
-        <div className="grid grid-cols-4 gap-3">
+        {/* Mobile: 2x2 grid, Desktop: 4 columns */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           {metrics.map((metric) => (
             <div
               key={metric.label}
               className={cn(
-                "relative p-3 rounded-lg border-2 transition-all",
+                "relative p-2 sm:p-3 rounded-lg border-2 transition-all touch-target",
                 getStatusColor(metric.status)
               )}
             >
               {/* Traffic Light Indicator */}
               <div className={cn(
-                "absolute top-2 right-2 h-2.5 w-2.5 rounded-full",
+                "absolute top-1.5 right-1.5 sm:top-2 sm:right-2 h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full",
                 getStatusIndicator(metric.status),
                 metric.status === 'red' && "animate-pulse"
               )} />
               
-              <metric.icon className="h-4 w-4 mb-2 opacity-80" />
-              <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">
+              <metric.icon className="h-4 w-4 mb-1.5 sm:mb-2 opacity-80" />
+              <p className="text-[9px] sm:text-[10px] font-medium uppercase tracking-wider opacity-70 truncate">
                 {metric.label}
               </p>
-              <div className="flex items-center gap-1 mt-1">
-                <p className="text-xs font-semibold">{metric.detail}</p>
+              <div className="flex items-center gap-1 mt-0.5 sm:mt-1">
+                <p className="text-[11px] sm:text-xs font-semibold truncate">{metric.detail}</p>
                 {metric.trend && metric.trend !== 'stable' && (
                   metric.trend === 'up' 
-                    ? <TrendingUp className="h-3 w-3 text-destructive" />
-                    : <TrendingDown className="h-3 w-3 text-success" />
+                    ? <TrendingUp className="h-3 w-3 text-destructive flex-shrink-0" />
+                    : <TrendingDown className="h-3 w-3 text-success flex-shrink-0" />
                 )}
               </div>
             </div>

@@ -225,19 +225,25 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* CEO Hawaii Command Center */}
+        {/* CEO Hawaii Command Center - Mobile Bento Grid */}
         {isCeo && (
-          <div className="space-y-4">
-            {/* Real-Time Profit Ticker */}
-            <RealTimeProfitTicker />
-            
-            {/* Executive Command Center */}
-            <div className="card-industrial p-3 sm:p-6">
-              <ExecutiveCommandCenter />
+          <div className="bento-grid">
+            {/* Real-Time Profit Ticker - Wide on desktop */}
+            <div className="bento-wide">
+              <RealTimeProfitTicker />
             </div>
             
             {/* Audit Health Widget */}
-            <AuditHealthWidget />
+            <div className="bento-wide">
+              <AuditHealthWidget />
+            </div>
+            
+            {/* Executive Command Center - Full width */}
+            <div className="bento-full">
+              <div className="glass-card p-3 sm:p-6 rounded-xl">
+                <ExecutiveCommandCenter />
+              </div>
+            </div>
           </div>
         )}
 
@@ -255,8 +261,8 @@ export default function Dashboard() {
           onDismiss={dismissAlert} 
         />
 
-        {/* Period-Aware KPI Grid */}
-        <div ref={kpiGridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Period-Aware KPI Grid - Mobile optimized */}
+        <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <PeriodKPICard
             title="Volume Total"
             value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
