@@ -52,7 +52,7 @@ interface Formule {
 }
 
 export default function Formules() {
-  const { isCeo, isSuperviseur, canEditFormules } = useAuth();
+  const { isCeo, isSuperviseur, isCentraliste, isAgentAdministratif, isDirecteurOperations, canEditFormules } = useAuth();
   const { previewRole } = usePreviewRole();
   const { calculateCUT, fetchPrices } = useFinancialCalculations();
   
@@ -62,6 +62,16 @@ export default function Formules() {
   // Everyone else is READ-ONLY (no preview role override)
   // =====================================================
   const canManageFormules = (isCeo || isSuperviseur) && !previewRole;
+  
+  // =====================================================
+  // SENSITIVE DATA ACCESS - Raw Material Weights
+  // Only CEO, Superviseur, and Resp. Technique can see full formula details
+  // Dir Ops, Agent Admin see formula ID + designation only
+  // Centraliste sees only active daily formula (filtered in query)
+  // =====================================================
+  const canSeeSensitiveData = isCeo || isSuperviseur;
+  const canSeeBasicDetails = canSeeSensitiveData || isAgentAdministratif || isDirecteurOperations;
+  
   const [formules, setFormules] = useState<Formule[]>([]);
   const [formuleCuts, setFormuleCuts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -408,16 +418,24 @@ export default function Formules() {
                 <TableRow>
                   <TableHead>ID Formule</TableHead>
                   <TableHead>Désignation</TableHead>
-                  <TableHead className="text-right">Ciment</TableHead>
-                  <TableHead className="text-right">Eau</TableHead>
-                  <TableHead className="text-right">Ratio E/C</TableHead>
-                  <TableHead className="text-right">Adjuvant</TableHead>
-                  <TableHead className="text-right">
-                    <span className="flex items-center justify-end gap-1">
-                      <Calculator className="h-3 w-3" />
-                      CUT
-                    </span>
-                  </TableHead>
+                  {/* Sensitive columns - only visible to CEO/Superviseur */}
+                  {canSeeSensitiveData && (
+                    <>
+                      <TableHead className="text-right">Ciment</TableHead>
+                      <TableHead className="text-right">Eau</TableHead>
+                      <TableHead className="text-right">Ratio E/C</TableHead>
+                      <TableHead className="text-right">Adjuvant</TableHead>
+                    </>
+                  )}
+                  {/* CUT visible to those who can see basic details */}
+                  {canSeeBasicDetails && (
+                    <TableHead className="text-right">
+                      <span className="flex items-center justify-end gap-1">
+                        <Calculator className="h-3 w-3" />
+                        CUT
+                      </span>
+                    </TableHead>
+                  )}
                   {canManageFormules && <TableHead className="w-24">Actions</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -426,19 +444,26 @@ export default function Formules() {
                   <TableRow key={f.formule_id}>
                     <TableCell className="font-mono font-medium">{f.formule_id}</TableCell>
                     <TableCell>{f.designation}</TableCell>
-                    <TableCell className="text-right">{f.ciment_kg_m3} kg/m³</TableCell>
-                    <TableCell className="text-right">{f.eau_l_m3} L/m³</TableCell>
-                    <TableCell className="text-right">
-                      <span className="font-mono text-success">
-                        {(f.eau_l_m3 / f.ciment_kg_m3).toFixed(3)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">{f.adjuvant_l_m3} L/m³</TableCell>
-                    <TableCell className="text-right">
-                      <span className="font-mono font-semibold text-primary">
-                        {formuleCuts[f.formule_id] ? `${formuleCuts[f.formule_id].toFixed(2)} DH` : '—'}
-                      </span>
-                    </TableCell>
+                    {/* Sensitive data - only CEO/Superviseur */}
+                    {canSeeSensitiveData && (
+                      <>
+                        <TableCell className="text-right">{f.ciment_kg_m3} kg/m³</TableCell>
+                        <TableCell className="text-right">{f.eau_l_m3} L/m³</TableCell>
+                        <TableCell className="text-right">
+                          <span className="font-mono text-success">
+                            {(f.eau_l_m3 / f.ciment_kg_m3).toFixed(3)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right">{f.adjuvant_l_m3} L/m³</TableCell>
+                      </>
+                    )}
+                    {canSeeBasicDetails && (
+                      <TableCell className="text-right">
+                        <span className="font-mono font-semibold text-primary">
+                          {formuleCuts[f.formule_id] ? `${formuleCuts[f.formule_id].toFixed(2)} DH` : '—'}
+                        </span>
+                      </TableCell>
+                    )}
                     {canManageFormules && (
                       <TableCell>
                         <div className="flex items-center gap-1">
