@@ -258,6 +258,93 @@ export type Database = {
         }
         Relationships: []
       }
+      audits_externes: {
+        Row: {
+          audit_period: string
+          auditor_id: string
+          auditor_notes: string | null
+          cash_app_amount: number
+          cash_comment: string | null
+          cash_physical_amount: number
+          cash_variance: number | null
+          cash_variance_pct: number | null
+          compliance_score: number | null
+          created_at: string
+          document_checks: Json
+          documents_missing_count: number | null
+          documents_verified_count: number | null
+          email_sent: boolean | null
+          email_sent_at: string | null
+          id: string
+          is_locked: boolean
+          locked_at: string | null
+          locked_by: string | null
+          silo_checks: Json
+          silo_variance_max_pct: number | null
+          status: string
+          submitted_at: string | null
+          truck_anomaly_detected: boolean | null
+          truck_checks: Json
+          updated_at: string
+        }
+        Insert: {
+          audit_period: string
+          auditor_id: string
+          auditor_notes?: string | null
+          cash_app_amount?: number
+          cash_comment?: string | null
+          cash_physical_amount?: number
+          cash_variance?: number | null
+          cash_variance_pct?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          document_checks?: Json
+          documents_missing_count?: number | null
+          documents_verified_count?: number | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          is_locked?: boolean
+          locked_at?: string | null
+          locked_by?: string | null
+          silo_checks?: Json
+          silo_variance_max_pct?: number | null
+          status?: string
+          submitted_at?: string | null
+          truck_anomaly_detected?: boolean | null
+          truck_checks?: Json
+          updated_at?: string
+        }
+        Update: {
+          audit_period?: string
+          auditor_id?: string
+          auditor_notes?: string | null
+          cash_app_amount?: number
+          cash_comment?: string | null
+          cash_physical_amount?: number
+          cash_variance?: number | null
+          cash_variance_pct?: number | null
+          compliance_score?: number | null
+          created_at?: string
+          document_checks?: Json
+          documents_missing_count?: number | null
+          documents_verified_count?: number | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          is_locked?: boolean
+          locked_at?: string | null
+          locked_by?: string | null
+          silo_checks?: Json
+          silo_variance_max_pct?: number | null
+          status?: string
+          submitted_at?: string | null
+          truck_anomaly_detected?: boolean | null
+          truck_checks?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bank_transactions: {
         Row: {
           client_id_suggere: string | null
@@ -2693,6 +2780,7 @@ export type Database = {
       is_accounting: { Args: { _user_id: string }; Returns: boolean }
       is_agent_administratif: { Args: { _user_id: string }; Returns: boolean }
       is_auditeur: { Args: { user_id: string }; Returns: boolean }
+      is_auditeur_v2: { Args: { _user_id: string }; Returns: boolean }
       is_centraliste: { Args: { _user_id: string }; Returns: boolean }
       is_ceo: { Args: { _user_id: string }; Returns: boolean }
       is_ceo_direct: { Args: { _user_id: string }; Returns: boolean }

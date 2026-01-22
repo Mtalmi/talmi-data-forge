@@ -7,22 +7,47 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+interface SiloCheck {
+  silo_id: string;
+  materiau: string;
+  niveau_app: number;
+  niveau_physique: number;
+  variance: number;
+  variance_pct: number;
+}
+
+interface DocumentCheck {
+  bl_id: string;
+  statut_document: 'present' | 'manquant';
+  signature_conforme: boolean;
+}
+
+interface TruckCheck {
+  id_camion: string;
+  chauffeur: string;
+  km_app: number;
+  km_reel: number;
+  variance: number;
+  anomaly: boolean;
+}
+
 interface AuditReportRequest {
   auditId: string;
   auditPeriod: string;
-  siloAppLevel: number;
-  siloPhysicalLevel: number;
-  siloVariance: number;
-  siloVariancePct: string;
+  siloChecks: SiloCheck[];
+  maxSiloVariance: number;
   cashAppAmount: number;
   cashPhysicalAmount: number;
   cashVariance: number;
   cashVariancePct: string;
-  documentChecks: Array<{ bl_id: string; verified: boolean; notes: string }>;
+  cashComment: string;
+  documentChecks: DocumentCheck[];
   verifiedCount: number;
   missingCount: number;
-  truckChecks: Array<{ id_camion: string; chauffeur: string; app_km: number; physical_km: number; variance: number }>;
+  truckChecks: TruckCheck[];
+  truckAnomalyDetected: boolean;
   auditorNotes: string;
+  complianceScore: number;
   submittedAt: string;
 }
 
@@ -38,6 +63,20 @@ const getVarianceStatus = (pct: number): string => {
   return 'CRITIQUE';
 };
 
+const getScoreColor = (score: number): string => {
+  if (score >= 90) return '#10b981';
+  if (score >= 70) return '#f59e0b';
+  return '#ef4444';
+};
+
+const getScoreGrade = (score: number): string => {
+  if (score >= 90) return 'A';
+  if (score >= 80) return 'B';
+  if (score >= 70) return 'C';
+  if (score >= 60) return 'D';
+  return 'F';
+};
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -46,13 +85,19 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const data: AuditReportRequest = await req.json();
     
-    const siloVariancePctNum = parseFloat(data.siloVariancePct);
     const cashVariancePctNum = parseFloat(data.cashVariancePct);
     
     const submittedDate = new Date(data.submittedAt).toLocaleString('fr-FR', {
       dateStyle: 'full',
       timeStyle: 'short',
     });
+
+    // Identify red flags
+    const redFlags: string[] = [];
+    if (data.maxSiloVariance > 5) redFlags.push(`Écart silo critique: ${data.maxSiloVariance.toFixed(1)}%`);
+    if (Math.abs(cashVariancePctNum) > 5) redFlags.push(`Écart caisse critique: ${cashVariancePctNum}%`);
+    if (data.missingCount > 0) redFlags.push(`${data.missingCount} document(s) manquant(s)`);
+    if (data.truckAnomalyDetected) redFlags.push('Anomalie compteur camion détectée');
 
     // Generate HTML email content
     const emailHtml = `
@@ -61,103 +106,154 @@ const handler = async (req: Request): Promise<Response> => {
 <head>
   <meta charset="utf-8">
   <style>
-    body { font-family: Arial, sans-serif; background: #f8fafc; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .header { background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; padding: 24px; text-align: center; }
-    .header h1 { margin: 0; font-size: 24px; }
-    .header p { margin: 8px 0 0; opacity: 0.9; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; margin: 0; padding: 20px; color: #1e293b; }
+    .container { max-width: 700px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.25); }
+    .header { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; padding: 32px; }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .header p { margin: 8px 0 0; opacity: 0.8; font-size: 14px; }
+    .score-badge { background: ${getScoreColor(data.complianceScore || 0)}; padding: 16px 24px; border-radius: 12px; text-align: center; }
+    .score-value { font-size: 36px; font-weight: 800; line-height: 1; }
+    .score-label { font-size: 11px; text-transform: uppercase; opacity: 0.9; margin-top: 4px; }
+    .red-flags { background: #fef2f2; border: 2px solid #fecaca; border-radius: 12px; padding: 16px; margin: 20px; }
+    .red-flags h3 { color: #dc2626; margin: 0 0 12px; font-size: 14px; text-transform: uppercase; }
+    .red-flags ul { margin: 0; padding-left: 20px; }
+    .red-flags li { color: #991b1b; margin-bottom: 6px; font-weight: 500; }
     .content { padding: 24px; }
-    .section { margin-bottom: 24px; padding: 16px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3b82f6; }
-    .section h2 { margin: 0 0 12px; font-size: 16px; color: #1e293b; display: flex; align-items: center; gap: 8px; }
-    .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
-    .row:last-child { border-bottom: none; }
-    .label { color: #64748b; }
-    .value { font-weight: 600; }
-    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .section { margin-bottom: 24px; padding: 20px; background: #f8fafc; border-radius: 12px; border-left: 5px solid #3b82f6; }
+    .section h2 { margin: 0 0 16px; font-size: 15px; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+    .data-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .data-item { text-align: center; padding: 12px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .data-item .label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+    .data-item .value { font-size: 20px; font-weight: 700; color: #0f172a; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 12px; background: white; border-radius: 8px; overflow: hidden; }
+    .table th, .table td { padding: 12px; text-align: left; }
+    .table th { background: #1e293b; color: white; font-weight: 600; font-size: 11px; text-transform: uppercase; }
+    .table td { border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+    .table tr:last-child td { border-bottom: none; }
+    .status-ok { color: #16a34a; font-weight: 600; }
+    .status-warning { color: #f59e0b; font-weight: 600; }
+    .status-critical { color: #dc2626; font-weight: 600; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
     .badge-green { background: #dcfce7; color: #166534; }
     .badge-amber { background: #fef3c7; color: #92400e; }
     .badge-red { background: #fee2e2; color: #dc2626; }
-    .table { width: 100%; border-collapse: collapse; margin-top: 12px; }
-    .table th, .table td { padding: 8px 12px; text-align: left; border: 1px solid #e2e8f0; }
-    .table th { background: #f1f5f9; font-weight: 600; font-size: 12px; text-transform: uppercase; }
-    .verified { color: #16a34a; }
-    .missing { color: #dc2626; }
-    .footer { padding: 16px 24px; background: #f1f5f9; text-align: center; color: #64748b; font-size: 12px; }
-    .notes { background: #fffbeb; border: 1px solid #fcd34d; padding: 12px; border-radius: 8px; margin-top: 16px; }
+    .footer { padding: 20px 24px; background: #f1f5f9; text-align: center; color: #64748b; font-size: 11px; }
+    .notes { background: #fefce8; border: 1px solid #fde047; padding: 16px; border-radius: 8px; margin-top: 20px; }
+    .notes strong { color: #854d0e; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>📋 Rapport d'Audit Externe</h1>
-      <p>Période: ${data.auditPeriod} | ${submittedDate}</p>
+      <div class="header-top">
+        <div>
+          <h1>📋 RAPPORT D'AUDIT</h1>
+          <p>Période: ${data.auditPeriod} | ${submittedDate}</p>
+        </div>
+        <div class="score-badge">
+          <div class="score-value">${data.complianceScore?.toFixed(0) || '—'}</div>
+          <div class="score-label">Score Compliance (${getScoreGrade(data.complianceScore || 0)})</div>
+        </div>
+      </div>
     </div>
     
+    ${redFlags.length > 0 ? `
+    <div class="red-flags">
+      <h3>🚨 Alertes Critiques</h3>
+      <ul>
+        ${redFlags.map(flag => `<li>${flag}</li>`).join('')}
+      </ul>
+    </div>
+    ` : ''}
+    
     <div class="content">
-      <!-- Silo Verification -->
+      <!-- Section A: Silo Reconciliation -->
       <div class="section" style="border-color: #3b82f6;">
-        <h2>🏗️ Vérification Silo Ciment</h2>
-        <div class="row">
-          <span class="label">Niveau Système</span>
-          <span class="value">${data.siloAppLevel.toFixed(2)} T</span>
-        </div>
-        <div class="row">
-          <span class="label">Niveau Physique</span>
-          <span class="value">${data.siloPhysicalLevel.toFixed(2)} T</span>
-        </div>
-        <div class="row">
-          <span class="label">Écart</span>
-          <span class="value" style="color: ${getVarianceColor(siloVariancePctNum)}">
-            ${data.siloVariance.toFixed(2)} T (${data.siloVariancePct}%)
-          </span>
-        </div>
-        <div style="text-align: right; margin-top: 8px;">
-          <span class="badge ${siloVariancePctNum <= 2 ? 'badge-green' : siloVariancePctNum <= 5 ? 'badge-amber' : 'badge-red'}">
-            ${getVarianceStatus(siloVariancePctNum)}
-          </span>
-        </div>
-      </div>
-
-      <!-- Cash Audit -->
-      <div class="section" style="border-color: #10b981;">
-        <h2>💰 Audit Caisse</h2>
-        <div class="row">
-          <span class="label">Montant Système</span>
-          <span class="value">${data.cashAppAmount.toLocaleString()} DH</span>
-        </div>
-        <div class="row">
-          <span class="label">Montant Physique</span>
-          <span class="value">${data.cashPhysicalAmount.toLocaleString()} DH</span>
-        </div>
-        <div class="row">
-          <span class="label">Écart</span>
-          <span class="value" style="color: ${getVarianceColor(cashVariancePctNum)}">
-            ${data.cashVariance.toLocaleString()} DH (${data.cashVariancePct}%)
-          </span>
-        </div>
-        <div style="text-align: right; margin-top: 8px;">
-          <span class="badge ${cashVariancePctNum <= 2 ? 'badge-green' : cashVariancePctNum <= 5 ? 'badge-amber' : 'badge-red'}">
-            ${getVarianceStatus(cashVariancePctNum)}
-          </span>
-        </div>
-      </div>
-
-      <!-- Document Check -->
-      <div class="section" style="border-color: #f59e0b;">
-        <h2>📄 Vérification Documents (${data.verifiedCount}/${data.documentChecks.length})</h2>
+        <h2>🏗️ Section A: Réconciliation Stocks (Silos)</h2>
         <table class="table">
           <thead>
             <tr>
-              <th>BL ID</th>
+              <th>Matériau</th>
+              <th>Niveau App</th>
+              <th>Niveau Physique</th>
+              <th>Écart</th>
               <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.siloChecks.map(silo => `
+              <tr>
+                <td><strong>${silo.materiau}</strong></td>
+                <td>${silo.niveau_app.toFixed(1)}</td>
+                <td>${silo.niveau_physique.toFixed(1)}</td>
+                <td style="color: ${getVarianceColor(silo.variance_pct)}; font-weight: 600;">
+                  ${silo.variance >= 0 ? '+' : ''}${silo.variance.toFixed(1)} (${silo.variance_pct.toFixed(1)}%)
+                </td>
+                <td>
+                  <span class="badge ${Math.abs(silo.variance_pct) <= 2 ? 'badge-green' : Math.abs(silo.variance_pct) <= 5 ? 'badge-amber' : 'badge-red'}">
+                    ${getVarianceStatus(silo.variance_pct)}
+                  </span>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section B: Cash Audit -->
+      <div class="section" style="border-color: #10b981;">
+        <h2>💰 Section B: Audit de Caisse</h2>
+        <div class="data-grid">
+          <div class="data-item">
+            <div class="label">Solde App</div>
+            <div class="value">${data.cashAppAmount.toLocaleString()} DH</div>
+          </div>
+          <div class="data-item">
+            <div class="label">Comptage Physique</div>
+            <div class="value">${data.cashPhysicalAmount.toLocaleString()} DH</div>
+          </div>
+          <div class="data-item">
+            <div class="label">Écart</div>
+            <div class="value" style="color: ${getVarianceColor(cashVariancePctNum)}">
+              ${data.cashVariance >= 0 ? '+' : ''}${data.cashVariance.toLocaleString()} DH
+            </div>
+          </div>
+        </div>
+        ${data.cashComment ? `
+          <div class="notes" style="margin-top: 16px; background: #f0fdf4; border-color: #86efac;">
+            <strong>💬 Commentaire:</strong>
+            <p style="margin: 8px 0 0;">${data.cashComment}</p>
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- Section C: Document Check -->
+      <div class="section" style="border-color: #f59e0b;">
+        <h2>📄 Section C: Contrôle Documentaire</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Référence BL</th>
+              <th>Statut Document</th>
+              <th>Signature Conforme</th>
+              <th>Verdict</th>
             </tr>
           </thead>
           <tbody>
             ${data.documentChecks.map(doc => `
               <tr>
-                <td>${doc.bl_id}</td>
-                <td class="${doc.verified ? 'verified' : 'missing'}">
-                  ${doc.verified ? '✓ Vérifié' : '✗ Manquant'}
+                <td><code style="background:#e2e8f0;padding:2px 6px;border-radius:4px;">${doc.bl_id}</code></td>
+                <td class="${doc.statut_document === 'present' ? 'status-ok' : 'status-critical'}">
+                  ${doc.statut_document === 'present' ? '✓ Présent' : '✗ Manquant'}
+                </td>
+                <td class="${doc.signature_conforme ? 'status-ok' : 'status-critical'}">
+                  ${doc.signature_conforme ? '✓ Oui' : '✗ Non'}
+                </td>
+                <td>
+                  <span class="badge ${doc.statut_document === 'present' && doc.signature_conforme ? 'badge-green' : 'badge-red'}">
+                    ${doc.statut_document === 'present' && doc.signature_conforme ? 'CONFORME' : 'NON-CONFORME'}
+                  </span>
                 </td>
               </tr>
             `).join('')}
@@ -165,31 +261,44 @@ const handler = async (req: Request): Promise<Response> => {
         </table>
       </div>
 
-      <!-- Truck Check -->
+      <!-- Section D: Truck Check -->
       <div class="section" style="border-color: #8b5cf6;">
-        <h2>🚛 Vérification Compteurs</h2>
+        <h2>🚛 Section D: Audit Logistique (Compteurs)</h2>
         <table class="table">
           <thead>
             <tr>
               <th>Camion</th>
-              <th>KM Système</th>
-              <th>KM Physique</th>
+              <th>Chauffeur</th>
+              <th>KM App</th>
+              <th>KM Réel</th>
               <th>Écart</th>
+              <th>Anomalie</th>
             </tr>
           </thead>
           <tbody>
             ${data.truckChecks.map(truck => `
               <tr>
-                <td>${truck.id_camion}</td>
-                <td>${truck.app_km.toLocaleString()}</td>
-                <td>${truck.physical_km.toLocaleString()}</td>
-                <td style="color: ${Math.abs(truck.variance) > 100 ? '#dc2626' : '#16a34a'}">
-                  ${truck.variance > 0 ? '+' : ''}${truck.variance} km
+                <td><strong>${truck.id_camion}</strong></td>
+                <td>${truck.chauffeur}</td>
+                <td>${truck.km_app.toLocaleString()}</td>
+                <td>${truck.km_reel.toLocaleString()}</td>
+                <td style="color: ${truck.anomaly ? '#dc2626' : '#16a34a'}; font-weight: 600;">
+                  ${truck.variance >= 0 ? '+' : ''}${truck.variance.toLocaleString()} km
+                </td>
+                <td>
+                  <span class="badge ${truck.anomaly ? 'badge-red' : 'badge-green'}">
+                    ${truck.anomaly ? '⚠️ ANOMALIE' : '✓ OK'}
+                  </span>
                 </td>
               </tr>
             `).join('')}
           </tbody>
         </table>
+        ${data.truckAnomalyDetected ? `
+          <div style="background:#fef2f2; border:2px solid #fecaca; padding:12px; border-radius:8px; margin-top:16px; color:#991b1b; font-weight:600;">
+            ⚠️ ALERTE: KM réel inférieur au KM système - Manipulation possible du compteur
+          </div>
+        ` : ''}
       </div>
 
       ${data.auditorNotes ? `
@@ -201,7 +310,8 @@ const handler = async (req: Request): Promise<Response> => {
     </div>
     
     <div class="footer">
-      <p>Ce rapport a été généré automatiquement par le Portail Audit Externe - Talmi Béton</p>
+      <p><strong>Ce rapport est IMMUTABLE et ne peut être modifié.</strong></p>
+      <p>Généré automatiquement par le Portail Audit Externe - TBOS (Talmi Béton OS)</p>
       <p>ID Audit: ${data.auditId}</p>
     </div>
   </div>
@@ -217,9 +327,9 @@ const handler = async (req: Request): Promise<Response> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: "Talmi Béton Audit <onboarding@resend.dev>",
+        from: "TBOS Audit <onboarding@resend.dev>",
         to: ["max.talmi@gmail.com"],
-        subject: `🔍 Rapport Audit Externe - ${data.auditPeriod} | Silo: ${getVarianceStatus(siloVariancePctNum)} | Caisse: ${getVarianceStatus(cashVariancePctNum)}`,
+        subject: `🔍 [AUDIT ${data.auditPeriod}] Score: ${data.complianceScore?.toFixed(0) || '—'}% ${redFlags.length > 0 ? '⚠️ ALERTES' : '✓'}`,
         html: emailHtml,
       }),
     });
