@@ -187,14 +187,15 @@ export function DispatcherProxyControls({
         <PopoverTrigger asChild>
           <Button
             size="sm"
-            variant="outline"
+            variant="secondary"
             className={cn(
-              "gap-2 h-9 px-3 border-dashed",
-              "hover:border-primary hover:bg-primary/5"
+              "gap-2 h-9 px-4",
+              "bg-muted/80 hover:bg-muted border border-border/50",
+              "shadow-sm hover:shadow-md transition-all"
             )}
           >
-            <Radio className="h-4 w-4 text-primary" />
-            <span className="text-xs font-medium">Proxy Dispatch</span>
+            <Radio className="h-4 w-4 text-primary animate-pulse" />
+            <span className="text-xs font-semibold">Proxy Dispatch</span>
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" className="w-64 p-3" onClick={e => e.stopPropagation()}>
