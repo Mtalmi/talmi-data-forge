@@ -2,7 +2,7 @@ import { useState, useEffect, createContext, useContext, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste';
+type AppRole = 'ceo' | 'operator' | 'accounting' | 'commercial' | 'superviseur' | 'responsable_technique' | 'directeur_operations' | 'agent_administratif' | 'centraliste' | 'auditeur';
 
 interface AuthContextType {
   user: User | null;
@@ -21,6 +21,7 @@ interface AuthContextType {
   isDirecteurOperations: boolean;
   isAgentAdministratif: boolean;
   isCentraliste: boolean;
+  isAuditeur: boolean;
   canCreateBons: boolean;
   canReadPrix: boolean;
   canManageClients: boolean;
@@ -132,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isDirecteurOperations = role === 'directeur_operations';
   const isAgentAdministratif = role === 'agent_administratif';
   const isCentraliste = role === 'centraliste';
+  const isAuditeur = role === 'auditeur';
 
   const value: AuthContextType = {
     user,
@@ -150,6 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isDirecteurOperations,
     isAgentAdministratif,
     isCentraliste,
+    isAuditeur,
     // Derived permissions - CEO ONLY for BL creation
     canCreateBons: isCeo,
     canReadPrix: isCeo,

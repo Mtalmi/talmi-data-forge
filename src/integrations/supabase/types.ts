@@ -2692,6 +2692,7 @@ export type Database = {
       }
       is_accounting: { Args: { _user_id: string }; Returns: boolean }
       is_agent_administratif: { Args: { _user_id: string }; Returns: boolean }
+      is_auditeur: { Args: { user_id: string }; Returns: boolean }
       is_centraliste: { Args: { _user_id: string }; Returns: boolean }
       is_ceo: { Args: { _user_id: string }; Returns: boolean }
       is_ceo_direct: { Args: { _user_id: string }; Returns: boolean }

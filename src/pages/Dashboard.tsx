@@ -24,6 +24,7 @@ import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Dr
 import { Button } from '@/components/ui/button';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
+import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
@@ -317,7 +318,8 @@ export default function Dashboard() {
         {/* CEO Emergency Codes Manager - CEO Only */}
         {isCeo && <CeoCodeManager />}
 
-        {/* Main Content Grid */}
+        {/* Audit History Chart - CEO Only */}
+        {isCeo && <AuditHistoryChart />}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RecentDeliveries />
           
