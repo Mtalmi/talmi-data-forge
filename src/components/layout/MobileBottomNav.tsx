@@ -29,12 +29,12 @@ interface NavItem {
 const PRIMARY_NAV_ITEMS: NavItem[] = [
   { path: '/', label: 'Accueil', icon: LayoutDashboard },
   { path: '/planning', label: 'Planning', icon: CalendarClock },
-  { path: '/ventes', label: 'Ventes', icon: Receipt },
-  { path: '/production', label: 'Prod.', icon: Factory },
+  { path: '/logistique', label: 'Logistique', icon: Truck },
 ];
 
 const MORE_NAV_ITEMS: NavItem[] = [
-  { path: '/logistique', label: 'Logistique', icon: Truck },
+  { path: '/ventes', label: 'Ventes', icon: Receipt },
+  { path: '/production', label: 'Production', icon: Factory },
   { path: '/stocks', label: 'Stocks', icon: Package },
   { path: '/clients', label: 'Clients', icon: Users },
   { path: '/bons', label: 'Bons', icon: FileText },
