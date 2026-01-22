@@ -5,6 +5,8 @@ import { SiloVisual } from '@/components/stocks/SiloVisual';
 import { TwoStepReceptionWizard } from '@/components/stocks/TwoStepReceptionWizard';
 import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog';
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
+import { QualityStockEntryDialog } from '@/components/stocks/QualityStockEntryDialog';
+import { PendingReceptionsWidget } from '@/components/stocks/PendingReceptionsWidget';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -32,7 +34,7 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 export default function Stocks() {
-  const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste } = useAuth();
+  const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually } = useAuth();
   const {
     stocks,
     mouvements,
@@ -43,12 +45,15 @@ export default function Stocks() {
     getCriticalStocks,
   } = useStocks();
 
-  // SEPARATION OF POWERS:
+  // =====================================================
+  // ZERO-TRUST SEPARATION OF POWERS:
   // - Centraliste: ZERO manual access (read-only)
-  // - Agent Admin: Can add receptions ONLY (with photo proof)
+  // - Resp. Technique: Can create Quality Entry (Step 1 of Double-Lock)
+  // - Agent Admin: Can validate Quality Entry (Step 2) or direct reception
   // - CEO/Superviseur: Full access including manual adjustments
-  const canAddReception = isCeo || isSuperviseur || isAgentAdministratif;
-  const canAdjustManually = isCeo || isSuperviseur;
+  // =====================================================
+  const canCreateQualityEntry = isCeo || isSuperviseur || isResponsableTechnique;
+  const canValidatePendingReception = isCeo || isSuperviseur || isAgentAdministratif;
   const isReadOnly = isCentraliste && !isCeo && !isSuperviseur;
   
   const criticalStocks = getCriticalStocks();
@@ -99,19 +104,24 @@ export default function Stocks() {
               Suivi en temps réel des niveaux de matières premières
             </p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleRefresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
             
-            {/* Reception Button - CEO/Superviseur/Agent Admin only - 2-Step Wizard */}
-            {canAddReception && (
+            {/* Quality Entry Button - Resp. Technique (Double-Lock Step 1) */}
+            {canCreateQualityEntry && (
+              <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
+            )}
+            
+            {/* Direct Reception Button - CEO/Superviseur/Agent Admin only */}
+            {canAddStockReception && (
               <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
             )}
             
             {/* Manual Adjustment - CEO/Superviseur ONLY */}
-            {canAdjustManually && (
+            {canAdjustStockManually && (
               <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
             )}
           </div>
@@ -133,6 +143,11 @@ export default function Stocks() {
               </p>
             </div>
           </div>
+        )}
+
+        {/* Pending Receptions Queue - Admin Financial Gate (Double-Lock Step 2) */}
+        {canValidatePendingReception && (
+          <PendingReceptionsWidget onRefresh={handleRefresh} />
         )}
 
         {/* Recent Receptions Indicator */}

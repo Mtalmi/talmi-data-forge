@@ -2726,6 +2726,81 @@ export type Database = {
           },
         ]
       }
+      stock_receptions_pending: {
+        Row: {
+          admin_approuve_at: string | null
+          admin_approuve_par: string | null
+          created_at: string
+          created_by: string | null
+          fournisseur: string
+          humidite_pct: number | null
+          id: string
+          materiau: string
+          montant_facture: number | null
+          notes_admin: string | null
+          notes_qualite: string | null
+          numero_bl: string
+          numero_facture: string | null
+          photo_bl_url: string | null
+          photo_materiel_url: string | null
+          poids_pesee: number | null
+          qualite_approuvee_at: string | null
+          qualite_approuvee_par: string | null
+          qualite_visuelle: string | null
+          quantite: number
+          statut: string
+          updated_at: string
+        }
+        Insert: {
+          admin_approuve_at?: string | null
+          admin_approuve_par?: string | null
+          created_at?: string
+          created_by?: string | null
+          fournisseur: string
+          humidite_pct?: number | null
+          id?: string
+          materiau: string
+          montant_facture?: number | null
+          notes_admin?: string | null
+          notes_qualite?: string | null
+          numero_bl: string
+          numero_facture?: string | null
+          photo_bl_url?: string | null
+          photo_materiel_url?: string | null
+          poids_pesee?: number | null
+          qualite_approuvee_at?: string | null
+          qualite_approuvee_par?: string | null
+          qualite_visuelle?: string | null
+          quantite: number
+          statut?: string
+          updated_at?: string
+        }
+        Update: {
+          admin_approuve_at?: string | null
+          admin_approuve_par?: string | null
+          created_at?: string
+          created_by?: string | null
+          fournisseur?: string
+          humidite_pct?: number | null
+          id?: string
+          materiau?: string
+          montant_facture?: number | null
+          notes_admin?: string | null
+          notes_qualite?: string | null
+          numero_bl?: string
+          numero_facture?: string | null
+          photo_bl_url?: string | null
+          photo_materiel_url?: string | null
+          poids_pesee?: number | null
+          qualite_approuvee_at?: string | null
+          qualite_approuvee_par?: string | null
+          qualite_visuelle?: string | null
+          quantite?: number
+          statut?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stocks: {
         Row: {
           capacite_max: number | null
@@ -2989,6 +3064,15 @@ export type Database = {
         Returns: Json
       }
       approve_devis_with_stamp: { Args: { p_devis_id: string }; Returns: Json }
+      approve_stock_quality: {
+        Args: {
+          p_humidite_pct?: number
+          p_notes?: string
+          p_qualite_visuelle?: string
+          p_reception_id: string
+        }
+        Returns: Json
+      }
       approve_technical_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
         Returns: Json
@@ -3059,6 +3143,20 @@ export type Database = {
             Returns: string
           }
         | { Args: { p_bc_id: string; p_volume_m3?: number }; Returns: string }
+      create_quality_stock_entry: {
+        Args: {
+          p_fournisseur: string
+          p_humidite_pct?: number
+          p_materiau: string
+          p_notes?: string
+          p_numero_bl: string
+          p_photo_bl_url?: string
+          p_photo_materiel_url: string
+          p_qualite_visuelle?: string
+          p_quantite: number
+        }
+        Returns: Json
+      }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
@@ -3120,6 +3218,15 @@ export type Database = {
       }
       validate_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
+        Returns: Json
+      }
+      validate_stock_reception: {
+        Args: {
+          p_notes?: string
+          p_numero_facture?: string
+          p_poids_pesee?: number
+          p_reception_id: string
+        }
         Returns: Json
       }
     }
