@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { CreditScoreDashboard } from '@/components/clients/CreditScoreDashboard';
@@ -82,11 +83,17 @@ interface Client {
 
 export default function Clients() {
   const { isCeo, isCommercial, isAgentAdministratif, canEditClients, isDirecteurOperations } = useAuth();
+  const { previewRole } = usePreviewRole();
   const { blockClient, unblockClient, generateMiseEnDemeure, checkPaymentDelays } = usePaymentDelays();
-  // Directeur Opérations can VIEW but not EDIT
-  const canEdit = canEditClients && !isDirecteurOperations;
-  const canBlock = isCeo;
-  const canSendNotice = isCeo || isAgentAdministratif;
+  
+  // Check if currently previewing as Directeur Opérations
+  const isPreviewingAsDirecteur = previewRole === 'directeur_operations';
+  
+  // Directeur Opérations (real or preview) can VIEW but not EDIT
+  // Disable editing when previewing as any non-editing role
+  const canEdit = (canEditClients && !isDirecteurOperations) && !isPreviewingAsDirecteur;
+  const canBlock = isCeo && !previewRole;
+  const canSendNotice = (isCeo || isAgentAdministratif) && !isPreviewingAsDirecteur;
   
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);

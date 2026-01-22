@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { useFinancialCalculations } from '@/hooks/useFinancialCalculations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,9 +53,15 @@ interface Formule {
 
 export default function Formules() {
   const { isCeo, isDirecteurOperations, canEditFormules } = useAuth();
+  const { previewRole } = usePreviewRole();
   const { calculateCUT, fetchPrices } = useFinancialCalculations();
-  // Directeur Opérations can VIEW formules but not EDIT
-  const canManageFormules = canEditFormules && !isDirecteurOperations;
+  
+  // Check if currently previewing as Directeur Opérations
+  const isPreviewingAsDirecteur = previewRole === 'directeur_operations';
+  
+  // Directeur Opérations (real or preview) can VIEW formules but not EDIT
+  // Only CEO can manage formules, and NOT when previewing as another role
+  const canManageFormules = isCeo && !previewRole;
   const [formules, setFormules] = useState<Formule[]>([]);
   const [formuleCuts, setFormuleCuts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
