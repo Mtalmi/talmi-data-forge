@@ -482,10 +482,13 @@ export type Database = {
           chauffeur_nom: string | null
           ciment_reel_kg: number
           client_id: string
+          consommation_calculee: number | null
           created_at: string
           created_by: string | null
           cur_reel: number | null
           date_livraison: string
+          debrief_at: string | null
+          debrief_valide: boolean | null
           eau_reel_l: number | null
           ecart_marge: number | null
           facture_generee: boolean | null
@@ -499,7 +502,9 @@ export type Database = {
           heure_prevue: string | null
           heure_retour_centrale: string | null
           justification_ecart: string | null
+          km_final: number | null
           km_parcourus: number | null
+          litres_ajoutes: number | null
           machine_id: string | null
           marge_brute_pct: number | null
           mode_paiement: string | null
@@ -510,6 +515,7 @@ export type Database = {
           source_donnees: string | null
           statut_paiement: string
           temps_attente_chantier_minutes: number | null
+          temps_attente_reel_minutes: number | null
           temps_attente_site: number | null
           temps_mission_heures: number | null
           temps_rotation_minutes: number | null
@@ -539,10 +545,13 @@ export type Database = {
           chauffeur_nom?: string | null
           ciment_reel_kg: number
           client_id: string
+          consommation_calculee?: number | null
           created_at?: string
           created_by?: string | null
           cur_reel?: number | null
           date_livraison?: string
+          debrief_at?: string | null
+          debrief_valide?: boolean | null
           eau_reel_l?: number | null
           ecart_marge?: number | null
           facture_generee?: boolean | null
@@ -556,7 +565,9 @@ export type Database = {
           heure_prevue?: string | null
           heure_retour_centrale?: string | null
           justification_ecart?: string | null
+          km_final?: number | null
           km_parcourus?: number | null
+          litres_ajoutes?: number | null
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -567,6 +578,7 @@ export type Database = {
           source_donnees?: string | null
           statut_paiement?: string
           temps_attente_chantier_minutes?: number | null
+          temps_attente_reel_minutes?: number | null
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
           temps_rotation_minutes?: number | null
@@ -596,10 +608,13 @@ export type Database = {
           chauffeur_nom?: string | null
           ciment_reel_kg?: number
           client_id?: string
+          consommation_calculee?: number | null
           created_at?: string
           created_by?: string | null
           cur_reel?: number | null
           date_livraison?: string
+          debrief_at?: string | null
+          debrief_valide?: boolean | null
           eau_reel_l?: number | null
           ecart_marge?: number | null
           facture_generee?: boolean | null
@@ -613,7 +628,9 @@ export type Database = {
           heure_prevue?: string | null
           heure_retour_centrale?: string | null
           justification_ecart?: string | null
+          km_final?: number | null
           km_parcourus?: number | null
+          litres_ajoutes?: number | null
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -624,6 +641,7 @@ export type Database = {
           source_donnees?: string | null
           statut_paiement?: string
           temps_attente_chantier_minutes?: number | null
+          temps_attente_reel_minutes?: number | null
           temps_attente_site?: number | null
           temps_mission_heures?: number | null
           temps_rotation_minutes?: number | null

@@ -26,7 +26,8 @@ import {
   AlertTriangle, 
   Fuel,
   Truck,
-  Calendar
+  Calendar,
+  CheckCircle2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -47,6 +48,8 @@ interface RotationEntry {
   km_parcourus: number | null;
   litres_carburant: number | null;
   consommation_l_100km: number | null;
+  debrief_valide: boolean;
+  km_final: number | null;
 }
 
 interface FuelEntry {
@@ -162,6 +165,9 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
           validated_at,
           validation_technique,
           km_parcourus,
+          km_final,
+          consommation_calculee,
+          debrief_valide,
           clients (nom_client)
         `)
         .eq('date_livraison', dateFilter)
@@ -194,6 +200,9 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
           derivedStatus = 'validation_technique';
         }
 
+        // Use BL's calculated consumption if available, otherwise fall back to fuel entry
+        const consommation = bl.consommation_calculee || fuelEntry?.consommation_l_100km || null;
+
         return {
           bl_id: bl.bl_id,
           client_id: bl.client_id,
@@ -208,8 +217,10 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
           workflow_status: derivedStatus,
           validated_at: bl.validated_at,
           km_parcourus: bl.km_parcourus || fuelEntry?.km_parcourus || null,
+          km_final: bl.km_final || null,
           litres_carburant: fuelEntry?.litres || null,
-          consommation_l_100km: fuelEntry?.consommation_l_100km || null,
+          consommation_l_100km: consommation,
+          debrief_valide: bl.debrief_valide || false,
         };
       });
 
@@ -304,8 +315,17 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
     return consumption > avg * 1.2; // 20% above average
   };
 
-  const getStatusBadge = (status: string, hasRetour: boolean, hasDepart: boolean) => {
-    // Complete cycle
+  const getStatusBadge = (status: string, hasRetour: boolean, hasDepart: boolean, debriefValide: boolean) => {
+    // Complete cycle with validated debrief
+    if (hasRetour && debriefValide) {
+      return (
+        <Badge className="bg-success/20 text-success border-success/30 gap-1">
+          <CheckCircle2 className="h-3 w-3" />
+          Validé
+        </Badge>
+      );
+    }
+    // Complete cycle but no debrief (legacy data)
     if (hasRetour) {
       return <Badge className="bg-success/20 text-success border-success/30">Complète</Badge>;
     }
@@ -492,7 +512,7 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
                       ) : '—'}
                     </TableCell>
                     <TableCell>
-                      {getStatusBadge(r.workflow_status, !!r.heure_retour_centrale, !!r.heure_depart_centrale)}
+                      {getStatusBadge(r.workflow_status, !!r.heure_retour_centrale, !!r.heure_depart_centrale, r.debrief_valide)}
                     </TableCell>
                   </TableRow>
                 );

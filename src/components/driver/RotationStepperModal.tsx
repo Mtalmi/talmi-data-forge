@@ -24,6 +24,7 @@ import {
   Truck,
   Fuel,
   Gauge,
+  AlertTriangle,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -78,11 +79,13 @@ export function RotationStepperModal({
   const [updating, setUpdating] = useState<StepKey | null>(null);
   const [proofModalOpen, setProofModalOpen] = useState(false);
   const [retourFormOpen, setRetourFormOpen] = useState(false);
+  const [lastKmReading, setLastKmReading] = useState<number | null>(null);
   
-  // Retour form state
+  // Retour form state (Final Debrief)
   const [kmCompteur, setKmCompteur] = useState('');
   const [didRefuel, setDidRefuel] = useState(false);
   const [litresCarburant, setLitresCarburant] = useState('');
+  const [tempsAttenteReel, setTempsAttenteReel] = useState('');
 
   // Sync props with local state when modal opens
   useEffect(() => {
@@ -124,8 +127,17 @@ export function RotationStepperModal({
       return;
     }
 
-    // For 'retour' step, open the retour form to collect KM/fuel data
+    // For 'retour' step, open the Final Debrief form to collect KM/fuel data
     if (stepKey === 'retour') {
+      // Fetch last km reading for this truck
+      if (camionId) {
+        const { data } = await supabase
+          .from('flotte')
+          .select('km_compteur')
+          .eq('id_camion', camionId)
+          .single();
+        setLastKmReading(data?.km_compteur || null);
+      }
       setRetourFormOpen(true);
       return;
     }
@@ -149,15 +161,10 @@ export function RotationStepperModal({
           setLocalHeureArrivee(now);
           break;
         case 'retour':
+          // Retour is handled by handleRetourSubmit with full debrief
+          // This case should not be reached directly
           updateData.heure_retour_centrale = now;
           setLocalHeureRetour(now);
-          // Also free up the truck!
-          if (camionId) {
-            await supabase
-              .from('flotte')
-              .update({ statut: 'Disponible' })
-              .eq('id_camion', camionId);
-          }
           break;
       }
 
@@ -191,64 +198,102 @@ export function RotationStepperModal({
   };
 
   const handleRetourSubmit = async () => {
+    setUpdating('retour');
+    
     const kmVal = parseFloat(kmCompteur);
     if (isNaN(kmVal) || kmVal <= 0) {
       toast.error('Veuillez entrer le compteur kilométrique');
+      setUpdating(null);
       return;
     }
 
-    // Record fuel entry if refueled
-    if (didRefuel && camionId) {
-      const litresVal = parseFloat(litresCarburant);
-      if (isNaN(litresVal) || litresVal <= 0) {
-        toast.error('Veuillez entrer les litres de carburant');
-        return;
-      }
+    const litresVal = didRefuel ? parseFloat(litresCarburant) : 0;
+    if (didRefuel && (isNaN(litresVal) || litresVal <= 0)) {
+      toast.error('Veuillez entrer les litres de carburant');
+      setUpdating(null);
+      return;
+    }
 
-      // Get last km reading for this truck to calculate consumption
-      const { data: lastEntry } = await supabase
-        .from('suivi_carburant')
-        .select('km_compteur')
-        .eq('id_camion', camionId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-
+    try {
+      const now = new Date().toISOString();
+      
+      // Calculate km traveled for this rotation
       let kmParcourus: number | null = null;
       let consommation: number | null = null;
 
-      if (lastEntry) {
-        kmParcourus = kmVal - lastEntry.km_compteur;
-        if (kmParcourus > 0) {
+      if (lastKmReading && lastKmReading > 0) {
+        kmParcourus = kmVal - lastKmReading;
+        if (kmParcourus > 0 && litresVal > 0) {
           consommation = (litresVal / kmParcourus) * 100;
         }
       }
 
-      // Insert fuel entry
-      await supabase.from('suivi_carburant').insert([{
-        id_camion: camionId,
-        litres: litresVal,
-        km_compteur: kmVal,
-        km_parcourus: kmParcourus,
-        consommation_l_100km: consommation,
-      }]);
+      // Parse temps d'attente réel if provided
+      const tempsAttenteReelVal = tempsAttenteReel ? parseFloat(tempsAttenteReel) : null;
 
-      // Update truck km counter
-      await supabase
-        .from('flotte')
-        .update({ km_compteur: kmVal })
-        .eq('id_camion', camionId);
+      // Record fuel entry if refueled
+      if (didRefuel && camionId && litresVal > 0) {
+        await supabase.from('suivi_carburant').insert([{
+          id_camion: camionId,
+          litres: litresVal,
+          km_compteur: kmVal,
+          km_parcourus: kmParcourus,
+          consommation_l_100km: consommation,
+          date_releve: new Date().toISOString().split('T')[0],
+        }]);
+      }
+
+      // Update truck km counter and set to Disponible
+      if (camionId) {
+        await supabase
+          .from('flotte')
+          .update({ 
+            km_compteur: kmVal,
+            statut: 'Disponible',
+            bc_mission_id: null,
+          })
+          .eq('id_camion', camionId);
+      }
+
+      // Update BL with all debrief data
+      const { error } = await supabase
+        .from('bons_livraison_reels')
+        .update({
+          heure_retour_centrale: now,
+          km_parcourus: kmParcourus,
+          km_final: kmVal,
+          litres_ajoutes: litresVal > 0 ? litresVal : null,
+          consommation_calculee: consommation,
+          temps_attente_reel_minutes: tempsAttenteReelVal,
+          debrief_valide: true,
+          debrief_at: now,
+        })
+        .eq('bl_id', blId);
+
+      if (error) throw error;
+
+      setLocalHeureRetour(now);
+      toast.success('🏠 Rotation validée - Camion libéré!', {
+        description: `KM: ${kmVal} ${litresVal > 0 ? `• Carburant: ${litresVal}L` : ''} ${consommation ? `• ${consommation.toFixed(1)} L/100km` : ''}`,
+      });
+      
+      setRetourFormOpen(false);
+      onComplete();
+      
+      // Close modal after a brief delay
+      setTimeout(() => onOpenChange(false), 1500);
+      
+      // Reset form
+      setKmCompteur('');
+      setDidRefuel(false);
+      setLitresCarburant('');
+      setTempsAttenteReel('');
+    } catch (error) {
+      console.error('Error completing debrief:', error);
+      toast.error("Erreur lors de la validation");
+    } finally {
+      setUpdating(null);
     }
-
-    setRetourFormOpen(false);
-    
-    // Execute the retour step with km_parcourus (if we have previous km)
-    await executeStep('retour', { km_parcourus: kmVal });
-    
-    // Reset form
-    setKmCompteur('');
-    setDidRefuel(false);
-    setLitresCarburant('');
   };
 
   const handleProofComplete = async (proofData: {
@@ -461,25 +506,33 @@ export function RotationStepperModal({
         onComplete={handleProofComplete}
       />
 
-      {/* Retour Form Dialog for KM/Fuel Entry */}
+      {/* Final Debrief Dialog for KM/Fuel/Waiting Time Entry */}
       <Dialog open={retourFormOpen} onOpenChange={setRetourFormOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Home className="h-5 w-5 text-primary" />
-              Retour à la Centrale
+              <Home className="h-5 w-5 text-success" />
+              Validation de Fin de Rotation
             </DialogTitle>
             <DialogDescription>
-              {blId} • {camionId}
+              {blId} • {camionId} — Données obligatoires avant libération du camion
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* KM Counter - Required */}
+            {/* Previous KM Info */}
+            {lastKmReading && (
+              <div className="p-3 bg-muted/50 rounded-lg border text-sm">
+                <span className="text-muted-foreground">Dernier relevé:</span>{' '}
+                <span className="font-mono font-semibold">{lastKmReading.toLocaleString()} km</span>
+              </div>
+            )}
+
+            {/* KM Final - Required */}
             <div className="space-y-2">
-              <Label htmlFor="km-compteur" className="flex items-center gap-2">
-                <Gauge className="h-4 w-4" />
-                Compteur Kilométrique <span className="text-destructive">*</span>
+              <Label htmlFor="km-compteur" className="flex items-center gap-2 font-semibold">
+                <Gauge className="h-4 w-4 text-primary" />
+                KM Final (Compteur) <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="km-compteur"
@@ -489,10 +542,15 @@ export function RotationStepperModal({
                 onChange={(e) => setKmCompteur(e.target.value)}
                 className="text-lg font-mono"
               />
+              {lastKmReading && kmCompteur && parseFloat(kmCompteur) > lastKmReading && (
+                <p className="text-xs text-muted-foreground">
+                  Distance parcourue: <span className="font-mono font-semibold text-foreground">{(parseFloat(kmCompteur) - lastKmReading).toLocaleString()} km</span>
+                </p>
+              )}
             </div>
 
             {/* Fuel Checkbox */}
-            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-lg">
+            <div className="flex items-center space-x-2 p-3 bg-muted/50 rounded-lg border">
               <Checkbox
                 id="did-refuel"
                 checked={didRefuel}
@@ -500,15 +558,15 @@ export function RotationStepperModal({
               />
               <Label htmlFor="did-refuel" className="flex items-center gap-2 cursor-pointer">
                 <Fuel className="h-4 w-4" />
-                J'ai fait le plein de carburant
+                Carburant Ajouté
               </Label>
             </div>
 
             {/* Fuel Amount - Conditional */}
             {didRefuel && (
               <div className="space-y-2 animate-in slide-in-from-top-2">
-                <Label htmlFor="litres-carburant" className="flex items-center gap-2">
-                  <Fuel className="h-4 w-4" />
+                <Label htmlFor="litres-carburant" className="flex items-center gap-2 font-semibold">
+                  <Fuel className="h-4 w-4 text-warning" />
                   Litres de Carburant <span className="text-destructive">*</span>
                 </Label>
                 <Input
@@ -520,11 +578,34 @@ export function RotationStepperModal({
                   onChange={(e) => setLitresCarburant(e.target.value)}
                   className="text-lg font-mono"
                 />
-                <p className="text-xs text-muted-foreground">
-                  La consommation L/100km sera calculée automatiquement
-                </p>
+                {kmCompteur && lastKmReading && litresCarburant && parseFloat(litresCarburant) > 0 && (
+                  <p className="text-xs text-success">
+                    Consommation estimée: <span className="font-mono font-semibold">
+                      {((parseFloat(litresCarburant) / (parseFloat(kmCompteur) - lastKmReading)) * 100).toFixed(1)} L/100km
+                    </span>
+                  </p>
+                )}
               </div>
             )}
+
+            {/* Temps d'Attente Réel - Optional */}
+            <div className="space-y-2">
+              <Label htmlFor="temps-attente" className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                Temps d'Attente Réel (minutes)
+              </Label>
+              <Input
+                id="temps-attente"
+                type="number"
+                placeholder="Laisser vide si pas de correction"
+                value={tempsAttenteReel}
+                onChange={(e) => setTempsAttenteReel(e.target.value)}
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">
+                Uniquement si différent du temps calculé automatiquement
+              </p>
+            </div>
           </div>
 
           <div className="flex gap-3">
@@ -532,11 +613,12 @@ export function RotationStepperModal({
               variant="outline"
               className="flex-1"
               onClick={() => setRetourFormOpen(false)}
+              disabled={updating === 'retour'}
             >
               Annuler
             </Button>
             <Button
-              className="flex-1 gap-2"
+              className="flex-1 gap-2 bg-success hover:bg-success/90"
               onClick={handleRetourSubmit}
               disabled={updating === 'retour'}
             >
@@ -545,7 +627,7 @@ export function RotationStepperModal({
               ) : (
                 <>
                   <Check className="h-4 w-4" />
-                  Confirmer Retour
+                  Valider & Libérer
                 </>
               )}
             </Button>
