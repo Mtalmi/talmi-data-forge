@@ -128,6 +128,7 @@ export default function Logistique() {
   // Helper to get workflow status label
   const getDeliveryStatusLabel = (status: string): string => {
     const labels: Record<string, string> = {
+      'planification': 'Planifié',
       'production': 'En Production',
       'validation_technique': 'Validation Tech.',
       'en_livraison': 'En Route',

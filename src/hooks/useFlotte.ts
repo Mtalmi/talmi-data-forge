@@ -118,8 +118,8 @@ export function useFlotte() {
     try {
       const today = format(new Date(), 'yyyy-MM-dd');
       
-      // Get all deliveries for today that are actively in progress
-      // (not yet completed - statuses: production, validation_technique, en_livraison)
+      // Get all deliveries for today that have a truck assigned and are not yet completed
+      // Includes: planification (scheduled), production, validation_technique, en_livraison
       const { data, error } = await supabase
         .from('bons_livraison_reels')
         .select(`
@@ -132,7 +132,8 @@ export function useFlotte() {
           zones_livraison (nom_zone)
         `)
         .eq('date_livraison', today)
-        .in('workflow_status', ['production', 'validation_technique', 'en_livraison']);
+        .in('workflow_status', ['planification', 'production', 'validation_technique', 'en_livraison'])
+        .or('camion_assigne.not.is.null,toupie_assignee.not.is.null');
 
       if (error) throw error;
 
