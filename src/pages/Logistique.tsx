@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFlotte } from '@/hooks/useFlotte';
 import { ProviderLeaderboard } from '@/components/logistics/ProviderLeaderboard';
 import { FuelEntryForm } from '@/components/logistics/FuelEntryForm';
+import { RotationJournal } from '@/components/logistics/RotationJournal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,6 +43,7 @@ import {
   Trophy,
   Fuel,
   TrendingUp,
+  RotateCcw,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -285,6 +287,10 @@ export default function Logistique() {
                 <span className="hidden sm:inline">Performance</span>
                 <span className="sm:hidden">Perf.</span>
               </TabsTrigger>
+              <TabsTrigger value="rotations" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
+                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                Rotations
+              </TabsTrigger>
               <TabsTrigger value="carburant" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Fuel className="h-3 w-3 sm:h-4 sm:w-4" />
                 Carburant
@@ -409,6 +415,17 @@ export default function Logistique() {
                 Classement des Prestataires
               </h2>
               <ProviderLeaderboard stats={providerStats} />
+            </div>
+          </TabsContent>
+
+          {/* Rotations Journal Tab */}
+          <TabsContent value="rotations">
+            <div className="card-industrial p-4 sm:p-6">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <RotateCcw className="h-5 w-5 text-primary" />
+                Journal des Rotations
+              </h2>
+              <RotationJournal />
             </div>
           </TabsContent>
 
