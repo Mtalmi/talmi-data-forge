@@ -51,6 +51,7 @@ export default function Prix() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [editingPrix, setEditingPrix] = useState<Prix | null>(null);
 
   // Form state
   const [matiere, setMatiere] = useState('');
@@ -82,6 +83,15 @@ export default function Prix() {
     setMatiere('');
     setPrixUnitaire('');
     setUnite('Tonne');
+    setEditingPrix(null);
+  };
+
+  const handleEdit = (p: Prix) => {
+    setEditingPrix(p);
+    setMatiere(p.matiere_premiere);
+    setPrixUnitaire(p.prix_unitaire_dh.toString());
+    setUnite(p.unite_mesure);
+    setDialogOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,7 +195,7 @@ export default function Prix() {
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Ajouter / Modifier un Prix</DialogTitle>
+                  <DialogTitle>{editingPrix ? 'Modifier le Prix' : 'Ajouter un Prix'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="space-y-2">
@@ -315,7 +325,12 @@ export default function Prix() {
                       {isCeo && (
                         <TableCell>
                           <div className="flex items-center gap-1">
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0"
+                              onClick={() => handleEdit(p)}
+                            >
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button

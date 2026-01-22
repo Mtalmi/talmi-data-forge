@@ -59,6 +59,7 @@ export default function Formules() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [editingFormule, setEditingFormule] = useState<Formule | null>(null);
 
   // Form state
   const [formuleId, setFormuleId] = useState('');
@@ -119,6 +120,19 @@ export default function Formules() {
     setSable('');
     setGravier('');
     setErrors({});
+    setEditingFormule(null);
+  };
+
+  const handleEdit = (f: Formule) => {
+    setEditingFormule(f);
+    setFormuleId(f.formule_id);
+    setDesignation(f.designation);
+    setCiment(f.ciment_kg_m3.toString());
+    setEau(f.eau_l_m3.toString());
+    setAdjuvant(f.adjuvant_l_m3.toString());
+    setSable(f.sable_kg_m3?.toString() || '');
+    setGravier(f.gravier_kg_m3?.toString() || '');
+    setDialogOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,27 +172,45 @@ export default function Formules() {
         return;
       }
 
-      const { error } = await supabase.from('formules_theoriques').insert([{
-        formule_id: data.formule_id,
-        designation: data.designation,
-        ciment_kg_m3: data.ciment_kg_m3,
-        eau_l_m3: data.eau_l_m3,
-        adjuvant_l_m3: data.adjuvant_l_m3,
-        sable_kg_m3: data.sable_kg_m3 || null,
-        gravier_kg_m3: data.gravier_kg_m3 || null,
-      }]);
+      if (editingFormule) {
+        // Update existing formule
+        const { error } = await supabase
+          .from('formules_theoriques')
+          .update({
+            designation: data.designation,
+            ciment_kg_m3: data.ciment_kg_m3,
+            eau_l_m3: data.eau_l_m3,
+            adjuvant_l_m3: data.adjuvant_l_m3,
+            sable_kg_m3: data.sable_kg_m3 || null,
+            gravier_kg_m3: data.gravier_kg_m3 || null,
+          })
+          .eq('formule_id', editingFormule.formule_id);
 
-      if (error) {
-        if (error.code === '23505') {
-          setErrors({ formule_id: 'Cette formule existe déjà' });
-        } else {
-          throw error;
+        if (error) throw error;
+        toast.success('Formule mise à jour');
+      } else {
+        // Insert new formule
+        const { error } = await supabase.from('formules_theoriques').insert([{
+          formule_id: data.formule_id,
+          designation: data.designation,
+          ciment_kg_m3: data.ciment_kg_m3,
+          eau_l_m3: data.eau_l_m3,
+          adjuvant_l_m3: data.adjuvant_l_m3,
+          sable_kg_m3: data.sable_kg_m3 || null,
+          gravier_kg_m3: data.gravier_kg_m3 || null,
+        }]);
+
+        if (error) {
+          if (error.code === '23505') {
+            setErrors({ formule_id: 'Cette formule existe déjà' });
+          } else {
+            throw error;
+          }
+          setSubmitting(false);
+          return;
         }
-        setSubmitting(false);
-        return;
+        toast.success('Formule créée avec succès');
       }
-
-      toast.success('Formule créée avec succès');
       resetForm();
       setDialogOpen(false);
       fetchFormules();
@@ -232,7 +264,7 @@ export default function Formules() {
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>Créer une Formule</DialogTitle>
+                  <DialogTitle>{editingFormule ? 'Modifier la Formule' : 'Créer une Formule'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -401,7 +433,12 @@ export default function Formules() {
                     {isCeo && (
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleEdit(f)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button

@@ -26,6 +26,7 @@ interface PhotoWaiverOptionProps {
   blId: string;
   onWaiverComplete: (waiverData: {
     waiverReason: string;
+    waiverNotes?: string;
     manualTimestamp: string;
     waivedAt: string;
   }) => void;
@@ -42,6 +43,7 @@ export function PhotoWaiverOption({
     new Date().toTimeString().slice(0, 5)
   );
   const [waiverReason, setWaiverReason] = useState('');
+  const [waiverNotes, setWaiverNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const reasons = [
@@ -67,6 +69,7 @@ export function PhotoWaiverOption({
     try {
       onWaiverComplete({
         waiverReason,
+        waiverNotes: waiverNotes || undefined,
         manualTimestamp: manualTime,
         waivedAt: new Date().toISOString(),
       });
@@ -77,6 +80,7 @@ export function PhotoWaiverOption({
 
       setOpen(false);
       setWaiverReason('');
+      setWaiverNotes('');
     } catch (error) {
       toast.error('Erreur lors de l\'enregistrement');
     } finally {
@@ -149,7 +153,7 @@ export function PhotoWaiverOption({
             </div>
           </div>
 
-          {/* Optional Notes */}
+          {/* Optional Notes - Always shown for 'other', but captured for all reasons */}
           {waiverReason === 'other' && (
             <div className="space-y-2">
               <Label htmlFor="waiver-notes">Précisez</Label>
@@ -157,6 +161,8 @@ export function PhotoWaiverOption({
                 id="waiver-notes"
                 placeholder="Détails supplémentaires..."
                 className="h-20"
+                value={waiverNotes}
+                onChange={(e) => setWaiverNotes(e.target.value)}
               />
             </div>
           )}
