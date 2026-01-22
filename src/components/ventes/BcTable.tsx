@@ -28,6 +28,8 @@ import {
   AlertCircle,
   Clock,
   Receipt,
+  Send,
+  Shield,
 } from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -36,9 +38,12 @@ import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
 import { OrderStatusTimeline } from '@/components/ventes/OrderStatusTimeline';
+import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+  en_attente_validation: { label: 'En Attente Admin', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse', icon: <Clock className="h-3 w-3" /> },
   pret_production: { label: 'Prêt Production', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
   en_production: { label: 'En Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30', icon: <Factory className="h-3 w-3" /> },
   en_livraison: { label: 'En Livraison', color: 'bg-rose-500/10 text-rose-600 border-rose-500/30', icon: <Truck className="h-3 w-3" /> },
@@ -46,6 +51,7 @@ const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: Rea
   termine: { label: 'Terminé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
   facture: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
 };
 
 // BL workflow status display for linked BLs - UNIFIED with workflowStatus.ts palette
@@ -78,6 +84,7 @@ interface BcTableProps {
   loading: boolean;
   launchingProduction: string | null;
   onLaunchProduction: (bc: BonCommande) => void;
+  onSubmitForValidation?: (bc: BonCommande) => void;
   onCopyBc: (bc: BonCommande) => void;
   onOpenDetail: (bc: BonCommande) => void;
   onGenerateInvoice?: (bcId: string) => Promise<string | null>;
@@ -119,6 +126,7 @@ export function BcTable({
   loading,
   launchingProduction,
   onLaunchProduction,
+  onSubmitForValidation,
   onCopyBc,
   onOpenDetail,
   onGenerateInvoice,
@@ -126,12 +134,27 @@ export function BcTable({
   onSelectionChange,
 }: BcTableProps) {
   const [generatingInvoice, setGeneratingInvoice] = useState<string | null>(null);
+  const { isDirecteurOperations, isCeo, isSuperviseur, isAgentAdministratif, canValidateBcPrice, isInEmergencyWindow } = useAuth();
 
   const handleGenerateInvoice = async (bc: BonCommande) => {
     if (!onGenerateInvoice) return;
     setGeneratingInvoice(bc.bc_id);
     await onGenerateInvoice(bc.bc_id);
     setGeneratingInvoice(null);
+  };
+
+  // Check if BC is an emergency bypass
+  const isEmergencyBc = (bc: BonCommande) => bc.notes?.includes('[URGENCE/EMERGENCY');
+
+  // Determine if current user can launch production for this BC
+  const canLaunchProduction = (bc: BonCommande) => {
+    // CEO and Superviseur can always launch
+    if (isCeo || isSuperviseur || isAgentAdministratif) return true;
+    // Dir Ops can only launch if it's already validated or in emergency window with bypass
+    if (isDirecteurOperations) {
+      return bc.prix_verrouille || isEmergencyBc(bc);
+    }
+    return false;
   };
   
   const handleSelectAll = (checked: boolean) => {
@@ -274,6 +297,8 @@ export function BcTable({
           const statusConfig = BC_STATUS_CONFIG[bc.statut] || BC_STATUS_CONFIG.pret_production;
           const isSelected = selectedIds.includes(bc.id);
           const priorityBadge = renderPriorityBadge(bc);
+          const bcIsEmergency = isEmergencyBc(bc);
+          const bcCanLaunch = canLaunchProduction(bc);
           
           // Get the most advanced BL workflow status for display
           const linkedBls = bc.linkedBls || [];
@@ -295,7 +320,11 @@ export function BcTable({
               key={bc.id} 
               className={cn(
                 "cursor-pointer hover:bg-muted/50",
-                isSelected && "bg-primary/5"
+                isSelected && "bg-primary/5",
+                // Emergency BC red pulse glow
+                bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
+                // Pending validation orange glow
+                bc.statut === 'en_attente_validation' && "bg-amber-500/5 border-l-2 border-l-amber-500"
               )}
               onClick={() => onOpenDetail(bc)}
             >
@@ -333,6 +362,13 @@ export function BcTable({
               </TableCell>
               <TableCell>
                 <div className="flex flex-col gap-1">
+                  {/* Emergency Badge */}
+                  {bcIsEmergency && (
+                    <Badge variant="destructive" className="gap-1 text-[10px]">
+                      <Zap className="h-3 w-3" />
+                      URGENCE
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
                     {statusConfig.icon}
                     {statusConfig.label}
@@ -393,23 +429,60 @@ export function BcTable({
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  {/* Launch Production - for new orders */}
+                  {/* Role-Adaptive Action Buttons */}
                   {bc.statut === 'pret_production' && (
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={() => onLaunchProduction(bc)}
-                      disabled={launchingProduction === bc.bc_id}
-                      className="gap-1"
-                    >
-                      {launchingProduction === bc.bc_id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Factory className="h-3 w-3" />
-                      )}
-                      Lancer
-                    </Button>
+                    <>
+                      {bcCanLaunch ? (
+                        <Button
+                          size="sm"
+                          variant="default"
+                          onClick={() => onLaunchProduction(bc)}
+                          disabled={launchingProduction === bc.bc_id}
+                          className={cn("gap-1", bcIsEmergency && "bg-red-600 hover:bg-red-700")}
+                        >
+                          {launchingProduction === bc.bc_id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Factory className="h-3 w-3" />
+                          )}
+                          Lancer
+                        </Button>
+                      ) : isDirecteurOperations && onSubmitForValidation ? (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => onSubmitForValidation(bc)}
+                              className="gap-1 text-amber-600 border-amber-500 hover:bg-amber-50"
+                            >
+                              <Send className="h-3 w-3" />
+                              Soumettre
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            Soumettre pour validation prix par l'Agent Admin
+                          </TooltipContent>
+                        </Tooltip>
+                      ) : null}
+                    </>
                   )}
+                  
+                  {/* Pending Validation - show for Dir Ops */}
+                  {bc.statut === 'en_attente_validation' && isDirecteurOperations && (
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Badge variant="outline" className="gap-1 bg-amber-500/10 text-amber-600 border-amber-500/30">
+                          <Clock className="h-3 w-3" />
+                          En attente Admin
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        Prix en attente de validation par l'Agent Administratif
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
+                  
                   {/* Add Delivery - only show when ALL linked BLs are validated or past production */}
                   {(() => {
                     const hasRemainingVolume = bc.statut === 'en_production' && 
