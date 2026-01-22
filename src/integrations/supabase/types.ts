@@ -421,6 +421,9 @@ export type Database = {
           formule_id: string
           heure_livraison_souhaitee: string | null
           id: string
+          lock_expires_at: string | null
+          locked_at: string | null
+          locked_by: string | null
           mode_paiement: string | null
           nb_livraisons: number | null
           notes: string | null
@@ -437,6 +440,8 @@ export type Database = {
           updated_at: string
           validated_at: string | null
           validated_by: string | null
+          validated_by_name: string | null
+          validated_by_role: string | null
           volume_livre: number | null
           volume_m3: number
           volume_restant: number | null
@@ -457,6 +462,9 @@ export type Database = {
           formule_id: string
           heure_livraison_souhaitee?: string | null
           id?: string
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           mode_paiement?: string | null
           nb_livraisons?: number | null
           notes?: string | null
@@ -473,6 +481,8 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           volume_livre?: number | null
           volume_m3: number
           volume_restant?: number | null
@@ -493,6 +503,9 @@ export type Database = {
           formule_id?: string
           heure_livraison_souhaitee?: string | null
           id?: string
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           mode_paiement?: string | null
           nb_livraisons?: number | null
           notes?: string | null
@@ -509,6 +522,8 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           volume_livre?: number | null
           volume_m3?: number
           volume_restant?: number | null
@@ -592,9 +607,15 @@ export type Database = {
           km_final: number | null
           km_parcourus: number | null
           litres_ajoutes: number | null
+          lock_expires_at: string | null
+          locked_at: string | null
+          locked_by: string | null
           machine_id: string | null
           marge_brute_pct: number | null
           mode_paiement: string | null
+          payment_recorded_at: string | null
+          payment_recorded_by: string | null
+          payment_recorded_by_name: string | null
           prestataire_id: string | null
           prix_livraison_m3: number | null
           prix_vente_m3: number | null
@@ -610,6 +631,8 @@ export type Database = {
           updated_at: string
           validated_at: string | null
           validated_by: string | null
+          validated_by_name: string | null
+          validated_by_role: string | null
           validation_technique: boolean | null
           volume_m3: number
           volume_perdu: number | null
@@ -655,9 +678,15 @@ export type Database = {
           km_final?: number | null
           km_parcourus?: number | null
           litres_ajoutes?: number | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          payment_recorded_at?: string | null
+          payment_recorded_by?: string | null
+          payment_recorded_by_name?: string | null
           prestataire_id?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
@@ -673,6 +702,8 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           validation_technique?: boolean | null
           volume_m3: number
           volume_perdu?: number | null
@@ -718,9 +749,15 @@ export type Database = {
           km_final?: number | null
           km_parcourus?: number | null
           litres_ajoutes?: number | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           machine_id?: string | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
+          payment_recorded_at?: string | null
+          payment_recorded_by?: string | null
+          payment_recorded_by_name?: string | null
           prestataire_id?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
@@ -736,6 +773,8 @@ export type Database = {
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           validation_technique?: boolean | null
           volume_m3?: number
           volume_perdu?: number | null
@@ -1101,15 +1140,27 @@ export type Database = {
           fixed_cost_per_m3: number
           formule_id: string
           id: string
+          is_special_formula: boolean | null
+          lock_expires_at: string | null
+          locked_at: string | null
+          locked_by: string | null
           margin_pct: number
           notes: string | null
           prix_livraison_m3: number | null
           prix_vente_m3: number
+          requires_technical_approval: boolean | null
           statut: string
+          technical_approved_at: string | null
+          technical_approved_by: string | null
+          technical_approved_by_name: string | null
           total_cost_per_m3: number
           total_ht: number
           transport_extra_per_m3: number
           updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+          validated_by_name: string | null
+          validated_by_role: string | null
           validite_jours: number
           volume_m3: number
           zone_livraison_id: string | null
@@ -1125,15 +1176,27 @@ export type Database = {
           fixed_cost_per_m3?: number
           formule_id: string
           id?: string
+          is_special_formula?: boolean | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           margin_pct?: number
           notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3: number
+          requires_technical_approval?: boolean | null
           statut?: string
+          technical_approved_at?: string | null
+          technical_approved_by?: string | null
+          technical_approved_by_name?: string | null
           total_cost_per_m3: number
           total_ht: number
           transport_extra_per_m3?: number
           updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           validite_jours?: number
           volume_m3: number
           zone_livraison_id?: string | null
@@ -1149,15 +1212,27 @@ export type Database = {
           fixed_cost_per_m3?: number
           formule_id?: string
           id?: string
+          is_special_formula?: boolean | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           margin_pct?: number
           notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number
+          requires_technical_approval?: boolean | null
           statut?: string
+          technical_approved_at?: string | null
+          technical_approved_by?: string | null
+          technical_approved_by_name?: string | null
           total_cost_per_m3?: number
           total_ht?: number
           transport_extra_per_m3?: number
           updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          validated_by_name?: string | null
+          validated_by_role?: string | null
           validite_jours?: number
           volume_m3?: number
           zone_livraison_id?: string | null
@@ -1367,12 +1442,17 @@ export type Database = {
           client_id: string
           created_at: string
           created_by: string | null
+          created_by_name: string | null
+          created_by_role: string | null
           cur_reel: number | null
           date_facture: string
           facture_id: string
           formule_id: string
           id: string
           is_consolidee: boolean | null
+          lock_expires_at: string | null
+          locked_at: string | null
+          locked_by: string | null
           marge_brute_dh: number | null
           marge_brute_pct: number | null
           mode_paiement: string | null
@@ -1392,12 +1472,17 @@ export type Database = {
           client_id: string
           created_at?: string
           created_by?: string | null
+          created_by_name?: string | null
+          created_by_role?: string | null
           cur_reel?: number | null
           date_facture?: string
           facture_id: string
           formule_id: string
           id?: string
           is_consolidee?: boolean | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -1417,12 +1502,17 @@ export type Database = {
           client_id?: string
           created_at?: string
           created_by?: string | null
+          created_by_name?: string | null
+          created_by_role?: string | null
           cur_reel?: number | null
           date_facture?: string
           facture_id?: string
           formule_id?: string
           id?: string
           is_consolidee?: boolean | null
+          lock_expires_at?: string | null
+          locked_at?: string | null
+          locked_by?: string | null
           marge_brute_dh?: number | null
           marge_brute_pct?: number | null
           mode_paiement?: string | null
@@ -2713,6 +2803,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      acquire_edit_lock: {
+        Args: {
+          p_lock_duration_minutes?: number
+          p_record_id: string
+          p_table_name: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
+      approve_technical_devis: {
+        Args: { p_devis_id: string; p_user_id?: string }
+        Returns: Json
+      }
       calculate_cut: {
         Args: {
           p_adjuvant_l: number
@@ -2774,6 +2877,13 @@ export type Database = {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
       }
+      get_user_display_info: {
+        Args: { p_user_id: string }
+        Returns: {
+          full_name: string
+          role_name: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -2798,6 +2908,14 @@ export type Database = {
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
+      release_edit_lock: {
+        Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
+        Returns: boolean
+      }
+      validate_devis: {
+        Args: { p_devis_id: string; p_user_id?: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
