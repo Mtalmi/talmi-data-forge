@@ -2,7 +2,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
 import { SiloVisual } from '@/components/stocks/SiloVisual';
-import { ReceptionForm } from '@/components/stocks/ReceptionForm';
+import { TwoStepReceptionWizard } from '@/components/stocks/TwoStepReceptionWizard';
 import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog';
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { Button } from '@/components/ui/button';
@@ -105,9 +105,9 @@ export default function Stocks() {
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
             
-            {/* Reception Button - CEO/Superviseur/Agent Admin only */}
+            {/* Reception Button - CEO/Superviseur/Agent Admin only - 2-Step Wizard */}
             {canAddReception && (
-              <ReceptionForm stocks={stocks} onSubmit={async () => true} onRefresh={handleRefresh} />
+              <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
             )}
             
             {/* Manual Adjustment - CEO/Superviseur ONLY */}

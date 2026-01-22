@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send } from 'lucide-react';
+import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send, Lock, Unlock } from 'lucide-react';
 import { format, isToday } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { getStatusConfig as getSharedStatusConfig, buildPlanningUrl } from '@/lib/workflowStatus';
+import { QualityLockButton } from '@/components/lab/QualityLockButton';
 
 interface BonProduction {
   bl_id: string;
@@ -293,6 +294,8 @@ const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
     { bon, statusConfig, onSelect, onStart, onSendToDelivery, isCurrentHour, isLate },
     ref
   ) {
+    const [qcUnlocked, setQcUnlocked] = useState(false);
+    
     const StatusIcon = statusConfig.icon;
     const clientName = bon.bon_commande?.client_nom || bon.client?.nom_client || bon.client_id;
     const canStart = bon.workflow_status === 'planification';
@@ -387,19 +390,17 @@ const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
                   </Button>
                 )}
                 {canSendToDelivery && (
-                  <Button
-                    size="sm"
-                    variant="default"
-                    className="h-7 gap-1 text-xs bg-rose-500 hover:bg-rose-600"
-                    data-testid={`send-to-delivery-${bon.bl_id}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
+                  <QualityLockButton
+                    blId={bon.bl_id}
+                    camion={bon.camion_assigne || undefined}
+                    formule={bon.formule_id}
+                    volume={bon.volume_m3}
+                    isUnlocked={qcUnlocked}
+                    onUnlock={() => setQcUnlocked(true)}
+                    onSendToDelivery={() => {
                       onSendToDelivery?.();
                     }}
-                  >
-                    <Send className="h-3 w-3" />
-                    Livraison
-                  </Button>
+                  />
                 )}
               </div>
             </div>
