@@ -3,8 +3,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
 import { SiloVisual } from '@/components/stocks/SiloVisual';
 import { ReceptionForm } from '@/components/stocks/ReceptionForm';
+import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog';
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -22,13 +24,15 @@ import {
   ArrowDown,
   Minus,
   TrendingDown,
+  Shield,
+  Lock,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 export default function Stocks() {
-  const { isCeo, isAgentAdministratif } = useAuth();
+  const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste } = useAuth();
   const {
     stocks,
     mouvements,
@@ -36,13 +40,23 @@ export default function Stocks() {
     loading,
     fetchStocks,
     fetchMouvements,
-    addReception,
     getCriticalStocks,
   } = useStocks();
 
-  // Only CEO can add receptions - Centraliste is read-only for stock management
-  const canAddReception = isCeo;
+  // SEPARATION OF POWERS:
+  // - Centraliste: ZERO manual access (read-only)
+  // - Agent Admin: Can add receptions ONLY (with photo proof)
+  // - CEO/Superviseur: Full access including manual adjustments
+  const canAddReception = isCeo || isSuperviseur || isAgentAdministratif;
+  const canAdjustManually = isCeo || isSuperviseur;
+  const isReadOnly = isCentraliste && !isCeo && !isSuperviseur;
+  
   const criticalStocks = getCriticalStocks();
+
+  const handleRefresh = () => {
+    fetchStocks();
+    fetchMouvements();
+  };
 
   const getMovementIcon = (type: string) => {
     switch (type) {
@@ -86,18 +100,40 @@ export default function Stocks() {
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Button variant="outline" size="sm" onClick={() => {
-              fetchStocks();
-              fetchMouvements();
-            }} className="min-h-[40px]">
+            <Button variant="outline" size="sm" onClick={handleRefresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
+            
+            {/* Reception Button - CEO/Superviseur/Agent Admin only */}
             {canAddReception && (
-              <ReceptionForm stocks={stocks} onSubmit={addReception} />
+              <ReceptionForm stocks={stocks} onSubmit={async () => true} onRefresh={handleRefresh} />
+            )}
+            
+            {/* Manual Adjustment - CEO/Superviseur ONLY */}
+            {canAdjustManually && (
+              <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
             )}
           </div>
         </div>
+
+        {/* Read-Only Warning for Centraliste */}
+        {isReadOnly && (
+          <div className="p-4 rounded-lg bg-muted/50 border border-border flex items-center gap-4">
+            <div className="p-2 rounded-full bg-primary/10">
+              <Lock className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Mode Consultation
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Les stocks sont mis à jour automatiquement lors de la production. Aucune modification manuelle autorisée.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Recent Receptions Indicator */}
         <RecentReceptionsCard mouvements={mouvements} />

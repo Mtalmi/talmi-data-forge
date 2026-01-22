@@ -2124,9 +2124,11 @@ export type Database = {
           materiau: string
           notes: string | null
           numero_bl_fournisseur: string | null
+          photo_bl_url: string | null
           quantite: number
           quantite_apres: number
           quantite_avant: number
+          reason_code: string | null
           reference_id: string | null
           reference_table: string | null
           type_mouvement: string
@@ -2139,9 +2141,11 @@ export type Database = {
           materiau: string
           notes?: string | null
           numero_bl_fournisseur?: string | null
+          photo_bl_url?: string | null
           quantite: number
           quantite_apres: number
           quantite_avant: number
+          reason_code?: string | null
           reference_id?: string | null
           reference_table?: string | null
           type_mouvement: string
@@ -2154,9 +2158,11 @@ export type Database = {
           materiau?: string
           notes?: string | null
           numero_bl_fournisseur?: string | null
+          photo_bl_url?: string | null
           quantite?: number
           quantite_apres?: number
           quantite_avant?: number
+          reason_code?: string | null
           reference_id?: string | null
           reference_table?: string | null
           type_mouvement?: string
@@ -2581,6 +2587,9 @@ export type Database = {
         Row: {
           capacite_max: number | null
           created_at: string
+          derniere_modification_notes: string | null
+          derniere_modification_par: string | null
+          derniere_modification_type: string | null
           derniere_reception_at: string | null
           id: string
           materiau: string
@@ -2592,6 +2601,9 @@ export type Database = {
         Insert: {
           capacite_max?: number | null
           created_at?: string
+          derniere_modification_notes?: string | null
+          derniere_modification_par?: string | null
+          derniere_modification_type?: string | null
           derniere_reception_at?: string | null
           id?: string
           materiau: string
@@ -2603,6 +2615,9 @@ export type Database = {
         Update: {
           capacite_max?: number | null
           created_at?: string
+          derniere_modification_notes?: string | null
+          derniere_modification_par?: string | null
+          derniere_modification_type?: string | null
           derniere_reception_at?: string | null
           id?: string
           materiau?: string
@@ -2911,6 +2926,26 @@ export type Database = {
       release_edit_lock: {
         Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
         Returns: boolean
+      }
+      secure_add_reception: {
+        Args: {
+          p_fournisseur: string
+          p_materiau: string
+          p_notes?: string
+          p_numero_bl: string
+          p_photo_bl_url?: string
+          p_quantite: number
+        }
+        Returns: Json
+      }
+      secure_adjust_stock: {
+        Args: {
+          p_materiau: string
+          p_notes: string
+          p_nouvelle_quantite: number
+          p_reason_code: string
+        }
+        Returns: Json
       }
       validate_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
