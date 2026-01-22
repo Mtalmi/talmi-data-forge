@@ -1,21 +1,17 @@
 import { useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
   Play,
   MapPin,
-  FileSignature,
-  Home,
-  Clock,
-  CheckCircle,
-  Loader2,
   FileCheck,
+  Home,
+  CheckCircle,
+  ChevronRight,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { ProofOfDeliveryModal } from './ProofOfDeliveryModal';
+import { RotationStepperModal } from './RotationStepperModal';
 
 interface DriverRotationTrackerProps {
   blId: string;
@@ -24,6 +20,7 @@ interface DriverRotationTrackerProps {
   heureRetour: string | null;
   workflowStatus: string;
   clientName?: string;
+  camionId?: string | null;
   onUpdate: () => void;
 }
 
@@ -34,87 +31,24 @@ export function DriverRotationTracker({
   heureRetour,
   workflowStatus,
   clientName = 'Client',
+  camionId = null,
   onUpdate,
 }: DriverRotationTrackerProps) {
-  const [updating, setUpdating] = useState<string | null>(null);
-  const [proofModalOpen, setProofModalOpen] = useState(false);
+  const [stepperOpen, setStepperOpen] = useState(false);
 
-  const recordStep = async (step: 'depart' | 'arrivee' | 'retour') => {
-    setUpdating(step);
-    try {
-      const now = new Date().toISOString();
-      let updateData: Record<string, unknown> = {};
+  const isDelivered = workflowStatus === 'livre' || workflowStatus === 'facture';
 
-      switch (step) {
-        case 'depart':
-          updateData = { heure_depart_centrale: now };
-          break;
-        case 'arrivee':
-          updateData = { heure_arrivee_chantier: now };
-          break;
-        case 'retour':
-          updateData = { heure_retour_centrale: now };
-          break;
-      }
-
-      const { error } = await supabase
-        .from('bons_livraison_reels')
-        .update(updateData)
-        .eq('bl_id', blId);
-
-      if (error) throw error;
-
-      const labels: Record<string, string> = {
-        depart: 'Départ enregistré',
-        arrivee: 'Arrivée sur chantier',
-        retour: 'Retour à la centrale',
-      };
-      toast.success(labels[step]);
-      onUpdate();
-    } catch (error) {
-      console.error('Error recording step:', error);
-      toast.error("Erreur lors de l'enregistrement");
-    } finally {
-      setUpdating(null);
-    }
+  // Calculate current step (0-indexed for display)
+  const getCurrentStep = (): number => {
+    if (!heureDepart) return 0;
+    if (!heureArrivee) return 1;
+    if (!isDelivered) return 2;
+    if (!heureRetour) return 3;
+    return 4; // All done
   };
 
-  const handleProofComplete = async (proofData: {
-    photoUrl?: string;
-    signatureDataUrl: string;
-    signerName: string;
-    signedAt: string;
-  }) => {
-    setUpdating('livre');
-    try {
-      const justificationParts = [
-        `Signé par: ${proofData.signerName}`,
-        proofData.photoUrl ? `Photo BL: ${proofData.photoUrl}` : 'Sans photo BL',
-        'Signature digitale capturée',
-      ];
-
-      const { error } = await supabase
-        .from('bons_livraison_reels')
-        .update({ 
-          workflow_status: 'livre',
-          validated_at: proofData.signedAt,
-          justification_ecart: justificationParts.join(' | '),
-        })
-        .eq('bl_id', blId);
-
-      if (error) throw error;
-
-      toast.success('✅ Livraison confirmée & archivée', {
-        description: `Signé par ${proofData.signerName}`,
-      });
-      onUpdate();
-    } catch (error) {
-      console.error('Error completing delivery proof:', error);
-      toast.error("Erreur lors de l'enregistrement");
-    } finally {
-      setUpdating(null);
-    }
-  };
+  const currentStep = getCurrentStep();
+  const isComplete = currentStep === 4;
 
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return null;
@@ -125,63 +59,21 @@ export function DriverRotationTracker({
     }
   };
 
-  const isDelivered = workflowStatus === 'livre' || workflowStatus === 'facture';
-  const isEnRoute = workflowStatus === 'en_livraison';
-
-  // Determine current step
-  const getActiveStep = () => {
-    if (!heureDepart) return 0; // Need to record departure
-    if (!heureArrivee) return 1; // En route, need to record arrival
-    if (!isDelivered) return 2; // Arrived, need to confirm delivery
-    if (!heureRetour) return 3; // Delivered, need to record return
-    return 4; // All done
-  };
-
-  const activeStep = getActiveStep();
-
   const steps = [
-    {
-      key: 'depart',
-      label: 'Départ',
-      sublabel: 'Centrale',
-      icon: Play,
-      timestamp: heureDepart,
-      color: 'primary',
-    },
-    {
-      key: 'arrivee',
-      label: 'Arrivée',
-      sublabel: 'Chantier',
-      icon: MapPin,
-      timestamp: heureArrivee,
-      color: 'warning',
-    },
-    {
-      key: 'livre',
-      label: 'BL Signé',
-      sublabel: 'Livraison OK',
-      icon: FileSignature,
-      timestamp: isDelivered ? 'done' : null,
-      color: 'success',
-    },
-    {
-      key: 'retour',
-      label: 'Retour',
-      sublabel: 'Centrale',
-      icon: Home,
-      timestamp: heureRetour,
-      color: 'primary',
-    },
+    { key: 'depart', label: 'Départ', icon: Play, timestamp: heureDepart, color: 'primary' },
+    { key: 'arrivee', label: 'Arrivée', icon: MapPin, timestamp: heureArrivee, color: 'warning' },
+    { key: 'signe', label: 'Signé', icon: FileCheck, timestamp: isDelivered ? 'done' : null, color: 'success' },
+    { key: 'retour', label: 'Retour', icon: Home, timestamp: heureRetour, color: 'primary' },
   ];
 
   return (
     <div className="space-y-4">
-      {/* Progress Steps */}
-      <div className="flex items-start justify-between gap-1">
+      {/* Compact Progress Steps */}
+      <div className="flex items-center justify-between gap-1">
         {steps.map((step, index) => {
           const Icon = step.icon;
-          const isCompleted = index < activeStep;
-          const isCurrent = index === activeStep;
+          const isCompleted = index < currentStep;
+          const isCurrent = index === currentStep;
           const time = step.timestamp === 'done' ? '✓' : formatTime(step.timestamp);
 
           return (
@@ -189,158 +81,69 @@ export function DriverRotationTracker({
               {/* Step Circle */}
               <div
                 className={cn(
-                  'relative w-12 h-12 rounded-full flex items-center justify-center transition-all',
-                  isCompleted && `bg-${step.color} text-${step.color}-foreground`,
-                  isCurrent && `bg-${step.color}/20 border-2 border-${step.color} text-${step.color}`,
-                  !isCompleted && !isCurrent && 'bg-muted text-muted-foreground',
-                  isCompleted && step.color === 'primary' && 'bg-primary text-primary-foreground',
-                  isCompleted && step.color === 'warning' && 'bg-warning text-warning-foreground',
-                  isCompleted && step.color === 'success' && 'bg-success text-success-foreground',
-                  isCurrent && step.color === 'primary' && 'bg-primary/20 border-primary text-primary',
-                  isCurrent && step.color === 'warning' && 'bg-warning/20 border-warning text-warning',
-                  isCurrent && step.color === 'success' && 'bg-success/20 border-success text-success'
+                  'w-10 h-10 rounded-full flex items-center justify-center transition-all',
+                  isCompleted && 'bg-success text-success-foreground',
+                  isCurrent && step.color === 'primary' && 'bg-primary/20 border-2 border-primary text-primary',
+                  isCurrent && step.color === 'warning' && 'bg-warning/20 border-2 border-warning text-warning',
+                  isCurrent && step.color === 'success' && 'bg-success/20 border-2 border-success text-success',
+                  !isCompleted && !isCurrent && 'bg-muted text-muted-foreground'
                 )}
               >
                 {isCompleted ? (
-                  <CheckCircle className="h-6 w-6" />
+                  <CheckCircle className="h-5 w-5" />
                 ) : (
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-4 w-4" />
                 )}
               </div>
 
               {/* Step Label */}
-              <div className="mt-2 text-center">
+              <div className="mt-1.5 text-center">
                 <p className={cn(
-                  'text-xs font-semibold',
+                  'text-xs font-medium',
                   (isCompleted || isCurrent) ? 'text-foreground' : 'text-muted-foreground'
                 )}>
                   {step.label}
                 </p>
                 {time && (
-                  <p className="text-xs font-mono text-muted-foreground">{time}</p>
+                  <p className="text-[10px] font-mono text-muted-foreground">{time}</p>
                 )}
               </div>
-
-              {/* Connector Line */}
-              {index < steps.length - 1 && (
-                <div
-                  className={cn(
-                    'absolute h-0.5 w-full top-6 left-1/2',
-                    isCompleted ? 'bg-success' : 'bg-border'
-                  )}
-                  style={{ display: 'none' }} // Hidden for now, using gap
-                />
-              )}
             </div>
           );
         })}
       </div>
 
-      {/* Action Button - Large Touch Target */}
+      {/* Main Action Button */}
       <div className="pt-2">
-        {activeStep === 0 && isEnRoute && (
-          <Button
-            size="lg"
-            className="w-full min-h-[60px] text-lg gap-3 bg-primary hover:bg-primary/90 touch-manipulation"
-            onClick={() => recordStep('depart')}
-            disabled={updating !== null}
-          >
-            {updating === 'depart' ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <Play className="h-6 w-6" />
-                Départ de la Centrale
-              </>
-            )}
-          </Button>
-        )}
-
-        {activeStep === 1 && (
-          <Button
-            size="lg"
-            className="w-full min-h-[60px] text-lg gap-3 bg-warning hover:bg-warning/90 text-warning-foreground touch-manipulation"
-            onClick={() => recordStep('arrivee')}
-            disabled={updating !== null}
-          >
-            {updating === 'arrivee' ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <MapPin className="h-6 w-6" />
-                Arrivé sur Chantier
-              </>
-            )}
-          </Button>
-        )}
-
-        {activeStep === 2 && (
-          <Button
-            size="lg"
-            className="w-full min-h-[60px] text-lg gap-3 bg-success hover:bg-success/90 touch-manipulation"
-            onClick={() => setProofModalOpen(true)}
-            disabled={updating !== null}
-          >
-            {updating === 'livre' ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <FileCheck className="h-6 w-6" />
-                Preuve de Livraison
-              </>
-            )}
-          </Button>
-        )}
-
-        {activeStep === 3 && (
-          <Button
-            size="lg"
-            variant="outline"
-            className="w-full min-h-[60px] text-lg gap-3 touch-manipulation"
-            onClick={() => recordStep('retour')}
-            disabled={updating !== null}
-          >
-            {updating === 'retour' ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
-            ) : (
-              <>
-                <Home className="h-6 w-6" />
-                Retour à la Centrale
-              </>
-            )}
-          </Button>
-        )}
-
-        {activeStep === 4 && (
+        {isComplete ? (
           <div className="flex items-center justify-center gap-2 p-4 bg-success/10 rounded-lg border border-success/20">
             <CheckCircle className="h-6 w-6 text-success" />
             <span className="text-success font-semibold text-lg">Rotation Complète</span>
           </div>
+        ) : (
+          <Button
+            size="lg"
+            className="w-full min-h-[60px] text-lg gap-3 touch-manipulation"
+            onClick={() => setStepperOpen(true)}
+          >
+            <span>Étape {currentStep + 1}/4</span>
+            <ChevronRight className="h-5 w-5" />
+          </Button>
         )}
       </div>
 
-      {/* Time Summary (when completed) */}
-      {heureDepart && heureArrivee && (
-        <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground pt-2">
-          <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>Départ: {formatTime(heureDepart)}</span>
-          </div>
-          <span>→</span>
-          <div className="flex items-center gap-1">
-            <MapPin className="h-4 w-4" />
-            <span>Arrivée: {formatTime(heureArrivee)}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Proof of Delivery Modal */}
-      <ProofOfDeliveryModal
-        open={proofModalOpen}
-        onOpenChange={setProofModalOpen}
+      {/* Rotation Stepper Modal */}
+      <RotationStepperModal
+        open={stepperOpen}
+        onOpenChange={setStepperOpen}
         blId={blId}
         clientName={clientName}
-        onComplete={handleProofComplete}
+        camionId={camionId}
+        heureDepart={heureDepart}
+        heureArrivee={heureArrivee}
+        heureRetour={heureRetour}
+        workflowStatus={workflowStatus}
+        onComplete={onUpdate}
       />
     </div>
   );
