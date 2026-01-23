@@ -108,9 +108,10 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes'],
     
-    // Resp. Technique (Abdel Sadek) - Formules READ-ONLY, Bons VALIDATION ONLY
-    // BLOCKED: Prix, Clients, Approbations
-    responsable_technique: ['/laboratoire', '/formules', '/bons'],
+    // Resp. Technique - Dashboard, Formules (READ-ONLY), Stocks (Quality Entry ONLY), Production, Lab
+    // Can CREATE Stock Entry Request with mandatory photo, but CANNOT Finalize/Validate stock increases
+    // BLOCKED: Ventes (Devis), Prix, Clients financial data
+    responsable_technique: ['/', '/formules', '/stocks', '/production', '/laboratoire', '/maintenance'],
     
     // Dir. Opérations (Imad) - Dashboard, Clients, Ventes (Devis READ-ONLY)
     // BLOCKED: Formules, Prix, Paramètres, Approbations
