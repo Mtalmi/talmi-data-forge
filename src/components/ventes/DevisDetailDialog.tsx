@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,8 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   FileText,
   Calendar,
@@ -42,6 +44,8 @@ import {
   Lock,
   Unlock,
   ShieldCheck,
+  History,
+  AlertTriangle,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -52,6 +56,19 @@ import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+
+// Type for correction history entries
+interface CorrectionHistoryEntry {
+  id: string;
+  user_name: string | null;
+  action: string;
+  created_at: string;
+  changes: {
+    reason?: string;
+    previous_status?: string;
+    new_status?: string;
+  } | null;
+}
 
 interface DevisDetailDialogProps {
   devis: Devis | null;
@@ -79,6 +96,42 @@ export function DevisDetailDialog({
   const [validating, setValidating] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [correctionHistory, setCorrectionHistory] = useState<CorrectionHistoryEntry[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  
+  // Minimum characters required for rollback justification
+  const MIN_REASON_LENGTH = 10;
+  const isReasonValid = cancelReason.trim().length >= MIN_REASON_LENGTH;
+  
+  // Fetch correction history for CEO/Superviseur
+  useEffect(() => {
+    const fetchCorrectionHistory = async () => {
+      if (!devis || !(isCeo || isSuperviseur)) return;
+      
+      setLoadingHistory(true);
+      try {
+        const { data, error } = await supabase
+          .from('audit_superviseur')
+          .select('id, user_name, action, created_at, changes')
+          .eq('table_name', 'devis')
+          .eq('record_id', devis.devis_id)
+          .eq('action', 'ROLLBACK_APPROVAL')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setCorrectionHistory((data || []) as CorrectionHistoryEntry[]);
+      } catch (error) {
+        console.error('Error fetching correction history:', error);
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+    
+    if (open && devis) {
+      fetchCorrectionHistory();
+    }
+  }, [devis, open, isCeo, isSuperviseur]);
   
   if (!devis) return null;
 
@@ -134,13 +187,21 @@ export function DevisDetailDialog({
     }
   };
   
-  // Handle cancel approval (CEO/Superviseur only)
+  // Handle cancel approval (CEO/Superviseur only) - MANDATORY JUSTIFICATION
   const handleCancelApproval = async () => {
+    // Strict validation - must have reason with min length
+    if (!isReasonValid) {
+      toast.error('Justification obligatoire', {
+        description: `Veuillez entrer au moins ${MIN_REASON_LENGTH} caractères.`,
+      });
+      return;
+    }
+    
     setCancelling(true);
     try {
       const { data, error } = await supabase.rpc('cancel_devis_approval', {
         p_devis_id: devis.devis_id,
-        p_reason: cancelReason || null,
+        p_reason: cancelReason.trim(),
       });
       
       if (error) throw error;
@@ -165,7 +226,7 @@ export function DevisDetailDialog({
                 client_name: result.client_name || devis.client?.nom_client || null,
                 rollback_by_name: result.cancelled_by,
                 rollback_by_role: result.cancelled_role,
-                reason: cancelReason || null,
+                reason: cancelReason.trim(),
               },
             });
           } catch (emailError) {
@@ -180,11 +241,12 @@ export function DevisDetailDialog({
           : '.';
         
         toast.success(`Succès : Devis déverrouillé${notificationMsg}`, {
-          description: `Par ${result.cancelled_by}`,
+          description: `Par ${result.cancelled_by} — Motif enregistré dans l'audit.`,
           duration: 5000,
         });
         
         setCancelReason('');
+        setCancelDialogOpen(false);
         onOpenChange(false);
       }
     } catch (error: any) {
@@ -377,6 +439,47 @@ export function DevisDetailDialog({
             </Card>
           )}
 
+          {/* =====================================================
+              CORRECTION HISTORY - CEO/Superviseur Only
+              Shows all rollback events with reasons for forensic audit
+          ===================================================== */}
+          {(isCeo || isSuperviseur) && correctionHistory.length > 0 && (
+            <Card className="border-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                  <History className="h-4 w-4" />
+                  Historique des Corrections
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="max-h-40">
+                  <div className="space-y-3">
+                    {correctionHistory.map((entry) => (
+                      <div 
+                        key={entry.id} 
+                        className="p-3 rounded-lg bg-background/80 border border-amber-200 dark:border-amber-800"
+                      >
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                          <span className="font-medium text-foreground">
+                            {entry.user_name || 'Utilisateur inconnu'}
+                          </span>
+                          <span>
+                            {format(new Date(entry.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                          </span>
+                        </div>
+                        {entry.changes?.reason && (
+                          <p className="text-sm italic text-amber-800 dark:text-amber-300">
+                            "{entry.changes.reason}"
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Actions */}
           <div className="flex flex-wrap gap-2 pt-2 border-t">
             <DevisPdfGenerator devis={devis} />
@@ -440,8 +543,15 @@ export function DevisDetailDialog({
                 CANCEL APPROVAL BUTTON - CEO/Superviseur Only
                 The ONLY way to modify an approved devis
             ===================================================== */}
+            {/* =====================================================
+                CANCEL APPROVAL WITH MANDATORY JUSTIFICATION
+                CEO/Superviseur Only - Forensic requirement
+            ===================================================== */}
             {canCancelApproval && (
-              <AlertDialog>
+              <AlertDialog open={cancelDialogOpen} onOpenChange={(open) => {
+                setCancelDialogOpen(open);
+                if (!open) setCancelReason('');
+              }}>
                 <AlertDialogTrigger asChild>
                   <Button 
                     variant="outline" 
@@ -455,29 +565,57 @@ export function DevisDetailDialog({
                   <AlertDialogHeader>
                     <AlertDialogTitle className="flex items-center gap-2">
                       <Shield className="h-5 w-5 text-destructive" />
-                      Annuler l'Approbation du Devis
+                      Justification de la Correction
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       Cette action va remettre le devis en statut "En Attente". 
                       Les prix et conditions pourront être modifiés.
-                      <br /><br />
-                      <strong>Cette action sera enregistrée dans le journal d'audit.</strong>
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <div className="py-2">
-                    <label className="text-sm font-medium">Raison de l'annulation (optionnel)</label>
-                    <Textarea
-                      placeholder="Ex: Erreur de prix, demande client..."
-                      value={cancelReason}
-                      onChange={(e) => setCancelReason(e.target.value)}
-                      className="mt-2"
-                    />
+                  
+                  <div className="py-3 space-y-3">
+                    <Alert variant="destructive" className="bg-destructive/10">
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertDescription>
+                        <strong>Audit Forensique :</strong> Cette action sera enregistrée avec votre identité et le motif.
+                      </AlertDescription>
+                    </Alert>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="rollback-reason" className="text-sm font-semibold">
+                        Motif du déverrouillage <span className="text-destructive">*</span>
+                      </Label>
+                      <Textarea
+                        id="rollback-reason"
+                        placeholder="Ex: Erreur de calcul de prix découverte, demande de modification client, etc."
+                        value={cancelReason}
+                        onChange={(e) => setCancelReason(e.target.value)}
+                        className={cn(
+                          "min-h-[100px]",
+                          !isReasonValid && cancelReason.length > 0 && "border-destructive"
+                        )}
+                      />
+                      <div className="flex justify-between text-xs">
+                        <span className={cn(
+                          "text-muted-foreground",
+                          !isReasonValid && cancelReason.length > 0 && "text-destructive"
+                        )}>
+                          {cancelReason.length}/{MIN_REASON_LENGTH} caractères minimum
+                        </span>
+                        {!isReasonValid && cancelReason.length > 0 && (
+                          <span className="text-destructive">
+                            {MIN_REASON_LENGTH - cancelReason.length} caractères restants
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
+                  
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Annuler</AlertDialogCancel>
-                    <AlertDialogAction
+                    <AlertDialogCancel disabled={cancelling}>Annuler</AlertDialogCancel>
+                    <Button
                       onClick={handleCancelApproval}
-                      disabled={cancelling}
+                      disabled={cancelling || !isReasonValid}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
                       {cancelling ? (
@@ -486,7 +624,7 @@ export function DevisDetailDialog({
                         <Unlock className="h-4 w-4 mr-2" />
                       )}
                       Confirmer l'Annulation
-                    </AlertDialogAction>
+                    </Button>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
