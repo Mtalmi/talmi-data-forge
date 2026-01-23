@@ -418,9 +418,9 @@ export function DevisTable({
                   )}
                   
                   {/* Read-only indicator for Dir Ops / Centraliste */}
-                  {isReadOnlyRole && devis.statut === 'en_attente' && (
-                    <Badge variant="outline" className="text-xs text-muted-foreground">
-                      En attente validation
+                  {isReadOnlyRole && devis.statut === 'en_attente' && devis.client_id && (
+                    <Badge variant="outline" className="text-orange-500 border-orange-500">
+                      En attente de validation
                     </Badge>
                   )}
                 </div>
