@@ -440,44 +440,78 @@ export function DevisDetailDialog({
           )}
 
           {/* =====================================================
-              CORRECTION HISTORY - CEO/Superviseur Only
-              Shows all rollback events with reasons for forensic audit
+              FORENSIC AUDIT FEED - CEO/Superviseur ONLY
+              "Audit Hawaii" - High-security correction history
+              Completely invisible to Agent Admin and Dir. Ops
           ===================================================== */}
-          {(isCeo || isSuperviseur) && correctionHistory.length > 0 && (
-            <Card className="border-amber-500/30 bg-amber-50/50 dark:bg-amber-950/20">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2 text-amber-700 dark:text-amber-400">
-                  <History className="h-4 w-4" />
-                  Historique des Corrections
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="max-h-40">
-                  <div className="space-y-3">
+          {(isCeo || isSuperviseur) && (
+            <div className="mt-8 border-t-2 border-destructive/30 pt-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-destructive/10">
+                  <History className="h-5 w-5 text-destructive" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-destructive dark:text-red-400">
+                    Historique des Corrections (Audit Hawaii)
+                  </h3>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    Accès Restreint — Direction Uniquement
+                  </p>
+                </div>
+              </div>
+              
+              {loadingHistory ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-20 w-full" />
+                </div>
+              ) : correctionHistory.length > 0 ? (
+                <ScrollArea className="max-h-60">
+                  <div className="space-y-4">
                     {correctionHistory.map((entry) => (
                       <div 
                         key={entry.id} 
-                        className="p-3 rounded-lg bg-background/80 border border-amber-200 dark:border-amber-800"
+                        className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border-l-4 border-destructive shadow-sm"
                       >
-                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                          <span className="font-medium text-foreground">
+                        <div className="flex justify-between items-start mb-2">
+                          <span className="font-bold text-sm text-foreground">
                             {entry.user_name || 'Utilisateur inconnu'}
                           </span>
-                          <span>
-                            {format(new Date(entry.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                          <span className="text-xs text-muted-foreground font-mono">
+                            {format(new Date(entry.created_at), 'dd/MM/yyyy à HH:mm:ss', { locale: fr })}
                           </span>
                         </div>
                         {entry.changes?.reason && (
-                          <p className="text-sm italic text-amber-800 dark:text-amber-300">
+                          <p className="text-sm text-gray-700 dark:text-gray-300 italic mb-2">
                             "{entry.changes.reason}"
                           </p>
                         )}
+                        <div className="flex items-center gap-2 mt-2 text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                          <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-destructive/50 text-destructive">
+                            ROLLBACK
+                          </Badge>
+                          <span>|</span>
+                          <span>Statut: {entry.changes?.previous_status || 'Validé'} → {entry.changes?.new_status || 'Brouillon'}</span>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </ScrollArea>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900/30 border border-dashed border-gray-300 dark:border-gray-700">
+                  <p className="text-sm text-muted-foreground italic text-center">
+                    ✓ Aucune correction enregistrée pour ce devis.
+                  </p>
+                </div>
+              )}
+              
+              {/* Security Footer */}
+              <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-800">
+                <p className="text-[9px] uppercase tracking-widest text-muted-foreground text-center">
+                  🔒 Journal d'audit sécurisé — Enregistrements immuables
+                </p>
+              </div>
+            </div>
           )}
 
           {/* Actions */}
