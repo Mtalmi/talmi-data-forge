@@ -3125,6 +3125,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      cancel_devis_approval: {
+        Args: { p_devis_id: string; p_reason?: string }
+        Returns: Json
+      }
       create_bl_from_bc:
         | {
             Args: {

@@ -12,6 +12,19 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Textarea } from '@/components/ui/textarea';
 import {
   FileText,
   Calendar,
@@ -26,6 +39,9 @@ import {
   Send,
   Shield,
   Loader2,
+  Lock,
+  Unlock,
+  ShieldCheck,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -44,12 +60,13 @@ interface DevisDetailDialogProps {
   onConvert: (devis: Devis) => void;
 }
 
-const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-4 w-4" /> },
-  accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-4 w-4" /> },
-  converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <ArrowRight className="h-4 w-4" /> },
-  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-4 w-4" /> },
-  expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-4 w-4" /> },
+const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
+  en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-4 w-4" />, isLocked: false },
+  valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-4 w-4" />, isLocked: true },
+  accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-4 w-4" />, isLocked: true },
+  converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <Lock className="h-4 w-4" />, isLocked: true },
+  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-4 w-4" />, isLocked: false },
+  expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-4 w-4" />, isLocked: false },
 };
 
 export function DevisDetailDialog({
@@ -58,8 +75,10 @@ export function DevisDetailDialog({
   onOpenChange,
   onConvert,
 }: DevisDetailDialogProps) {
-  const { canApproveDevis, isDirecteurOperations, isCentraliste, user, loading: authLoading } = useAuth();
+  const { canApproveDevis, isDirecteurOperations, isCentraliste, isCeo, isSuperviseur, user, loading: authLoading } = useAuth();
   const [validating, setValidating] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
   
   if (!devis) return null;
 
@@ -87,6 +106,13 @@ export function DevisDetailDialog({
   const canApprove = canApproveDevis && !isReadOnlyRole && !isCreator;
   const canConvert = (devis.statut === 'valide' || devis.statut === 'accepte') && canApproveDevis;
   
+  // =====================================================
+  // IMMUTABLE APPROVED STATE: Lock Logic
+  // Approved devis cannot be modified - only CEO/Superviseur can unlock
+  // =====================================================
+  const isLocked = statusConfig.isLocked || false;
+  const canCancelApproval = (isCeo || isSuperviseur) && (devis.statut === 'valide' || devis.statut === 'accepte');
+  
   const handleValidate = async () => {
     setValidating(true);
     try {
@@ -107,6 +133,30 @@ export function DevisDetailDialog({
       setValidating(false);
     }
   };
+  
+  // Handle cancel approval (CEO/Superviseur only)
+  const handleCancelApproval = async () => {
+    setCancelling(true);
+    try {
+      const { data, error } = await supabase.rpc('cancel_devis_approval', {
+        p_devis_id: devis.devis_id,
+        p_reason: cancelReason || null,
+      });
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; cancelled_by?: string };
+      if (result.success) {
+        toast.success(`Approbation annulée par ${result.cancelled_by}. Devis remis en brouillon.`);
+        setCancelReason('');
+        onOpenChange(false);
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'annulation');
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -124,10 +174,20 @@ export function DevisDetailDialog({
         <div className="space-y-6">
           {/* Status & Expiration Header */}
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <Badge variant="outline" className={cn("gap-2 px-3 py-1.5 text-sm", statusConfig.color)}>
-              {statusConfig.icon}
-              {statusConfig.label}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className={cn("gap-2 px-3 py-1.5 text-sm", statusConfig.color)}>
+                {statusConfig.icon}
+                {statusConfig.label}
+              </Badge>
+              
+              {/* Security Seal for Locked Devis */}
+              {isLocked && (
+                <Badge className="gap-1 bg-slate-800 text-white border-slate-700">
+                  <Lock className="h-3 w-3" />
+                  Scellé
+                </Badge>
+              )}
+            </div>
             
             {expirationDate && devis.statut === 'en_attente' && (
               <Badge 
@@ -147,6 +207,26 @@ export function DevisDetailDialog({
               </Badge>
             )}
           </div>
+          
+          {/* =====================================================
+              IMMUTABLE STATE ALERT - Security Seal Banner
+              Shows when devis is validated/accepted
+          ===================================================== */}
+          {isLocked && (
+            <Alert className="bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-600">
+              <ShieldCheck className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+              <AlertDescription className="text-slate-700 dark:text-slate-300">
+                <strong>Document Scellé</strong> — Ce devis a été validé et ne peut plus être modifié. 
+                Les prix et conditions sont désormais contractuels.
+                {(devis as any).validated_by_name && (
+                  <span className="block text-xs mt-1 opacity-80">
+                    Validé par {(devis as any).validated_by_name} 
+                    {(devis as any).validated_at && ` le ${format(new Date((devis as any).validated_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}`}
+                  </span>
+                )}
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Client & Formule Info */}
           <Card>
@@ -270,8 +350,9 @@ export function DevisDetailDialog({
                 VALIDATE BUTTON - Financial Gate
                 Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
                 Hidden for: DIR_OPS, CENTRALISTE
+                Hidden when devis is already locked
             ===================================================== */}
-            {devis.statut === 'en_attente' && devis.client_id && (
+            {devis.statut === 'en_attente' && devis.client_id && !isLocked && (
               authLoading ? (
                 <Skeleton className="w-24 h-9 rounded-md ml-auto" />
               ) : canApprove ? (
@@ -305,6 +386,7 @@ export function DevisDetailDialog({
               ) : null
             )}
             
+            {/* Convert to BC Button after validation */}
             {canConvert && (
               <Button 
                 onClick={() => {
@@ -316,6 +398,62 @@ export function DevisDetailDialog({
                 <ArrowRight className="h-4 w-4" />
                 Convertir en BC
               </Button>
+            )}
+            
+            {/* =====================================================
+                CANCEL APPROVAL BUTTON - CEO/Superviseur Only
+                The ONLY way to modify an approved devis
+            ===================================================== */}
+            {canCancelApproval && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="gap-2 ml-auto border-destructive/50 text-destructive hover:bg-destructive/10"
+                  >
+                    <Unlock className="h-4 w-4" />
+                    Annuler l'Approbation
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-destructive" />
+                      Annuler l'Approbation du Devis
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette action va remettre le devis en statut "En Attente". 
+                      Les prix et conditions pourront être modifiés.
+                      <br /><br />
+                      <strong>Cette action sera enregistrée dans le journal d'audit.</strong>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <div className="py-2">
+                    <label className="text-sm font-medium">Raison de l'annulation (optionnel)</label>
+                    <Textarea
+                      placeholder="Ex: Erreur de prix, demande client..."
+                      value={cancelReason}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                      className="mt-2"
+                    />
+                  </div>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleCancelApproval}
+                      disabled={cancelling}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {cancelling ? (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Unlock className="h-4 w-4 mr-2" />
+                      )}
+                      Confirmer l'Annulation
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </div>
