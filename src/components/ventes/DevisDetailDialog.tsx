@@ -281,7 +281,7 @@ export function DevisDetailDialog({
                   Valider le Devis
                 </Button>
               ) : isReadOnlyRole ? (
-                <Badge variant="outline" className="ml-auto text-muted-foreground">
+                <Badge variant="outline" className="ml-auto text-orange-500 border-orange-500">
                   <Clock className="h-3 w-3 mr-1" />
                   En attente de validation
                 </Badge>
