@@ -100,13 +100,13 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/audit-superviseur', '/users'],
+          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are AUDITED)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes'],
+          '/approbations', '/alertes', '/securite'],
     
     // Resp. Technique - Dashboard, Formules (READ-ONLY), Stocks (Quality Entry ONLY), Production, Lab
     // Can CREATE Stock Entry Request with mandatory photo, but CANNOT Finalize/Validate stock increases
@@ -274,6 +274,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
             <NavItem to="/rapports" icon={<BarChart3 className="h-5 w-5" />} label="Rapports & BI" onClick={onNavClick} />
             <NavItem to="/approbations" icon={<CheckSquare className="h-5 w-5" />} label="Approbations" onClick={onNavClick} />
             <NavItem to="/alertes" icon={<AlertTriangle className="h-5 w-5" />} label="Alertes" onClick={onNavClick} />
+            <NavItem to="/securite" icon={<Shield className="h-5 w-5 text-destructive" />} label="Sécurité" onClick={onNavClick} />
             {isCeo && <NavItem to="/audit-superviseur" icon={<Shield className="h-5 w-5" />} label="Audit Superviseur" onClick={onNavClick} />}
             {isCeo && <NavItem to="/users" icon={<Users className="h-5 w-5" />} label="Utilisateurs" onClick={onNavClick} />}
           </>
