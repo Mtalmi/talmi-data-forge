@@ -98,7 +98,7 @@ export function DevisTable({
   onQuickSend,
   onRefresh,
 }: DevisTableProps) {
-  const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo, loading: authLoading } = useAuth();
+  const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo, user, loading: authLoading } = useAuth();
   const [validating, setValidating] = useState<string | null>(null);
   
   // =====================================================
@@ -106,10 +106,25 @@ export function DevisTable({
   // ONLY CEO, Superviseur, Agent Administratif can APPROVE
   // Dir Ops and Centraliste are READ-ONLY
   // =====================================================
-  const canValidateDevis = canApproveDevis;
   const isReadOnlyRole = isDirecteurOperations || isCentraliste;
   // Resp Technique can approve technical aspects only
   const canApproveTechnical = isCeo || isResponsableTechnique;
+  
+  // =====================================================
+  // ANTI-FRAUD: Self-Approval Block
+  // A user CANNOT approve a Devis they created themselves
+  // This is enforced at both UI and database levels
+  // =====================================================
+  const canApproveSpecificDevis = (devis: Devis): boolean => {
+    // Must have role permission
+    if (!canApproveDevis || isReadOnlyRole) return false;
+    // Cannot approve own devis (anti-fraud)
+    if (devis.created_by === user?.id) return false;
+    return true;
+  };
+  
+  // Check if current user is the creator (for showing the warning message)
+  const isCreator = (devis: Devis): boolean => devis.created_by === user?.id;
   
   const handleValidateDevis = async (devis: Devis) => {
     setValidating(devis.devis_id);
@@ -375,32 +390,40 @@ export function DevisTable({
                       VALIDATE BUTTON - Conditional Rendering with Role Check
                       Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
                       Hidden for: DIR_OPS, CENTRALISTE (read-only roles)
+                      ANTI-FRAUD: Creator cannot approve their own Devis
                       Shows skeleton while auth is loading
                   ===================================================== */}
                   {devis.statut === 'en_attente' && devis.client_id && (
                     authLoading ? (
                       <Skeleton className="w-20 h-8 rounded-md" />
-                    ) : (
-                      (canValidateDevis && !isReadOnlyRole) ? (
-                        <Button
-                          size="sm"
-                          onClick={() => handleValidateDevis(devis)}
-                          disabled={validating === devis.devis_id}
-                          className="gap-1 bg-success hover:bg-success/90"
-                        >
-                          {validating === devis.devis_id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <CheckCircle className="h-3 w-3" />
-                          )}
-                          Valider
-                        </Button>
-                      ) : null
-                    )
+                    ) : canApproveSpecificDevis(devis) ? (
+                      <Button
+                        size="sm"
+                        onClick={() => handleValidateDevis(devis)}
+                        disabled={validating === devis.devis_id}
+                        className="gap-1 bg-success hover:bg-success/90"
+                      >
+                        {validating === devis.devis_id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <CheckCircle className="h-3 w-3" />
+                        )}
+                        Valider
+                      </Button>
+                    ) : isCreator(devis) && canApproveDevis ? (
+                      // Anti-fraud warning for creators with approval role
+                      <span className="text-xs text-muted-foreground italic">
+                        Auto-validation impossible
+                      </span>
+                    ) : isReadOnlyRole ? (
+                      <Badge variant="outline" className="text-orange-500 border-orange-500">
+                        En attente de validation
+                      </Badge>
+                    ) : null
                   )}
                   
                   {/* Convert to BC Button after validation */}
-                  {(devis.statut === 'valide' || devis.statut === 'accepte') && devis.client_id && canValidateDevis && (
+                  {(devis.statut === 'valide' || devis.statut === 'accepte') && devis.client_id && canApproveDevis && (
                     <Button
                       size="sm"
                       onClick={() => onConvert(devis)}
@@ -415,13 +438,6 @@ export function DevisTable({
                     <span className="text-xs text-muted-foreground">
                       Client requis
                     </span>
-                  )}
-                  
-                  {/* Read-only indicator for Dir Ops / Centraliste */}
-                  {isReadOnlyRole && devis.statut === 'en_attente' && devis.client_id && (
-                    <Badge variant="outline" className="text-orange-500 border-orange-500">
-                      En attente de validation
-                    </Badge>
                   )}
                 </div>
               </TableCell>
