@@ -58,7 +58,7 @@ export function DevisDetailDialog({
   onOpenChange,
   onConvert,
 }: DevisDetailDialogProps) {
-  const { canApproveDevis, isDirecteurOperations, isCentraliste, loading: authLoading } = useAuth();
+  const { canApproveDevis, isDirecteurOperations, isCentraliste, user, loading: authLoading } = useAuth();
   const [validating, setValidating] = useState(false);
   
   if (!devis) return null;
@@ -77,8 +77,15 @@ export function DevisDetailDialog({
   // DIR_OPS, CENTRALISTE are READ-ONLY
   // =====================================================
   const isReadOnlyRole = isDirecteurOperations || isCentraliste;
-  const canApprove = canApproveDevis && !isReadOnlyRole;
-  const canConvert = (devis.statut === 'valide' || devis.statut === 'accepte') && canApprove;
+  
+  // =====================================================
+  // ANTI-FRAUD: Self-Approval Block
+  // A user CANNOT approve a Devis they created themselves
+  // This is enforced at both UI and database levels
+  // =====================================================
+  const isCreator = devis.created_by === user?.id;
+  const canApprove = canApproveDevis && !isReadOnlyRole && !isCreator;
+  const canConvert = (devis.statut === 'valide' || devis.statut === 'accepte') && canApproveDevis;
   
   const handleValidate = async () => {
     setValidating(true);
@@ -280,6 +287,16 @@ export function DevisDetailDialog({
                   )}
                   Valider le Devis
                 </Button>
+              ) : isCreator && canApproveDevis ? (
+                // Anti-fraud warning for creators with approval role
+                <div className="ml-auto text-right">
+                  <p className="text-xs text-muted-foreground italic">
+                    Auto-validation impossible.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    En attente d'un autre administrateur.
+                  </p>
+                </div>
               ) : isReadOnlyRole ? (
                 <Badge variant="outline" className="ml-auto text-orange-500 border-orange-500">
                   <Clock className="h-3 w-3 mr-1" />
