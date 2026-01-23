@@ -28,6 +28,8 @@ import {
   Wifi,
   WifiOff,
   Smartphone,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -463,6 +465,337 @@ export default function SecurityDashboard() {
     await fetchSecurityData();
   };
 
+  // ===========================================================
+  // PDF EXPORT - Forensic Audit Report
+  // ===========================================================
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+
+  const generateForensicPdf = async () => {
+    setGeneratingPdf(true);
+    try {
+      const rollbackLogs = auditLogs.filter(l => l.action === 'ROLLBACK_APPROVAL');
+      const blockedLogs = auditLogs.filter(l => l.action === 'ACCESS_DENIED');
+      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
+      const periodStart = auditLogs.length > 0 
+        ? format(new Date(auditLogs[auditLogs.length - 1].created_at), 'dd/MM/yyyy', { locale: fr })
+        : '-';
+      const periodEnd = auditLogs.length > 0
+        ? format(new Date(auditLogs[0].created_at), 'dd/MM/yyyy', { locale: fr })
+        : '-';
+
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+          <meta charset="UTF-8">
+          <title>Rapport Forensique Sécurité</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+              font-size: 11px;
+              line-height: 1.4;
+              color: #1a1a1a;
+              background: #fff;
+            }
+            .page { padding: 20mm 15mm; }
+            .header { 
+              display: flex; 
+              justify-content: space-between; 
+              align-items: flex-start;
+              border-bottom: 3px solid #dc2626;
+              padding-bottom: 15px;
+              margin-bottom: 20px;
+            }
+            .header-left h1 { 
+              font-size: 22px; 
+              color: #dc2626; 
+              font-weight: 700;
+              margin-bottom: 4px;
+            }
+            .header-left p { color: #666; font-size: 10px; }
+            .header-right { text-align: right; font-size: 10px; color: #666; }
+            .header-right .date { font-size: 12px; color: #333; font-weight: 600; }
+            
+            .badge-confidential {
+              background: #dc2626;
+              color: white;
+              padding: 4px 12px;
+              border-radius: 4px;
+              font-size: 9px;
+              font-weight: 700;
+              letter-spacing: 1px;
+              margin-top: 8px;
+              display: inline-block;
+            }
+            
+            .summary-grid {
+              display: grid;
+              grid-template-columns: repeat(4, 1fr);
+              gap: 12px;
+              margin-bottom: 25px;
+            }
+            .summary-card {
+              background: #f8f9fa;
+              border: 1px solid #e9ecef;
+              border-radius: 6px;
+              padding: 12px;
+              text-align: center;
+            }
+            .summary-card.danger { border-left: 4px solid #dc2626; }
+            .summary-card.warning { border-left: 4px solid #f59e0b; }
+            .summary-card.info { border-left: 4px solid #3b82f6; }
+            .summary-card.success { border-left: 4px solid #10b981; }
+            .summary-value { font-size: 24px; font-weight: 700; color: #1a1a1a; }
+            .summary-label { font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+            
+            .section { margin-bottom: 25px; }
+            .section-title {
+              font-size: 13px;
+              font-weight: 700;
+              color: #1a1a1a;
+              border-bottom: 2px solid #e9ecef;
+              padding-bottom: 6px;
+              margin-bottom: 12px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .section-title .icon { color: #dc2626; }
+            
+            table { width: 100%; border-collapse: collapse; font-size: 10px; }
+            th { 
+              background: #f1f5f9; 
+              padding: 8px 10px; 
+              text-align: left; 
+              font-weight: 600;
+              border-bottom: 2px solid #e2e8f0;
+              color: #475569;
+              text-transform: uppercase;
+              font-size: 9px;
+              letter-spacing: 0.5px;
+            }
+            td { 
+              padding: 8px 10px; 
+              border-bottom: 1px solid #f1f5f9;
+              vertical-align: top;
+            }
+            tr:hover td { background: #fafafa; }
+            
+            .badge {
+              display: inline-block;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-size: 9px;
+              font-weight: 600;
+            }
+            .badge-red { background: #fee2e2; color: #dc2626; }
+            .badge-amber { background: #fef3c7; color: #d97706; }
+            .badge-green { background: #d1fae5; color: #059669; }
+            .badge-blue { background: #dbeafe; color: #2563eb; }
+            .badge-gray { background: #f3f4f6; color: #6b7280; }
+            
+            .reason-cell {
+              max-width: 200px;
+              font-style: italic;
+              color: #dc2626;
+              background: #fef2f2;
+              padding: 6px 8px;
+              border-radius: 4px;
+              font-size: 9px;
+            }
+            
+            .footer {
+              margin-top: 30px;
+              padding-top: 15px;
+              border-top: 1px solid #e9ecef;
+              display: flex;
+              justify-content: space-between;
+              font-size: 9px;
+              color: #999;
+            }
+            
+            .watermark {
+              position: fixed;
+              bottom: 50%;
+              left: 50%;
+              transform: translate(-50%, 50%) rotate(-45deg);
+              font-size: 80px;
+              color: rgba(220, 38, 38, 0.05);
+              font-weight: 900;
+              pointer-events: none;
+              z-index: -1;
+            }
+            
+            @media print {
+              .page { padding: 10mm; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="watermark">CONFIDENTIEL</div>
+          <div class="page">
+            <div class="header">
+              <div class="header-left">
+                <h1>🔒 RAPPORT FORENSIQUE SÉCURITÉ</h1>
+                <p>Analyse des événements de sécurité • Période: ${periodStart} → ${periodEnd}</p>
+                <span class="badge-confidential">⚠️ CONFIDENTIEL - CEO/SUPERVISEUR UNIQUEMENT</span>
+              </div>
+              <div class="header-right">
+                <div class="date">${reportDate}</div>
+                <p>Généré par: ${user?.email || 'Système'}</p>
+                <p>Rôle: ${isCeo ? 'CEO' : 'Superviseur'}</p>
+              </div>
+            </div>
+            
+            <div class="summary-grid">
+              <div class="summary-card danger">
+                <div class="summary-value">${metrics.totalRollbacks}</div>
+                <div class="summary-label">Rollbacks Devis</div>
+              </div>
+              <div class="summary-card warning">
+                <div class="summary-value">${metrics.blockedActions}</div>
+                <div class="summary-label">Accès Bloqués</div>
+              </div>
+              <div class="summary-card info">
+                <div class="summary-value">${metrics.pendingQualityChecks}</div>
+                <div class="summary-label">Contrôles en Attente</div>
+              </div>
+              <div class="summary-card success">
+                <div class="summary-value">${users.length}</div>
+                <div class="summary-label">Utilisateurs Actifs</div>
+              </div>
+            </div>
+            
+            <div class="section">
+              <div class="section-title">
+                <span class="icon">🚨</span> ÉVÉNEMENTS ROLLBACK (${rollbackLogs.length})
+              </div>
+              ${rollbackLogs.length === 0 ? '<p style="color:#666; font-style:italic;">Aucun rollback détecté dans la période.</p>' : `
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Heure</th>
+                    <th>Utilisateur</th>
+                    <th>Table</th>
+                    <th>Enregistrement</th>
+                    <th>Motif</th>
+                    <th>N°</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rollbackLogs.map(log => `
+                    <tr>
+                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}</td>
+                      <td><strong>${log.user_name || 'Inconnu'}</strong></td>
+                      <td><span class="badge badge-gray">${log.table_name}</span></td>
+                      <td style="font-family:monospace;font-size:9px;">${log.record_id || '-'}</td>
+                      <td><div class="reason-cell">"${log.changes?.reason || 'Non spécifié'}"</div></td>
+                      <td><span class="badge badge-red">#${log.changes?.rollback_number || '?'}</span></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+              `}
+            </div>
+            
+            <div class="section">
+              <div class="section-title">
+                <span class="icon">🚫</span> ACCÈS BLOQUÉS (${blockedLogs.length})
+              </div>
+              ${blockedLogs.length === 0 ? '<p style="color:#666; font-style:italic;">Aucun accès bloqué détecté.</p>' : `
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date/Heure</th>
+                    <th>Utilisateur</th>
+                    <th>Table Cible</th>
+                    <th>Action Tentée</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${blockedLogs.map(log => `
+                    <tr>
+                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}</td>
+                      <td><strong>${log.user_name || 'Inconnu'}</strong></td>
+                      <td><span class="badge badge-amber">${log.table_name}</span></td>
+                      <td>${log.changes?.new_status || 'Accès non autorisé'}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+              `}
+            </div>
+            
+            <div class="section">
+              <div class="section-title">
+                <span class="icon">👥</span> AUDIT ACCÈS UTILISATEURS (${users.length})
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Date Attribution</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${users.map(u => {
+                    const roleBadgeClass = ['ceo', 'superviseur'].includes(u.role) ? 'badge-red' : 
+                                           ['agent_administratif', 'directeur_operations'].includes(u.role) ? 'badge-blue' : 'badge-gray';
+                    return `
+                    <tr>
+                      <td><strong>${u.full_name || 'Sans nom'}</strong></td>
+                      <td>${u.email || '-'}</td>
+                      <td><span class="badge ${roleBadgeClass}">${u.role.toUpperCase()}</span></td>
+                      <td>${format(new Date(u.created_at), 'dd/MM/yyyy', { locale: fr })}</td>
+                    </tr>
+                  `}).join('')}
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="footer">
+              <div>
+                <strong>TALMI Béton</strong> • Rapport Forensique Automatisé<br/>
+                Document confidentiel - Conservation obligatoire 5 ans
+              </div>
+              <div style="text-align:right;">
+                Généré le ${reportDate}<br/>
+                Hash: ${Math.random().toString(36).substring(2, 10).toUpperCase()}
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        toast.error('Popup bloqué. Autorisez les popups pour générer le PDF.');
+        return;
+      }
+
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+
+      setTimeout(() => {
+        printWindow.print();
+        toast.success('Rapport forensique prêt', {
+          description: 'Utilisez "Enregistrer en PDF" dans la boîte de dialogue.',
+        });
+      }, 500);
+
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      toast.error('Erreur lors de la génération du rapport');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  };
+
   // Filter audit logs by search
   const filteredLogs = auditLogs.filter(log => {
     if (!searchFilter) return true;
@@ -537,6 +870,21 @@ export default function SecurityDashboard() {
             >
               <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
               <span className="hidden sm:inline">Actualiser</span>
+            </Button>
+            
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={generateForensicPdf}
+              disabled={generatingPdf || loading}
+              className="gap-1.5 h-8 bg-red-600 hover:bg-red-700 text-white"
+            >
+              {generatingPdf ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <FileText className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Export PDF</span>
             </Button>
           </div>
         </div>
