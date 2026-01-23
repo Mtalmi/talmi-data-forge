@@ -145,9 +145,45 @@ export function DevisDetailDialog({
       
       if (error) throw error;
       
-      const result = data as { success: boolean; cancelled_by?: string };
+      const result = data as { 
+        success: boolean; 
+        cancelled_by?: string; 
+        creator_id?: string;
+        creator_notified?: boolean;
+        client_name?: string;
+        cancelled_role?: string;
+      };
+      
       if (result.success) {
-        toast.success(`Approbation annulée par ${result.cancelled_by}. Devis remis en brouillon.`);
+        // Send email notification if creator was notified (different person)
+        if (result.creator_notified && result.creator_id) {
+          try {
+            await supabase.functions.invoke('notify-devis-rollback', {
+              body: {
+                devis_id: devis.devis_id,
+                creator_id: result.creator_id,
+                client_name: result.client_name || devis.client?.nom_client || null,
+                rollback_by_name: result.cancelled_by,
+                rollback_by_role: result.cancelled_role,
+                reason: cancelReason || null,
+              },
+            });
+          } catch (emailError) {
+            console.error('Failed to send rollback email notification:', emailError);
+            // Don't fail the whole operation if email fails
+          }
+        }
+        
+        // Show appropriate toast message
+        const notificationMsg = result.creator_notified 
+          ? ' et notification envoyée à l\'auteur.'
+          : '.';
+        
+        toast.success(`Succès : Devis déverrouillé${notificationMsg}`, {
+          description: `Par ${result.cancelled_by}`,
+          duration: 5000,
+        });
+        
         setCancelReason('');
         onOpenChange(false);
       }
