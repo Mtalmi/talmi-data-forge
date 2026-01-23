@@ -41,6 +41,7 @@ import { WhatsAppShareButton } from '@/components/ventes/WhatsAppShareButton';
 import { DuplicateDevisButton } from '@/components/ventes/DuplicateDevisButton';
 import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
 import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
+import { RollbackAccountabilityBadge } from '@/components/ventes/RollbackAccountabilityBadge';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -332,7 +333,7 @@ export function DevisTable({
                 {devis.total_ht.toLocaleString()} DH
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
                   <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
                     {statusConfig.icon}
                     {statusConfig.label}
@@ -343,6 +344,11 @@ export function DevisTable({
                       <Lock className="h-2.5 w-2.5" />
                     </Badge>
                   )}
+                  {/* Public Accountability Badge - Visible to ALL roles */}
+                  <RollbackAccountabilityBadge 
+                    rollbackCount={(devis as any).rollback_count} 
+                    compact 
+                  />
                   {expirationBadge}
                 </div>
               </TableCell>

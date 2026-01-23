@@ -1292,6 +1292,7 @@ export type Database = {
           prix_livraison_m3: number | null
           prix_vente_m3: number
           requires_technical_approval: boolean | null
+          rollback_count: number
           statut: string
           technical_approved_at: string | null
           technical_approved_by: string | null
@@ -1328,6 +1329,7 @@ export type Database = {
           prix_livraison_m3?: number | null
           prix_vente_m3: number
           requires_technical_approval?: boolean | null
+          rollback_count?: number
           statut?: string
           technical_approved_at?: string | null
           technical_approved_by?: string | null
@@ -1364,6 +1366,7 @@ export type Database = {
           prix_livraison_m3?: number | null
           prix_vente_m3?: number
           requires_technical_approval?: boolean | null
+          rollback_count?: number
           statut?: string
           technical_approved_at?: string | null
           technical_approved_by?: string | null
