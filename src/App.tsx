@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
 import { PreviewRoleProvider } from "@/hooks/usePreviewRole";
+import { SecurityProvider } from "@/components/security/SecurityProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Formules from "./pages/Formules";
@@ -46,42 +47,45 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <PreviewRoleProvider>
-              <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/formules" element={<Formules />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/prix" element={<Prix />} />
-              <Route path="/bons" element={<Bons />} />
-              <Route path="/planning" element={<Planning />} />
-              <Route path="/production" element={<Production />} />
-              <Route path="/stocks" element={<Stocks />} />
-              <Route path="/logistique" element={<Logistique />} />
-              <Route path="/laboratoire" element={<Laboratoire />} />
-              <Route path="/depenses" element={<Depenses />} />
-              <Route path="/ventes" element={<Ventes />} />
-              <Route path="/users" element={<Users />} />
-              <Route path="/approbations" element={<Approbations />} />
-              <Route path="/alertes" element={<Alertes />} />
-              <Route path="/rapports" element={<Rapports />} />
-              <Route path="/journal" element={<Journal />} />
-              <Route path="/fournisseurs" element={<Fournisseurs />} />
-              <Route path="/pointage" element={<Pointage />} />
-              <Route path="/prestataires" element={<Prestataires />} />
-              <Route path="/paiements" element={<Paiements />} />
-              <Route path="/rapprochement" element={<Rapprochement />} />
-              <Route path="/chauffeur" element={<DriverView />} />
-              <Route path="/maintenance" element={<Maintenance />} />
-              <Route path="/audit-superviseur" element={<AuditSuperviseur />} />
-              <Route path="/audit-externe" element={<AuditExterne />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </PreviewRoleProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </ThemeProvider>
+              {/* TITANIUM SHIELD: Security wrapper with session timeout & HTTPS enforcement */}
+              <SecurityProvider>
+                <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/formules" element={<Formules />} />
+                <Route path="/clients" element={<Clients />} />
+                <Route path="/prix" element={<Prix />} />
+                <Route path="/bons" element={<Bons />} />
+                <Route path="/planning" element={<Planning />} />
+                <Route path="/production" element={<Production />} />
+                <Route path="/stocks" element={<Stocks />} />
+                <Route path="/logistique" element={<Logistique />} />
+                <Route path="/laboratoire" element={<Laboratoire />} />
+                <Route path="/depenses" element={<Depenses />} />
+                <Route path="/ventes" element={<Ventes />} />
+                <Route path="/users" element={<Users />} />
+                <Route path="/approbations" element={<Approbations />} />
+                <Route path="/alertes" element={<Alertes />} />
+                <Route path="/rapports" element={<Rapports />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/fournisseurs" element={<Fournisseurs />} />
+                <Route path="/pointage" element={<Pointage />} />
+                <Route path="/prestataires" element={<Prestataires />} />
+                <Route path="/paiements" element={<Paiements />} />
+                <Route path="/rapprochement" element={<Rapprochement />} />
+                <Route path="/chauffeur" element={<DriverView />} />
+                <Route path="/maintenance" element={<Maintenance />} />
+                <Route path="/audit-superviseur" element={<AuditSuperviseur />} />
+                <Route path="/audit-externe" element={<AuditExterne />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              </SecurityProvider>
+            </PreviewRoleProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
