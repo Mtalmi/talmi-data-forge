@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -34,7 +36,6 @@ import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 interface DevisDetailDialogProps {
   devis: Devis | null;
@@ -57,6 +58,9 @@ export function DevisDetailDialog({
   onOpenChange,
   onConvert,
 }: DevisDetailDialogProps) {
+  const { canApproveDevis, isDirecteurOperations, isCentraliste, loading: authLoading } = useAuth();
+  const [validating, setValidating] = useState(false);
+  
   if (!devis) return null;
 
   const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
@@ -67,7 +71,35 @@ export function DevisDetailDialog({
   const isExpired = daysUntilExpiration !== null && daysUntilExpiration < 0;
   const isExpiring = daysUntilExpiration !== null && daysUntilExpiration >= 0 && daysUntilExpiration <= 3;
 
-  const canConvert = devis.statut === 'en_attente' || devis.statut === 'accepte';
+  // =====================================================
+  // FINANCIAL GATE - Permission Check
+  // ONLY CEO, SUPERVISEUR, AGENT_ADMIN can approve
+  // DIR_OPS, CENTRALISTE are READ-ONLY
+  // =====================================================
+  const isReadOnlyRole = isDirecteurOperations || isCentraliste;
+  const canApprove = canApproveDevis && !isReadOnlyRole;
+  const canConvert = (devis.statut === 'valide' || devis.statut === 'accepte') && canApprove;
+  
+  const handleValidate = async () => {
+    setValidating(true);
+    try {
+      const { data, error } = await supabase.rpc('approve_devis_with_stamp', {
+        p_devis_id: devis.devis_id,
+      });
+      
+      if (error) throw error;
+      
+      const result = data as { success: boolean; approved_by?: string; approved_role?: string };
+      if (result.success) {
+        toast.success(`Devis approuvé par ${result.approved_by} (${result.approved_role})`);
+        onOpenChange(false);
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de l\'approbation');
+    } finally {
+      setValidating(false);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -227,13 +259,42 @@ export function DevisDetailDialog({
             <DevisPdfGenerator devis={devis} />
             <DevisSendDialog devis={devis} />
             
+            {/* =====================================================
+                VALIDATE BUTTON - Financial Gate
+                Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
+                Hidden for: DIR_OPS, CENTRALISTE
+            ===================================================== */}
+            {devis.statut === 'en_attente' && devis.client_id && (
+              authLoading ? (
+                <Skeleton className="w-24 h-9 rounded-md ml-auto" />
+              ) : canApprove ? (
+                <Button 
+                  onClick={handleValidate}
+                  disabled={validating}
+                  className="gap-2 ml-auto bg-success hover:bg-success/90"
+                >
+                  {validating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4" />
+                  )}
+                  Valider le Devis
+                </Button>
+              ) : isReadOnlyRole ? (
+                <Badge variant="outline" className="ml-auto text-muted-foreground">
+                  <Clock className="h-3 w-3 mr-1" />
+                  En attente de validation
+                </Badge>
+              ) : null
+            )}
+            
             {canConvert && (
               <Button 
                 onClick={() => {
                   onOpenChange(false);
                   onConvert(devis);
                 }}
-                className="gap-2 ml-auto"
+                className="gap-2"
               >
                 <ArrowRight className="h-4 w-4" />
                 Convertir en BC
