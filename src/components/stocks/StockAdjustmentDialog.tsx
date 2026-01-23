@@ -19,6 +19,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Wrench, Loader2, AlertTriangle, Shield } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -44,7 +45,7 @@ const REASON_CODES = [
 ];
 
 export function StockAdjustmentDialog({ stocks, onRefresh }: StockAdjustmentDialogProps) {
-  const { isCeo, isSuperviseur } = useAuth();
+  const { isCeo, isSuperviseur, loading: authLoading } = useAuth();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
@@ -53,9 +54,18 @@ export function StockAdjustmentDialog({ stocks, onRefresh }: StockAdjustmentDial
   const [reasonCode, setReasonCode] = useState('');
   const [notes, setNotes] = useState('');
 
-  // STRICT: Only CEO and Superviseur can access this
+  // =====================================================
+  // MANUAL STOCK ADJUSTMENT - CEO/SUPERVISEUR ONLY
+  // Shows skeleton while auth is loading
+  // =====================================================
   const canAdjust = isCeo || isSuperviseur;
 
+  // Show skeleton while auth is loading
+  if (authLoading) {
+    return <Skeleton className="w-32 h-11 rounded-md" />;
+  }
+
+  // Hide completely for unauthorized roles
   if (!canAdjust) {
     return null;
   }
