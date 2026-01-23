@@ -57,6 +57,7 @@ import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBad
 import { RollbackAccountabilityBadge } from '@/components/ventes/RollbackAccountabilityBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { sanitizeReason, rollbackReasonSchema } from '@/lib/security';
 
 // Type for correction history entries
 interface CorrectionHistoryEntry {
@@ -189,6 +190,7 @@ export function DevisDetailDialog({
   };
   
   // Handle cancel approval (CEO/Superviseur only) - MANDATORY JUSTIFICATION
+  // TITANIUM SHIELD: Input sanitization for XSS/SQL injection prevention
   const handleCancelApproval = async () => {
     // Strict validation - must have reason with min length
     if (!isReasonValid) {
@@ -198,11 +200,23 @@ export function DevisDetailDialog({
       return;
     }
     
+    // SECURITY: Validate and sanitize the reason input
+    const validationResult = rollbackReasonSchema.safeParse({ reason: cancelReason });
+    if (!validationResult.success) {
+      toast.error('Entrée invalide', {
+        description: 'Le motif contient des caractères non autorisés.',
+      });
+      return;
+    }
+    
+    // Use sanitized reason
+    const sanitizedReason = sanitizeReason(cancelReason);
+    
     setCancelling(true);
     try {
       const { data, error } = await supabase.rpc('cancel_devis_approval', {
         p_devis_id: devis.devis_id,
-        p_reason: cancelReason.trim(),
+        p_reason: sanitizedReason,
       });
       
       if (error) throw error;
