@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,16 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
   Shield,
-  ShieldAlert,
   ShieldCheck,
   AlertTriangle,
   Camera,
@@ -31,14 +23,17 @@ import {
   Lock,
   Unlock,
   CheckCircle,
-  XCircle,
   FileWarning,
   Package,
+  Wifi,
+  WifiOff,
+  Smartphone,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 // Types
 interface AuditLogEntry {
@@ -81,13 +76,13 @@ const ACTION_CONFIG: Record<string, {
   icon: React.ElementType;
 }> = {
   ROLLBACK_APPROVAL: { 
-    label: 'Déverrouillage Devis', 
+    label: 'Rollback Devis', 
     color: 'text-red-500', 
     bgColor: 'bg-red-500/10 border-red-500/30',
     icon: Unlock,
   },
   APPROVE_DEVIS: { 
-    label: 'Approbation Devis', 
+    label: 'Approbation', 
     color: 'text-emerald-500', 
     bgColor: 'bg-emerald-500/10 border-emerald-500/30',
     icon: CheckCircle,
@@ -99,7 +94,7 @@ const ACTION_CONFIG: Record<string, {
     icon: Package,
   },
   PRICE_CHANGE: { 
-    label: 'Modification Prix', 
+    label: 'Modif. Prix', 
     color: 'text-amber-500', 
     bgColor: 'bg-amber-500/10 border-amber-500/30',
     icon: FileWarning,
@@ -108,6 +103,24 @@ const ACTION_CONFIG: Record<string, {
     label: 'Accès Refusé', 
     color: 'text-red-600', 
     bgColor: 'bg-red-600/10 border-red-600/30',
+    icon: Ban,
+  },
+  INSERT: { 
+    label: 'Création', 
+    color: 'text-blue-500', 
+    bgColor: 'bg-blue-500/10 border-blue-500/30',
+    icon: CheckCircle,
+  },
+  UPDATE: { 
+    label: 'Modification', 
+    color: 'text-amber-500', 
+    bgColor: 'bg-amber-500/10 border-amber-500/30',
+    icon: FileWarning,
+  },
+  DELETE: { 
+    label: 'Suppression', 
+    color: 'text-red-500', 
+    bgColor: 'bg-red-500/10 border-red-500/30',
     icon: Ban,
   },
   default: { 
@@ -123,8 +136,8 @@ const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
   ceo: { label: 'CEO', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
   superviseur: { label: 'Superviseur', color: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' },
   agent_administratif: { label: 'Agent Admin', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-  directeur_operations: { label: 'Dir. Opérations', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  responsable_technique: { label: 'Resp. Technique', color: 'bg-teal-500/20 text-teal-400 border-teal-500/30' },
+  directeur_operations: { label: 'Dir. Ops', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+  responsable_technique: { label: 'Resp. Tech', color: 'bg-teal-500/20 text-teal-400 border-teal-500/30' },
   centraliste: { label: 'Centraliste', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' },
   commercial: { label: 'Commercial', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
   accounting: { label: 'Comptabilité', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
@@ -132,10 +145,165 @@ const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
   operator: { label: 'Opérateur', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
 };
 
+// Forensic Feed Card Component (Mobile-optimized)
+function ForensicFeedCard({ log }: { log: AuditLogEntry }) {
+  const config = ACTION_CONFIG[log.action] || ACTION_CONFIG.default;
+  const Icon = config.icon;
+  const isRollback = log.action === 'ROLLBACK_APPROVAL';
+  const isSuccess = log.action === 'STOCK_FINALIZED' || log.action === 'APPROVE_DEVIS';
+
+  return (
+    <Card className={cn(
+      "transition-all border-l-4",
+      isRollback ? "border-l-red-500 bg-red-500/5" : 
+      isSuccess ? "border-l-green-500 bg-green-500/5" : 
+      "border-l-muted"
+    )}>
+      <CardContent className="p-4">
+        {/* Header Row */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className={cn(
+              "p-1.5 rounded-full shrink-0",
+              isRollback ? "bg-red-500/20" : isSuccess ? "bg-green-500/20" : "bg-muted"
+            )}>
+              <Icon className={cn("h-4 w-4", config.color)} />
+            </div>
+            <div className="min-w-0">
+              <Badge variant="outline" className={cn("text-xs font-medium", config.color)}>
+                {config.label}
+              </Badge>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+            <Clock className="h-3 w-3" />
+            <span className="hidden sm:inline">
+              {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: fr })}
+            </span>
+            <span className="sm:hidden">
+              {format(new Date(log.created_at), 'HH:mm')}
+            </span>
+          </div>
+        </div>
+
+        {/* User & Target */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="font-semibold">{log.user_name || 'Utilisateur'}</span>
+            <span className="text-muted-foreground">•</span>
+            <span className="font-mono text-xs bg-muted/50 px-1.5 py-0.5 rounded truncate">
+              {log.table_name}
+            </span>
+            {log.record_id && (
+              <span className="font-mono text-xs text-muted-foreground truncate">
+                #{log.record_id.substring(0, 12)}
+              </span>
+            )}
+          </div>
+
+          {/* Rollback Reason (Highlighted) */}
+          {isRollback && log.changes?.reason && (
+            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+              <p className="text-sm italic text-red-400 leading-relaxed">
+                "{log.changes.reason}"
+              </p>
+              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-red-500/50 text-red-400">
+                  ROLLBACK #{log.changes.rollback_number}
+                </Badge>
+                <span>par {log.changes.cancelled_by_role?.toUpperCase()}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// User Card Component (Mobile-optimized)
+function UserCard({ user }: { user: UserWithRole }) {
+  const roleConfig = ROLE_CONFIG[user.role] || { label: user.role, color: 'bg-gray-500/20 text-gray-400' };
+
+  return (
+    <div className="flex items-center justify-between p-3 rounded-lg border bg-card/50 hover:bg-muted/30 transition-colors">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <span className="text-sm font-semibold text-primary">
+            {(user.full_name || user.email || '?').charAt(0).toUpperCase()}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <p className="font-medium text-sm truncate">{user.full_name || 'Sans nom'}</p>
+          <p className="text-xs text-muted-foreground truncate">{user.email || 'email@inconnu'}</p>
+        </div>
+      </div>
+      <Badge variant="outline" className={cn("shrink-0 text-xs", roleConfig.color)}>
+        {roleConfig.label}
+      </Badge>
+    </div>
+  );
+}
+
+// Metric Card Component (Mobile-optimized)
+function MetricCard({ 
+  title, 
+  value, 
+  subtitle, 
+  icon: Icon, 
+  color, 
+  loading 
+}: { 
+  title: string; 
+  value: number; 
+  subtitle: string; 
+  icon: React.ElementType; 
+  color: string;
+  loading: boolean;
+}) {
+  const colorClasses: Record<string, { border: string; bg: string; text: string; iconBg: string }> = {
+    red: { border: 'border-red-500/30', bg: 'from-red-500/5', text: 'text-red-500', iconBg: 'bg-red-500/10' },
+    amber: { border: 'border-amber-500/30', bg: 'from-amber-500/5', text: 'text-amber-500', iconBg: 'bg-amber-500/10' },
+    destructive: { border: 'border-destructive/30', bg: 'from-destructive/5', text: 'text-destructive', iconBg: 'bg-destructive/10' },
+    primary: { border: 'border-primary/30', bg: 'from-primary/5', text: 'text-primary', iconBg: 'bg-primary/10' },
+  };
+  
+  const c = colorClasses[color] || colorClasses.primary;
+
+  return (
+    <Card className={cn("border", c.border, `bg-gradient-to-br ${c.bg} to-transparent`)}>
+      <CardContent className="p-4 sm:pt-6">
+        <div className="flex items-center justify-between">
+          <div className="min-w-0">
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider font-medium truncate">
+              {title}
+            </p>
+            {loading ? (
+              <Skeleton className="h-8 w-14 mt-1" />
+            ) : (
+              <p className={cn("text-2xl sm:text-3xl font-bold mt-1", c.text)}>
+                {value}
+              </p>
+            )}
+          </div>
+          <div className={cn("p-2 sm:p-3 rounded-full shrink-0", c.iconBg)}>
+            <Icon className={cn("h-5 w-5 sm:h-6 sm:w-6", c.text)} />
+          </div>
+        </div>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-2 sm:mt-3 truncate">
+          {subtitle}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SecurityDashboard() {
-  const { isCeo, isSuperviseur, user } = useAuth();
+  const navigate = useNavigate();
+  const { isCeo, isSuperviseur, user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);
   const [users, setUsers] = useState<UserWithRole[]>([]);
   const [metrics, setMetrics] = useState<SecurityMetrics>({
@@ -145,6 +313,18 @@ export default function SecurityDashboard() {
     totalAuditLogs: 0,
   });
   const [searchFilter, setSearchFilter] = useState('');
+
+  // ===========================================================
+  // HARD REDIRECT SECURITY - CEO/Superviseur ONLY
+  // ===========================================================
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (!isCeo && !isSuperviseur) {
+        // Hard redirect to 404 for unauthorized access
+        navigate('/404', { replace: true });
+      }
+    }
+  }, [authLoading, user, isCeo, isSuperviseur, navigate]);
 
   // Fetch all security data
   const fetchSecurityData = useCallback(async () => {
@@ -209,9 +389,74 @@ export default function SecurityDashboard() {
     }
   }, []);
 
+  // ===========================================================
+  // REALTIME SUBSCRIPTION - Live audit feed
+  // ===========================================================
   useEffect(() => {
+    if (!user || (!isCeo && !isSuperviseur)) return;
+
     fetchSecurityData();
-  }, [fetchSecurityData]);
+
+    // Subscribe to realtime changes on audit_superviseur
+    const channel = supabase
+      .channel('security-dashboard-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'audit_superviseur',
+        },
+        (payload) => {
+          const newLog = payload.new as AuditLogEntry;
+          
+          // Add to top of list
+          setAuditLogs(prev => [newLog, ...prev].slice(0, 100));
+          
+          // Update metrics
+          setMetrics(prev => ({
+            ...prev,
+            totalAuditLogs: prev.totalAuditLogs + 1,
+            totalRollbacks: newLog.action === 'ROLLBACK_APPROVAL' 
+              ? prev.totalRollbacks + 1 
+              : prev.totalRollbacks,
+            blockedActions: newLog.action === 'ACCESS_DENIED'
+              ? prev.blockedActions + 1
+              : prev.blockedActions,
+          }));
+
+          // 🔔 PUSH NOTIFICATION for ROLLBACK actions
+          if (newLog.action === 'ROLLBACK_APPROVAL') {
+            // Browser notification (if permitted)
+            if ('Notification' in window && Notification.permission === 'granted') {
+              new Notification('🚨 ROLLBACK ALERT', {
+                body: `${newLog.user_name || 'User'} a déverrouillé un Devis: ${newLog.record_id}`,
+                icon: '/favicon.ico',
+                tag: 'rollback-alert',
+              });
+            }
+            
+            // In-app toast
+            toast.error('🚨 ROLLBACK DÉTECTÉ', {
+              description: `${newLog.user_name} a déverrouillé ${newLog.record_id}`,
+              duration: 10000,
+            });
+          }
+        }
+      )
+      .subscribe((status) => {
+        setIsRealtimeConnected(status === 'SUBSCRIBED');
+      });
+
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, isCeo, isSuperviseur, fetchSecurityData]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -230,341 +475,191 @@ export default function SecurityDashboard() {
     );
   });
 
-  // ACCESS CONTROL - CEO/Superviseur ONLY
-  if (!isCeo && !isSuperviseur) {
+  // Show loading while checking auth
+  if (authLoading) {
     return (
       <MainLayout>
-        <div className="flex items-center justify-center h-[70vh]">
-          <Card className="max-w-md border-2 border-destructive/30 bg-destructive/5">
-            <CardContent className="pt-8 pb-8 text-center">
-              <ShieldAlert className="h-20 w-20 text-destructive/60 mx-auto mb-6" />
-              <h2 className="text-2xl font-bold mb-3 text-destructive">Accès Refusé</h2>
-              <p className="text-muted-foreground text-lg">
-                Ce tableau de bord est exclusivement réservé au <strong>CEO</strong> et au <strong>Superviseur</strong>.
-              </p>
-              <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                <Lock className="h-3 w-3" />
-                <span>Zone de Commandement Sécurisée</span>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex items-center justify-center h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
       </MainLayout>
     );
   }
 
+  // Access control handled by redirect above, but double-check
+  if (!isCeo && !isSuperviseur) {
+    return null;
+  }
+
   return (
     <MainLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight">Tableau de Bord Sécurité</h1>
-                <p className="text-sm text-muted-foreground">
-                  Centre de Commandement — Vue Forensique
-                </p>
-              </div>
+      <div className="space-y-4 sm:space-y-6">
+        {/* Header - Mobile Optimized */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">War Room</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Centre de Commandement Sécurisé
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="gap-1.5 px-3 py-1.5 bg-primary/5">
-              <Eye className="h-3 w-3" />
-              Mode: {isCeo ? 'CEO' : 'Superviseur'}
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Realtime Status */}
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "gap-1.5 px-2 py-1",
+                isRealtimeConnected 
+                  ? "bg-green-500/10 text-green-500 border-green-500/30" 
+                  : "bg-amber-500/10 text-amber-500 border-amber-500/30"
+              )}
+            >
+              {isRealtimeConnected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+              <span className="hidden sm:inline">{isRealtimeConnected ? 'Live' : 'Offline'}</span>
             </Badge>
+            
+            <Badge variant="outline" className="gap-1.5 px-2 py-1 bg-primary/5">
+              <Eye className="h-3 w-3" />
+              <span className="hidden sm:inline">Mode:</span> {isCeo ? 'CEO' : 'SUP'}
+            </Badge>
+            
             <Button 
               variant="outline" 
               size="sm" 
               onClick={handleRefresh}
               disabled={refreshing}
-              className="gap-2"
+              className="gap-1.5 h-8"
             >
-              <RefreshCw className={cn("h-4 w-4", refreshing && "animate-spin")} />
-              Actualiser
+              <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
+              <span className="hidden sm:inline">Actualiser</span>
             </Button>
           </div>
         </div>
 
-        {/* Key Metrics Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Total Rollbacks */}
-          <Card className="border-red-500/30 bg-gradient-to-br from-red-500/5 to-transparent">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    Corrections Totales
-                  </p>
-                  {loading ? (
-                    <Skeleton className="h-9 w-16 mt-1" />
-                  ) : (
-                    <p className="text-3xl font-bold text-red-500 mt-1">
-                      {metrics.totalRollbacks}
-                    </p>
-                  )}
-                </div>
-                <div className="p-3 rounded-full bg-red-500/10">
-                  <Unlock className="h-6 w-6 text-red-500" />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Devis déverrouillés après approbation
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Pending Quality Checks */}
-          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-transparent">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    Contrôles en Attente
-                  </p>
-                  {loading ? (
-                    <Skeleton className="h-9 w-16 mt-1" />
-                  ) : (
-                    <p className="text-3xl font-bold text-amber-500 mt-1">
-                      {metrics.pendingQualityChecks}
-                    </p>
-                  )}
-                </div>
-                <div className="p-3 rounded-full bg-amber-500/10">
-                  <Camera className="h-6 w-6 text-amber-500" />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Réceptions stock en attente de photo
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Blocked Actions */}
-          <Card className="border-destructive/30 bg-gradient-to-br from-destructive/5 to-transparent">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    Actions Bloquées
-                  </p>
-                  {loading ? (
-                    <Skeleton className="h-9 w-16 mt-1" />
-                  ) : (
-                    <p className="text-3xl font-bold text-destructive mt-1">
-                      {metrics.blockedActions}
-                    </p>
-                  )}
-                </div>
-                <div className="p-3 rounded-full bg-destructive/10">
-                  <Ban className="h-6 w-6 text-destructive" />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Tentatives d'accès refusées
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Total Audit Logs */}
-          <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    Logs d'Audit
-                  </p>
-                  {loading ? (
-                    <Skeleton className="h-9 w-16 mt-1" />
-                  ) : (
-                    <p className="text-3xl font-bold text-primary mt-1">
-                      {metrics.totalAuditLogs}
-                    </p>
-                  )}
-                </div>
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Activity className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Entrées dans le journal d'audit
-              </p>
-            </CardContent>
-          </Card>
+        {/* Key Metrics Row - Responsive Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <MetricCard
+            title="Rollbacks"
+            value={metrics.totalRollbacks}
+            subtitle="Devis déverrouillés"
+            icon={Unlock}
+            color="red"
+            loading={loading}
+          />
+          <MetricCard
+            title="Contrôles"
+            value={metrics.pendingQualityChecks}
+            subtitle="En attente photo"
+            icon={Camera}
+            color="amber"
+            loading={loading}
+          />
+          <MetricCard
+            title="Bloqués"
+            value={metrics.blockedActions}
+            subtitle="Accès refusés"
+            icon={Ban}
+            color="destructive"
+            loading={loading}
+          />
+          <MetricCard
+            title="Audit Logs"
+            value={metrics.totalAuditLogs}
+            subtitle="Entrées totales"
+            icon={Activity}
+            color="primary"
+            loading={loading}
+          />
         </div>
 
-        {/* Main Content: Forensic Feed + User Access */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Forensic Feed (2 cols) */}
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
+        {/* Main Content - Mobile-First Stack */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Forensic Feed (Full width on mobile, 2 cols on desktop) */}
+          <Card className="lg:col-span-2 order-1">
+            <CardHeader className="pb-3 space-y-3 sm:space-y-0">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg">Flux Forensique</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Flux Forensique</CardTitle>
+                  {isRealtimeConnected && (
+                    <span className="flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                  )}
                 </div>
-                <div className="relative">
+                <div className="relative w-full sm:w-auto">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Rechercher..."
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
-                    className="pl-9 w-48"
+                    className="pl-9 h-9 w-full sm:w-48"
                   />
                 </div>
               </div>
-              <CardDescription>
-                Journal d'audit chronologique — Actions sensibles en temps réel
+              <CardDescription className="text-xs">
+                Actions sensibles en temps réel • {filteredLogs.length} entrées
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 sm:px-6">
               {loading ? (
                 <div className="space-y-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-20 w-full" />
+                  {[...Array(4)].map((_, i) => (
+                    <Skeleton key={i} className="h-24 w-full rounded-lg" />
                   ))}
                 </div>
               ) : filteredLogs.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">
                   <Activity className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>Aucune entrée d'audit trouvée</p>
+                  <p>Aucune entrée d'audit</p>
                 </div>
               ) : (
-                <ScrollArea className="h-[500px] pr-4">
+                <ScrollArea className="h-[400px] sm:h-[500px] pr-2 sm:pr-4">
                   <div className="space-y-3">
-                    {filteredLogs.map((log) => {
-                      const config = ACTION_CONFIG[log.action] || ACTION_CONFIG.default;
-                      const Icon = config.icon;
-                      const isRollback = log.action === 'ROLLBACK_APPROVAL';
-                      const isSuccess = log.action === 'STOCK_FINALIZED' || log.action === 'APPROVE_DEVIS';
-
-                      return (
-                        <div
-                          key={log.id}
-                          className={cn(
-                            "p-4 rounded-lg border transition-all",
-                            config.bgColor,
-                            isRollback && "ring-1 ring-red-500/20"
-                          )}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={cn(
-                              "p-2 rounded-full shrink-0",
-                              isRollback ? "bg-red-500/20" : isSuccess ? "bg-green-500/20" : "bg-muted"
-                            )}>
-                              <Icon className={cn("h-4 w-4", config.color)} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <Badge variant="outline" className={cn("font-medium", config.color)}>
-                                    {config.label}
-                                  </Badge>
-                                  <span className="text-sm font-semibold">
-                                    {log.user_name || 'Utilisateur inconnu'}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-                                  <Clock className="h-3 w-3" />
-                                  {formatDistanceToNow(new Date(log.created_at), { 
-                                    addSuffix: true, 
-                                    locale: fr 
-                                  })}
-                                </div>
-                              </div>
-                              
-                              <div className="mt-1.5 text-sm text-muted-foreground">
-                                <span className="font-mono text-xs bg-muted/50 px-1.5 py-0.5 rounded">
-                                  {log.table_name}
-                                </span>
-                                {log.record_id && (
-                                  <span className="ml-2 font-mono text-xs">
-                                    #{log.record_id}
-                                  </span>
-                                )}
-                              </div>
-
-                              {/* Rollback reason display */}
-                              {isRollback && log.changes?.reason && (
-                                <div className="mt-2 p-2 rounded bg-red-500/5 border border-red-500/20">
-                                  <p className="text-sm italic text-red-400">
-                                    "{log.changes.reason}"
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    Rollback #{log.changes.rollback_number} par {log.changes.cancelled_by_role?.toUpperCase()}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {filteredLogs.map((log) => (
+                      <ForensicFeedCard key={log.id} log={log} />
+                    ))}
                   </div>
                 </ScrollArea>
               )}
             </CardContent>
           </Card>
 
-          {/* User Access Audit (1 col) */}
-          <Card>
+          {/* User Access Audit (Full width on mobile, 1 col on desktop) */}
+          <Card className="order-2">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg">Accès Utilisateurs</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Équipe</CardTitle>
               </div>
-              <CardDescription>
-                Rôles actuels du système
+              <CardDescription className="text-xs">
+                {users.length} utilisateurs actifs
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 sm:px-6">
               {loading ? (
                 <div className="space-y-2">
-                  {[...Array(6)].map((_, i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
+                  {[...Array(5)].map((_, i) => (
+                    <Skeleton key={i} className="h-14 w-full rounded-lg" />
                   ))}
                 </div>
               ) : users.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Users className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                  <p>Aucun utilisateur trouvé</p>
+                  <p>Aucun utilisateur</p>
                 </div>
               ) : (
-                <ScrollArea className="h-[500px]">
+                <ScrollArea className="h-[300px] sm:h-[500px]">
                   <div className="space-y-2">
-                    {users.map((user) => {
-                      const roleConfig = ROLE_CONFIG[user.role] || { 
-                        label: user.role, 
-                        color: 'bg-gray-500/20 text-gray-400' 
-                      };
-
-                      return (
-                        <div
-                          key={user.user_id}
-                          className="p-3 rounded-lg border bg-card/50 hover:bg-muted/30 transition-colors"
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="min-w-0">
-                              <p className="font-medium text-sm truncate">
-                                {user.full_name || 'Sans nom'}
-                              </p>
-                              <p className="text-xs text-muted-foreground truncate">
-                                {user.email || 'email@inconnu'}
-                              </p>
-                            </div>
-                            <Badge 
-                              variant="outline" 
-                              className={cn("shrink-0 text-xs", roleConfig.color)}
-                            >
-                              {roleConfig.label}
-                            </Badge>
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {users.map((user) => (
+                      <UserCard key={user.user_id} user={user} />
+                    ))}
                   </div>
                 </ScrollArea>
               )}
@@ -572,12 +667,14 @@ export default function SecurityDashboard() {
           </Card>
         </div>
 
-        {/* Security Footer */}
+        {/* Mobile Indicator */}
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-4 border-t">
-          <Lock className="h-3 w-3" />
-          <span>Données chiffrées • Audit immuable • Accès journalisé</span>
-          <span className="mx-2">|</span>
-          <span>Dernière actualisation: {format(new Date(), 'HH:mm:ss', { locale: fr })}</span>
+          <Smartphone className="h-3 w-3 sm:hidden" />
+          <Lock className="h-3 w-3 hidden sm:block" />
+          <span className="hidden sm:inline">Données chiffrées • Audit immuable • Accès journalisé</span>
+          <span className="sm:hidden">Sécurisé • {format(new Date(), 'HH:mm')}</span>
+          <span className="hidden sm:inline mx-2">|</span>
+          <span className="hidden sm:inline">{format(new Date(), 'HH:mm:ss', { locale: fr })}</span>
         </div>
       </div>
     </MainLayout>
