@@ -615,15 +615,15 @@ export function DevisDetailDialog({
                     Annuler l'Approbation
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent>
+                <AlertDialogContent className="border-destructive/50">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-destructive" />
-                      Justification de la Correction
+                    <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                      <Shield className="h-5 w-5" />
+                      🔐 Action de Haute Sécurité
                     </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Cette action va remettre le devis en statut "En Attente". 
-                      Les prix et conditions pourront être modifiés.
+                    <AlertDialogDescription className="text-base">
+                      Vous êtes sur le point de remettre ce devis en statut "En Attente". 
+                      Les prix et conditions pourront être modifiés. L'auteur original sera notifié.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   
