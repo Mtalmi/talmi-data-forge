@@ -29,6 +29,8 @@ import {
   Zap,
   Mail,
   Shield,
+  Lock,
+  ShieldCheck,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
@@ -45,13 +47,13 @@ import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
-  valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-3 w-3" /> },
-  converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <ArrowRight className="h-3 w-3" /> },
-  expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <AlertTriangle className="h-3 w-3" /> },
+const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
+  en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" />, isLocked: false },
+  valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
+  accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
+  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-3 w-3" />, isLocked: false },
+  converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <Lock className="h-3 w-3" />, isLocked: true },
+  expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <AlertTriangle className="h-3 w-3" />, isLocked: false },
 };
 
 // Priority thresholds
@@ -335,6 +337,12 @@ export function DevisTable({
                     {statusConfig.icon}
                     {statusConfig.label}
                   </Badge>
+                  {/* Security Seal for locked devis */}
+                  {statusConfig.isLocked && (
+                    <Badge className="gap-0.5 h-5 text-[10px] bg-slate-800 text-white border-slate-700">
+                      <Lock className="h-2.5 w-2.5" />
+                    </Badge>
+                  )}
                   {expirationBadge}
                 </div>
               </TableCell>
