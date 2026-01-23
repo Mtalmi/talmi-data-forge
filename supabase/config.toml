@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.auto-payment-reminders]
 verify_jwt = false
+
+[functions.notify-rollback-alert]
+verify_jwt = false
