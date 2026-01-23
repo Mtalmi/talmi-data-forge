@@ -116,10 +116,10 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // BLOCKED: Formules, Prix, Paramètres, Approbations
     directeur_operations: ['/', '/clients', '/ventes', '/planning', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
     
-    // Agent Administratif - PRIMARY OWNER of Planning, Dispatch, Facturation
-    // Formules READ-ONLY, Clients FULL, Bons PAIEMENT/FACTURATION
-    // BLOCKED: Prix, Approbations (except invoice generation)
-    agent_administratif: ['/', '/planning', '/production', '/bons', '/clients', '/depenses', '/paiements'],
+    // Agent Administratif - Dashboard, Ventes (Devis), Clients, Stocks (Silos)
+    // Can APPROVE Devis created by others (not her own), can FINALIZE Stock after Resp. Tech quality photo
+    // BLOCKED: Formules, Prix, Approbations menu
+    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/paiements'],
     
     // Centraliste (Hassan) - Formules READ-ONLY (Daily Mix), Bons CONSOMMATION ONLY
     // BLOCKED: Prix, Clients, Approbations, STOCKS (zero manual access)
