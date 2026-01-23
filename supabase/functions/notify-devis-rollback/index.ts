@@ -123,6 +123,15 @@ const handler = async (req: Request): Promise<Response> => {
               </span>
             </div>
             
+            ${reason ? `
+            <div style="background: #fef2f2; border: 1px solid #ef4444; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+              <strong style="color: #dc2626;">📝 Motif du déverrouillage :</strong>
+              <p style="margin: 10px 0 0; font-style: italic; color: #7f1d1d; font-size: 15px;">
+                "${reason}"
+              </p>
+            </div>
+            ` : ''}
+            
             <div class="info-grid">
               <div class="info-item">
                 <div class="label">Numéro de Devis</div>
@@ -142,12 +151,6 @@ const handler = async (req: Request): Promise<Response> => {
                 <div class="label">Date & Heure</div>
                 <div class="value">📅 ${timestamp}</div>
               </div>
-              ${reason ? `
-              <div class="info-item">
-                <div class="label">Raison</div>
-                <div class="value">💬 ${reason}</div>
-              </div>
-              ` : ''}
             </div>
             
             <p style="margin-bottom: 20px;">
