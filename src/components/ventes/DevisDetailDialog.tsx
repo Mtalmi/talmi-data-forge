@@ -54,6 +54,7 @@ import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
 import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
+import { RollbackAccountabilityBadge } from '@/components/ventes/RollbackAccountabilityBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -272,7 +273,7 @@ export function DevisDetailDialog({
         <div className="space-y-6">
           {/* Status & Expiration Header */}
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline" className={cn("gap-2 px-3 py-1.5 text-sm", statusConfig.color)}>
                 {statusConfig.icon}
                 {statusConfig.label}
@@ -285,6 +286,11 @@ export function DevisDetailDialog({
                   Scellé
                 </Badge>
               )}
+              
+              {/* Public Accountability Badge - Visible to ALL roles */}
+              <RollbackAccountabilityBadge 
+                rollbackCount={(devis as any).rollback_count} 
+              />
             </div>
             
             {expirationDate && devis.statut === 'en_attente' && (
