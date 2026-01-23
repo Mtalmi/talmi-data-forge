@@ -112,10 +112,9 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // BLOCKED: Prix, Clients, Approbations
     responsable_technique: ['/laboratoire', '/formules', '/bons'],
     
-    // Dir. Opérations (Imad) - Formules & Clients READ-ONLY, Bons PLANIFICATION/ASSIGNATION ONLY
-    // BLOCKED: Prix, Approbations (can only REQUEST dérogations, not approve)
-    directeur_operations: ['/', '/planning', '/production', '/logistique', '/stocks', '/pointage', 
-                           '/maintenance', '/formules', '/clients'],
+    // Dir. Opérations (Imad) - Dashboard, Clients, Ventes (Devis READ-ONLY)
+    // BLOCKED: Formules, Prix, Paramètres, Approbations
+    directeur_operations: ['/', '/clients', '/ventes', '/planning', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
     
     // Agent Administratif - PRIMARY OWNER of Planning, Dispatch, Facturation
     // Formules READ-ONLY, Clients FULL, Bons PAIEMENT/FACTURATION
