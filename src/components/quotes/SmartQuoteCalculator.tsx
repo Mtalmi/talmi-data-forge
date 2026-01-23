@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSalesWorkflow } from '@/hooks/useSalesWorkflow';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Select,
   SelectContent,
@@ -18,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Calculator, Loader2, TrendingUp, Truck, Package, Info, Save } from 'lucide-react';
+import { Calculator, Loader2, TrendingUp, Truck, Package, Info, Save, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Formule {
@@ -56,6 +58,10 @@ interface SmartQuoteCalculatorProps {
 
 export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuoteCalculatorProps) {
   const { saveDevis } = useSalesWorkflow();
+  const { isDirecteurOperations, isCentraliste, canApproveDevis } = useAuth();
+  
+  // DIR_OPS and CENTRALISTE create devis but cannot approve them
+  const isNonApproverRole = isDirecteurOperations || isCentraliste;
   const [formules, setFormules] = useState<Formule[]>([]);
   const [clients, setClients] = useState<{ client_id: string; nom_client: string }[]>([]);
   const [prix, setPrix] = useState<Prix[]>([]);
@@ -173,6 +179,13 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
     });
     setSaving(false);
     if (result) {
+      // Show custom message for DIR_OPS and other non-approver roles
+      if (isNonApproverRole) {
+        toast.success('Devis créé. En attente de validation par l\'administration.', {
+          icon: <Clock className="h-4 w-4" />,
+          duration: 5000,
+        });
+      }
       resetCalculator();
       setDialogOpen(false);
     }
@@ -256,10 +269,19 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
                     </div>
                   </div>
                 </div>
+                {/* Info banner for non-approver roles */}
+                {isNonApproverRole && (
+                  <Alert className="bg-warning/10 border-warning/30">
+                    <Clock className="h-4 w-4 text-warning" />
+                    <AlertDescription className="text-warning text-sm">
+                      Le devis sera créé avec le statut "En Attente" et devra être validé par l'administration.
+                    </AlertDescription>
+                  </Alert>
+                )}
                 <div className="flex gap-2">
                   <Button onClick={handleSaveDevis} disabled={saving} className="flex-1 gap-2">
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                    Enregistrer Devis
+                    {isNonApproverRole ? 'Soumettre pour Validation' : 'Enregistrer Devis'}
                   </Button>
                   <Button variant="outline" onClick={resetCalculator}>Nouveau</Button>
                 </div>
