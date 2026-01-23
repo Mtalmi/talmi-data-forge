@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Shield,
   ShieldCheck,
@@ -30,8 +32,10 @@ import {
   Smartphone,
   FileText,
   Loader2,
+  CalendarIcon,
+  X,
 } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
+import { format, formatDistanceToNow, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -315,6 +319,8 @@ export default function SecurityDashboard() {
     totalAuditLogs: 0,
   });
   const [searchFilter, setSearchFilter] = useState('');
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
 
   // ===========================================================
   // HARD REDIRECT SECURITY - CEO/Superviseur ONLY
@@ -502,15 +508,23 @@ export default function SecurityDashboard() {
   const generateForensicPdf = async () => {
     setGeneratingPdf(true);
     try {
-      const rollbackLogs = auditLogs.filter(l => l.action === 'ROLLBACK_APPROVAL');
-      const blockedLogs = auditLogs.filter(l => l.action === 'ACCESS_DENIED');
+      // Use filtered logs for PDF if date filter is active
+      const logsForPdf = hasDateFilter ? filteredLogs : auditLogs;
+      const rollbackLogs = logsForPdf.filter(l => l.action === 'ROLLBACK_APPROVAL');
+      const blockedLogs = logsForPdf.filter(l => l.action === 'ACCESS_DENIED');
       const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
-      const periodStart = auditLogs.length > 0 
-        ? format(new Date(auditLogs[auditLogs.length - 1].created_at), 'dd/MM/yyyy', { locale: fr })
-        : '-';
-      const periodEnd = auditLogs.length > 0
-        ? format(new Date(auditLogs[0].created_at), 'dd/MM/yyyy', { locale: fr })
-        : '-';
+      
+      // Period based on filter or data
+      const periodStart = dateFrom 
+        ? format(dateFrom, 'dd/MM/yyyy', { locale: fr })
+        : logsForPdf.length > 0 
+          ? format(new Date(logsForPdf[logsForPdf.length - 1].created_at), 'dd/MM/yyyy', { locale: fr })
+          : '-';
+      const periodEnd = dateTo 
+        ? format(dateTo, 'dd/MM/yyyy', { locale: fr })
+        : logsForPdf.length > 0
+          ? format(new Date(logsForPdf[0].created_at), 'dd/MM/yyyy', { locale: fr })
+          : '-';
 
       const htmlContent = `
         <!DOCTYPE html>
@@ -825,17 +839,56 @@ export default function SecurityDashboard() {
     }
   };
 
-  // Filter audit logs by search
+  // Filter audit logs by search AND date range
   const filteredLogs = auditLogs.filter(log => {
-    if (!searchFilter) return true;
-    const search = searchFilter.toLowerCase();
-    return (
-      log.user_name?.toLowerCase().includes(search) ||
-      log.action.toLowerCase().includes(search) ||
-      log.record_id?.toLowerCase().includes(search) ||
-      log.table_name.toLowerCase().includes(search)
-    );
+    // Text search filter
+    if (searchFilter) {
+      const search = searchFilter.toLowerCase();
+      const matchesSearch = 
+        log.user_name?.toLowerCase().includes(search) ||
+        log.action.toLowerCase().includes(search) ||
+        log.record_id?.toLowerCase().includes(search) ||
+        log.table_name.toLowerCase().includes(search);
+      if (!matchesSearch) return false;
+    }
+    
+    // Date range filter
+    const logDate = new Date(log.created_at);
+    if (dateFrom && dateTo) {
+      return isWithinInterval(logDate, { 
+        start: startOfDay(dateFrom), 
+        end: endOfDay(dateTo) 
+      });
+    }
+    if (dateFrom) {
+      return logDate >= startOfDay(dateFrom);
+    }
+    if (dateTo) {
+      return logDate <= endOfDay(dateTo);
+    }
+    
+    return true;
   });
+
+  // Compute filtered metrics
+  const filteredMetrics = {
+    totalRollbacks: filteredLogs.filter(l => l.action === 'ROLLBACK_APPROVAL').length,
+    blockedActions: filteredLogs.filter(l => l.action === 'ACCESS_DENIED').length,
+    totalAuditLogs: filteredLogs.length,
+  };
+
+  // Quick date range presets
+  const setPreset = (days: number) => {
+    setDateTo(new Date());
+    setDateFrom(subDays(new Date(), days));
+  };
+
+  const clearDateFilter = () => {
+    setDateFrom(undefined);
+    setDateTo(undefined);
+  };
+
+  const hasDateFilter = dateFrom || dateTo;
 
   // Show loading while checking auth
   if (authLoading) {
@@ -918,12 +971,127 @@ export default function SecurityDashboard() {
           </div>
         </div>
 
+        {/* Date Range Filter */}
+        <Card className="border-dashed">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <CalendarIcon className="h-4 w-4" />
+                <span>Période:</span>
+              </div>
+              
+              {/* Quick Presets */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant={dateFrom && dateTo && format(dateFrom, 'yyyy-MM-dd') === format(subDays(new Date(), 7), 'yyyy-MM-dd') ? "secondary" : "outline"}
+                  size="sm"
+                  onClick={() => setPreset(7)}
+                  className="h-7 text-xs"
+                >
+                  7 jours
+                </Button>
+                <Button
+                  variant={dateFrom && dateTo && format(dateFrom, 'yyyy-MM-dd') === format(subDays(new Date(), 30), 'yyyy-MM-dd') ? "secondary" : "outline"}
+                  size="sm"
+                  onClick={() => setPreset(30)}
+                  className="h-7 text-xs"
+                >
+                  30 jours
+                </Button>
+                <Button
+                  variant={dateFrom && dateTo && format(dateFrom, 'yyyy-MM-dd') === format(subDays(new Date(), 90), 'yyyy-MM-dd') ? "secondary" : "outline"}
+                  size="sm"
+                  onClick={() => setPreset(90)}
+                  className="h-7 text-xs"
+                >
+                  90 jours
+                </Button>
+              </div>
+
+              {/* Custom Date Pickers */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "h-8 justify-start text-left font-normal w-[130px]",
+                        !dateFrom && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                      {dateFrom ? format(dateFrom, 'dd/MM/yyyy', { locale: fr }) : 'Du...'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateFrom}
+                      onSelect={setDateFrom}
+                      disabled={(date) => date > new Date()}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                <span className="text-muted-foreground text-sm">→</span>
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        "h-8 justify-start text-left font-normal w-[130px]",
+                        !dateTo && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                      {dateTo ? format(dateTo, 'dd/MM/yyyy', { locale: fr }) : 'Au...'}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={dateTo}
+                      onSelect={setDateTo}
+                      disabled={(date) => date > new Date() || (dateFrom ? date < dateFrom : false)}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                {hasDateFilter && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearDateFilter}
+                    className="h-8 px-2 text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              {/* Filter Status */}
+              {hasDateFilter && (
+                <Badge variant="secondary" className="text-xs">
+                  {filteredLogs.length} résultats
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Key Metrics Row - Responsive Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <MetricCard
             title="Rollbacks"
-            value={metrics.totalRollbacks}
-            subtitle="Devis déverrouillés"
+            value={hasDateFilter ? filteredMetrics.totalRollbacks : metrics.totalRollbacks}
+            subtitle={hasDateFilter ? "Dans la période" : "Devis déverrouillés"}
             icon={Unlock}
             color="red"
             loading={loading}
@@ -938,16 +1106,16 @@ export default function SecurityDashboard() {
           />
           <MetricCard
             title="Bloqués"
-            value={metrics.blockedActions}
-            subtitle="Accès refusés"
+            value={hasDateFilter ? filteredMetrics.blockedActions : metrics.blockedActions}
+            subtitle={hasDateFilter ? "Dans la période" : "Accès refusés"}
             icon={Ban}
             color="destructive"
             loading={loading}
           />
           <MetricCard
             title="Audit Logs"
-            value={metrics.totalAuditLogs}
-            subtitle="Entrées totales"
+            value={hasDateFilter ? filteredMetrics.totalAuditLogs : metrics.totalAuditLogs}
+            subtitle={hasDateFilter ? "Dans la période" : "Entrées totales"}
             icon={Activity}
             color="primary"
             loading={loading}
