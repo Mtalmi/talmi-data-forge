@@ -23,6 +23,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Plus, FlaskConical, AlertCircle, Loader2, Edit, Trash2, Calculator } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -52,7 +53,7 @@ interface Formule {
 }
 
 export default function Formules() {
-  const { isCeo, isSuperviseur, isCentraliste, isAgentAdministratif, isDirecteurOperations, canEditFormules } = useAuth();
+  const { isCeo, isSuperviseur, isCentraliste, isAgentAdministratif, isDirecteurOperations, canEditFormules, loading: authLoading } = useAuth();
   const { previewRole } = usePreviewRole();
   const { calculateCUT, fetchPrices } = useFinancialCalculations();
   
@@ -273,14 +274,22 @@ export default function Formules() {
               Gestion des formules de béton • Référence qualité
             </p>
           </div>
-          {canManageFormules && (
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nouvelle Formule
-                </Button>
-              </DialogTrigger>
+          {/* =====================================================
+              NEW FORMULA BUTTON - Role-Based Visibility
+              Only visible for: CEO, SUPERVISEUR
+              Shows skeleton while auth is loading
+          ===================================================== */}
+          {authLoading ? (
+            <Skeleton className="w-36 h-10 rounded-md" />
+          ) : (
+            canManageFormules && (
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Nouvelle Formule
+                  </Button>
+                </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle>{editingFormule ? 'Modifier la Formule' : 'Créer une Formule'}</DialogTitle>
@@ -398,6 +407,7 @@ export default function Formules() {
                 </form>
               </DialogContent>
             </Dialog>
+            )
           )}
         </div>
 
@@ -464,27 +474,41 @@ export default function Formules() {
                         </span>
                       </TableCell>
                     )}
-                    {canManageFormules && (
+                    {/* =====================================================
+                        FORMULA EDIT/DELETE BUTTONS - Role-Based Visibility
+                        Only visible for: CEO, SUPERVISEUR
+                        Shows skeleton while auth is loading
+                    ===================================================== */}
+                    {authLoading ? (
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={() => handleEdit(f)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                            onClick={() => handleDelete(f.formule_id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <Skeleton className="h-8 w-8 rounded-md" />
+                          <Skeleton className="h-8 w-8 rounded-md" />
                         </div>
                       </TableCell>
+                    ) : (
+                      canManageFormules && (
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="h-8 w-8 p-0"
+                              onClick={() => handleEdit(f)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                              onClick={() => handleDelete(f.formule_id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      )
                     )}
                   </TableRow>
                 ))}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -97,7 +98,7 @@ export function DevisTable({
   onQuickSend,
   onRefresh,
 }: DevisTableProps) {
-  const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo } = useAuth();
+  const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo, loading: authLoading } = useAuth();
   const [validating, setValidating] = useState<string | null>(null);
   
   // =====================================================
@@ -370,22 +371,32 @@ export function DevisTable({
                   )}
                   <DevisPdfGenerator devis={devis} />
                   
-                  {/* VALIDATE BUTTON - Only for CEO, Superviseur, Agent Admin */}
-                  {/* Hidden for Dir Ops and Centraliste - they only see approved jobs */}
-                  {devis.statut === 'en_attente' && devis.client_id && !isReadOnlyRole && canValidateDevis && (
-                    <Button
-                      size="sm"
-                      onClick={() => handleValidateDevis(devis)}
-                      disabled={validating === devis.devis_id}
-                      className="gap-1 bg-success hover:bg-success/90"
-                    >
-                      {validating === devis.devis_id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <CheckCircle className="h-3 w-3" />
-                      )}
-                      Valider
-                    </Button>
+                  {/* =====================================================
+                      VALIDATE BUTTON - Conditional Rendering with Role Check
+                      Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
+                      Hidden for: DIR_OPS, CENTRALISTE (read-only roles)
+                      Shows skeleton while auth is loading
+                  ===================================================== */}
+                  {devis.statut === 'en_attente' && devis.client_id && (
+                    authLoading ? (
+                      <Skeleton className="w-20 h-8 rounded-md" />
+                    ) : (
+                      (canValidateDevis && !isReadOnlyRole) ? (
+                        <Button
+                          size="sm"
+                          onClick={() => handleValidateDevis(devis)}
+                          disabled={validating === devis.devis_id}
+                          className="gap-1 bg-success hover:bg-success/90"
+                        >
+                          {validating === devis.devis_id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <CheckCircle className="h-3 w-3" />
+                          )}
+                          Valider
+                        </Button>
+                      ) : null
+                    )
                   )}
                   
                   {/* Convert to BC Button after validation */}

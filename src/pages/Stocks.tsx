@@ -9,6 +9,7 @@ import { QualityStockEntryDialog } from '@/components/stocks/QualityStockEntryDi
 import { PendingReceptionsWidget } from '@/components/stocks/PendingReceptionsWidget';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -34,7 +35,7 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 export default function Stocks() {
-  const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually } = useAuth();
+  const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually, loading: authLoading } = useAuth();
   const {
     stocks,
     mouvements,
@@ -110,19 +111,36 @@ export default function Stocks() {
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
             
-            {/* Quality Entry Button - Resp. Technique (Double-Lock Step 1) */}
-            {canCreateQualityEntry && (
-              <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
-            )}
-            
-            {/* Direct Reception Button - CEO/Superviseur/Agent Admin only */}
-            {canAddStockReception && (
-              <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
-            )}
-            
-            {/* Manual Adjustment - CEO/Superviseur ONLY */}
-            {canAdjustStockManually && (
-              <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
+            {/* =====================================================
+                STOCK ACTION BUTTONS - Role-Based Visibility
+                Quality Entry: CEO, SUPERVISEUR, RESP_TECHNIQUE
+                Direct Reception: CEO, SUPERVISEUR, AGENT_ADMIN
+                Manual Adjustment: CEO, SUPERVISEUR ONLY
+                Shows skeleton while auth is loading
+            ===================================================== */}
+            {authLoading ? (
+              <>
+                <Skeleton className="w-32 h-10 rounded-md" />
+                <Skeleton className="w-32 h-10 rounded-md" />
+                <Skeleton className="w-32 h-10 rounded-md" />
+              </>
+            ) : (
+              <>
+                {/* Quality Entry Button - Resp. Technique (Double-Lock Step 1) */}
+                {canCreateQualityEntry && (
+                  <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
+                )}
+                
+                {/* Direct Reception Button - CEO/Superviseur/Agent Admin only */}
+                {canAddStockReception && (
+                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
+                )}
+                
+                {/* Manual Adjustment - CEO/Superviseur ONLY */}
+                {canAdjustStockManually && (
+                  <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
+                )}
+              </>
             )}
           </div>
         </div>
