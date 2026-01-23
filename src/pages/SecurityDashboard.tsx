@@ -394,6 +394,32 @@ export default function SecurityDashboard() {
   // ===========================================================
   // REALTIME SUBSCRIPTION - Live audit feed
   // ===========================================================
+  
+  // Send email alert for rollback events
+  const sendRollbackEmailAlert = async (log: AuditLogEntry) => {
+    try {
+      const response = await supabase.functions.invoke('notify-rollback-alert', {
+        body: {
+          devisId: log.record_id || 'N/A',
+          userName: log.user_name || 'Utilisateur inconnu',
+          userRole: log.changes?.cancelled_by_role || 'unknown',
+          reason: log.changes?.reason || 'Aucun motif fourni',
+          rollbackNumber: log.changes?.rollback_number || 1,
+          timestamp: log.created_at,
+          tableName: log.table_name,
+        },
+      });
+
+      if (response.error) {
+        console.error('Email alert failed:', response.error);
+      } else {
+        console.log('Rollback email alert sent successfully');
+      }
+    } catch (error) {
+      console.error('Error sending rollback email:', error);
+    }
+  };
+  
   useEffect(() => {
     if (!user || (!isCeo && !isSuperviseur)) return;
 
@@ -443,6 +469,9 @@ export default function SecurityDashboard() {
               description: `${newLog.user_name} a déverrouillé ${newLog.record_id}`,
               duration: 10000,
             });
+
+            // 📧 Send EMAIL ALERT to CEO
+            sendRollbackEmailAlert(newLog);
           }
         }
       )
