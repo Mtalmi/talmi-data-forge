@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Space Grotesk', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -90,14 +90,17 @@ export default {
         "3xl": "1.5rem",
       },
       boxShadow: {
-        'glow-sm': '0 0 15px hsl(var(--primary) / 0.2)',
-        'glow': '0 0 30px hsl(var(--primary) / 0.25)',
-        'glow-lg': '0 0 60px hsl(var(--primary) / 0.3)',
-        'glow-success': '0 0 30px hsl(var(--success) / 0.25)',
-        'glow-destructive': '0 0 30px hsl(var(--destructive) / 0.25)',
-        'glow-warning': '0 0 30px hsl(var(--warning) / 0.25)',
-        'glass': '0 8px 32px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.05)',
-        'glass-lg': '0 16px 48px hsl(0 0% 0% / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.06)',
+        'glow-sm': '0 0 15px hsl(51 100% 50% / 0.15)',
+        'glow': '0 0 30px hsl(51 100% 50% / 0.2)',
+        'glow-lg': '0 0 60px hsl(51 100% 50% / 0.25)',
+        'glow-gold': '0 0 40px hsl(51 100% 50% / 0.3)',
+        'glow-ruby': '0 0 30px hsl(350 100% 50% / 0.25)',
+        'glow-success': '0 0 30px hsl(51 100% 50% / 0.25)',
+        'glow-destructive': '0 0 30px hsl(350 100% 50% / 0.25)',
+        'glow-warning': '0 0 30px hsl(38 100% 50% / 0.25)',
+        'glass': '0 0 30px hsl(51 100% 50% / 0.08), inset 0 1px 0 hsl(51 100% 50% / 0.05)',
+        'glass-lg': '0 0 60px hsl(51 100% 50% / 0.12), inset 0 1px 0 hsl(51 100% 50% / 0.08)',
+        'vault': '0 0 80px hsl(51 100% 50% / 0.1)',
       },
       keyframes: {
         "accordion-down": {
