@@ -25,13 +25,16 @@ import {
   Edit,
   Plus,
   Eye,
-  Lock
+  Lock,
+  Download,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 
 interface AuditLogEntry {
   id: string;
@@ -272,10 +275,11 @@ function CompareDialog({
 }
 
 export function ForensicAuditFeed() {
-  const { isCeo, isSuperviseur, loading: authLoading } = useAuth();
+  const { isCeo, isSuperviseur, loading: authLoading, user } = useAuth();
   const [alerts, setAlerts] = useState<ForensicAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [selectedAlert, setSelectedAlert] = useState<ForensicAlert | null>(null);
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -392,6 +396,303 @@ export function ForensicAuditFeed() {
     setCompareOpen(true);
   };
 
+  // PDF Export function
+  const handleExportPdf = async () => {
+    setExporting(true);
+    
+    try {
+      // Fetch all audit logs for comprehensive report (up to 100)
+      const { data: allLogs, error } = await supabase
+        .from('audit_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+
+      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
+      const criticalCount = allLogs?.filter((l: any) => l.action_type === 'DELETE').length || 0;
+      const warningCount = allLogs?.filter((l: any) => l.action_type === 'UPDATE').length || 0;
+      const infoCount = allLogs?.filter((l: any) => l.action_type === 'INSERT').length || 0;
+
+      const formatJsonData = (data: any): string => {
+        if (!data) return '—';
+        try {
+          return Object.entries(data)
+            .map(([key, value]) => `<strong>${key}:</strong> ${typeof value === 'object' ? JSON.stringify(value) : value}`)
+            .join('<br>');
+        } catch {
+          return JSON.stringify(data);
+        }
+      };
+
+      const pdfContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Rapport Forensique - ${reportDate}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+              font-family: 'Segoe UI', Arial, sans-serif; 
+              padding: 30px; 
+              color: #1a1a1a;
+              line-height: 1.5;
+              font-size: 11px;
+            }
+            .header {
+              text-align: center;
+              border-bottom: 3px solid #dc2626;
+              padding-bottom: 20px;
+              margin-bottom: 25px;
+            }
+            .header h1 {
+              font-size: 22px;
+              color: #dc2626;
+              margin-bottom: 5px;
+            }
+            .header .subtitle {
+              color: #666;
+              font-size: 12px;
+            }
+            .header .confidential {
+              display: inline-block;
+              background: #dc2626;
+              color: white;
+              padding: 4px 12px;
+              border-radius: 4px;
+              font-size: 10px;
+              font-weight: bold;
+              margin-top: 10px;
+            }
+            .summary {
+              display: flex;
+              justify-content: space-around;
+              margin-bottom: 25px;
+              padding: 15px;
+              background: #f8f9fa;
+              border-radius: 8px;
+            }
+            .summary-item {
+              text-align: center;
+            }
+            .summary-item .count {
+              font-size: 24px;
+              font-weight: bold;
+            }
+            .summary-item .label {
+              font-size: 10px;
+              color: #666;
+              text-transform: uppercase;
+            }
+            .critical .count { color: #dc2626; }
+            .warning .count { color: #f59e0b; }
+            .info .count { color: #3b82f6; }
+            .section {
+              margin-bottom: 20px;
+            }
+            .section-title {
+              font-size: 14px;
+              font-weight: bold;
+              color: #333;
+              border-bottom: 1px solid #ddd;
+              padding-bottom: 5px;
+              margin-bottom: 10px;
+            }
+            .log-entry {
+              border: 1px solid #e5e7eb;
+              border-radius: 6px;
+              padding: 10px;
+              margin-bottom: 8px;
+              page-break-inside: avoid;
+            }
+            .log-entry.critical {
+              border-left: 4px solid #dc2626;
+              background: #fef2f2;
+            }
+            .log-entry.warning {
+              border-left: 4px solid #f59e0b;
+              background: #fffbeb;
+            }
+            .log-entry.info {
+              border-left: 4px solid #3b82f6;
+              background: #eff6ff;
+            }
+            .log-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 6px;
+            }
+            .log-action {
+              display: inline-block;
+              padding: 2px 8px;
+              border-radius: 4px;
+              font-size: 9px;
+              font-weight: bold;
+              text-transform: uppercase;
+            }
+            .log-action.DELETE { background: #dc2626; color: white; }
+            .log-action.UPDATE { background: #f59e0b; color: white; }
+            .log-action.INSERT { background: #3b82f6; color: white; }
+            .log-table {
+              font-family: monospace;
+              color: #666;
+              font-size: 10px;
+            }
+            .log-time {
+              color: #999;
+              font-size: 10px;
+            }
+            .log-message {
+              font-weight: 500;
+              margin-bottom: 6px;
+            }
+            .log-user {
+              color: #666;
+              font-size: 10px;
+            }
+            .data-comparison {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              margin-top: 8px;
+              font-size: 9px;
+            }
+            .data-box {
+              padding: 8px;
+              border-radius: 4px;
+              overflow: hidden;
+            }
+            .data-box.old {
+              background: #fee2e2;
+              border: 1px solid #fca5a5;
+            }
+            .data-box.new {
+              background: #dcfce7;
+              border: 1px solid #86efac;
+            }
+            .data-box-title {
+              font-weight: bold;
+              font-size: 8px;
+              text-transform: uppercase;
+              margin-bottom: 4px;
+            }
+            .footer {
+              text-align: center;
+              margin-top: 30px;
+              padding-top: 15px;
+              border-top: 1px solid #ddd;
+              color: #888;
+              font-size: 10px;
+            }
+            @media print {
+              body { padding: 15px; }
+              .log-entry { page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>🔐 RAPPORT FORENSIQUE</h1>
+            <p class="subtitle">Talmi Beton Operating System • Black Box Audit Trail</p>
+            <p class="subtitle">Généré le ${reportDate}</p>
+            <span class="confidential">🔒 CONFIDENTIEL - CEO UNIQUEMENT</span>
+          </div>
+
+          <div class="summary">
+            <div class="summary-item critical">
+              <div class="count">${criticalCount}</div>
+              <div class="label">🚨 Critiques (DELETE)</div>
+            </div>
+            <div class="summary-item warning">
+              <div class="count">${warningCount}</div>
+              <div class="label">⚠️ Alertes (UPDATE)</div>
+            </div>
+            <div class="summary-item info">
+              <div class="count">${infoCount}</div>
+              <div class="label">ℹ️ Infos (INSERT)</div>
+            </div>
+            <div class="summary-item">
+              <div class="count">${allLogs?.length || 0}</div>
+              <div class="label">📊 Total Entrées</div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">📋 Journal d'Audit Complet</div>
+            ${(allLogs || []).map((log: any) => {
+              const { message, severity } = generateHumanMessage({
+                id: log.id,
+                user_id: log.user_id,
+                user_name: log.user_name,
+                action_type: log.action_type,
+                table_name: log.table_name,
+                record_id: log.record_id,
+                old_data: log.old_data,
+                new_data: log.new_data,
+                description: log.description,
+                created_at: log.created_at,
+              });
+              return `
+                <div class="log-entry ${severity}">
+                  <div class="log-header">
+                    <div>
+                      <span class="log-action ${log.action_type}">${log.action_type}</span>
+                      <span class="log-table">${log.table_name}</span>
+                    </div>
+                    <span class="log-time">${format(parseISO(log.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: fr })}</span>
+                  </div>
+                  <div class="log-message">${message}</div>
+                  <div class="log-user">👤 ${log.user_name || 'Système'} ${log.record_id ? `• ID: ${log.record_id}` : ''}</div>
+                  ${(log.old_data || log.new_data) ? `
+                    <div class="data-comparison">
+                      <div class="data-box old">
+                        <div class="data-box-title">Avant</div>
+                        ${formatJsonData(log.old_data)}
+                      </div>
+                      <div class="data-box new">
+                        <div class="data-box-title">Après</div>
+                        ${formatJsonData(log.new_data)}
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="footer">
+            <p><strong>TALMI BETON</strong> • Système de Traçabilité Forensique</p>
+            <p>Ce document est généré automatiquement et constitue une preuve légale d'audit.</p>
+            <p>Généré par: ${user?.email || 'CEO'} • ${reportDate}</p>
+          </div>
+        </body>
+        </html>
+      `;
+
+      // Open print window
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(pdfContent);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+        toast.success('Rapport forensique généré avec succès');
+      } else {
+        toast.error('Impossible d\'ouvrir la fenêtre d\'impression');
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Erreur lors de la génération du rapport');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const getSeverityStyles = (severity: ForensicAlert['severity']) => {
     switch (severity) {
       case 'critical':
@@ -459,13 +760,27 @@ export function ForensicAuditFeed() {
                 Audit en temps réel • Cliquez pour comparer les changements
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               {criticalCount > 0 && (
                 <Badge variant="destructive" className="animate-pulse gap-1">
                   <AlertTriangle className="h-3 w-3" />
                   {criticalCount} CRITIQUE{criticalCount > 1 ? 'S' : ''}
                 </Badge>
               )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleExportPdf}
+                disabled={exporting || alerts.length === 0}
+                title="Exporter rapport PDF"
+              >
+                {exporting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
