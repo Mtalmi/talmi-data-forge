@@ -899,7 +899,7 @@
       inset 0 1px 0 hsl(0 0% 100% / 0.02);
   }
 
-  /* ===== BENTO GRID ===== */
+  /* ===== ENTERPRISE BENTO GRID - 6 Column System ===== */
   .bento-grid {
     @apply grid gap-4;
     grid-template-columns: 1fr;
@@ -927,6 +927,52 @@
     .bento-grid .bento-full {
       grid-column: span 4;
     }
+  }
+
+  @media (min-width: 1280px) {
+    .bento-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .bento-grid .bento-wide {
+      grid-column: span 3;
+    }
+    
+    .bento-grid .bento-full {
+      grid-column: span 6;
+    }
+  }
+
+  /* Zone-Specific Cards */
+  .zone-executive {
+    @apply relative overflow-hidden rounded-2xl;
+    background: transparent;
+    border: 1px solid hsl(var(--primary) / 0.15);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .zone-executive:hover {
+    border-color: hsl(var(--primary) / 0.35);
+    box-shadow: 0 0 50px hsl(var(--primary) / 0.12);
+  }
+
+  .zone-tactical {
+    @apply relative overflow-hidden rounded-xl;
+    background: hsl(var(--card) / 0.5);
+    border: 1px solid hsl(var(--border) / 0.5);
+    transition: all 0.3s ease;
+  }
+
+  .zone-tactical:hover {
+    border-color: hsl(var(--accent) / 0.4);
+    background: hsl(var(--card) / 0.7);
+  }
+
+  .zone-forensic {
+    @apply relative overflow-hidden rounded-xl;
+    background: hsl(var(--muted) / 0.3);
+    border: 1px solid hsl(var(--border) / 0.3);
+    transition: all 0.3s ease;
   }
 
   /* ===== MOBILE BUTTONS ===== */
@@ -1128,6 +1174,19 @@
   background: linear-gradient(180deg, hsl(51 100% 50% / 0.5), hsl(51 100% 40% / 0.4));
 }
 
+/* Light mode scrollbar */
+.light ::-webkit-scrollbar-track {
+  background: hsl(40 15% 94%);
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, hsl(45 100% 42% / 0.4), hsl(45 100% 35% / 0.3));
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, hsl(45 100% 42% / 0.6), hsl(45 100% 35% / 0.5));
+}
+
 @media (max-width: 768px) {
   ::-webkit-scrollbar {
     width: 3px;
@@ -1139,4 +1198,83 @@
 ::selection {
   background: hsl(51 100% 50% / 0.3);
   color: hsl(0 0% 100%);
+}
+
+.light ::selection {
+  background: hsl(45 100% 50% / 0.25);
+  color: hsl(30 15% 12%);
+}
+
+/* ===== LIGHT MODE GLASS EFFECTS ===== */
+.light .glass-panel {
+  background: linear-gradient(135deg, hsl(40 20% 99% / 0.85) 0%, hsl(40 15% 97% / 0.9) 100%);
+  border: 1px solid hsl(45 100% 42% / 0.15);
+  box-shadow: 
+    0 4px 20px hsl(30 15% 12% / 0.05),
+    inset 0 1px 0 hsl(0 0% 100% / 0.5);
+}
+
+.light .glass-panel:hover {
+  border-color: hsl(45 100% 42% / 0.3);
+  box-shadow: 
+    0 8px 30px hsl(45 100% 50% / 0.1),
+    inset 0 1px 0 hsl(0 0% 100% / 0.6);
+}
+
+.light .dashboard-header {
+  background: linear-gradient(145deg, hsl(40 15% 99% / 0.95) 0%, hsl(40 20% 97% / 0.98) 100%);
+  border: 1px solid hsl(45 100% 42% / 0.12);
+  box-shadow: 0 4px 20px hsl(30 15% 12% / 0.04);
+}
+
+.light .photo-dropzone {
+  background: linear-gradient(145deg, hsl(40 20% 99% / 0.9) 0%, hsl(40 15% 97% / 0.95) 100%);
+  border-color: hsl(45 100% 42% / 0.25);
+}
+
+.light .photo-dropzone:hover {
+  border-color: hsl(45 100% 42% / 0.5);
+  box-shadow: 0 0 30px hsl(45 100% 50% / 0.1);
+}
+
+.light .zone-executive {
+  border: 1px solid hsl(45 100% 42% / 0.12);
+}
+
+.light .zone-executive:hover {
+  border-color: hsl(45 100% 42% / 0.25);
+  box-shadow: 0 0 30px hsl(45 100% 50% / 0.08);
+}
+
+.light .mobile-bottom-nav {
+  background: linear-gradient(180deg, hsl(40 15% 99% / 0.98) 0%, hsl(40 20% 97% / 0.99) 100%);
+  border-top: 1px solid hsl(45 100% 42% / 0.12);
+  box-shadow: 0 -4px 20px hsl(30 15% 12% / 0.06);
+}
+
+.light .data-table-industrial th {
+  color: hsl(45 100% 35%);
+  background: hsl(40 15% 97%);
+  border-color: hsl(45 100% 42% / 0.12);
+}
+
+.light .data-table-industrial td {
+  border-color: hsl(40 15% 90%);
+}
+
+.light .data-table-industrial tr:hover td {
+  background: hsl(45 100% 50% / 0.03);
+}
+
+.light .skeleton-premium {
+  background: hsl(40 15% 94%);
+}
+
+.light .skeleton-premium::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(45 100% 50% / 0.12) 50%,
+    transparent 100%
+  );
 }
