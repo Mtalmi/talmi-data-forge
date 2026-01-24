@@ -15,6 +15,9 @@ import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
 import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
 import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
+import { MonthlyBudgetGauge } from '@/components/dashboard/MonthlyBudgetGauge';
+import { HandshakeUI } from '@/components/dashboard/HandshakeUI';
+import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -255,6 +258,21 @@ export default function Dashboard() {
             {/* Batch Photo Gallery - Hawaii Visual Proof */}
             <div className="bento-wide">
               <BatchPhotoGallery />
+            </div>
+            
+            {/* Monthly Budget Gauge - Financial Constitution */}
+            <div className="bento-standard">
+              <MonthlyBudgetGauge />
+            </div>
+            
+            {/* Handshake UI - Double Validation Workflow */}
+            <div className="bento-standard">
+              <HandshakeUI />
+            </div>
+            
+            {/* Forensic Alert Feed - War Room Security */}
+            <div className="bento-wide">
+              <ForensicAlertFeed />
             </div>
             
             {/* Treasury & Cash Flow - Financial Constitution */}
