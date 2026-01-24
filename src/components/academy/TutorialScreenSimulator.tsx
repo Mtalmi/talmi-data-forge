@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { 
   FileText, 
   Plus, 
@@ -70,7 +70,9 @@ const AnimatedCursor = ({
 );
 
 // Typing animation for form fields
-const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+// NOTE: forwardRef avoids React warnings when Framer Motion attaches refs during layout/animation.
+const TypingText = forwardRef<HTMLSpanElement, { text: string; delay?: number }>(
+  ({ text, delay = 0 }, ref) => {
   const [displayText, setDisplayText] = useState('');
   
   useEffect(() => {
@@ -91,7 +93,7 @@ const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
   }, [text, delay]);
   
   return (
-    <span>
+    <span ref={ref}>
       {displayText}
       <motion.span
         animate={{ opacity: [1, 0] }}
@@ -100,7 +102,9 @@ const TypingText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
       />
     </span>
   );
-};
+});
+
+TypingText.displayName = 'TypingText';
 
 // ========== DEVIS/BC TUTORIAL SCREENS ==========
 const DevisBCScreens = ({ step, isPlaying }: { step: number; isPlaying: boolean }) => {
@@ -204,11 +208,11 @@ const DevisBCScreens = ({ step, isPlaying }: { step: number; isPlaying: boolean 
   }, [step, isPlaying]);
 
   return (
-    <div className="relative w-full h-full bg-background rounded-lg overflow-hidden">
+    <div className="relative w-full h-full bg-background rounded-lg overflow-hidden flex">
       <AnimatedCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       
       {/* Sidebar simulation */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 bg-muted/50 border-r flex flex-col items-center py-4 gap-4">
+      <div className="w-16 bg-muted/50 border-r flex flex-col items-center py-4 gap-4 shrink-0">
         <motion.div 
           className={cn(
             "w-10 h-10 rounded-lg flex items-center justify-center",
@@ -227,7 +231,7 @@ const DevisBCScreens = ({ step, isPlaying }: { step: number; isPlaying: boolean 
       </div>
       
       {/* Main content */}
-      <div className="absolute left-20 right-4 top-4 bottom-4">
+      <div className="flex-1 p-4 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold">Ventes</h2>
@@ -257,7 +261,7 @@ const DevisBCScreens = ({ step, isPlaying }: { step: number; isPlaying: boolean 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-card border rounded-xl p-4 space-y-4"
+              className="bg-card border rounded-xl p-4 space-y-4 relative"
             >
               {/* Client field */}
               <div className="space-y-2">
@@ -285,7 +289,8 @@ const DevisBCScreens = ({ step, isPlaying }: { step: number; isPlaying: boolean 
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute z-40 w-64 bg-popover border rounded-lg shadow-xl p-2"
+                      className="absolute z-40 w-64 bg-popover border rounded-lg shadow-xl p-2 left-0"
+                      style={{ top: '88px' }}
                     >
                       {['Entreprise Atlas Construction', 'Groupe Immobilier Maroc', 'Bâtiments Modernes SA'].map((client, i) => (
                         <motion.div
@@ -436,7 +441,7 @@ const LivraisonScreens = ({ step, isPlaying }: { step: number; isPlaying: boolea
       <AnimatedCursor x={cursorPos.x} y={cursorPos.y} clicking={clicking} />
       
       {/* Planning view simulation */}
-      <div className="absolute inset-4">
+      <div className="p-4 h-full flex flex-col">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold flex items-center gap-2">
             <ClipboardCheck className="h-5 w-5 text-primary" />
@@ -575,7 +580,7 @@ const LivraisonScreens = ({ step, isPlaying }: { step: number; isPlaying: boolea
         </motion.div>
         
         {/* Actions */}
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-2 mt-auto pt-4">
           <motion.button
             className={cn(
               "flex-1 py-2 rounded-lg text-sm font-medium",

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
+import { Slider } from '@/components/ui/slider';
 import { 
   Play, 
   Video, 
@@ -13,6 +14,8 @@ import {
   Pause,
   Volume2,
   VolumeX,
+  Maximize2,
+  Minimize2,
   Package,
   Receipt,
   Truck,
@@ -323,9 +326,11 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
   const [currentPhase, setCurrentPhase] = useState<'idle' | 'intro' | 'steps' | 'outro' | 'complete'>('idle');
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { speak, stop, isLoading, isPlaying, cleanup } = useTutorialVoice();
+  const { speak, stop, isLoading, isPlaying, usingFallback, volume, setVolume, cleanup } = useTutorialVoice();
   const abortRef = useRef(false);
+  const fullscreenRef = useRef<HTMLDivElement | null>(null);
 
   const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
   const estimateNarrationMs = (text: string) => {
@@ -374,10 +379,37 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
       setCurrentPhase('idle');
       setCurrentStepIndex(0);
       setProgress(0);
+      setIsFullscreen(false);
       abortRef.current = true;
       cleanup();
     }
   }, [open, cleanup]);
+
+  const toggleFullscreen = useCallback(async () => {
+    const el = fullscreenRef.current;
+    if (!el || typeof document === 'undefined') {
+      setIsFullscreen(v => !v);
+      return;
+    }
+
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      } else {
+        setIsFullscreen(true);
+        // Ensure element is mounted/rendered before requesting fullscreen
+        setTimeout(() => {
+          el.requestFullscreen?.().catch(() => {
+            // If fullscreen is blocked, still keep the enlarged dialog mode.
+          });
+        }, 0);
+      }
+    } catch {
+      // Ignore fullscreen errors; dialog enlargement still works.
+      setIsFullscreen(v => !v);
+    }
+  }, []);
 
   const startTutorial = useCallback(async () => {
     if (!tutorial) return;
@@ -440,7 +472,14 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-3xl p-0 overflow-hidden bg-gradient-to-br from-background via-background to-primary/5">
+      <DialogContent
+        className={cn(
+          "p-0 overflow-hidden bg-gradient-to-br from-background via-background to-primary/5",
+          isFullscreen
+            ? "max-w-none w-[calc(100vw-1rem)] h-[calc(100vh-1rem)]"
+            : "max-w-3xl"
+        )}
+      >
         <DialogHeader className="p-4 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,hsl(var(--primary)/0.15),transparent_60%)]" />
           <div className="relative flex items-center gap-3">
@@ -463,10 +502,24 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                     Narration
                   </Badge>
                 )}
+                {usingFallback && (
+                  <Badge className="bg-muted/40 text-muted-foreground border-muted">
+                    Navigateur
+                  </Badge>
+                )}
               </DialogTitle>
               <p className="text-sm text-muted-foreground">{tutorial.description}</p>
             </div>
             <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleFullscreen}
+                className="h-8 w-8"
+                title={isFullscreen ? "Quitter plein écran" : "Plein écran"}
+              >
+                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"
@@ -479,9 +532,41 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
           </div>
         </DialogHeader>
 
-        <div className="p-6 space-y-6">
+        <div className={cn("p-6 space-y-6", isFullscreen && "h-full flex flex-col")}> 
+          {/* Player controls */}
+          <div className={cn("flex flex-col gap-3", isFullscreen ? "sm:flex-row sm:items-center sm:justify-between" : "sm:flex-row sm:items-center sm:justify-between")}> 
+            <div className="flex items-center gap-2">
+              <Badge className="bg-primary/10 text-primary border-primary/20">Simulateur</Badge>
+              {usingFallback && (
+                <Badge className="bg-warning/15 text-warning border-warning/30">Voix navigateur (fallback)</Badge>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Volume2 className="h-4 w-4 text-muted-foreground" />
+              <div className="w-40">
+                <Slider
+                  value={[Math.round(volume * 100)]}
+                  min={0}
+                  max={100}
+                  step={1}
+                  onValueChange={(v) => setVolume((v?.[0] ?? 100) / 100)}
+                />
+              </div>
+              <span className="text-xs text-muted-foreground tabular-nums w-10 text-right">
+                {Math.round(volume * 100)}%
+              </span>
+            </div>
+          </div>
+
           {/* Immersive Video Area - Now with Screen Simulator */}
-          <div className="relative aspect-video bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl">
+          <div
+            ref={fullscreenRef}
+            className={cn(
+              "relative w-full bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl",
+              isFullscreen ? "flex-1 min-h-[320px]" : "aspect-video"
+            )}
+          >
             
             {/* Content based on phase */}
             <AnimatePresence mode="wait">
@@ -591,7 +676,8 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                   <TutorialScreenSimulator 
                     tutorialId={tutorial.id} 
                     currentStep={currentStepIndex} 
-                    isPlaying={isPlaying || !isMuted} 
+                    // Visuals must keep running even if narration fails or is muted.
+                    isPlaying={true} 
                   />
                   
                   {/* Step info overlay at bottom */}
@@ -611,6 +697,9 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-muted-foreground">Étape {currentStepIndex + 1} sur {tutorial.steps.length}</p>
                         <h3 className="text-sm font-bold truncate">{tutorial.steps[currentStepIndex]}</h3>
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
+                          {tutorial.narration.steps[currentStepIndex]}
+                        </p>
                       </div>
                       {isPlaying && (
                         <div className="flex items-center gap-1 text-success shrink-0">
