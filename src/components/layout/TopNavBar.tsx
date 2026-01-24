@@ -36,6 +36,7 @@ import {
   DollarSign,
   BarChart3,
   Wrench,
+  HelpCircle,
 } from 'lucide-react';
 
 interface TopNavBarProps {
@@ -124,6 +125,12 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         { to: '/users', label: 'Utilisateurs', icon: Users },
       ].filter(item => canAccess(item.to)),
     }] : []),
+    {
+      label: 'Support',
+      items: [
+        { to: '/aide', label: 'Aide & Manuel', icon: HelpCircle },
+      ],
+    },
   ].filter(group => group.items.length > 0);
 
   const isActive = (path: string) => location.pathname === path;
