@@ -5,6 +5,7 @@ import { useFlotte } from '@/hooks/useFlotte';
 import { ProviderLeaderboard } from '@/components/logistics/ProviderLeaderboard';
 import { FuelEntryForm } from '@/components/logistics/FuelEntryForm';
 import RotationJournal from '@/components/logistics/RotationJournal';
+import { FleetPredatorPage } from '@/components/fleet/FleetPredatorPage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +45,7 @@ import {
   Fuel,
   TrendingUp,
   RotateCcw,
+  Crosshair,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -281,9 +283,14 @@ export default function Logistique() {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="flotte" className="space-y-4">
+        <Tabs defaultValue="predator" className="space-y-4">
           <div className="overflow-x-auto -mx-3 px-3 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex w-full sm:w-auto">
+              <TabsTrigger value="predator" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px] data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+                <Crosshair className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Fleet Predator</span>
+                <span className="sm:hidden">GPS</span>
+              </TabsTrigger>
               <TabsTrigger value="flotte" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Truck className="h-3 w-3 sm:h-4 sm:w-4" />
                 Flotte
@@ -303,6 +310,11 @@ export default function Logistique() {
               </TabsTrigger>
             </TabsList>
           </div>
+
+          {/* Fleet Predator Tab - Tactical Map */}
+          <TabsContent value="predator" className="mt-0">
+            <FleetPredatorPage />
+          </TabsContent>
 
           {/* Fleet Tab */}
           <TabsContent value="flotte">
