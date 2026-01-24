@@ -28,6 +28,7 @@ import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
 import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
 import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
+import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -325,6 +326,11 @@ export default function Dashboard() {
             {/* Maintenance Sentinel - Fleet Health Widget */}
             <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
               <MaintenanceAlertWidget />
+            </ParallaxCard>
+            
+            {/* Geofence Alert Widget - GPS Predator Alerts */}
+            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="medium">
+              <GeofenceAlertWidget />
             </ParallaxCard>
             
             {/* CEO Emergency Override - Nuclear Key */}
