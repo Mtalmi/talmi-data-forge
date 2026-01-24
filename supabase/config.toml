@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.ai-document-ocr]
 verify_jwt = false
+
+[functions.tutorial-voice]
+verify_jwt = false
