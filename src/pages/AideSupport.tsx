@@ -11,6 +11,7 @@ import { TrainingReceptionForm } from '@/components/manual/TrainingReceptionForm
 import { generateManualPdf } from '@/components/manual/ManualPdfGenerator';
 import { useTrainingProgress, TRAINING_STEPS } from '@/hooks/useTrainingProgress';
 import { CertifiedBadge } from '@/components/academy/CertifiedBadge';
+import { VideoTutorialSection } from '@/components/academy/VideoTutorialSection';
 import {
   BookOpen,
   Shield,
@@ -418,6 +419,9 @@ export default function AideSupport() {
           onOpenChange={setTrainingOpen}
           onComplete={() => setTrainingCompleted(true)}
         />
+
+        {/* Video Tutorials Section - Prominently displayed */}
+        <VideoTutorialSection />
 
         {/* Main Tabs */}
         <Tabs defaultValue="rules" className="space-y-4">
