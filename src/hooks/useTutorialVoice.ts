@@ -105,17 +105,35 @@ export function useTutorialVoice() {
 
   const speak = useCallback(async (text: string): Promise<void> => {
     // Clean up previous audio
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (audioUrlRef.current) {
+        URL.revokeObjectURL(audioUrlRef.current);
+        audioUrlRef.current = null;
+      }
+      window.speechSynthesis?.cancel();
+    } catch {
+      // Ignore cleanup errors
     }
-    if (audioUrlRef.current) {
-      URL.revokeObjectURL(audioUrlRef.current);
-      audioUrlRef.current = null;
-    }
-    window.speechSynthesis?.cancel();
 
     setState({ isLoading: true, isPlaying: false, error: null, usingFallback: false });
+
+    // Helper to try browser TTS safely (never throws)
+    const tryBrowserTTS = async (): Promise<boolean> => {
+      try {
+        setState(prev => ({ ...prev, isLoading: false, isPlaying: true, usingFallback: true }));
+        await speakWithBrowserTTS(text);
+        setState(prev => ({ ...prev, isPlaying: false }));
+        return true;
+      } catch (e) {
+        console.warn('Browser TTS failed:', e);
+        setState(prev => ({ ...prev, isPlaying: false }));
+        return false;
+      }
+    };
 
     try {
       const response = await fetch(
@@ -133,10 +151,8 @@ export function useTutorialVoice() {
 
       if (!response.ok) {
         // Fall back to browser TTS on any error
-        console.warn('ElevenLabs unavailable, using browser TTS fallback');
-        setState({ isLoading: false, isPlaying: true, error: null, usingFallback: true });
-        await speakWithBrowserTTS(text);
-        setState(prev => ({ ...prev, isPlaying: false }));
+        console.warn('ElevenLabs unavailable (status ' + response.status + '), using browser TTS fallback');
+        await tryBrowserTTS();
         return;
       }
 
@@ -160,20 +176,23 @@ export function useTutorialVoice() {
       };
 
       setState({ isLoading: false, isPlaying: true, error: null, usingFallback: false });
-      await audio.play();
+      
+      try {
+        await audio.play();
+      } catch (playError) {
+        // Autoplay blocked - try browser TTS
+        console.warn('Audio play blocked, trying browser fallback:', playError);
+        await tryBrowserTTS();
+      }
 
     } catch (error) {
-      // Try browser TTS as last resort
+      // Network error or other issue - try browser TTS
       console.warn('Tutorial voice error, trying browser fallback:', error);
-      try {
-        setState({ isLoading: false, isPlaying: true, error: null, usingFallback: true });
-        await speakWithBrowserTTS(text);
-        setState(prev => ({ ...prev, isPlaying: false }));
-      } catch (fallbackError) {
-        const errorMessage = 'Synthèse vocale indisponible';
-        console.error('Both TTS methods failed:', fallbackError);
-        setState({ isLoading: false, isPlaying: false, error: errorMessage, usingFallback: false });
-        toast.error(errorMessage);
+      const success = await tryBrowserTTS();
+      if (!success) {
+        // Both failed - just continue silently (no crash)
+        console.warn('All TTS methods failed, continuing silently');
+        setState({ isLoading: false, isPlaying: false, error: null, usingFallback: false });
       }
     }
   }, []);
