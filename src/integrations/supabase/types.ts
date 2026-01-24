@@ -945,6 +945,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ceo_emergency_overrides: {
+        Row: {
+          ceo_user_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          override_type: string
+          reason: string
+          token: string
+          used_at: string | null
+          used_for_record_id: string | null
+        }
+        Insert: {
+          ceo_user_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          override_type: string
+          reason: string
+          token?: string
+          used_at?: string | null
+          used_for_record_id?: string | null
+        }
+        Update: {
+          ceo_user_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          override_type?: string
+          reason?: string
+          token?: string
+          used_at?: string | null
+          used_for_record_id?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           adresse: string | null
@@ -3565,6 +3604,10 @@ export type Database = {
       cancel_devis_approval: {
         Args: { p_devis_id: string; p_reason?: string }
         Returns: Json
+      }
+      consume_ceo_override: {
+        Args: { p_override_type: string; p_record_id?: string; p_token: string }
+        Returns: boolean
       }
       create_bl_from_bc:
         | {

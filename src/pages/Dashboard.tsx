@@ -22,6 +22,7 @@ import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget'
 import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
 import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
 import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
+import { CeoEmergencyOverride } from '@/components/dashboard/CeoEmergencyOverride';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -302,6 +303,11 @@ export default function Dashboard() {
             {/* Treasury & Cash Flow - Financial Constitution */}
             <div className="bento-wide">
               <TreasuryWidget />
+            </div>
+            
+            {/* CEO Emergency Override - Nuclear Key */}
+            <div className="bento-standard">
+              <CeoEmergencyOverride />
             </div>
             
             {/* Executive Command Center - Full width */}
