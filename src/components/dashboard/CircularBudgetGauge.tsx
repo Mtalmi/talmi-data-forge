@@ -34,6 +34,7 @@ export function CircularBudgetGauge() {
   });
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const fetchBudgetStats = useCallback(async () => {
     try {
@@ -69,6 +70,9 @@ export function CircularBudgetGauge() {
   }, []);
 
   useEffect(() => {
+    // Trigger mount animation
+    const timer = setTimeout(() => setMounted(true), 100);
+    
     fetchBudgetStats();
 
     const channel = supabase
@@ -86,6 +90,7 @@ export function CircularBudgetGauge() {
       .subscribe();
 
     return () => {
+      clearTimeout(timer);
       supabase.removeChannel(channel);
     };
   }, [fetchBudgetStats]);
@@ -97,11 +102,11 @@ export function CircularBudgetGauge() {
   };
 
   // SVG circular gauge parameters
-  const size = 160;
-  const strokeWidth = 14;
+  const size = 180;
+  const strokeWidth = 16;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (stats.percentUsed / 100) * circumference;
+  const offset = circumference - (mounted ? (stats.percentUsed / 100) * circumference : circumference);
 
   // Color based on usage
   const getColor = () => {
@@ -109,7 +114,7 @@ export function CircularBudgetGauge() {
     if (stats.percentUsed >= 90) return 'text-red-500';
     if (stats.percentUsed >= 75) return 'text-orange-500';
     if (stats.percentUsed >= 50) return 'text-amber-500';
-    return 'text-emerald-500';
+    return 'text-success';
   };
 
   const getStrokeColor = () => {
@@ -117,13 +122,21 @@ export function CircularBudgetGauge() {
     if (stats.percentUsed >= 90) return 'stroke-red-500';
     if (stats.percentUsed >= 75) return 'stroke-orange-500';
     if (stats.percentUsed >= 50) return 'stroke-amber-500';
-    return 'stroke-emerald-500';
+    return 'stroke-success';
+  };
+
+  const getGlowColor = () => {
+    if (stats.exceeded || stats.percentUsed >= 100) return 'drop-shadow-[0_0_12px_hsl(var(--destructive)/0.5)]';
+    if (stats.percentUsed >= 90) return 'drop-shadow-[0_0_12px_rgba(239,68,68,0.5)]';
+    if (stats.percentUsed >= 75) return 'drop-shadow-[0_0_12px_rgba(249,115,22,0.5)]';
+    if (stats.percentUsed >= 50) return 'drop-shadow-[0_0_12px_rgba(245,158,11,0.5)]';
+    return 'drop-shadow-[0_0_12px_hsl(var(--success)/0.5)]';
   };
 
   const getStatusBadge = () => {
     if (stats.exceeded) {
       return (
-        <Badge variant="destructive" className="animate-pulse gap-1">
+        <Badge variant="destructive" className="animate-pulse gap-1.5 px-3 py-1 text-xs font-bold">
           <Lock className="h-3 w-3" />
           BLOQUÉ
         </Badge>
@@ -131,7 +144,7 @@ export function CircularBudgetGauge() {
     }
     if (stats.percentUsed >= 90) {
       return (
-        <Badge variant="outline" className="border-red-500 text-red-500 gap-1">
+        <Badge variant="outline" className="border-red-500 text-red-500 gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-destructive">
           <AlertTriangle className="h-3 w-3" />
           CRITIQUE
         </Badge>
@@ -139,14 +152,14 @@ export function CircularBudgetGauge() {
     }
     if (stats.percentUsed >= 75) {
       return (
-        <Badge variant="outline" className="border-orange-500 text-orange-500 gap-1">
+        <Badge variant="outline" className="border-orange-500 text-orange-500 gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-warning">
           <TrendingUp className="h-3 w-3" />
           ÉLEVÉ
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="border-emerald-500 text-emerald-500 gap-1">
+      <Badge variant="outline" className="border-success text-success gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-success">
         <Shield className="h-3 w-3" />
         OK
       </Badge>
@@ -155,37 +168,39 @@ export function CircularBudgetGauge() {
 
   if (loading) {
     return (
-      <Card className="border-primary/20">
-        <CardHeader className="pb-2">
-          <Skeleton className="h-5 w-40" />
-        </CardHeader>
-        <CardContent className="flex flex-col items-center">
-          <Skeleton className="h-40 w-40 rounded-full" />
-        </CardContent>
-      </Card>
+      <div className="glass-panel p-4">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="h-5 w-32 skeleton-premium" />
+          <Skeleton className="h-6 w-20 skeleton-premium" />
+        </div>
+        <div className="flex justify-center">
+          <Skeleton className="h-44 w-44 rounded-full skeleton-premium" />
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className={cn(
-      "border-2 transition-colors",
-      stats.exceeded ? "border-destructive/50 bg-destructive/5" : 
-      stats.percentUsed >= 90 ? "border-red-500/50 bg-red-500/5" :
-      stats.percentUsed >= 75 ? "border-orange-500/50 bg-orange-500/5" :
-      "border-primary/20"
+    <div className={cn(
+      "glass-panel transition-all duration-500",
+      stats.exceeded && "border-destructive/40 shadow-glow-destructive",
+      stats.percentUsed >= 90 && !stats.exceeded && "border-red-500/40",
+      stats.percentUsed >= 75 && stats.percentUsed < 90 && "border-orange-500/40"
     )}>
-      <CardHeader className="pb-2">
+      <div className="p-4 pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm sm:text-base flex items-center gap-2">
-            <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-            Budget Level 1
-          </CardTitle>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Wallet className="h-4 w-4 text-primary" />
+            </div>
+            <span className="text-sm font-bold text-foreground">Budget Niveau 1</span>
+          </div>
           <div className="flex items-center gap-2">
             {getStatusBadge()}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-8 w-8 rounded-lg hover:bg-muted/50"
               onClick={handleRefresh}
               disabled={refreshing}
             >
@@ -193,9 +208,10 @@ export function CircularBudgetGauge() {
             </Button>
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="flex flex-col items-center pb-4">
-        {/* Circular Gauge */}
+      </div>
+      
+      <div className="px-4 pb-4 flex flex-col items-center">
+        {/* Animated Circular Gauge */}
         <div className="relative mb-4">
           <svg 
             width={size} 
@@ -212,7 +228,8 @@ export function CircularBudgetGauge() {
               strokeWidth={strokeWidth}
               className="text-muted/20"
             />
-            {/* Progress arc */}
+            
+            {/* Progress arc with animation and glow */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -224,9 +241,14 @@ export function CircularBudgetGauge() {
               strokeDashoffset={offset}
               className={cn(
                 'transition-all duration-1000 ease-out',
-                getStrokeColor()
+                getStrokeColor(),
+                getGlowColor()
               )}
+              style={{
+                '--gauge-circumference': circumference,
+              } as React.CSSProperties}
             />
+            
             {/* Threshold markers */}
             {[50, 75, 90].map((threshold) => {
               const angle = (threshold / 100) * 360 - 90;
@@ -252,50 +274,52 @@ export function CircularBudgetGauge() {
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={cn(
-              'text-3xl font-bold tabular-nums',
+              'text-4xl font-black tabular-nums tracking-tight',
+              mounted && 'animate-number-pop',
               getColor()
             )}>
               {stats.percentUsed.toFixed(0)}%
             </span>
-            <span className="text-xs text-muted-foreground">utilisé</span>
+            <span className="text-xs font-medium text-muted-foreground mt-1">utilisé</span>
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="w-full grid grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-muted/30">
+        {/* Stats Grid */}
+        <div className="w-full grid grid-cols-3 gap-3">
+          <div className="glass-card p-3 rounded-xl text-center">
             <p className={cn(
-              "text-sm font-bold",
-              stats.exceeded ? "text-destructive" : "text-emerald-500"
+              "text-sm font-bold tabular-nums",
+              stats.exceeded ? "text-destructive" : "text-success"
             )}>
               {stats.remaining.toLocaleString('fr-MA')}
             </p>
-            <p className="text-[10px] text-muted-foreground">MAD restant</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">MAD restant</p>
           </div>
-          <div className="p-2 rounded-lg bg-muted/30">
-            <p className="text-sm font-bold text-foreground">
+          <div className="glass-card p-3 rounded-xl text-center">
+            <p className="text-sm font-bold text-foreground tabular-nums">
               {stats.spent.toLocaleString('fr-MA')}
             </p>
-            <p className="text-[10px] text-muted-foreground">dépensé</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">dépensé</p>
           </div>
-          <div className="p-2 rounded-lg bg-muted/30">
-            <p className="text-sm font-bold text-foreground">
+          <div className="glass-card p-3 rounded-xl text-center">
+            <p className="text-sm font-bold text-foreground tabular-nums">
               {stats.daysRemaining}j
             </p>
-            <p className="text-[10px] text-muted-foreground">restants</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">restants</p>
           </div>
         </div>
 
-        {/* Warning */}
+        {/* Warning Alert */}
         {stats.exceeded && (
-          <div className="mt-3 w-full flex items-center gap-2 p-2.5 rounded-lg bg-destructive/10 border border-destructive/30">
-            <Lock className="h-4 w-4 text-destructive shrink-0" />
-            <p className="text-[11px] text-destructive">
-              <span className="font-bold">Plafond atteint.</span> Validation CEO requise.
-            </p>
+          <div className="mt-4 w-full flex items-center gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/30 animate-fade-in">
+            <Lock className="h-5 w-5 text-destructive shrink-0" />
+            <div>
+              <p className="text-xs font-bold text-destructive">Plafond atteint</p>
+              <p className="text-[10px] text-destructive/80">Validation CEO requise pour continuer</p>
+            </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
