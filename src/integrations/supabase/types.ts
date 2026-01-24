@@ -2067,18 +2067,94 @@ export type Database = {
           },
         ]
       }
+      fleet_service_records: {
+        Row: {
+          cout_main_oeuvre: number | null
+          cout_pieces: number | null
+          cout_total: number | null
+          created_at: string
+          date_service: string
+          description: string | null
+          effectue_par: string | null
+          effectue_par_name: string | null
+          id: string
+          id_camion: string
+          km_at_service: number
+          notes: string | null
+          photo_facture_url: string | null
+          photo_pieces_url: string | null
+          pieces_utilisees: string[] | null
+          prestataire: string | null
+          service_type: string
+          updated_at: string
+        }
+        Insert: {
+          cout_main_oeuvre?: number | null
+          cout_pieces?: number | null
+          cout_total?: number | null
+          created_at?: string
+          date_service?: string
+          description?: string | null
+          effectue_par?: string | null
+          effectue_par_name?: string | null
+          id?: string
+          id_camion: string
+          km_at_service: number
+          notes?: string | null
+          photo_facture_url?: string | null
+          photo_pieces_url?: string | null
+          pieces_utilisees?: string[] | null
+          prestataire?: string | null
+          service_type: string
+          updated_at?: string
+        }
+        Update: {
+          cout_main_oeuvre?: number | null
+          cout_pieces?: number | null
+          cout_total?: number | null
+          created_at?: string
+          date_service?: string
+          description?: string | null
+          effectue_par?: string | null
+          effectue_par_name?: string | null
+          id?: string
+          id_camion?: string
+          km_at_service?: number
+          notes?: string | null
+          photo_facture_url?: string | null
+          photo_pieces_url?: string | null
+          pieces_utilisees?: string[] | null
+          prestataire?: string | null
+          service_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_service_records_id_camion_fkey"
+            columns: ["id_camion"]
+            isOneToOne: false
+            referencedRelation: "flotte"
+            referencedColumns: ["id_camion"]
+          },
+        ]
+      }
       flotte: {
         Row: {
           bc_mission_id: string | null
           capacite_m3: number | null
           chauffeur: string | null
           created_at: string
+          date_last_visite_technique: string | null
+          date_next_visite_technique: string | null
           derniere_maintenance_at: string | null
           id: string
           id_camion: string
           immatriculation: string | null
           is_interne: boolean
           km_compteur: number | null
+          km_last_pneumatiques: number | null
+          km_last_vidange: number | null
+          maintenance_status: string | null
           mission_updated_at: string | null
           notes: string | null
           prochaine_maintenance_at: string | null
@@ -2093,12 +2169,17 @@ export type Database = {
           capacite_m3?: number | null
           chauffeur?: string | null
           created_at?: string
+          date_last_visite_technique?: string | null
+          date_next_visite_technique?: string | null
           derniere_maintenance_at?: string | null
           id?: string
           id_camion: string
           immatriculation?: string | null
           is_interne?: boolean
           km_compteur?: number | null
+          km_last_pneumatiques?: number | null
+          km_last_vidange?: number | null
+          maintenance_status?: string | null
           mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
@@ -2113,12 +2194,17 @@ export type Database = {
           capacite_m3?: number | null
           chauffeur?: string | null
           created_at?: string
+          date_last_visite_technique?: string | null
+          date_next_visite_technique?: string | null
           derniere_maintenance_at?: string | null
           id?: string
           id_camion?: string
           immatriculation?: string | null
           is_interne?: boolean
           km_compteur?: number | null
+          km_last_pneumatiques?: number | null
+          km_last_vidange?: number | null
+          maintenance_status?: string | null
           mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
@@ -3664,6 +3750,15 @@ export type Database = {
           p_sable_m3: number
         }
         Returns: number
+      }
+      calculate_fleet_maintenance_status: {
+        Args: {
+          p_date_next_visite: string
+          p_km_compteur: number
+          p_km_last_pneumatiques: number
+          p_km_last_vidange: number
+        }
+        Returns: string
       }
       calculate_quote_price: {
         Args: {

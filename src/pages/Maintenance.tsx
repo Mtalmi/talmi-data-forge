@@ -33,9 +33,11 @@ import {
   Zap,
   FileWarning,
   ImageIcon,
+  Truck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { EtalonnageForm } from '@/components/maintenance/EtalonnageForm';
+import { FleetHealthDashboard } from '@/components/maintenance/FleetHealthDashboard';
 
 interface Equipement {
   id: string;
@@ -572,9 +574,13 @@ export default function Maintenance() {
           </CardContent>
         </Card>
 
-        {/* Tabs for Equipment, Incidents, Calibrations */}
-        <Tabs defaultValue="equipements">
-          <TabsList>
+        {/* Tabs for Fleet Health, Equipment, Incidents, Calibrations */}
+        <Tabs defaultValue="flotte">
+          <TabsList className="flex-wrap h-auto gap-1">
+            <TabsTrigger value="flotte" className="gap-2">
+              <Truck className="h-4 w-4" />
+              Santé Flotte
+            </TabsTrigger>
             <TabsTrigger value="equipements" className="gap-2">
               <Settings className="h-4 w-4" />
               Équipements
@@ -593,6 +599,11 @@ export default function Maintenance() {
               Étalonnage
             </TabsTrigger>
           </TabsList>
+
+          {/* Fleet Health Tab */}
+          <TabsContent value="flotte" className="mt-4">
+            <FleetHealthDashboard />
+          </TabsContent>
 
           <TabsContent value="equipements" className="mt-4">
             <Card>
