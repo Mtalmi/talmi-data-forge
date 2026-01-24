@@ -32,6 +32,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { compressImage } from '@/lib/imageCompression';
+import { InfoTooltip } from '@/components/academy/InfoTooltip';
 
 interface PendingHandshake {
   id: string;
@@ -309,6 +310,19 @@ export function SplitViewHandshake() {
               <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 Centre Handshake
+                <InfoTooltip
+                  id="handshake-help"
+                  title="Réception de Stock"
+                  content="Le processus 'Handshake' garantit une double validation: d'abord le Responsable Technique valide la qualité, puis l'Agent Administratif finalise l'entrée en stock."
+                  videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                  steps={[
+                    "L'opérateur saisit la réception avec photo",
+                    "Le Resp. Technique valide la qualité visuelle",
+                    "L'Agent Admin vérifie et finalise le stock",
+                    "Les quantités sont ajoutées automatiquement"
+                  ]}
+                  position="bottom"
+                />
               </CardTitle>
               <CardDescription className="text-xs">
                 Double validation: Qualité → Administratif
