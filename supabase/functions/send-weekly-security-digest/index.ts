@@ -339,12 +339,26 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // CEO email
-    const ceoEmail = Deno.env.get("CEO_EMAIL") || "ceo@talmibeton.ma";
+    // Fetch recipients from database
+    const { data: recipientsData, error: recipientsError } = await supabase
+      .from("security_digest_recipients")
+      .select("email, name")
+      .eq("is_active", true);
+
+    if (recipientsError) {
+      console.warn("Failed to fetch recipients, using fallback:", recipientsError.message);
+    }
+
+    // Build recipient list (fallback to CEO_EMAIL if no recipients configured)
+    const recipients = (recipientsData && recipientsData.length > 0)
+      ? recipientsData.map(r => r.email)
+      : [Deno.env.get("CEO_EMAIL") || "ceo@talmibeton.ma"];
+
+    console.log(`Sending digest to ${recipients.length} recipient(s):`, recipients);
 
     const emailResponse = await resend.emails.send({
       from: "Talmi Beton Security <onboarding@resend.dev>",
-      to: [ceoEmail],
+      to: recipients,
       subject: `🔒 Digest Sécurité Semaine ${now.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" })} - Score: ${anomalyScore} (${riskLevel})`,
       html,
     });
@@ -361,6 +375,7 @@ const handler = async (req: Request): Promise<Response> => {
           rollbacks: rollbacks.length,
           blockedActions: blockedActions.length,
           totalEvents: logs.length,
+          recipientCount: recipients.length,
         },
         email: emailResponse,
       }),

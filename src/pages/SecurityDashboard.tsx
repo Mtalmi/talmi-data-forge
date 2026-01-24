@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DigestRecipientsManager } from '@/components/security/DigestRecipientsManager';
 import {
   Shield,
   ShieldCheck,
@@ -1100,7 +1101,9 @@ export default function SecurityDashboard() {
               <span className="hidden sm:inline">Actualiser</span>
             </Button>
             
-            <Button 
+            <DigestRecipientsManager />
+            
+            <Button
               variant="outline" 
               size="sm" 
               onClick={handleSendTestDigest}
