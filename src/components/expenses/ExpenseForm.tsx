@@ -314,7 +314,14 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
             <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
               Annuler
             </Button>
-            <Button type="submit" disabled={submitting || uploading || !photoUrl}>
+            <Button 
+              type="submit" 
+              disabled={submitting || uploading || !photoUrl}
+              className={cn(
+                "transition-all",
+                (!photoUrl && !submitting && !uploading) && "opacity-50 cursor-not-allowed"
+              )}
+            >
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
