@@ -1,5 +1,39 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { TruckPosition } from './useGPSTracking';
+import { TruckPosition, MissionInfo } from './useGPSTracking';
+
+// Demo missions for trucks
+const DEMO_MISSIONS: Record<string, MissionInfo> = {
+  'DEMO-2413-A1': {
+    bc_id: 'BC-DEMO-001',
+    bl_id: 'BL-DEMO-001',
+    client_nom: 'Entreprise Maroc Construction',
+    volume_m3: 8,
+    adresse_livraison: 'Lot 45, Zone Industrielle Ain Sebaa',
+    zone_nom: 'Casablanca Nord',
+    heure_prevue: '10:30',
+    workflow_status: 'en_livraison',
+  },
+  'DEMO-3521-B2': {
+    bc_id: 'BC-DEMO-002',
+    bl_id: 'BL-DEMO-002',
+    client_nom: 'Résidences Al Fath',
+    volume_m3: 6,
+    adresse_livraison: 'Avenue Mohammed V, Mohammedia',
+    zone_nom: 'Mohammedia',
+    heure_prevue: '11:00',
+    workflow_status: 'en_livraison',
+  },
+  'DEMO-4567-D4': {
+    bc_id: 'BC-DEMO-003',
+    bl_id: 'BL-DEMO-003',
+    client_nom: 'Société Immobilière Atlas',
+    volume_m3: 10,
+    adresse_livraison: 'Route de Rabat Km 12',
+    zone_nom: 'Bouskoura',
+    heure_prevue: '09:45',
+    workflow_status: 'en_livraison',
+  },
+};
 
 // Demo truck configurations - starting positions around Morocco
 const DEMO_TRUCKS: Omit<TruckPosition, 'latitude' | 'longitude' | 'speed_kmh' | 'heading'>[] = [
@@ -14,6 +48,7 @@ const DEMO_TRUCKS: Omit<TruckPosition, 'latitude' | 'longitude' | 'speed_kmh' | 
     statut: 'en_mission',
     type: 'toupie',
     bc_mission_id: 'BC-DEMO-001',
+    mission: DEMO_MISSIONS['DEMO-2413-A1'],
   },
   {
     id_camion: 'DEMO-3521-B2',
@@ -26,6 +61,7 @@ const DEMO_TRUCKS: Omit<TruckPosition, 'latitude' | 'longitude' | 'speed_kmh' | 
     statut: 'en_mission',
     type: 'toupie',
     bc_mission_id: 'BC-DEMO-002',
+    mission: DEMO_MISSIONS['DEMO-3521-B2'],
   },
   {
     id_camion: 'DEMO-1892-C3',
@@ -38,6 +74,7 @@ const DEMO_TRUCKS: Omit<TruckPosition, 'latitude' | 'longitude' | 'speed_kmh' | 
     statut: 'disponible',
     type: 'toupie',
     bc_mission_id: null,
+    mission: null,
   },
   {
     id_camion: 'DEMO-4567-D4',
@@ -50,6 +87,7 @@ const DEMO_TRUCKS: Omit<TruckPosition, 'latitude' | 'longitude' | 'speed_kmh' | 
     statut: 'en_mission',
     type: 'pompe',
     bc_mission_id: 'BC-DEMO-003',
+    mission: DEMO_MISSIONS['DEMO-4567-D4'],
   },
 ];
 

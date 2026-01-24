@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +12,8 @@ import {
   ChevronLeft,
   RefreshCw,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  Crosshair
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -41,6 +43,7 @@ interface FleetPanelProps {
 }
 
 export function FleetPanel({ selectedDate }: FleetPanelProps) {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [vehicles, setVehicles] = useState<FleetVehicle[]>([]);
   const [activeDeliveries, setActiveDeliveries] = useState<ActiveDeliveriesMap>({});
@@ -272,27 +275,44 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
 
                 {/* Active Delivery Info */}
                 {isOnDelivery && (
-                  <div className="text-[10px] bg-primary/10 rounded px-1.5 py-1 mb-1.5 flex items-center justify-between">
-                    <div className="flex items-center gap-1 min-w-0">
-                      <Truck className="h-2.5 w-2.5 animate-pulse text-primary flex-shrink-0" />
-                      <span className="font-medium text-primary font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
-                      <span className="text-muted-foreground">({activeDelivery.volume_m3}m³)</span>
+                  <div className="text-[10px] bg-primary/10 rounded px-1.5 py-1 mb-1.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Truck className="h-2.5 w-2.5 animate-pulse text-primary flex-shrink-0" />
+                        <span className="font-medium text-primary font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
+                        <span className="text-muted-foreground">({activeDelivery.volume_m3}m³)</span>
+                      </div>
+                      <div className="flex gap-1">
+                        {/* GPS Tracking Button */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-5 px-1.5 text-[9px] text-amber-600 hover:bg-amber-500/20 hover:text-amber-600"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate('/logistique');
+                          }}
+                          title="Suivre sur GPS"
+                        >
+                          <Crosshair className="h-2.5 w-2.5" />
+                        </Button>
+                        {/* Incident Button for active deliveries */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-5 px-1.5 text-[9px] text-destructive hover:bg-destructive/20 hover:text-destructive"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIncidentTruckId(v.id_camion);
+                            setIncidentDelivery(activeDelivery);
+                            setRescueModalOpen(true);
+                          }}
+                        >
+                          <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
+                          Incident
+                        </Button>
+                      </div>
                     </div>
-                    {/* Incident Button for active deliveries */}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-5 px-1.5 text-[9px] text-destructive hover:bg-destructive/20 hover:text-destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIncidentTruckId(v.id_camion);
-                        setIncidentDelivery(activeDelivery);
-                        setRescueModalOpen(true);
-                      }}
-                    >
-                      <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
-                      Incident
-                    </Button>
                   </div>
                 )}
 
