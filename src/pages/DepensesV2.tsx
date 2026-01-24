@@ -176,11 +176,22 @@ export default function DepensesV2() {
   const handleDelete = async (expense: ExpenseControlled) => {
     if (!confirm('Supprimer cette dépense ?')) return;
     
-    const success = await deleteExpense(expense.id);
-    if (success) {
+    const result = await deleteExpense(expense.id);
+    if (result.success) {
       toast.success('Dépense supprimée');
     } else {
-      toast.error('Erreur lors de la suppression');
+      // Handle specific error types with professional messages
+      if (result.error?.includes('DELETION_BLOCKED')) {
+        toast.error(
+          <div className="space-y-1">
+            <p className="font-semibold">🔒 Suppression refusée</p>
+            <p className="text-sm">Seul le CEO peut supprimer des dépenses approuvées.</p>
+          </div>,
+          { duration: 6000 }
+        );
+      } else {
+        toast.error(result.error || 'Erreur lors de la suppression');
+      }
     }
   };
 
