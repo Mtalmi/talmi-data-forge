@@ -252,10 +252,23 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
     } catch (error: any) {
       console.error('Submit error:', error);
       
-      // Parse specific error messages
-      if (error.message?.includes('EVIDENCE_REQUIRED')) {
+      // Parse specific error messages from database triggers
+      const errorMessage = error.message || error.details || '';
+      
+      if (errorMessage.includes('LIMIT_EXCEEDED')) {
+        // Extract the custom message from the trigger
+        toast.error(
+          <div className="space-y-1">
+            <p className="font-semibold">🚫 Plafond mensuel de 15,000 MAD atteint</p>
+            <p className="text-sm">Cette dépense nécessite désormais la validation de Karim.</p>
+          </div>,
+          { duration: 8000 }
+        );
+        // Refresh monthly cap status to update UI
+        fetchMonthlyCapStatus();
+      } else if (errorMessage.includes('EVIDENCE_REQUIRED')) {
         toast.error('Justificatif obligatoire!');
-      } else if (error.message?.includes('FUEL_PROTOCOL')) {
+      } else if (errorMessage.includes('FUEL_PROTOCOL')) {
         toast.error('Données véhicule manquantes pour le carburant');
       } else {
         toast.error('Erreur lors de la soumission');
