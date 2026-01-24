@@ -14,6 +14,7 @@ import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicke
 import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
 import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
+import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -254,6 +255,11 @@ export default function Dashboard() {
             {/* Batch Photo Gallery - Hawaii Visual Proof */}
             <div className="bento-wide">
               <BatchPhotoGallery />
+            </div>
+            
+            {/* Treasury & Cash Flow - Financial Constitution */}
+            <div className="bento-wide">
+              <TreasuryWidget />
             </div>
             
             {/* Executive Command Center - Full width */}
