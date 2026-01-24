@@ -38,12 +38,14 @@ import {
   Calendar,
   Zap,
   Shield,
+  Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
+import { ClientTrackingToggle } from '@/components/dashboard/ClientTrackingToggle';
 
 interface LinkedBL {
   bl_id: string;
@@ -206,6 +208,26 @@ export function BcDetailDialog({
               </div>
             </CardContent>
           </Card>
+
+          {/* Client Tracking Toggle - CEO Only */}
+          {isCeo && (
+            <Card className="border-amber-500/20 bg-amber-500/5">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-amber-500" />
+                  Portail Client
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ClientTrackingToggle
+                  bcId={bc.bc_id}
+                  trackingToken={(bc as any).tracking_token || null}
+                  trackingEnabled={(bc as any).tracking_enabled || false}
+                  onToggle={() => onRefresh()}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Delivery Progress */}
           <Card>

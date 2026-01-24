@@ -36,6 +36,7 @@ import Maintenance from "./pages/Maintenance";
 import AuditSuperviseur from "./pages/AuditSuperviseur";
 import AuditExterne from "./pages/AuditExterne";
 import SecurityDashboard from "./pages/SecurityDashboard";
+import ClientTracking from "./pages/ClientTracking";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,8 @@ const App = () => (
                 <Route path="/audit-superviseur" element={<AuditSuperviseur />} />
                 <Route path="/audit-externe" element={<AuditExterne />} />
                 <Route path="/securite" element={<SecurityDashboard />} />
+                {/* Client Portal - Public tracking page (no auth required) */}
+                <Route path="/track/:token" element={<ClientTracking />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
