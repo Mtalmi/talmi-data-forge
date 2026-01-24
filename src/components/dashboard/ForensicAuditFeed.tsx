@@ -59,110 +59,203 @@ interface ForensicAlert {
   new_data: any;
   description: string | null;
   created_at: string;
-  // Computed fields
-  severity: 'info' | 'warning' | 'critical';
+  // Computed fields - Extended severity types for color-coding
+  severity: 'critical' | 'warning' | 'afterhours' | 'info';
   humanMessage: string;
   icon: React.ElementType;
+  ruleType: 'ghost_deletion' | 'price_variance' | 'formula_integrity' | 'midnight_bypass' | 'role_elevation' | 'standard';
 }
 
-// Human-readable message generator
-function generateHumanMessage(log: AuditLogEntry): { message: string; severity: 'info' | 'warning' | 'critical' } {
+// Check if timestamp is in after-hours window (18:00 - 00:00 Casablanca)
+function isAfterHours(timestamp: string): boolean {
+  try {
+    const date = new Date(timestamp);
+    // Get hour in Casablanca timezone
+    const casablancaHour = parseInt(
+      date.toLocaleString('en-US', { 
+        timeZone: 'Africa/Casablanca', 
+        hour: 'numeric', 
+        hour12: false 
+      })
+    );
+    return casablancaHour >= 18 || casablancaHour < 0;
+  } catch {
+    return false;
+  }
+}
+
+// Calculate percentage change between two values
+function calculatePercentChange(oldVal: number, newVal: number): number | null {
+  if (!oldVal || oldVal === 0) return null;
+  return Math.round(((newVal - oldVal) / oldVal) * 100);
+}
+
+// Enhanced human-readable message generator with 5 security rules
+function generateHumanMessage(log: AuditLogEntry): { 
+  message: string; 
+  severity: 'critical' | 'warning' | 'afterhours' | 'info';
+  ruleType: ForensicAlert['ruleType'];
+} {
   const userName = log.user_name || 'Utilisateur inconnu';
   const tableName = log.table_name.toLowerCase();
   const actionType = log.action_type.toUpperCase();
+  const isNightAction = isAfterHours(log.created_at);
 
-  // CRITICAL: DELETE operations
+  // ============================================================
+  // RULE 5: ROLE ELEVATION (Security Breach) - RED
+  // If role in profiles/user_roles is changed
+  // ============================================================
+  if (actionType === 'UPDATE' && (tableName.includes('profile') || tableName.includes('user_role'))) {
+    const oldRole = log.old_data?.role;
+    const newRole = log.new_data?.role;
+    if (oldRole !== newRole && (oldRole || newRole)) {
+      return {
+        message: `🔑 SECURITY ALERT: Rôle utilisateur modifié (${oldRole || '?'} → ${newRole || '?'}) par ${userName}`,
+        severity: 'critical',
+        ruleType: 'role_elevation'
+      };
+    }
+  }
+
+  // ============================================================
+  // RULE 3: GHOST DELETION (Evidence Destruction) - RED
+  // Any record deletion
+  // ============================================================
   if (actionType === 'DELETE') {
-    if (tableName.includes('expense') || tableName.includes('depense')) {
-      return {
-        message: `🚨 CRITIQUE: Enregistrement dépense supprimé par ${userName}!`,
-        severity: 'critical'
-      };
-    }
-    if (tableName.includes('formule')) {
-      return {
-        message: `🚨 CRITIQUE: Formule supprimée par ${userName}!`,
-        severity: 'critical'
-      };
-    }
-    if (tableName.includes('prix')) {
-      return {
-        message: `🚨 CRITIQUE: Prix supprimé par ${userName}!`,
-        severity: 'critical'
-      };
-    }
     return {
-      message: `🚨 SUPPRESSION: ${tableName} supprimé par ${userName}`,
-      severity: 'critical'
+      message: `🚨 CRITICAL: Enregistrement ${tableName} supprimé définitivement par ${userName}!`,
+      severity: 'critical',
+      ruleType: 'ghost_deletion'
     };
   }
 
-  // WARNING: UPDATE operations
-  if (actionType === 'UPDATE') {
-    if (tableName.includes('formule')) {
+  // ============================================================
+  // RULE 1: PRICE VARIANCE (Theft Detection) - ORANGE
+  // Devis or Expense amount update with % change
+  // ============================================================
+  if (actionType === 'UPDATE' && (tableName.includes('devis') || tableName.includes('depense') || tableName.includes('expense'))) {
+    const oldAmount = log.old_data?.montant_total || log.old_data?.montant || log.old_data?.prix_unitaire;
+    const newAmount = log.new_data?.montant_total || log.new_data?.montant || log.new_data?.prix_unitaire;
+    
+    if (oldAmount && newAmount && oldAmount !== newAmount) {
+      const percentChange = calculatePercentChange(parseFloat(oldAmount), parseFloat(newAmount));
+      if (percentChange !== null) {
+        const direction = percentChange > 0 ? '+' : '';
+        return {
+          message: `⚠️ PRICE VARIANCE: Montant changé de ${direction}${percentChange}% par ${userName} (${oldAmount} → ${newAmount} DH)`,
+          severity: 'warning',
+          ruleType: 'price_variance'
+        };
+      }
+    }
+  }
+
+  // ============================================================
+  // RULE 2: FORMULA INTEGRITY (Quality) - ORANGE
+  // Composition changes in formules table
+  // ============================================================
+  if (actionType === 'UPDATE' && tableName.includes('formule')) {
+    // Check for composition-related field changes
+    const compositionFields = ['composition', 'dosage', 'ciment', 'sable', 'gravier', 'eau', 'adjuvant', 'ratio'];
+    const hasCompositionChange = compositionFields.some(field => {
+      const oldVal = JSON.stringify(log.old_data?.[field]);
+      const newVal = JSON.stringify(log.new_data?.[field]);
+      return oldVal !== newVal && (log.old_data?.[field] || log.new_data?.[field]);
+    });
+    
+    if (hasCompositionChange) {
       const formuleName = log.new_data?.nom_formule || log.old_data?.nom_formule || 'Formule';
       return {
-        message: `⚠️ FORMULE MODIFIÉE: ${formuleName} changée par ${userName}`,
-        severity: 'warning'
+        message: `🧪 SECRET SAUCE MODIFIED: Composition "${formuleName}" changée par ${userName}`,
+        severity: 'warning',
+        ruleType: 'formula_integrity'
       };
     }
+    
+    // Generic formula change
+    const formuleName = log.new_data?.nom_formule || log.old_data?.nom_formule || 'Formule';
+    return {
+      message: `🧪 FORMULE MODIFIÉE: "${formuleName}" mise à jour par ${userName}`,
+      severity: 'warning',
+      ruleType: 'formula_integrity'
+    };
+  }
+
+  // ============================================================
+  // RULE 4: MIDNIGHT BYPASS (After-Hours) - BLUE
+  // Any action between 18:00 and 00:00
+  // ============================================================
+  if (isNightAction) {
+    const actionLabel = actionType === 'INSERT' ? 'Création' : actionType === 'UPDATE' ? 'Modification' : actionType;
+    return {
+      message: `⏰ AFTER-HOURS ACTIVITY: ${actionLabel} sur ${tableName} par ${userName} pendant la Fenêtre d'Urgence`,
+      severity: 'afterhours',
+      ruleType: 'midnight_bypass'
+    };
+  }
+
+  // ============================================================
+  // STANDARD RULES (Fallback)
+  // ============================================================
+  
+  // UPDATE operations
+  if (actionType === 'UPDATE') {
     if (tableName.includes('prix')) {
       const oldPrice = log.old_data?.prix || log.old_data?.montant;
       const newPrice = log.new_data?.prix || log.new_data?.montant;
       if (oldPrice && newPrice) {
+        const percentChange = calculatePercentChange(parseFloat(oldPrice), parseFloat(newPrice));
+        const pctLabel = percentChange !== null ? ` (${percentChange > 0 ? '+' : ''}${percentChange}%)` : '';
         return {
-          message: `⚠️ PRIX MODIFIÉ: ${oldPrice} DH → ${newPrice} DH par ${userName}`,
-          severity: 'warning'
+          message: `⚠️ PRIX MODIFIÉ: ${oldPrice} → ${newPrice} DH${pctLabel} par ${userName}`,
+          severity: 'warning',
+          ruleType: 'price_variance'
         };
       }
-      return {
-        message: `⚠️ PRIX MODIFIÉ par ${userName}`,
-        severity: 'warning'
-      };
-    }
-    if (tableName.includes('devis')) {
-      return {
-        message: `⚠️ DEVIS MODIFIÉ par ${userName}`,
-        severity: 'warning'
-      };
     }
     if (tableName.includes('stock')) {
       return {
         message: `⚠️ STOCK AJUSTÉ par ${userName}`,
-        severity: 'warning'
+        severity: 'warning',
+        ruleType: 'standard'
       };
     }
     return {
       message: `📝 MODIFICATION: ${tableName} mis à jour par ${userName}`,
-      severity: 'warning'
+      severity: 'info',
+      ruleType: 'standard'
     };
   }
 
-  // INFO: INSERT operations
+  // INSERT operations
   if (actionType === 'INSERT') {
     if (tableName.includes('formule')) {
       const formuleName = log.new_data?.nom_formule || 'Nouvelle formule';
       return {
-        message: `➕ NOUVELLE FORMULE: ${formuleName} créée par ${userName}`,
-        severity: 'info'
+        message: `➕ NOUVELLE FORMULE: "${formuleName}" créée par ${userName}`,
+        severity: 'info',
+        ruleType: 'standard'
       };
     }
     if (tableName.includes('devis')) {
       return {
         message: `➕ NOUVEAU DEVIS créé par ${userName}`,
-        severity: 'info'
+        severity: 'info',
+        ruleType: 'standard'
       };
     }
     return {
       message: `➕ CRÉATION: ${tableName} par ${userName}`,
-      severity: 'info'
+      severity: 'info',
+      ruleType: 'standard'
     };
   }
 
   // Default
   return {
     message: log.description || `${actionType} sur ${tableName} par ${userName}`,
-    severity: 'info'
+    severity: 'info',
+    ruleType: 'standard'
   };
 }
 
@@ -311,7 +404,7 @@ export function ForensicAuditFeed() {
 
         if (fallbackData) {
           const processedAlerts = fallbackData.map((log: any) => {
-            const { message, severity } = generateHumanMessage({
+            const { message, severity, ruleType } = generateHumanMessage({
               ...log,
               action_type: log.action || 'UPDATE',
               old_data: log.changes?.before || null,
@@ -330,6 +423,7 @@ export function ForensicAuditFeed() {
               severity,
               humanMessage: message,
               icon: getActionIcon(log.action || 'UPDATE'),
+              ruleType,
             };
           });
           setAlerts(processedAlerts);
@@ -340,7 +434,7 @@ export function ForensicAuditFeed() {
 
       // Process audit_logs entries
       const processedAlerts: ForensicAlert[] = (data || []).map((log: AuditLogEntry) => {
-        const { message, severity } = generateHumanMessage(log);
+        const { message, severity, ruleType } = generateHumanMessage(log);
         return {
           id: log.id,
           action_type: log.action_type,
@@ -354,6 +448,7 @@ export function ForensicAuditFeed() {
           severity,
           humanMessage: message,
           icon: getActionIcon(log.action_type),
+          ruleType,
         };
       });
 
@@ -512,12 +607,16 @@ export function ForensicAuditFeed() {
               background: #fef2f2;
             }
             .log-entry.warning {
-              border-left: 4px solid #f59e0b;
-              background: #fffbeb;
+              border-left: 4px solid #f97316;
+              background: #fff7ed;
             }
-            .log-entry.info {
+            .log-entry.afterhours {
               border-left: 4px solid #3b82f6;
               background: #eff6ff;
+            }
+            .log-entry.info {
+              border-left: 4px solid #22c55e;
+              background: #f0fdf4;
             }
             .log-header {
               display: flex;
@@ -695,20 +794,31 @@ export function ForensicAuditFeed() {
 
   const getSeverityStyles = (severity: ForensicAlert['severity']) => {
     switch (severity) {
+      // RED - Ghost Deletion & Role Elevation
       case 'critical':
         return {
-          border: 'border-l-destructive',
-          bg: 'bg-destructive/5',
-          iconBg: 'bg-destructive/20 text-destructive',
-          badge: 'border-destructive text-destructive'
+          border: 'border-l-red-500',
+          bg: 'bg-red-500/10',
+          iconBg: 'bg-red-500/20 text-red-600',
+          badge: 'border-red-500 text-red-600 bg-red-500/10'
         };
+      // ORANGE - Price Variance & Formula Integrity
       case 'warning':
         return {
-          border: 'border-l-warning',
-          bg: 'bg-warning/5',
-          iconBg: 'bg-warning/20 text-warning',
-          badge: 'border-warning text-warning'
+          border: 'border-l-orange-500',
+          bg: 'bg-orange-500/10',
+          iconBg: 'bg-orange-500/20 text-orange-600',
+          badge: 'border-orange-500 text-orange-600 bg-orange-500/10'
         };
+      // BLUE - Midnight Bypass (After-Hours)
+      case 'afterhours':
+        return {
+          border: 'border-l-blue-500',
+          bg: 'bg-blue-500/10',
+          iconBg: 'bg-blue-500/20 text-blue-600',
+          badge: 'border-blue-500 text-blue-600 bg-blue-500/10'
+        };
+      // DEFAULT - Info
       default:
         return {
           border: 'border-l-primary',
@@ -838,10 +948,11 @@ export function ForensicAuditFeed() {
                         </div>
                         <Badge 
                           variant="outline" 
-                          className={cn("text-[9px] shrink-0", styles.badge)}
+                          className={cn("text-[9px] shrink-0 font-bold", styles.badge)}
                         >
                           {alert.severity === 'critical' ? '🚨 CRITIQUE' : 
-                           alert.severity === 'warning' ? '⚠️ ALERTE' : 'ℹ️ INFO'}
+                           alert.severity === 'warning' ? '⚠️ ALERTE' : 
+                           alert.severity === 'afterhours' ? '⏰ NUIT' : 'ℹ️ INFO'}
                         </Badge>
                       </div>
 
@@ -849,6 +960,19 @@ export function ForensicAuditFeed() {
                       <p className="text-xs text-foreground font-medium line-clamp-2 mb-1.5">
                         {alert.humanMessage}
                       </p>
+
+                      {/* Rule Type Badge */}
+                      {alert.ruleType !== 'standard' && (
+                        <div className="mb-1.5">
+                          <Badge variant="secondary" className="text-[8px] font-mono">
+                            {alert.ruleType === 'ghost_deletion' && '🚨 GHOST DELETION'}
+                            {alert.ruleType === 'price_variance' && '💰 PRICE VARIANCE'}
+                            {alert.ruleType === 'formula_integrity' && '🧪 FORMULA INTEGRITY'}
+                            {alert.ruleType === 'midnight_bypass' && '⏰ MIDNIGHT BYPASS'}
+                            {alert.ruleType === 'role_elevation' && '🔑 ROLE ELEVATION'}
+                          </Badge>
+                        </div>
+                      )}
 
                       {/* Quick Compare Preview */}
                       {(alert.old_data || alert.new_data) && (
