@@ -52,7 +52,32 @@ interface MapLibreMap {
   loaded: () => boolean;
 }
 
-export function TacticalMap() {
+interface DemoAlert {
+  id: string;
+  id_camion: string;
+  event_type: string;
+  latitude: number;
+  longitude: number;
+  duration_minutes: number;
+  acknowledged: boolean;
+  created_at: string;
+}
+
+interface TacticalMapProps {
+  demoMode?: boolean;
+  demoTrucks?: TruckPosition[];
+  demoAlerts?: DemoAlert[];
+  onAcknowledgeDemoAlert?: (alertId: string) => void;
+  getDemoTruckHistory?: (truckId: string) => { latitude: number; longitude: number; recorded_at: string; speed_kmh: number }[];
+}
+
+export function TacticalMap({ 
+  demoMode = false, 
+  demoTrucks = [], 
+  demoAlerts = [],
+  onAcknowledgeDemoAlert,
+  getDemoTruckHistory,
+}: TacticalMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
@@ -61,16 +86,27 @@ export function TacticalMap() {
   const [followMode, setFollowMode] = useState(false);
 
   const {
-    trucks,
+    trucks: realTrucks,
     geofences,
-    alerts,
+    alerts: realAlerts,
     selectedTruck,
-    truckHistory,
+    truckHistory: realTruckHistory,
     loading,
     selectTruck,
-    acknowledgeAlert,
+    acknowledgeAlert: acknowledgeRealAlert,
     fetchTrucks,
   } = useGPSTracking();
+
+  // Use demo or real data based on mode
+  const trucks = demoMode ? demoTrucks : realTrucks;
+  const alerts = demoMode ? demoAlerts : realAlerts;
+  const truckHistory = demoMode && selectedTruck && getDemoTruckHistory 
+    ? getDemoTruckHistory(selectedTruck) 
+    : realTruckHistory;
+  
+  const acknowledgeAlert = demoMode && onAcknowledgeDemoAlert 
+    ? onAcknowledgeDemoAlert 
+    : acknowledgeRealAlert;
 
   // Initialize map
   useEffect(() => {
@@ -333,9 +369,15 @@ export function TacticalMap() {
           <div className="flex items-center gap-2">
             <Crosshair className="h-5 w-5 text-amber-500" />
             <span className="font-bold text-amber-400">FLEET PREDATOR</span>
-            <Badge variant="outline" className="bg-emerald-500/20 border-emerald-500/50 text-emerald-400">
-              LIVE
-            </Badge>
+            {demoMode ? (
+              <Badge variant="outline" className="bg-amber-500/20 border-amber-500/50 text-amber-400">
+                DEMO
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-emerald-500/20 border-emerald-500/50 text-emerald-400">
+                LIVE
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -363,14 +405,16 @@ export function TacticalMap() {
 
       {/* Top Right Controls */}
       <div className="absolute top-4 right-16 z-10 flex gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          className="bg-gray-900/90 border-gray-700 hover:bg-gray-800"
-          onClick={() => fetchTrucks()}
-        >
-          <RefreshCw className="h-4 w-4" />
-        </Button>
+        {!demoMode && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="bg-gray-900/90 border-gray-700 hover:bg-gray-800"
+            onClick={() => fetchTrucks()}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        )}
         <Button
           size="sm"
           variant="outline"
@@ -581,8 +625,8 @@ export function TacticalMap() {
         </Card>
       </div>
 
-      {/* Loading overlay */}
-      {loading && (
+      {/* Loading overlay - only show for real mode */}
+      {!demoMode && loading && (
         <div className="absolute inset-0 bg-gray-900/80 flex items-center justify-center z-20">
           <div className="text-amber-400 flex flex-col items-center gap-2">
             <RefreshCw className="h-8 w-8 animate-spin" />
