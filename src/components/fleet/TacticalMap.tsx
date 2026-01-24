@@ -81,8 +81,9 @@ export function TacticalMap() {
       const mapboxgl = await import('mapbox-gl');
       await import('mapbox-gl/dist/mapbox-gl.css');
       
-      // Get token from environment or use placeholder
-      const token = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.placeholder';
+      // Get token from environment - use public key
+      const token = import.meta.env.VITE_MAPBOX_TOKEN || 
+        'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
       mapboxgl.default.accessToken = token;
 
       const map = new mapboxgl.default.Map({
