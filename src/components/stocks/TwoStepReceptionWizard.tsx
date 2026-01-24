@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Package, Check, Loader2, X, ChevronRight, Lock, Shield, Truck } from 'lucide-react';
+import { Camera, Package, Check, Loader2, X, ChevronRight, Lock, Shield, Truck, Bot, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,9 @@ import { hapticSuccess, hapticError, hapticTap } from '@/lib/haptics';
 import { CaptureRealityZone } from '@/components/ui/VaultWizard';
 import { TacticalSwitch } from '@/components/ui/TacticalSwitch';
 import { VaultSubmitButton } from '@/components/ui/VaultSubmitButton';
+import { AIVerifiedBadge } from '@/components/ui/AIVerifiedBadge';
+import { AIVerificationPanel } from '@/components/ui/AIVerificationPanel';
+import { useAIDocumentVerification } from '@/hooks/useAIDocumentVerification';
 
 interface Stock {
   materiau: string;
@@ -49,6 +53,17 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
   const [submitting, setSubmitting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
+  // AI Document Verification
+  const {
+    isScanning,
+    extractedData,
+    verificationResult,
+    scanDocument,
+    verifyAgainstUserData,
+    hasCriticalMismatch,
+    reset: resetAI,
+  } = useAIDocumentVerification();
+
   // Step 1 - Capture Reality (Photo)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -75,6 +90,7 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
     setFournisseur('');
     setNumeroBl('');
     setNotes('');
+    resetAI();
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -111,8 +127,22 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
         .from('documents')
         .getPublicUrl(`receptions/${fileName}`);
 
-      setPhotoUrl(urlData.publicUrl);
+      const publicUrl = urlData.publicUrl;
+      setPhotoUrl(publicUrl);
       hapticSuccess();
+      
+      // 🤖 AI OCR Scan - Smart Fill
+      const extracted = await scanDocument(publicUrl, 'stock');
+      if (extracted) {
+        // Auto-fill supplier and BL number if extracted
+        if (extracted.supplier) {
+          setFournisseur(extracted.supplier);
+        }
+        if (extracted.bl_number) {
+          setNumeroBl(extracted.bl_number);
+        }
+        toast.success('🤖 Données pré-remplies par AI', { duration: 3000 });
+      }
       
       // Auto-advance after capture
       setTimeout(() => {
@@ -134,16 +164,48 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
       throw new Error('Missing photo');
     }
 
+    // 🤖 AI Verification - Compare extracted data with user input
+    if (extractedData) {
+      const verification = verifyAgainstUserData(extractedData, {
+        supplier: fournisseur,
+        bl_number: numeroBl,
+      });
+
+      // Block submission if critical mismatch detected
+      if (verification.mismatches.some(m => m.severity === 'critical')) {
+        hapticError();
+        toast.error(
+          '🚫 SOUMISSION BLOQUÉE - Écart critique détecté par l\'AI. Cette tentative a été enregistrée.',
+          { duration: 8000 }
+        );
+        throw new Error('AI verification failed - critical mismatch');
+      }
+
+      // Warn but allow for non-critical mismatches
+      if (verification.mismatches.length > 0) {
+        toast.warning(
+          '⚠️ Écarts détectés par l\'AI - Vérifiez les données avant soumission',
+          { duration: 5000 }
+        );
+      }
+    }
+
     setSubmitting(true);
 
     try {
+      // Include AI verification status in notes
+      const aiVerificationNote = extractedData 
+        ? `[AI_VERIFIED: ${verificationResult?.isVerified ? 'OK' : 'MISMATCH'} - Confiance: ${extractedData.confidence}%]`
+        : '[AI_NOT_SCANNED]';
+      const finalNotes = notes ? `${aiVerificationNote} | ${notes}` : aiVerificationNote;
+
       const { data, error } = await supabase.rpc('secure_add_reception', {
         p_materiau: materiau,
         p_quantite: parseFloat(quantite),
         p_fournisseur: fournisseur,
         p_numero_bl: numeroBl,
         p_photo_bl_url: photoUrl,
-        p_notes: notes || null,
+        p_notes: finalNotes,
       });
 
       if (error) throw error;
@@ -157,7 +219,8 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
       }
 
       hapticSuccess();
-      toast.success(result.message || 'Réception sécurisée avec succès!');
+      const verifiedText = verificationResult?.isVerified ? ' ✅ AI Vérifié' : '';
+      toast.success(`${result.message || 'Réception sécurisée avec succès!'}${verifiedText}`);
       
       setTimeout(() => {
         handleOpenChange(false);
@@ -453,6 +516,31 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
                   </div>
                 </div>
 
+                {/* AI Verification Panel */}
+                {(extractedData || isScanning) && (
+                  <AIVerificationPanel
+                    isScanning={isScanning}
+                    extractedData={extractedData}
+                    verificationResult={verificationResult}
+                    onApplySuggestion={(field, value) => {
+                      if (field === 'supplier') setFournisseur(String(value));
+                      if (field === 'bl_number') setNumeroBl(String(value));
+                    }}
+                    className="mb-4"
+                  />
+                )}
+
+                {/* Critical Mismatch Block */}
+                {hasCriticalMismatch && (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertDescription>
+                      <strong>🚫 SOUMISSION BLOQUÉE</strong> - L'AI a détecté un écart critique. 
+                      Corrigez les données ou contactez un superviseur.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 {/* Summary Card */}
                 <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 mb-4 mt-4">
                   <div className="grid grid-cols-2 gap-2 text-sm">
@@ -460,6 +548,20 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
                     <span className="font-semibold text-foreground">{materiau}</span>
                     <span className="text-muted-foreground">Quantité:</span>
                     <span className="font-semibold text-primary">{quantite} {selectedStock?.unite}</span>
+                    {verificationResult && (
+                      <>
+                        <span className="text-muted-foreground">Statut AI:</span>
+                        <AIVerifiedBadge
+                          status={
+                            hasCriticalMismatch ? 'blocked' :
+                            verificationResult.mismatches.length > 0 ? 'mismatch' :
+                            verificationResult.isVerified ? 'verified' : 'pending'
+                          }
+                          confidence={extractedData?.confidence}
+                          compact
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -475,9 +577,9 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
                   <div className="flex-1">
                     <VaultSubmitButton
                       onClick={handleSubmit}
-                      disabled={!isStep4Complete || submitting}
+                      disabled={!isStep4Complete || submitting || hasCriticalMismatch}
                     >
-                      Sécuriser la Réception
+                      {verificationResult?.isVerified ? '✅ Sécuriser (AI Vérifié)' : 'Sécuriser la Réception'}
                     </VaultSubmitButton>
                   </div>
                 </div>
