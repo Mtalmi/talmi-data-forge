@@ -432,6 +432,7 @@ export default function SecurityDashboard() {
   const [searchFilter, setSearchFilter] = useState('');
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [actionFilter, setActionFilter] = useState<'all' | 'rollbacks' | 'blocked' | 'success'>('all');
 
   // ===========================================================
   // HARD REDIRECT SECURITY - CEO/Superviseur ONLY
@@ -950,8 +951,15 @@ export default function SecurityDashboard() {
     }
   };
 
-  // Filter audit logs by search AND date range
+  // Filter audit logs by search, date range, AND action type
   const filteredLogs = auditLogs.filter(log => {
+    // Action type filter
+    if (actionFilter !== 'all') {
+      if (actionFilter === 'rollbacks' && log.action !== 'ROLLBACK_APPROVAL') return false;
+      if (actionFilter === 'blocked' && log.action !== 'ACCESS_DENIED') return false;
+      if (actionFilter === 'success' && !['STOCK_FINALIZED', 'APPROVE_DEVIS'].includes(log.action)) return false;
+    }
+
     // Text search filter
     if (searchFilter) {
       const search = searchFilter.toLowerCase();
@@ -1259,8 +1267,88 @@ export default function SecurityDashboard() {
                   />
                 </div>
               </div>
+              
+              {/* Action Type Filter Buttons */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={actionFilter === 'all' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActionFilter('all')}
+                  className="h-8 text-xs gap-1.5"
+                >
+                  <Activity className="h-3.5 w-3.5" />
+                  Tout
+                  <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">
+                    {auditLogs.length}
+                  </Badge>
+                </Button>
+                <Button
+                  variant={actionFilter === 'rollbacks' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActionFilter('rollbacks')}
+                  className={cn(
+                    "h-8 text-xs gap-1.5",
+                    actionFilter === 'rollbacks' && "bg-red-600 hover:bg-red-700 text-white"
+                  )}
+                >
+                  <Unlock className="h-3.5 w-3.5" />
+                  Rollbacks
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "ml-1 h-5 px-1.5 text-[10px]",
+                      actionFilter === 'rollbacks' && "bg-red-800 text-white"
+                    )}
+                  >
+                    {auditLogs.filter(l => l.action === 'ROLLBACK_APPROVAL').length}
+                  </Badge>
+                </Button>
+                <Button
+                  variant={actionFilter === 'blocked' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActionFilter('blocked')}
+                  className={cn(
+                    "h-8 text-xs gap-1.5",
+                    actionFilter === 'blocked' && "bg-orange-600 hover:bg-orange-700 text-white"
+                  )}
+                >
+                  <Ban className="h-3.5 w-3.5" />
+                  Bloqués
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "ml-1 h-5 px-1.5 text-[10px]",
+                      actionFilter === 'blocked' && "bg-orange-800 text-white"
+                    )}
+                  >
+                    {auditLogs.filter(l => l.action === 'ACCESS_DENIED').length}
+                  </Badge>
+                </Button>
+                <Button
+                  variant={actionFilter === 'success' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setActionFilter('success')}
+                  className={cn(
+                    "h-8 text-xs gap-1.5",
+                    actionFilter === 'success' && "bg-green-600 hover:bg-green-700 text-white"
+                  )}
+                >
+                  <CheckCircle className="h-3.5 w-3.5" />
+                  Succès
+                  <Badge 
+                    variant="secondary" 
+                    className={cn(
+                      "ml-1 h-5 px-1.5 text-[10px]",
+                      actionFilter === 'success' && "bg-green-800 text-white"
+                    )}
+                  >
+                    {auditLogs.filter(l => ['STOCK_FINALIZED', 'APPROVE_DEVIS'].includes(l.action)).length}
+                  </Badge>
+                </Button>
+              </div>
+              
               <CardDescription className="text-xs">
-                Actions sensibles en temps réel • {filteredLogs.length} entrées
+                Actions sensibles en temps réel • {filteredLogs.length} entrées {actionFilter !== 'all' && `(filtre: ${actionFilter})`}
               </CardDescription>
             </CardHeader>
             <CardContent className="px-3 sm:px-6">
