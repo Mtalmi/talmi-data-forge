@@ -621,6 +621,33 @@ export default function SecurityDashboard() {
   // PDF EXPORT - Forensic Audit Report
   // ===========================================================
   const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [generatingCompliancePdf, setGeneratingCompliancePdf] = useState(false);
+
+  // Security Compliance Report for External Auditors
+  const generateCompliancePdf = async () => {
+    setGeneratingCompliancePdf(true);
+    try {
+      // Import the PDF generator dynamically
+      const { generateSecurityComplianceHtml } = await import('@/lib/securityCompliancePdf');
+      const htmlContent = generateSecurityComplianceHtml();
+
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        printWindow.onload = () => {
+          printWindow.print();
+        };
+      }
+      
+      toast.success('Rapport de conformité généré');
+    } catch (error) {
+      console.error('Error generating compliance PDF:', error);
+      toast.error('Erreur lors de la génération');
+    } finally {
+      setGeneratingCompliancePdf(false);
+    }
+  };
 
   const generateForensicPdf = async () => {
     setGeneratingPdf(true);
@@ -1160,6 +1187,21 @@ export default function SecurityDashboard() {
               <span className="hidden sm:inline">Test Weekly</span>
             </Button>
             
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={generateCompliancePdf}
+              disabled={generatingCompliancePdf || loading}
+              className="gap-1.5 h-8 border-indigo-500/30 text-indigo-500 hover:bg-indigo-500/10"
+            >
+              {generatingCompliancePdf ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Shield className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Compliance</span>
+            </Button>
+
             <Button 
               variant="default" 
               size="sm" 
