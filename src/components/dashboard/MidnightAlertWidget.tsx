@@ -12,12 +12,22 @@ import {
   User,
   Package,
   Receipt,
-  ShieldAlert
+  ShieldAlert,
+  Bell,
+  Send,
+  CheckCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { toast } from 'sonner';
+import { 
+  isOffHoursCasablanca, 
+  getHourInCasablanca, 
+  formatCasablancaTime,
+  isCurrentlyOffHours 
+} from '@/lib/timezone';
 
 interface MidnightTransaction {
   id: string;
@@ -27,19 +37,15 @@ interface MidnightTransaction {
   created_at: string;
   created_by_name?: string;
   hour: number;
+  justification_urgence?: string;
 }
 
 export function MidnightAlertWidget() {
   const [transactions, setTransactions] = useState<MidnightTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const isOffHours = (dateStr: string): boolean => {
-    const date = parseISO(dateStr);
-    const hour = date.getHours();
-    // Off-hours: 18:00 (6pm) to 00:00 (midnight) - War Room Alert Window
-    return hour >= 18 && hour <= 23;
-  };
+  const [sendingAlerts, setSendingAlerts] = useState<Set<string>>(new Set());
+  const [sentAlerts, setSentAlerts] = useState<Set<string>>(new Set());
 
   const fetchMidnightTransactions = useCallback(async () => {
     try {
@@ -49,7 +55,7 @@ export function MidnightAlertWidget() {
       // Fetch expenses
       const { data: expenses } = await supabase
         .from('expenses_controlled')
-        .select('id, description, montant_ttc, created_at, requested_by_name')
+        .select('id, description, montant_ttc, created_at, requested_by_name, notes')
         .gte('created_at', twentyFourHoursAgo.toISOString())
         .order('created_at', { ascending: false });
 
@@ -69,9 +75,11 @@ export function MidnightAlertWidget() {
 
       const allTransactions: MidnightTransaction[] = [];
 
-      // Process expenses
+      // Process expenses - using timezone-locked Casablanca time
       expenses?.forEach(exp => {
-        if (isOffHours(exp.created_at)) {
+        if (isOffHoursCasablanca(exp.created_at)) {
+          // Check if notes contain justification (format: [URGENCE: ...])
+          const justificationMatch = exp.notes?.match(/\[URGENCE:\s*(.+?)\]/);
           allTransactions.push({
             id: exp.id,
             type: 'expense',
@@ -79,34 +87,35 @@ export function MidnightAlertWidget() {
             amount: exp.montant_ttc,
             created_at: exp.created_at,
             created_by_name: exp.requested_by_name,
-            hour: parseISO(exp.created_at).getHours(),
+            hour: getHourInCasablanca(exp.created_at),
+            justification_urgence: justificationMatch?.[1],
           });
         }
       });
 
-      // Process stock receptions
+      // Process stock receptions - using timezone-locked Casablanca time
       stockReceptions?.forEach(stock => {
-        if (isOffHours(stock.created_at)) {
+        if (isOffHoursCasablanca(stock.created_at)) {
           allTransactions.push({
             id: stock.id,
             type: 'stock',
             description: `${stock.materiau} - ${stock.quantite}T`,
             created_at: stock.created_at,
-            hour: parseISO(stock.created_at).getHours(),
+            hour: getHourInCasablanca(stock.created_at),
           });
         }
       });
 
-      // Process deliveries
+      // Process deliveries - using timezone-locked Casablanca time
       deliveries?.forEach((del: any) => {
-        if (del.created_at && isOffHours(del.created_at)) {
+        if (del.created_at && isOffHoursCasablanca(del.created_at)) {
           const clientName = del.clients?.nom || 'Client';
           allTransactions.push({
             id: del.bl_id,
             type: 'delivery',
             description: `${clientName} - ${del.volume_m3}m³`,
             created_at: del.created_at,
-            hour: parseISO(del.created_at).getHours(),
+            hour: getHourInCasablanca(del.created_at),
           });
         }
       });
@@ -158,6 +167,59 @@ export function MidnightAlertWidget() {
     setRefreshing(false);
   };
 
+  const handleSendCeoAlert = async (tx: MidnightTransaction) => {
+    const txKey = `${tx.type}-${tx.id}`;
+    setSendingAlerts(prev => new Set(prev).add(txKey));
+    
+    try {
+      // Simulate sending alert to CEO (in production, this would call an edge function)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Log the alert to audit_superviseur for forensic trail
+      const { error } = await supabase
+        .from('audit_superviseur')
+        .insert({
+          user_id: (await supabase.auth.getUser()).data.user?.id || 'system',
+          user_name: 'Système Alerte Nocturne',
+          action: 'CEO_MIDNIGHT_ALERT',
+          table_name: tx.type === 'expense' ? 'expenses_controlled' : 
+                      tx.type === 'stock' ? 'stock_receptions_pending' : 'bons_livraison_reels',
+          record_id: tx.id,
+          changes: {
+            type: tx.type,
+            description: tx.description,
+            amount: tx.amount,
+            hour: tx.hour,
+            justification: tx.justification_urgence || 'Non fournie',
+            created_by: tx.created_by_name,
+          },
+        });
+
+      if (error) throw error;
+
+      setSentAlerts(prev => new Set(prev).add(txKey));
+      
+      toast.success(
+        <div className="space-y-1">
+          <p className="font-semibold">📱 Alerte CEO Envoyée</p>
+          <p className="text-xs text-muted-foreground">
+            {tx.description} ({tx.hour}h) - Notifié au tableau de bord CEO
+          </p>
+        </div>,
+        { duration: 5000 }
+      );
+    } catch (error) {
+      console.error('Error sending CEO alert:', error);
+      toast.error('Erreur lors de l\'envoi de l\'alerte');
+    } finally {
+      setSendingAlerts(prev => {
+        const next = new Set(prev);
+        next.delete(txKey);
+        return next;
+      });
+    }
+  };
+
   const getTypeIcon = (type: MidnightTransaction['type']) => {
     switch (type) {
       case 'expense':
@@ -199,6 +261,9 @@ export function MidnightAlertWidget() {
     );
   }
 
+  // Check if currently in off-hours window (for status indicator)
+  const currentlyOffHours = isCurrentlyOffHours();
+
   return (
     <Card className={cn(
       "border-2 transition-colors",
@@ -217,9 +282,18 @@ export function MidnightAlertWidget() {
               <span className={transactions.length > 0 ? "text-destructive" : ""}>
                 Alertes Nocturnes
               </span>
+              {currentlyOffHours && (
+                <Badge variant="destructive" className="text-[9px] animate-pulse">
+                  MODE NUIT ACTIF
+                </Badge>
+              )}
             </CardTitle>
-            <CardDescription className="text-xs">
-              Transactions entre 18h et minuit (dernières 24h)
+            <CardDescription className="text-xs flex items-center gap-1">
+              <Clock className="h-3 w-3" />
+              <span>Transactions 18h-00h</span>
+              <Badge variant="outline" className="text-[9px] ml-1">
+                🇲🇦 Casablanca
+              </Badge>
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
@@ -249,69 +323,116 @@ export function MidnightAlertWidget() {
             </div>
             <p className="font-medium text-sm text-success">Aucune activité nocturne</p>
             <p className="text-xs text-muted-foreground">
-              Pas de transactions hors heures
+              Pas de transactions hors heures (18h-00h Casablanca)
             </p>
           </div>
         ) : (
-          <ScrollArea className="h-[280px] pr-2">
+          <ScrollArea className="h-[320px] pr-2">
             <div className="space-y-2">
-              {transactions.map((tx) => (
-                <div
-                  key={`${tx.type}-${tx.id}`}
-                  className={cn(
-                    "p-3 rounded-lg border-l-4 bg-destructive/10 border-l-destructive",
-                    "transition-all hover:bg-destructive/15"
-                  )}
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="p-1.5 rounded-md bg-destructive/20 text-destructive">
-                        {getTypeIcon(tx.type)}
-                      </span>
-                      <div>
-                        <p className="font-semibold text-xs text-destructive">
-                          {getTypeLabel(tx.type)}
+              {transactions.map((tx) => {
+                const txKey = `${tx.type}-${tx.id}`;
+                const isSending = sendingAlerts.has(txKey);
+                const isSent = sentAlerts.has(txKey);
+                
+                return (
+                  <div
+                    key={txKey}
+                    className={cn(
+                      "p-3 rounded-lg border-l-4 bg-destructive/10 border-l-destructive",
+                      "transition-all hover:bg-destructive/15"
+                    )}
+                  >
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="p-1.5 rounded-md bg-destructive/20 text-destructive">
+                          {getTypeIcon(tx.type)}
+                        </span>
+                        <div>
+                          <p className="font-semibold text-xs text-destructive">
+                            {getTypeLabel(tx.type)}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground font-mono">
+                            {formatCasablancaTime(tx.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant="outline" 
+                        className="text-[10px] border-destructive text-destructive shrink-0"
+                      >
+                        <Clock className="h-2.5 w-2.5 mr-1" />
+                        {tx.hour}h 🇲🇦
+                      </Badge>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-xs text-foreground line-clamp-2 mb-1">
+                      {tx.description}
+                    </p>
+
+                    {/* Justification (if provided) */}
+                    {tx.justification_urgence && (
+                      <div className="mt-2 p-2 bg-warning/10 rounded border border-warning/30">
+                        <p className="text-[10px] text-warning font-semibold mb-0.5">
+                          📝 Justification d'Urgence:
                         </p>
-                        <p className="text-[10px] text-muted-foreground font-mono">
-                          {format(parseISO(tx.created_at), 'HH:mm', { locale: fr })}
+                        <p className="text-[11px] text-foreground italic">
+                          "{tx.justification_urgence}"
                         </p>
                       </div>
-                    </div>
-                    <Badge 
-                      variant="outline" 
-                      className="text-[10px] border-destructive text-destructive shrink-0"
-                    >
-                      <Clock className="h-2.5 w-2.5 mr-1" />
-                      {tx.hour}h
-                    </Badge>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-foreground line-clamp-2 mb-1">
-                    {tx.description}
-                  </p>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-2.5 w-2.5" />
-                      {formatDistanceToNow(parseISO(tx.created_at), { locale: fr, addSuffix: true })}
-                    </span>
-                    {tx.amount && (
-                      <span className="font-mono font-semibold text-destructive">
-                        {tx.amount.toLocaleString('fr-MA')} MAD
-                      </span>
                     )}
-                    {tx.created_by_name && (
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-2">
                       <span className="flex items-center gap-1">
-                        <User className="h-2.5 w-2.5" />
-                        {tx.created_by_name}
+                        <Clock className="h-2.5 w-2.5" />
+                        {formatDistanceToNow(parseISO(tx.created_at), { locale: fr, addSuffix: true })}
                       </span>
-                    )}
+                      {tx.amount && (
+                        <span className="font-mono font-semibold text-destructive">
+                          {tx.amount.toLocaleString('fr-MA')} MAD
+                        </span>
+                      )}
+                      {tx.created_by_name && (
+                        <span className="flex items-center gap-1">
+                          <User className="h-2.5 w-2.5" />
+                          {tx.created_by_name}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* CEO Alert Button */}
+                    <div className="mt-2 pt-2 border-t border-destructive/20">
+                      <Button
+                        variant={isSent ? "secondary" : "destructive"}
+                        size="sm"
+                        className="w-full h-8 text-xs gap-1.5"
+                        onClick={() => handleSendCeoAlert(tx)}
+                        disabled={isSending || isSent}
+                      >
+                        {isSending ? (
+                          <>
+                            <RefreshCw className="h-3 w-3 animate-spin" />
+                            Envoi en cours...
+                          </>
+                        ) : isSent ? (
+                          <>
+                            <CheckCircle className="h-3 w-3" />
+                            Alerte CEO Envoyée
+                          </>
+                        ) : (
+                          <>
+                            <Bell className="h-3 w-3" />
+                            <Send className="h-3 w-3" />
+                            Alerter CEO
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </ScrollArea>
         )}
@@ -322,7 +443,7 @@ export function MidnightAlertWidget() {
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-destructive shrink-0" />
               <p className="text-[11px] text-destructive">
-                <span className="font-bold">ALERTE SÉCURITÉ:</span> Ces transactions ont été effectuées en dehors des heures normales de travail.
+                <span className="font-bold">ALERTE SÉCURITÉ:</span> Transactions effectuées hors heures (18h-00h heure Casablanca).
               </p>
             </div>
           </div>
