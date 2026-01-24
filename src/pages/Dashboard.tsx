@@ -25,6 +25,8 @@ import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
 import { CeoEmergencyOverride } from '@/components/dashboard/CeoEmergencyOverride';
 import { HawaiiGreeting } from '@/components/dashboard/HawaiiGreeting';
 import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
+import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
+import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -307,6 +309,16 @@ export default function Dashboard() {
             {/* Treasury & Cash Flow - Financial Constitution */}
             <ParallaxCard className="bento-wide" glowColor="gold">
               <TreasuryWidget />
+            </ParallaxCard>
+            
+            {/* Cash-Flow Time Machine - 30-Day Forecast */}
+            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+              <CashFlowForecast />
+            </ParallaxCard>
+            
+            {/* Fleet Predator - Live GPS & Fuel Theft Detection */}
+            <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
+              <LiveFleetMap />
             </ParallaxCard>
             
             {/* CEO Emergency Override - Nuclear Key */}
