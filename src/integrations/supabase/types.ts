@@ -1265,6 +1265,45 @@ export type Database = {
         }
         Relationships: []
       }
+      department_budgets: {
+        Row: {
+          alert_threshold_pct: number
+          budget_cap: number
+          created_at: string
+          created_by: string | null
+          department: string
+          department_label: string
+          id: string
+          is_active: boolean
+          month_year: string
+          updated_at: string
+        }
+        Insert: {
+          alert_threshold_pct?: number
+          budget_cap?: number
+          created_at?: string
+          created_by?: string | null
+          department: string
+          department_label: string
+          id?: string
+          is_active?: boolean
+          month_year: string
+          updated_at?: string
+        }
+        Update: {
+          alert_threshold_pct?: number
+          budget_cap?: number
+          created_at?: string
+          created_by?: string | null
+          department?: string
+          department_label?: string
+          id?: string
+          is_active?: boolean
+          month_year?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       depenses: {
         Row: {
           categorie: string
@@ -1617,6 +1656,7 @@ export type Database = {
           cap_override_reason: string | null
           categorie: Database["public"]["Enums"]["expense_category"]
           created_at: string | null
+          department: string | null
           description: string
           id: string
           kilometrage: number | null
@@ -1663,6 +1703,7 @@ export type Database = {
           cap_override_reason?: string | null
           categorie: Database["public"]["Enums"]["expense_category"]
           created_at?: string | null
+          department?: string | null
           description: string
           id?: string
           kilometrage?: number | null
@@ -1709,6 +1750,7 @@ export type Database = {
           cap_override_reason?: string | null
           categorie?: Database["public"]["Enums"]["expense_category"]
           created_at?: string | null
+          department?: string | null
           description?: string
           id?: string
           kilometrage?: number | null
@@ -3371,6 +3413,18 @@ export type Database = {
       }
     }
     Views: {
+      department_spending_summary: {
+        Row: {
+          department: string | null
+          expense_count: number | null
+          month_year: string | null
+          total_all: number | null
+          total_approved: number | null
+          total_paid: number | null
+          total_pending: number | null
+        }
+        Relationships: []
+      }
       v_quality_feed: {
         Row: {
           camion: string | null
@@ -3503,6 +3557,21 @@ export type Database = {
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
+      }
+      get_department_budget_status: {
+        Args: { p_month_year?: string }
+        Returns: {
+          alert_threshold_pct: number
+          budget_cap: number
+          department: string
+          department_label: string
+          is_alert_triggered: boolean
+          is_over_budget: boolean
+          remaining: number
+          total_pending: number
+          total_spent: number
+          utilization_pct: number
+        }[]
       }
       get_user_display_info: {
         Args: { p_user_id: string }

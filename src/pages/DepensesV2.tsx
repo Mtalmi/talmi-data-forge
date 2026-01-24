@@ -5,8 +5,9 @@ import { useExpensesControlled, ExpenseFilters, ExpenseControlled } from '@/hook
 import { ExpenseRequestForm } from '@/components/expenses/ExpenseRequestForm';
 import { ExpenseFiltersPanel } from '@/components/expenses/ExpenseFiltersPanel';
 import { ExpenseDetailDialog } from '@/components/expenses/ExpenseDetailDialog';
+import { DepartmentBudgetWidget } from '@/components/expenses/DepartmentBudgetWidget';
 import { ExportButton } from '@/components/documents/ExportButton';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -46,7 +47,10 @@ import {
   ShieldCheck,
   ShieldAlert,
   ShieldX,
+  Wallet,
+  List,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -86,6 +90,7 @@ export default function DepensesV2() {
   const [showFilters, setShowFilters] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<ExpenseControlled | null>(null);
+  const [activeTab, setActiveTab] = useState('expenses');
   
   const { 
     expenses, 
@@ -200,7 +205,7 @@ export default function DepensesV2() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Gestion des Dépenses Contrôlées</h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Workflow multi-niveau avec plafond mensuel de 15,000 MAD
+              Workflow multi-niveau avec budgets départementaux
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -242,207 +247,227 @@ export default function DepensesV2() {
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <Receipt className="h-4 w-4" />
-                Total
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold">{stats.total}</p>
-              <p className="text-xs text-muted-foreground font-mono">
-                {stats.totalAmount.toLocaleString('fr-FR')} MAD
-              </p>
-            </CardContent>
-          </Card>
+        {/* Tabs for Expenses vs Budgets */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="expenses" className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              Dépenses
+            </TabsTrigger>
+            <TabsTrigger value="budgets" className="flex items-center gap-2">
+              <Wallet className="h-4 w-4" />
+              Budgets
+            </TabsTrigger>
+          </TabsList>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-warning flex items-center gap-2">
-                <Clock className="h-4 w-4" />
-                En attente
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold text-warning">{stats.pending}</p>
-              <p className="text-xs text-muted-foreground font-mono">
-                {stats.pendingAmount.toLocaleString('fr-FR')} MAD
-              </p>
-            </CardContent>
-          </Card>
+          <TabsContent value="expenses" className="space-y-4 mt-4">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+                    <Receipt className="h-4 w-4" />
+                    Total
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold">{stats.total}</p>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    {stats.totalAmount.toLocaleString('fr-FR')} MAD
+                  </p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-success flex items-center gap-2">
-                <CheckCircle className="h-4 w-4" />
-                Approuvées
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold text-success">{stats.approved}</p>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-warning flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    En attente
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold text-warning">{stats.pending}</p>
+                  <p className="text-xs text-muted-foreground font-mono">
+                    {stats.pendingAmount.toLocaleString('fr-FR')} MAD
+                  </p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-primary flex items-center gap-2">
-                <Banknote className="h-4 w-4" />
-                Payées
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold text-primary">{stats.paid}</p>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-success flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" />
+                    Approuvées
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold text-success">{stats.approved}</p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
-                <XCircle className="h-4 w-4" />
-                Rejetées
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold text-destructive">{stats.rejected}</p>
-            </CardContent>
-          </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-primary flex items-center gap-2">
+                    <Banknote className="h-4 w-4" />
+                    Payées
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold text-primary">{stats.paid}</p>
+                </CardContent>
+              </Card>
 
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" />
-                Bloquées
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xl font-bold text-destructive">{stats.blocked}</p>
-            </CardContent>
-          </Card>
-        </div>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
+                    <XCircle className="h-4 w-4" />
+                    Rejetées
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold text-destructive">{stats.rejected}</p>
+                </CardContent>
+              </Card>
 
-        {/* Filters Panel */}
-        {showFilters && (
-          <ExpenseFiltersPanel filters={filters} onChange={setFilters} />
-        )}
-
-        {/* Expenses Table */}
-        <div className="card-industrial overflow-x-auto">
-          {loading ? (
-            <div className="p-8 text-center">
-              <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    Bloquées
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xl font-bold text-destructive">{stats.blocked}</p>
+                </CardContent>
+              </Card>
             </div>
-          ) : expenses.length === 0 ? (
-            <div className="p-8 text-center">
-              <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucune dépense trouvée</p>
-              {Object.keys(filters).length > 0 && (
-                <Button variant="link" onClick={() => setFilters({})}>
-                  Effacer les filtres
-                </Button>
+
+            {/* Filters Panel */}
+            {showFilters && (
+              <ExpenseFiltersPanel filters={filters} onChange={setFilters} />
+            )}
+
+            {/* Expenses Table */}
+            <div className="card-industrial overflow-x-auto">
+              {loading ? (
+                <div className="p-8 text-center">
+                  <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+                </div>
+              ) : expenses.length === 0 ? (
+                <div className="p-8 text-center">
+                  <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
+                  <p className="text-muted-foreground">Aucune dépense trouvée</p>
+                  {Object.keys(filters).length > 0 && (
+                    <Button variant="link" onClick={() => setFilters({})}>
+                      Effacer les filtres
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                <Table className="data-table-industrial">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Référence</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Demandeur</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead className="text-right">Montant TTC</TableHead>
+                      <TableHead>Niveau</TableHead>
+                      <TableHead>Statut</TableHead>
+                      <TableHead className="w-10"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {expenses.map((expense) => (
+                      <TableRow key={expense.id}>
+                        <TableCell className="font-mono text-xs">
+                          {expense.reference}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {expense.requested_at 
+                            ? format(new Date(expense.requested_at), 'dd/MM/yyyy', { locale: fr })
+                            : '—'}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          {expense.requested_by_name || '—'}
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate text-sm">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-xs shrink-0">
+                              {CATEGORY_LABELS[expense.categorie] || expense.categorie}
+                            </Badge>
+                            <span className="truncate">{expense.description}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right font-mono font-medium">
+                          {expense.montant_ttc.toLocaleString('fr-FR')} MAD
+                        </TableCell>
+                        <TableCell>{getLevelBadge(expense.approval_level)}</TableCell>
+                        <TableCell>{getStatusBadge(expense.statut)}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => setSelectedExpense(expense)}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                Voir détails
+                              </DropdownMenuItem>
+                              
+                              {canApprove && expense.statut === 'en_attente' && (
+                                <>
+                                  <DropdownMenuItem onClick={() => handleApprove(expense)}>
+                                    <CheckCircle className="h-4 w-4 mr-2 text-success" />
+                                    Approuver
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleReject(expense)}>
+                                    <XCircle className="h-4 w-4 mr-2 text-destructive" />
+                                    Rejeter
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                              
+                              {canApprove && expense.statut === 'bloque_plafond' && (isCeo || isSuperviseur) && (
+                                <DropdownMenuItem onClick={() => handleOverrideCap(expense)}>
+                                  <TrendingUp className="h-4 w-4 mr-2 text-warning" />
+                                  Débloquer plafond
+                                </DropdownMenuItem>
+                              )}
+                              
+                              {canApprove && expense.statut === 'approuve' && (
+                                <DropdownMenuItem onClick={() => handleMarkPaid(expense)}>
+                                  <Banknote className="h-4 w-4 mr-2 text-primary" />
+                                  Marquer payé
+                                </DropdownMenuItem>
+                              )}
+                              
+                              {isCeo && expense.statut === 'brouillon' && (
+                                <DropdownMenuItem 
+                                  onClick={() => handleDelete(expense)}
+                                  className="text-destructive"
+                                >
+                                  <XCircle className="h-4 w-4 mr-2" />
+                                  Supprimer
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               )}
             </div>
-          ) : (
-            <Table className="data-table-industrial">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Référence</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Demandeur</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Montant TTC</TableHead>
-                  <TableHead>Niveau</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="w-10"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {expenses.map((expense) => (
-                  <TableRow key={expense.id}>
-                    <TableCell className="font-mono text-xs">
-                      {expense.reference}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {expense.requested_at 
-                        ? format(new Date(expense.requested_at), 'dd/MM/yyyy', { locale: fr })
-                        : '—'}
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {expense.requested_by_name || '—'}
-                    </TableCell>
-                    <TableCell className="max-w-[200px] truncate text-sm">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs shrink-0">
-                          {CATEGORY_LABELS[expense.categorie] || expense.categorie}
-                        </Badge>
-                        <span className="truncate">{expense.description}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right font-mono font-medium">
-                      {expense.montant_ttc.toLocaleString('fr-FR')} MAD
-                    </TableCell>
-                    <TableCell>{getLevelBadge(expense.approval_level)}</TableCell>
-                    <TableCell>{getStatusBadge(expense.statut)}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => setSelectedExpense(expense)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            Voir détails
-                          </DropdownMenuItem>
-                          
-                          {canApprove && expense.statut === 'en_attente' && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleApprove(expense)}>
-                                <CheckCircle className="h-4 w-4 mr-2 text-success" />
-                                Approuver
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleReject(expense)}>
-                                <XCircle className="h-4 w-4 mr-2 text-destructive" />
-                                Rejeter
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          
-                          {canApprove && expense.statut === 'bloque_plafond' && (isCeo || isSuperviseur) && (
-                            <DropdownMenuItem onClick={() => handleOverrideCap(expense)}>
-                              <TrendingUp className="h-4 w-4 mr-2 text-warning" />
-                              Débloquer plafond
-                            </DropdownMenuItem>
-                          )}
-                          
-                          {canApprove && expense.statut === 'approuve' && (
-                            <DropdownMenuItem onClick={() => handleMarkPaid(expense)}>
-                              <Banknote className="h-4 w-4 mr-2 text-primary" />
-                              Marquer payé
-                            </DropdownMenuItem>
-                          )}
-                          
-                          {isCeo && expense.statut === 'brouillon' && (
-                            <DropdownMenuItem 
-                              onClick={() => handleDelete(expense)}
-                              className="text-destructive"
-                            >
-                              <XCircle className="h-4 w-4 mr-2" />
-                              Supprimer
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </div>
+          </TabsContent>
+
+          <TabsContent value="budgets" className="mt-4">
+            <DepartmentBudgetWidget />
+          </TabsContent>
+        </Tabs>
 
         {/* New Expense Form Dialog */}
         <Dialog open={showNewForm} onOpenChange={setShowNewForm}>
