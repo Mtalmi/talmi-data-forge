@@ -40,15 +40,15 @@ export default function KPICard({
   };
 
   const iconBgColors = {
-    default: 'bg-primary/15',
-    positive: 'bg-success/15',
-    negative: 'bg-destructive/15',
-    warning: 'bg-warning/15',
+    default: 'bg-primary/10 border border-primary/20',
+    positive: 'bg-primary/10 border border-primary/20',
+    negative: 'bg-destructive/10 border border-destructive/20',
+    warning: 'bg-warning/10 border border-warning/20',
   };
 
   const iconColors = {
     default: 'text-primary',
-    positive: 'text-success',
+    positive: 'text-primary',
     negative: 'text-destructive',
     warning: 'text-warning',
   };

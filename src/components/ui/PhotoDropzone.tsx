@@ -174,27 +174,34 @@ export function PhotoDropzone({
           <div className="flex flex-col items-center gap-4 p-6 text-center">
             <div className={cn(
               "relative flex items-center justify-center",
-              "w-20 h-20 rounded-2xl",
-              "bg-primary/10 border-2 border-dashed border-primary/30",
-              "transition-all duration-300",
-              isDragging && "scale-110 bg-primary/20 border-primary/50"
+              "w-24 h-24 rounded-2xl",
+              "bg-primary/5 border-2 border-dashed border-primary/30",
+              "transition-all duration-500",
+              isDragging && "scale-110 bg-primary/15 border-primary/60"
             )}>
               {isDragging ? (
-                <Upload className="h-8 w-8 text-primary animate-bounce" />
+                <Upload className="h-10 w-10 text-primary animate-bounce" />
               ) : (
-                <Camera className="h-8 w-8 text-primary" />
+                <Camera className="h-10 w-10 text-primary" />
               )}
               
-              {/* Pulse Ring */}
-              <div className="absolute inset-0 rounded-2xl border-2 border-primary/30 animate-pulse-ring" />
+              {/* Gold Pulse Ring */}
+              <div className="absolute inset-0 rounded-2xl border-2 border-primary/40 animate-pulse-ring" />
+              
+              {/* Golden Scan Overlay */}
+              {isDragging && (
+                <div className="absolute inset-0 overflow-hidden rounded-2xl">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent animate-[scan-line_1.5s_ease-in-out_infinite]" />
+                </div>
+              )}
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-foreground">
-                {isDragging ? 'Déposez la photo ici' : hint}
+              <p className="text-base font-semibold text-foreground">
+                {isDragging ? 'Déposez dans le Vault' : hint}
               </p>
               <p className="text-xs text-muted-foreground">
-                PNG, JPG jusqu'à 10MB
+                PNG, JPG jusqu'à 10MB • Mandat Visuel Actif
               </p>
             </div>
             
@@ -202,14 +209,14 @@ export function PhotoDropzone({
               type="button"
               variant="outline"
               size="sm"
-              className="gap-2 mt-2"
+              className="gap-2 mt-2 border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
               onClick={(e) => {
                 e.stopPropagation();
                 fileInputRef.current?.click();
               }}
             >
               <ImageIcon className="h-4 w-4" />
-              Sélectionner
+              Accéder au Vault
             </Button>
           </div>
         )}
