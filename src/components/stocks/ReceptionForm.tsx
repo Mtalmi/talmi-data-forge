@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -22,6 +23,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { compressImage } from '@/lib/imageCompression';
+import { cn } from '@/lib/utils';
 
 interface Stock {
   materiau: string;
@@ -237,13 +239,15 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
             />
           </div>
 
-          {/* Photo Upload Section */}
+          {/* Photo Upload Section - Preuve Obligatoire */}
           <div className="space-y-2">
             <Label className="form-label-industrial flex items-center gap-2">
-              <Camera className="h-4 w-4" />
-              Photo du BL Fournisseur
+              <Camera className="h-4 w-4 text-primary" />
+              <span className="font-semibold">Preuve Obligatoire</span>
               {requiresPhoto && (
-                <span className="text-destructive text-xs">(Obligatoire)</span>
+                <Badge variant="destructive" className="text-[10px] animate-pulse">
+                  REQUIS
+                </Badge>
               )}
             </Label>
             
@@ -257,7 +261,7 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
             />
             
             {photoPreview ? (
-              <div className="relative rounded-lg border border-success/50 bg-success/10 p-2">
+              <div className="relative rounded-lg border-2 border-success bg-success/10 p-2">
                 <img 
                   src={photoPreview} 
                   alt="BL Preview" 
@@ -274,29 +278,42 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="flex items-center gap-2 mt-2 text-success text-sm">
+                <div className="flex items-center gap-2 mt-2 text-success text-sm font-semibold">
                   <CheckCircle className="h-4 w-4" />
-                  Photo téléchargée
+                  Preuve Validée
                 </div>
               </div>
             ) : (
               <Button
                 type="button"
                 variant="outline"
-                className="w-full min-h-[56px] border-dashed"
+                className={cn(
+                  "w-full min-h-[64px] border-dashed transition-all",
+                  requiresPhoto 
+                    ? "border-destructive/50 hover:border-destructive hover:bg-destructive/5" 
+                    : "border-border"
+                )}
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingPhoto}
               >
                 {uploadingPhoto ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                     Téléchargement...
                   </>
                 ) : (
-                  <>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Prendre ou Sélectionner Photo
-                  </>
+                  <div className="flex flex-col items-center">
+                    <Camera className={cn(
+                      "h-6 w-6 mb-1",
+                      requiresPhoto ? "text-destructive" : "text-muted-foreground"
+                    )} />
+                    <span className="text-sm">📸 Photographier le BL</span>
+                    {requiresPhoto && (
+                      <span className="text-xs text-destructive font-bold mt-1">
+                        ⚠️ PREUVE OBLIGATOIRE
+                      </span>
+                    )}
+                  </div>
                 )}
               </Button>
             )}

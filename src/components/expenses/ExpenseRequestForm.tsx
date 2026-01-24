@@ -327,11 +327,14 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </Alert>
       )}
 
-      {/* Receipt Upload - MANDATORY */}
+      {/* Receipt Upload - MANDATORY - Preuve Obligatoire */}
       <div className="space-y-3">
         <Label className="flex items-center gap-2">
-          <Receipt className="h-4 w-4" />
-          Justificatif (Ticket/Facture) <span className="text-destructive">*</span>
+          <Camera className="h-4 w-4 text-primary" />
+          <span className="font-semibold">Preuve Obligatoire</span>
+          <Badge variant="destructive" className="text-[10px] animate-pulse">
+            REQUIS
+          </Badge>
         </Label>
         
         {receiptPreview ? (
@@ -339,11 +342,11 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
             <img 
               src={receiptPreview} 
               alt="Receipt" 
-              className="w-full max-h-48 object-contain rounded-lg border bg-muted"
+              className="w-full max-h-48 object-contain rounded-lg border-2 border-success bg-muted"
             />
-            <Badge className="absolute top-2 right-2 bg-success">
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Téléchargé
+            <Badge className="absolute top-2 right-2 bg-success gap-1">
+              <CheckCircle className="h-3 w-3" />
+              Preuve Validée
             </Badge>
             <Button
               type="button"
@@ -359,18 +362,20 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
             </Button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-primary/50 transition-colors">
+          <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-destructive/50 rounded-lg cursor-pointer hover:border-destructive hover:bg-destructive/5 transition-all">
             <div className="flex flex-col items-center justify-center py-4">
               {uploadingReceipt ? (
-                <Loader2 className="h-8 w-8 text-muted-foreground animate-spin" />
+                <Loader2 className="h-10 w-10 text-primary animate-spin" />
               ) : (
                 <>
-                  <Camera className="h-8 w-8 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    Photographier le justificatif
+                  <div className="p-3 rounded-full bg-destructive/10 mb-2">
+                    <Camera className="h-8 w-8 text-destructive" />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">
+                    📸 Photographier le justificatif
                   </p>
-                  <p className="text-xs text-destructive mt-1 font-medium">
-                    Obligatoire - Aucune dépense sans ticket
+                  <p className="text-xs text-destructive mt-1 font-bold">
+                    ⚠️ PREUVE OBLIGATOIRE - Soumission bloquée sans photo
                   </p>
                 </>
               )}

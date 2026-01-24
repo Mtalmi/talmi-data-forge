@@ -37,8 +37,8 @@ export function MidnightAlertWidget() {
   const isOffHours = (dateStr: string): boolean => {
     const date = parseISO(dateStr);
     const hour = date.getHours();
-    // Off-hours: 18:00 (6pm) to 06:00 (6am)
-    return hour >= 18 || hour < 6;
+    // Off-hours: 18:00 (6pm) to 00:00 (midnight) - War Room Alert Window
+    return hour >= 18 && hour <= 23;
   };
 
   const fetchMidnightTransactions = useCallback(async () => {
@@ -219,7 +219,7 @@ export function MidnightAlertWidget() {
               </span>
             </CardTitle>
             <CardDescription className="text-xs">
-              Transactions entre 18h et 6h (dernières 24h)
+              Transactions entre 18h et minuit (dernières 24h)
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">

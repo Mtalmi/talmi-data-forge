@@ -21,6 +21,7 @@ import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
 import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
 import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
 import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
+import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -291,6 +292,11 @@ export default function Dashboard() {
             {/* Forensic Alert Feed - War Room Security */}
             <div className="bento-wide">
               <ForensicAlertFeed />
+            </div>
+            
+            {/* Forensic Audit Feed - Price/Formule Changes */}
+            <div className="bento-wide">
+              <ForensicAuditFeed />
             </div>
             
             {/* Treasury & Cash Flow - Financial Constitution */}
