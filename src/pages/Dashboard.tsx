@@ -12,6 +12,7 @@ import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
 import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
 import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
+import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
 import { 
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -242,6 +243,11 @@ export default function Dashboard() {
             {/* Live Quality Feed - Hawaii Transparency */}
             <div className="bento-wide">
               <LiveQualityFeed />
+            </div>
+            
+            {/* Live Production Feed - Hawaii Plant Monitoring */}
+            <div className="bento-wide">
+              <LiveProductionWidget />
             </div>
             
             {/* Executive Command Center - Full width */}
