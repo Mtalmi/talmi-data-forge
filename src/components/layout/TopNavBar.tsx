@@ -224,14 +224,6 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             <GlobalSearch />
           </div>
 
-          {/* Role Preview (CEO only) */}
-          {onPreviewRoleChange && (
-            <RolePreviewSwitcher 
-              previewRole={previewRole} 
-              onPreviewRoleChange={onPreviewRoleChange} 
-            />
-          )}
-
           <ThemeToggle />
           <NotificationCenter />
 
