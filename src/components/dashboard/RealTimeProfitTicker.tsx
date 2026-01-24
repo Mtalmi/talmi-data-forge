@@ -44,26 +44,42 @@ export function RealTimeProfitTicker() {
         .select('cout_total_dh')
         .gte('date_releve', today);
 
-      // Fetch today's pump/transport fees from depenses
-      const { data: depenses } = await supabase
+      // Fetch ALL today's expenses (not just transport/pump) for accurate profit calculation
+      const { data: allDepenses } = await supabase
         .from('depenses')
         .select('montant, categorie')
-        .gte('date_depense', today)
-        .in('categorie', ['Transport', 'Pompage', 'Prestataires']);
+        .gte('date_depense', today);
+
+      // Also fetch expenses_controlled for real-time expense tracking
+      const { data: controlledExpenses } = await supabase
+        .from('expenses_controlled')
+        .select('montant_ttc, statut')
+        .gte('created_at', `${today}T00:00:00`)
+        .in('statut', ['approuve', 'paye']);
 
       const totalRevenue = invoices?.reduce((sum, inv) => sum + (inv.total_ht || 0), 0) || 0;
       const materialCost = invoices?.reduce((sum, inv) => sum + ((inv.cur_reel || 0) * (inv.volume_m3 || 0)), 0) || 0;
       const fuelCost = fuel?.reduce((sum, f) => sum + (f.cout_total_dh || 0), 0) || 0;
-      const pumpFees = depenses?.reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
       
-      const netProfit = totalRevenue - materialCost - fuelCost - pumpFees;
+      // Calculate total expenses from both tables
+      const depensesTotal = allDepenses?.reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
+      const controlledTotal = controlledExpenses?.reduce((sum, e) => sum + (e.montant_ttc || 0), 0) || 0;
+      const totalExpenses = depensesTotal + controlledTotal;
+      
+      // Pump fees (subset for display)
+      const pumpFees = allDepenses?.filter(d => 
+        ['Transport', 'Pompage', 'Prestataires'].includes(d.categorie)
+      ).reduce((sum, d) => sum + (d.montant || 0), 0) || 0;
+      
+      // Net Profit = CA - Material Costs - Fuel - ALL Expenses
+      const netProfit = totalRevenue - materialCost - fuelCost - totalExpenses;
       const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
 
       setData({
         totalRevenue,
         materialCost,
         fuelCost,
-        pumpFees,
+        pumpFees: totalExpenses, // Show total expenses in the "Pompe" card
         netProfit,
         profitMargin,
         lastUpdated: new Date(),

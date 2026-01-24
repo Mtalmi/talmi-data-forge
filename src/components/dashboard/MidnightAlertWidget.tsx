@@ -380,17 +380,34 @@ export function MidnightAlertWidget() {
                       {tx.description}
                     </p>
 
-                    {/* Justification (if provided) */}
-                    {tx.justification_urgence && (
-                      <div className="mt-2 p-2 bg-warning/10 rounded border border-warning/30">
-                        <p className="text-[10px] text-warning font-semibold mb-0.5">
-                          📝 Justification d'Urgence:
-                        </p>
-                        <p className="text-[11px] text-foreground italic">
-                          "{tx.justification_urgence}"
-                        </p>
+                    {/* STICKY NOTE: Always visible justification */}
+                    <div className={cn(
+                      "mt-2 p-2.5 rounded-lg border-2 shadow-sm",
+                      tx.justification_urgence 
+                        ? "bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-amber-900/30 dark:to-yellow-900/20 border-warning/50" 
+                        : "bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border-destructive/50"
+                    )}>
+                      <div className="flex items-start gap-2">
+                        <span className="text-lg">📝</span>
+                        <div className="flex-1 min-w-0">
+                          <p className={cn(
+                            "text-[10px] font-bold uppercase tracking-wider mb-1",
+                            tx.justification_urgence ? "text-warning" : "text-destructive"
+                          )}>
+                            {tx.justification_urgence ? "Justification d'Urgence" : "⚠️ Aucune Justification"}
+                          </p>
+                          <p className={cn(
+                            "text-[11px] leading-relaxed",
+                            tx.justification_urgence ? "text-foreground italic" : "text-muted-foreground"
+                          )}>
+                            {tx.justification_urgence 
+                              ? `"${tx.justification_urgence}"` 
+                              : "Travail nocturne sans justification fournie - Investigation CEO recommandée"
+                            }
+                          </p>
+                        </div>
                       </div>
-                    )}
+                    </div>
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-2">
