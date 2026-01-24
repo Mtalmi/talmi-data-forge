@@ -342,7 +342,7 @@ export function MidnightAlertWidget() {
                       "transition-all hover:bg-destructive/15"
                     )}
                   >
-                    {/* Header */}
+                    {/* Header with EMERGENCY Badge */}
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-2">
                         <span className="p-1.5 rounded-md bg-destructive/20 text-destructive">
@@ -357,13 +357,22 @@ export function MidnightAlertWidget() {
                           </p>
                         </div>
                       </div>
-                      <Badge 
-                        variant="outline" 
-                        className="text-[10px] border-destructive text-destructive shrink-0"
-                      >
-                        <Clock className="h-2.5 w-2.5 mr-1" />
-                        {tx.hour}h 🇲🇦
-                      </Badge>
+                      {/* EMERGENCY Badge */}
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge 
+                          variant="destructive" 
+                          className="text-[9px] animate-pulse gap-1"
+                        >
+                          🚨 EMERGENCY
+                        </Badge>
+                        <Badge 
+                          variant="outline" 
+                          className="text-[10px] border-destructive text-destructive shrink-0"
+                        >
+                          <Clock className="h-2.5 w-2.5 mr-1" />
+                          {tx.hour}h 🇲🇦
+                        </Badge>
+                      </div>
                     </div>
 
                     {/* Description */}
