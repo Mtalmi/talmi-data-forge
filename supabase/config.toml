@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.send-weekly-security-digest]
 verify_jwt = false
+
+[functions.send-daily-security-digest]
+verify_jwt = false

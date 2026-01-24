@@ -36,6 +36,7 @@ import {
   CalendarIcon,
   X,
   Mail,
+  CalendarCheck,
 } from 'lucide-react';
 import { format, formatDistanceToNow, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -436,6 +437,7 @@ export default function SecurityDashboard() {
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [actionFilter, setActionFilter] = useState<'all' | 'rollbacks' | 'blocked' | 'success'>('all');
   const [sendingDigest, setSendingDigest] = useState(false);
+  const [sendingDailyDigest, setSendingDailyDigest] = useState(false);
 
   // ===========================================================
   // HARD REDIRECT SECURITY - CEO/Superviseur ONLY
@@ -1037,6 +1039,31 @@ export default function SecurityDashboard() {
     }
   };
 
+  // Send test daily digest
+  const handleSendTestDailyDigest = async () => {
+    setSendingDailyDigest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-daily-security-digest');
+      
+      if (error) throw error;
+      
+      if (data?.success) {
+        toast.success('Digest quotidien envoyé', {
+          description: `Statut: ${data.summary?.riskLevel} (${data.summary?.totalEvents} événements)`,
+        });
+      } else {
+        throw new Error(data?.error || 'Échec de l\'envoi');
+      }
+    } catch (error: any) {
+      console.error('Error sending daily digest:', error);
+      toast.error('Erreur lors de l\'envoi', {
+        description: error.message,
+      });
+    } finally {
+      setSendingDailyDigest(false);
+    }
+  };
+
   // Show loading while checking auth
   if (authLoading) {
     return (
@@ -1106,6 +1133,21 @@ export default function SecurityDashboard() {
             <Button
               variant="outline" 
               size="sm" 
+              onClick={handleSendTestDailyDigest}
+              disabled={sendingDailyDigest || loading}
+              className="gap-1.5 h-8 border-green-500/30 text-green-600 hover:bg-green-500/10"
+            >
+              {sendingDailyDigest ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <CalendarCheck className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Test Daily</span>
+            </Button>
+
+            <Button
+              variant="outline" 
+              size="sm" 
               onClick={handleSendTestDigest}
               disabled={sendingDigest || loading}
               className="gap-1.5 h-8 border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
@@ -1115,7 +1157,7 @@ export default function SecurityDashboard() {
               ) : (
                 <Mail className="h-3.5 w-3.5" />
               )}
-              <span className="hidden sm:inline">Test Digest</span>
+              <span className="hidden sm:inline">Test Weekly</span>
             </Button>
             
             <Button 
