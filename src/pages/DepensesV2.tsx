@@ -7,6 +7,7 @@ import { ExpenseFiltersPanel } from '@/components/expenses/ExpenseFiltersPanel';
 import { ExpenseDetailDialog } from '@/components/expenses/ExpenseDetailDialog';
 import { DepartmentBudgetWidget } from '@/components/expenses/DepartmentBudgetWidget';
 import { ExportButton } from '@/components/documents/ExportButton';
+import { SecurityComplianceButton } from '@/components/reports/SecurityComplianceButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -220,6 +221,7 @@ export default function DepensesV2() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <SecurityComplianceButton />
             <ExportButton
               data={exportData}
               columns={[
