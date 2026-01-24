@@ -223,20 +223,36 @@ export function useExpensesControlled(filters: ExpenseFilters = {}) {
     }
   };
 
-  const deleteExpense = async (id: string): Promise<boolean> => {
+  const deleteExpense = async (id: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const { error } = await supabase
         .from('expenses_controlled')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        // Parse specific RLS/permission errors
+        const errorMessage = error.message || error.details || '';
+        
+        if (errorMessage.includes('new row violates row-level security') || 
+            errorMessage.includes('violates row-level security policy')) {
+          return { 
+            success: false, 
+            error: 'DELETION_BLOCKED: Seul le CEO peut supprimer des dépenses.' 
+          };
+        }
+        
+        throw error;
+      }
 
       await fetchExpenses();
-      return true;
-    } catch (error) {
+      return { success: true };
+    } catch (error: any) {
       console.error('Error deleting expense:', error);
-      return false;
+      return { 
+        success: false, 
+        error: error.message || 'Erreur lors de la suppression' 
+      };
     }
   };
 
