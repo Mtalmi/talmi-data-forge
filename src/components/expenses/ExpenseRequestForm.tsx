@@ -24,12 +24,16 @@ import {
   Ban,
   ShieldAlert,
   Moon,
-  Clock
+  Clock,
+  Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
 import { isCurrentlyOffHours, getCasablancaHour } from '@/lib/timezone';
+import { AIVerifiedBadge } from '@/components/ui/AIVerifiedBadge';
+import { AIVerificationPanel } from '@/components/ui/AIVerificationPanel';
+import { useAIDocumentVerification } from '@/hooks/useAIDocumentVerification';
 
 interface ExpenseRequestFormProps {
   onSuccess: () => void;
@@ -65,6 +69,17 @@ const MIN_JUSTIFICATION_LENGTH = 20;
 
 export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormProps) {
   const { user } = useAuth();
+  
+  // AI Document Verification
+  const {
+    isScanning,
+    extractedData,
+    verificationResult,
+    scanDocument,
+    verifyAgainstUserData,
+    hasCriticalMismatch,
+    reset: resetAI,
+  } = useAIDocumentVerification();
   
   const [description, setDescription] = useState('');
   const [montantHT, setMontantHT] = useState('');
@@ -158,6 +173,8 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
     if (!file) return;
 
     setUploadingReceipt(true);
+    resetAI(); // Reset previous AI state
+    
     try {
       const compressedFile = await compressImage(file, { maxWidth: 1920, quality: 0.8 });
       
@@ -176,8 +193,25 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         .from('expense-receipts')
         .getPublicUrl(data.path);
 
-      setReceiptUrl(urlData.publicUrl);
+      const publicUrl = urlData.publicUrl;
+      setReceiptUrl(publicUrl);
       toast.success('Justificatif téléchargé');
+
+      // 🤖 AI OCR Scan - Smart Fill
+      const extracted = await scanDocument(publicUrl, 'expense');
+      if (extracted) {
+        // Auto-fill amount if extracted and field is empty
+        if (extracted.amount !== null && !montantHT) {
+          // Calculate HT from TTC (assuming 20% TVA by default)
+          const calculatedHT = extracted.amount / (1 + parseFloat(tvaPct) / 100);
+          setMontantHT(calculatedHT.toFixed(2));
+          toast.success(`🤖 Montant pré-rempli: ${extracted.amount.toLocaleString()} MAD TTC`, { duration: 4000 });
+        }
+        // Auto-fill description with supplier if empty
+        if (extracted.supplier && !description) {
+          setDescription(`Facture ${extracted.supplier}${extracted.bl_number ? ` - ${extracted.bl_number}` : ''}`);
+        }
+      }
     } catch (error) {
       console.error('Upload error:', error);
       toast.error('Erreur lors du téléchargement');
@@ -237,6 +271,30 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
       }
     }
 
+    // 🤖 AI Verification - Compare extracted data with user input (only on final submit)
+    if (!asDraft && extractedData) {
+      const verification = verifyAgainstUserData(extractedData, {
+        amount: montantTTC,
+      });
+
+      // Block submission if critical mismatch detected
+      if (verification.mismatches.some(m => m.severity === 'critical')) {
+        toast.error(
+          '🚫 SOUMISSION BLOQUÉE - Écart critique détecté entre le montant saisi et le document. Cette tentative a été enregistrée.',
+          { duration: 8000 }
+        );
+        return;
+      }
+
+      // Warn but allow for non-critical mismatches  
+      if (verification.mismatches.length > 0) {
+        toast.warning(
+          '⚠️ Écart détecté par l\'AI - Vérifiez le montant avant soumission',
+          { duration: 5000 }
+        );
+      }
+    }
+
     setSubmitting(true);
     try {
       // Get user profile
@@ -263,10 +321,24 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
           receipt_photo_url: receiptUrl || null,
           requested_by: user?.id as string,
           requested_by_name: profile?.full_name || 'Utilisateur',
-          // Append urgency justification to notes if in off-hours mode
-          notes: isOffHoursMode && justificationUrgence.trim()
-            ? `[URGENCE: ${justificationUrgence.trim()}]${notes ? ' | ' + notes : ''}`
-            : notes || null,
+          // Include AI verification status and urgency justification in notes
+          notes: (() => {
+            const parts: string[] = [];
+            // AI verification tag
+            if (extractedData) {
+              const aiTag = verificationResult?.isVerified 
+                ? `[AI_VERIFIED: OK - ${extractedData.confidence}%]`
+                : `[AI_VERIFIED: MISMATCH - ${extractedData.confidence}%]`;
+              parts.push(aiTag);
+            }
+            // Off-hours justification
+            if (isOffHoursMode && justificationUrgence.trim()) {
+              parts.push(`[URGENCE: ${justificationUrgence.trim()}]`);
+            }
+            // User notes
+            if (notes) parts.push(notes);
+            return parts.length > 0 ? parts.join(' | ') : null;
+          })(),
           statut: asDraft ? 'brouillon' : 'en_attente',
           approval_level: calculatedLevel as Database['public']['Enums']['expense_approval_level'],
         });
@@ -435,6 +507,33 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
           </label>
         )}
       </div>
+
+      {/* AI Verification Panel */}
+      {(extractedData || isScanning) && (
+        <AIVerificationPanel
+          isScanning={isScanning}
+          extractedData={extractedData}
+          verificationResult={verificationResult}
+          onApplySuggestion={(field, value) => {
+            if (field === 'amount' && typeof value === 'number') {
+              // Calculate HT from extracted TTC
+              const calculatedHT = value / (1 + parseFloat(tvaPct) / 100);
+              setMontantHT(calculatedHT.toFixed(2));
+            }
+          }}
+        />
+      )}
+
+      {/* Critical Mismatch Block Alert */}
+      {hasCriticalMismatch && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>🚫 SOUMISSION BLOQUÉE</strong> - L'AI a détecté un écart critique entre le montant saisi ({montantTTC.toFixed(2)} MAD) 
+            et le document ({extractedData?.amount?.toLocaleString()} MAD). Corrigez le montant ou contactez un superviseur.
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Separator />
 
@@ -618,17 +717,24 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
             submitting || 
             !receiptUrl || 
             !!blockedReason || 
+            hasCriticalMismatch ||
             (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH)
           }
           className={cn(
             "gap-2",
-            isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH && "opacity-50"
+            (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH) && "opacity-50",
+            hasCriticalMismatch && "opacity-50 cursor-not-allowed"
           )}
         >
           {submitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
               Envoi...
+            </>
+          ) : verificationResult?.isVerified ? (
+            <>
+              <Bot className="h-4 w-4" />
+              ✅ Soumettre (AI Vérifié)
             </>
           ) : (
             <>
