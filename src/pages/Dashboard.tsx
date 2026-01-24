@@ -23,6 +23,8 @@ import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge'
 import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
 import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
 import { CeoEmergencyOverride } from '@/components/dashboard/CeoEmergencyOverride';
+import { HawaiiGreeting } from '@/components/dashboard/HawaiiGreeting';
+import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -161,6 +163,8 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="space-y-4 sm:space-y-6">
+        {/* Hawaii Greeting - CEO Only */}
+        {isCeo && <HawaiiGreeting />}
         {/* Premium Dashboard Header */}
         <div
           ref={kpiSectionRef}
@@ -241,74 +245,74 @@ export default function Dashboard() {
         {isCeo && (
           <div className="bento-grid">
             {/* Real-Time Profit Ticker - Wide on desktop */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <RealTimeProfitTicker />
-            </div>
+            </ParallaxCard>
             
             {/* Audit Health Widget */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="emerald">
               <AuditHealthWidget />
-            </div>
+            </ParallaxCard>
             
             {/* Live Quality Feed - Hawaii Transparency */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <LiveQualityFeed />
-            </div>
+            </ParallaxCard>
             
             {/* Live Production Feed - Hawaii Plant Monitoring */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
               <LiveProductionWidget />
-            </div>
+            </ParallaxCard>
             
             {/* Batch Photo Gallery - Hawaii Visual Proof */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <BatchPhotoGallery />
-            </div>
+            </ParallaxCard>
             
             {/* Circular Budget Gauge - Financial Constitution */}
-            <div className="bento-standard">
+            <ParallaxCard className="bento-standard" glowColor="gold">
               <CircularBudgetGauge />
-            </div>
+            </ParallaxCard>
             
             {/* Monthly Budget Gauge - Linear View */}
-            <div className="bento-standard">
+            <ParallaxCard className="bento-standard" glowColor="gold">
               <MonthlyBudgetGauge />
-            </div>
+            </ParallaxCard>
             
             {/* Midnight Alert Widget - Off-Hours Transactions */}
-            <div className="bento-standard">
+            <ParallaxCard className="bento-standard" glowColor="ruby">
               <MidnightAlertWidget />
-            </div>
+            </ParallaxCard>
             
             {/* Split-View Handshake Center - Double Validation */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <SplitViewHandshake />
-            </div>
+            </ParallaxCard>
             
             {/* Original Handshake UI - Compact Version */}
-            <div className="bento-standard">
+            <ParallaxCard className="bento-standard" glowColor="gold">
               <HandshakeUI />
-            </div>
+            </ParallaxCard>
             
             {/* Forensic Alert Feed - War Room Security */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="ruby">
               <ForensicAlertFeed />
-            </div>
+            </ParallaxCard>
             
             {/* Forensic Audit Feed - Price/Formule Changes */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <ForensicAuditFeed />
-            </div>
+            </ParallaxCard>
             
             {/* Treasury & Cash Flow - Financial Constitution */}
-            <div className="bento-wide">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <TreasuryWidget />
-            </div>
+            </ParallaxCard>
             
             {/* CEO Emergency Override - Nuclear Key */}
-            <div className="bento-standard">
+            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
               <CeoEmergencyOverride />
-            </div>
+            </ParallaxCard>
             
             {/* Executive Command Center - Full width */}
             <div className="bento-full">

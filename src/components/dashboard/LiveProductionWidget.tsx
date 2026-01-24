@@ -159,26 +159,40 @@ export function LiveProductionWidget() {
     ? Math.round((stats.ok / stats.total) * 100) 
     : 100;
 
+  // Determine breathing animation speed based on activity
+  const isActiveProduction = stats.total > 0;
+  const hasCriticalIssues = stats.critical > 0;
+
   return (
     <Card className="glass-card overflow-hidden">
       <CardHeader className="pb-3 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={cn(
-              'h-10 w-10 rounded-xl flex items-center justify-center',
+              'h-10 w-10 rounded-xl flex items-center justify-center relative',
               stats.critical > 0 
                 ? 'bg-destructive/10 border border-destructive/20' 
                 : stats.warning > 0 
                   ? 'bg-warning/10 border border-warning/20'
-                  : 'bg-success/10 border border-success/20'
+                  : 'bg-success/10 border border-success/20',
+              isActiveProduction && (hasCriticalIssues ? 'animate-breathe-fast' : 'animate-breathe')
             )}>
               <Activity className={cn(
                 'h-5 w-5',
                 stats.critical > 0 ? 'text-destructive' : stats.warning > 0 ? 'text-warning' : 'text-success'
               )} />
+              {/* Sanctum glow effect */}
+              {isActiveProduction && (
+                <div className="absolute inset-0 rounded-xl sanctum-icon" />
+              )}
             </div>
             <div>
-              <CardTitle className="text-base">Live Production</CardTitle>
+              <CardTitle className="text-base flex items-center gap-2">
+                Live Production
+                {isActiveProduction && (
+                  <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                )}
+              </CardTitle>
               <p className="text-xs text-muted-foreground">
                 5 derniers batches
               </p>
