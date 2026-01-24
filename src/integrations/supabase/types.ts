@@ -3738,6 +3738,33 @@ export type Database = {
           },
         ]
       }
+      user_certifications: {
+        Row: {
+          badge_level: string | null
+          certification_type: string
+          certified_at: string
+          certified_by: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_level?: string | null
+          certification_type?: string
+          certified_at?: string
+          certified_by?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_level?: string | null
+          certification_type?: string
+          certified_at?: string
+          certified_by?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -3776,6 +3803,27 @@ export type Database = {
           created_at?: string
           id?: string
           role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_training_progress: {
+        Row: {
+          completed_at: string
+          id: string
+          step_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          step_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          step_id?: string
           user_id?: string
         }
         Relationships: []
