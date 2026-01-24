@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { isOffHoursCasablanca } from '@/lib/timezone';
 
 export function DailyReportGenerator() {
   const [generating, setGenerating] = useState(false);
@@ -16,9 +17,10 @@ export function DailyReportGenerator() {
       const today = new Date();
       const startOfDay = new Date(today.setHours(0, 0, 0, 0)).toISOString();
       const endOfDay = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+      const todayStr = startOfDay.split('T')[0];
 
-      // Fetch today's data
-      const [facturesRes, blRes, depensesRes, clientsRes] = await Promise.all([
+      // Fetch today's data including security metrics
+      const [facturesRes, blRes, depensesRes, clientsRes, midnightAlertsRes, forensicLogsRes, formulasRes] = await Promise.all([
         supabase
           .from('factures')
           .select('total_ht, total_ttc, cur_reel, marge_brute_pct, volume_m3')
@@ -26,26 +28,79 @@ export function DailyReportGenerator() {
           .lte('date_emission', endOfDay),
         supabase
           .from('bons_livraison_reels')
-          .select('bl_id, volume_m3, statut_paiement, workflow_status, cur_reel, marge_brute_pct')
-          .gte('date_livraison', startOfDay.split('T')[0])
-          .lte('date_livraison', endOfDay.split('T')[0]),
+          .select('bl_id, volume_m3, statut_paiement, workflow_status, cur_reel, marge_brute_pct, ciment_reel_kg, adjuvant_reel_l, eau_reel_l, formule_id, created_at')
+          .gte('date_livraison', todayStr)
+          .lte('date_livraison', todayStr),
         supabase
           .from('depenses')
           .select('montant, categorie')
-          .gte('date_depense', startOfDay.split('T')[0])
-          .lte('date_depense', endOfDay.split('T')[0]),
+          .gte('date_depense', todayStr)
+          .lte('date_depense', todayStr),
         supabase
           .from('clients')
           .select('solde_du, credit_bloque')
           .gt('solde_du', 0),
+        // Midnight alerts (off-hours transactions)
+        supabase
+          .from('expenses_controlled')
+          .select('id, created_at')
+          .gte('created_at', startOfDay)
+          .lte('created_at', endOfDay),
+        // Forensic violations from audit_logs
+        supabase
+          .from('audit_logs')
+          .select('id, action_type, created_at, new_data')
+          .gte('created_at', startOfDay)
+          .lte('created_at', endOfDay)
+          .in('action_type', ['DELETE', 'SECURITY_VIOLATION']),
+        // Get formulas for leakage calculation
+        supabase
+          .from('formules_theoriques')
+          .select('formule_id, ciment_kg_m3, adjuvant_l_m3, eau_l_m3')
       ]);
 
       const factures = facturesRes.data || [];
       const bons = blRes.data || [];
       const depenses = depensesRes.data || [];
       const clientsEnRetard = clientsRes.data || [];
+      const allExpenses = midnightAlertsRes.data || [];
+      const forensicLogs = forensicLogsRes.data || [];
+      const formulas = formulasRes.data || [];
 
-      // Calculate KPIs
+      // === SECURITY METRICS ===
+      // Count midnight alerts (transactions between 18:00-00:00)
+      const midnightAlertCount = allExpenses.filter(e => isOffHoursCasablanca(e.created_at)).length;
+      
+      // Count forensic violations
+      const forensicViolationCount = forensicLogs.length;
+      const deletionCount = forensicLogs.filter(l => l.action_type === 'DELETE').length;
+      const securityViolationCount = forensicLogs.filter(l => l.action_type === 'SECURITY_VIOLATION').length;
+
+      // === EFFICIENCY METRICS (Leakage) ===
+      const formulaMap = new Map(formulas.map(f => [f.formule_id, f]));
+      let totalTheoMaterial = 0;
+      let totalActualMaterial = 0;
+
+      bons.forEach((bl: any) => {
+        const formula = formulaMap.get(bl.formule_id);
+        if (formula && bl.volume_m3) {
+          const theoCiment = (formula.ciment_kg_m3 || 0) * bl.volume_m3;
+          const theoAdjuvant = (formula.adjuvant_l_m3 || 0) * bl.volume_m3 * 1.2;
+          const theoEau = (formula.eau_l_m3 || 0) * bl.volume_m3;
+          totalTheoMaterial += theoCiment + theoAdjuvant + theoEau;
+
+          const actualCiment = bl.ciment_reel_kg || theoCiment;
+          const actualAdjuvant = (bl.adjuvant_reel_l || (formula.adjuvant_l_m3 || 0) * bl.volume_m3) * 1.2;
+          const actualEau = bl.eau_reel_l || theoEau;
+          totalActualMaterial += actualCiment + actualAdjuvant + actualEau;
+        }
+      });
+
+      const avgLeakageRate = totalTheoMaterial > 0 
+        ? ((totalActualMaterial - totalTheoMaterial) / totalTheoMaterial) * 100 
+        : 0;
+
+      // === FINANCIAL METRICS ===
       const totalFacture = factures.reduce((sum, f) => sum + (f.total_ht || 0), 0);
       const totalVolume = bons.reduce((sum, b) => sum + (b.volume_m3 || 0), 0);
       const totalDepenses = depenses.reduce((sum, d) => sum + (d.montant || 0), 0);
@@ -66,12 +121,16 @@ export function DailyReportGenerator() {
 
       const dateStr = format(new Date(), 'dd MMMM yyyy', { locale: fr });
 
+      // Determine leakage status color
+      const leakageStatus = avgLeakageRate > 7 ? 'critical' : avgLeakageRate > 3 ? 'warning' : 'normal';
+      const leakageColor = leakageStatus === 'critical' ? '#dc2626' : leakageStatus === 'warning' ? '#f59e0b' : '#22c55e';
+
       const pdfContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
-          <title>Rapport Journalier - ${dateStr}</title>
+          <title>Rapport Hawaii - ${dateStr}</title>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: 'Helvetica', 'Arial', sans-serif; padding: 30px; color: #1a1a1a; line-height: 1.4; background: #fff; }
@@ -85,6 +144,7 @@ export function DailyReportGenerator() {
             .kpi-card.positive { background: #dcfce7; border-color: #22c55e; }
             .kpi-card.negative { background: #fee2e2; border-color: #ef4444; }
             .kpi-card.warning { background: #fef3c7; border-color: #f59e0b; }
+            .kpi-card.security { background: #fef3c7; border-color: #3b82f6; }
             .kpi-value { font-size: 28px; font-weight: bold; color: #1a1a1a; font-family: 'Courier New', monospace; }
             .kpi-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
             .section { margin-bottom: 25px; }
@@ -101,7 +161,16 @@ export function DailyReportGenerator() {
             .table th { background: #f3f4f6; font-size: 11px; text-transform: uppercase; }
             .table .number { text-align: right; font-family: 'Courier New', monospace; }
             .alert-box { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+            .alert-box.security { background: #dbeafe; border-color: #3b82f6; }
+            .alert-box.critical { background: #fee2e2; border-color: #ef4444; }
             .alert-title { font-weight: bold; color: #b45309; font-size: 12px; }
+            .security-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+            .security-card { border-radius: 12px; padding: 20px; text-align: center; }
+            .security-card.midnight { background: #1e3a5f; color: white; border: 2px solid #3b82f6; }
+            .security-card.forensic { background: #fee2e2; border: 2px solid #ef4444; }
+            .security-card.efficiency { background: ${leakageStatus === 'critical' ? '#fee2e2' : leakageStatus === 'warning' ? '#fef3c7' : '#dcfce7'}; border: 2px solid ${leakageColor}; }
+            .security-value { font-size: 32px; font-weight: bold; font-family: 'Courier New', monospace; }
+            .security-label { font-size: 11px; text-transform: uppercase; margin-top: 5px; opacity: 0.8; }
             .footer { text-align: center; font-size: 10px; color: #666; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
             @media print { body { padding: 15px; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
           </style>
@@ -109,22 +178,23 @@ export function DailyReportGenerator() {
         <body>
           <div class="header">
             <div class="logo">TALMI BETON</div>
-            <div class="report-title">Rapport de Clôture Journalier</div>
+            <div class="report-title">Rapport Hawaii Complet</div>
             <div class="date">${dateStr}</div>
-            <div class="hawaii-badge">🌴 HAWAII REPORT</div>
+            <div class="hawaii-badge">🌴 HAWAII EXECUTIVE REPORT</div>
           </div>
 
+          <!-- PROFIT BOX -->
           <div class="profit-box">
-            <div class="profit-label">Profit Net du Jour</div>
+            <div class="profit-label">Profit Net du Jour (CA - Coûts - Dépenses)</div>
             <div class="profit-value">${profitNet >= 0 ? '+' : ''}${profitNet.toLocaleString('fr-FR')} DH</div>
             <div class="breakdown">
               <div class="breakdown-item">
                 <div class="breakdown-value" style="color: #16a34a;">+${totalFacture.toLocaleString('fr-FR')}</div>
-                <div class="breakdown-label">Facturé HT</div>
+                <div class="breakdown-label">CA (Facturé HT)</div>
               </div>
               <div class="breakdown-item">
                 <div class="breakdown-value" style="color: #dc2626;">-${totalCout.toLocaleString('fr-FR')}</div>
-                <div class="breakdown-label">Coût Réel</div>
+                <div class="breakdown-label">Coût Matières</div>
               </div>
               <div class="breakdown-item">
                 <div class="breakdown-value" style="color: #dc2626;">-${totalDepenses.toLocaleString('fr-FR')}</div>
@@ -133,6 +203,29 @@ export function DailyReportGenerator() {
             </div>
           </div>
 
+          <!-- SECURITY SECTION -->
+          <div class="section">
+            <div class="section-title">🔐 Tableau de Bord Sécurité</div>
+            <div class="security-grid">
+              <div class="security-card midnight">
+                <div class="security-value">${midnightAlertCount}</div>
+                <div class="security-label">🌙 Alertes Nocturnes</div>
+                <div style="font-size: 10px; margin-top: 5px;">Transactions 18h-00h</div>
+              </div>
+              <div class="security-card forensic">
+                <div class="security-value" style="color: #dc2626;">${forensicViolationCount}</div>
+                <div class="security-label">🚨 Violations Forensic</div>
+                <div style="font-size: 10px; margin-top: 5px;">${deletionCount} suppressions • ${securityViolationCount} alertes</div>
+              </div>
+              <div class="security-card efficiency">
+                <div class="security-value" style="color: ${leakageColor};">${avgLeakageRate.toFixed(1)}%</div>
+                <div class="security-label">💧 Taux de Fuite Moyen</div>
+                <div style="font-size: 10px; margin-top: 5px;">${leakageStatus === 'critical' ? '🚨 CRITIQUE (>7%)' : leakageStatus === 'warning' ? '⚠️ Attention (>3%)' : '✅ Normal'}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OPERATIONAL KPIs -->
           <div class="kpi-grid">
             <div class="kpi-card">
               <div class="kpi-value">${nbLivraisons}</div>
@@ -151,6 +244,25 @@ export function DailyReportGenerator() {
               <div class="kpi-label">CUR Moyen (DH)</div>
             </div>
           </div>
+
+          ${midnightAlertCount > 0 ? `
+          <div class="alert-box security">
+            <div class="alert-title">🌙 ALERTES NOCTURNES</div>
+            <p>${midnightAlertCount} transaction(s) effectuée(s) entre 18h00 et minuit. Vérification CEO recommandée.</p>
+          </div>
+          ` : ''}
+
+          ${avgLeakageRate > 7 ? `
+          <div class="alert-box critical">
+            <div class="alert-title" style="color: #dc2626;">🚨 ALERTE FUITE CRITIQUE</div>
+            <p>Taux de fuite matériaux: ${avgLeakageRate.toFixed(1)}% (seuil: 7%). Investigation immédiate requise.</p>
+          </div>
+          ` : avgLeakageRate > 3 ? `
+          <div class="alert-box">
+            <div class="alert-title">⚠️ ATTENTION FUITE DÉTECTÉE</div>
+            <p>Taux de fuite matériaux: ${avgLeakageRate.toFixed(1)}% (seuil alerte: 3%). Surveillance recommandée.</p>
+          </div>
+          ` : ''}
 
           ${retardsPaiement > 0 ? `
           <div class="alert-box">
@@ -186,8 +298,9 @@ export function DailyReportGenerator() {
           </div>
 
           <div class="footer">
-            <strong>TALMI BETON SARL</strong> | Rapport généré automatiquement le ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: fr })}<br>
-            Ce rapport est confidentiel et destiné à un usage interne uniquement.
+            <strong>TALMI BETON SARL</strong> | Rapport Hawaii généré le ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: fr })}<br>
+            Ce rapport est confidentiel et destiné à un usage interne uniquement.<br>
+            <span style="color: #f59e0b;">🌴 Hawaii Report Engine v2.0 - Financials • Security • Efficiency</span>
           </div>
         </body>
         </html>
