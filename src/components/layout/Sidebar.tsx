@@ -98,13 +98,13 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
   const roleNavConfig: Record<string, string[]> = {
     // CEO - FULL UNRESTRICTED ACCESS
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
-          '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
+          '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are AUDITED)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
-          '/clients', '/stocks', '/laboratoire', '/depenses', '/fournisseurs', '/prestataires', 
+          '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
           '/approbations', '/alertes', '/securite'],
     
@@ -120,7 +120,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // Agent Administratif - Dashboard, Ventes (Devis), Clients, Stocks (Silos)
     // Can APPROVE Devis created by others (not her own), can FINALIZE Stock after Resp. Tech quality photo
     // BLOCKED: Formules, Prix, Approbations menu
-    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/paiements'],
+    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/depenses-v2', '/paiements'],
     
     // Centraliste (Hassan) - Formules READ-ONLY (Daily Mix), Bons CONSOMMATION ONLY
     // BLOCKED: Prix, Clients, Approbations, STOCKS (zero manual access)
@@ -136,7 +136,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     operator: ['/production', '/stocks'],
     
     // Accounting - finance ONLY
-    accounting: ['/paiements', '/rapprochement', '/depenses', '/journal'],
+    accounting: ['/paiements', '/rapprochement', '/depenses', '/depenses-v2', '/journal'],
     
     // Auditeur Externe - STRICTLY LOCKED to /audit-externe
     // NO ACCESS to any other part of the system
@@ -226,7 +226,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
         )}
 
         {/* STEP 3: FACTURATION & FINANCE */}
-        {(canAccess('/bons') || canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/depenses') || canAccess('/journal')) && (
+        {(canAccess('/bons') || canAccess('/paiements') || canAccess('/rapprochement') || canAccess('/depenses') || canAccess('/depenses-v2') || canAccess('/journal')) && (
           <>
             <div className="pt-4 pb-2">
               <div className="flex items-center gap-2 px-3">
@@ -240,7 +240,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
             {canAccess('/bons') && <NavItem to="/bons" icon={<Receipt className="h-5 w-5" />} label="Archive BL & Factures" onClick={onNavClick} />}
             {canAccess('/paiements') && <NavItem to="/paiements" icon={<DollarSign className="h-5 w-5" />} label="Suivi Paiements" onClick={onNavClick} />}
             {canAccess('/rapprochement') && <NavItem to="/rapprochement" icon={<Building2 className="h-5 w-5" />} label="Rapprochement" onClick={onNavClick} />}
-            {canAccess('/depenses') && <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses" onClick={onNavClick} />}
+            {canAccess('/depenses') && <NavItem to="/depenses" icon={<Receipt className="h-5 w-5" />} label="Dépenses (Simple)" onClick={onNavClick} />}
+            {canAccess('/depenses-v2') && <NavItem to="/depenses-v2" icon={<Shield className="h-5 w-5" />} label="Dépenses Contrôlées" onClick={onNavClick} />}
           </>
         )}
 
