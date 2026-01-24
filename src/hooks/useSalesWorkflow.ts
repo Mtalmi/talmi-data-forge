@@ -39,7 +39,7 @@ export interface Devis {
   locked_at: string | null;
   lock_expires_at: string | null;
   // Joined data
-  client?: { nom_client: string; adresse: string | null };
+  client?: { nom_client: string; adresse: string | null; email: string | null };
   formule?: { designation: string };
 }
 
@@ -110,7 +110,7 @@ export function useSalesWorkflow() {
           .from('devis')
           .select(`
             *,
-            client:clients(nom_client, adresse),
+            client:clients(nom_client, adresse, email),
             formule:formules_theoriques(designation)
           `)
           .order('created_at', { ascending: false }),

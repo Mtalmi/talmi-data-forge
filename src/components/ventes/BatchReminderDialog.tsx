@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Send, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Mail, Send, Loader2, AlertTriangle, CheckCircle, MailX } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -32,6 +32,7 @@ interface BatchReminderDialogProps {
 interface DevisWithSelection extends Devis {
   selected: boolean;
   daysUntilExpiration: number;
+  hasEmail: boolean;
 }
 
 export function BatchReminderDialog({ 
@@ -45,18 +46,29 @@ export function BatchReminderDialog({
   const [selectedDevis, setSelectedDevis] = useState<Map<string, boolean>>(new Map());
   const [results, setResults] = useState<{ success: string[]; failed: string[] } | null>(null);
 
-  // Filter to only show pending devis with clients and email
-  const eligibleDevis: DevisWithSelection[] = devisList
+  // Filter to only show pending devis with clients
+  const allPendingDevis: DevisWithSelection[] = devisList
     .filter(d => d.statut === 'en_attente' && d.client_id)
-    .map(d => ({
-      ...d,
-      selected: selectedDevis.get(d.id) ?? true,
-      daysUntilExpiration: d.date_expiration 
-        ? differenceInDays(new Date(d.date_expiration), new Date())
-        : 999,
-    }))
-    .sort((a, b) => a.daysUntilExpiration - b.daysUntilExpiration);
+    .map(d => {
+      const hasEmail = !!(d.client?.email);
+      return {
+        ...d,
+        selected: hasEmail ? (selectedDevis.get(d.id) ?? true) : false,
+        daysUntilExpiration: d.date_expiration 
+          ? differenceInDays(new Date(d.date_expiration), new Date())
+          : 999,
+        hasEmail,
+      };
+    })
+    .sort((a, b) => {
+      // Sort: with email first, then by expiration
+      if (a.hasEmail && !b.hasEmail) return -1;
+      if (!a.hasEmail && b.hasEmail) return 1;
+      return a.daysUntilExpiration - b.daysUntilExpiration;
+    });
 
+  const eligibleDevis = allPendingDevis.filter(d => d.hasEmail);
+  const noEmailDevis = allPendingDevis.filter(d => !d.hasEmail);
   const selectedCount = eligibleDevis.filter(d => d.selected).length;
 
   const handleToggleAll = (checked: boolean) => {
@@ -110,9 +122,13 @@ export function BatchReminderDialog({
         });
         
         success.push(devis.devis_id);
-      } catch (error) {
+      } catch (error: any) {
         console.error(`Failed to send reminder for ${devis.devis_id}:`, error);
-        failed.push(devis.devis_id);
+        // Extract meaningful error message
+        const errorMsg = error?.context?.body ? 
+          JSON.parse(error.context.body)?.error : 
+          error?.message || 'Erreur inconnue';
+        failed.push(`${devis.devis_id} (${errorMsg})`);
       }
     }
 
@@ -214,12 +230,13 @@ export function BatchReminderDialog({
                 </div>
 
                 <ScrollArea className="h-64 border rounded-lg">
-                  {eligibleDevis.length === 0 ? (
+                  {eligibleDevis.length === 0 && noEmailDevis.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground">
                       Aucun devis en attente avec client assigné
                     </div>
                   ) : (
                     <div className="divide-y">
+                      {/* Eligible devis with email */}
                       {eligibleDevis.map((devis) => (
                         <div
                           key={devis.id}
@@ -262,6 +279,42 @@ export function BatchReminderDialog({
                           </span>
                         </div>
                       ))}
+                      
+                      {/* Devis without email - disabled with warning */}
+                      {noEmailDevis.length > 0 && (
+                        <>
+                          <div className="px-3 py-2 bg-warning/10 border-t border-warning/30">
+                            <div className="flex items-center gap-2 text-sm text-warning">
+                              <MailX className="h-4 w-4" />
+                              <span className="font-medium">
+                                {noEmailDevis.length} client(s) sans email configuré
+                              </span>
+                            </div>
+                          </div>
+                          {noEmailDevis.map((devis) => (
+                            <div
+                              key={devis.id}
+                              className="flex items-center gap-3 p-3 opacity-50 bg-muted/30"
+                            >
+                              <Checkbox disabled checked={false} />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono font-medium text-muted-foreground">
+                                    {devis.devis_id}
+                                  </span>
+                                  <Badge variant="outline" className="bg-muted text-muted-foreground">
+                                    <MailX className="h-3 w-3 mr-1" />
+                                    Pas d'email
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-muted-foreground truncate">
+                                  {devis.client?.nom_client} · {devis.total_ht.toLocaleString()} DH
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
                     </div>
                   )}
                 </ScrollArea>
