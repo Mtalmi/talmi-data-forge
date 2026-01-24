@@ -18,6 +18,9 @@ import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
 import { MonthlyBudgetGauge } from '@/components/dashboard/MonthlyBudgetGauge';
 import { HandshakeUI } from '@/components/dashboard/HandshakeUI';
 import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
+import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
+import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
+import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -260,12 +263,27 @@ export default function Dashboard() {
               <BatchPhotoGallery />
             </div>
             
-            {/* Monthly Budget Gauge - Financial Constitution */}
+            {/* Circular Budget Gauge - Financial Constitution */}
+            <div className="bento-standard">
+              <CircularBudgetGauge />
+            </div>
+            
+            {/* Monthly Budget Gauge - Linear View */}
             <div className="bento-standard">
               <MonthlyBudgetGauge />
             </div>
             
-            {/* Handshake UI - Double Validation Workflow */}
+            {/* Midnight Alert Widget - Off-Hours Transactions */}
+            <div className="bento-standard">
+              <MidnightAlertWidget />
+            </div>
+            
+            {/* Split-View Handshake Center - Double Validation */}
+            <div className="bento-wide">
+              <SplitViewHandshake />
+            </div>
+            
+            {/* Original Handshake UI - Compact Version */}
             <div className="bento-standard">
               <HandshakeUI />
             </div>
