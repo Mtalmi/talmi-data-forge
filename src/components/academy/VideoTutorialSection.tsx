@@ -641,7 +641,10 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                   <TutorialScreenSimulator 
                     tutorialId={tutorial.id} 
                     currentStep={-1} 
-                    isPlaying={false} 
+                    isPlaying={false}
+                    stepLabel={tutorial.steps[0]}
+                    totalSteps={tutorial.steps.length}
+                    icon={tutorial.icon}
                   />
                   {/* Intro overlay */}
                   <motion.div
@@ -677,7 +680,10 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                     tutorialId={tutorial.id} 
                     currentStep={currentStepIndex} 
                     // Visuals must keep running even if narration fails or is muted.
-                    isPlaying={true} 
+                    isPlaying={true}
+                    stepLabel={tutorial.steps[currentStepIndex]}
+                    totalSteps={tutorial.steps.length}
+                    icon={tutorial.icon}
                   />
                   
                   {/* Step info overlay at bottom */}

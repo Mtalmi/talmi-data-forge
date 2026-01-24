@@ -29,6 +29,9 @@ interface TutorialScreenSimulatorProps {
   tutorialId: string;
   currentStep: number;
   isPlaying: boolean;
+  stepLabel?: string;
+  totalSteps?: number;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 // Cursor component that moves around
@@ -823,8 +826,165 @@ const FleetPredatorScreens = ({ step, isPlaying }: { step: number; isPlaying: bo
   );
 };
 
+// ========== GENERIC FALLBACK - Enhanced Visual Simulator ==========
+const GenericStepSimulator = ({ 
+  step, 
+  isPlaying, 
+  stepLabel,
+  totalSteps,
+  Icon 
+}: { 
+  step: number; 
+  isPlaying: boolean; 
+  stepLabel?: string;
+  totalSteps?: number;
+  Icon?: React.ComponentType<{ className?: string }>;
+}) => {
+  const total = totalSteps || 4;
+  const progress = ((step + 1) / total) * 100;
+  
+  return (
+    <div className="relative w-full h-full bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-lg overflow-hidden">
+      {/* Animated background grid */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(to right, hsl(var(--primary)/0.2) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(var(--primary)/0.2) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px'
+        }} />
+      </div>
+      
+      {/* Floating orbs animation */}
+      <motion.div
+        className="absolute w-64 h-64 rounded-full bg-primary/10 blur-3xl"
+        animate={{
+          x: ['-20%', '80%', '-20%'],
+          y: ['-10%', '60%', '-10%'],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute w-48 h-48 rounded-full bg-success/10 blur-3xl"
+        animate={{
+          x: ['80%', '20%', '80%'],
+          y: ['60%', '10%', '60%'],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      
+      {/* Main content */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center p-6">
+        {/* Step progress ring */}
+        <div className="relative mb-6">
+          <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="hsl(var(--muted))"
+              strokeWidth="8"
+            />
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="hsl(var(--primary))"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 40}`}
+              initial={{ strokeDashoffset: 2 * Math.PI * 40 }}
+              animate={{ strokeDashoffset: 2 * Math.PI * 40 * (1 - progress / 100) }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            />
+          </svg>
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            animate={isPlaying ? { scale: [1, 1.1, 1] } : {}}
+            transition={{ duration: 1.5, repeat: Infinity }}
+          >
+            <div className="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
+              {Icon ? (
+                <Icon className="h-10 w-10 text-primary" />
+              ) : (
+                <span className="text-3xl font-bold text-primary">{step + 1}</span>
+              )}
+            </div>
+          </motion.div>
+        </div>
+        
+        {/* Step indicator pills */}
+        <div className="flex gap-2 mb-4">
+          {Array.from({ length: total }).map((_, i) => (
+            <motion.div
+              key={i}
+              className={cn(
+                "h-2 rounded-full transition-all duration-300",
+                i <= step ? "bg-primary" : "bg-muted",
+                i === step ? "w-8" : "w-2"
+              )}
+              animate={i === step ? { scale: [1, 1.1, 1] } : {}}
+              transition={{ duration: 0.5, repeat: i === step ? Infinity : 0 }}
+            />
+          ))}
+        </div>
+        
+        {/* Step label */}
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="text-center max-w-md"
+        >
+          <p className="text-lg font-semibold text-foreground mb-1">
+            Étape {step + 1} sur {total}
+          </p>
+          {stepLabel && (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {stepLabel}
+            </p>
+          )}
+        </motion.div>
+        
+        {/* Animated action hint */}
+        {isPlaying && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-6 flex items-center gap-2 text-xs text-primary"
+          >
+            <motion.div
+              animate={{ scale: [1, 1.3, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="w-2 h-2 rounded-full bg-primary"
+            />
+            <span>Narration en cours...</span>
+          </motion.div>
+        )}
+      </div>
+      
+      {/* Corner decorations */}
+      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+      <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-primary/30 rounded-tr-lg" />
+      <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-primary/30 rounded-bl-lg" />
+      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+    </div>
+  );
+};
+
 // Main component
-export function TutorialScreenSimulator({ tutorialId, currentStep, isPlaying }: TutorialScreenSimulatorProps) {
+export function TutorialScreenSimulator({ 
+  tutorialId, 
+  currentStep, 
+  isPlaying,
+  stepLabel,
+  totalSteps,
+  icon 
+}: TutorialScreenSimulatorProps) {
   switch (tutorialId) {
     case 'creer-devis-bc':
       return <DevisBCScreens step={currentStep} isPlaying={isPlaying} />;
@@ -833,22 +993,14 @@ export function TutorialScreenSimulator({ tutorialId, currentStep, isPlaying }: 
     case 'fleet-predator-avance':
       return <FleetPredatorScreens step={currentStep} isPlaying={isPlaying} />;
     default:
-      // Generic placeholder for other tutorials
       return (
-        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-background to-muted rounded-lg">
-          <div className="text-center">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4"
-            >
-              <BarChart3 className="h-8 w-8 text-primary" />
-            </motion.div>
-            <p className="text-sm text-muted-foreground">
-              Étape {currentStep + 1}
-            </p>
-          </div>
-        </div>
+        <GenericStepSimulator 
+          step={currentStep} 
+          isPlaying={isPlaying} 
+          stepLabel={stepLabel}
+          totalSteps={totalSteps}
+          Icon={icon}
+        />
       );
   }
 }
