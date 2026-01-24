@@ -8,33 +8,87 @@ interface VoiceState {
   usingFallback: boolean;
 }
 
-// Browser-native TTS fallback
-const speakWithBrowserTTS = (text: string): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    if (!('speechSynthesis' in window)) {
-      reject(new Error('Speech synthesis not supported'));
+// Browser-native TTS fallback with voice loading
+const getVoices = (): Promise<SpeechSynthesisVoice[]> => {
+  return new Promise((resolve) => {
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
       return;
     }
+    
+    // Voices not loaded yet, wait for them
+    const handleVoicesChanged = () => {
+      const loadedVoices = window.speechSynthesis.getVoices();
+      window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
+      resolve(loadedVoices);
+    };
+    
+    window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
+    
+    // Timeout fallback
+    setTimeout(() => {
+      window.speechSynthesis.removeEventListener('voiceschanged', handleVoicesChanged);
+      resolve(window.speechSynthesis.getVoices());
+    }, 1000);
+  });
+};
 
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+const speakWithBrowserTTS = async (text: string): Promise<void> => {
+  if (!('speechSynthesis' in window)) {
+    throw new Error('Speech synthesis not supported');
+  }
 
+  // Cancel any ongoing speech
+  window.speechSynthesis.cancel();
+
+  // Wait for voices to load
+  const voices = await getVoices();
+  
+  return new Promise((resolve, reject) => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
+    utterance.volume = 1.0;
 
     // Try to find a French voice
-    const voices = window.speechSynthesis.getVoices();
-    const frenchVoice = voices.find(v => v.lang.startsWith('fr')) || voices[0];
+    const frenchVoice = voices.find(v => v.lang.startsWith('fr')) || 
+                        voices.find(v => v.lang.includes('FR')) ||
+                        voices[0];
     if (frenchVoice) {
       utterance.voice = frenchVoice;
+      console.log('Using voice:', frenchVoice.name, frenchVoice.lang);
     }
 
-    utterance.onend = () => resolve();
-    utterance.onerror = (e) => reject(e);
+    utterance.onend = () => {
+      console.log('Browser TTS completed');
+      resolve();
+    };
+    
+    utterance.onerror = (e) => {
+      console.error('Browser TTS error:', e);
+      reject(e);
+    };
 
     window.speechSynthesis.speak(utterance);
+    
+    // Chrome bug workaround: speech can pause after ~15 seconds
+    // Resume periodically
+    const resumeInterval = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearInterval(resumeInterval);
+      } else {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 10000);
+    
+    utterance.onend = () => {
+      clearInterval(resumeInterval);
+      console.log('Browser TTS completed');
+      resolve();
+    };
   });
 };
 
