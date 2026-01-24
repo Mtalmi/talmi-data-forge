@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { toast } from 'sonner';
+// toast intentionally not used here: narration failures should never block the UI.
 
 interface VoiceState {
   isLoading: boolean;
@@ -34,7 +34,7 @@ const getVoices = (): Promise<SpeechSynthesisVoice[]> => {
   });
 };
 
-const speakWithBrowserTTS = async (text: string): Promise<void> => {
+const speakWithBrowserTTS = async (text: string, volume: number): Promise<void> => {
   if (!('speechSynthesis' in window)) {
     throw new Error('Speech synthesis not supported');
   }
@@ -50,7 +50,7 @@ const speakWithBrowserTTS = async (text: string): Promise<void> => {
     utterance.lang = 'fr-FR';
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+    utterance.volume = Math.min(1, Math.max(0, volume));
 
     // Try to find a French voice
     const frenchVoice = voices.find(v => v.lang.startsWith('fr')) || 
@@ -99,9 +99,21 @@ export function useTutorialVoice() {
     error: null,
     usingFallback: false,
   });
+
+  const [volume, setVolumeState] = useState(1);
+  const volumeRef = useRef(1);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef<string | null>(null);
+
+  const setVolume = useCallback((v: number) => {
+    const next = Math.min(1, Math.max(0, v));
+    volumeRef.current = next;
+    setVolumeState(next);
+    if (audioRef.current) {
+      audioRef.current.volume = next;
+    }
+  }, []);
 
   const speak = useCallback(async (text: string): Promise<void> => {
     // Clean up previous audio
@@ -125,7 +137,7 @@ export function useTutorialVoice() {
     const tryBrowserTTS = async (): Promise<boolean> => {
       try {
         setState(prev => ({ ...prev, isLoading: false, isPlaying: true, usingFallback: true }));
-        await speakWithBrowserTTS(text);
+        await speakWithBrowserTTS(text, volumeRef.current);
         setState(prev => ({ ...prev, isPlaying: false }));
         return true;
       } catch (e) {
@@ -169,6 +181,7 @@ export function useTutorialVoice() {
       audioUrlRef.current = audioUrl;
 
       const audio = new Audio(audioUrl);
+      audio.volume = volumeRef.current;
       audioRef.current = audio;
 
       audio.onplay = () => {
@@ -225,6 +238,8 @@ export function useTutorialVoice() {
 
   return {
     ...state,
+    volume,
+    setVolume,
     speak,
     stop,
     cleanup,
