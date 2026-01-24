@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,8 +39,10 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTutorialVoice } from '@/hooks/useTutorialVoice';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ScreenRecorderStudio } from './ScreenRecorderStudio';
 import { TutorialScreenSimulator } from './TutorialScreenSimulator';
+import { TutorialStepsTracker } from './tutorial-player/TutorialStepsTracker';
 
 interface VideoTutorial {
   id: string;
@@ -323,10 +325,15 @@ interface NarratedTutorialPlayerProps {
 }
 
 function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPlayerProps) {
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+  const perfMode = isMobile || prefersReducedMotion;
+
   const [currentPhase, setCurrentPhase] = useState<'idle' | 'intro' | 'steps' | 'outro' | 'complete'>('idle');
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showSteps, setShowSteps] = useState(true);
   const [progress, setProgress] = useState(0);
   const { speak, stop, isLoading, isPlaying, usingFallback, volume, setVolume, cleanup } = useTutorialVoice();
   const abortRef = useRef(false);
@@ -380,10 +387,16 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
       setCurrentStepIndex(0);
       setProgress(0);
       setIsFullscreen(false);
+      setShowSteps(true);
       abortRef.current = true;
       cleanup();
     }
   }, [open, cleanup]);
+
+  useEffect(() => {
+    // On mobile, default to a bigger simulator area.
+    if (open && isMobile) setShowSteps(false);
+  }, [open, isMobile]);
 
   const toggleFullscreen = useCallback(async () => {
     const el = fullscreenRef.current;
@@ -409,6 +422,10 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
       // Ignore fullscreen errors; dialog enlargement still works.
       setIsFullscreen(v => !v);
     }
+  }, []);
+
+  const toggleSteps = useCallback(() => {
+    setShowSteps((v) => !v);
   }, []);
 
   const startTutorial = useCallback(async () => {
@@ -476,7 +493,7 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
         className={cn(
           "p-0 overflow-hidden bg-gradient-to-br from-background via-background to-primary/5",
           isFullscreen
-            ? "max-w-none w-[calc(100vw-1rem)] h-[calc(100vh-1rem)]"
+            ? "max-w-none w-screen h-screen left-0 top-0 translate-x-0 translate-y-0 sm:rounded-none"
             : "max-w-3xl"
         )}
       >
@@ -523,6 +540,15 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
               <Button
                 variant="ghost"
                 size="icon"
+                onClick={toggleSteps}
+                className="h-8 w-8"
+                title={showSteps ? "Masquer les étapes" : "Afficher les étapes"}
+              >
+                <Navigation className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={toggleMute}
                 className="h-8 w-8"
               >
@@ -532,9 +558,9 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
           </div>
         </DialogHeader>
 
-        <div className={cn("p-6 space-y-6", isFullscreen && "h-full flex flex-col")}> 
+        <div className={cn("p-4 sm:p-6 space-y-4 sm:space-y-6", isFullscreen && "h-full flex flex-col")}> 
           {/* Player controls */}
-          <div className={cn("flex flex-col gap-3", isFullscreen ? "sm:flex-row sm:items-center sm:justify-between" : "sm:flex-row sm:items-center sm:justify-between")}> 
+          <div className={cn("flex flex-col gap-3", "sm:flex-row sm:items-center sm:justify-between")}> 
             <div className="flex items-center gap-2">
               <Badge className="bg-primary/10 text-primary border-primary/20">Simulateur</Badge>
               {usingFallback && (
@@ -563,8 +589,10 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
           <div
             ref={fullscreenRef}
             className={cn(
-              "relative w-full bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl",
-              isFullscreen ? "flex-1 min-h-[320px]" : "aspect-video"
+              "relative w-full bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-2xl overflow-hidden border-2 border-primary/20",
+              perfMode ? "shadow-lg" : "shadow-2xl",
+              isFullscreen ? "flex-1 min-h-[360px]" : "aspect-[4/5] sm:aspect-video",
+              "transform-gpu will-change-transform"
             )}
           >
             
@@ -580,20 +608,22 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                 >
                   {/* Animated background */}
                   <div className="absolute inset-0 overflow-hidden">
-                    <motion.div
-                      className="absolute w-96 h-96 rounded-full bg-primary/10 blur-3xl"
-                      animate={{
-                        x: ['-50%', '50%', '-50%'],
-                        y: ['-30%', '30%', '-30%'],
-                      }}
-                      transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-                    />
+                    {!perfMode && (
+                      <motion.div
+                        className="absolute w-96 h-96 rounded-full bg-primary/10 blur-3xl"
+                        animate={{
+                          x: ['-50%', '50%', '-50%'],
+                          y: ['-30%', '30%', '-30%'],
+                        }}
+                        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    )}
                   </div>
                   
                   <div className="relative z-10 text-center">
                     <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                      animate={perfMode ? undefined : { scale: [1, 1.1, 1] }}
+                      transition={perfMode ? undefined : { duration: 2, repeat: Infinity }}
                       className="mb-6 p-6 rounded-full bg-primary/20 border-2 border-primary/40 mx-auto w-fit"
                     >
                       <Video className="h-12 w-12 text-primary" />
@@ -650,11 +680,14 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-8"
+                    className={cn(
+                      "absolute inset-0 flex flex-col items-center justify-center p-6 sm:p-8",
+                      perfMode ? "bg-background/90" : "bg-background/80 backdrop-blur-sm"
+                    )}
                   >
                     <motion.div
-                      animate={{ scale: [1, 1.05, 1] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
+                      animate={perfMode ? undefined : { scale: [1, 1.05, 1] }}
+                      transition={perfMode ? undefined : { duration: 1.5, repeat: Infinity }}
                       className="mb-4 p-4 rounded-full bg-primary/30"
                     >
                       <Volume2 className="h-10 w-10 text-primary" />
@@ -690,7 +723,10 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                   <motion.div
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent p-4"
+                    className={cn(
+                      "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent p-4",
+                      perfMode && "pb-3"
+                    )}
                   >
                     <div className="flex items-center gap-3">
                       <motion.div
@@ -709,11 +745,7 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                       </div>
                       {isPlaying && (
                         <div className="flex items-center gap-1 text-success shrink-0">
-                          <motion.div
-                            animate={{ scale: [1, 1.3, 1] }}
-                            transition={{ repeat: Infinity, duration: 1 }}
-                            className="w-2 h-2 rounded-full bg-success"
-                          />
+                          <div className={cn("w-2 h-2 rounded-full bg-success", !perfMode && "animate-pulse")} />
                           <span className="text-xs">Narration</span>
                         </div>
                       )}
@@ -789,66 +821,15 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
           </div>
 
           {/* Steps Tracker */}
-          <div className="space-y-2">
-            <h4 className="font-medium text-sm flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
-              Progression du tutoriel
-            </h4>
-            <div className="grid gap-2">
-              {tutorial.steps.map((step, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={false}
-                  animate={{
-                    scale: currentPhase === 'steps' && idx === currentStepIndex ? 1.02 : 1,
-                    opacity: currentPhase === 'steps' && idx <= currentStepIndex ? 1 : 0.5,
-                  }}
-                  className={cn(
-                    "flex items-center gap-3 p-3 rounded-lg border transition-all",
-                    currentPhase === 'steps' && idx < currentStepIndex 
-                      ? "bg-success/10 border-success/30" 
-                      : currentPhase === 'steps' && idx === currentStepIndex 
-                        ? "bg-primary/10 border-primary/30" 
-                        : currentPhase === 'complete'
-                          ? "bg-success/10 border-success/30"
-                          : "bg-muted/30 border-transparent"
-                  )}
-                >
-                  <div className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all",
-                    (currentPhase === 'steps' && idx < currentStepIndex) || currentPhase === 'complete'
-                      ? "bg-success text-success-foreground" 
-                      : currentPhase === 'steps' && idx === currentStepIndex 
-                        ? "bg-primary text-primary-foreground" 
-                        : "bg-muted text-muted-foreground"
-                  )}>
-                    {(currentPhase === 'steps' && idx < currentStepIndex) || currentPhase === 'complete' ? (
-                      <CheckCircle2 className="h-4 w-4" />
-                    ) : (
-                      idx + 1
-                    )}
-                  </div>
-                  <span className={cn(
-                    "text-sm font-medium",
-                    (currentPhase === 'steps' && idx <= currentStepIndex) || currentPhase === 'complete'
-                      ? "text-foreground" 
-                      : "text-muted-foreground"
-                  )}>
-                    {step}
-                  </span>
-                  {currentPhase === 'steps' && idx === currentStepIndex && isPlaying && (
-                    <motion.div
-                      animate={{ opacity: [1, 0.5, 1] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="ml-auto"
-                    >
-                      <Volume2 className="h-4 w-4 text-primary" />
-                    </motion.div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          {showSteps && !isFullscreen && (
+            <TutorialStepsTracker
+              steps={tutorial.steps}
+              currentPhase={currentPhase}
+              currentStepIndex={currentStepIndex}
+              isNarrating={isPlaying}
+              dense={isMobile}
+            />
+          )}
 
           {/* Footer info */}
           <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground pt-4 border-t">
@@ -967,8 +948,8 @@ export function VideoTutorialSection() {
                       </motion.div>
                     </div>
                     
-                    {/* Play button overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Play button overlay (always visible on touch devices) */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <motion.div 
                         className="p-3 rounded-full bg-primary text-primary-foreground shadow-lg"
                         whileHover={{ scale: 1.1 }}
