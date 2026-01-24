@@ -3045,6 +3045,51 @@ export type Database = {
         }
         Relationships: []
       }
+      offline_sync_queue: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          operation: string
+          record_data: Json
+          record_id: string | null
+          retry_count: number | null
+          status: string
+          synced_at: string | null
+          table_name: string
+          user_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          operation: string
+          record_data: Json
+          record_id?: string | null
+          retry_count?: number | null
+          status?: string
+          synced_at?: string | null
+          table_name: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          operation?: string
+          record_data?: Json
+          record_id?: string | null
+          retry_count?: number | null
+          status?: string
+          synced_at?: string | null
+          table_name?: string
+          user_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: []
+      }
       paiements_fournisseur: {
         Row: {
           created_at: string
@@ -3660,6 +3705,75 @@ export type Database = {
           km_parcourus?: number | null
           litres?: number
           station?: string | null
+        }
+        Relationships: []
+      }
+      system_errors: {
+        Row: {
+          action: string | null
+          component: string | null
+          created_at: string
+          error_code: string | null
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          metadata: Json | null
+          record_id: string | null
+          resolution_notes: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          table_name: string | null
+          url: string | null
+          user_agent: string | null
+          user_id: string | null
+          user_name: string | null
+          user_role: string | null
+        }
+        Insert: {
+          action?: string | null
+          component?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          metadata?: Json | null
+          record_id?: string | null
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          table_name?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_name?: string | null
+          user_role?: string | null
+        }
+        Update: {
+          action?: string | null
+          component?: string | null
+          created_at?: string
+          error_code?: string | null
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          metadata?: Json | null
+          record_id?: string | null
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          table_name?: string | null
+          url?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_name?: string | null
+          user_role?: string | null
         }
         Relationships: []
       }

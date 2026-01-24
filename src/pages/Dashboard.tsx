@@ -10,6 +10,7 @@ import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
 import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
+import { DatabaseHealthWidget } from '@/components/dashboard/DatabaseHealthWidget';
 import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
 import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
@@ -256,6 +257,11 @@ export default function Dashboard() {
             {/* Audit Health Widget */}
             <ParallaxCard className="bento-wide" glowColor="emerald">
               <AuditHealthWidget />
+            </ParallaxCard>
+            
+            {/* Database Health Widget - Error Sentry */}
+            <ParallaxCard className="bento-wide" glowColor="emerald">
+              <DatabaseHealthWidget />
             </ParallaxCard>
             
             {/* Live Quality Feed - Hawaii Transparency */}
