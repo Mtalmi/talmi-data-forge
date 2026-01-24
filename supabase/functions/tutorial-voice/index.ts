@@ -67,6 +67,22 @@ serve(async (req) => {
         });
       }
 
+      // ElevenLabs can respond 401/403 for blocked free-tier or invalid keys.
+      // Do NOT throw (which becomes a 500 runtime error). Return the status so
+      // the client can gracefully fallback to browser TTS.
+      if (response.status === 401 || response.status === 403) {
+        return new Response(
+          JSON.stringify({
+            error: "ElevenLabs unauthorized",
+            details: errorText,
+          }),
+          {
+            status: response.status,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
+
       throw new Error(`ElevenLabs API error: ${response.status}`);
     }
 
