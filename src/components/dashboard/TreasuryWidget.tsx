@@ -203,7 +203,7 @@ export function TreasuryWidget() {
 
   return (
     <>
-      <Card className="glass-card overflow-hidden">
+      <Card data-tour="expense-entry" className="glass-card overflow-hidden">
         <CardHeader className="pb-3 border-b border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">

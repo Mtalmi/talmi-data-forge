@@ -265,12 +265,15 @@ export function MidnightAlertWidget() {
   const currentlyOffHours = isCurrentlyOffHours();
 
   return (
-    <Card className={cn(
-      "border-2 transition-colors",
-      transactions.length > 0 
-        ? "border-destructive/50 bg-destructive/5" 
-        : "border-border/50"
-    )}>
+    <Card 
+      data-tour="midnight-alert"
+      className={cn(
+        "border-2 transition-colors",
+        transactions.length > 0 
+          ? "border-destructive/50 bg-destructive/5" 
+          : "border-border/50"
+      )}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div>

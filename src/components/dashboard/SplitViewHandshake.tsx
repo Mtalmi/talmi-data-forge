@@ -302,7 +302,7 @@ export function SplitViewHandshake() {
 
   return (
     <>
-      <Card className="border-primary/20">
+      <Card data-tour="stock-reception" className="border-primary/20">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div>
