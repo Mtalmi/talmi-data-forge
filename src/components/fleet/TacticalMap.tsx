@@ -507,8 +507,48 @@ export function TacticalMap({
                 </div>
               )}
 
+              {/* Mission Info */}
+              {selectedTruckData.mission && (
+                <div className="pt-3 mt-3 border-t border-gray-700">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="h-4 w-4 text-amber-500" />
+                    <span className="text-amber-400 text-sm font-medium">Mission Active</span>
+                  </div>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Client:</span>
+                      <span className="text-white font-medium truncate max-w-[140px]">
+                        {selectedTruckData.mission.client_nom}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400">Volume:</span>
+                      <span className="text-white font-medium">
+                        {selectedTruckData.mission.volume_m3} m³
+                      </span>
+                    </div>
+                    {selectedTruckData.mission.zone_nom && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400">Zone:</span>
+                        <span className="text-gray-300 truncate max-w-[140px]">
+                          {selectedTruckData.mission.zone_nom}
+                        </span>
+                      </div>
+                    )}
+                    {selectedTruckData.mission.heure_prevue && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-400">Prévu:</span>
+                        <span className="text-gray-300">
+                          {selectedTruckData.mission.heure_prevue}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Actions */}
-              <div className="flex gap-2 pt-2">
+              <div className="flex gap-2 pt-3">
                 <Button
                   size="sm"
                   variant={followMode ? "default" : "outline"}
@@ -695,8 +735,18 @@ function createTruckMarkerElement(truck: TruckPosition, isSelected: boolean): HT
 
 // Helper to create popup HTML
 function createPopupHTML(truck: TruckPosition): string {
+  const missionHtml = truck.mission ? `
+    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #374151;">
+      <div style="color: #f59e0b; font-size: 11px; margin-bottom: 4px;">📦 MISSION ACTIVE</div>
+      <div style="margin-bottom: 2px;">🏢 ${truck.mission.client_nom}</div>
+      <div style="margin-bottom: 2px;">📍 ${truck.mission.zone_nom || truck.mission.adresse_livraison || 'Adresse non définie'}</div>
+      <div style="margin-bottom: 2px;">🧱 ${truck.mission.volume_m3} m³</div>
+      ${truck.mission.heure_prevue ? `<div>🕐 Prévu: ${truck.mission.heure_prevue}</div>` : ''}
+    </div>
+  ` : '';
+
   return `
-    <div style="color: #fff; font-family: system-ui; padding: 8px;">
+    <div style="color: #fff; font-family: system-ui; padding: 8px; min-width: 180px;">
       <div style="font-weight: bold; color: #f59e0b; font-size: 14px; margin-bottom: 8px;">
         ${truck.id_camion}
       </div>
@@ -712,6 +762,7 @@ function createPopupHTML(truck: TruckPosition): string {
         ? `<div>⛽ ${Math.round(truck.fuel_level_pct)}%</div>` 
         : ''
       }
+      ${missionHtml}
     </div>
   `;
 }

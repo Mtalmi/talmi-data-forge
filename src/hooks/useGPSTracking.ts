@@ -3,6 +3,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { subHours, format } from 'date-fns';
 
+export interface MissionInfo {
+  bc_id: string;
+  bl_id: string;
+  client_nom: string;
+  volume_m3: number;
+  adresse_livraison: string | null;
+  zone_nom: string | null;
+  heure_prevue: string | null;
+  workflow_status: string;
+}
+
 export interface TruckPosition {
   id_camion: string;
   latitude: number;
@@ -18,6 +29,7 @@ export interface TruckPosition {
   statut: string;
   type: string;
   bc_mission_id: string | null;
+  mission?: MissionInfo | null;
 }
 
 export interface GPSHistoryPoint {
@@ -59,10 +71,11 @@ export function useGPSTracking() {
   const [loading, setLoading] = useState(true);
   const historyLoadedRef = useRef<string | null>(null);
 
-  // Fetch all trucks with GPS data
+  // Fetch all trucks with GPS data and their active missions
   const fetchTrucks = useCallback(async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch trucks with GPS data
+      const { data: trucksData, error: trucksError } = await supabase
         .from('flotte')
         .select(`
           id_camion,
@@ -82,9 +95,47 @@ export function useGPSTracking() {
         `)
         .not('last_latitude', 'is', null);
 
-      if (error) throw error;
+      if (trucksError) throw trucksError;
 
-      const positions: TruckPosition[] = (data || []).map(t => ({
+      // Get today's date for filtering active deliveries
+      const today = new Date().toISOString().split('T')[0];
+
+      // Fetch active deliveries with mission info
+      const { data: deliveriesData } = await supabase
+        .from('bons_livraison_reels')
+        .select(`
+          bl_id,
+          bc_id,
+          camion_assigne,
+          toupie_assignee,
+          volume_m3,
+          heure_prevue,
+          workflow_status,
+          clients (nom_client, adresse),
+          zones_livraison (nom_zone),
+          bons_commande:bc_id (adresse_livraison)
+        `)
+        .eq('date_livraison', today)
+        .in('workflow_status', ['planification', 'production', 'validation_technique', 'en_livraison']);
+
+      // Build mission map by truck ID
+      const missionMap: Record<string, MissionInfo> = {};
+      (deliveriesData || []).forEach((bl: any) => {
+        const mission: MissionInfo = {
+          bc_id: bl.bc_id || '',
+          bl_id: bl.bl_id,
+          client_nom: bl.clients?.nom_client || 'Client inconnu',
+          volume_m3: bl.volume_m3 || 0,
+          adresse_livraison: bl.bons_commande?.adresse_livraison || bl.clients?.adresse || null,
+          zone_nom: bl.zones_livraison?.nom_zone || null,
+          heure_prevue: bl.heure_prevue,
+          workflow_status: bl.workflow_status || 'planification',
+        };
+        if (bl.camion_assigne) missionMap[bl.camion_assigne] = mission;
+        if (bl.toupie_assignee) missionMap[bl.toupie_assignee] = mission;
+      });
+
+      const positions: TruckPosition[] = (trucksData || []).map(t => ({
         id_camion: t.id_camion,
         latitude: Number(t.last_latitude),
         longitude: Number(t.last_longitude),
@@ -99,6 +150,7 @@ export function useGPSTracking() {
         statut: t.statut,
         type: t.type,
         bc_mission_id: t.bc_mission_id,
+        mission: missionMap[t.id_camion] || null,
       }));
 
       setTrucks(positions);

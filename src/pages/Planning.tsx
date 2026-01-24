@@ -34,7 +34,8 @@ import {
   Receipt,
   Phone,
   Lock,
-  Shield
+  Shield,
+  Crosshair
 } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -1251,6 +1252,20 @@ export default function Planning() {
             <p className="text-muted-foreground">Ordonnancement des livraisons</p>
           </div>
           <div className="flex items-center gap-3">
+            {/* GPS Tracking Link */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
+              onClick={() => navigate('/logistique')}
+            >
+              <Crosshair className="h-4 w-4" />
+              GPS Tracking
+              {enLivraison.length > 0 && (
+                <Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>
+              )}
+            </Button>
+            
             {pendingBLCount > 0 && pendingEarliestDate && (
               <Button 
                 variant="outline" 
