@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { AlertTriangle, TrendingDown } from 'lucide-react';
+import { AlertTriangle, TrendingDown, Clock, Gauge } from 'lucide-react';
 
 interface SiloVisualProps {
   materiau: string;
@@ -8,6 +8,8 @@ interface SiloVisualProps {
   seuil: number;
   unite: string;
   daysRemaining?: number;
+  hoursRemaining?: number;
+  avgDailyUsage?: number;
   className?: string;
 }
 
@@ -18,6 +20,8 @@ export function SiloVisual({
   seuil,
   unite,
   daysRemaining,
+  hoursRemaining,
+  avgDailyUsage,
   className,
 }: SiloVisualProps) {
   const percentage = capacite > 0 ? Math.min((quantite / capacite) * 100, 100) : 0;
@@ -162,18 +166,58 @@ export function SiloVisual({
         </p>
       </div>
 
-      {/* Days Remaining */}
-      {daysRemaining !== undefined && (
+      {/* Oracle Autonomy - Estimated Autonomy */}
+      {(daysRemaining !== undefined || hoursRemaining !== undefined) && (
+        <div className={cn(
+          'mt-3 p-2 rounded-lg oracle-badge',
+          daysRemaining !== undefined && daysRemaining <= 3 
+            ? 'border-destructive/50 bg-destructive/10' 
+            : daysRemaining !== undefined && daysRemaining <= 7 
+              ? 'border-warning/50 bg-warning/10' 
+              : ''
+        )}>
+          <div className="flex items-center gap-1.5 justify-center">
+            <Gauge className={cn(
+              'h-3.5 w-3.5',
+              daysRemaining !== undefined && daysRemaining <= 3 
+                ? 'text-destructive animate-pulse' 
+                : daysRemaining !== undefined && daysRemaining <= 7 
+                  ? 'text-warning' 
+                  : 'text-primary'
+            )} />
+            <span className="text-xs font-medium">
+              Autonomie Estimée
+            </span>
+          </div>
+          <div className={cn(
+            'mt-1 text-center font-mono text-lg font-bold',
+            daysRemaining !== undefined && daysRemaining <= 3 
+              ? 'text-destructive' 
+              : daysRemaining !== undefined && daysRemaining <= 7 
+                ? 'text-warning' 
+                : 'text-primary'
+          )}>
+            {daysRemaining !== undefined && daysRemaining <= 999 
+              ? `${daysRemaining}j ${hoursRemaining !== undefined ? `${hoursRemaining % 24}h` : ''}`
+              : '∞'}
+          </div>
+          {avgDailyUsage !== undefined && avgDailyUsage > 0 && (
+            <div className="mt-1 text-[10px] text-muted-foreground text-center flex items-center justify-center gap-1">
+              <TrendingDown className="h-3 w-3" />
+              <span>Conso. moy: {avgDailyUsage.toFixed(0)} {unite}/jour</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Legacy Days Remaining (backward compat) */}
+      {daysRemaining === undefined && hoursRemaining === undefined && (
         <div className={cn(
           'mt-2 flex items-center gap-1 px-2 py-1 rounded text-xs font-medium',
-          daysRemaining <= 3 ? 'bg-destructive/20 text-destructive' :
-          daysRemaining <= 7 ? 'bg-warning/20 text-warning' :
           'bg-muted text-muted-foreground'
         )}>
-          <TrendingDown className="h-3 w-3" />
-          <span>
-            {daysRemaining <= 999 ? `${daysRemaining}j restants` : '∞'}
-          </span>
+          <Clock className="h-3 w-3" />
+          <span>Calcul en cours...</span>
         </div>
       )}
 

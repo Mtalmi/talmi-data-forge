@@ -30,9 +30,9 @@ import {
   AlertTriangle,
   DollarSign,
   TrendingDown,
-  Loader2,
   RefreshCw,
-  Trash2
+  Trash2,
+  Fingerprint
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,6 +40,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { BiometricScanOverlay } from './BiometricScanOverlay';
 
 interface OverrideToken {
   id: string;
@@ -75,6 +76,7 @@ export function CeoEmergencyOverride() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
+  const [showBiometricScan, setShowBiometricScan] = useState(false);
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
   // Form state
@@ -118,12 +120,16 @@ export function CeoEmergencyOverride() {
     };
   }, [fetchTokens]);
 
-  const handleGenerateToken = async () => {
+  const startBiometricScan = () => {
     if (reason.trim().length < 10) {
       toast.error('Justification requise (min. 10 caractères)');
       return;
     }
+    setShowBiometricScan(true);
+  };
 
+  const handleBiometricComplete = async () => {
+    setShowBiometricScan(false);
     setGenerating(true);
 
     try {
@@ -214,6 +220,13 @@ export function CeoEmergencyOverride() {
 
   return (
     <>
+      {/* Biometric Scan Overlay */}
+      <BiometricScanOverlay
+        isActive={showBiometricScan}
+        onComplete={handleBiometricComplete}
+        duration={2000}
+      />
+
       <Card className="border-red-500/20 bg-gradient-to-br from-red-500/5 to-transparent">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
@@ -433,19 +446,19 @@ export function CeoEmergencyOverride() {
               Annuler
             </Button>
             <Button
-              onClick={handleGenerateToken}
+              onClick={startBiometricScan}
               disabled={generating || reason.trim().length < 10}
-              className="bg-gradient-to-r from-red-600 to-orange-600"
+              className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
             >
               {generating ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Génération...
+                  <Shield className="h-4 w-4 mr-2 animate-spin" />
+                  Sécurisation...
                 </>
               ) : (
                 <>
-                  <Zap className="h-4 w-4 mr-2" />
-                  Générer Token
+                  <Fingerprint className="h-4 w-4 mr-2" />
+                  Autorisation Biométrique
                 </>
               )}
             </Button>
