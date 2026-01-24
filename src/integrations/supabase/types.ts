@@ -3661,6 +3661,27 @@ export type Database = {
           utilization_pct: number
         }[]
       }
+      get_rls_policies_for_report: {
+        Args: never
+        Returns: {
+          cmd: string
+          permissive: string
+          policyname: string
+          qual: string
+          roles: string
+          schemaname: string
+          tablename: string
+          with_check: string
+        }[]
+      }
+      get_security_functions_for_report: {
+        Args: never
+        Returns: {
+          routine_name: string
+          routine_type: string
+          security_type: string
+        }[]
+      }
       get_user_display_info: {
         Args: { p_user_id: string }
         Returns: {
