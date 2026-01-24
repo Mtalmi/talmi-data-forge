@@ -2151,15 +2151,23 @@ export type Database = {
           id_camion: string
           immatriculation: string | null
           is_interne: boolean
+          is_moving: boolean | null
           km_compteur: number | null
           km_last_pneumatiques: number | null
           km_last_vidange: number | null
+          last_fuel_level_pct: number | null
+          last_gps_update: string | null
+          last_heading: number | null
+          last_latitude: number | null
+          last_longitude: number | null
+          last_speed_kmh: number | null
           maintenance_status: string | null
           mission_updated_at: string | null
           notes: string | null
           prochaine_maintenance_at: string | null
           proprietaire: string
           statut: string
+          stopped_since: string | null
           telephone_chauffeur: string | null
           type: string
           updated_at: string
@@ -2176,15 +2184,23 @@ export type Database = {
           id_camion: string
           immatriculation?: string | null
           is_interne?: boolean
+          is_moving?: boolean | null
           km_compteur?: number | null
           km_last_pneumatiques?: number | null
           km_last_vidange?: number | null
+          last_fuel_level_pct?: number | null
+          last_gps_update?: string | null
+          last_heading?: number | null
+          last_latitude?: number | null
+          last_longitude?: number | null
+          last_speed_kmh?: number | null
           maintenance_status?: string | null
           mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
           statut?: string
+          stopped_since?: string | null
           telephone_chauffeur?: string | null
           type: string
           updated_at?: string
@@ -2201,15 +2217,23 @@ export type Database = {
           id_camion?: string
           immatriculation?: string | null
           is_interne?: boolean
+          is_moving?: boolean | null
           km_compteur?: number | null
           km_last_pneumatiques?: number | null
           km_last_vidange?: number | null
+          last_fuel_level_pct?: number | null
+          last_gps_update?: string | null
+          last_heading?: number | null
+          last_latitude?: number | null
+          last_longitude?: number | null
+          last_speed_kmh?: number | null
           maintenance_status?: string | null
           mission_updated_at?: string | null
           notes?: string | null
           prochaine_maintenance_at?: string | null
           proprietaire?: string
           statut?: string
+          stopped_since?: string | null
           telephone_chauffeur?: string | null
           type?: string
           updated_at?: string
@@ -2320,6 +2344,166 @@ export type Database = {
           ville?: string | null
         }
         Relationships: []
+      }
+      geofence_events: {
+        Row: {
+          acknowledged: boolean
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          created_at: string
+          duration_minutes: number | null
+          event_type: string
+          geofence_id: string | null
+          id: string
+          id_camion: string
+          latitude: number
+          longitude: number
+          notes: string | null
+        }
+        Insert: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          event_type: string
+          geofence_id?: string | null
+          id?: string
+          id_camion: string
+          latitude: number
+          longitude: number
+          notes?: string | null
+        }
+        Update: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          event_type?: string
+          geofence_id?: string | null
+          id?: string
+          id_camion?: string
+          latitude?: number
+          longitude?: number
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "geofence_events_geofence_id_fkey"
+            columns: ["geofence_id"]
+            isOneToOne: false
+            referencedRelation: "geofences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "geofence_events_id_camion_fkey"
+            columns: ["id_camion"]
+            isOneToOne: false
+            referencedRelation: "flotte"
+            referencedColumns: ["id_camion"]
+          },
+        ]
+      }
+      geofences: {
+        Row: {
+          client_id: string | null
+          color: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          latitude: number
+          longitude: number
+          name: string
+          radius_meters: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude: number
+          longitude: number
+          name: string
+          radius_meters?: number
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          color?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          latitude?: number
+          longitude?: number
+          name?: string
+          radius_meters?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "geofences_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+        ]
+      }
+      gps_positions: {
+        Row: {
+          accuracy_m: number | null
+          altitude_m: number | null
+          created_at: string
+          fuel_level_pct: number | null
+          heading: number | null
+          id: string
+          id_camion: string
+          latitude: number
+          longitude: number
+          recorded_at: string
+          speed_kmh: number | null
+        }
+        Insert: {
+          accuracy_m?: number | null
+          altitude_m?: number | null
+          created_at?: string
+          fuel_level_pct?: number | null
+          heading?: number | null
+          id?: string
+          id_camion: string
+          latitude: number
+          longitude: number
+          recorded_at?: string
+          speed_kmh?: number | null
+        }
+        Update: {
+          accuracy_m?: number | null
+          altitude_m?: number | null
+          created_at?: string
+          fuel_level_pct?: number | null
+          heading?: number | null
+          id?: string
+          id_camion?: string
+          latitude?: number
+          longitude?: number
+          recorded_at?: string
+          speed_kmh?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gps_positions_id_camion_fkey"
+            columns: ["id_camion"]
+            isOneToOne: false
+            referencedRelation: "flotte"
+            referencedColumns: ["id_camion"]
+          },
+        ]
       }
       incidents_centrale: {
         Row: {
