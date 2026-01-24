@@ -51,38 +51,30 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
+
+      // ElevenLabs may return 401/403 for free-tier blocks or quota issues.
+      // Treat these as a *soft failure* and let the client fall back to browser TTS
+      // without surfacing as an app-breaking error.
+      const softFailureStatuses = new Set([401, 402, 403, 429]);
+      const isSoftFailure = softFailureStatuses.has(response.status);
+
+      if (isSoftFailure) {
+        console.warn("ElevenLabs unavailable (soft failure):", response.status, errorText);
+
+        // IMPORTANT: Return a 2xx so the hosting layer doesn't treat it as a runtime error.
+        // The client will detect 204 and use browser TTS.
+        return new Response(null, {
+          status: 204,
+          headers: {
+            ...corsHeaders,
+            "Cache-Control": "no-store",
+            "X-TTS-Fallback": "browser",
+            "X-TTS-Provider-Status": String(response.status),
+          },
+        });
+      }
+
       console.error("ElevenLabs API error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(JSON.stringify({ error: "Rate limit exceeded. Please try again later." }), {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-      
-      if (response.status === 402) {
-        return new Response(JSON.stringify({ error: "ElevenLabs credits exhausted." }), {
-          status: 402,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-
-      // ElevenLabs can respond 401/403 for blocked free-tier or invalid keys.
-      // Do NOT throw (which becomes a 500 runtime error). Return the status so
-      // the client can gracefully fallback to browser TTS.
-      if (response.status === 401 || response.status === 403) {
-        return new Response(
-          JSON.stringify({
-            error: "ElevenLabs unauthorized",
-            details: errorText,
-          }),
-          {
-            status: response.status,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          }
-        );
-      }
-
       throw new Error(`ElevenLabs API error: ${response.status}`);
     }
 

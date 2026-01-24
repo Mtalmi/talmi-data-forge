@@ -149,6 +149,14 @@ export function useTutorialVoice() {
         }
       );
 
+      // Backend can return 204 to explicitly signal "use fallback" without raising
+      // a non-2xx error (keeps the app stable when provider quota is exhausted).
+      if (response.status === 204) {
+        console.warn('TTS provider unavailable (204), using browser TTS fallback');
+        await tryBrowserTTS();
+        return;
+      }
+
       if (!response.ok) {
         // Fall back to browser TTS on any error
         console.warn('ElevenLabs unavailable (status ' + response.status + '), using browser TTS fallback');
