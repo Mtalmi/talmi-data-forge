@@ -28,6 +28,7 @@ import {
   formatCasablancaTime,
   isCurrentlyOffHours 
 } from '@/lib/timezone';
+import { InfoTooltip } from '@/components/academy/InfoTooltip';
 
 interface MidnightTransaction {
   id: string;
@@ -290,6 +291,19 @@ export function MidnightAlertWidget() {
                   MODE NUIT ACTIF
                 </Badge>
               )}
+              <InfoTooltip
+                id="midnight-alert-help"
+                title="Alertes Nocturnes"
+                content="Ce widget surveille toutes les transactions effectuées entre 18h et minuit (heure de Casablanca). Ces activités hors heures nécessitent une justification d'urgence."
+                videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                steps={[
+                  "Vérifiez les transactions nocturnes listées",
+                  "Examinez la justification d'urgence fournie",
+                  "Cliquez 'Alerter CEO' si investigation requise",
+                  "L'alerte est enregistrée pour audit forensique"
+                ]}
+                position="bottom"
+              />
             </CardTitle>
             <CardDescription className="text-xs flex items-center gap-1">
               <Clock className="h-3 w-3" />

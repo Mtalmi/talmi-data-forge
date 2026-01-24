@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { InfoTooltip } from '@/components/academy/InfoTooltip';
 
 interface PendingExpense {
   id: string;
@@ -219,7 +220,22 @@ export function TreasuryWidget() {
                 )} />
               </div>
               <div>
-                <CardTitle className="text-base">Trésorerie</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2">
+                  Trésorerie
+                  <InfoTooltip
+                    id="treasury-help"
+                    title="Contrôle des Dépenses"
+                    content="Ce widget affiche le plafond mensuel Level 1 (≤2000 MAD) et les dépenses en attente d'approbation. Quand le plafond est atteint, toutes les nouvelles dépenses sont automatiquement bloquées."
+                    videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    steps={[
+                      "Consultez le plafond Level 1 restant",
+                      "Vérifiez les dépenses en attente",
+                      "Cliquez sur une dépense pour voir les détails",
+                      "Approuvez ou rejetez selon le justificatif"
+                    ]}
+                    position="bottom"
+                  />
+                </CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Contrôle des Dépenses
                 </p>

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { InfoTooltip } from '@/components/academy/InfoTooltip';
 
 interface BudgetStats {
   spent: number;
@@ -173,6 +174,19 @@ export function MonthlyBudgetGauge() {
           <CardTitle className="text-sm sm:text-base flex items-center gap-2">
             <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
             Budget Mensuel Level 1
+            <InfoTooltip
+              id="budget-gauge-help"
+              title="Plafond Mensuel"
+              content="Le plafond Level 1 (15 000 MAD/mois) limite les dépenses auto-approuvées. Une fois atteint, toutes les dépenses requièrent l'approbation CEO."
+              videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+              steps={[
+                "Surveillez la jauge de consommation",
+                "Vert = Normal, Orange = Attention, Rouge = Critique",
+                "Au-delà de 100%, le plafond est verrouillé",
+                "Seul le CEO peut alors approuver les dépenses"
+              ]}
+              position="bottom"
+            />
           </CardTitle>
           <div className="flex items-center gap-2">
             {getStatusBadge()}
