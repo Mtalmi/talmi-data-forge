@@ -1,18 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import Dashboard from './Dashboard';
+import { SplashScreen } from '@/components/layout/SplashScreen';
 import { Loader2 } from 'lucide-react';
+
+// Session storage key to show splash only once per session
+const SPLASH_SHOWN_KEY = 'tbos_splash_shown';
 
 export default function Index() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const [showSplash, setShowSplash] = useState(() => {
+    // Only show splash on first visit in this session
+    return !sessionStorage.getItem(SPLASH_SHOWN_KEY);
+  });
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
+    setShowSplash(false);
+  };
 
   if (loading) {
     return (
@@ -29,5 +42,10 @@ export default function Index() {
     return null;
   }
 
-  return <Dashboard />;
+  return (
+    <>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+      <Dashboard />
+    </>
+  );
 }

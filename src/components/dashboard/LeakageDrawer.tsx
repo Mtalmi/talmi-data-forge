@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -43,7 +43,8 @@ interface LeakageDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function LeakageDrawer({ open, onOpenChange }: LeakageDrawerProps) {
+export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
+  function LeakageDrawer({ open, onOpenChange }, ref) {
   const navigate = useNavigate();
   const [deliveries, setDeliveries] = useState<LeakageDelivery[]>([]);
   const [loading, setLoading] = useState(true);
@@ -299,4 +300,6 @@ export function LeakageDrawer({ open, onOpenChange }: LeakageDrawerProps) {
       </DrawerContent>
     </Drawer>
   );
-}
+});
+
+LeakageDrawer.displayName = 'LeakageDrawer';
