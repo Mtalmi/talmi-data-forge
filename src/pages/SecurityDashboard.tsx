@@ -34,6 +34,7 @@ import {
   Loader2,
   CalendarIcon,
   X,
+  Mail,
 } from 'lucide-react';
 import { format, formatDistanceToNow, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -433,6 +434,7 @@ export default function SecurityDashboard() {
   const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
   const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [actionFilter, setActionFilter] = useState<'all' | 'rollbacks' | 'blocked' | 'success'>('all');
+  const [sendingDigest, setSendingDigest] = useState(false);
 
   // ===========================================================
   // HARD REDIRECT SECURITY - CEO/Superviseur ONLY
@@ -1009,6 +1011,31 @@ export default function SecurityDashboard() {
 
   const hasDateFilter = dateFrom || dateTo;
 
+  // Send test digest email
+  const handleSendTestDigest = async () => {
+    setSendingDigest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('send-weekly-security-digest');
+      
+      if (error) throw error;
+      
+      if (data?.success) {
+        toast.success('Digest envoyé avec succès', {
+          description: `Score de risque: ${data.summary?.anomalyScore} (${data.summary?.riskLevel})`,
+        });
+      } else {
+        throw new Error(data?.error || 'Échec de l\'envoi');
+      }
+    } catch (error: any) {
+      console.error('Error sending test digest:', error);
+      toast.error('Erreur lors de l\'envoi du digest', {
+        description: error.message,
+      });
+    } finally {
+      setSendingDigest(false);
+    }
+  };
+
   // Show loading while checking auth
   if (authLoading) {
     return (
@@ -1071,6 +1098,21 @@ export default function SecurityDashboard() {
             >
               <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
               <span className="hidden sm:inline">Actualiser</span>
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleSendTestDigest}
+              disabled={sendingDigest || loading}
+              className="gap-1.5 h-8 border-blue-500/30 text-blue-500 hover:bg-blue-500/10"
+            >
+              {sendingDigest ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Mail className="h-3.5 w-3.5" />
+              )}
+              <span className="hidden sm:inline">Test Digest</span>
             </Button>
             
             <Button 
