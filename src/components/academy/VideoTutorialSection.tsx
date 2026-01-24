@@ -327,6 +327,48 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
   const { speak, stop, isLoading, isPlaying, cleanup } = useTutorialVoice();
   const abortRef = useRef(false);
 
+  const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
+  const estimateNarrationMs = (text: string) => {
+    // Defensive: iOS/Safari can block speech/audio mid-flow (NotAllowedError), so we cap wait.
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    const estimated = 1200 + words * 320; // ~0.32s/word + base
+    return Math.min(12000, Math.max(2500, estimated));
+  };
+
+  const safeNarrate = useCallback(
+    async (text: string) => {
+      if (abortRef.current) return;
+
+      // If muted, just keep the visuals moving.
+      if (isMuted) {
+        await sleep(1500);
+        return;
+      }
+
+      // iOS autoplay restrictions can cause narration promises to never resolve.
+      // We enforce a timeout so the tutorial never freezes.
+      const timeoutMs = estimateNarrationMs(text);
+      let timedOut = false;
+
+      try {
+        await Promise.race([
+          speak(text),
+          sleep(timeoutMs).then(() => {
+            timedOut = true;
+          }),
+        ]);
+      } catch {
+        // Ignore: narration can fail on some browsers/contexts
+      } finally {
+        if (timedOut) {
+          // Stop any stuck audio / TTS so the next step can try cleanly.
+          stop();
+        }
+      }
+    },
+    [isMuted, speak, stop]
+  );
+
   useEffect(() => {
     if (!open) {
       setCurrentPhase('idle');
@@ -344,10 +386,8 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
     // Phase 1: Intro
     setCurrentPhase('intro');
     setProgress(5);
-    
-    if (!isMuted) {
-      await speak(tutorial.narration.intro);
-    }
+
+    await safeNarrate(tutorial.narration.intro);
     
     if (abortRef.current) return;
     
@@ -360,13 +400,8 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
       
       setCurrentStepIndex(i);
       setProgress(10 + ((i + 1) / totalSteps) * 70);
-      
-      if (!isMuted) {
-        await speak(tutorial.narration.steps[i]);
-      } else {
-        // If muted, wait a bit before next step
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
+
+      await safeNarrate(tutorial.narration.steps[i]);
     }
     
     if (abortRef.current) return;
@@ -374,17 +409,15 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
     // Phase 3: Outro
     setCurrentPhase('outro');
     setProgress(90);
-    
-    if (!isMuted) {
-      await speak(tutorial.narration.outro);
-    }
+
+    await safeNarrate(tutorial.narration.outro);
     
     if (abortRef.current) return;
     
     // Complete
     setCurrentPhase('complete');
     setProgress(100);
-  }, [tutorial, isMuted, speak]);
+  }, [tutorial, safeNarrate]);
 
   const resetTutorial = useCallback(() => {
     abortRef.current = true;
