@@ -22,11 +22,14 @@ import {
   XCircle,
   Loader2,
   Ban,
-  ShieldAlert
+  ShieldAlert,
+  Moon,
+  Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
+import { isCurrentlyOffHours, getCasablancaHour } from '@/lib/timezone';
 
 interface ExpenseRequestFormProps {
   onSuccess: () => void;
@@ -57,6 +60,9 @@ const BLOCKED_KEYWORDS = [
   'no receipt',
 ];
 
+// Minimum justification length for off-hours transactions
+const MIN_JUSTIFICATION_LENGTH = 10;
+
 export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormProps) {
   const { user } = useAuth();
   
@@ -75,6 +81,11 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   const [receiptUrl, setReceiptUrl] = useState('');
   const [receiptPreview, setReceiptPreview] = useState('');
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
+  
+  // Off-hours justification (Midnight Alert Protocol)
+  const [justificationUrgence, setJustificationUrgence] = useState('');
+  const [isOffHoursMode] = useState(() => isCurrentlyOffHours());
+  const [currentCasablancaHour] = useState(() => getCasablancaHour());
   
   // Monthly cap status
   const [monthlyCapStatus, setMonthlyCapStatus] = useState<{
@@ -214,6 +225,18 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
       }
     }
 
+    // Off-hours justification check (Midnight Alert Protocol)
+    if (!asDraft && isOffHoursMode) {
+      if (!justificationUrgence.trim()) {
+        toast.error('Justification d\'urgence obligatoire pour les transactions nocturnes');
+        return;
+      }
+      if (justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH) {
+        toast.error(`Justification trop courte (minimum ${MIN_JUSTIFICATION_LENGTH} caractères)`);
+        return;
+      }
+    }
+
     setSubmitting(true);
     try {
       // Get user profile
@@ -240,7 +263,10 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
           receipt_photo_url: receiptUrl || null,
           requested_by: user?.id as string,
           requested_by_name: profile?.full_name || 'Utilisateur',
-          notes: notes || null,
+          // Append urgency justification to notes if in off-hours mode
+          notes: isOffHoursMode && justificationUrgence.trim()
+            ? `[URGENCE: ${justificationUrgence.trim()}]${notes ? ' | ' + notes : ''}`
+            : notes || null,
           statut: asDraft ? 'brouillon' : 'en_attente',
           approval_level: calculatedLevel as Database['public']['Enums']['expense_approval_level'],
         });
@@ -285,6 +311,24 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
 
   return (
     <div className="space-y-6">
+      {/* Off-Hours Alert Banner (Midnight Protocol) */}
+      {isOffHoursMode && (
+        <Alert className="border-destructive bg-destructive/10">
+          <Moon className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-destructive">
+            <div className="flex items-center gap-2">
+              <span className="font-bold">🌙 MODE NUIT ACTIF</span>
+              <Badge variant="destructive" className="text-[10px] animate-pulse">
+                {currentCasablancaHour}h 🇲🇦
+              </Badge>
+            </div>
+            <p className="text-xs mt-1">
+              Transaction nocturne (18h-00h Casablanca). <strong>Justification d'urgence obligatoire.</strong>
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Monthly Cap Warning */}
       {monthlyCapStatus && monthlyCapStatus.exceeded && (
         <Alert variant="destructive">
@@ -500,6 +544,51 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         />
       </div>
 
+      {/* Off-Hours Justification - MANDATORY during 18h-00h */}
+      {isOffHoursMode && (
+        <Card className="border-destructive bg-destructive/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-destructive">
+              <Moon className="h-4 w-4" />
+              Justification d'Urgence
+              <Badge variant="destructive" className="text-[10px] animate-pulse">
+                OBLIGATOIRE
+              </Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Expliquez pourquoi vous travaillez après 18h. Cette information sera visible par le CEO.
+            </p>
+            <Textarea
+              placeholder="Raison de cette transaction nocturne... (minimum 10 caractères)"
+              value={justificationUrgence}
+              onChange={(e) => setJustificationUrgence(e.target.value)}
+              rows={3}
+              className={cn(
+                "border-destructive/50",
+                justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && "border-success"
+              )}
+            />
+            <div className="flex items-center justify-between text-xs">
+              <span className={cn(
+                justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH 
+                  ? "text-success" 
+                  : "text-destructive"
+              )}>
+                {justificationUrgence.trim().length}/{MIN_JUSTIFICATION_LENGTH} caractères minimum
+              </span>
+              {justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && (
+                <Badge className="bg-success text-[10px] gap-1">
+                  <CheckCircle className="h-2.5 w-2.5" />
+                  Validé
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Notes */}
       <div className="space-y-2">
         <Label>Notes (optionnel)</Label>
@@ -525,8 +614,16 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </Button>
         <Button 
           onClick={() => handleSubmit(false)} 
-          disabled={submitting || !receiptUrl || !!blockedReason}
-          className="gap-2"
+          disabled={
+            submitting || 
+            !receiptUrl || 
+            !!blockedReason || 
+            (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH)
+          }
+          className={cn(
+            "gap-2",
+            isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH && "opacity-50"
+          )}
         >
           {submitting ? (
             <>
