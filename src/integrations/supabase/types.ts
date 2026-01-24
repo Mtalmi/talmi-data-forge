@@ -597,6 +597,7 @@ export type Database = {
           facture_id: string | null
           facturer_attente: boolean | null
           formule_id: string
+          gravette_reel_kg: number | null
           heure_arrivee_chantier: string | null
           heure_depart_centrale: string | null
           heure_depart_prevue: string | null
@@ -616,10 +617,14 @@ export type Database = {
           payment_recorded_at: string | null
           payment_recorded_by: string | null
           payment_recorded_by_name: string | null
+          photo_pupitre_url: string | null
           prestataire_id: string | null
           prix_livraison_m3: number | null
           prix_vente_m3: number | null
+          production_batch_time: string | null
+          quality_status: string | null
           raison_annulation: string | null
+          sable_reel_kg: number | null
           source_donnees: string | null
           statut_paiement: string
           temps_attente_chantier_minutes: number | null
@@ -634,6 +639,11 @@ export type Database = {
           validated_by_name: string | null
           validated_by_role: string | null
           validation_technique: boolean | null
+          variance_adjuvant_pct: number | null
+          variance_ciment_pct: number | null
+          variance_eau_pct: number | null
+          variance_gravette_pct: number | null
+          variance_sable_pct: number | null
           volume_m3: number
           volume_perdu: number | null
           workflow_status: string | null
@@ -668,6 +678,7 @@ export type Database = {
           facture_id?: string | null
           facturer_attente?: boolean | null
           formule_id: string
+          gravette_reel_kg?: number | null
           heure_arrivee_chantier?: string | null
           heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
@@ -687,10 +698,14 @@ export type Database = {
           payment_recorded_at?: string | null
           payment_recorded_by?: string | null
           payment_recorded_by_name?: string | null
+          photo_pupitre_url?: string | null
           prestataire_id?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
+          production_batch_time?: string | null
+          quality_status?: string | null
           raison_annulation?: string | null
+          sable_reel_kg?: number | null
           source_donnees?: string | null
           statut_paiement?: string
           temps_attente_chantier_minutes?: number | null
@@ -705,6 +720,11 @@ export type Database = {
           validated_by_name?: string | null
           validated_by_role?: string | null
           validation_technique?: boolean | null
+          variance_adjuvant_pct?: number | null
+          variance_ciment_pct?: number | null
+          variance_eau_pct?: number | null
+          variance_gravette_pct?: number | null
+          variance_sable_pct?: number | null
           volume_m3: number
           volume_perdu?: number | null
           workflow_status?: string | null
@@ -739,6 +759,7 @@ export type Database = {
           facture_id?: string | null
           facturer_attente?: boolean | null
           formule_id?: string
+          gravette_reel_kg?: number | null
           heure_arrivee_chantier?: string | null
           heure_depart_centrale?: string | null
           heure_depart_prevue?: string | null
@@ -758,10 +779,14 @@ export type Database = {
           payment_recorded_at?: string | null
           payment_recorded_by?: string | null
           payment_recorded_by_name?: string | null
+          photo_pupitre_url?: string | null
           prestataire_id?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number | null
+          production_batch_time?: string | null
+          quality_status?: string | null
           raison_annulation?: string | null
+          sable_reel_kg?: number | null
           source_donnees?: string | null
           statut_paiement?: string
           temps_attente_chantier_minutes?: number | null
@@ -776,6 +801,11 @@ export type Database = {
           validated_by_name?: string | null
           validated_by_role?: string | null
           validation_technique?: boolean | null
+          variance_adjuvant_pct?: number | null
+          variance_ciment_pct?: number | null
+          variance_eau_pct?: number | null
+          variance_gravette_pct?: number | null
+          variance_sable_pct?: number | null
           volume_m3?: number
           volume_perdu?: number | null
           workflow_status?: string | null
@@ -2583,6 +2613,104 @@ export type Database = {
           unite_mesure?: string
         }
         Relationships: []
+      }
+      production_batches: {
+        Row: {
+          adjuvant_reel_l: number | null
+          adjuvant_theo_l: number | null
+          batch_number: number
+          bl_id: string
+          ciment_reel_kg: number
+          ciment_theo_kg: number
+          created_at: string | null
+          eau_reel_l: number
+          eau_theo_l: number
+          entered_at: string | null
+          entered_by: string | null
+          entered_by_name: string | null
+          gravette_reel_kg: number | null
+          gravette_theo_kg: number | null
+          has_critical_variance: boolean | null
+          id: string
+          notes: string | null
+          photo_pupitre_url: string
+          quality_status: string
+          sable_reel_kg: number | null
+          sable_theo_kg: number | null
+          updated_at: string | null
+          variance_adjuvant_pct: number | null
+          variance_ciment_pct: number | null
+          variance_eau_pct: number | null
+          variance_gravette_pct: number | null
+          variance_sable_pct: number | null
+        }
+        Insert: {
+          adjuvant_reel_l?: number | null
+          adjuvant_theo_l?: number | null
+          batch_number?: number
+          bl_id: string
+          ciment_reel_kg: number
+          ciment_theo_kg: number
+          created_at?: string | null
+          eau_reel_l: number
+          eau_theo_l: number
+          entered_at?: string | null
+          entered_by?: string | null
+          entered_by_name?: string | null
+          gravette_reel_kg?: number | null
+          gravette_theo_kg?: number | null
+          has_critical_variance?: boolean | null
+          id?: string
+          notes?: string | null
+          photo_pupitre_url: string
+          quality_status?: string
+          sable_reel_kg?: number | null
+          sable_theo_kg?: number | null
+          updated_at?: string | null
+          variance_adjuvant_pct?: number | null
+          variance_ciment_pct?: number | null
+          variance_eau_pct?: number | null
+          variance_gravette_pct?: number | null
+          variance_sable_pct?: number | null
+        }
+        Update: {
+          adjuvant_reel_l?: number | null
+          adjuvant_theo_l?: number | null
+          batch_number?: number
+          bl_id?: string
+          ciment_reel_kg?: number
+          ciment_theo_kg?: number
+          created_at?: string | null
+          eau_reel_l?: number
+          eau_theo_l?: number
+          entered_at?: string | null
+          entered_by?: string | null
+          entered_by_name?: string | null
+          gravette_reel_kg?: number | null
+          gravette_theo_kg?: number | null
+          has_critical_variance?: boolean | null
+          id?: string
+          notes?: string | null
+          photo_pupitre_url?: string
+          quality_status?: string
+          sable_reel_kg?: number | null
+          sable_theo_kg?: number | null
+          updated_at?: string | null
+          variance_adjuvant_pct?: number | null
+          variance_ciment_pct?: number | null
+          variance_eau_pct?: number | null
+          variance_gravette_pct?: number | null
+          variance_sable_pct?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "production_batches_bl_id_fkey"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "bons_livraison_reels"
+            referencedColumns: ["bl_id"]
+          },
+        ]
       }
       profiles: {
         Row: {

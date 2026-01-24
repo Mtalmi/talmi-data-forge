@@ -17,6 +17,7 @@ import { ProductionSearchBar } from '@/components/production/ProductionSearchBar
 import { ProductionDeviationChart } from '@/components/production/ProductionDeviationChart';
 import { DailyProductionTimeline } from '@/components/production/DailyProductionTimeline';
 import { ProductionLiveMetrics } from '@/components/production/ProductionLiveMetrics';
+import { LiveProductionFeed } from '@/components/production/LiveProductionFeed';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -966,8 +967,20 @@ export default function Production() {
             className="lg:col-span-2"
           />
           
-          {/* Quick Stats Panel */}
+          {/* Live Production Feed Panel - Hawaii Bridge to Physical Plant */}
           <div className="space-y-4">
+            <LiveProductionFeed 
+              bons={filteredAndSortedBons.filter(b => 
+                b.workflow_status === 'production' || 
+                b.workflow_status === 'validation_technique'
+              ).map(b => ({
+                bl_id: b.bl_id,
+                client_name: b.bon_commande?.client_nom || b.client?.nom_client || '',
+                formule_designation: formules.find(f => f.formule_id === b.formule_id)?.designation || b.formule_id,
+                volume_m3: b.volume_m3,
+              }))}
+              onBatchAdded={fetchData}
+            />
             <ProductionStockAlerts stocks={stocks} />
           </div>
         </div>
