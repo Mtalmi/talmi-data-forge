@@ -1610,6 +1610,147 @@ export type Database = {
           },
         ]
       }
+      expenses_controlled: {
+        Row: {
+          approval_level: Database["public"]["Enums"]["expense_approval_level"]
+          cap_override_by: string | null
+          cap_override_reason: string | null
+          categorie: Database["public"]["Enums"]["expense_category"]
+          created_at: string | null
+          description: string
+          id: string
+          kilometrage: number | null
+          level1_approved_at: string | null
+          level1_approved_by: string | null
+          level1_approved_by_name: string | null
+          level1_notes: string | null
+          level2_approved_at: string | null
+          level2_approved_by: string | null
+          level2_approved_by_name: string | null
+          level2_notes: string | null
+          level3_approved_at: string | null
+          level3_approved_by: string | null
+          level3_approved_by_name: string | null
+          level3_notes: string | null
+          montant_ht: number
+          montant_ttc: number
+          month_year: string | null
+          notes: string | null
+          paid_at: string | null
+          paid_by: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          receipt_photo_url: string | null
+          receipt_verified: boolean | null
+          reference: string
+          rejected_at: string | null
+          rejected_by: string | null
+          rejected_by_name: string | null
+          rejection_reason: string | null
+          requested_at: string | null
+          requested_by: string
+          requested_by_name: string | null
+          sous_categorie: string | null
+          statut: Database["public"]["Enums"]["expense_status"]
+          tva_pct: number | null
+          updated_at: string | null
+          vehicule_id: string | null
+          was_blocked_by_cap: boolean | null
+        }
+        Insert: {
+          approval_level: Database["public"]["Enums"]["expense_approval_level"]
+          cap_override_by?: string | null
+          cap_override_reason?: string | null
+          categorie: Database["public"]["Enums"]["expense_category"]
+          created_at?: string | null
+          description: string
+          id?: string
+          kilometrage?: number | null
+          level1_approved_at?: string | null
+          level1_approved_by?: string | null
+          level1_approved_by_name?: string | null
+          level1_notes?: string | null
+          level2_approved_at?: string | null
+          level2_approved_by?: string | null
+          level2_approved_by_name?: string | null
+          level2_notes?: string | null
+          level3_approved_at?: string | null
+          level3_approved_by?: string | null
+          level3_approved_by_name?: string | null
+          level3_notes?: string | null
+          montant_ht: number
+          montant_ttc: number
+          month_year?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          paid_by?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          receipt_photo_url?: string | null
+          receipt_verified?: boolean | null
+          reference?: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejected_by_name?: string | null
+          rejection_reason?: string | null
+          requested_at?: string | null
+          requested_by: string
+          requested_by_name?: string | null
+          sous_categorie?: string | null
+          statut?: Database["public"]["Enums"]["expense_status"]
+          tva_pct?: number | null
+          updated_at?: string | null
+          vehicule_id?: string | null
+          was_blocked_by_cap?: boolean | null
+        }
+        Update: {
+          approval_level?: Database["public"]["Enums"]["expense_approval_level"]
+          cap_override_by?: string | null
+          cap_override_reason?: string | null
+          categorie?: Database["public"]["Enums"]["expense_category"]
+          created_at?: string | null
+          description?: string
+          id?: string
+          kilometrage?: number | null
+          level1_approved_at?: string | null
+          level1_approved_by?: string | null
+          level1_approved_by_name?: string | null
+          level1_notes?: string | null
+          level2_approved_at?: string | null
+          level2_approved_by?: string | null
+          level2_approved_by_name?: string | null
+          level2_notes?: string | null
+          level3_approved_at?: string | null
+          level3_approved_by?: string | null
+          level3_approved_by_name?: string | null
+          level3_notes?: string | null
+          montant_ht?: number
+          montant_ttc?: number
+          month_year?: string | null
+          notes?: string | null
+          paid_at?: string | null
+          paid_by?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          receipt_photo_url?: string | null
+          receipt_verified?: boolean | null
+          reference?: string
+          rejected_at?: string | null
+          rejected_by?: string | null
+          rejected_by_name?: string | null
+          rejection_reason?: string | null
+          requested_at?: string | null
+          requested_by?: string
+          requested_by_name?: string | null
+          sous_categorie?: string | null
+          statut?: Database["public"]["Enums"]["expense_status"]
+          tva_pct?: number | null
+          updated_at?: string | null
+          vehicule_id?: string | null
+          was_blocked_by_cap?: boolean | null
+        }
+        Relationships: []
+      }
       factures: {
         Row: {
           bc_id: string | null
@@ -2288,6 +2429,39 @@ export type Database = {
           id?: string
           maintenance_interval_days?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      monthly_expense_caps: {
+        Row: {
+          cap_exceeded: boolean | null
+          cap_exceeded_at: string | null
+          created_at: string | null
+          id: string
+          level1_cap: number
+          level1_spent: number
+          month_year: string
+          updated_at: string | null
+        }
+        Insert: {
+          cap_exceeded?: boolean | null
+          cap_exceeded_at?: string | null
+          created_at?: string | null
+          id?: string
+          level1_cap?: number
+          level1_spent?: number
+          month_year: string
+          updated_at?: string | null
+        }
+        Update: {
+          cap_exceeded?: boolean | null
+          cap_exceeded_at?: string | null
+          created_at?: string | null
+          id?: string
+          level1_cap?: number
+          level1_spent?: number
+          month_year?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -3401,6 +3575,25 @@ export type Database = {
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
+      expense_approval_level: "level_1" | "level_2" | "level_3"
+      expense_category:
+        | "carburant"
+        | "maintenance"
+        | "fournitures"
+        | "transport"
+        | "reparation"
+        | "nettoyage"
+        | "petit_equipement"
+        | "services_externes"
+        | "frais_administratifs"
+        | "autre"
+      expense_status:
+        | "brouillon"
+        | "en_attente"
+        | "approuve"
+        | "rejete"
+        | "bloque_plafond"
+        | "paye"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3529,6 +3722,27 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["ceo", "operator", "accounting", "commercial"],
+      expense_approval_level: ["level_1", "level_2", "level_3"],
+      expense_category: [
+        "carburant",
+        "maintenance",
+        "fournitures",
+        "transport",
+        "reparation",
+        "nettoyage",
+        "petit_equipement",
+        "services_externes",
+        "frais_administratifs",
+        "autre",
+      ],
+      expense_status: [
+        "brouillon",
+        "en_attente",
+        "approuve",
+        "rejete",
+        "bloque_plafond",
+        "paye",
+      ],
     },
   },
 } as const
