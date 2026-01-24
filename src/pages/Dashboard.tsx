@@ -27,6 +27,7 @@ import { HawaiiGreeting } from '@/components/dashboard/HawaiiGreeting';
 import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
 import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
 import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
+import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -319,6 +320,11 @@ export default function Dashboard() {
             {/* Fleet Predator - Live GPS & Fuel Theft Detection */}
             <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
               <LiveFleetMap />
+            </ParallaxCard>
+            
+            {/* Maintenance Sentinel - Fleet Health Widget */}
+            <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
+              <MaintenanceAlertWidget />
             </ParallaxCard>
             
             {/* CEO Emergency Override - Nuclear Key */}
