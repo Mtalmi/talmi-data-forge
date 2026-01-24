@@ -60,8 +60,8 @@ const BLOCKED_KEYWORDS = [
   'no receipt',
 ];
 
-// Minimum justification length for off-hours transactions
-const MIN_JUSTIFICATION_LENGTH = 10;
+// Minimum justification length for off-hours transactions (Titanium Shield)
+const MIN_JUSTIFICATION_LENGTH = 20;
 
 export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormProps) {
   const { user } = useAuth();
@@ -561,7 +561,7 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
               Expliquez pourquoi vous travaillez après 18h. Cette information sera visible par le CEO.
             </p>
             <Textarea
-              placeholder="Raison de cette transaction nocturne... (minimum 10 caractères)"
+              placeholder="Raison de cette transaction nocturne... (minimum 20 caractères)"
               value={justificationUrgence}
               onChange={(e) => setJustificationUrgence(e.target.value)}
               rows={3}

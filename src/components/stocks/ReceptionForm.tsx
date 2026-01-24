@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -18,12 +20,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { PackagePlus, Loader2, Camera, Upload, X, CheckCircle } from 'lucide-react';
+import { PackagePlus, Loader2, Camera, Upload, X, CheckCircle, Moon, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { compressImage } from '@/lib/imageCompression';
 import { cn } from '@/lib/utils';
+import { isCurrentlyOffHours, getCasablancaHour } from '@/lib/timezone';
+
+// Minimum justification length for off-hours transactions (Titanium Shield)
+const MIN_JUSTIFICATION_LENGTH = 20;
 
 interface Stock {
   materiau: string;
@@ -58,6 +64,11 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   
+  // Off-hours justification (Midnight Alert Protocol)
+  const [justificationUrgence, setJustificationUrgence] = useState('');
+  const [isOffHoursMode] = useState(() => isCurrentlyOffHours());
+  const [currentCasablancaHour] = useState(() => getCasablancaHour());
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Agent Admin MUST upload photo, CEO/Superviseur can skip
@@ -71,6 +82,7 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
     setNotes('');
     setPhotoUrl(null);
     setPhotoPreview(null);
+    setJustificationUrgence('');
   };
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,10 +141,27 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
       toast.error('Photo du BL fournisseur obligatoire');
       return;
     }
+
+    // Off-hours justification check (Midnight Alert Protocol)
+    if (isOffHoursMode) {
+      if (!justificationUrgence.trim()) {
+        toast.error('Justification d\'urgence obligatoire pour les transactions nocturnes');
+        return;
+      }
+      if (justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH) {
+        toast.error(`Justification trop courte (minimum ${MIN_JUSTIFICATION_LENGTH} caractères)`);
+        return;
+      }
+    }
     
     setSubmitting(true);
 
     try {
+      // Build notes with urgency justification if in off-hours mode
+      const finalNotes = isOffHoursMode && justificationUrgence.trim()
+        ? `[URGENCE: ${justificationUrgence.trim()}]${notes ? ' | ' + notes : ''}`
+        : notes || null;
+
       // Use secure RPC function
       const { data, error } = await supabase.rpc('secure_add_reception', {
         p_materiau: materiau,
@@ -140,7 +169,7 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
         p_fournisseur: fournisseur,
         p_numero_bl: numeroBl,
         p_photo_bl_url: photoUrl || null,
-        p_notes: notes || null
+        p_notes: finalNotes
       });
 
       if (error) throw error;
@@ -319,6 +348,55 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
             )}
           </div>
 
+          {/* Off-Hours Justification - MANDATORY during 18h-00h */}
+          {isOffHoursMode && (
+            <Card className="border-destructive bg-destructive/5">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm flex items-center gap-2 text-destructive">
+                  <Moon className="h-4 w-4" />
+                  Justification d'Urgence
+                  <Badge variant="destructive" className="text-[10px] animate-pulse">
+                    🚨 OBLIGATOIRE
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Alert className="border-destructive/50 bg-destructive/10">
+                  <Clock className="h-4 w-4 text-destructive" />
+                  <AlertDescription className="text-destructive text-xs">
+                    <strong>MODE NUIT ACTIF ({currentCasablancaHour}h 🇲🇦)</strong> - 
+                    Expliquez pourquoi vous enregistrez cette réception après 18h.
+                  </AlertDescription>
+                </Alert>
+                <Textarea
+                  placeholder="Raison de cette réception nocturne... (minimum 20 caractères)"
+                  value={justificationUrgence}
+                  onChange={(e) => setJustificationUrgence(e.target.value)}
+                  rows={3}
+                  className={cn(
+                    "border-destructive/50",
+                    justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && "border-success"
+                  )}
+                />
+                <div className="flex items-center justify-between text-xs">
+                  <span className={cn(
+                    justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH 
+                      ? "text-success" 
+                      : "text-destructive"
+                  )}>
+                    {justificationUrgence.trim().length}/{MIN_JUSTIFICATION_LENGTH} caractères minimum
+                  </span>
+                  {justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && (
+                    <Badge className="bg-success text-[10px] gap-1">
+                      <CheckCircle className="h-2.5 w-2.5" />
+                      Validé
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="space-y-2">
             <Label className="form-label-industrial">Notes (optionnel)</Label>
             <Textarea
@@ -352,8 +430,16 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
             </Button>
             <Button 
               type="submit" 
-              disabled={submitting || uploadingPhoto || (requiresPhoto && !photoUrl)}
-              className="min-h-[44px]"
+              disabled={
+                submitting || 
+                uploadingPhoto || 
+                (requiresPhoto && !photoUrl) ||
+                (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH)
+              }
+              className={cn(
+                "min-h-[44px]",
+                isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH && "opacity-50"
+              )}
             >
               {submitting ? (
                 <>

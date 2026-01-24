@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   Camera, 
   CheckCircle, 
@@ -21,7 +22,8 @@ import {
   FileText,
   User,
   Shield,
-  Banknote
+  Banknote,
+  Lock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -550,14 +552,45 @@ export function SplitViewHandshake() {
             )}
             
             {actionType === 'finalize' && (
-              <Button 
-                onClick={handleFinalize}
-                disabled={processing}
-                className="gap-1"
-              >
-                {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                Finaliser Stock
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-block">
+                      <Button 
+                        onClick={handleFinalize}
+                        disabled={
+                          processing || 
+                          !selectedItem?.qualite_approuvee_at || 
+                          !selectedItem?.photo_materiel_url ||
+                          selectedItem?.statut !== 'qualité_validée'
+                        }
+                        className={cn(
+                          "gap-1",
+                          (!selectedItem?.qualite_approuvee_at || !selectedItem?.photo_materiel_url || selectedItem?.statut !== 'qualité_validée') && 
+                          "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {processing ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (!selectedItem?.qualite_approuvee_at || !selectedItem?.photo_materiel_url) ? (
+                          <Lock className="h-4 w-4" />
+                        ) : (
+                          <CheckCircle className="h-4 w-4" />
+                        )}
+                        Finaliser Stock
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  {(!selectedItem?.qualite_approuvee_at || !selectedItem?.photo_materiel_url || selectedItem?.statut !== 'qualité_validée') && (
+                    <TooltipContent side="top" className="max-w-xs">
+                      <div className="flex items-center gap-2">
+                        <Lock className="h-4 w-4 text-warning" />
+                        <span>En attente de validation qualité par Abdel Sadek</span>
+                      </div>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             )}
           </DialogFooter>
         </DialogContent>
