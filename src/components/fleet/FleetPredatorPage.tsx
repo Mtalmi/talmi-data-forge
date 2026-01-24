@@ -6,12 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Switch } from '@/components/ui/switch';
 import { 
   Map, 
   Crosshair, 
   Shield, 
   Radio, 
-  Fuel, 
   AlertTriangle,
   Plus,
   Trash2,
@@ -19,16 +19,27 @@ import {
   Server,
   Copy,
   Check,
-  ExternalLink
+  Play,
+  Square
 } from 'lucide-react';
 import { TacticalMap } from './TacticalMap';
 import { useGPSTracking } from '@/hooks/useGPSTracking';
+import { useGPSDemoMode } from '@/hooks/useGPSDemoMode';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 
 export function FleetPredatorPage() {
   const { geofences, alerts, addGeofence, fetchGeofences } = useGPSTracking();
+  const { 
+    demoEnabled, 
+    demoTrucks, 
+    demoAlerts, 
+    toggleDemo, 
+    acknowledgeDemoAlert,
+    getDemoTruckHistory 
+  } = useGPSDemoMode();
+  
   const [newZoneName, setNewZoneName] = useState('');
   const [newZoneLat, setNewZoneLat] = useState('');
   const [newZoneLng, setNewZoneLng] = useState('');
@@ -107,13 +118,62 @@ export function FleetPredatorPage() {
             Centre de commandement GPS tactique
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/50">
+        <div className="flex items-center gap-4">
+          {/* Demo Mode Toggle */}
+          <div className="flex items-center gap-3 bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2">
+            <div className="flex items-center gap-2">
+              {demoEnabled ? (
+                <Play className="h-4 w-4 text-amber-400 animate-pulse" />
+              ) : (
+                <Square className="h-4 w-4 text-gray-500" />
+              )}
+              <span className="text-sm font-medium text-gray-300">Mode Démo</span>
+            </div>
+            <Switch
+              checked={demoEnabled}
+              onCheckedChange={() => {
+                toggleDemo();
+                toast.success(demoEnabled ? 'Mode démo désactivé' : 'Mode démo activé - Simulation GPS en cours');
+              }}
+              className="data-[state=checked]:bg-amber-500"
+            />
+          </div>
+          
+          <Badge className={demoEnabled 
+            ? "bg-amber-500/20 text-amber-400 border-amber-500/50"
+            : "bg-emerald-500/20 text-emerald-400 border-emerald-500/50"
+          }>
             <Radio className="h-3 w-3 mr-1 animate-pulse" />
-            SYSTÈME ACTIF
+            {demoEnabled ? 'SIMULATION' : 'SYSTÈME ACTIF'}
           </Badge>
         </div>
       </div>
+      
+      {/* Demo Mode Banner */}
+      {demoEnabled && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-500/20 rounded-lg">
+              <Play className="h-5 w-5 text-amber-400" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-amber-400">Mode Démonstration Actif</h3>
+              <p className="text-sm text-gray-400">
+                {demoTrucks.length} camions simulés en mouvement autour de Casablanca. 
+                Les données sont générées localement et ne sont pas enregistrées.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-amber-400">{demoTrucks.length}</div>
+              <div className="text-xs text-gray-500">véhicules</div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-red-400">{demoAlerts.length}</div>
+              <div className="text-xs text-gray-500">alertes</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Tabs defaultValue="map" className="space-y-4">
         <TabsList className="bg-gray-800/50 border border-gray-700">
@@ -133,7 +193,13 @@ export function FleetPredatorPage() {
 
         {/* Tactical Map Tab */}
         <TabsContent value="map" className="mt-0">
-          <TacticalMap />
+          <TacticalMap 
+            demoMode={demoEnabled}
+            demoTrucks={demoTrucks}
+            demoAlerts={demoAlerts}
+            onAcknowledgeDemoAlert={acknowledgeDemoAlert}
+            getDemoTruckHistory={getDemoTruckHistory}
+          />
         </TabsContent>
 
         {/* Geofencing Tab */}
