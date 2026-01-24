@@ -13,7 +13,8 @@ import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
 import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
 import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
-import { 
+import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
+import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
   ARAgingWidget, 
@@ -248,6 +249,11 @@ export default function Dashboard() {
             {/* Live Production Feed - Hawaii Plant Monitoring */}
             <div className="bento-wide">
               <LiveProductionWidget />
+            </div>
+            
+            {/* Batch Photo Gallery - Hawaii Visual Proof */}
+            <div className="bento-wide">
+              <BatchPhotoGallery />
             </div>
             
             {/* Executive Command Center - Full width */}
