@@ -128,7 +128,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
     {
       label: 'Support',
       items: [
-        { to: '/aide', label: 'Aide & Manuel', icon: HelpCircle },
+        { to: '/aide', label: 'Manuel Système', icon: HelpCircle },
       ],
     },
   ].filter(group => group.items.length > 0);
