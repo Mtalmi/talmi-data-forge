@@ -454,7 +454,10 @@ export type Database = {
         Row: {
           adresse_livraison: string | null
           bc_id: string
+          client_confirmed_at: string | null
+          client_confirmed_by_name: string | null
           client_id: string
+          client_signature_url: string | null
           conditions_acces: string | null
           contact_chantier: string | null
           created_at: string
@@ -481,6 +484,8 @@ export type Database = {
           statut: string
           telephone_chantier: string | null
           total_ht: number
+          tracking_enabled: boolean | null
+          tracking_token: string | null
           type_pompe: string | null
           updated_at: string
           validated_at: string | null
@@ -495,7 +500,10 @@ export type Database = {
         Insert: {
           adresse_livraison?: string | null
           bc_id: string
+          client_confirmed_at?: string | null
+          client_confirmed_by_name?: string | null
           client_id: string
+          client_signature_url?: string | null
           conditions_acces?: string | null
           contact_chantier?: string | null
           created_at?: string
@@ -522,6 +530,8 @@ export type Database = {
           statut?: string
           telephone_chantier?: string | null
           total_ht: number
+          tracking_enabled?: boolean | null
+          tracking_token?: string | null
           type_pompe?: string | null
           updated_at?: string
           validated_at?: string | null
@@ -536,7 +546,10 @@ export type Database = {
         Update: {
           adresse_livraison?: string | null
           bc_id?: string
+          client_confirmed_at?: string | null
+          client_confirmed_by_name?: string | null
           client_id?: string
+          client_signature_url?: string | null
           conditions_acces?: string | null
           contact_chantier?: string | null
           created_at?: string
@@ -563,6 +576,8 @@ export type Database = {
           statut?: string
           telephone_chantier?: string | null
           total_ht?: number
+          tracking_enabled?: boolean | null
+          tracking_token?: string | null
           type_pompe?: string | null
           updated_at?: string
           validated_at?: string | null
@@ -628,7 +643,10 @@ export type Database = {
           camion_assigne: string | null
           chauffeur_nom: string | null
           ciment_reel_kg: number
+          client_confirmed_at: string | null
+          client_confirmed_by_name: string | null
           client_id: string
+          client_signature_url: string | null
           consommation_calculee: number | null
           created_at: string
           created_by: string | null
@@ -678,6 +696,7 @@ export type Database = {
           temps_mission_heures: number | null
           temps_rotation_minutes: number | null
           toupie_assignee: string | null
+          tracking_token: string | null
           updated_at: string
           validated_at: string | null
           validated_by: string | null
@@ -709,7 +728,10 @@ export type Database = {
           camion_assigne?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg: number
+          client_confirmed_at?: string | null
+          client_confirmed_by_name?: string | null
           client_id: string
+          client_signature_url?: string | null
           consommation_calculee?: number | null
           created_at?: string
           created_by?: string | null
@@ -759,6 +781,7 @@ export type Database = {
           temps_mission_heures?: number | null
           temps_rotation_minutes?: number | null
           toupie_assignee?: string | null
+          tracking_token?: string | null
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
@@ -790,7 +813,10 @@ export type Database = {
           camion_assigne?: string | null
           chauffeur_nom?: string | null
           ciment_reel_kg?: number
+          client_confirmed_at?: string | null
+          client_confirmed_by_name?: string | null
           client_id?: string
+          client_signature_url?: string | null
           consommation_calculee?: number | null
           created_at?: string
           created_by?: string | null
@@ -840,6 +866,7 @@ export type Database = {
           temps_mission_heures?: number | null
           temps_rotation_minutes?: number | null
           toupie_assignee?: string | null
+          tracking_token?: string | null
           updated_at?: string
           validated_at?: string | null
           validated_by?: string | null
@@ -1231,6 +1258,13 @@ export type Database = {
             columns: ["bl_id"]
             isOneToOne: false
             referencedRelation: "bons_livraison_reels"
+            referencedColumns: ["bl_id"]
+          },
+          {
+            foreignKeyName: "fk_bl"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "client_delivery_tracking_view"
             referencedColumns: ["bl_id"]
           },
         ]
@@ -3010,6 +3044,13 @@ export type Database = {
             referencedRelation: "bons_livraison_reels"
             referencedColumns: ["bl_id"]
           },
+          {
+            foreignKeyName: "production_batches_bl_id_fkey"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "client_delivery_tracking_view"
+            referencedColumns: ["bl_id"]
+          },
         ]
       }
       profiles: {
@@ -3418,6 +3459,13 @@ export type Database = {
             referencedRelation: "bons_livraison_reels"
             referencedColumns: ["bl_id"]
           },
+          {
+            foreignKeyName: "tests_laboratoire_bl_id_fkey"
+            columns: ["bl_id"]
+            isOneToOne: false
+            referencedRelation: "client_delivery_tracking_view"
+            referencedColumns: ["bl_id"]
+          },
         ]
       }
       user_roles: {
@@ -3497,6 +3545,60 @@ export type Database = {
       }
     }
     Views: {
+      client_delivery_tracking_view: {
+        Row: {
+          affaissement_conforme: boolean | null
+          affaissement_mm: number | null
+          bc_id: string | null
+          bl_id: string | null
+          camion_assigne: string | null
+          chauffeur_nom: string | null
+          client_confirmed_at: string | null
+          client_confirmed_by_name: string | null
+          date_livraison: string | null
+          driver_phone: string | null
+          heure_arrivee_chantier: string | null
+          heure_depart_centrale: string | null
+          heure_prevue: string | null
+          nom_zone: string | null
+          photo_slump_url: string | null
+          photo_texture_url: string | null
+          quality_approved: boolean | null
+          quality_approved_by: string | null
+          toupie_assignee: string | null
+          tracking_token: string | null
+          truck_driver: string | null
+          volume_m3: number | null
+          workflow_status: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bons_livraison_reels_camion_assigne_fkey"
+            columns: ["camion_assigne"]
+            isOneToOne: false
+            referencedRelation: "flotte"
+            referencedColumns: ["id_camion"]
+          },
+        ]
+      }
+      client_tracking_view: {
+        Row: {
+          adresse_livraison: string | null
+          bc_confirmed_at: string | null
+          bc_confirmed_by: string | null
+          bc_id: string | null
+          bc_statut: string | null
+          bc_volume: number | null
+          date_livraison_souhaitee: string | null
+          formule_designation: string | null
+          heure_livraison_souhaitee: string | null
+          nom_client: string | null
+          tracking_enabled: boolean | null
+          tracking_token: string | null
+          zone_nom: string | null
+        }
+        Relationships: []
+      }
       department_spending_summary: {
         Row: {
           department: string | null
