@@ -74,65 +74,87 @@ interface SecurityMetrics {
   totalAuditLogs: number;
 }
 
-// Action styling configurations
+// Action styling configurations with enhanced mobile badges
 const ACTION_CONFIG: Record<string, { 
   label: string; 
   color: string; 
   bgColor: string;
+  badgeBg: string;
+  borderColor: string;
   icon: React.ElementType;
+  isPulsing?: boolean;
 }> = {
   ROLLBACK_APPROVAL: { 
-    label: 'Rollback Devis', 
+    label: 'DEVIS ROLLBACK', 
     color: 'text-red-500', 
-    bgColor: 'bg-red-500/10 border-red-500/30',
+    bgColor: 'bg-red-600',
+    badgeBg: 'bg-red-600 text-white',
+    borderColor: 'border-l-red-600',
     icon: Unlock,
   },
   APPROVE_DEVIS: { 
-    label: 'Approbation', 
+    label: 'APPROBATION', 
     color: 'text-emerald-500', 
-    bgColor: 'bg-emerald-500/10 border-emerald-500/30',
+    bgColor: 'bg-emerald-600',
+    badgeBg: 'bg-emerald-600 text-white',
+    borderColor: 'border-l-emerald-600',
     icon: CheckCircle,
   },
   STOCK_FINALIZED: { 
-    label: 'Stock Finalisé', 
+    label: 'STOCK FINALISÉ', 
     color: 'text-green-500', 
-    bgColor: 'bg-green-500/10 border-green-500/30',
+    bgColor: 'bg-green-600',
+    badgeBg: 'bg-green-600 text-white',
+    borderColor: 'border-l-green-600',
     icon: Package,
   },
   PRICE_CHANGE: { 
-    label: 'Modif. Prix', 
+    label: 'MODIF. PRIX', 
     color: 'text-amber-500', 
-    bgColor: 'bg-amber-500/10 border-amber-500/30',
+    bgColor: 'bg-amber-600',
+    badgeBg: 'bg-amber-600 text-white',
+    borderColor: 'border-l-amber-600',
     icon: FileWarning,
   },
   ACCESS_DENIED: { 
-    label: 'Accès Refusé', 
-    color: 'text-red-600', 
-    bgColor: 'bg-red-600/10 border-red-600/30',
+    label: 'VIOLATION SÉCURITÉ', 
+    color: 'text-orange-500', 
+    bgColor: 'bg-orange-600',
+    badgeBg: 'bg-orange-600 text-white animate-pulse',
+    borderColor: 'border-l-orange-600',
     icon: Ban,
+    isPulsing: true,
   },
   INSERT: { 
-    label: 'Création', 
+    label: 'CRÉATION', 
     color: 'text-blue-500', 
-    bgColor: 'bg-blue-500/10 border-blue-500/30',
+    bgColor: 'bg-blue-600',
+    badgeBg: 'bg-blue-600 text-white',
+    borderColor: 'border-l-blue-600',
     icon: CheckCircle,
   },
   UPDATE: { 
-    label: 'Modification', 
+    label: 'MODIFICATION', 
     color: 'text-amber-500', 
-    bgColor: 'bg-amber-500/10 border-amber-500/30',
+    bgColor: 'bg-amber-600',
+    badgeBg: 'bg-amber-600 text-white',
+    borderColor: 'border-l-amber-600',
     icon: FileWarning,
   },
   DELETE: { 
-    label: 'Suppression', 
+    label: 'SUPPRESSION', 
     color: 'text-red-500', 
-    bgColor: 'bg-red-500/10 border-red-500/30',
+    bgColor: 'bg-red-600',
+    badgeBg: 'bg-red-600 text-white',
+    borderColor: 'border-l-red-600',
     icon: Ban,
   },
   default: { 
-    label: 'Action', 
+    label: 'ACTION', 
     color: 'text-muted-foreground', 
-    bgColor: 'bg-muted/30 border-muted',
+    bgColor: 'bg-muted',
+    badgeBg: 'bg-slate-600 text-white',
+    borderColor: 'border-l-muted',
     icon: Activity,
   },
 };
@@ -151,79 +173,168 @@ const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
   operator: { label: 'Opérateur', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
 };
 
-// Forensic Feed Card Component (Mobile-optimized)
+// Helper to get target label from table name
+const getTargetLabel = (tableName: string, recordId: string | null): string => {
+  const labels: Record<string, string> = {
+    devis: 'Devis',
+    bons_commande: 'BC',
+    bons_livraison_reels: 'BL',
+    stock_receptions_pending: 'Réception',
+    clients: 'Client',
+    factures: 'Facture',
+    stocks_journaliers: 'Silo',
+  };
+  const label = labels[tableName] || tableName;
+  return recordId ? `${label} #${recordId.substring(0, 8)}` : label;
+};
+
+// Forensic Alert Card Component (Mobile-First, Touch-Optimized)
 function ForensicFeedCard({ log }: { log: AuditLogEntry }) {
   const config = ACTION_CONFIG[log.action] || ACTION_CONFIG.default;
   const Icon = config.icon;
   const isRollback = log.action === 'ROLLBACK_APPROVAL';
   const isSuccess = log.action === 'STOCK_FINALIZED' || log.action === 'APPROVE_DEVIS';
+  const isViolation = log.action === 'ACCESS_DENIED';
+
+  // Format target as clickable element
+  const targetLabel = getTargetLabel(log.table_name, log.record_id);
 
   return (
-    <Card className={cn(
-      "transition-all border-l-4",
-      isRollback ? "border-l-red-500 bg-red-500/5" : 
-      isSuccess ? "border-l-green-500 bg-green-500/5" : 
-      "border-l-muted"
+    <div className={cn(
+      // Mobile-first card styling
+      "rounded-xl border-l-4 shadow-sm p-4 mb-3 bg-card transition-all",
+      // Dynamic border color based on action type
+      config.borderColor,
+      // Subtle background tint
+      isRollback && "bg-red-500/5",
+      isSuccess && "bg-green-500/5",
+      isViolation && "bg-orange-500/5"
     )}>
-      <CardContent className="p-4">
-        {/* Header Row */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className={cn(
-              "p-1.5 rounded-full shrink-0",
-              isRollback ? "bg-red-500/20" : isSuccess ? "bg-green-500/20" : "bg-muted"
+      {/* Header Row: User Name (left) + Time Ago (right) */}
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <span className="font-bold text-sm sm:text-[14px] text-foreground truncate">
+          {log.user_name || 'Utilisateur Inconnu'}
+        </span>
+        <span className="text-xs text-muted-foreground/70 shrink-0">
+          {formatDistanceToNow(new Date(log.created_at), { addSuffix: false, locale: fr })}
+        </span>
+      </div>
+
+      {/* Action Badge (Center, High Contrast) */}
+      <div className="flex justify-center mb-3">
+        <span className={cn(
+          "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-sm",
+          config.badgeBg,
+          config.isPulsing && "animate-pulse"
+        )}>
+          <Icon className="h-3.5 w-3.5" />
+          {config.label}
+        </span>
+      </div>
+
+      {/* Content Body: The Forensic Detail */}
+      <div className="space-y-3">
+        {/* The Reason (if available) */}
+        {(isRollback || isViolation) && log.changes?.reason && (
+          <p className="text-base italic text-slate-600 dark:text-slate-300 leading-relaxed text-center px-2">
+            "{log.changes.reason}"
+          </p>
+        )}
+
+        {/* The Target: Clickable link-style element */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            className={cn(
+              "inline-flex items-center gap-2 px-4 py-2 rounded-lg",
+              "bg-muted/50 hover:bg-muted transition-colors",
+              "text-sm font-mono font-medium",
+              "min-h-[44px]", // Touch target: 44px minimum
+              "active:scale-[0.98]"
+            )}
+            onClick={() => {
+              // Could navigate to the record in the future
+              toast.info(`Affichage de ${targetLabel}`, {
+                description: `Table: ${log.table_name}`,
+              });
+            }}
+          >
+            <Eye className="h-4 w-4 text-muted-foreground" />
+            <span className={cn(
+              isRollback && "text-red-600 dark:text-red-400",
+              isSuccess && "text-green-600 dark:text-green-400",
+              isViolation && "text-orange-600 dark:text-orange-400",
+              !isRollback && !isSuccess && !isViolation && "text-primary"
             )}>
-              <Icon className={cn("h-4 w-4", config.color)} />
-            </div>
-            <div className="min-w-0">
-              <Badge variant="outline" className={cn("text-xs font-medium", config.color)}>
-                {config.label}
-              </Badge>
-            </div>
-          </div>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-            <Clock className="h-3 w-3" />
-            <span className="hidden sm:inline">
-              {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: fr })}
+              {targetLabel}
             </span>
-            <span className="sm:hidden">
-              {format(new Date(log.created_at), 'HH:mm')}
-            </span>
-          </div>
+          </button>
         </div>
 
-        {/* User & Target */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-semibold">{log.user_name || 'Utilisateur'}</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="font-mono text-xs bg-muted/50 px-1.5 py-0.5 rounded truncate">
-              {log.table_name}
-            </span>
-            {log.record_id && (
-              <span className="font-mono text-xs text-muted-foreground truncate">
-                #{log.record_id.substring(0, 12)}
-              </span>
+        {/* Rollback metadata footer */}
+        {isRollback && log.changes?.rollback_number && (
+          <div className="flex justify-center gap-2 pt-2 border-t border-dashed border-red-500/20">
+            <Badge variant="outline" className="text-[10px] px-2 py-0.5 border-red-500/50 text-red-500 font-mono">
+              ROLLBACK #{log.changes.rollback_number}
+            </Badge>
+            {log.changes.cancelled_by_role && (
+              <Badge variant="outline" className="text-[10px] px-2 py-0.5 border-muted text-muted-foreground">
+                {log.changes.cancelled_by_role.toUpperCase()}
+              </Badge>
             )}
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-          {/* Rollback Reason (Highlighted) */}
-          {isRollback && log.changes?.reason && (
-            <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <p className="text-sm italic text-red-400 leading-relaxed">
-                "{log.changes.reason}"
-              </p>
-              <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-red-500/50 text-red-400">
-                  ROLLBACK #{log.changes.rollback_number}
-                </Badge>
-                <span>par {log.changes.cancelled_by_role?.toUpperCase()}</span>
-              </div>
-            </div>
-          )}
+// Enhanced Skeleton Loader for Alert Cards
+function ForensicCardSkeleton() {
+  return (
+    <div className="rounded-xl border-l-4 border-l-muted shadow-sm p-4 mb-3 bg-card animate-pulse">
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between mb-3">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-3 w-16" />
+      </div>
+      {/* Badge skeleton */}
+      <div className="flex justify-center mb-3">
+        <Skeleton className="h-7 w-36 rounded-full" />
+      </div>
+      {/* Content skeleton */}
+      <div className="space-y-3">
+        <Skeleton className="h-4 w-3/4 mx-auto" />
+        <div className="flex justify-center">
+          <Skeleton className="h-11 w-40 rounded-lg" />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
+  );
+}
+
+// Clear Skies Empty State
+function ClearSkiesEmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+      {/* Clear Skies Illustration */}
+      <div className="relative mb-6">
+        <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-sky-900/30 dark:to-emerald-900/30 flex items-center justify-center">
+          <ShieldCheck className="h-12 w-12 text-emerald-500" />
+        </div>
+        {/* Floating particles */}
+        <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-emerald-400/60 animate-bounce" style={{ animationDelay: '0.1s' }} />
+        <div className="absolute -bottom-1 -left-3 w-3 h-3 rounded-full bg-sky-400/60 animate-bounce" style={{ animationDelay: '0.3s' }} />
+        <div className="absolute top-1/2 -right-4 w-2 h-2 rounded-full bg-amber-400/60 animate-bounce" style={{ animationDelay: '0.5s' }} />
+      </div>
+      
+      <h3 className="text-lg font-semibold text-foreground mb-2">
+        Ciel Dégagé ☀️
+      </h3>
+      <p className="text-sm text-muted-foreground max-w-[240px]">
+        Aucune alerte de sécurité dans les dernières 24 heures. Tout est sous contrôle.
+      </p>
+    </div>
   );
 }
 
@@ -1154,19 +1265,18 @@ export default function SecurityDashboard() {
             </CardHeader>
             <CardContent className="px-3 sm:px-6">
               {loading ? (
-                <div className="space-y-3">
+                // Enhanced Skeleton Loaders
+                <div className="space-y-0">
                   {[...Array(4)].map((_, i) => (
-                    <Skeleton key={i} className="h-24 w-full rounded-lg" />
+                    <ForensicCardSkeleton key={i} />
                   ))}
                 </div>
               ) : filteredLogs.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Activity className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <p>Aucune entrée d'audit</p>
-                </div>
+                // Clear Skies Empty State
+                <ClearSkiesEmptyState />
               ) : (
                 <ScrollArea className="h-[400px] sm:h-[500px] pr-2 sm:pr-4">
-                  <div className="space-y-3">
+                  <div className="space-y-0">
                     {filteredLogs.map((log) => (
                       <ForensicFeedCard key={log.id} log={log} />
                     ))}
