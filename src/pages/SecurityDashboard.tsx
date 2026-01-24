@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DigestRecipientsManager } from '@/components/security/DigestRecipientsManager';
+import { RealTimeSecurityPanel } from '@/components/security/RealTimeSecurityPanel';
 import {
   Shield,
   ShieldCheck,
@@ -1369,6 +1370,9 @@ export default function SecurityDashboard() {
             loading={loading}
           />
         </div>
+
+        {/* Real-Time Security Panel */}
+        <RealTimeSecurityPanel />
 
         {/* Main Content - Mobile-First Stack */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
