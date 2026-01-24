@@ -460,6 +460,58 @@
     }
   }
 
+  /* Scan Vertical Animation */
+  @keyframes scan-vertical {
+    0% {
+      top: -4px;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      top: calc(100% + 4px);
+      opacity: 0;
+    }
+  }
+
+  .animate-scan-vertical {
+    animation: scan-vertical 2s ease-in-out infinite;
+  }
+
+  /* Shimmer Effect for Vault Lock */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 1s ease-out forwards;
+  }
+
+  /* Fade In Up - For wizard steps */
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
   /* ===== OBSIDIAN INDUSTRIAL CARDS ===== */
   .card-industrial {
     @apply relative overflow-hidden rounded-xl;

@@ -1,16 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Package, Check, Loader2, X, ChevronRight, Lock } from 'lucide-react';
+import { Camera, Package, Check, Loader2, X, ChevronRight, Lock, Shield, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +16,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { compressImage } from '@/lib/imageCompression';
 import { hapticSuccess, hapticError, hapticTap } from '@/lib/haptics';
+import { CaptureRealityZone } from '@/components/ui/VaultWizard';
+import { TacticalSwitch } from '@/components/ui/TacticalSwitch';
+import { VaultSubmitButton } from '@/components/ui/VaultSubmitButton';
 
 interface Stock {
   materiau: string;
@@ -35,39 +31,40 @@ interface TwoStepReceptionWizardProps {
   onRefresh?: () => void;
 }
 
+// Material icons for Tactical Switch
+const MATERIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  'Ciment': Shield,
+  'Sable': Package,
+  'Gravette': Truck,
+};
+
 /**
- * 2-Step Stock Reception Wizard for Agent Administratif
- * Step 1 (Evidence): Camera/Upload - MANDATORY before proceeding
- * Step 2 (Data): Enter quantities - LOCKED until Step 1 complete
+ * 2-Step Stock Reception Wizard - VAULT Edition
+ * Camera-First workflow with minimalist one-question-at-a-time UX
+ * "Obsidian & Liquid Gold" aesthetic
  */
 export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWizardProps) {
   const [open, setOpen] = useState(false);
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-  // Step 1 - Evidence
+  // Step 1 - Capture Reality (Photo)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
-  // Step 2 - Data (locked until photo captured)
+  // Step 2 - Material Selection (Tactical Switch)
   const [materiau, setMateriau] = useState('');
+
+  // Step 3 - Quantity
   const [quantite, setQuantite] = useState('');
+
+  // Step 4 - Additional Data
   const [fournisseur, setFournisseur] = useState('');
   const [numeroBl, setNumeroBl] = useState('');
   const [notes, setNotes] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Auto-trigger camera on dialog open
-  useEffect(() => {
-    if (open && step === 1 && !photoUrl) {
-      const timer = setTimeout(() => {
-        fileInputRef.current?.click();
-      }, 150);
-      return () => clearTimeout(timer);
-    }
-  }, [open, step, photoUrl]);
 
   const resetForm = () => {
     setStep(1);
@@ -87,10 +84,7 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
     }
   };
 
-  const handlePhotoCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const handlePhotoCapture = async (file: File) => {
     try {
       setUploadingPhoto(true);
       hapticTap();
@@ -119,7 +113,11 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
 
       setPhotoUrl(urlData.publicUrl);
       hapticSuccess();
-      toast.success('Photo du BL capturée!');
+      
+      // Auto-advance after capture
+      setTimeout(() => {
+        setStep(2);
+      }, 800);
     } catch (error) {
       console.error('Error uploading photo:', error);
       hapticError();
@@ -129,23 +127,11 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
     }
   };
 
-  const handleProceedToStep2 = () => {
-    if (!photoUrl) {
-      hapticError();
-      toast.error('Photo du BL fournisseur obligatoire!');
-      return;
-    }
-    hapticTap();
-    setStep(2);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async (): Promise<void> => {
     if (!photoUrl) {
       hapticError();
       toast.error('Photo du BL obligatoire!');
-      return;
+      throw new Error('Missing photo');
     }
 
     setSubmitting(true);
@@ -167,17 +153,20 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
       if (!result.success) {
         hapticError();
         toast.error(result.error || 'Erreur lors de la réception');
-        return;
+        throw new Error(result.error);
       }
 
       hapticSuccess();
-      toast.success(result.message || 'Réception enregistrée avec succès!');
-      handleOpenChange(false);
-      onRefresh?.();
+      toast.success(result.message || 'Réception sécurisée avec succès!');
+      
+      setTimeout(() => {
+        handleOpenChange(false);
+        onRefresh?.();
+      }, 1500);
     } catch (error) {
       console.error('Error adding reception:', error);
       hapticError();
-      toast.error("Erreur lors de l'enregistrement");
+      throw error;
     } finally {
       setSubmitting(false);
     }
@@ -185,259 +174,316 @@ export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWi
 
   const selectedStock = stocks.find((s) => s.materiau === materiau);
 
+  // Prepare material options for Tactical Switch
+  const materialOptions = stocks.map(s => ({
+    value: s.materiau,
+    label: s.materiau,
+    icon: MATERIAL_ICONS[s.materiau] || Package,
+  }));
+
+  // Calculate step completion
+  const isStep1Complete = !!photoUrl;
+  const isStep2Complete = !!materiau;
+  const isStep3Complete = !!quantite && parseFloat(quantite) > 0;
+  const isStep4Complete = !!fournisseur && !!numeroBl;
+
   return (
     <>
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handlePhotoCapture}
-        className="hidden"
-      />
-
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogTrigger asChild>
-          <Button className="gap-2 min-h-[44px]" onClick={() => hapticTap()}>
+          <Button 
+            className="gap-2 min-h-[44px] btn-premium-primary" 
+            onClick={() => hapticTap()}
+          >
             <Package className="h-4 w-4" />
             <span className="hidden sm:inline">Nouvelle Réception</span>
             <span className="sm:hidden">Réception</span>
           </Button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto animate-scale-in">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Package className="h-5 w-5 text-primary" />
-              Réception Matières Premières
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-hidden p-0 bg-background border-primary/20">
+          {/* Vault Header */}
+          <div className="p-6 border-b border-border/30 bg-gradient-to-r from-background to-muted/20">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-3 text-xl">
+                <div className="p-2 rounded-lg bg-primary/10 border border-primary/30">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <span className="text-foreground">Vault Reception</span>
+                  <p className="text-xs font-normal text-muted-foreground mt-0.5">
+                    Protocole sécurisé d'entrée de stock
+                  </p>
+                </div>
+              </DialogTitle>
+            </DialogHeader>
 
-          {/* Step Indicator */}
-          <div className="flex items-center gap-2 py-2">
-            <div
-              className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
-                step === 1
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-success/20 text-success'
-              )}
-            >
-              {step > 1 ? <Check className="h-4 w-4" /> : <Camera className="h-4 w-4" />}
-              <span>1. Preuve</span>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <div
-              className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
-                step === 2
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
-              )}
-            >
-              {step === 1 && <Lock className="h-3 w-3" />}
-              <span>2. Données</span>
+            {/* Progress Indicators */}
+            <div className="flex items-center justify-between mt-6">
+              {[
+                { step: 1, label: 'Preuve', complete: isStep1Complete },
+                { step: 2, label: 'Quoi?', complete: isStep2Complete },
+                { step: 3, label: 'Combien?', complete: isStep3Complete },
+                { step: 4, label: 'Qui?', complete: isStep4Complete },
+              ].map((s, i) => (
+                <div key={s.step} className="flex items-center">
+                  <div className={cn(
+                    'w-10 h-10 rounded-full flex items-center justify-center',
+                    'transition-all duration-500 border-2',
+                    s.complete ? [
+                      'bg-gradient-to-br from-primary to-primary/80',
+                      'border-primary',
+                      'shadow-[0_0_20px_hsl(var(--primary)/0.4)]',
+                    ] : step === s.step ? [
+                      'bg-transparent border-primary',
+                      'shadow-[0_0_15px_hsl(var(--primary)/0.2)]',
+                    ] : [
+                      'bg-transparent border-border/40',
+                    ]
+                  )}>
+                    {s.complete ? (
+                      <Check className="h-5 w-5 text-primary-foreground" />
+                    ) : step === s.step ? (
+                      <span className="text-sm font-bold text-primary">{s.step}</span>
+                    ) : (
+                      <Lock className="h-4 w-4 text-muted-foreground/50" />
+                    )}
+                  </div>
+                  {i < 3 && (
+                    <div className={cn(
+                      'w-6 h-0.5 mx-1 transition-all duration-500',
+                      s.complete ? 'bg-primary' : 'bg-border/30'
+                    )} />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Step 1: Evidence */}
-          {step === 1 && (
-            <div className="space-y-4 py-4">
-              {uploadingPhoto ? (
-                <div className="flex flex-col items-center gap-4 py-8">
-                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                  <p className="text-muted-foreground">Traitement de la photo...</p>
+          {/* Step Content */}
+          <div className="p-6 min-h-[350px] flex flex-col">
+            {/* Step 1: Capture Reality */}
+            {step === 1 && (
+              <div className="flex-1 flex flex-col animate-fade-in-up">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Preuve?
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Capturez le Bon de Livraison fournisseur
+                  </p>
                 </div>
-              ) : photoPreview ? (
-                <div className="space-y-4">
-                  <div className="relative rounded-lg border border-success/50 overflow-hidden">
-                    <img
-                      src={photoPreview}
-                      alt="BL Fournisseur"
-                      className="w-full h-48 object-cover"
+
+                <div className="flex-1 flex items-center justify-center">
+                  <CaptureRealityZone
+                    photoUrl={photoUrl}
+                    photoPreview={photoPreview}
+                    onCapture={handlePhotoCapture}
+                    uploading={uploadingPhoto}
+                    label="Scanner le BL"
+                    sublabel="Photo obligatoire pour continuer"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Material Selection - Tactical Switch */}
+            {step === 2 && (
+              <div className="flex-1 flex flex-col animate-fade-in-up">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Quoi?
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Sélectionnez le matériau reçu
+                  </p>
+                </div>
+
+                <div className="flex-1 flex items-center">
+                  <TacticalSwitch
+                    options={materialOptions}
+                    value={materiau}
+                    onChange={(val) => {
+                      setMateriau(val);
+                      // Auto-advance after selection
+                      setTimeout(() => setStep(3), 400);
+                    }}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Photo thumbnail */}
+                {photoPreview && (
+                  <div className="flex items-center gap-3 p-3 mt-4 rounded-xl bg-primary/5 border border-primary/20">
+                    <img src={photoPreview} alt="BL" className="h-10 w-10 rounded object-cover" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-primary">Preuve capturée ✓</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Step 3: Quantity */}
+            {step === 3 && (
+              <div className="flex-1 flex flex-col animate-fade-in-up">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Combien?
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Quantité de {materiau} reçue
+                  </p>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center space-y-6">
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      inputMode="decimal"
+                      step="0.01"
+                      min="0"
+                      placeholder="0"
+                      value={quantite}
+                      onChange={(e) => setQuantite(e.target.value)}
+                      className={cn(
+                        'h-20 text-4xl text-center font-bold rounded-xl',
+                        'bg-transparent border-2',
+                        quantite ? 'border-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)]' : 'border-border/50'
+                      )}
                     />
-                    <div className="absolute top-2 right-2">
-                      <Button
-                        type="button"
-                        size="icon"
-                        variant="secondary"
-                        className="h-8 w-8"
-                        onClick={() => {
-                          setPhotoUrl(null);
-                          setPhotoPreview(null);
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                    {selectedStock && (
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-lg text-muted-foreground font-semibold">
+                        {selectedStock.unite}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Stock preview */}
+                  {selectedStock && quantite && (
+                    <div className="p-4 rounded-xl border border-border/30 bg-muted/10">
+                      <div className="flex justify-between items-center text-sm mb-2">
+                        <span className="text-muted-foreground">Stock actuel</span>
+                        <span className="font-mono font-bold">
+                          {selectedStock.quantite_actuelle.toLocaleString()} {selectedStock.unite}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-muted-foreground">Après réception</span>
+                        <span className="font-mono font-bold text-primary">
+                          {(selectedStock.quantite_actuelle + parseFloat(quantite || '0')).toLocaleString()} {selectedStock.unite}
+                        </span>
+                      </div>
                     </div>
-                    <div className="absolute bottom-2 left-2 flex items-center gap-1 bg-success/90 text-success-foreground px-2 py-1 rounded text-xs">
-                      <Check className="h-3 w-3" />
-                      Photo vérifiée
-                    </div>
-                  </div>
-
-                  <Button
-                    className="w-full min-h-[56px] gap-2"
-                    onClick={handleProceedToStep2}
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                    Continuer vers Étape 2
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-4 py-8">
-                  <div className="p-6 rounded-full bg-primary/10">
-                    <Camera className="h-12 w-12 text-primary" />
-                  </div>
-                  <div className="text-center">
-                    <p className="font-semibold">Scanner le Bon de Livraison</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Photo du BL fournisseur obligatoire
-                    </p>
-                  </div>
-                  <Button
-                    size="lg"
-                    className="w-full min-h-[56px] gap-2"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Camera className="h-5 w-5" />
-                    Prendre Photo
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Step 2: Data Entry */}
-          {step === 2 && (
-            <form onSubmit={handleSubmit} className="space-y-4 py-4">
-              {/* Thumbnail of captured photo */}
-              {photoPreview && (
-                <div className="flex items-center gap-3 p-2 bg-success/10 border border-success/30 rounded-lg">
-                  <img
-                    src={photoPreview}
-                    alt="BL"
-                    className="h-12 w-12 object-cover rounded"
-                  />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-success">BL Vérifié</p>
-                    <p className="text-xs text-muted-foreground">Photo capturée</p>
-                  </div>
-                  <Check className="h-5 w-5 text-success" />
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label>Matériau</Label>
-                <Select value={materiau} onValueChange={setMateriau} required>
-                  <SelectTrigger className="min-h-[48px]">
-                    <SelectValue placeholder="Sélectionner..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {stocks.map((s) => (
-                      <SelectItem key={s.materiau} value={s.materiau}>
-                        {s.materiau} ({s.unite})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Quantité {selectedStock ? `(${selectedStock.unite})` : ''}</Label>
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
-                    placeholder="0"
-                    value={quantite}
-                    onChange={(e) => setQuantite(e.target.value)}
-                    required
-                    className="min-h-[48px]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>N° BL Fournisseur</Label>
-                  <Input
-                    placeholder="BL-2024-001"
-                    value={numeroBl}
-                    onChange={(e) => setNumeroBl(e.target.value)}
-                    required
-                    className="min-h-[48px]"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Fournisseur</Label>
-                <Input
-                  placeholder="Nom du fournisseur"
-                  value={fournisseur}
-                  onChange={(e) => setFournisseur(e.target.value)}
-                  required
-                  className="min-h-[48px]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Notes (optionnel)</Label>
-                <Textarea
-                  placeholder="Remarques..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={2}
-                />
-              </div>
-
-              {/* Stock Preview */}
-              {selectedStock && quantite && (
-                <div className="p-3 rounded-lg bg-muted/30 border border-border">
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground">Stock actuel:</span>
-                    <span className="font-mono font-semibold">
-                      {selectedStock.quantite_actuelle.toLocaleString()}{' '}
-                      {selectedStock.unite}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm mt-1">
-                    <span className="text-muted-foreground">Après réception:</span>
-                    <span className="font-mono font-semibold text-success">
-                      {(
-                        selectedStock.quantite_actuelle + parseFloat(quantite || '0')
-                      ).toLocaleString()}{' '}
-                      {selectedStock.unite}
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              <div className="flex gap-3 pt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 min-h-[48px]"
-                  onClick={() => setStep(1)}
-                >
-                  Retour
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex-1 min-h-[48px] gap-2"
-                >
-                  {submitting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Check className="h-4 w-4" />
                   )}
-                  Enregistrer
-                </Button>
+                </div>
+
+                {/* Navigation */}
+                <div className="flex gap-3 mt-6">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setStep(2)}
+                    className="flex-none"
+                  >
+                    Retour
+                  </Button>
+                  <Button
+                    onClick={() => setStep(4)}
+                    disabled={!isStep3Complete}
+                    className={cn(
+                      'flex-1 gap-2',
+                      isStep3Complete && 'btn-premium-primary'
+                    )}
+                  >
+                    Continuer
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-            </form>
-          )}
+            )}
+
+            {/* Step 4: Supplier Info + Submit */}
+            {step === 4 && (
+              <div className="flex-1 flex flex-col animate-fade-in-up">
+                <div className="text-center mb-6">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Pour qui?
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Informations fournisseur
+                  </p>
+                </div>
+
+                <div className="space-y-4 flex-1">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      Fournisseur
+                    </Label>
+                    <Input
+                      placeholder="Nom du fournisseur"
+                      value={fournisseur}
+                      onChange={(e) => setFournisseur(e.target.value)}
+                      className="min-h-[52px] text-base"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      N° Bon de Livraison
+                    </Label>
+                    <Input
+                      placeholder="BL-2024-001"
+                      value={numeroBl}
+                      onChange={(e) => setNumeroBl(e.target.value)}
+                      className="min-h-[52px] text-base"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                      Notes (optionnel)
+                    </Label>
+                    <Textarea
+                      placeholder="Remarques..."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+
+                {/* Summary Card */}
+                <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 mb-4 mt-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <span className="text-muted-foreground">Matériau:</span>
+                    <span className="font-semibold text-foreground">{materiau}</span>
+                    <span className="text-muted-foreground">Quantité:</span>
+                    <span className="font-semibold text-primary">{quantite} {selectedStock?.unite}</span>
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <div className="flex gap-3">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setStep(3)}
+                    className="flex-none"
+                  >
+                    Retour
+                  </Button>
+                  <div className="flex-1">
+                    <VaultSubmitButton
+                      onClick={handleSubmit}
+                      disabled={!isStep4Complete || submitting}
+                    >
+                      Sécuriser la Réception
+                    </VaultSubmitButton>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </>
