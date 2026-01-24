@@ -24,7 +24,15 @@ import {
   RotateCcw,
   Mic,
   Camera,
-  Plus
+  Plus,
+  FileText,
+  ClipboardCheck,
+  Navigation,
+  Target,
+  Radar,
+  AlertTriangle,
+  CreditCard,
+  UserCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTutorialVoice } from '@/hooks/useTutorialVoice';
@@ -46,6 +54,112 @@ interface VideoTutorial {
 }
 
 const VIDEO_TUTORIALS: VideoTutorial[] = [
+  // ========== NOUVEAUX TUTORIELS DÉTAILLÉS ==========
+  {
+    id: 'creer-devis-bc',
+    title: 'Créer un Devis → BC',
+    description: 'Workflow complet: devis, validation, conversion en bon de commande',
+    duration: '5:00',
+    icon: FileText,
+    category: 'operations',
+    steps: [
+      'Accéder à la page Ventes',
+      'Cliquer sur "Nouveau Devis"',
+      'Sélectionner le client',
+      'Choisir la formule béton',
+      'Définir volume et zone de livraison',
+      'Calculer le prix automatique',
+      'Soumettre pour approbation',
+      'Validation par Agent Admin ou CEO',
+      'Convertir le devis en BC'
+    ],
+    narration: {
+      intro: "Dans ce tutoriel complet, vous allez maîtriser le workflow de création de devis et sa conversion en bon de commande. C'est le processus commercial fondamental de TBOS.",
+      steps: [
+        "Commencez par accéder à la page Ventes depuis le menu principal. Vous y trouverez trois onglets : Devis, Bons de Commande, et Factures.",
+        "Cliquez sur le bouton jaune 'Nouveau Devis' en haut à droite. Un formulaire complet s'affiche.",
+        "Sélectionnez le client dans la liste déroulante. Si c'est un nouveau client, cliquez sur 'Créer Client' pour l'ajouter d'abord au système.",
+        "Choisissez la formule de béton souhaitée : B25, B30, B35 ou formule spéciale. Chaque formule a un coût de revient calculé automatiquement.",
+        "Entrez le volume en mètres cubes et sélectionnez la zone de livraison. La distance impacte directement le prix de transport.",
+        "Le système calcule automatiquement le prix de vente en fonction du coût des matériaux, du transport, et de votre marge cible. Vous pouvez ajuster si nécessaire.",
+        "Cliquez sur 'Soumettre pour approbation'. Le devis passe en statut 'En attente' et une notification est envoyée aux validateurs.",
+        "Seuls l'Agent Admin, le CEO ou le Superviseur peuvent approuver un devis. Une fois validé, le devis est verrouillé et ne peut plus être modifié.",
+        "Après approbation, cliquez sur 'Convertir en BC'. Le bon de commande est créé avec toutes les informations du devis. Il est maintenant prêt pour la planification."
+      ],
+      outro: "Excellent ! Vous maîtrisez maintenant le cycle de vente complet. Rappel : un devis approuvé ne peut plus être modifié. Seul le CEO peut le remettre en brouillon via le code spécial."
+    }
+  },
+  {
+    id: 'valider-livraison-complete',
+    title: 'Valider une Livraison',
+    description: 'Signature client, contrôle qualité, enregistrement paiement et facturation',
+    duration: '6:00',
+    icon: ClipboardCheck,
+    category: 'operations',
+    steps: [
+      'Accéder à la page Planning',
+      'Identifier le BL à valider',
+      'Ouvrir le détail de la livraison',
+      'Vérifier le contrôle qualité départ',
+      'Confirmer l\'arrivée sur chantier',
+      'Obtenir la signature client',
+      'Enregistrer le mode de paiement',
+      'Valider le retour camion',
+      'Générer la facture'
+    ],
+    narration: {
+      intro: "Ce tutoriel vous guide à travers le processus complet de validation d'une livraison, de l'arrivée sur chantier jusqu'à la facturation. Chaque étape est tracée pour une traçabilité totale.",
+      steps: [
+        "Rendez-vous sur la page Planning. La timeline affiche toutes les livraisons du jour avec leur statut en temps réel : planifié, en production, en route, ou livré.",
+        "Identifiez le bon de livraison à valider. Les BL en attente de validation sont marqués en orange. Cliquez dessus pour ouvrir le détail.",
+        "Le panneau de détail affiche toutes les informations : client, formule, volume, camion assigné, et chauffeur. Vérifiez que tout est correct.",
+        "Avant le départ, le responsable qualité doit valider le test de slump. La photo du cône d'Abrams et la mesure d'affaissement sont obligatoires. Sans cette validation, le camion ne peut pas partir.",
+        "Une fois sur le chantier, le chauffeur confirme son arrivée via l'application mobile. L'heure d'arrivée est enregistrée automatiquement pour calculer le temps d'attente.",
+        "Le client signe directement sur la tablette ou le téléphone du chauffeur. La signature numérique est horodatée et géolocalisée. C'est la preuve de réception.",
+        "Enregistrez le mode de paiement : espèces, chèque, virement, ou à crédit. Pour les paiements en espèces, le montant est ajouté au chiffre d'affaires du jour.",
+        "Au retour à la centrale, le chauffeur complète le débriefing : kilométrage final, litres de carburant ajoutés, et notes éventuelles. Le système calcule automatiquement la consommation.",
+        "Cliquez sur 'Générer Facture' pour créer la facture automatiquement. Elle reprend tous les détails du BL, applique la TVA, et met à jour le solde client."
+      ],
+      outro: "Parfait ! La livraison est maintenant complète et facturée. Toutes les données sont enregistrées dans le système pour l'audit et le reporting."
+    }
+  },
+  {
+    id: 'fleet-predator-avance',
+    title: 'Fleet Predator GPS Avancé',
+    description: 'Suivi tactique, détection de fraude carburant, alertes géofencing',
+    duration: '7:00',
+    icon: Radar,
+    category: 'advanced',
+    steps: [
+      'Accéder au menu Logistique',
+      'Ouvrir Fleet Predator',
+      'Comprendre l\'interface tactique',
+      'Activer le Mode Démo',
+      'Suivre un camion en mode Follow',
+      'Analyser les breadcrumbs de trajet',
+      'Configurer les zones de géofencing',
+      'Détecter les arrêts suspects',
+      'Analyser les alertes carburant',
+      'Exporter les données GPS'
+    ],
+    narration: {
+      intro: "Fleet Predator est le centre de commandement tactique de TBOS. Ce tutoriel avancé vous révèle toutes les fonctionnalités de surveillance et de détection de fraude.",
+      steps: [
+        "Depuis le menu principal, cliquez sur Logistique puis sur Fleet Predator. L'interface s'ouvre en plein écran avec la carte tactique.",
+        "Cliquez sur 'Fleet Predator' dans le sous-menu. La carte Mapbox s'affiche avec le style Obsidian, parfait pour les longues sessions de surveillance.",
+        "L'interface affiche : la carte centrale, la liste des camions à gauche, et le panneau d'alertes à droite. Chaque camion est représenté par une icône dorée avec son immatriculation.",
+        "Pour tester sans hardware GPS, activez le 'Mode Démo' en haut à droite. Quatre camions virtuels apparaissent et simulent des trajets réalistes autour de Casablanca.",
+        "Cliquez sur un camion puis sur 'Suivre'. La carte centre automatiquement sur ce véhicule et suit ses mouvements en temps réel. Le zoom s'ajuste pour garder le camion visible.",
+        "La queue de trajet montre les deux dernières heures de déplacement en pointillés. Chaque point représente une position GPS. Les couleurs indiquent la vitesse : vert rapide, jaune lent, rouge arrêt.",
+        "Dans les paramètres, définissez les zones de géofencing : la centrale, les chantiers clients, et les stations-service autorisées. Tout arrêt hors zone déclenche une alerte.",
+        "Les arrêts de plus de 15 minutes hors zone génèrent une alerte 'Arrêt Non Planifié' dans le flux forensique. L'alerte affiche l'adresse exacte et la durée de l'arrêt.",
+        "Le système analyse la consommation de carburant en temps réel. Si un camion consomme plus de 35 litres aux 100 kilomètres, ou si le niveau de carburant chute anormalement, une alerte 'Vol de Carburant Potentiel' est déclenchée.",
+        "Exportez l'historique GPS pour l'audit. Cliquez sur 'Exporter' pour générer un fichier CSV avec toutes les positions, vitesses, et événements d'un véhicule sur la période sélectionnée."
+      ],
+      outro: "Vous êtes maintenant un expert Fleet Predator. Utilisez ces outils pour optimiser les trajets, réduire les fraudes, et maintenir une flotte efficace."
+    }
+  },
+  // ========== TUTORIELS EXISTANTS ==========
   {
     id: 'reception-stock',
     title: 'Réception de Stock',
