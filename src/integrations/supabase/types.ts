@@ -2734,6 +2734,7 @@ export type Database = {
           added_by: string | null
           created_at: string
           email: string
+          frequency: string
           id: string
           is_active: boolean
           name: string | null
@@ -2743,6 +2744,7 @@ export type Database = {
           added_by?: string | null
           created_at?: string
           email: string
+          frequency?: string
           id?: string
           is_active?: boolean
           name?: string | null
@@ -2752,6 +2754,7 @@ export type Database = {
           added_by?: string | null
           created_at?: string
           email?: string
+          frequency?: string
           id?: string
           is_active?: boolean
           name?: string | null

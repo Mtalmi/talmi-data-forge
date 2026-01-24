@@ -12,17 +12,33 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Mail, Plus, Trash2, Loader2, Users, Settings } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Mail, Plus, Trash2, Loader2, Users, Settings, Calendar, CalendarDays } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+
+type Frequency = 'daily' | 'weekly' | 'both';
 
 interface Recipient {
   id: string;
   email: string;
   name: string | null;
   is_active: boolean;
+  frequency: Frequency;
   created_at: string;
 }
+
+const FREQUENCY_CONFIG: Record<Frequency, { label: string; icon: React.ReactNode; color: string }> = {
+  daily: { label: 'Quotidien', icon: <Calendar className="h-3 w-3" />, color: 'bg-blue-500/10 text-blue-600 border-blue-500/30' },
+  weekly: { label: 'Hebdo', icon: <CalendarDays className="h-3 w-3" />, color: 'bg-purple-500/10 text-purple-600 border-purple-500/30' },
+  both: { label: 'Les deux', icon: <Mail className="h-3 w-3" />, color: 'bg-green-500/10 text-green-600 border-green-500/30' },
+};
 
 export function DigestRecipientsManager() {
   const [open, setOpen] = useState(false);
@@ -30,6 +46,7 @@ export function DigestRecipientsManager() {
   const [loading, setLoading] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
+  const [newFrequency, setNewFrequency] = useState<Frequency>('weekly');
   const [adding, setAdding] = useState(false);
 
   const fetchRecipients = async () => {
@@ -41,7 +58,7 @@ export function DigestRecipientsManager() {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setRecipients(data || []);
+      setRecipients((data || []) as Recipient[]);
     } catch (error: any) {
       console.error('Error fetching recipients:', error);
       toast.error('Erreur de chargement');
@@ -62,7 +79,6 @@ export function DigestRecipientsManager() {
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail.trim())) {
       toast.error('Format email invalide');
@@ -77,6 +93,7 @@ export function DigestRecipientsManager() {
           email: newEmail.trim().toLowerCase(),
           name: newName.trim() || null,
           is_active: true,
+          frequency: newFrequency,
         });
 
       if (error) {
@@ -91,6 +108,7 @@ export function DigestRecipientsManager() {
       toast.success('Destinataire ajouté');
       setNewEmail('');
       setNewName('');
+      setNewFrequency('weekly');
       fetchRecipients();
     } catch (error: any) {
       console.error('Error adding recipient:', error);
@@ -119,6 +137,25 @@ export function DigestRecipientsManager() {
     }
   };
 
+  const handleFrequencyChange = async (id: string, frequency: Frequency) => {
+    try {
+      const { error } = await supabase
+        .from('security_digest_recipients')
+        .update({ frequency })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setRecipients(prev =>
+        prev.map(r => (r.id === id ? { ...r, frequency } : r))
+      );
+      toast.success('Fréquence mise à jour');
+    } catch (error: any) {
+      console.error('Error updating frequency:', error);
+      toast.error('Erreur de mise à jour');
+    }
+  };
+
   const handleDelete = async (id: string) => {
     try {
       const { error } = await supabase
@@ -137,6 +174,8 @@ export function DigestRecipientsManager() {
   };
 
   const activeCount = recipients.filter(r => r.is_active).length;
+  const dailyCount = recipients.filter(r => r.is_active && (r.frequency === 'daily' || r.frequency === 'both')).length;
+  const weeklyCount = recipients.filter(r => r.is_active && (r.frequency === 'weekly' || r.frequency === 'both')).length;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -155,14 +194,14 @@ export function DigestRecipientsManager() {
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
             Destinataires du Digest
           </DialogTitle>
           <DialogDescription>
-            Gérez les personnes qui reçoivent le digest sécurité hebdomadaire.
+            Gérez les personnes qui reçoivent les digests de sécurité.
           </DialogDescription>
         </DialogHeader>
 
@@ -178,25 +217,52 @@ export function DigestRecipientsManager() {
                 className="flex-1"
               />
               <Input
-                placeholder="Nom (optionnel)"
+                placeholder="Nom"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                className="w-32"
+                className="w-24"
               />
             </div>
-            <Button
-              onClick={handleAddRecipient}
-              disabled={adding || !newEmail.trim()}
-              size="sm"
-              className="w-full gap-1.5"
-            >
-              {adding ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
-              Ajouter
-            </Button>
+            <div className="flex gap-2">
+              <Select value={newFrequency} onValueChange={(v) => setNewFrequency(v as Frequency)}>
+                <SelectTrigger className="flex-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">
+                    <span className="flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5" />
+                      Quotidien (07h00)
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="weekly">
+                    <span className="flex items-center gap-2">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      Hebdomadaire (Lun 08h00)
+                    </span>
+                  </SelectItem>
+                  <SelectItem value="both">
+                    <span className="flex items-center gap-2">
+                      <Mail className="h-3.5 w-3.5" />
+                      Les deux
+                    </span>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleAddRecipient}
+                disabled={adding || !newEmail.trim()}
+                size="sm"
+                className="gap-1.5 px-4"
+              >
+                {adding ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                Ajouter
+              </Button>
+            </div>
           </div>
 
           {/* Recipients list */}
@@ -211,27 +277,44 @@ export function DigestRecipientsManager() {
                 <p className="text-sm">Aucun destinataire configuré</p>
               </div>
             ) : (
-              recipients.map((recipient) => (
-                <div
-                  key={recipient.id}
-                  className={cn(
-                    'flex items-center justify-between p-3 rounded-lg border transition-colors',
-                    recipient.is_active
-                      ? 'bg-background'
-                      : 'bg-muted/50 opacity-60'
-                  )}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {recipient.name || recipient.email}
-                    </p>
-                    {recipient.name && (
-                      <p className="text-xs text-muted-foreground truncate">
-                        {recipient.email}
-                      </p>
+              recipients.map((recipient) => {
+                const freqConfig = FREQUENCY_CONFIG[recipient.frequency];
+                return (
+                  <div
+                    key={recipient.id}
+                    className={cn(
+                      'flex items-center gap-2 p-3 rounded-lg border transition-colors',
+                      recipient.is_active
+                        ? 'bg-background'
+                        : 'bg-muted/50 opacity-60'
                     )}
-                  </div>
-                  <div className="flex items-center gap-2 ml-2">
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {recipient.name || recipient.email}
+                      </p>
+                      {recipient.name && (
+                        <p className="text-xs text-muted-foreground truncate">
+                          {recipient.email}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Frequency selector */}
+                    <Select 
+                      value={recipient.frequency} 
+                      onValueChange={(v) => handleFrequencyChange(recipient.id, v as Frequency)}
+                    >
+                      <SelectTrigger className={cn('w-28 h-7 text-xs border', freqConfig.color)}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="daily">Quotidien</SelectItem>
+                        <SelectItem value="weekly">Hebdo</SelectItem>
+                        <SelectItem value="both">Les deux</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
                     <Switch
                       checked={recipient.is_active}
                       onCheckedChange={() =>
@@ -242,23 +325,28 @@ export function DigestRecipientsManager() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => handleDelete(recipient.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
           {/* Summary */}
           {recipients.length > 0 && (
-            <div className="text-xs text-muted-foreground text-center pt-2 border-t">
-              {activeCount} destinataire{activeCount !== 1 ? 's' : ''} actif
-              {activeCount !== 1 ? 's' : ''} recevront le digest chaque lundi à
-              08h00.
+            <div className="flex gap-4 justify-center text-xs text-muted-foreground pt-2 border-t">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-3.5 w-3.5 text-blue-500" />
+                <span>{dailyCount} quotidien</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CalendarDays className="h-3.5 w-3.5 text-purple-500" />
+                <span>{weeklyCount} hebdo</span>
+              </div>
             </div>
           )}
         </div>
