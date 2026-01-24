@@ -22,10 +22,13 @@ import {
   GraduationCap,
   Sparkles,
   RotateCcw,
-  Mic
+  Mic,
+  Camera,
+  Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTutorialVoice } from '@/hooks/useTutorialVoice';
+import { ScreenRecorderStudio } from './ScreenRecorderStudio';
 
 interface VideoTutorial {
   id: string;
@@ -599,10 +602,16 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
 export function VideoTutorialSection() {
   const [selectedTutorial, setSelectedTutorial] = useState<VideoTutorial | null>(null);
   const [filter, setFilter] = useState<'all' | 'basics' | 'operations' | 'advanced'>('all');
+  const [showRecorder, setShowRecorder] = useState(false);
 
   const filteredTutorials = filter === 'all' 
     ? VIDEO_TUTORIALS 
     : VIDEO_TUTORIALS.filter(t => t.category === filter);
+
+  const handleRecordingSaved = (videoUrl: string, metadata: { title: string; description: string; category: string; duration: number }) => {
+    console.log('Recording saved:', videoUrl, metadata);
+    // TODO: Save to database and refresh tutorial list
+  };
 
   return (
     <Card className="border-2 border-primary/20 overflow-hidden">
@@ -633,8 +642,8 @@ export function VideoTutorialSection() {
             </div>
           </div>
 
-          {/* Filter buttons */}
-          <div className="flex gap-2">
+          {/* Filter buttons + Record button */}
+          <div className="flex flex-wrap items-center gap-2">
             {(['all', 'basics', 'operations', 'advanced'] as const).map((cat) => (
               <Button
                 key={cat}
@@ -646,6 +655,17 @@ export function VideoTutorialSection() {
                 {cat === 'all' ? 'Tous' : CATEGORY_LABELS[cat].label}
               </Button>
             ))}
+            
+            {/* Screen Record Button */}
+            <Button
+              onClick={() => setShowRecorder(true)}
+              size="sm"
+              className="gap-1.5 bg-gradient-to-r from-destructive to-primary hover:from-destructive/90 hover:to-primary/90 ml-2"
+            >
+              <Camera className="h-3.5 w-3.5" />
+              <Plus className="h-3 w-3" />
+              Enregistrer
+            </Button>
           </div>
         </div>
       </CardHeader>
@@ -728,6 +748,13 @@ export function VideoTutorialSection() {
         tutorial={selectedTutorial}
         open={!!selectedTutorial}
         onClose={() => setSelectedTutorial(null)}
+      />
+
+      {/* Screen Recorder Studio */}
+      <ScreenRecorderStudio
+        open={showRecorder}
+        onClose={() => setShowRecorder(false)}
+        onSave={handleRecordingSaved}
       />
     </Card>
   );
