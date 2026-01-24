@@ -37,6 +37,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useTutorialVoice } from '@/hooks/useTutorialVoice';
 import { ScreenRecorderStudio } from './ScreenRecorderStudio';
+import { TutorialScreenSimulator } from './TutorialScreenSimulator';
 
 interface VideoTutorial {
   id: string;
@@ -446,28 +447,9 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
         </DialogHeader>
 
         <div className="p-6 space-y-6">
-          {/* Immersive Video Area */}
+          {/* Immersive Video Area - Now with Screen Simulator */}
           <div className="relative aspect-video bg-gradient-to-br from-background via-muted/30 to-primary/10 rounded-2xl overflow-hidden border-2 border-primary/20 shadow-2xl">
-            {/* Animated background */}
-            <div className="absolute inset-0 overflow-hidden">
-              <motion.div
-                className="absolute w-96 h-96 rounded-full bg-primary/10 blur-3xl"
-                animate={{
-                  x: ['-50%', '50%', '-50%'],
-                  y: ['-30%', '30%', '-30%'],
-                }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-              />
-              <motion.div
-                className="absolute right-0 w-64 h-64 rounded-full bg-warning/10 blur-3xl"
-                animate={{
-                  x: ['30%', '-30%', '30%'],
-                  y: ['40%', '-20%', '40%'],
-                }}
-                transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-              />
-            </div>
-
+            
             {/* Content based on phase */}
             <AnimatePresence mode="wait">
               {currentPhase === 'idle' && (
@@ -476,91 +458,139 @@ function NarratedTutorialPlayer({ tutorial, open, onClose }: NarratedTutorialPla
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center"
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-background via-muted/30 to-primary/10"
                 >
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="mb-6 p-6 rounded-full bg-primary/20 border-2 border-primary/40"
-                  >
-                    <GraduationCap className="h-16 w-16 text-primary" />
-                  </motion.div>
-                  <h3 className="text-2xl font-bold mb-2">Tutoriel Narré</h3>
-                  <p className="text-muted-foreground text-center max-w-sm mb-6">
-                    Apprenez avec une voix professionnelle qui vous guide étape par étape
-                  </p>
-                  <Button
-                    onClick={startTutorial}
-                    disabled={isLoading}
-                    className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-lg px-8 py-6"
-                    size="lg"
-                  >
-                    {isLoading ? (
-                      <>
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                        >
-                          <Sparkles className="h-5 w-5" />
-                        </motion.div>
-                        Chargement...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="h-5 w-5" />
-                        Lancer le Tutoriel
-                      </>
-                    )}
-                  </Button>
+                  {/* Animated background */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <motion.div
+                      className="absolute w-96 h-96 rounded-full bg-primary/10 blur-3xl"
+                      animate={{
+                        x: ['-50%', '50%', '-50%'],
+                        y: ['-30%', '30%', '-30%'],
+                      }}
+                      transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  </div>
+                  
+                  <div className="relative z-10 text-center">
+                    <motion.div
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="mb-6 p-6 rounded-full bg-primary/20 border-2 border-primary/40 mx-auto w-fit"
+                    >
+                      <Video className="h-12 w-12 text-primary" />
+                    </motion.div>
+                    <h3 className="text-2xl font-bold mb-2">Démonstration Interactive</h3>
+                    <p className="text-muted-foreground text-center max-w-sm mb-6">
+                      Regardez une simulation réelle de l'interface avec narration professionnelle
+                    </p>
+                    <Button
+                      onClick={startTutorial}
+                      disabled={isLoading}
+                      className="gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-lg px-8 py-6"
+                      size="lg"
+                    >
+                      {isLoading ? (
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                          >
+                            <Sparkles className="h-5 w-5" />
+                          </motion.div>
+                          Chargement...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-5 w-5" />
+                          Lancer la Démo
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </motion.div>
               )}
 
               {currentPhase === 'intro' && (
                 <motion.div
                   key="intro"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center p-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0"
                 >
+                  {/* Show simulator during intro */}
+                  <TutorialScreenSimulator 
+                    tutorialId={tutorial.id} 
+                    currentStep={-1} 
+                    isPlaying={false} 
+                  />
+                  {/* Intro overlay */}
                   <motion.div
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    className="mb-4 p-4 rounded-full bg-primary/30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center p-8"
                   >
-                    <Volume2 className="h-10 w-10 text-primary" />
+                    <motion.div
+                      animate={{ scale: [1, 1.05, 1] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                      className="mb-4 p-4 rounded-full bg-primary/30"
+                    >
+                      <Volume2 className="h-10 w-10 text-primary" />
+                    </motion.div>
+                    <h3 className="text-xl font-bold mb-4 text-center">Introduction</h3>
+                    <p className="text-center text-muted-foreground max-w-md leading-relaxed text-sm">
+                      {tutorial.narration.intro}
+                    </p>
                   </motion.div>
-                  <h3 className="text-xl font-bold mb-4 text-center">Introduction</h3>
-                  <p className="text-center text-muted-foreground max-w-md leading-relaxed">
-                    {tutorial.narration.intro}
-                  </p>
                 </motion.div>
               )}
 
               {currentPhase === 'steps' && (
                 <motion.div
                   key={`step-${currentStepIndex}`}
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center p-8"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0"
                 >
-                  <div className="flex items-center gap-4 mb-6">
-                    <motion.div
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 0.5 }}
-                      className="h-16 w-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-2xl font-bold"
-                    >
-                      {currentStepIndex + 1}
-                    </motion.div>
-                    <div className="text-left">
-                      <p className="text-sm text-muted-foreground">Étape {currentStepIndex + 1} sur {tutorial.steps.length}</p>
-                      <h3 className="text-xl font-bold">{tutorial.steps[currentStepIndex]}</h3>
+                  {/* Real screen simulator */}
+                  <TutorialScreenSimulator 
+                    tutorialId={tutorial.id} 
+                    currentStep={currentStepIndex} 
+                    isPlaying={isPlaying || !isMuted} 
+                  />
+                  
+                  {/* Step info overlay at bottom */}
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent p-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 0.5 }}
+                        className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-lg font-bold shrink-0"
+                      >
+                        {currentStepIndex + 1}
+                      </motion.div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-muted-foreground">Étape {currentStepIndex + 1} sur {tutorial.steps.length}</p>
+                        <h3 className="text-sm font-bold truncate">{tutorial.steps[currentStepIndex]}</h3>
+                      </div>
+                      {isPlaying && (
+                        <div className="flex items-center gap-1 text-success shrink-0">
+                          <motion.div
+                            animate={{ scale: [1, 1.3, 1] }}
+                            transition={{ repeat: Infinity, duration: 1 }}
+                            className="w-2 h-2 rounded-full bg-success"
+                          />
+                          <span className="text-xs">Narration</span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <p className="text-center text-muted-foreground max-w-lg leading-relaxed">
-                    {tutorial.narration.steps[currentStepIndex]}
-                  </p>
+                  </motion.div>
                 </motion.div>
               )}
 
