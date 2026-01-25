@@ -47,16 +47,17 @@ export const SIMULATION_TYPE_IDS: Record<SimulationType, number> = {
   create_quote: 4,
   validate_delivery: 5,
   budget_management: 6,
-  // Tier 2 - Advanced (7-10)
+  // Tier 2 - Advanced (7-11)
   quality_control: 7,
   fleet_predator: 8,
   production_management: 9,
   audit_compliance: 10,
-  // Tier 3 - Executive (11-14)
-  ceo_override: 11,
-  forensic_analysis: 12,
-  financial_reporting: 13,
-  client_management: 14,
+  ai_receipt_verification: 11,
+  // Tier 3 - Executive (12-15)
+  ceo_override: 12,
+  forensic_analysis: 13,
+  financial_reporting: 14,
+  client_management: 15,
 };
 
 // Reverse mapping

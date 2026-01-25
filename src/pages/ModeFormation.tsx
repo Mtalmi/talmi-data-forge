@@ -28,6 +28,7 @@ import {
   ForensicAnalysisSim,
   FinancialReportingSim,
   ClientManagementSim,
+  AIReceiptVerificationSim,
   CertificationBadge,
   useFormationProgress,
   SimulationType,
@@ -114,6 +115,14 @@ const SIMULATIONS: SimulationConfig[] = [
     type: 'production_management',
     title: 'Gestion Production',
     description: 'Créez un lot de béton, définissez les paramètres et suivez la production.',
+    duration: '~5 min',
+    tier: 'advanced',
+    difficulty: 'medium',
+  },
+  {
+    type: 'ai_receipt_verification',
+    title: 'Vérification AI Factures',
+    description: 'Testez le système OCR/AI qui vérifie automatiquement les factures avec contrôle de fraude.',
     duration: '~5 min',
     tier: 'advanced',
     difficulty: 'medium',
@@ -258,6 +267,8 @@ export default function ModeFormation() {
         return <FleetPredatorSim {...simProps} />;
       case 'production_management':
         return <ProductionManagementSim {...simProps} />;
+      case 'ai_receipt_verification':
+        return <AIReceiptVerificationSim {...simProps} />;
       case 'forensic_analysis':
         return <ForensicAnalysisSim {...simProps} />;
       case 'financial_reporting':
