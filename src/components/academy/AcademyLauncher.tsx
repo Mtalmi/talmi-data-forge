@@ -32,7 +32,10 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
     isCertified, 
     progress, 
     loading,
-    totalSteps
+    totalSteps,
+    startWalkthrough,
+    isWalkthroughActive,
+    currentStepData
   } = useTrainingProgress();
   
   const [isExpanded, setIsExpanded] = useState(false);
@@ -46,21 +49,45 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
   }, [loading, isCertified, showOnFirstVisit]);
 
   const handleStart = () => {
-    console.log('[Academy] Commencer clicked - navigating to Nouveau Devis');
+    console.log('[Academy] Commencer clicked - starting tutorial');
     
     // Close overlay
     setIsExpanded(false);
     
-    // Set flag to show instruction card
-    sessionStorage.setItem(INSTRUCTION_CARD_KEY, 'true');
+    // Start the walkthrough (sets step to 0 and activates it)
+    startWalkthrough();
     
-    // Navigate to Ventes page with query param to open new devis form
-    navigate('/ventes?action=nouveau-devis');
-    
-    console.log('[Academy] ✅ Navigation triggered');
+    console.log('[Academy] ✅ Tutorial started - Step 1:', currentStepData?.title || 'Réception Stock');
   };
 
-  if (loading) return null;
+  // Show tutorial card when walkthrough is active
+  if (isWalkthroughActive && currentStepData) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md"
+      >
+        <Card className="bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-amber-600/20 border-amber-500/50 shadow-xl backdrop-blur-xl">
+          <div className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-lg bg-amber-500/30 border border-amber-400/50">
+                <GraduationCap className="h-5 w-5 text-amber-400" />
+              </div>
+              <div>
+                <Badge variant="outline" className="bg-amber-500/20 text-amber-300 border-amber-400/50 text-[10px]">
+                  ÉTAPE {completedSteps.length + 1}/{totalSteps}
+                </Badge>
+                <h3 className="font-bold text-amber-100">{currentStepData.title}</h3>
+              </div>
+            </div>
+            <p className="text-sm text-amber-200/90 mb-3">{currentStepData.content}</p>
+            <p className="text-xs text-amber-300/70 italic">{currentStepData.description}</p>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  }
 
   // If certified, show minimal badge
   if (isCertified) {
