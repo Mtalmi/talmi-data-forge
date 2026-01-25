@@ -2714,6 +2714,183 @@ export type Database = {
           },
         ]
       }
+      emergency_bc_notifications: {
+        Row: {
+          acknowledged: boolean | null
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          acknowledged_by_name: string | null
+          action_items_completed: Json | null
+          approval_id: string | null
+          bc_approved_at: string | null
+          bc_approved_by: string | null
+          bc_approved_by_role: string | null
+          bc_id: string
+          bc_status: string | null
+          bc_uuid: string | null
+          created_at: string
+          data_fields: Json
+          delivery_address: string | null
+          delivery_date: string | null
+          delivery_time_window: string | null
+          emergency_reason: string | null
+          emergency_trigger: string | null
+          expected_arrival: string | null
+          id: string
+          material_code: string | null
+          material_name: string | null
+          material_type: string | null
+          notification_id: string
+          notification_type: string
+          production_impact: string | null
+          quality_decision: string | null
+          quality_decision_at: string | null
+          quality_decision_by: string | null
+          quality_decision_notes: string | null
+          quality_grade: string | null
+          quantity: number | null
+          quantity_unit: string | null
+          read: boolean | null
+          read_at: string | null
+          recipient_email: string | null
+          recipient_id: string | null
+          recipient_name: string | null
+          recipient_phone: string | null
+          recipient_role: string
+          sent: boolean | null
+          sent_at: string | null
+          sent_via: string[] | null
+          severity: string
+          supplier_contact: string | null
+          supplier_email: string | null
+          supplier_id: string | null
+          supplier_name: string | null
+          supplier_phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_by_name?: string | null
+          action_items_completed?: Json | null
+          approval_id?: string | null
+          bc_approved_at?: string | null
+          bc_approved_by?: string | null
+          bc_approved_by_role?: string | null
+          bc_id: string
+          bc_status?: string | null
+          bc_uuid?: string | null
+          created_at?: string
+          data_fields?: Json
+          delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_time_window?: string | null
+          emergency_reason?: string | null
+          emergency_trigger?: string | null
+          expected_arrival?: string | null
+          id?: string
+          material_code?: string | null
+          material_name?: string | null
+          material_type?: string | null
+          notification_id: string
+          notification_type: string
+          production_impact?: string | null
+          quality_decision?: string | null
+          quality_decision_at?: string | null
+          quality_decision_by?: string | null
+          quality_decision_notes?: string | null
+          quality_grade?: string | null
+          quantity?: number | null
+          quantity_unit?: string | null
+          read?: boolean | null
+          read_at?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          recipient_role: string
+          sent?: boolean | null
+          sent_at?: string | null
+          sent_via?: string[] | null
+          severity?: string
+          supplier_contact?: string | null
+          supplier_email?: string | null
+          supplier_id?: string | null
+          supplier_name?: string | null
+          supplier_phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          acknowledged?: boolean | null
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          acknowledged_by_name?: string | null
+          action_items_completed?: Json | null
+          approval_id?: string | null
+          bc_approved_at?: string | null
+          bc_approved_by?: string | null
+          bc_approved_by_role?: string | null
+          bc_id?: string
+          bc_status?: string | null
+          bc_uuid?: string | null
+          created_at?: string
+          data_fields?: Json
+          delivery_address?: string | null
+          delivery_date?: string | null
+          delivery_time_window?: string | null
+          emergency_reason?: string | null
+          emergency_trigger?: string | null
+          expected_arrival?: string | null
+          id?: string
+          material_code?: string | null
+          material_name?: string | null
+          material_type?: string | null
+          notification_id?: string
+          notification_type?: string
+          production_impact?: string | null
+          quality_decision?: string | null
+          quality_decision_at?: string | null
+          quality_decision_by?: string | null
+          quality_decision_notes?: string | null
+          quality_grade?: string | null
+          quantity?: number | null
+          quantity_unit?: string | null
+          read?: boolean | null
+          read_at?: string | null
+          recipient_email?: string | null
+          recipient_id?: string | null
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          recipient_role?: string
+          sent?: boolean | null
+          sent_at?: string | null
+          sent_via?: string[] | null
+          severity?: string
+          supplier_contact?: string | null
+          supplier_email?: string | null
+          supplier_id?: string | null
+          supplier_name?: string | null
+          supplier_phone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_bc_notifications_approval_id_fkey"
+            columns: ["approval_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_bc_approvals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_bc_notifications_bc_uuid_fkey"
+            columns: ["bc_uuid"]
+            isOneToOne: false
+            referencedRelation: "bons_commande"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employes: {
         Row: {
           actif: boolean
@@ -6418,6 +6595,10 @@ export type Database = {
       }
     }
     Functions: {
+      acknowledge_emergency_notification: {
+        Args: { p_notification_id: string }
+        Returns: boolean
+      }
       acquire_edit_lock: {
         Args: {
           p_lock_duration_minutes?: number
@@ -6637,6 +6818,13 @@ export type Database = {
         }
         Returns: string
       }
+      create_emergency_bc_notifications: {
+        Args: { p_approval_id: string }
+        Returns: {
+          production_notification_id: string
+          qc_notification_id: string
+        }[]
+      }
       create_quality_stock_entry: {
         Args: {
           p_fournisseur: string
@@ -6688,6 +6876,14 @@ export type Database = {
         Returns: number
       }
       generate_loan_number: { Args: never; Returns: string }
+      generate_production_notification_payload: {
+        Args: { p_approval_id: string; p_bc_id: string; p_bc_uuid: string }
+        Returns: Json
+      }
+      generate_qc_notification_payload: {
+        Args: { p_approval_id: string; p_bc_id: string; p_bc_uuid: string }
+        Returns: Json
+      }
       get_active_tight_times: { Args: never; Returns: Json }
       get_approval_status: { Args: { p_devis_id: string }; Returns: Json }
       get_associate_balance: {
@@ -6907,6 +7103,14 @@ export type Database = {
           p_reason_code: string
         }
         Returns: Json
+      }
+      submit_emergency_quality_decision: {
+        Args: {
+          p_decision: string
+          p_notes?: string
+          p_notification_id: string
+        }
+        Returns: boolean
       }
       update_asset_depreciation: { Args: never; Returns: number }
       use_ceo_bypass_token: {
