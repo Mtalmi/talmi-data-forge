@@ -32,7 +32,7 @@ interface AcademyVideoPlayerProps {
 }
 
 const COMPLETION_THRESHOLD = 95;
-const PLACEHOLDER_MODE = true;
+const PLACEHOLDER_MODE = false;
 
 export function AcademyVideoPlayer({ 
   videoUrl, 
