@@ -17,6 +17,7 @@ export { CeoOverrideSim } from './CeoOverrideSim';
 export { ForensicAnalysisSim } from './ForensicAnalysisSim';
 export { FinancialReportingSim } from './FinancialReportingSim';
 export { ClientManagementSim } from './ClientManagementSim';
+export { AIReceiptVerificationSim } from './AIReceiptVerificationSim';
 
 // RBAC components
 export { AccessBadge, RestrictedAccessCard } from './AccessBadge';

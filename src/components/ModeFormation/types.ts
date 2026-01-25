@@ -13,6 +13,7 @@ export type SimulationType =
   | 'fleet_predator'
   | 'production_management'
   | 'audit_compliance'
+  | 'ai_receipt_verification'
   // Tier 3 - Executive
   | 'ceo_override'
   | 'forensic_analysis'

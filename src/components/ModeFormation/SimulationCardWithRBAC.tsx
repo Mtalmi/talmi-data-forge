@@ -5,7 +5,7 @@ import {
   Play, CheckCircle2, Clock, Package, Wallet, Moon,
   FileText, Truck, PieChart, FlaskConical, MapPin,
   Factory, Shield, Key, Search, BarChart3, Users,
-  Lock, AlertCircle
+  Lock, AlertCircle, Bot
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SimulationType, SimulationDifficulty } from './types';
@@ -39,6 +39,7 @@ const iconMap: Record<SimulationType, React.ElementType> = {
   fleet_predator: MapPin,
   production_management: Factory,
   audit_compliance: Shield,
+  ai_receipt_verification: Bot,
   ceo_override: Key,
   forensic_analysis: Search,
   financial_reporting: BarChart3,
