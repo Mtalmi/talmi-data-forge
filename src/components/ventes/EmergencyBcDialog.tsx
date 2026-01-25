@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,10 +28,16 @@ import {
   Phone,
   Building2,
   Package,
+  Moon,
+  CheckCircle2,
+  XCircle,
+  Calendar,
 } from 'lucide-react';
 import { OrderFormFields } from './OrderFormFields';
 import { QuickClientCreate } from './QuickClientCreate';
+import { EmergencyBcEligibilityCard } from './EmergencyBcEligibilityCard';
 import { useAuth } from '@/hooks/useAuth';
+import { useTightTimes } from '@/hooks/useTightTimes';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { triggerHaptic } from '@/lib/haptics';
@@ -85,9 +91,12 @@ export function EmergencyBcDialog({
   onSuccess,
 }: EmergencyBcDialogProps) {
   const { user, isDirecteurOperations, isCeo, isSuperviseur, canUseEmergencyBypass, isInEmergencyWindow } = useAuth();
+  const { checkEmergencyEligibility, createEmergencyBcApproval, isTightTimesActive } = useTightTimes();
   
   const [creating, setCreating] = useState(false);
   const [emergencyReason, setEmergencyReason] = useState('');
+  const [isEligibleForEmergency, setIsEligibleForEmergency] = useState(false);
+  const [emergencyCondition, setEmergencyCondition] = useState<string | null>(null);
   
   // Form state
   const [clientId, setClientId] = useState('');
@@ -116,7 +125,16 @@ export function EmergencyBcDialog({
 
   // Determine if this is Dir Ops creating (requires pending validation outside emergency)
   const requiresPendingValidation = isDirecteurOperations && !isCeo && !isSuperviseur;
-  const isEmergencyMode = requiresPendingValidation && canUseEmergencyBypass && emergencyReason.length >= 10;
+  
+  // New eligibility check based on conditions
+  const canUseEmergency = isEligibleForEmergency && emergencyReason.length >= 10;
+  const isEmergencyMode = requiresPendingValidation && canUseEmergency;
+  
+  // Callback to handle eligibility changes from the card
+  const handleEligibilityChange = useCallback((eligible: boolean, condition: string | null) => {
+    setIsEligibleForEmergency(eligible);
+    setEmergencyCondition(condition);
+  }, []);
 
   const resetForm = () => {
     setClientId('');
@@ -204,8 +222,8 @@ export function EmergencyBcDialog({
       return;
     }
 
-    // Require emergency reason for Dir Ops in emergency mode
-    if (requiresPendingValidation && isInEmergencyWindow && emergencyReason.length < 10) {
+    // Require emergency reason for Dir Ops using emergency path
+    if (requiresPendingValidation && isEligibleForEmergency && emergencyReason.length < 10) {
       toast.error('Veuillez fournir une raison détaillée pour la commande d\'urgence (min. 10 caractères)');
       return;
     }
@@ -222,11 +240,15 @@ export function EmergencyBcDialog({
       // Determine status based on role and emergency mode
       let statut = 'pret_production';
       let notesWithEmergency = notes || '';
+      const conditionLabel = emergencyCondition === 'AFTER_18H_SAME_DAY' 
+        ? 'Après 18h Même Jour' 
+        : 'Mode TIGHT TIMES';
       
       if (requiresPendingValidation) {
         if (isEmergencyMode) {
-          statut = 'pret_production'; // Emergency bypass - immediate production
-          notesWithEmergency = `[URGENCE/EMERGENCY - ${new Date().toLocaleString('fr-FR')}] ${emergencyReason}\n\n${notes || ''}`;
+          // Emergency BC goes to pending_approval status with 30-min timeout
+          statut = 'en_attente_approbation_urgence';
+          notesWithEmergency = `[URGENCE/EMERGENCY - ${conditionLabel} - ${new Date().toLocaleString('fr-FR')}] ${emergencyReason}\n\n${notes || ''}`;
         } else {
           statut = 'en_attente_validation'; // Pending validation from Admin
         }
@@ -269,12 +291,18 @@ export function EmergencyBcDialog({
 
       if (error) throw error;
 
-      // Send emergency alerts if in emergency mode
-      if (isEmergencyMode) {
-        await sendEmergencyAlerts(bc_id, selectedClient?.nom_client || clientId);
-        triggerHaptic('success');
-        toast.warning(`BC URGENCE ${bc_id} créé - Alertes envoyées au CEO et Superviseur`);
-      } else if (requiresPendingValidation && !isInEmergencyWindow) {
+      // Handle emergency BC approval workflow
+      if (isEmergencyMode && newBc) {
+        // Create approval request with 30-min timeout
+        await createEmergencyBcApproval(
+          bc_id,
+          newBc.id,
+          deliveryDate,
+          emergencyReason
+        );
+        triggerHaptic('warning');
+        toast.warning(`BC URGENCE ${bc_id} créé - En attente d'approbation (30 min)`);
+      } else if (requiresPendingValidation && !isEligibleForEmergency) {
         triggerHaptic('success');
         toast.info(`BC ${bc_id} créé en attente de validation prix par l'Admin`);
       } else {
@@ -335,18 +363,26 @@ export function EmergencyBcDialog({
         </DialogHeader>
         
         <div className="space-y-6">
-          {/* Emergency Mode Indicator */}
-          {isInEmergencyWindow && requiresPendingValidation && (
+          {/* Emergency Eligibility Card - Shows conditions */}
+          {requiresPendingValidation && (
+            <EmergencyBcEligibilityCard 
+              deliveryDate={deliveryDate}
+              onEligibilityChange={handleEligibilityChange}
+            />
+          )}
+
+          {/* Emergency Reason Input - Show when eligible */}
+          {requiresPendingValidation && isEligibleForEmergency && (
             <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="h-5 w-5 text-amber-500" />
-                <span className="font-semibold text-amber-700">Protocole Urgence Minuit</span>
+                <span className="font-semibold text-amber-700">BC Urgence Autorisé</span>
                 <Badge variant="outline" className="ml-auto text-amber-600 border-amber-500">
-                  {currentHour}:00 - Fenêtre Active
+                  {emergencyCondition === 'AFTER_18H_SAME_DAY' ? 'Après 18h' : 'TIGHT TIMES'}
                 </Badge>
               </div>
               <p className="text-sm text-muted-foreground mb-3">
-                Vous pouvez créer une commande en bypass, mais le CEO et Superviseur seront alertés immédiatement.
+                Approbation Max/Karim requise dans 30 minutes.
               </p>
               <div className="space-y-2">
                 <Label className="text-amber-700">Raison de l'Urgence (obligatoire) *</Label>
