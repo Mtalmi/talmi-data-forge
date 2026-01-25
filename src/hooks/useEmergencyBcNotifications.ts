@@ -87,6 +87,21 @@ export function useEmergencyBcNotifications() {
 
       if (error) throw error;
 
+      // Get the created notification ID for production team to create action items
+      const prodNotification = (data as any[])?.find((n: any) => n.notification_type === 'PRODUCTION_TEAM');
+      if (prodNotification) {
+        // Create action items for production team
+        try {
+          await supabase.rpc('create_emergency_bc_action_items', {
+            p_notification_id: prodNotification.id,
+            p_bc_id: prodNotification.bc_id
+          });
+        } catch (actionError) {
+          console.error('Error creating action items:', actionError);
+          // Don't fail the overall flow
+        }
+      }
+
       toast.success('Notifications créées pour Production et Resp. Technique');
       await fetchNotifications();
       return true;
