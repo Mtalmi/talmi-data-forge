@@ -287,6 +287,164 @@ export type Database = {
         }
         Relationships: []
       }
+      associate_transactions: {
+        Row: {
+          amount: number
+          approval_level: string | null
+          approval_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          approved_by_name: string | null
+          associate_id: string
+          bank_reference: string | null
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          description: string
+          direction: string
+          document_url: string | null
+          executed_at: string | null
+          executed_by: string | null
+          executed_by_name: string | null
+          id: string
+          justification: string | null
+          loan_id: string | null
+          loan_payment_id: string | null
+          requires_approval: boolean | null
+          status: string
+          transaction_number: string
+          transaction_type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          approval_level?: string | null
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          associate_id: string
+          bank_reference?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description: string
+          direction: string
+          document_url?: string | null
+          executed_at?: string | null
+          executed_by?: string | null
+          executed_by_name?: string | null
+          id?: string
+          justification?: string | null
+          loan_id?: string | null
+          loan_payment_id?: string | null
+          requires_approval?: boolean | null
+          status?: string
+          transaction_number: string
+          transaction_type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approval_level?: string | null
+          approval_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          associate_id?: string
+          bank_reference?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description?: string
+          direction?: string
+          document_url?: string | null
+          executed_at?: string | null
+          executed_by?: string | null
+          executed_by_name?: string | null
+          id?: string
+          justification?: string | null
+          loan_id?: string | null
+          loan_payment_id?: string | null
+          requires_approval?: boolean | null
+          status?: string
+          transaction_number?: string
+          transaction_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "associate_transactions_associate_id_fkey"
+            columns: ["associate_id"]
+            isOneToOne: false
+            referencedRelation: "associates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "associate_transactions_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loan_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "associate_transactions_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "associate_transactions_loan_payment_id_fkey"
+            columns: ["loan_payment_id"]
+            isOneToOne: false
+            referencedRelation: "loan_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      associates: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          notes: string | null
+          phone: string | null
+          relationship: string
+          tax_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          relationship: string
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          relationship?: string
+          tax_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action_type: string
@@ -3336,6 +3494,249 @@ export type Database = {
           },
         ]
       }
+      loan_compliance_alerts: {
+        Row: {
+          alert_type: string
+          associate_id: string | null
+          created_at: string
+          description: string
+          id: string
+          is_resolved: boolean | null
+          loan_id: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          resolved_by_name: string | null
+          severity: string
+          title: string
+        }
+        Insert: {
+          alert_type: string
+          associate_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          is_resolved?: boolean | null
+          loan_id?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_by_name?: string | null
+          severity: string
+          title: string
+        }
+        Update: {
+          alert_type?: string
+          associate_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          is_resolved?: boolean | null
+          loan_id?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          resolved_by_name?: string | null
+          severity?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_compliance_alerts_associate_id_fkey"
+            columns: ["associate_id"]
+            isOneToOne: false
+            referencedRelation: "associates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_compliance_alerts_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loan_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_compliance_alerts_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loan_payments: {
+        Row: {
+          actual_amount: number | null
+          balance_after: number
+          created_at: string
+          days_late: number | null
+          due_date: string
+          id: string
+          interest_portion: number
+          late_fee: number | null
+          loan_id: string
+          notes: string | null
+          paid_by: string | null
+          paid_by_name: string | null
+          paid_date: string | null
+          payment_method: string | null
+          payment_number: number
+          payment_reference: string | null
+          principal_portion: number
+          receipt_url: string | null
+          scheduled_amount: number
+          status: Database["public"]["Enums"]["loan_payment_status"]
+          updated_at: string
+        }
+        Insert: {
+          actual_amount?: number | null
+          balance_after: number
+          created_at?: string
+          days_late?: number | null
+          due_date: string
+          id?: string
+          interest_portion?: number
+          late_fee?: number | null
+          loan_id: string
+          notes?: string | null
+          paid_by?: string | null
+          paid_by_name?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_number: number
+          payment_reference?: string | null
+          principal_portion?: number
+          receipt_url?: string | null
+          scheduled_amount: number
+          status?: Database["public"]["Enums"]["loan_payment_status"]
+          updated_at?: string
+        }
+        Update: {
+          actual_amount?: number | null
+          balance_after?: number
+          created_at?: string
+          days_late?: number | null
+          due_date?: string
+          id?: string
+          interest_portion?: number
+          late_fee?: number | null
+          loan_id?: string
+          notes?: string | null
+          paid_by?: string | null
+          paid_by_name?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_number?: number
+          payment_reference?: string | null
+          principal_portion?: number
+          receipt_url?: string | null
+          scheduled_amount?: number
+          status?: Database["public"]["Enums"]["loan_payment_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loan_payments_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loan_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loan_payments_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loans: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          approved_by_name: string | null
+          associate_id: string
+          board_decision_url: string | null
+          contract_url: string | null
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          end_date: string
+          id: string
+          interest_rate: number | null
+          loan_number: string
+          loan_type: Database["public"]["Enums"]["loan_type"]
+          monthly_payment: number
+          notes: string | null
+          principal_amount: number
+          start_date: string
+          status: Database["public"]["Enums"]["loan_status"]
+          term_months: number
+          total_amount: number
+          total_interest: number | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          associate_id: string
+          board_decision_url?: string | null
+          contract_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          end_date: string
+          id?: string
+          interest_rate?: number | null
+          loan_number: string
+          loan_type: Database["public"]["Enums"]["loan_type"]
+          monthly_payment: number
+          notes?: string | null
+          principal_amount: number
+          start_date: string
+          status?: Database["public"]["Enums"]["loan_status"]
+          term_months: number
+          total_amount: number
+          total_interest?: number | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          associate_id?: string
+          board_decision_url?: string | null
+          contract_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          end_date?: string
+          id?: string
+          interest_rate?: number | null
+          loan_number?: string
+          loan_type?: Database["public"]["Enums"]["loan_type"]
+          monthly_payment?: number
+          notes?: string | null
+          principal_amount?: number
+          start_date?: string
+          status?: Database["public"]["Enums"]["loan_status"]
+          term_months?: number
+          total_amount?: number
+          total_interest?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_associate_id_fkey"
+            columns: ["associate_id"]
+            isOneToOne: false
+            referencedRelation: "associates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       maintenance_records: {
         Row: {
           cout_main_oeuvre: number | null
@@ -5010,6 +5411,30 @@ export type Database = {
         }
         Relationships: []
       }
+      loan_summary: {
+        Row: {
+          associate_name: string | null
+          created_at: string | null
+          end_date: string | null
+          id: string | null
+          interest_rate: number | null
+          loan_number: string | null
+          loan_type: Database["public"]["Enums"]["loan_type"] | null
+          monthly_payment: number | null
+          outstanding_balance: number | null
+          payments_completed: number | null
+          payments_overdue: number | null
+          principal_amount: number | null
+          relationship: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["loan_status"] | null
+          term_months: number | null
+          total_amount: number | null
+          total_paid: number | null
+          total_payments: number | null
+        }
+        Relationships: []
+      }
       monthly_deposit_summary: {
         Row: {
           flagged_amount: number | null
@@ -5168,6 +5593,14 @@ export type Database = {
         }
         Returns: string
       }
+      calculate_loan_payment: {
+        Args: {
+          p_annual_rate: number
+          p_principal: number
+          p_term_months: number
+        }
+        Returns: number
+      }
       calculate_quote_price: {
         Args: {
           p_distance_km?: number
@@ -5268,9 +5701,15 @@ export type Database = {
           total_amount: number
         }[]
       }
+      generate_associate_transaction_number: { Args: never; Returns: string }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
+      }
+      generate_loan_number: { Args: never; Returns: string }
+      get_associate_balance: {
+        Args: { p_associate_id: string }
+        Returns: number
       }
       get_department_budget_status: {
         Args: { p_month_year?: string }
@@ -5286,6 +5725,10 @@ export type Database = {
           total_spent: number
           utilization_pct: number
         }[]
+      }
+      get_loan_outstanding_balance: {
+        Args: { p_loan_id: string }
+        Returns: number
       }
       get_payables_aging_summary: {
         Args: never
@@ -5426,6 +5869,9 @@ export type Database = {
         | "rejete"
         | "bloque_plafond"
         | "paye"
+      loan_payment_status: "pending" | "paid" | "late" | "partial" | "skipped"
+      loan_status: "active" | "paid_off" | "defaulted" | "cancelled"
+      loan_type: "to_company" | "from_company"
       obligation_frequency: "monthly" | "quarterly" | "annual" | "one_time"
       obligation_status: "pending" | "paid" | "overdue" | "partially_paid"
       tax_obligation_type:
@@ -5594,6 +6040,9 @@ export const Constants = {
         "bloque_plafond",
         "paye",
       ],
+      loan_payment_status: ["pending", "paid", "late", "partial", "skipped"],
+      loan_status: ["active", "paid_off", "defaulted", "cancelled"],
+      loan_type: ["to_company", "from_company"],
       obligation_frequency: ["monthly", "quarterly", "annual", "one_time"],
       obligation_status: ["pending", "paid", "overdue", "partially_paid"],
       tax_obligation_type: [
