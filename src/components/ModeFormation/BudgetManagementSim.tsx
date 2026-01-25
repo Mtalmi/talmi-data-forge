@@ -112,8 +112,11 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
                 <h4 className="font-medium mb-2">📊 Étape 1: Revue par Catégorie</h4>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-sm text-muted-foreground mb-2">
                   Passez en revue chaque catégorie de dépenses.
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mb-4 flex items-center gap-1">
+                  👆 Cliquez sur chaque catégorie pour la valider ({reviewedCategories.length}/{DEMO_CATEGORIES.length})
                 </p>
                 <div className="space-y-2">
                   {DEMO_CATEGORIES.map(cat => (
@@ -123,12 +126,17 @@ export function BudgetManagementSim({ onComplete, onClose }: BudgetManagementSim
                       className={cn(
                         "p-3 rounded-lg border cursor-pointer transition-all",
                         reviewedCategories.includes(cat.name) 
-                          ? "bg-emerald-50 border-emerald-300" 
-                          : "bg-white dark:bg-gray-900 hover:border-amber-300"
+                          ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-300 dark:border-emerald-700" 
+                          : "bg-white dark:bg-gray-900 hover:border-amber-300 hover:bg-amber-50/50"
                       )}
                     >
                       <div className="flex justify-between items-center">
-                        <span className="font-medium">{cat.name}</span>
+                        <span className="font-medium flex items-center gap-2">
+                          {reviewedCategories.includes(cat.name) && (
+                            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                          )}
+                          {cat.name}
+                        </span>
                         <span className="text-sm">
                           {cat.spent.toLocaleString()} / {cat.budget.toLocaleString()} DH
                         </span>
