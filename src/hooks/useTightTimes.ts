@@ -225,7 +225,35 @@ export function useTightTimes() {
       if (error) throw error;
       
       if (action === 'APPROVE') {
-        toast.success('BC Urgence approuvé - Production et Resp. Technique notifiés');
+        // Create detailed notifications for Production and Resp. Technique
+        try {
+          await supabase.rpc('create_emergency_bc_notifications', {
+            p_approval_id: approvalId
+          });
+          
+          // Get the approval details to send emails
+          const { data: approval } = await supabase
+            .from('emergency_bc_approvals')
+            .select('bc_id')
+            .eq('id', approvalId)
+            .single();
+          
+          if (approval?.bc_id) {
+            // Send email notifications via edge function
+            await supabase.functions.invoke('send-emergency-bc-notification', {
+              body: {
+                approval_id: approvalId,
+                bc_id: approval.bc_id,
+                notification_type: 'BOTH'
+              }
+            });
+          }
+        } catch (notifError) {
+          console.error('Error creating/sending notifications:', notifError);
+          // Don't fail the approval, just log the error
+        }
+        
+        toast.success('BC Urgence approuvé - Notifications envoyées à Production et Resp. Technique');
       } else {
         toast.info('BC Urgence refusé');
       }
