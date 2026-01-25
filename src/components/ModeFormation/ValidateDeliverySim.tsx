@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { CheckCircle2, Truck, ArrowRight, RotateCcw, Camera, PenTool } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { CheckCircle2, Truck, ArrowRight, RotateCcw, Camera, ClipboardCheck, ListChecks } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -15,38 +16,57 @@ interface ValidateDeliverySimProps {
   onClose: () => void;
 }
 
+const DEMO_ORDERS = [
+  { id: 'DEMO-DEVIS-001', client: 'Entreprise BTP Demo', volume: 10, product: 'B/25', total: 7200 },
+  { id: 'DEMO-DEVIS-002', client: 'Construction Plus', volume: 15, product: 'B/30', total: 11250 },
+];
+
+const QUALITY_CHECKLIST = [
+  { id: 'color', label: 'Béton couleur correcte (Correct color)' },
+  { id: 'consistency', label: 'Consistance correcte (Correct consistency)' },
+  { id: 'segregation', label: 'Pas de ségrégation (No segregation)' },
+  { id: 'temperature', label: 'Température correcte (Correct temperature)' },
+];
+
 export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySimProps) {
   const [step, setStep] = useState(1);
-  const [quantityVerified, setQuantityVerified] = useState(false);
-  const [qualityChecked, setQualityChecked] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [deliveredQuantity, setDeliveredQuantity] = useState('10');
   const [photoUploaded, setPhotoUploaded] = useState(false);
-  const [signatureComplete, setSignatureComplete] = useState(false);
-  const [paymentRecorded, setPaymentRecorded] = useState(false);
+  const [qualityChecks, setQualityChecks] = useState<Record<string, boolean>>({});
+  const [qualityNotes, setQualityNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const totalSteps = 5;
+  const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
-  const handleNext = () => {
-    if (step < totalSteps) {
-      setStep(step + 1);
-    }
+  const order = DEMO_ORDERS.find(o => o.id === selectedOrder);
+  const allChecksComplete = QUALITY_CHECKLIST.every(item => qualityChecks[item.id]);
+
+  const handlePhotoUpload = () => {
+    setTimeout(() => {
+      setPhotoUploaded(true);
+      toast.success('[SIMULATION] Photo livraison capturée');
+    }, 500);
+  };
+
+  const handleCheckChange = (id: string, checked: boolean) => {
+    setQualityChecks(prev => ({ ...prev, [id]: checked }));
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     console.log('[SIMULATION] Validation livraison:', {
-      quantityVerified,
-      qualityChecked,
-      photoUploaded,
-      signatureComplete,
-      paymentRecorded,
+      orderId: selectedOrder,
+      deliveredQuantity,
+      qualityChecks,
+      qualityNotes,
     });
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    toast.success('🎉 Simulation terminée!', {
-      description: 'Livraison DEMO-001 validée avec succès',
+    toast.success('🎉 Livraison validée avec succès!', {
+      description: `Commande ${selectedOrder} marquée comme complétée.`,
     });
     
     setIsSubmitting(false);
@@ -55,16 +75,16 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
 
   const handleReset = () => {
     setStep(1);
-    setQuantityVerified(false);
-    setQualityChecked(false);
+    setSelectedOrder(null);
+    setDeliveredQuantity('10');
     setPhotoUploaded(false);
-    setSignatureComplete(false);
-    setPaymentRecorded(false);
+    setQualityChecks({});
+    setQualityNotes('');
   };
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Truck className="h-5 w-5 text-amber-500" />
@@ -84,43 +104,48 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
           <Progress value={progress} className="h-2" indicatorClassName="bg-amber-500" />
         </div>
 
-        {/* Demo Delivery Info */}
-        <div className="p-3 bg-muted/50 rounded-lg text-sm">
-          <div className="flex justify-between">
-            <span>BL:</span>
-            <span className="font-mono font-medium">DEMO-001</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Client:</span>
-            <span className="font-medium">Client Test SARL</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Volume:</span>
-            <span className="font-medium">8 m³ Béton B25</span>
-          </div>
-        </div>
-
         {/* Steps */}
         <div className="space-y-4 py-4">
+          {/* Step 1: Select Order */}
           {step === 1 && (
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                <h4 className="font-medium mb-2">📦 Étape 1: Vérification des Quantités</h4>
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <ClipboardCheck className="h-4 w-4" />
+                  Étape 1/4: Sélectionner la Commande
+                </h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Confirmez que le volume livré correspond à la commande.
+                  Choisissez une commande à valider.
                 </p>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="qty" 
-                    checked={quantityVerified}
-                    onCheckedChange={(checked) => setQuantityVerified(checked as boolean)}
-                  />
-                  <Label htmlFor="qty">Volume vérifié: 8 m³ conforme</Label>
+                <div className="space-y-2">
+                  {DEMO_ORDERS.map((o) => (
+                    <button
+                      key={o.id}
+                      onClick={() => setSelectedOrder(o.id)}
+                      className={cn(
+                        "w-full p-3 rounded-lg border text-left transition-all",
+                        selectedOrder === o.id
+                          ? "bg-amber-100 border-amber-400 dark:bg-amber-900/50"
+                          : "bg-background hover:bg-amber-50 dark:hover:bg-amber-950/30"
+                      )}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="font-mono font-bold text-amber-600">{o.id}</span>
+                          <p className="text-sm">{o.client}</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="outline">{o.volume} M³ {o.product}</Badge>
+                          <p className="text-sm font-bold mt-1">{o.total.toLocaleString()} DH</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
               <Button 
-                onClick={handleNext} 
-                disabled={!quantityVerified}
+                onClick={() => setStep(2)} 
+                disabled={!selectedOrder}
                 className="w-full gap-2"
               >
                 Continuer <ArrowRight className="h-4 w-4" />
@@ -128,35 +153,81 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
             </div>
           )}
 
-          {step === 2 && (
+          {/* Step 2: Verify Delivery */}
+          {step === 2 && order && (
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                <h4 className="font-medium mb-2">🧪 Étape 2: Contrôle Qualité</h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Vérifiez les paramètres qualité du béton.
-                </p>
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <Truck className="h-4 w-4" />
+                  Étape 2/4: Vérifier la Livraison
+                </h4>
+                
+                <div className="p-3 bg-background rounded-lg border mb-4">
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Commande:</span>
+                      <p className="font-mono font-bold">{order.id}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Produit:</span>
+                      <p className="font-medium">{order.product} Béton</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Quantité Commandée:</span>
+                      <p className="font-bold">{order.volume} M³</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Date Livraison:</span>
+                      <p>Aujourd'hui</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Chauffeur:</span>
+                      <p>Jean Dupont</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span>Affaissement (Slump):</span>
-                    <Badge className="bg-emerald-100 text-emerald-700">120mm ✓</Badge>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Température:</span>
-                    <Badge className="bg-emerald-100 text-emerald-700">22°C ✓</Badge>
-                  </div>
-                  <div className="flex items-center space-x-2 pt-2">
-                    <Checkbox 
-                      id="quality" 
-                      checked={qualityChecked}
-                      onCheckedChange={(checked) => setQualityChecked(checked as boolean)}
+                  <div className="space-y-2">
+                    <Label>Quantité Livrée (M³)</Label>
+                    <Input
+                      type="number"
+                      value={deliveredQuantity}
+                      onChange={(e) => setDeliveredQuantity(e.target.value)}
                     />
-                    <Label htmlFor="quality">Qualité conforme aux spécifications</Label>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Photo du Bon de Livraison</Label>
+                    {!photoUploaded ? (
+                      <button
+                        onClick={handlePhotoUpload}
+                        className={cn(
+                          "w-full h-24 rounded-lg border-2 border-dashed transition-all",
+                          "border-amber-300 bg-amber-100/50 dark:bg-amber-900/20",
+                          "hover:border-amber-400 hover:bg-amber-200/50",
+                          "flex flex-col items-center justify-center gap-2"
+                        )}
+                      >
+                        <Camera className="h-6 w-6 text-amber-500" />
+                        <span className="text-sm text-amber-700 dark:text-amber-300">
+                          Télécharger Photo
+                        </span>
+                      </button>
+                    ) : (
+                      <div className="w-full h-24 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-300 flex flex-col items-center justify-center gap-1">
+                        <CheckCircle2 className="h-6 w-6 text-emerald-500" />
+                        <span className="text-sm text-emerald-700 dark:text-emerald-300">
+                          Photo capturée ✓
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
               <Button 
-                onClick={handleNext} 
-                disabled={!qualityChecked}
+                onClick={() => setStep(3)} 
+                disabled={!photoUploaded || parseFloat(deliveredQuantity) <= 0}
                 className="w-full gap-2"
               >
                 Continuer <ArrowRight className="h-4 w-4" />
@@ -164,28 +235,61 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
             </div>
           )}
 
+          {/* Step 3: Quality Inspection */}
           {step === 3 && (
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                <h4 className="font-medium mb-2">📸 Étape 3: Photo du Bon</h4>
+                <h4 className="font-medium mb-2 flex items-center gap-2">
+                  <ListChecks className="h-4 w-4" />
+                  Étape 3/4: Inspection Qualité
+                </h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  Capturez une photo du bon de livraison signé.
+                  Vérifiez tous les points de contrôle qualité.
                 </p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setPhotoUploaded(true)}
-                  className={cn(
-                    "w-full gap-2",
-                    photoUploaded && "bg-emerald-50 border-emerald-300 text-emerald-700"
-                  )}
-                >
-                  <Camera className="h-4 w-4" />
-                  {photoUploaded ? 'Photo capturée ✓' : 'Simuler capture photo'}
-                </Button>
+
+                <div className="space-y-3">
+                  {QUALITY_CHECKLIST.map((item) => (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "flex items-center space-x-3 p-3 rounded-lg border transition-all",
+                        qualityChecks[item.id]
+                          ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30"
+                          : "bg-background"
+                      )}
+                    >
+                      <Checkbox
+                        id={item.id}
+                        checked={qualityChecks[item.id] || false}
+                        onCheckedChange={(checked) => handleCheckChange(item.id, checked as boolean)}
+                      />
+                      <Label htmlFor={item.id} className="cursor-pointer flex-1">
+                        {qualityChecks[item.id] ? '☑️' : '☐'} {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 space-y-2">
+                  <Label>Notes (optionnel)</Label>
+                  <Textarea
+                    placeholder="Observations supplémentaires..."
+                    value={qualityNotes}
+                    onChange={(e) => setQualityNotes(e.target.value)}
+                  />
+                </div>
+
+                {allChecksComplete && (
+                  <div className="mt-3 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200">
+                    <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                      ✅ Tous les contrôles qualité sont conformes
+                    </p>
+                  </div>
+                )}
               </div>
               <Button 
-                onClick={handleNext} 
-                disabled={!photoUploaded}
+                onClick={() => setStep(4)} 
+                disabled={!allChecksComplete}
                 className="w-full gap-2"
               >
                 Continuer <ArrowRight className="h-4 w-4" />
@@ -193,65 +297,46 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
             </div>
           )}
 
-          {step === 4 && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800">
-                <h4 className="font-medium mb-2">✍️ Étape 4: Signature Client</h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Obtenez la signature du client pour confirmer la réception.
-                </p>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setSignatureComplete(true)}
-                  className={cn(
-                    "w-full gap-2",
-                    signatureComplete && "bg-emerald-50 border-emerald-300 text-emerald-700"
-                  )}
-                >
-                  <PenTool className="h-4 w-4" />
-                  {signatureComplete ? 'Signature obtenue ✓' : 'Simuler signature'}
-                </Button>
-              </div>
-              <Button 
-                onClick={handleNext} 
-                disabled={!signatureComplete}
-                className="w-full gap-2"
-              >
-                Continuer <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
-
-          {step === 5 && (
+          {/* Step 4: Complete Validation */}
+          {step === 4 && order && (
             <div className="space-y-4 animate-fade-in">
               <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                <h4 className="font-medium mb-2">💳 Étape 5: Enregistrer le Paiement</h4>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Confirmez le mode de paiement utilisé.
-                </p>
-                <div className="space-y-2">
-                  <Label>Mode de paiement</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant={paymentRecorded ? "default" : "outline"}
-                      onClick={() => setPaymentRecorded(true)}
-                      size="sm"
-                    >
-                      Espèces
-                    </Button>
-                    <Button
-                      variant={paymentRecorded ? "default" : "outline"}
-                      onClick={() => setPaymentRecorded(true)}
-                      size="sm"
-                    >
-                      Crédit
-                    </Button>
+                <h4 className="font-medium mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  Étape 4/4: Récapitulatif Final
+                </h4>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Quantité vérifiée: {deliveredQuantity} M³</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Photo bon de livraison: Capturée</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Qualité inspectée: Conforme (4/4 checks)</span>
+                  </div>
+                  <div className="pt-2 border-t mt-2">
+                    <div className="flex justify-between">
+                      <span>Statut:</span>
+                      <Badge className="bg-emerald-500">VALIDÉE</Badge>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200">
+                <p className="text-xs text-blue-700 dark:text-blue-300 font-mono">
+                  [SIMULATION] Livraison Validée - {order.id} - {deliveredQuantity} M³ - Qualité: Conforme
+                </p>
+              </div>
+
               <Button 
                 onClick={handleSubmit} 
-                disabled={isSubmitting || !paymentRecorded}
+                disabled={isSubmitting}
                 className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700"
               >
                 {isSubmitting ? (
@@ -259,7 +344,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
                 ) : (
                   <>
                     <CheckCircle2 className="h-4 w-4" />
-                    Finaliser la Livraison
+                    Finaliser Validation
                   </>
                 )}
               </Button>
