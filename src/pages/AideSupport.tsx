@@ -1,13 +1,10 @@
-import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Progress } from '@/components/ui/progress';
 import { SystemHealthReport } from '@/components/documents/SystemHealthReport';
-import { TrainingReceptionForm } from '@/components/manual/TrainingReceptionForm';
 import { generateManualPdf } from '@/components/manual/ManualPdfGenerator';
 import {
   BookOpen,
@@ -28,9 +25,7 @@ import {
   Download,
   Star,
   Lock,
-  GraduationCap,
   Crown,
-  Play,
   Workflow,
   Eye,
   Gauge,
@@ -230,8 +225,6 @@ const FAQ_ITEMS = [
 ];
 
 export default function AideSupport() {
-  const [trainingOpen, setTrainingOpen] = useState(false);
-  const [trainingCompleted, setTrainingCompleted] = useState(false);
 
   const handleDownloadPdf = () => {
     try {
@@ -275,55 +268,6 @@ export default function AideSupport() {
           </div>
         </div>
 
-        {/* Training Mode CTA */}
-
-        {/* Training Mode CTA */}
-        <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="h-12 w-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <GraduationCap className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    Mode Formation
-                    {trainingCompleted && (
-                      <Badge className="bg-success/20 text-success border-success/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        Complété
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Pratiquez sans affecter les données réelles
-                  </CardDescription>
-                </div>
-              </div>
-              <Button 
-                className="gap-2 bg-primary hover:bg-primary/90"
-                onClick={() => setTrainingOpen(true)}
-              >
-                <Play className="h-4 w-4" />
-                Lancer la Simulation
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Nouveaux employés: Utilisez ce mode pour vous entraîner à enregistrer une réception de stock 
-              sans risque d'erreur dans la base de données réelle.
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Training Dialog */}
-        <TrainingReceptionForm 
-          open={trainingOpen} 
-          onOpenChange={setTrainingOpen}
-          onComplete={() => setTrainingCompleted(true)}
-        />
 
         {/* Main Tabs */}
         <Tabs defaultValue="rules" className="space-y-4">
