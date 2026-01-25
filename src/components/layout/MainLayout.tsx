@@ -6,8 +6,6 @@ import { RolePreviewBanner } from './RolePreviewSwitcher';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
-import { AcademyLauncher } from '@/components/academy/AcademyLauncher';
-import { SpotlightOverlay } from '@/components/academy/SpotlightOverlay';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -23,9 +21,6 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
     <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* Ambient Glow Background */}
       <AmbientGlow intensity="subtle" />
-
-      {/* TBOS Academy - Spotlight Walkthrough Overlay */}
-      <SpotlightOverlay />
 
       {/* Content Layer */}
       <div className="relative z-10 flex flex-col min-h-[100dvh]">
@@ -52,9 +47,6 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
         {/* Quick Action FAB for employees */}
         <QuickActionFAB />
-
-        {/* TBOS Academy Launcher */}
-        <AcademyLauncher showOnFirstVisit />
 
         {/* Mobile Bottom Navigation */}
         {!hideBottomNav && showMobileNav && <MobileBottomNav />}

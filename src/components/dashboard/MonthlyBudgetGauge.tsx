@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
-import { InfoTooltip } from '@/components/academy/InfoTooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface BudgetStats {
   spent: number;

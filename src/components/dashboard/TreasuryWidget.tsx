@@ -24,7 +24,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { InfoTooltip } from '@/components/academy/InfoTooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface PendingExpense {
   id: string;
