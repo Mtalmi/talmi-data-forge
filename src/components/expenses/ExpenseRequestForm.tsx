@@ -51,8 +51,19 @@ const EXPENSE_CATEGORIES = [
   { value: 'petit_equipement', label: 'Petit Équipement', icon: Receipt },
   { value: 'services_externes', label: 'Services Externes', icon: Receipt },
   { value: 'frais_administratifs', label: 'Frais Administratifs', icon: Receipt },
+  { value: 'location_camion', label: 'Location Camion', icon: Car, requiresContract: 'camion_rental' },
+  { value: 'location_trax', label: 'Location Trax', icon: Car, requiresContract: 'trax_rental' },
+  { value: 'location_terrain', label: 'Location Terrain', icon: Receipt, requiresContract: 'terrain_rental' },
   { value: 'autre', label: 'Autre', icon: Receipt },
 ];
+
+// Rental categories that require contract linking
+const RENTAL_CATEGORIES = ['location_camion', 'location_trax', 'location_terrain'];
+const CATEGORY_CONTRACT_MAP: Record<string, string> = {
+  'location_camion': 'camion_rental',
+  'location_trax': 'trax_rental',
+  'location_terrain': 'terrain_rental',
+};
 
 // INTERDICTIONS - Hard blocked categories per Section 8
 const BLOCKED_KEYWORDS = [
@@ -93,6 +104,19 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   const [vehiculeId, setVehiculeId] = useState('');
   const [kilometrage, setKilometrage] = useState('');
   
+  // Contract-specific (for rental expenses)
+  const [contractId, setContractId] = useState('');
+  const [availableContracts, setAvailableContracts] = useState<Array<{
+    id: string;
+    title: string;
+    provider_name: string;
+    monthly_amount: number;
+    contract_type: string;
+    ras_applicable: boolean;
+    ras_rate: number;
+  }>>([]);
+  const [rasAmount, setRasAmount] = useState(0);
+  
   // Receipt
   const [receiptUrl, setReceiptUrl] = useState('');
   const [receiptPreview, setReceiptPreview] = useState('');
@@ -113,6 +137,10 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   const [submitting, setSubmitting] = useState(false);
   const [blockedReason, setBlockedReason] = useState<string | null>(null);
   const [showComplianceAlert, setShowComplianceAlert] = useState(false);
+
+  // Check if current category is a rental category
+  const isRentalCategory = RENTAL_CATEGORIES.includes(categorie);
+  const requiredContractType = CATEGORY_CONTRACT_MAP[categorie] || null;
 
   // Calculate TTC
   const montantTTC = montantHT 
@@ -144,6 +172,40 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   useEffect(() => {
     fetchMonthlyCapStatus();
   }, []);
+
+  // Fetch contracts when rental category selected
+  useEffect(() => {
+    if (isRentalCategory && requiredContractType) {
+      fetchContracts(requiredContractType);
+    } else {
+      setContractId('');
+      setAvailableContracts([]);
+      setRasAmount(0);
+    }
+  }, [categorie, isRentalCategory, requiredContractType]);
+
+  // Calculate RAS when contract changes (for terrain rental)
+  useEffect(() => {
+    if (contractId && montantHT) {
+      const contract = availableContracts.find(c => c.id === contractId);
+      if (contract?.ras_applicable && contract?.ras_rate) {
+        setRasAmount(parseFloat(montantHT) * (contract.ras_rate / 100));
+      } else {
+        setRasAmount(0);
+      }
+    } else {
+      setRasAmount(0);
+    }
+  }, [contractId, montantHT, availableContracts]);
+
+  const fetchContracts = async (contractType: string) => {
+    const { data } = await supabase
+      .from('contracts')
+      .select('id, title, provider_name, monthly_amount, contract_type, ras_applicable, ras_rate')
+      .eq('contract_type', contractType as 'camion_rental' | 'trax_rental' | 'terrain_rental')
+      .eq('is_active', true);
+    setAvailableContracts(data || []);
+  };
 
   const fetchMonthlyCapStatus = async () => {
     try {
@@ -261,6 +323,12 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
       }
     }
 
+    // Contract validation for rental expenses
+    if (!asDraft && isRentalCategory && !contractId) {
+      toast.error('Contrat obligatoire pour les dépenses de location');
+      return;
+    }
+
     // Off-hours justification check (Midnight Alert Protocol)
     if (!asDraft && isOffHoursMode) {
       if (!justificationUrgence.trim()) {
@@ -320,6 +388,7 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
           sous_categorie: sousCategorie || null,
           vehicule_id: categorie === 'carburant' ? vehiculeId : null,
           kilometrage: categorie === 'carburant' ? parseFloat(kilometrage) : null,
+          contract_id: isRentalCategory ? contractId : null,
           receipt_photo_url: receiptUrl || null,
           requested_by: user?.id as string,
           requested_by_name: profile?.full_name || 'Utilisateur',
@@ -685,6 +754,55 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
                 className="font-mono"
               />
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Contract Selection for Rental Expenses */}
+      {isRentalCategory && (
+        <Card className="border-amber-500/50 bg-amber-500/5">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2 text-amber-500">
+              <Shield className="h-4 w-4" />
+              Contrat de Location Obligatoire
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Select value={contractId} onValueChange={setContractId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un contrat" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableContracts.length === 0 ? (
+                  <SelectItem value="_none" disabled>Aucun contrat actif</SelectItem>
+                ) : (
+                  availableContracts.map((contract) => (
+                    <SelectItem key={contract.id} value={contract.id}>
+                      {contract.title} - {contract.provider_name}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+            
+            {/* RAS Display for Terrain Rental */}
+            {rasAmount > 0 && (
+              <div className="flex items-center justify-between p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm font-medium">Retenue à la Source (15%)</span>
+                </div>
+                <span className="font-mono font-bold text-amber-500">
+                  {rasAmount.toFixed(2)} MAD
+                </span>
+              </div>
+            )}
+            
+            {!contractId && (
+              <p className="text-xs text-destructive">
+                ⚠️ Un contrat doit être sélectionné pour les dépenses de location
+              </p>
+            )}
           </CardContent>
         </Card>
       )}

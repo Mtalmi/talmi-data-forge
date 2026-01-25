@@ -38,6 +38,7 @@ import AuditExterne from "./pages/AuditExterne";
 import SecurityDashboard from "./pages/SecurityDashboard";
 import ClientTracking from "./pages/ClientTracking";
 import AideSupport from "./pages/AideSupport";
+import Contracts from "./pages/Contracts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -87,6 +88,8 @@ const App = () => (
                 <Route path="/track/:token" element={<ClientTracking />} />
                 {/* User Manual & Support */}
                 <Route path="/aide" element={<AideSupport />} />
+                {/* Contracts Module */}
+                <Route path="/contracts" element={<Contracts />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

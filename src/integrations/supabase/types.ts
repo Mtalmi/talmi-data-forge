@@ -1179,6 +1179,60 @@ export type Database = {
         }
         Relationships: []
       }
+      contracts: {
+        Row: {
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          monthly_amount: number
+          pdf_url: string
+          provider_name: string
+          ras_applicable: boolean | null
+          ras_rate: number | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          contract_type: Database["public"]["Enums"]["contract_type"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_amount: number
+          pdf_url: string
+          provider_name: string
+          ras_applicable?: boolean | null
+          ras_rate?: number | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          contract_type?: Database["public"]["Enums"]["contract_type"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_amount?: number
+          pdf_url?: string
+          provider_name?: string
+          ras_applicable?: boolean | null
+          ras_rate?: number | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       controles_depart: {
         Row: {
           affaissement_conforme: boolean
@@ -1773,6 +1827,7 @@ export type Database = {
           cap_override_by: string | null
           cap_override_reason: string | null
           categorie: Database["public"]["Enums"]["expense_category"]
+          contract_id: string | null
           created_at: string | null
           department: string | null
           description: string
@@ -1798,6 +1853,7 @@ export type Database = {
           paid_by: string | null
           payment_method: string | null
           payment_reference: string | null
+          ras_amount: number | null
           receipt_photo_url: string | null
           receipt_verified: boolean | null
           reference: string
@@ -1820,6 +1876,7 @@ export type Database = {
           cap_override_by?: string | null
           cap_override_reason?: string | null
           categorie: Database["public"]["Enums"]["expense_category"]
+          contract_id?: string | null
           created_at?: string | null
           department?: string | null
           description: string
@@ -1845,6 +1902,7 @@ export type Database = {
           paid_by?: string | null
           payment_method?: string | null
           payment_reference?: string | null
+          ras_amount?: number | null
           receipt_photo_url?: string | null
           receipt_verified?: boolean | null
           reference?: string
@@ -1867,6 +1925,7 @@ export type Database = {
           cap_override_by?: string | null
           cap_override_reason?: string | null
           categorie?: Database["public"]["Enums"]["expense_category"]
+          contract_id?: string | null
           created_at?: string | null
           department?: string | null
           description?: string
@@ -1892,6 +1951,7 @@ export type Database = {
           paid_by?: string | null
           payment_method?: string | null
           payment_reference?: string | null
+          ras_amount?: number | null
           receipt_photo_url?: string | null
           receipt_verified?: boolean | null
           reference?: string
@@ -1909,7 +1969,15 @@ export type Database = {
           vehicule_id?: string | null
           was_blocked_by_cap?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "expenses_controlled_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       factures: {
         Row: {
@@ -4296,6 +4364,7 @@ export type Database = {
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
+      contract_type: "camion_rental" | "trax_rental" | "terrain_rental"
       expense_approval_level: "level_1" | "level_2" | "level_3"
       expense_category:
         | "carburant"
@@ -4443,6 +4512,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["ceo", "operator", "accounting", "commercial"],
+      contract_type: ["camion_rental", "trax_rental", "terrain_rental"],
       expense_approval_level: ["level_1", "level_2", "level_3"],
       expense_category: [
         "carburant",

@@ -29,6 +29,7 @@ import {
   Menu,
   X,
   Wrench,
+  FileText,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -100,13 +101,13 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite'],
+          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite', '/contracts'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are AUDITED)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/securite'],
+          '/approbations', '/alertes', '/securite', '/contracts'],
     
     // Resp. Technique - Dashboard, Formules (READ-ONLY), Stocks (Quality Entry ONLY), Production, Lab
     // Can CREATE Stock Entry Request with mandatory photo, but CANNOT Finalize/Validate stock increases
@@ -120,7 +121,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     // Agent Administratif - Dashboard, Ventes (Devis), Clients, Stocks (Silos)
     // Can APPROVE Devis created by others (not her own), can FINALIZE Stock after Resp. Tech quality photo
     // BLOCKED: Formules, Prix, Approbations menu
-    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/depenses-v2', '/paiements'],
+    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/depenses-v2', '/paiements', '/contracts'],
     
     // Centraliste (Hassan) - Formules READ-ONLY (Daily Mix), Bons CONSOMMATION ONLY
     // BLOCKED: Prix, Clients, Approbations, STOCKS (zero manual access)
@@ -245,8 +246,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
           </>
         )}
 
-        {/* SUPPORT: Stocks, Formules, Lab, Maintenance */}
-        {(canAccess('/stocks') || canAccess('/formules') || canAccess('/laboratoire') || canAccess('/maintenance') || canAccess('/prix') || canAccess('/fournisseurs') || canAccess('/prestataires') || canAccess('/pointage')) && (
+        {/* SUPPORT: Stocks, Formules, Lab, Maintenance, Contracts */}
+        {(canAccess('/stocks') || canAccess('/formules') || canAccess('/laboratoire') || canAccess('/maintenance') || canAccess('/prix') || canAccess('/fournisseurs') || canAccess('/prestataires') || canAccess('/pointage') || canAccess('/contracts')) && (
           <>
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -257,6 +258,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
             {canAccess('/formules') && <NavItem to="/formules" icon={<FlaskConical className="h-5 w-5" />} label="Formules Béton" onClick={onNavClick} />}
             {canAccess('/laboratoire') && <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />}
             {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}
+            {canAccess('/contracts') && <NavItem to="/contracts" icon={<FileText className="h-5 w-5" />} label="Contrats" onClick={onNavClick} />}
             {canAccess('/fournisseurs') && <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />}
             {canAccess('/prestataires') && <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />}
             {canAccess('/prix') && <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />}
