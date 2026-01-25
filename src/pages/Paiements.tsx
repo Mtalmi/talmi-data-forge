@@ -54,9 +54,11 @@ import {
   Mail,
   Send,
   PiggyBank,
+  Building2,
 } from 'lucide-react';
 import { CashFeedingForm } from '@/components/finance/CashFeedingForm';
 import { CashDepositsWidget } from '@/components/finance/CashDepositsWidget';
+import { TaxComplianceDashboard } from '@/components/compliance';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -162,9 +164,9 @@ export default function Paiements() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Suivi des Paiements</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Paiements & Conformité</h1>
             <p className="text-muted-foreground">
-              Analyse des créances et rapports d'antériorité
+              Suivi des créances et conformité fiscale & sociale
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -195,6 +197,21 @@ export default function Paiements() {
             </Button>
           </div>
         </div>
+
+        {/* Main Tabs */}
+        <Tabs defaultValue="payments" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+            <TabsTrigger value="payments" className="gap-2">
+              <Wallet className="h-4 w-4" />
+              Créances Clients
+            </TabsTrigger>
+            <TabsTrigger value="compliance" className="gap-2">
+              <Building2 className="h-4 w-4" />
+              Conformité Fiscale
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="payments" className="space-y-6">
 
         {/* Reminder Alert Banner */}
         {canManagePayments && reminderEligible.length > 0 && (
@@ -603,6 +620,12 @@ export default function Paiements() {
             </div>
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="compliance" className="space-y-6">
+            <TaxComplianceDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );

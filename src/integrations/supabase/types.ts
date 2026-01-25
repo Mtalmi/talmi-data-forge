@@ -4258,6 +4258,192 @@ export type Database = {
         }
         Relationships: []
       }
+      tax_compliance_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          obligation_id: string | null
+          read_at: string | null
+          read_by: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          obligation_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          obligation_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_compliance_alerts_obligation_id_fkey"
+            columns: ["obligation_id"]
+            isOneToOne: false
+            referencedRelation: "tax_obligations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tax_compliance_alerts_obligation_id_fkey"
+            columns: ["obligation_id"]
+            isOneToOne: false
+            referencedRelation: "upcoming_tax_obligations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_obligation_templates: {
+        Row: {
+          auto_generate: boolean | null
+          base_amount: number
+          created_at: string
+          description: string | null
+          due_day: number
+          frequency: Database["public"]["Enums"]["obligation_frequency"]
+          id: string
+          is_active: boolean | null
+          name: string
+          obligation_type: Database["public"]["Enums"]["tax_obligation_type"]
+          penalty_rate: number | null
+          updated_at: string
+        }
+        Insert: {
+          auto_generate?: boolean | null
+          base_amount: number
+          created_at?: string
+          description?: string | null
+          due_day?: number
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          is_active?: boolean | null
+          name: string
+          obligation_type: Database["public"]["Enums"]["tax_obligation_type"]
+          penalty_rate?: number | null
+          updated_at?: string
+        }
+        Update: {
+          auto_generate?: boolean | null
+          base_amount?: number
+          created_at?: string
+          description?: string | null
+          due_day?: number
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          obligation_type?: Database["public"]["Enums"]["tax_obligation_type"]
+          penalty_rate?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tax_obligations: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          days_overdue: number | null
+          description: string | null
+          due_date: string
+          due_day: number
+          frequency: Database["public"]["Enums"]["obligation_frequency"]
+          id: string
+          name: string
+          notes: string | null
+          obligation_type: Database["public"]["Enums"]["tax_obligation_type"]
+          paid_amount: number | null
+          paid_by: string | null
+          paid_by_name: string | null
+          paid_date: string | null
+          payment_method: string | null
+          payment_proof_url: string | null
+          payment_reference: string | null
+          penalty_amount: number | null
+          period_month: number | null
+          period_quarter: number | null
+          period_year: number
+          reminder_1_sent: boolean | null
+          reminder_30_sent: boolean | null
+          reminder_7_sent: boolean | null
+          status: Database["public"]["Enums"]["obligation_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by?: string | null
+          days_overdue?: number | null
+          description?: string | null
+          due_date: string
+          due_day?: number
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          name: string
+          notes?: string | null
+          obligation_type: Database["public"]["Enums"]["tax_obligation_type"]
+          paid_amount?: number | null
+          paid_by?: string | null
+          paid_by_name?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          penalty_amount?: number | null
+          period_month?: number | null
+          period_quarter?: number | null
+          period_year: number
+          reminder_1_sent?: boolean | null
+          reminder_30_sent?: boolean | null
+          reminder_7_sent?: boolean | null
+          status?: Database["public"]["Enums"]["obligation_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          days_overdue?: number | null
+          description?: string | null
+          due_date?: string
+          due_day?: number
+          frequency?: Database["public"]["Enums"]["obligation_frequency"]
+          id?: string
+          name?: string
+          notes?: string | null
+          obligation_type?: Database["public"]["Enums"]["tax_obligation_type"]
+          paid_amount?: number | null
+          paid_by?: string | null
+          paid_by_name?: string | null
+          paid_date?: string | null
+          payment_method?: string | null
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          penalty_amount?: number | null
+          period_month?: number | null
+          period_quarter?: number | null
+          period_year?: number
+          reminder_1_sent?: boolean | null
+          reminder_30_sent?: boolean | null
+          reminder_7_sent?: boolean | null
+          status?: Database["public"]["Enums"]["obligation_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tests_laboratoire: {
         Row: {
           affaissement_conforme: boolean | null
@@ -4553,6 +4739,66 @@ export type Database = {
         }
         Relationships: []
       }
+      tax_compliance_summary: {
+        Row: {
+          obligation_type:
+            | Database["public"]["Enums"]["tax_obligation_type"]
+            | null
+          overdue_count: number | null
+          paid_count: number | null
+          partial_count: number | null
+          pending_count: number | null
+          total_amount: number | null
+          total_days_overdue: number | null
+          total_obligations: number | null
+          total_outstanding: number | null
+          total_paid: number | null
+          total_penalties: number | null
+        }
+        Relationships: []
+      }
+      upcoming_tax_obligations: {
+        Row: {
+          amount: number | null
+          days_overdue: number | null
+          days_until_due: number | null
+          due_date: string | null
+          id: string | null
+          name: string | null
+          obligation_type:
+            | Database["public"]["Enums"]["tax_obligation_type"]
+            | null
+          penalty_amount: number | null
+          status: Database["public"]["Enums"]["obligation_status"] | null
+        }
+        Insert: {
+          amount?: number | null
+          days_overdue?: number | null
+          days_until_due?: never
+          due_date?: string | null
+          id?: string | null
+          name?: string | null
+          obligation_type?:
+            | Database["public"]["Enums"]["tax_obligation_type"]
+            | null
+          penalty_amount?: number | null
+          status?: Database["public"]["Enums"]["obligation_status"] | null
+        }
+        Update: {
+          amount?: number | null
+          days_overdue?: number | null
+          days_until_due?: never
+          due_date?: string | null
+          id?: string | null
+          name?: string | null
+          obligation_type?:
+            | Database["public"]["Enums"]["tax_obligation_type"]
+            | null
+          penalty_amount?: number | null
+          status?: Database["public"]["Enums"]["obligation_status"] | null
+        }
+        Relationships: []
+      }
       v_quality_feed: {
         Row: {
           camion: string | null
@@ -4631,6 +4877,15 @@ export type Database = {
           total_quote: number
           transport_extra_per_m3: number
         }[]
+      }
+      calculate_tax_penalty: {
+        Args: {
+          p_amount: number
+          p_due_date: string
+          p_payment_date?: string
+          p_penalty_rate?: number
+        }
+        Returns: number
       }
       calculate_water_correction: {
         Args: {
@@ -4845,6 +5100,17 @@ export type Database = {
         | "rejete"
         | "bloque_plafond"
         | "paye"
+      obligation_frequency: "monthly" | "quarterly" | "annual" | "one_time"
+      obligation_status: "pending" | "paid" | "overdue" | "partially_paid"
+      tax_obligation_type:
+        | "cnss"
+        | "mutuelle"
+        | "ir"
+        | "tva"
+        | "timbre"
+        | "patente"
+        | "taxe_professionnelle"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5001,6 +5267,18 @@ export const Constants = {
         "rejete",
         "bloque_plafond",
         "paye",
+      ],
+      obligation_frequency: ["monthly", "quarterly", "annual", "one_time"],
+      obligation_status: ["pending", "paid", "overdue", "partially_paid"],
+      tax_obligation_type: [
+        "cnss",
+        "mutuelle",
+        "ir",
+        "tva",
+        "timbre",
+        "patente",
+        "taxe_professionnelle",
+        "other",
       ],
     },
   },
