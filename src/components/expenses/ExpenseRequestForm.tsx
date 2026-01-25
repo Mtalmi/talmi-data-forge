@@ -25,7 +25,8 @@ import {
   ShieldAlert,
   Moon,
   Clock,
-  Bot
+  Bot,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -478,33 +479,43 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
             </Button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-destructive/50 rounded-lg cursor-pointer hover:border-destructive hover:bg-destructive/5 transition-all">
-            <div className="flex flex-col items-center justify-center py-4">
-              {uploadingReceipt ? (
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
-              ) : (
-                <>
-                  <div className="p-3 rounded-full bg-destructive/10 mb-2">
-                    <Camera className="h-8 w-8 text-destructive" />
-                  </div>
-                  <p className="text-sm font-semibold text-foreground">
-                    📸 Photographier le justificatif
-                  </p>
-                  <p className="text-xs text-destructive mt-1 font-bold">
-                    ⚠️ PREUVE OBLIGATOIRE - Soumission bloquée sans photo
-                  </p>
-                </>
-              )}
+          <div className="space-y-2">
+            {/* Golden Audit Requirement Badge */}
+            <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 rounded-full w-fit mx-auto">
+              <Shield className="h-3.5 w-3.5 text-amber-500" />
+              <span className="text-xs font-semibold text-amber-500">
+                Audit Requirement: Photo Mandatory
+              </span>
             </div>
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={handleReceiptUpload}
-              disabled={uploadingReceipt}
-            />
-          </label>
+            
+            <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-destructive/50 rounded-lg cursor-pointer hover:border-destructive hover:bg-destructive/5 transition-all">
+              <div className="flex flex-col items-center justify-center py-4">
+                {uploadingReceipt ? (
+                  <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                ) : (
+                  <>
+                    <div className="p-3 rounded-full bg-destructive/10 mb-2">
+                      <Camera className="h-8 w-8 text-destructive" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">
+                      📸 Photographier le justificatif
+                    </p>
+                    <p className="text-xs text-destructive mt-1 font-bold">
+                      ⚠️ PREUVE OBLIGATOIRE - Soumission bloquée sans photo
+                    </p>
+                  </>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleReceiptUpload}
+                disabled={uploadingReceipt}
+              />
+            </label>
+          </div>
         )}
       </div>
 
