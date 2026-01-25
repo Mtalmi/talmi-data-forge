@@ -45,7 +45,7 @@ import { ExportReportsDialog } from '@/components/ventes/ExportReportsDialog';
 import { EmergencyBcDialog } from '@/components/ventes/EmergencyBcDialog';
 import { PendingBcValidation } from '@/components/ventes/PendingBcValidation';
 import { EmergencyBcQualityView } from '@/components/ventes/EmergencyBcQualityView';
-
+import { InstructionCard } from '@/components/academy/InstructionCard';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import { Lock, Shield } from 'lucide-react';
@@ -409,6 +409,13 @@ export default function Ventes() {
   return (
     <TooltipProvider>
       <MainLayout>
+        {/* Academy Instruction Card - shows when triggered from Academy */}
+        <InstructionCard 
+          step={1}
+          title="Formation TBOS"
+          message="Remplissez les détails client. Rappel: La Photo est Obligatoire."
+        />
+        
         <div className="space-y-6">
           {/* Header */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
