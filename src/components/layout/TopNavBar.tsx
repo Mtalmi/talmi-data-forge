@@ -37,6 +37,7 @@ import {
   BarChart3,
   Wrench,
   HelpCircle,
+  FileText,
 } from 'lucide-react';
 
 interface TopNavBarProps {
@@ -70,14 +71,14 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite'],
+          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite', '/contracts'],
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/securite'],
+          '/approbations', '/alertes', '/securite', '/contracts'],
     responsable_technique: ['/', '/formules', '/stocks', '/production', '/laboratoire', '/maintenance'],
     directeur_operations: ['/', '/clients', '/ventes', '/planning', '/production', '/logistique', '/stocks', '/pointage', '/maintenance'],
-    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/depenses-v2', '/paiements'],
+    agent_administratif: ['/', '/ventes', '/clients', '/stocks', '/planning', '/production', '/bons', '/depenses', '/depenses-v2', '/paiements', '/contracts'],
     centraliste: ['/production', '/maintenance', '/formules'],
     chauffeur: ['/chauffeur'],
     commercial: ['/ventes', '/clients'],
@@ -106,6 +107,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         { to: '/bons', label: 'Archive BL', icon: Receipt },
         { to: '/paiements', label: 'Paiements', icon: DollarSign },
         { to: '/depenses-v2', label: 'Dépenses', icon: Receipt },
+        { to: '/contracts', label: 'Contrats', icon: FileText },
       ].filter(item => canAccess(item.to)),
     },
     {
