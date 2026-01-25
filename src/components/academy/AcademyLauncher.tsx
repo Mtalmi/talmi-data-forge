@@ -5,6 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { 
   GraduationCap, 
   Play, 
@@ -12,10 +18,13 @@ import {
   ChevronRight,
   Sparkles,
   BookOpen,
-  Target
+  Target,
+  Video,
+  X
 } from 'lucide-react';
 import { useTrainingProgress, TRAINING_STEPS } from '@/hooks/useTrainingProgress';
 import { CertifiedBadge } from './CertifiedBadge';
+import { AcademyVideoPlayer } from './AcademyVideoPlayer';
 import { cn } from '@/lib/utils';
 
 interface AcademyLauncherProps {
@@ -23,7 +32,32 @@ interface AcademyLauncherProps {
 }
 
 // Session storage key for showing instruction card
-const INSTRUCTION_CARD_KEY = 'tbos-show-instruction-card';
+export const INSTRUCTION_CARD_KEY = 'tbos-show-instruction-card';
+
+// Training video modules
+const TRAINING_VIDEOS = [
+  {
+    id: 'reception_stock',
+    title: 'Réception Stock - Le Handshake Photo-First',
+    description: 'Règle d\'Or #1: Toujours prendre la photo AVANT de saisir les données.',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', // Placeholder
+    duration: '~5 min'
+  },
+  {
+    id: 'expense_entry',
+    title: 'Saisie Dépense - La Limite 15k DH',
+    description: 'Comprendre le plafond mensuel et le système d\'approbation CEO.',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Placeholder
+    duration: '~4 min'
+  },
+  {
+    id: 'midnight_protocol',
+    title: 'Le Protocole Minuit (18h-00h)',
+    description: 'Toute transaction requiert une justification d\'urgence.',
+    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4', // Placeholder
+    duration: '~3 min'
+  }
+];
 
 export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProps) {
   const navigate = useNavigate();
@@ -33,12 +67,20 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
     progress, 
     loading,
     totalSteps,
-    startWalkthrough,
-    isWalkthroughActive,
-    currentStepData
+    completeStep
   } = useTrainingProgress();
   
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [completedVideos, setCompletedVideos] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('tbos-completed-videos');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     const seen = localStorage.getItem('tbos-academy-seen');
@@ -49,45 +91,47 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
   }, [loading, isCertified, showOnFirstVisit]);
 
   const handleStart = () => {
-    console.log('[Academy] Commencer clicked - starting tutorial');
+    console.log('[Academy] Commencer clicked - opening video player');
     
-    // Close overlay
+    // Close the overlay
     setIsExpanded(false);
     
-    // Start the walkthrough (sets step to 0 and activates it)
-    startWalkthrough();
+    // Find first incomplete video
+    const firstIncompleteIndex = TRAINING_VIDEOS.findIndex(
+      v => !completedVideos.includes(v.id)
+    );
     
-    console.log('[Academy] ✅ Tutorial started - Step 1:', currentStepData?.title || 'Réception Stock');
+    setCurrentVideoIndex(firstIncompleteIndex >= 0 ? firstIncompleteIndex : 0);
+    setShowVideoPlayer(true);
+    
+    console.log('[Academy] ✅ Video player opened');
   };
 
-  // Show tutorial card when walkthrough is active
-  if (isWalkthroughActive && currentStepData) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md"
-      >
-        <Card className="bg-gradient-to-br from-amber-500/20 via-yellow-500/10 to-amber-600/20 border-amber-500/50 shadow-xl backdrop-blur-xl">
-          <div className="p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-lg bg-amber-500/30 border border-amber-400/50">
-                <GraduationCap className="h-5 w-5 text-amber-400" />
-              </div>
-              <div>
-                <Badge variant="outline" className="bg-amber-500/20 text-amber-300 border-amber-400/50 text-[10px]">
-                  ÉTAPE {completedSteps.length + 1}/{totalSteps}
-                </Badge>
-                <h3 className="font-bold text-amber-100">{currentStepData.title}</h3>
-              </div>
-            </div>
-            <p className="text-sm text-amber-200/90 mb-3">{currentStepData.content}</p>
-            <p className="text-xs text-amber-300/70 italic">{currentStepData.description}</p>
-          </div>
-        </Card>
-      </motion.div>
-    );
-  }
+  const handleVideoComplete = () => {
+    const currentVideo = TRAINING_VIDEOS[currentVideoIndex];
+    
+    if (!completedVideos.includes(currentVideo.id)) {
+      const newCompleted = [...completedVideos, currentVideo.id];
+      setCompletedVideos(newCompleted);
+      localStorage.setItem('tbos-completed-videos', JSON.stringify(newCompleted));
+      
+      // Also mark the training step as complete
+      const stepId = currentVideo.id === 'reception_stock' ? 'stock_reception' :
+                     currentVideo.id === 'expense_entry' ? 'expense_entry' :
+                     'midnight_alert';
+      completeStep(stepId);
+    }
+    
+    // Auto-advance to next video if available
+    if (currentVideoIndex < TRAINING_VIDEOS.length - 1) {
+      setTimeout(() => {
+        setCurrentVideoIndex(prev => prev + 1);
+      }, 2000);
+    }
+  };
+
+  const currentVideo = TRAINING_VIDEOS[currentVideoIndex];
+  const videoProgress = (completedVideos.length / TRAINING_VIDEOS.length) * 100;
 
   // If certified, show minimal badge
   if (isCertified) {
@@ -104,6 +148,84 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
 
   return (
     <>
+      {/* Video Player Dialog */}
+      <Dialog open={showVideoPlayer} onOpenChange={setShowVideoPlayer}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden bg-slate-950 border-amber-500/30">
+          <DialogHeader className="p-4 pb-2">
+            <div className="flex items-center justify-between">
+              <DialogTitle className="flex items-center gap-2 text-amber-100">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
+                  <Video className="h-4 w-4 text-white" />
+                </div>
+                TBOS Academy - Formation {currentVideoIndex + 1}/{TRAINING_VIDEOS.length}
+              </DialogTitle>
+            </div>
+            {/* Video Progress */}
+            <div className="flex gap-1 mt-2">
+              {TRAINING_VIDEOS.map((video, idx) => (
+                <button
+                  key={video.id}
+                  onClick={() => setCurrentVideoIndex(idx)}
+                  className={cn(
+                    "flex-1 h-1.5 rounded-full transition-all",
+                    idx === currentVideoIndex
+                      ? "bg-amber-500"
+                      : completedVideos.includes(video.id)
+                        ? "bg-emerald-500"
+                        : "bg-slate-700"
+                  )}
+                />
+              ))}
+            </div>
+          </DialogHeader>
+          
+          <div className="p-4 pt-0">
+            <AcademyVideoPlayer
+              videoUrl={currentVideo.videoUrl}
+              videoTitle={currentVideo.title}
+              videoId={currentVideo.id}
+              onComplete={handleVideoComplete}
+              className="aspect-video"
+            />
+            
+            {/* Video Description */}
+            <div className="mt-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
+              <h4 className="font-semibold text-amber-200 mb-1">{currentVideo.title}</h4>
+              <p className="text-sm text-amber-300/80">{currentVideo.description}</p>
+            </div>
+            
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setCurrentVideoIndex(prev => Math.max(0, prev - 1))}
+                disabled={currentVideoIndex === 0}
+                className="border-amber-500/30 text-amber-300"
+              >
+                Précédent
+              </Button>
+              
+              <span className="text-sm text-amber-400">
+                {completedVideos.length}/{TRAINING_VIDEOS.length} complétés
+              </span>
+              
+              <Button
+                onClick={() => {
+                  if (currentVideoIndex < TRAINING_VIDEOS.length - 1) {
+                    setCurrentVideoIndex(prev => prev + 1);
+                  } else {
+                    setShowVideoPlayer(false);
+                  }
+                }}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+              >
+                {currentVideoIndex < TRAINING_VIDEOS.length - 1 ? 'Suivant' : 'Terminer'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Floating Badge/Button */}
       <motion.button
         initial={{ scale: 0, opacity: 0 }}
@@ -122,9 +244,9 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
       >
         <GraduationCap className="h-5 w-5" />
         <span className="font-medium text-sm">Academy</span>
-        {completedSteps.length > 0 && (
+        {completedVideos.length > 0 && (
           <Badge variant="secondary" className="h-5 min-w-[20px] px-1.5 text-[10px]">
-            {completedSteps.length}/{totalSteps}
+            {completedVideos.length}/{TRAINING_VIDEOS.length}
           </Badge>
         )}
       </motion.button>
@@ -148,59 +270,64 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-foreground">TBOS Academy</h3>
-                    <p className="text-xs text-muted-foreground">Formation Interactive</p>
+                    <p className="text-xs text-muted-foreground">Formation Vidéo Interactive</p>
                   </div>
                 </div>
 
                 {/* Progress */}
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="text-muted-foreground">Progression</span>
+                    <span className="text-muted-foreground">Progression Vidéos</span>
                     <span className="font-medium text-foreground">
-                      {completedSteps.length}/{totalSteps} étapes
+                      {completedVideos.length}/{TRAINING_VIDEOS.length} vidéos
                     </span>
                   </div>
-                  <Progress value={progress} className="h-2" />
+                  <Progress value={videoProgress} className="h-2" />
                 </div>
               </div>
 
-              {/* Steps Preview */}
+              {/* Video Modules Preview */}
               <div className="p-4 space-y-2">
-                {TRAINING_STEPS.map((step, idx) => (
-                  <div
-                    key={step.id}
+                {TRAINING_VIDEOS.map((video, idx) => (
+                  <button
+                    key={video.id}
+                    onClick={() => {
+                      setCurrentVideoIndex(idx);
+                      setShowVideoPlayer(true);
+                      setIsExpanded(false);
+                    }}
                     className={cn(
-                      "flex items-center gap-3 p-2 rounded-lg transition-all",
-                      completedSteps.includes(step.id) 
-                        ? "bg-success/10" 
-                        : "bg-muted/30"
+                      "w-full flex items-center gap-3 p-2 rounded-lg transition-all text-left",
+                      completedVideos.includes(video.id) 
+                        ? "bg-success/10 hover:bg-success/20" 
+                        : "bg-muted/30 hover:bg-muted/50"
                     )}
                   >
                     <div className={cn(
-                      "h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold",
-                      completedSteps.includes(step.id)
+                      "h-8 w-8 rounded-lg flex items-center justify-center",
+                      completedVideos.includes(video.id)
                         ? "bg-success text-success-foreground"
-                        : "bg-muted text-muted-foreground"
+                        : "bg-amber-500/20 text-amber-500"
                     )}>
-                      {completedSteps.includes(step.id) ? (
+                      {completedVideos.includes(video.id) ? (
                         <CheckCircle2 className="h-4 w-4" />
                       ) : (
-                        idx + 1
+                        <Play className="h-4 w-4" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={cn(
                         "text-sm font-medium truncate",
-                        completedSteps.includes(step.id) ? "text-success" : "text-foreground"
+                        completedVideos.includes(video.id) ? "text-success" : "text-foreground"
                       )}>
-                        {step.title}
+                        {video.title.split(' - ')[0]}
                       </p>
                       <p className="text-[10px] text-muted-foreground truncate">
-                        {step.description}
+                        {video.duration}
                       </p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  </div>
+                  </button>
                 ))}
               </div>
 
@@ -208,20 +335,20 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
               <div className="p-4 pt-0 space-y-2">
                 <Button
                   onClick={handleStart}
-                  className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80"
+                  className="w-full gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                 >
                   <Play className="h-4 w-4" />
-                  {completedSteps.length > 0 ? 'Continuer' : 'Commencer'}
+                  {completedVideos.length > 0 ? 'Continuer la Formation' : 'Commencer'}
                 </Button>
                 
                 <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <Target className="h-3 w-3" />
-                    <span>3 tâches</span>
+                    <Video className="h-3 w-3" />
+                    <span>3 vidéos</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <BookOpen className="h-3 w-3" />
-                    <span>~5 min</span>
+                    <span>~12 min</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Sparkles className="h-3 w-3" />
