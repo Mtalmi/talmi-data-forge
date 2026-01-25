@@ -42,6 +42,7 @@ import Contracts from "./pages/Contracts";
 import ModeFormation from "./pages/ModeFormation";
 import Creances from "./pages/Creances";
 import Dettes from "./pages/Dettes";
+import Prets from "./pages/Prets";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -96,6 +97,8 @@ const App = () => (
                 {/* AR/AP Management */}
                 <Route path="/creances" element={<Creances />} />
                 <Route path="/dettes" element={<Dettes />} />
+                {/* Loan Management */}
+                <Route path="/prets" element={<Prets />} />
                 {/* Mode Formation - Interactive Training Simulations */}
                 <Route path="/formation" element={<ModeFormation />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
