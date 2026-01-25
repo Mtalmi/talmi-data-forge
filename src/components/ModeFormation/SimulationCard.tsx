@@ -1,29 +1,45 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, CheckCircle2, Clock, Package, Wallet, Moon } from 'lucide-react';
+import { 
+  Play, CheckCircle2, Clock, Package, Wallet, Moon,
+  FileText, Truck, PieChart, FlaskConical, MapPin,
+  Factory, Shield, Key, Search, BarChart3, Users
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SimulationType } from './types';
+import { SimulationType, SimulationDifficulty } from './types';
 
 interface SimulationCardProps {
   type: SimulationType;
   title: string;
   description: string;
   duration: string;
+  difficulty: SimulationDifficulty;
   isCompleted: boolean;
   onStart: () => void;
 }
 
-const iconMap = {
+const iconMap: Record<SimulationType, React.ElementType> = {
   stock_reception: Package,
   expense_entry: Wallet,
   midnight_protocol: Moon,
+  create_quote: FileText,
+  validate_delivery: Truck,
+  budget_management: PieChart,
+  quality_control: FlaskConical,
+  fleet_predator: MapPin,
+  production_management: Factory,
+  audit_compliance: Shield,
+  ceo_override: Key,
+  forensic_analysis: Search,
+  financial_reporting: BarChart3,
+  client_management: Users,
 };
 
-const categoryMap = {
-  stock_reception: 'Opérations',
-  expense_entry: 'Finance',
-  midnight_protocol: 'Sécurité',
+const difficultyConfig: Record<SimulationDifficulty, { label: string; className: string }> = {
+  easy: { label: 'Facile', className: 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300' },
+  medium: { label: 'Moyen', className: 'bg-amber-200 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300' },
+  hard: { label: 'Avancé', className: 'bg-rose-200 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300' },
 };
 
 export function SimulationCard({
@@ -31,11 +47,12 @@ export function SimulationCard({
   title,
   description,
   duration,
+  difficulty,
   isCompleted,
   onStart,
 }: SimulationCardProps) {
   const Icon = iconMap[type];
-  const category = categoryMap[type];
+  const diffConfig = difficultyConfig[difficulty];
 
   return (
     <Card className={cn(
@@ -44,18 +61,13 @@ export function SimulationCard({
       "hover:shadow-lg hover:shadow-amber-500/10 hover:border-amber-300 dark:hover:border-amber-700",
       isCompleted && "ring-2 ring-emerald-500/50"
     )}>
-      {/* Category Badge */}
+      {/* Difficulty Badge */}
       <div className="absolute top-3 right-3">
         <Badge 
           variant="secondary" 
-          className={cn(
-            "text-xs font-medium",
-            type === 'stock_reception' && "bg-yellow-200 text-yellow-800",
-            type === 'expense_entry' && "bg-orange-200 text-orange-800",
-            type === 'midnight_protocol' && "bg-pink-200 text-pink-800"
-          )}
+          className={cn("text-xs font-medium", diffConfig.className)}
         >
-          {category}
+          {diffConfig.label}
         </Badge>
       </div>
 
@@ -77,7 +89,7 @@ export function SimulationCard({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
           {description}
         </p>
 

@@ -1,12 +1,42 @@
 // Mode Formation Types - Sandbox Training Environment
 
-export type SimulationType = 'stock_reception' | 'expense_entry' | 'midnight_protocol';
+export type SimulationType = 
+  // Tier 1 - Core
+  | 'stock_reception' 
+  | 'expense_entry' 
+  | 'midnight_protocol'
+  | 'create_quote'
+  | 'validate_delivery'
+  | 'budget_management'
+  // Tier 2 - Advanced
+  | 'quality_control'
+  | 'fleet_predator'
+  | 'production_management'
+  | 'audit_compliance'
+  // Tier 3 - Executive
+  | 'ceo_override'
+  | 'forensic_analysis'
+  | 'financial_reporting'
+  | 'client_management';
+
+export type SimulationTier = 'core' | 'advanced' | 'executive';
+
+export type SimulationDifficulty = 'easy' | 'medium' | 'hard';
 
 export interface SimulationStep {
   id: string;
   title: string;
   description: string;
   isCompleted: boolean;
+}
+
+export interface SimulationConfig {
+  type: SimulationType;
+  title: string;
+  description: string;
+  duration: string;
+  tier: SimulationTier;
+  difficulty: SimulationDifficulty;
 }
 
 export interface StockReceptionData {
