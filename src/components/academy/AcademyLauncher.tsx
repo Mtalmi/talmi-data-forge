@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -22,6 +23,8 @@ interface AcademyLauncherProps {
 }
 
 export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { 
     completedSteps, 
     isCertified, 
@@ -44,9 +47,37 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
     }
   }, [loading, isCertified, showOnFirstVisit]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
+    console.log('[Academy] Commencer button clicked - starting tour sequence');
+    
+    // Step 1: Close the overlay immediately
     setIsExpanded(false);
-    startWalkthrough();
+    console.log('[Academy] Overlay closed');
+    
+    // Step 2: Check if 'Nouveau Devis' button exists on the screen
+    const nouveauDevisButton = document.querySelector('[data-tour="nouveau-devis"]') || 
+                               document.querySelector('button:has-text("Nouveau Devis")') ||
+                               Array.from(document.querySelectorAll('button')).find(btn => 
+                                 btn.textContent?.includes('Nouveau Devis') || btn.textContent?.includes('Nouveau')
+                               );
+    
+    if (nouveauDevisButton) {
+      console.log('[Academy] Nouveau Devis button found on current page - starting spotlight tour');
+      startWalkthrough();
+      console.log('[Academy] ✅ Tour started successfully');
+    } else {
+      console.log('[Academy] Nouveau Devis button NOT found - redirecting to Pipeline Commercial (/ventes)');
+      
+      // Step 4: Redirect to Ventes page
+      navigate('/ventes');
+      
+      // Wait for navigation and DOM to settle, then start tour
+      setTimeout(() => {
+        console.log('[Academy] Navigation complete - starting spotlight tour');
+        startWalkthrough();
+        console.log('[Academy] ✅ Tour started successfully after redirect');
+      }, 500);
+    }
   };
 
   if (loading) return null;
