@@ -32,7 +32,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { compressImage } from '@/lib/imageCompression';
-import { InfoTooltip } from '@/components/academy/InfoTooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface PendingHandshake {
   id: string;

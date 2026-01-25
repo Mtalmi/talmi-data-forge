@@ -39,6 +39,7 @@ import SecurityDashboard from "./pages/SecurityDashboard";
 import ClientTracking from "./pages/ClientTracking";
 import AideSupport from "./pages/AideSupport";
 import Contracts from "./pages/Contracts";
+import VideoTutorials from "./pages/VideoTutorials";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -90,6 +91,8 @@ const App = () => (
                 <Route path="/aide" element={<AideSupport />} />
                 {/* Contracts Module */}
                 <Route path="/contracts" element={<Contracts />} />
+                {/* Video Tutorials */}
+                <Route path="/tutoriels" element={<VideoTutorials />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

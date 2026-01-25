@@ -9,9 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { SystemHealthReport } from '@/components/documents/SystemHealthReport';
 import { TrainingReceptionForm } from '@/components/manual/TrainingReceptionForm';
 import { generateManualPdf } from '@/components/manual/ManualPdfGenerator';
-import { useTrainingProgress, TRAINING_STEPS } from '@/hooks/useTrainingProgress';
-import { CertifiedBadge } from '@/components/academy/CertifiedBadge';
-import { VideoTutorialSection } from '@/components/academy/VideoTutorialSection';
+import { VideoTutorialsSection } from '@/components/video-tutorials';
 import {
   BookOpen,
   Shield,
@@ -235,14 +233,6 @@ const FAQ_ITEMS = [
 export default function AideSupport() {
   const [trainingOpen, setTrainingOpen] = useState(false);
   const [trainingCompleted, setTrainingCompleted] = useState(false);
-  const { 
-    completedSteps, 
-    isCertified, 
-    progress, 
-    loading: trainingLoading,
-    startWalkthrough,
-    totalSteps
-  } = useTrainingProgress();
 
   const handleDownloadPdf = () => {
     try {
@@ -272,7 +262,6 @@ export default function AideSupport() {
                 Guide opérationnel complet pour TBOS
               </p>
             </div>
-            {isCertified && <CertifiedBadge level="gold" size="lg" showLabel />}
           </div>
           <div className="flex gap-2">
             <Button 
@@ -287,90 +276,8 @@ export default function AideSupport() {
           </div>
         </div>
 
-        {/* TBOS Academy Interactive Walkthrough */}
-        <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
-          <CardHeader className="pb-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border border-primary/30">
-                  <GraduationCap className="h-7 w-7 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    TBOS Academy
-                    {isCertified && (
-                      <Badge className="bg-success/20 text-success border-success/30">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        Certifié
-                      </Badge>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    Formation interactive guidée en 3 étapes
-                  </CardDescription>
-                </div>
-              </div>
-              <Button 
-                className="gap-2 bg-gradient-to-r from-primary to-primary/80"
-                onClick={startWalkthrough}
-                disabled={trainingLoading}
-              >
-                <Sparkles className="h-4 w-4" />
-                {isCertified ? 'Refaire le Parcours' : completedSteps.length > 0 ? 'Continuer' : 'Commencer'}
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progression</span>
-                <span className="font-medium">{completedSteps.length}/{totalSteps} étapes</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-
-            {/* Training Steps */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {TRAINING_STEPS.map((step, idx) => (
-                <div
-                  key={step.id}
-                  className={cn(
-                    "p-3 rounded-lg border transition-all",
-                    completedSteps.includes(step.id) 
-                      ? "bg-success/10 border-success/30" 
-                      : "bg-muted/30 border-border/50"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "h-7 w-7 rounded-full flex items-center justify-center text-sm font-bold shrink-0",
-                      completedSteps.includes(step.id)
-                        ? "bg-success text-success-foreground"
-                        : "bg-muted text-muted-foreground"
-                    )}>
-                      {completedSteps.includes(step.id) ? (
-                        <CheckCircle2 className="h-4 w-4" />
-                      ) : (
-                        idx + 1
-                      )}
-                    </div>
-                    <div>
-                      <p className={cn(
-                        "font-medium text-sm",
-                        completedSteps.includes(step.id) ? "text-success" : "text-foreground"
-                      )}>
-                        {step.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">{step.description}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Video Tutorials Section - Prominently displayed */}
+        <VideoTutorialsSection />
 
         {/* Training Mode CTA */}
         <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent overflow-hidden relative">
@@ -421,7 +328,7 @@ export default function AideSupport() {
         />
 
         {/* Video Tutorials Section - Prominently displayed */}
-        <VideoTutorialSection />
+        <VideoTutorialsSection />
 
         {/* Main Tabs */}
         <Tabs defaultValue="rules" className="space-y-4">

@@ -28,7 +28,7 @@ import {
   formatCasablancaTime,
   isCurrentlyOffHours 
 } from '@/lib/timezone';
-import { InfoTooltip } from '@/components/academy/InfoTooltip';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 
 interface MidnightTransaction {
   id: string;
