@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -22,62 +22,42 @@ interface AcademyLauncherProps {
   showOnFirstVisit?: boolean;
 }
 
+// Session storage key for showing instruction card
+const INSTRUCTION_CARD_KEY = 'tbos-show-instruction-card';
+
 export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProps) {
   const navigate = useNavigate();
-  const location = useLocation();
   const { 
     completedSteps, 
     isCertified, 
     progress, 
     loading,
-    startWalkthrough,
     totalSteps
   } = useTrainingProgress();
   
   const [isExpanded, setIsExpanded] = useState(false);
-  const [hasSeenLauncher, setHasSeenLauncher] = useState(false);
 
   useEffect(() => {
     const seen = localStorage.getItem('tbos-academy-seen');
-    if (seen) {
-      setHasSeenLauncher(true);
-    } else if (showOnFirstVisit && !loading && !isCertified) {
+    if (!seen && showOnFirstVisit && !loading && !isCertified) {
       setIsExpanded(true);
       localStorage.setItem('tbos-academy-seen', 'true');
     }
   }, [loading, isCertified, showOnFirstVisit]);
 
-  const handleStart = async () => {
-    console.log('[Academy] Commencer button clicked - starting tour sequence');
+  const handleStart = () => {
+    console.log('[Academy] Commencer clicked - navigating to Nouveau Devis');
     
-    // Step 1: Close the overlay immediately
+    // Close overlay
     setIsExpanded(false);
-    console.log('[Academy] Overlay closed');
     
-    // Step 2: Check if 'Nouveau Devis' button exists on the screen
-    const nouveauDevisButton = document.querySelector('[data-tour="nouveau-devis"]') || 
-                               document.querySelector('button:has-text("Nouveau Devis")') ||
-                               Array.from(document.querySelectorAll('button')).find(btn => 
-                                 btn.textContent?.includes('Nouveau Devis') || btn.textContent?.includes('Nouveau')
-                               );
+    // Set flag to show instruction card
+    sessionStorage.setItem(INSTRUCTION_CARD_KEY, 'true');
     
-    if (nouveauDevisButton) {
-      console.log('[Academy] Nouveau Devis button found on current page - starting spotlight tour');
-      startWalkthrough();
-      console.log('[Academy] ✅ Tour started successfully');
-    } else {
-      console.log('[Academy] Nouveau Devis button NOT found - redirecting to Pipeline Commercial (/ventes)');
-      
-      // Step 4: Redirect to Ventes page
-      navigate('/ventes');
-      
-      // Wait for navigation and DOM to settle, then start tour
-      setTimeout(() => {
-        console.log('[Academy] Navigation complete - starting spotlight tour');
-        startWalkthrough();
-        console.log('[Academy] ✅ Tour started successfully after redirect');
-      }, 500);
-    }
+    // Navigate to Ventes page with query param to open new devis form
+    navigate('/ventes?action=nouveau-devis');
+    
+    console.log('[Academy] ✅ Navigation triggered');
   };
 
   if (loading) return null;
