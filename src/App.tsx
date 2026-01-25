@@ -43,6 +43,7 @@ import ModeFormation from "./pages/ModeFormation";
 import Creances from "./pages/Creances";
 import Dettes from "./pages/Dettes";
 import Prets from "./pages/Prets";
+import Immobilisations from "./pages/Immobilisations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,8 @@ const App = () => (
                 <Route path="/dettes" element={<Dettes />} />
                 {/* Loan Management */}
                 <Route path="/prets" element={<Prets />} />
+                {/* Fixed Assets Management */}
+                <Route path="/immobilisations" element={<Immobilisations />} />
                 {/* Mode Formation - Interactive Training Simulations */}
                 <Route path="/formation" element={<ModeFormation />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

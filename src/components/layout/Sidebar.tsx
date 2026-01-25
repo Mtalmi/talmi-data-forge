@@ -101,13 +101,13 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
     ceo: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite', '/contracts', '/creances', '/dettes', '/prets'],
+          '/approbations', '/alertes', '/audit-superviseur', '/users', '/securite', '/contracts', '/creances', '/dettes', '/prets', '/immobilisations'],
     
     // Superviseur (Karim) - FULL access like CEO (all changes are AUDITED)
     superviseur: ['/', '/planning', '/chauffeur', '/bons', '/production', '/logistique', '/formules', '/ventes', 
           '/clients', '/stocks', '/laboratoire', '/depenses', '/depenses-v2', '/fournisseurs', '/prestataires', 
           '/paiements', '/rapprochement', '/pointage', '/prix', '/maintenance', '/rapports', '/journal',
-          '/approbations', '/alertes', '/securite', '/contracts', '/creances', '/dettes', '/prets'],
+          '/approbations', '/alertes', '/securite', '/contracts', '/creances', '/dettes', '/prets', '/immobilisations'],
     
     // Resp. Technique - Dashboard, Formules (READ-ONLY), Stocks (Quality Entry ONLY), Production, Lab
     // Can CREATE Stock Entry Request with mandatory photo, but CANNOT Finalize/Validate stock increases
@@ -249,8 +249,8 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
           </>
         )}
 
-        {/* SUPPORT: Stocks, Formules, Lab, Maintenance, Contracts */}
-        {(canAccess('/stocks') || canAccess('/formules') || canAccess('/laboratoire') || canAccess('/maintenance') || canAccess('/prix') || canAccess('/fournisseurs') || canAccess('/prestataires') || canAccess('/pointage') || canAccess('/contracts')) && (
+        {/* SUPPORT: Stocks, Formules, Lab, Maintenance, Contracts, Fixed Assets */}
+        {(canAccess('/stocks') || canAccess('/formules') || canAccess('/laboratoire') || canAccess('/maintenance') || canAccess('/prix') || canAccess('/fournisseurs') || canAccess('/prestataires') || canAccess('/pointage') || canAccess('/contracts') || canAccess('/immobilisations')) && (
           <>
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -262,6 +262,7 @@ function SidebarContent({ onNavClick, previewRole, pendingBLCount = 0 }: Sidebar
             {canAccess('/laboratoire') && <NavItem to="/laboratoire" icon={<FlaskConical className="h-5 w-5" />} label="Laboratoire" onClick={onNavClick} />}
             {canAccess('/maintenance') && <NavItem to="/maintenance" icon={<Wrench className="h-5 w-5" />} label="Maintenance" onClick={onNavClick} />}
             {canAccess('/contracts') && <NavItem to="/contracts" icon={<FileText className="h-5 w-5" />} label="Contrats" onClick={onNavClick} />}
+            {canAccess('/immobilisations') && <NavItem to="/immobilisations" icon={<Building2 className="h-5 w-5" />} label="Immobilisations" onClick={onNavClick} />}
             {canAccess('/fournisseurs') && <NavItem to="/fournisseurs" icon={<PackageSearch className="h-5 w-5" />} label="Fournisseurs" onClick={onNavClick} />}
             {canAccess('/prestataires') && <NavItem to="/prestataires" icon={<MapPin className="h-5 w-5" />} label="Transport & Zones" onClick={onNavClick} />}
             {canAccess('/prix') && <NavItem to="/prix" icon={<DollarSign className="h-5 w-5" />} label="Prix d'Achat" onClick={onNavClick} />}

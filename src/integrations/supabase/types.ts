@@ -287,6 +287,249 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_depreciation_schedule: {
+        Row: {
+          accumulated_depreciation: number
+          asset_id: string
+          created_at: string
+          depreciation_amount: number
+          id: string
+          is_posted: boolean | null
+          net_book_value: number
+          period_date: string
+          period_number: number
+          posted_at: string | null
+          posted_by: string | null
+        }
+        Insert: {
+          accumulated_depreciation: number
+          asset_id: string
+          created_at?: string
+          depreciation_amount: number
+          id?: string
+          is_posted?: boolean | null
+          net_book_value: number
+          period_date: string
+          period_number: number
+          posted_at?: string | null
+          posted_by?: string | null
+        }
+        Update: {
+          accumulated_depreciation?: number
+          asset_id?: string
+          created_at?: string
+          depreciation_amount?: number
+          id?: string
+          is_posted?: boolean | null
+          net_book_value?: number
+          period_date?: string
+          period_number?: number
+          posted_at?: string | null
+          posted_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_depreciation_schedule_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "fixed_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_disposals: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          approved_by_name: string | null
+          asset_id: string
+          buyer_contact: string | null
+          buyer_name: string | null
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          disposal_date: string
+          disposal_price: number | null
+          disposal_reason: string | null
+          disposal_type: string
+          documents: Json | null
+          gain_loss: number
+          id: string
+          invoice_url: string | null
+          net_book_value_at_disposal: number
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          asset_id: string
+          buyer_contact?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          disposal_date: string
+          disposal_price?: number | null
+          disposal_reason?: string | null
+          disposal_type: string
+          documents?: Json | null
+          gain_loss: number
+          id?: string
+          invoice_url?: string | null
+          net_book_value_at_disposal: number
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          asset_id?: string
+          buyer_contact?: string | null
+          buyer_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          disposal_date?: string
+          disposal_price?: number | null
+          disposal_reason?: string | null
+          disposal_type?: string
+          documents?: Json | null
+          gain_loss?: number
+          id?: string
+          invoice_url?: string | null
+          net_book_value_at_disposal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_disposals_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "fixed_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_inventory_checks: {
+        Row: {
+          condition_issues: number
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          extra_count: number
+          id: string
+          inventory_date: string
+          inventory_year: number
+          location_errors: number
+          missing_count: number
+          reconciled_at: string | null
+          reconciled_by: string | null
+          reconciled_by_name: string | null
+          reconciliation_notes: string | null
+          results: Json
+          status: string
+          total_assets_found: number
+          total_assets_system: number
+        }
+        Insert: {
+          condition_issues?: number
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          extra_count?: number
+          id?: string
+          inventory_date: string
+          inventory_year: number
+          location_errors?: number
+          missing_count?: number
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          reconciled_by_name?: string | null
+          reconciliation_notes?: string | null
+          results?: Json
+          status?: string
+          total_assets_found?: number
+          total_assets_system?: number
+        }
+        Update: {
+          condition_issues?: number
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          extra_count?: number
+          id?: string
+          inventory_date?: string
+          inventory_year?: number
+          location_errors?: number
+          missing_count?: number
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          reconciled_by_name?: string | null
+          reconciliation_notes?: string | null
+          results?: Json
+          status?: string
+          total_assets_found?: number
+          total_assets_system?: number
+        }
+        Relationships: []
+      }
+      asset_maintenance: {
+        Row: {
+          asset_id: string
+          cost: number
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          description: string | null
+          id: string
+          invoice_url: string | null
+          maintenance_date: string
+          maintenance_type: string
+          next_maintenance_date: string | null
+          next_maintenance_type: string | null
+          performed_by: string | null
+          photos: Json | null
+        }
+        Insert: {
+          asset_id: string
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          maintenance_date: string
+          maintenance_type: string
+          next_maintenance_date?: string | null
+          next_maintenance_type?: string | null
+          performed_by?: string | null
+          photos?: Json | null
+        }
+        Update: {
+          asset_id?: string
+          cost?: number
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          description?: string | null
+          id?: string
+          invoice_url?: string | null
+          maintenance_date?: string
+          maintenance_type?: string
+          next_maintenance_date?: string | null
+          next_maintenance_type?: string | null
+          performed_by?: string | null
+          photos?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_maintenance_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "fixed_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       associate_transactions: {
         Row: {
           amount: number
@@ -2776,6 +3019,123 @@ export type Database = {
           {
             foreignKeyName: "factures_fournisseur_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fixed_assets: {
+        Row: {
+          accumulated_depreciation: number
+          asset_id: string
+          barcode: string | null
+          category: Database["public"]["Enums"]["asset_category"]
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          depreciation_method: Database["public"]["Enums"]["depreciation_method"]
+          depreciation_start_date: string
+          description: string
+          documents: Json | null
+          id: string
+          invoice_number: string | null
+          invoice_url: string | null
+          location: string
+          monthly_depreciation: number
+          net_book_value: number
+          photos: Json | null
+          purchase_date: string
+          purchase_price: number
+          residual_value: number
+          responsible_person: string | null
+          serial_number: string | null
+          status: Database["public"]["Enums"]["asset_status"]
+          supplier_id: string | null
+          updated_at: string
+          updated_by: string | null
+          updated_by_name: string | null
+          useful_life_months: number
+          warranty_certificate_url: string | null
+          warranty_end_date: string | null
+        }
+        Insert: {
+          accumulated_depreciation?: number
+          asset_id: string
+          barcode?: string | null
+          category: Database["public"]["Enums"]["asset_category"]
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          depreciation_method?: Database["public"]["Enums"]["depreciation_method"]
+          depreciation_start_date: string
+          description: string
+          documents?: Json | null
+          id?: string
+          invoice_number?: string | null
+          invoice_url?: string | null
+          location?: string
+          monthly_depreciation: number
+          net_book_value: number
+          photos?: Json | null
+          purchase_date: string
+          purchase_price: number
+          residual_value?: number
+          responsible_person?: string | null
+          serial_number?: string | null
+          status?: Database["public"]["Enums"]["asset_status"]
+          supplier_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+          useful_life_months: number
+          warranty_certificate_url?: string | null
+          warranty_end_date?: string | null
+        }
+        Update: {
+          accumulated_depreciation?: number
+          asset_id?: string
+          barcode?: string | null
+          category?: Database["public"]["Enums"]["asset_category"]
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          depreciation_method?: Database["public"]["Enums"]["depreciation_method"]
+          depreciation_start_date?: string
+          description?: string
+          documents?: Json | null
+          id?: string
+          invoice_number?: string | null
+          invoice_url?: string | null
+          location?: string
+          monthly_depreciation?: number
+          net_book_value?: number
+          photos?: Json | null
+          purchase_date?: string
+          purchase_price?: number
+          residual_value?: number
+          responsible_person?: string | null
+          serial_number?: string | null
+          status?: Database["public"]["Enums"]["asset_status"]
+          supplier_id?: string | null
+          updated_at?: string
+          updated_by?: string | null
+          updated_by_name?: string | null
+          useful_life_months?: number
+          warranty_certificate_url?: string | null
+          warranty_end_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fixed_assets_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "fixed_assets_supplier_id_fkey"
+            columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
@@ -5601,6 +5961,15 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_monthly_depreciation: {
+        Args: {
+          p_method?: Database["public"]["Enums"]["depreciation_method"]
+          p_purchase_price: number
+          p_residual_value: number
+          p_useful_life_months: number
+        }
+        Returns: number
+      }
       calculate_quote_price: {
         Args: {
           p_distance_km?: number
@@ -5653,6 +6022,22 @@ export type Database = {
         Returns: Json
       }
       check_contract_expirations: { Args: never; Returns: undefined }
+      check_duplicate_asset: {
+        Args: {
+          p_category: Database["public"]["Enums"]["asset_category"]
+          p_exclude_id?: string
+          p_purchase_date: string
+          p_purchase_price: number
+          p_serial_number: string
+          p_supplier_id: string
+        }
+        Returns: {
+          duplicate_asset_id: string
+          duplicate_id: string
+          is_duplicate: boolean
+          match_type: string
+        }[]
+      }
       consume_ceo_override: {
         Args: { p_override_type: string; p_record_id?: string; p_token: string }
         Returns: boolean
@@ -5701,10 +6086,15 @@ export type Database = {
           total_amount: number
         }[]
       }
+      generate_asset_id: { Args: never; Returns: string }
       generate_associate_transaction_number: { Args: never; Returns: string }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
+      }
+      generate_depreciation_schedule: {
+        Args: { p_asset_id: string }
+        Returns: number
       }
       generate_loan_number: { Args: never; Returns: string }
       get_associate_balance: {
@@ -5724,6 +6114,16 @@ export type Database = {
           total_pending: number
           total_spent: number
           utilization_pct: number
+        }[]
+      }
+      get_fixed_assets_summary: {
+        Args: never
+        Returns: {
+          accumulated_depreciation: number
+          asset_count: number
+          category: Database["public"]["Enums"]["asset_category"]
+          gross_value: number
+          net_value: number
         }[]
       }
       get_loan_outstanding_balance: {
@@ -5827,6 +6227,7 @@ export type Database = {
         }
         Returns: Json
       }
+      update_asset_depreciation: { Args: never; Returns: number }
       validate_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
         Returns: Json
@@ -5843,6 +6244,21 @@ export type Database = {
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
+      asset_category:
+        | "batiments"
+        | "vehicules"
+        | "equipements"
+        | "mobilier"
+        | "informatique"
+        | "outils"
+        | "autre"
+      asset_status:
+        | "new"
+        | "active"
+        | "maintenance"
+        | "inactive"
+        | "pending_disposal"
+        | "disposed"
       cash_source_type:
         | "customer_payment"
         | "ceo_injection"
@@ -5850,6 +6266,7 @@ export type Database = {
         | "loan"
         | "other"
       contract_type: "camion_rental" | "trax_rental" | "terrain_rental"
+      depreciation_method: "linear" | "accelerated" | "units_of_production"
       expense_approval_level: "level_1" | "level_2" | "level_3"
       expense_category:
         | "carburant"
@@ -6011,6 +6428,23 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["ceo", "operator", "accounting", "commercial"],
+      asset_category: [
+        "batiments",
+        "vehicules",
+        "equipements",
+        "mobilier",
+        "informatique",
+        "outils",
+        "autre",
+      ],
+      asset_status: [
+        "new",
+        "active",
+        "maintenance",
+        "inactive",
+        "pending_disposal",
+        "disposed",
+      ],
       cash_source_type: [
         "customer_payment",
         "ceo_injection",
@@ -6019,6 +6453,7 @@ export const Constants = {
         "other",
       ],
       contract_type: ["camion_rental", "trax_rental", "terrain_rental"],
+      depreciation_method: ["linear", "accelerated", "units_of_production"],
       expense_approval_level: ["level_1", "level_2", "level_3"],
       expense_category: [
         "carburant",
