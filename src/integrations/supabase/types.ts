@@ -227,6 +227,66 @@ export type Database = {
         }
         Relationships: []
       }
+      approval_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          event_id: string
+          event_type: string
+          id: string
+          ip_address: string | null
+          new_status: string | null
+          previous_status: string | null
+          quote_id: string
+          reason: string | null
+          security_flag: boolean | null
+          session_id: string | null
+          timestamp: string
+          user_id: string | null
+          user_name: string | null
+          user_role: string | null
+          validation_details: Json | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          event_id?: string
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          new_status?: string | null
+          previous_status?: string | null
+          quote_id: string
+          reason?: string | null
+          security_flag?: boolean | null
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+          user_name?: string | null
+          user_role?: string | null
+          validation_details?: Json | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          event_id?: string
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          new_status?: string | null
+          previous_status?: string | null
+          quote_id?: string
+          reason?: string | null
+          security_flag?: boolean | null
+          session_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+          user_name?: string | null
+          user_role?: string | null
+          validation_details?: Json | null
+        }
+        Relationships: []
+      }
       ar_ap_reconciliation: {
         Row: {
           adjustments: number | null
@@ -2362,12 +2422,20 @@ export type Database = {
       }
       devis: {
         Row: {
+          admin_approval_at: string | null
+          admin_approval_by: string | null
+          admin_approval_by_name: string | null
+          admin_approval_notes: string | null
+          admin_approval_status: string | null
+          approval_chain_complete: boolean | null
+          blocking_reason: string | null
           client_id: string | null
           created_at: string
           created_by: string | null
           cut_per_m3: number
           date_expiration: string | null
           devis_id: string
+          discrepancies_count: number | null
           distance_km: number
           fixed_cost_per_m3: number
           formule_id: string
@@ -2383,6 +2451,8 @@ export type Database = {
           requires_technical_approval: boolean | null
           rollback_count: number
           statut: string
+          tech_approval_notes: string | null
+          tech_approval_status: string | null
           technical_approved_at: string | null
           technical_approved_by: string | null
           technical_approved_by_name: string | null
@@ -2394,17 +2464,26 @@ export type Database = {
           validated_by: string | null
           validated_by_name: string | null
           validated_by_role: string | null
+          validation_score: number | null
           validite_jours: number
           volume_m3: number
           zone_livraison_id: string | null
         }
         Insert: {
+          admin_approval_at?: string | null
+          admin_approval_by?: string | null
+          admin_approval_by_name?: string | null
+          admin_approval_notes?: string | null
+          admin_approval_status?: string | null
+          approval_chain_complete?: boolean | null
+          blocking_reason?: string | null
           client_id?: string | null
           created_at?: string
           created_by?: string | null
           cut_per_m3: number
           date_expiration?: string | null
           devis_id: string
+          discrepancies_count?: number | null
           distance_km?: number
           fixed_cost_per_m3?: number
           formule_id: string
@@ -2420,6 +2499,8 @@ export type Database = {
           requires_technical_approval?: boolean | null
           rollback_count?: number
           statut?: string
+          tech_approval_notes?: string | null
+          tech_approval_status?: string | null
           technical_approved_at?: string | null
           technical_approved_by?: string | null
           technical_approved_by_name?: string | null
@@ -2431,17 +2512,26 @@ export type Database = {
           validated_by?: string | null
           validated_by_name?: string | null
           validated_by_role?: string | null
+          validation_score?: number | null
           validite_jours?: number
           volume_m3: number
           zone_livraison_id?: string | null
         }
         Update: {
+          admin_approval_at?: string | null
+          admin_approval_by?: string | null
+          admin_approval_by_name?: string | null
+          admin_approval_notes?: string | null
+          admin_approval_status?: string | null
+          approval_chain_complete?: boolean | null
+          blocking_reason?: string | null
           client_id?: string | null
           created_at?: string
           created_by?: string | null
           cut_per_m3?: number
           date_expiration?: string | null
           devis_id?: string
+          discrepancies_count?: number | null
           distance_km?: number
           fixed_cost_per_m3?: number
           formule_id?: string
@@ -2457,6 +2547,8 @@ export type Database = {
           requires_technical_approval?: boolean | null
           rollback_count?: number
           statut?: string
+          tech_approval_notes?: string | null
+          tech_approval_status?: string | null
           technical_approved_at?: string | null
           technical_approved_by?: string | null
           technical_approved_by_name?: string | null
@@ -2468,6 +2560,7 @@ export type Database = {
           validated_by?: string | null
           validated_by_name?: string | null
           validated_by_role?: string | null
+          validation_score?: number | null
           validite_jours?: number
           volume_m3?: number
           zone_livraison_id?: string | null
@@ -4852,6 +4945,57 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_approvals: {
+        Row: {
+          approval_type: string
+          approved_at: string
+          approved_by: string | null
+          approved_by_name: string | null
+          approved_by_role: string | null
+          created_at: string
+          discrepancies_count: number | null
+          id: string
+          quote_id: string
+          reason: string | null
+          status: string
+          updated_at: string
+          validation_details: Json | null
+          validation_score: number | null
+        }
+        Insert: {
+          approval_type: string
+          approved_at?: string
+          approved_by?: string | null
+          approved_by_name?: string | null
+          approved_by_role?: string | null
+          created_at?: string
+          discrepancies_count?: number | null
+          id?: string
+          quote_id: string
+          reason?: string | null
+          status: string
+          updated_at?: string
+          validation_details?: Json | null
+          validation_score?: number | null
+        }
+        Update: {
+          approval_type?: string
+          approved_at?: string
+          approved_by?: string | null
+          approved_by_name?: string | null
+          approved_by_role?: string | null
+          created_at?: string
+          discrepancies_count?: number | null
+          id?: string
+          quote_id?: string
+          reason?: string | null
+          status?: string
+          updated_at?: string
+          validation_details?: Json | null
+          validation_score?: number | null
+        }
+        Relationships: []
+      }
       rapports_journaliers: {
         Row: {
           created_at: string
@@ -5945,6 +6089,10 @@ export type Database = {
         }
         Returns: Json
       }
+      approve_administrative_devis: {
+        Args: { p_action?: string; p_devis_id: string; p_notes?: string }
+        Returns: Json
+      }
       approve_devis_with_stamp: { Args: { p_devis_id: string }; Returns: Json }
       approve_stock_quality: {
         Args: {
@@ -5957,6 +6105,16 @@ export type Database = {
       }
       approve_technical_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
+        Returns: Json
+      }
+      approve_technical_devis_v2: {
+        Args: {
+          p_action?: string
+          p_devis_id: string
+          p_discrepancies_count?: number
+          p_reason?: string
+          p_validation_score?: number
+        }
         Returns: Json
       }
       approve_technical_reception: {
@@ -6153,6 +6311,7 @@ export type Database = {
         Returns: number
       }
       generate_loan_number: { Args: never; Returns: string }
+      get_approval_status: { Args: { p_devis_id: string }; Returns: Json }
       get_associate_balance: {
         Args: { p_associate_id: string }
         Returns: number
@@ -6269,6 +6428,7 @@ export type Database = {
           role_name: string
         }[]
       }
+      get_user_role_text: { Args: { p_user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -6293,6 +6453,19 @@ export type Database = {
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
+      log_approval_audit: {
+        Args: {
+          p_action: string
+          p_event_type: string
+          p_new_status?: string
+          p_previous_status?: string
+          p_quote_id: string
+          p_reason?: string
+          p_security_flag?: boolean
+          p_validation_details?: Json
+        }
+        Returns: string
+      }
       match_deposit_to_invoice: { Args: { deposit_id: string }; Returns: Json }
       release_edit_lock: {
         Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
