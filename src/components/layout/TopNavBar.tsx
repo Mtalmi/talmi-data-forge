@@ -38,7 +38,7 @@ import {
   Wrench,
   HelpCircle,
   FileText,
-  Video,
+  GraduationCap,
 } from 'lucide-react';
 
 interface TopNavBarProps {
@@ -132,7 +132,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
       label: 'Support',
       items: [
         { to: '/aide', label: 'Manuel Système', icon: HelpCircle },
-        { to: '/tutoriels', label: 'Tutoriels Vidéo', icon: Video },
+        { to: '/formation', label: 'Mode Formation', icon: GraduationCap },
       ],
     },
   ].filter(group => group.items.length > 0);
