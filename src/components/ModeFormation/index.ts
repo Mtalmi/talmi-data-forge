@@ -1,4 +1,8 @@
+// Core components
 export { SimulationCard } from './SimulationCard';
+export { SimulationCardWithRBAC } from './SimulationCardWithRBAC';
+
+// Simulation modals
 export { StockReceptionSim } from './StockReceptionSim';
 export { ExpenseEntrySim } from './ExpenseEntrySim';
 export { MidnightProtocolSim } from './MidnightProtocolSim';
@@ -13,4 +17,16 @@ export { CeoOverrideSim } from './CeoOverrideSim';
 export { ForensicAnalysisSim } from './ForensicAnalysisSim';
 export { FinancialReportingSim } from './FinancialReportingSim';
 export { ClientManagementSim } from './ClientManagementSim';
+
+// RBAC components
+export { AccessBadge, RestrictedAccessCard } from './AccessBadge';
+export { CertificationBadge, CertificationMini } from './CertificationBadge';
+
+// Hooks
+export { useFormationProgress } from './useFormationProgress';
+
+// RBAC utilities
+export * from './rbac';
+
+// Types
 export * from './types';

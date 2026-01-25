@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   GraduationCap,
   BookOpen,
@@ -11,9 +12,11 @@ import {
   Star,
   Layers,
   Crown,
+  Lock,
+  AlertCircle,
 } from 'lucide-react';
 import {
-  SimulationCard,
+  SimulationCardWithRBAC,
   StockReceptionSim,
   ExpenseEntrySim,
   MidnightProtocolSim,
@@ -28,11 +31,19 @@ import {
   ForensicAnalysisSim,
   FinancialReportingSim,
   ClientManagementSim,
+  CertificationBadge,
+  useFormationProgress,
   SimulationType,
   SimulationTier,
   SimulationDifficulty,
+  canAccessSimulation,
+  canAccessTier,
+  TIER_SIMULATIONS,
+  ROLE_DISPLAY_NAMES,
+  AppRole,
 } from '@/components/ModeFormation';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface SimulationConfig {
   type: SimulationType;
@@ -164,6 +175,7 @@ const SIMULATIONS: SimulationConfig[] = [
 const TIER_CONFIG = {
   core: {
     title: 'Tier 1: Fondamentaux',
+    subtitle: 'Obligatoire pour tous',
     icon: Star,
     description: 'Opérations quotidiennes essentielles',
     bgColor: 'bg-amber-50 dark:bg-amber-950/30',
@@ -172,6 +184,7 @@ const TIER_CONFIG = {
   },
   advanced: {
     title: 'Tier 2: Avancé',
+    subtitle: 'Responsables de département',
     icon: Layers,
     description: 'Fonctions techniques et logistiques',
     bgColor: 'bg-orange-50 dark:bg-orange-950/30',
@@ -180,6 +193,7 @@ const TIER_CONFIG = {
   },
   executive: {
     title: 'Tier 3: Direction',
+    subtitle: 'PDG, DAF, Superviseur',
     icon: Crown,
     description: 'Contrôle exécutif et analyse',
     bgColor: 'bg-rose-50 dark:bg-rose-950/30',
@@ -189,25 +203,62 @@ const TIER_CONFIG = {
 };
 
 export default function ModeFormation() {
-  const [completedSims, setCompletedSims] = useState<SimulationType[]>([]);
   const [activeSim, setActiveSim] = useState<SimulationType | null>(null);
+  
+  const {
+    userRole,
+    completedSimulations,
+    mandatoryProgress,
+    certificationStatus,
+    isFullyCertified,
+    loading,
+    completeSimulation,
+    resetProgress,
+    checkAndIssueCertification,
+    canAccess,
+    isCompleted,
+  } = useFormationProgress();
 
-  const handleComplete = (type: SimulationType) => {
-    if (!completedSims.includes(type)) {
-      setCompletedSims((prev) => [...prev, type]);
+  // Check for certification when progress changes
+  useEffect(() => {
+    if (certificationStatus === 'FULLY_CERTIFIED') {
+      checkAndIssueCertification();
+    }
+  }, [certificationStatus, checkAndIssueCertification]);
+
+  const handleComplete = async (type: SimulationType) => {
+    const result = await completeSimulation(type);
+    if (result.success) {
+      toast.success('🎉 Simulation terminée!', {
+        description: `Module "${SIMULATIONS.find(s => s.type === type)?.title}" complété avec succès.`,
+      });
     }
     setActiveSim(null);
   };
 
-  const handleReset = () => {
-    setCompletedSims([]);
+  const handleReset = async () => {
+    const result = await resetProgress();
+    if (result.success) {
+      toast.info('Progression réinitialisée', {
+        description: 'Vous pouvez recommencer toutes les simulations.',
+      });
+    }
   };
-
-  const progressPct = (completedSims.length / SIMULATIONS.length) * 100;
-  const allComplete = completedSims.length === SIMULATIONS.length;
 
   const getSimsByTier = (tier: SimulationTier) => 
     SIMULATIONS.filter(sim => sim.tier === tier);
+
+  const getTierProgress = (tier: SimulationTier) => {
+    const tierSims = getSimsByTier(tier);
+    const accessibleSims = tierSims.filter(s => canAccess(s.type));
+    const completedCount = accessibleSims.filter(s => isCompleted(s.type)).length;
+    return { completed: completedCount, total: accessibleSims.length };
+  };
+
+  const hasTierAccess = (tier: SimulationTier) => {
+    const tierSims = getSimsByTier(tier);
+    return tierSims.some(s => canAccess(s.type));
+  };
 
   const renderSimModal = () => {
     if (!activeSim) return null;
@@ -251,6 +302,22 @@ export default function ModeFormation() {
     }
   };
 
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-20 w-full" />
+          <Skeleton className="h-32 w-full" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <Skeleton key={i} className="h-48" />
+            ))}
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <div className="space-y-6 animate-fade-in">
@@ -268,12 +335,15 @@ export default function ModeFormation() {
                 </Badge>
               </h1>
               <p className="text-muted-foreground">
-                14 simulations interactives - Aucune donnée réelle affectée
+                {userRole 
+                  ? `${ROLE_DISPLAY_NAMES[userRole as AppRole]} - Formation personnalisée`
+                  : '14 simulations interactives - Aucune donnée réelle affectée'
+                }
               </p>
             </div>
           </div>
 
-          {completedSims.length > 0 && (
+          {completedSimulations.length > 0 && (
             <Button variant="outline" size="sm" onClick={handleReset}>
               <RotateCcw className="h-4 w-4 mr-1" />
               Réinitialiser
@@ -281,52 +351,76 @@ export default function ModeFormation() {
           )}
         </div>
 
-        {/* Progress Card */}
-        <div
-          className={cn(
-            'p-4 rounded-xl border transition-all',
-            allComplete
-              ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-700'
-              : 'bg-amber-50/50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-700'
-          )}
-        >
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              {allComplete ? (
-                <Trophy className="h-5 w-5 text-emerald-500" />
-              ) : (
-                <BookOpen className="h-5 w-5 text-amber-500" />
-              )}
-              <span className="font-medium">
-                {allComplete ? '🎉 TBOS Certified Operator!' : 'Progression'}
-              </span>
-            </div>
-            <span className="text-sm font-mono">
-              {completedSims.length}/{SIMULATIONS.length}
-            </span>
-          </div>
-          <Progress
-            value={progressPct}
-            className={cn(
-              'h-2',
-              allComplete ? '[&>div]:bg-emerald-500' : '[&>div]:bg-amber-500'
-            )}
-          />
-          {allComplete && (
-            <div className="mt-3 p-3 bg-emerald-100 dark:bg-emerald-900/50 rounded-lg">
-              <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium">
-                🏆 Félicitations! Vous avez terminé toutes les simulations et êtes maintenant certifié opérateur TBOS.
-              </p>
-            </div>
-          )}
-        </div>
+        {/* Certification Status Card */}
+        <CertificationBadge
+          status={certificationStatus}
+          progress={mandatoryProgress}
+          userRole={userRole}
+          showDownload={isFullyCertified}
+        />
 
         {/* Simulation Tiers */}
         {(['core', 'advanced', 'executive'] as SimulationTier[]).map((tier) => {
           const config = TIER_CONFIG[tier];
           const TierIcon = config.icon;
           const tierSims = getSimsByTier(tier);
-          const tierCompleted = tierSims.filter(s => completedSims.includes(s.type)).length;
+          const tierProgress = getTierProgress(tier);
+          const hasAccess = hasTierAccess(tier);
+          const isTierAccessible = tier === 'core' || canAccessTier(tier, completedSimulations);
+
+          // If no access to any simulation in this tier and not core
+          if (!hasAccess && tier !== 'core') {
+            return (
+              <div key={tier} className="space-y-4">
+                <div className={cn(
+                  'p-4 rounded-xl border opacity-60',
+                  'bg-muted/30 border-muted'
+                )}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Lock className="h-5 w-5 text-muted-foreground" />
+                      <div>
+                        <h2 className="font-semibold text-muted-foreground">{config.title}</h2>
+                        <p className="text-sm text-muted-foreground">{config.subtitle}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-muted">
+                      <Lock className="h-3 w-3 mr-1" />
+                      Accès restreint
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          // Tier not yet accessible (prerequisites not met)
+          if (!isTierAccessible && hasAccess) {
+            return (
+              <div key={tier} className="space-y-4">
+                <div className={cn(
+                  'p-4 rounded-xl border',
+                  config.bgColor,
+                  config.borderColor,
+                  'opacity-75'
+                )}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <TierIcon className={cn('h-5 w-5', config.iconColor)} />
+                      <div>
+                        <h2 className="font-semibold">{config.title}</h2>
+                        <p className="text-sm text-muted-foreground">{config.description}</p>
+                      </div>
+                    </div>
+                    <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
+                      <AlertCircle className="h-3 w-3 mr-1" />
+                      Complétez le Tier précédent
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            );
+          }
 
           return (
             <div key={tier} className="space-y-4">
@@ -344,25 +438,26 @@ export default function ModeFormation() {
                     </div>
                   </div>
                   <Badge variant="outline" className={cn(
-                    tierCompleted === tierSims.length 
+                    tierProgress.completed === tierProgress.total && tierProgress.total > 0
                       ? 'bg-emerald-100 text-emerald-700 border-emerald-300'
                       : 'bg-muted'
                   )}>
-                    {tierCompleted}/{tierSims.length}
+                    {tierProgress.completed}/{tierProgress.total}
                   </Badge>
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {tierSims.map((sim) => (
-                  <SimulationCard
+                  <SimulationCardWithRBAC
                     key={sim.type}
                     type={sim.type}
                     title={sim.title}
                     description={sim.description}
                     duration={sim.duration}
                     difficulty={sim.difficulty}
-                    isCompleted={completedSims.includes(sim.type)}
+                    isCompleted={isCompleted(sim.type)}
+                    userRole={userRole}
                     onStart={() => setActiveSim(sim.type)}
                   />
                 ))}
@@ -381,8 +476,8 @@ export default function ModeFormation() {
             <li>• Toutes les données sont fictives (préfixe DEMO-)</li>
             <li>• Aucune écriture en base de données</li>
             <li>• Les logs affichent le préfixe "SIMULATION"</li>
-            <li>• Vous pouvez répéter chaque simulation autant de fois que nécessaire</li>
-            <li>• Complétez les 14 simulations pour obtenir la certification TBOS</li>
+            <li>• L'accès aux simulations dépend de votre rôle</li>
+            <li>• Complétez les modules obligatoires pour la certification TBOS</li>
           </ul>
         </div>
       </div>
