@@ -82,7 +82,7 @@ export function useVentesFilters(
       // Status filter (for devis-specific statuses)
       // When 'all' is selected OR a BC-specific status is selected, show all devis
       if (filters.status !== 'all') {
-        const devisStatuses = ['en_attente', 'accepte', 'converti', 'refuse', 'expire'];
+        const devisStatuses = ['en_attente', 'accepte', 'converti', 'refuse', 'expire', 'annule'];
         if (devisStatuses.includes(filters.status)) {
           // Only filter if a devis-specific status is selected
           if (devis.statut !== filters.status) return false;
