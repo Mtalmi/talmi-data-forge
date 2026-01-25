@@ -53,7 +53,9 @@ import {
   DollarSign,
   Mail,
   Send,
+  PiggyBank,
 } from 'lucide-react';
+import { CashFeedingForm } from '@/components/finance/CashFeedingForm';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -164,7 +166,12 @@ export default function Paiements() {
               Analyse des créances et rapports d'antériorité
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            {/* Cash Feeding Form */}
+            {canManagePayments && (
+              <CashFeedingForm onSuccess={refetch} />
+            )}
+            
             {canManagePayments && reminderEligible.length > 0 && (
               <Button 
                 variant="default" 

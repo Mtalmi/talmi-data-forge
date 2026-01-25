@@ -921,6 +921,65 @@ export type Database = {
           },
         ]
       }
+      cash_deposits: {
+        Row: {
+          amount: number
+          client_id: string | null
+          created_at: string
+          created_by: string
+          created_by_name: string | null
+          deposit_date: string
+          facture_id: string | null
+          id: string
+          notes: string | null
+          receipt_photo_url: string
+          reference: string
+          source_description: string | null
+          source_type: Database["public"]["Enums"]["cash_source_type"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          client_id?: string | null
+          created_at?: string
+          created_by: string
+          created_by_name?: string | null
+          deposit_date?: string
+          facture_id?: string | null
+          id?: string
+          notes?: string | null
+          receipt_photo_url: string
+          reference?: string
+          source_description?: string | null
+          source_type: Database["public"]["Enums"]["cash_source_type"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          created_at?: string
+          created_by?: string
+          created_by_name?: string | null
+          deposit_date?: string
+          facture_id?: string | null
+          id?: string
+          notes?: string | null
+          receipt_photo_url?: string
+          reference?: string
+          source_description?: string | null
+          source_type?: Database["public"]["Enums"]["cash_source_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_deposits_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+        ]
+      }
       ceo_emergency_codes: {
         Row: {
           approved_at: string | null
@@ -4364,6 +4423,12 @@ export type Database = {
     }
     Enums: {
       app_role: "ceo" | "operator" | "accounting" | "commercial"
+      cash_source_type:
+        | "customer_payment"
+        | "ceo_injection"
+        | "refund"
+        | "loan"
+        | "other"
       contract_type: "camion_rental" | "trax_rental" | "terrain_rental"
       expense_approval_level: "level_1" | "level_2" | "level_3"
       expense_category:
@@ -4512,6 +4577,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["ceo", "operator", "accounting", "commercial"],
+      cash_source_type: [
+        "customer_payment",
+        "ceo_injection",
+        "refund",
+        "loan",
+        "other",
+      ],
       contract_type: ["camion_rental", "trax_rental", "terrain_rental"],
       expense_approval_level: ["level_1", "level_2", "level_3"],
       expense_category: [
