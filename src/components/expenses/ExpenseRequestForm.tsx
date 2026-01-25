@@ -112,6 +112,7 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   
   const [submitting, setSubmitting] = useState(false);
   const [blockedReason, setBlockedReason] = useState<string | null>(null);
+  const [showComplianceAlert, setShowComplianceAlert] = useState(false);
 
   // Calculate TTC
   const montantTTC = montantHT 
@@ -355,14 +356,8 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
       const errorMessage = error.message || error.details || '';
       
       if (errorMessage.includes('LIMIT_EXCEEDED')) {
-        // Extract the custom message from the trigger
-        toast.error(
-          <div className="space-y-1">
-            <p className="font-semibold">🚫 Plafond mensuel de 15,000 MAD atteint</p>
-            <p className="text-sm">Cette dépense nécessite désormais la validation de Karim.</p>
-          </div>,
-          { duration: 8000 }
-        );
+        // Show high-visibility compliance alert with Obsidian & Gold styling
+        setShowComplianceAlert(true);
         // Refresh monthly cap status to update UI
         fetchMonthlyCapStatus();
       } else if (errorMessage.includes('EVIDENCE_REQUIRED')) {
@@ -442,6 +437,57 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
           <Ban className="h-4 w-4" />
           <AlertDescription>{blockedReason}</AlertDescription>
         </Alert>
+      )}
+
+      {/* Compliance Alert - LIMIT_EXCEEDED - Obsidian & Gold Styling */}
+      {showComplianceAlert && (
+        <div className="relative overflow-hidden rounded-xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-[0_0_30px_-5px_rgba(245,158,11,0.3)]">
+          {/* Ambient glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-amber-500/5 pointer-events-none" />
+          
+          <div className="relative space-y-4">
+            {/* Header with shield icon */}
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-500/30">
+                <Shield className="h-6 w-6 text-slate-950" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
+                  Compliance Alert
+                </h3>
+                <p className="text-xs text-amber-500/80 font-medium">
+                  Financial Control System
+                </p>
+              </div>
+            </div>
+            
+            {/* Message */}
+            <div className="space-y-2">
+              <p className="text-white font-semibold text-base">
+                Monthly Spending Limit Reached
+              </p>
+              <p className="text-slate-300 text-sm">
+                CEO Authorization Required to Proceed.
+              </p>
+              <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                <ShieldAlert className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                <span className="text-xs text-amber-400">
+                  Le plafond mensuel de 15,000 MAD a été atteint. Contactez Karim pour autorisation.
+                </span>
+              </div>
+            </div>
+            
+            {/* Dismiss button */}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowComplianceAlert(false)}
+              className="w-full border-amber-500/40 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
+            >
+              Compris
+            </Button>
+          </div>
+        </div>
       )}
 
       {/* Receipt Upload - MANDATORY - Preuve Obligatoire */}
