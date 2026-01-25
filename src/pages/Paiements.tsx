@@ -56,6 +56,7 @@ import {
   PiggyBank,
 } from 'lucide-react';
 import { CashFeedingForm } from '@/components/finance/CashFeedingForm';
+import { CashDepositsWidget } from '@/components/finance/CashDepositsWidget';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -227,6 +228,11 @@ export default function Paiements() {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Cash Deposits Widget */}
+        {canManagePayments && (
+          <CashDepositsWidget />
         )}
 
         {/* KPI Cards */}
