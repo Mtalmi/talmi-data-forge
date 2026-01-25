@@ -571,16 +571,19 @@ export function useSalesWorkflow() {
     }
   }, [fetchData]);
 
-  // Stats
+  // Stats - exclude 'annule' from active pipeline totals
+  // Annulé records are preserved in database but not counted in conversion rate or pipeline value
+  const activeDevis = devisList.filter(d => d.statut !== 'annule');
   const stats = {
-    devisEnAttente: devisList.filter(d => d.statut === 'en_attente').length,
-    devisAcceptes: devisList.filter(d => d.statut === 'accepte').length,
-    devisConverti: devisList.filter(d => d.statut === 'converti').length,
-    devisRefuses: devisList.filter(d => d.statut === 'refuse').length,
+    devisEnAttente: activeDevis.filter(d => d.statut === 'en_attente').length,
+    devisAcceptes: activeDevis.filter(d => d.statut === 'accepte').length,
+    devisConverti: activeDevis.filter(d => d.statut === 'converti').length,
+    devisRefuses: activeDevis.filter(d => d.statut === 'refuse').length,
+    devisAnnules: devisList.filter(d => d.statut === 'annule').length, // Track separately for reporting
     bcPretProduction: bcList.filter(bc => bc.statut === 'pret_production').length,
     bcEnProduction: bcList.filter(bc => bc.statut === 'en_production').length,
     bcLivre: bcList.filter(bc => bc.statut === 'livre' || bc.statut === 'termine').length,
-    totalDevisHT: devisList
+    totalDevisHT: activeDevis
       .filter(d => d.statut === 'en_attente')
       .reduce((sum, d) => sum + (d.total_ht || 0), 0),
     totalBcHT: bcList.reduce((sum, bc) => sum + (bc.total_ht || 0), 0),

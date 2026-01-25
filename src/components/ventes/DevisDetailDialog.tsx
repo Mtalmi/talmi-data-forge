@@ -86,6 +86,7 @@ const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: 
   converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <Lock className="h-4 w-4" />, isLocked: true },
   refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-4 w-4" />, isLocked: false },
   expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-4 w-4" />, isLocked: false },
+  annule: { label: 'Annulé', color: 'bg-slate-500/10 text-slate-500 border-slate-500/30', icon: <XCircle className="h-4 w-4" />, isLocked: true },
 };
 
 export function DevisDetailDialog({

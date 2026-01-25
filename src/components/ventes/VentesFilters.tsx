@@ -128,6 +128,7 @@ export function VentesFilters({
             <SelectItem value="accepte">Accepté</SelectItem>
             <SelectItem value="converti">Converti</SelectItem>
             <SelectItem value="refuse">Refusé</SelectItem>
+            <SelectItem value="annule">Annulé</SelectItem>
             <SelectItem value="pret_production">Prêt Production</SelectItem>
             <SelectItem value="en_production">En Production</SelectItem>
             <SelectItem value="termine">Terminé</SelectItem>

@@ -55,6 +55,7 @@ const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: 
   refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-3 w-3" />, isLocked: false },
   converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <Lock className="h-3 w-3" />, isLocked: true },
   expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <AlertTriangle className="h-3 w-3" />, isLocked: false },
+  annule: { label: 'Annulé', color: 'bg-slate-500/10 text-slate-500 border-slate-500/30', icon: <XCircle className="h-3 w-3" />, isLocked: true },
 };
 
 // Priority thresholds
