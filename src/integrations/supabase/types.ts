@@ -68,6 +68,13 @@ export type Database = {
             foreignKeyName: "achats_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
             isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "achats_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
@@ -111,6 +118,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "alertes_reapprovisionnement_fournisseur_prefere_id_fkey"
+            columns: ["fournisseur_prefere_id"]
+            isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
           {
             foreignKeyName: "alertes_reapprovisionnement_fournisseur_prefere_id_fkey"
             columns: ["fournisseur_prefere_id"]
@@ -1053,6 +1067,13 @@ export type Database = {
             foreignKeyName: "cash_payment_audit_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
             isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "cash_payment_audit_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
@@ -1316,13 +1337,57 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_date: string
+          alert_type: string
+          contract_id: string
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_date: string
+          alert_type: string
+          contract_id: string
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_date?: string
+          alert_type?: string
+          contract_id?: string
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_alerts_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
+          contact_email: string | null
+          contact_person: string | null
+          contact_phone: string | null
           contract_type: Database["public"]["Enums"]["contract_type"]
           created_at: string | null
           created_by: string | null
           description: string | null
           end_date: string | null
+          equipment_count: number | null
+          equipment_description: string | null
+          fournisseur_id: string | null
           id: string
           is_active: boolean | null
           monthly_amount: number
@@ -1335,11 +1400,17 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
           contract_type: Database["public"]["Enums"]["contract_type"]
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           end_date?: string | null
+          equipment_count?: number | null
+          equipment_description?: string | null
+          fournisseur_id?: string | null
           id?: string
           is_active?: boolean | null
           monthly_amount: number
@@ -1352,11 +1423,17 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          contact_email?: string | null
+          contact_person?: string | null
+          contact_phone?: string | null
           contract_type?: Database["public"]["Enums"]["contract_type"]
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           end_date?: string | null
+          equipment_count?: number | null
+          equipment_description?: string | null
+          fournisseur_id?: string | null
           id?: string
           is_active?: boolean | null
           monthly_amount?: number
@@ -1368,7 +1445,22 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contracts_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "contracts_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       controles_depart: {
         Row: {
@@ -2139,6 +2231,13 @@ export type Database = {
             foreignKeyName: "expenses_controlled_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
             isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "expenses_controlled_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
@@ -2290,6 +2389,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "achats"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "factures_fournisseur_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
           },
           {
             foreignKeyName: "factures_fournisseur_fournisseur_id_fkey"
@@ -3372,6 +3478,13 @@ export type Database = {
             foreignKeyName: "paiements_fournisseur_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
             isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "paiements_fournisseur_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
@@ -3983,6 +4096,13 @@ export type Database = {
             foreignKeyName: "supplier_cash_tracking_fournisseur_id_fkey"
             columns: ["fournisseur_id"]
             isOneToOne: false
+            referencedRelation: "contract_compliance_summary"
+            referencedColumns: ["fournisseur_id"]
+          },
+          {
+            foreignKeyName: "supplier_cash_tracking_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
             referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
@@ -4311,6 +4431,20 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_compliance_summary: {
+        Row: {
+          active_contracts: number | null
+          annual_total: number | null
+          fournisseur_actif: boolean | null
+          fournisseur_id: string | null
+          has_active_contract: boolean | null
+          monthly_total: number | null
+          nearest_expiration: string | null
+          nom_fournisseur: string | null
+          total_contracts: number | null
+        }
+        Relationships: []
+      }
       department_spending_summary: {
         Row: {
           department: string | null
@@ -4428,6 +4562,7 @@ export type Database = {
         Args: { p_devis_id: string; p_reason?: string }
         Returns: Json
       }
+      check_contract_expirations: { Args: never; Returns: undefined }
       consume_ceo_override: {
         Args: { p_override_type: string; p_record_id?: string; p_token: string }
         Returns: boolean

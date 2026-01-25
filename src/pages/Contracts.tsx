@@ -3,9 +3,12 @@ import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Dialog,
   DialogContent,
@@ -43,12 +46,20 @@ import {
   Shield,
   Building,
   Check,
-  X
+  X,
+  AlertTriangle,
+  TrendingDown,
+  Phone,
+  Mail,
+  User,
+  Clock,
+  CheckCircle,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useContractCompliance } from '@/hooks/useContractCompliance';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
@@ -90,6 +101,7 @@ const CONTRACT_TYPE_CONFIG: Record<ContractType, { label: string; icon: React.Re
 
 export default function Contracts() {
   const { user, canApproveDevis, isCeo } = useAuth();
+  const { stats, expirationAlerts, suppliers } = useContractCompliance();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -100,10 +112,16 @@ export default function Contracts() {
   const [contractType, setContractType] = useState<ContractType>('camion_rental');
   const [title, setTitle] = useState('');
   const [providerName, setProviderName] = useState('');
+  const [selectedFournisseur, setSelectedFournisseur] = useState('');
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [equipmentCount, setEquipmentCount] = useState('1');
+  const [equipmentDescription, setEquipmentDescription] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
   const [pdfFileName, setPdfFileName] = useState('');
   
@@ -170,10 +188,16 @@ export default function Contracts() {
     setContractType('camion_rental');
     setTitle('');
     setProviderName('');
+    setSelectedFournisseur('');
     setMonthlyAmount('');
     setStartDate('');
     setEndDate('');
     setDescription('');
+    setContactPerson('');
+    setContactPhone('');
+    setContactEmail('');
+    setEquipmentCount('1');
+    setEquipmentDescription('');
     setPdfUrl('');
     setPdfFileName('');
   };
@@ -193,6 +217,7 @@ export default function Contracts() {
           title: title.trim(),
           description: description.trim() || null,
           provider_name: providerName.trim(),
+          fournisseur_id: selectedFournisseur || null,
           monthly_amount: parseFloat(monthlyAmount),
           start_date: startDate,
           end_date: endDate || null,
@@ -200,6 +225,11 @@ export default function Contracts() {
           is_active: true,
           ras_applicable: contractType === 'terrain_rental',
           ras_rate: contractType === 'terrain_rental' ? 15 : 0,
+          contact_person: contactPerson.trim() || null,
+          contact_phone: contactPhone.trim() || null,
+          contact_email: contactEmail.trim() || null,
+          equipment_count: parseInt(equipmentCount) || 1,
+          equipment_description: equipmentDescription.trim() || null,
           created_by: user?.id,
         });
 
@@ -314,23 +344,63 @@ export default function Contracts() {
                   </div>
 
                   {/* Provider */}
-                  <div className="space-y-2">
-                    <Label>Prestataire *</Label>
-                    <Input 
-                      placeholder="Nom du prestataire" 
-                      value={providerName}
-                      onChange={(e) => setProviderName(e.target.value)}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Prestataire *</Label>
+                      <Input 
+                        placeholder="Nom du prestataire" 
+                        value={providerName}
+                        onChange={(e) => setProviderName(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Lier à Fournisseur</Label>
+                      <Select value={selectedFournisseur} onValueChange={setSelectedFournisseur}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionner..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">Aucun</SelectItem>
+                          {suppliers.map((s) => (
+                            <SelectItem key={s.id} value={s.id}>
+                              {s.nom_fournisseur}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  {/* Monthly Amount */}
+                  {/* Monthly Amount & Equipment */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Montant Mensuel (MAD) *</Label>
+                      <Input 
+                        type="number"
+                        placeholder="0.00" 
+                        value={monthlyAmount}
+                        onChange={(e) => setMonthlyAmount(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Nombre d'Équipements</Label>
+                      <Input 
+                        type="number"
+                        placeholder="1" 
+                        value={equipmentCount}
+                        onChange={(e) => setEquipmentCount(e.target.value)}
+                        min="1"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Equipment Description */}
                   <div className="space-y-2">
-                    <Label>Montant Mensuel (MAD) *</Label>
+                    <Label>Description Équipement</Label>
                     <Input 
-                      type="number"
-                      placeholder="0.00" 
-                      value={monthlyAmount}
-                      onChange={(e) => setMonthlyAmount(e.target.value)}
+                      placeholder="Ex: Camion 1 (MAT-123), Camion 2 (MAT-456)" 
+                      value={equipmentDescription}
+                      onChange={(e) => setEquipmentDescription(e.target.value)}
                     />
                   </div>
 
@@ -354,7 +424,48 @@ export default function Contracts() {
                     </div>
                   </div>
 
+                  {/* Contact Info */}
+                  <Separator />
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Personne de Contact
+                    </Label>
+                    <Input 
+                      placeholder="Nom du contact" 
+                      value={contactPerson}
+                      onChange={(e) => setContactPerson(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Téléphone
+                      </Label>
+                      <Input 
+                        placeholder="+212 6XX XXX XXX" 
+                        value={contactPhone}
+                        onChange={(e) => setContactPhone(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email
+                      </Label>
+                      <Input 
+                        type="email"
+                        placeholder="contact@example.com" 
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
                   {/* PDF Upload */}
+                  <Separator />
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <Upload className="h-4 w-4" />
@@ -408,10 +519,11 @@ export default function Contracts() {
                   {/* Description */}
                   <div className="space-y-2">
                     <Label>Notes (optionnel)</Label>
-                    <Input 
+                    <Textarea 
                       placeholder="Notes additionnelles" 
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
+                      rows={2}
                     />
                   </div>
                 </div>
@@ -438,6 +550,134 @@ export default function Contracts() {
             </Dialog>
           )}
         </div>
+
+        {/* Compliance Summary Banner */}
+        {stats.missingContracts > 0 && (
+          <Alert className="border-warning/50 bg-warning/10">
+            <AlertTriangle className="h-4 w-4 text-warning" />
+            <AlertDescription className="flex items-center justify-between">
+              <div>
+                <span className="font-semibold text-warning">
+                  ⚠️ {stats.missingContracts} contrats manquants détectés
+                </span>
+                <span className="text-muted-foreground ml-2">
+                  Risque fiscal: {stats.potentialNonDeductible.toLocaleString('fr-FR')} DH/an
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-warning text-warning hover:bg-warning/10"
+                onClick={() => setDialogOpen(true)}
+              >
+                Ajouter Contrats
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Compliance Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="relative overflow-hidden">
+            <div className={cn(
+              "absolute inset-0 opacity-10",
+              stats.complianceRate >= 90 ? "bg-success" : 
+              stats.complianceRate >= 70 ? "bg-warning" : "bg-destructive"
+            )} />
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Taux de Conformité
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className={cn(
+                  "text-3xl font-bold",
+                  stats.complianceRate >= 90 ? "text-success" : 
+                  stats.complianceRate >= 70 ? "text-warning" : "text-destructive"
+                )}>
+                  {stats.complianceRate}%
+                </span>
+              </div>
+              <Progress 
+                value={stats.complianceRate} 
+                className={cn(
+                  "h-2",
+                  stats.complianceRate >= 90 ? "[&>div]:bg-success" : 
+                  stats.complianceRate >= 70 ? "[&>div]:bg-warning" : "[&>div]:bg-destructive"
+                )} 
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Contrats Actifs
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">{stats.activeContracts}</span>
+                <span className="text-sm text-muted-foreground">/ {stats.totalContracts}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats.missingContracts > 0 && (
+                  <span className="text-warning">{stats.missingContracts} manquants</span>
+                )}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Total Mensuel
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold font-mono">
+                {stats.monthlyTotal.toLocaleString('fr-FR')}
+                <span className="text-sm font-normal text-muted-foreground ml-1">DH</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {(stats.monthlyTotal * 12).toLocaleString('fr-FR')} DH/an
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className={cn(
+            stats.expiringSoon > 0 && "border-warning/50"
+          )}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Expirations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline gap-2">
+                <span className={cn(
+                  "text-3xl font-bold",
+                  stats.expiringSoon > 0 ? "text-warning" : "text-success"
+                )}>
+                  {stats.expiringSoon}
+                </span>
+                <span className="text-sm text-muted-foreground">&lt; 30 jours</span>
+              </div>
+              {expirationAlerts.length > 0 && (
+                <p className="text-xs text-warning mt-1">
+                  Prochain: {expirationAlerts[0]?.providerName}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        <Separator />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
