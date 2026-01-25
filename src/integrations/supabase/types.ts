@@ -1636,6 +1636,51 @@ export type Database = {
           },
         ]
       }
+      ceo_bypass_tokens: {
+        Row: {
+          amount_limit: number | null
+          created_at: string | null
+          expires_at: string
+          generated_by: string
+          generated_for: string
+          id: string
+          is_active: boolean | null
+          reason: string
+          token_code: string
+          used_at: string | null
+          used_by: string | null
+          used_for_reference: string | null
+        }
+        Insert: {
+          amount_limit?: number | null
+          created_at?: string | null
+          expires_at: string
+          generated_by: string
+          generated_for: string
+          id?: string
+          is_active?: boolean | null
+          reason: string
+          token_code: string
+          used_at?: string | null
+          used_by?: string | null
+          used_for_reference?: string | null
+        }
+        Update: {
+          amount_limit?: number | null
+          created_at?: string | null
+          expires_at?: string
+          generated_by?: string
+          generated_for?: string
+          id?: string
+          is_active?: boolean | null
+          reason?: string
+          token_code?: string
+          used_at?: string | null
+          used_by?: string | null
+          used_for_reference?: string | null
+        }
+        Relationships: []
+      }
       ceo_emergency_codes: {
         Row: {
           approved_at: string | null
@@ -3408,6 +3453,60 @@ export type Database = {
         }
         Relationships: []
       }
+      forensic_blackbox: {
+        Row: {
+          actor_id: string | null
+          actor_name: string | null
+          actor_role: string | null
+          created_at: string | null
+          event_type: string
+          id: string
+          intent_analysis: string | null
+          ip_address: string | null
+          new_data: Json | null
+          old_data: Json | null
+          risk_score: number | null
+          session_fingerprint: string | null
+          severity: string
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string | null
+          event_type: string
+          id?: string
+          intent_analysis?: string | null
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          risk_score?: number | null
+          session_fingerprint?: string | null
+          severity: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          intent_analysis?: string | null
+          ip_address?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          risk_score?: number | null
+          session_fingerprint?: string | null
+          severity?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
       formules_theoriques: {
         Row: {
           adjuvant_l_m3: number
@@ -4528,6 +4627,51 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_log: {
+        Row: {
+          action_url: string | null
+          actor_name: string | null
+          actor_role: string | null
+          created_at: string | null
+          details: Json | null
+          event_type: string
+          id: string
+          message: string
+          notification_id: string
+          read_at: string | null
+          recipient_role: string
+          severity: string
+        }
+        Insert: {
+          action_url?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+          message: string
+          notification_id?: string
+          read_at?: string | null
+          recipient_role: string
+          severity: string
+        }
+        Update: {
+          action_url?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+          message?: string
+          notification_id?: string
+          read_at?: string | null
+          recipient_role?: string
+          severity?: string
+        }
+        Relationships: []
+      }
       offline_sync_queue: {
         Row: {
           created_at: string
@@ -4691,6 +4835,66 @@ export type Database = {
           status?: string
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      personnel_registry: {
+        Row: {
+          can_access_forensic_blackbox: boolean | null
+          can_approve_administrative: boolean | null
+          can_approve_emergency_bc: boolean | null
+          can_approve_technical: boolean | null
+          can_generate_bypass_tokens: boolean | null
+          can_override_credit_block: boolean | null
+          created_at: string | null
+          display_name: string
+          id: string
+          is_active: boolean | null
+          monthly_cap_limit_mad: number | null
+          receives_all_notifications: boolean | null
+          role_code: string
+          subject_to_spending_cap: boolean | null
+          trust_level: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          can_access_forensic_blackbox?: boolean | null
+          can_approve_administrative?: boolean | null
+          can_approve_emergency_bc?: boolean | null
+          can_approve_technical?: boolean | null
+          can_generate_bypass_tokens?: boolean | null
+          can_override_credit_block?: boolean | null
+          created_at?: string | null
+          display_name: string
+          id?: string
+          is_active?: boolean | null
+          monthly_cap_limit_mad?: number | null
+          receives_all_notifications?: boolean | null
+          role_code: string
+          subject_to_spending_cap?: boolean | null
+          trust_level: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          can_access_forensic_blackbox?: boolean | null
+          can_approve_administrative?: boolean | null
+          can_approve_emergency_bc?: boolean | null
+          can_approve_technical?: boolean | null
+          can_generate_bypass_tokens?: boolean | null
+          can_override_credit_block?: boolean | null
+          created_at?: string | null
+          display_name?: string
+          id?: string
+          is_active?: boolean | null
+          monthly_cap_limit_mad?: number | null
+          receives_all_notifications?: boolean | null
+          role_code?: string
+          subject_to_spending_cap?: boolean | null
+          trust_level?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -6302,6 +6506,20 @@ export type Database = {
       }
       generate_asset_id: { Args: never; Returns: string }
       generate_associate_transaction_number: { Args: never; Returns: string }
+      generate_ceo_bypass_token: {
+        Args: {
+          p_amount_limit?: number
+          p_for_role: string
+          p_reason: string
+          p_valid_minutes?: number
+        }
+        Returns: {
+          error: string
+          expires_at: string
+          success: boolean
+          token_code: string
+        }[]
+      }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
@@ -6315,6 +6533,20 @@ export type Database = {
       get_associate_balance: {
         Args: { p_associate_id: string }
         Returns: number
+      }
+      get_current_personnel: {
+        Args: never
+        Returns: {
+          can_access_forensic_blackbox: boolean
+          can_approve_administrative: boolean
+          can_approve_technical: boolean
+          can_generate_bypass_tokens: boolean
+          display_name: string
+          monthly_cap_limit_mad: number
+          role_code: string
+          subject_to_spending_cap: boolean
+          trust_level: string
+        }[]
       }
       get_department_budget_status: {
         Args: { p_month_year?: string }
@@ -6450,6 +6682,7 @@ export type Database = {
       is_ceo_v2: { Args: { _user_id: string }; Returns: boolean }
       is_commercial: { Args: { _user_id: string }; Returns: boolean }
       is_directeur_operations: { Args: { _user_id: string }; Returns: boolean }
+      is_master_admin: { Args: never; Returns: boolean }
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
@@ -6466,7 +6699,26 @@ export type Database = {
         }
         Returns: string
       }
+      log_training_completion: {
+        Args: {
+          p_score: number
+          p_simulation_type: string
+          p_user_name: string
+        }
+        Returns: undefined
+      }
       match_deposit_to_invoice: { Args: { deposit_id: string }; Returns: Json }
+      notify_ceo_critical_action: {
+        Args: {
+          p_actor_name: string
+          p_actor_role: string
+          p_details?: Json
+          p_event_type: string
+          p_message: string
+          p_severity: string
+        }
+        Returns: string
+      }
       release_edit_lock: {
         Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
         Returns: boolean
@@ -6492,6 +6744,14 @@ export type Database = {
         Returns: Json
       }
       update_asset_depreciation: { Args: never; Returns: number }
+      use_ceo_bypass_token: {
+        Args: { p_reference: string; p_token_code: string }
+        Returns: {
+          amount_limit: number
+          error: string
+          success: boolean
+        }[]
+      }
       validate_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
         Returns: Json
