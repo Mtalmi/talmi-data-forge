@@ -17,7 +17,6 @@ import {
   TrendingUp,
   Award
 } from 'lucide-react';
-import { CertifiedBadge } from './CertifiedBadge';
 import { TRAINING_STEPS } from '@/hooks/useTrainingProgress';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -241,7 +240,12 @@ export function TrainingMonitor() {
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-medium text-foreground">{staff.fullName}</span>
-                          {staff.isCertified && <CertifiedBadge level="gold" size="sm" />}
+                          {staff.isCertified && (
+                            <Badge className="bg-success/20 text-success border-success/30 text-[10px] px-1.5 py-0">
+                              <Award className="h-2.5 w-2.5 mr-0.5" />
+                              Certifié
+                            </Badge>
+                          )}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Badge variant="outline" className="text-[10px] px-1.5 py-0">

@@ -9,7 +9,6 @@ import { Progress } from '@/components/ui/progress';
 import { SystemHealthReport } from '@/components/documents/SystemHealthReport';
 import { TrainingReceptionForm } from '@/components/manual/TrainingReceptionForm';
 import { generateManualPdf } from '@/components/manual/ManualPdfGenerator';
-import { VideoTutorialsSection } from '@/components/video-tutorials';
 import {
   BookOpen,
   Shield,
@@ -276,8 +275,7 @@ export default function AideSupport() {
           </div>
         </div>
 
-        {/* Video Tutorials Section - Prominently displayed */}
-        <VideoTutorialsSection />
+        {/* Training Mode CTA */}
 
         {/* Training Mode CTA */}
         <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-transparent overflow-hidden relative">
@@ -326,9 +324,6 @@ export default function AideSupport() {
           onOpenChange={setTrainingOpen}
           onComplete={() => setTrainingCompleted(true)}
         />
-
-        {/* Video Tutorials Section - Prominently displayed */}
-        <VideoTutorialsSection />
 
         {/* Main Tabs */}
         <Tabs defaultValue="rules" className="space-y-4">
