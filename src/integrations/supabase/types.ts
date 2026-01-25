@@ -2634,6 +2634,163 @@ export type Database = {
           },
         ]
       }
+      emergency_bc_action_history: {
+        Row: {
+          action_item_id: string | null
+          changed_by: string | null
+          changed_by_name: string | null
+          created_at: string | null
+          id: string
+          new_status: string
+          notes: string | null
+          previous_status: string | null
+        }
+        Insert: {
+          action_item_id?: string | null
+          changed_by?: string | null
+          changed_by_name?: string | null
+          created_at?: string | null
+          id?: string
+          new_status: string
+          notes?: string | null
+          previous_status?: string | null
+        }
+        Update: {
+          action_item_id?: string | null
+          changed_by?: string | null
+          changed_by_name?: string | null
+          created_at?: string | null
+          id?: string
+          new_status?: string
+          notes?: string | null
+          previous_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_bc_action_history_action_item_id_fkey"
+            columns: ["action_item_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_bc_action_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emergency_bc_action_items: {
+        Row: {
+          action_code: string
+          action_name: string
+          action_type: string
+          assigned_to: string
+          assigned_to_email: string | null
+          assigned_to_phone: string | null
+          assigned_to_role: string
+          bc_id: string
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          completed_by_name: string | null
+          completion_notes: string | null
+          created_at: string | null
+          deadline_at: string | null
+          deadline_minutes: number
+          escalate_to: string | null
+          escalate_to_email: string | null
+          escalate_to_phone: string | null
+          escalated: boolean | null
+          escalated_at: string | null
+          escalated_reason: string | null
+          escalation_after_minutes: number | null
+          id: string
+          notification_id: string | null
+          phase: number
+          phase_name: string
+          priority: string
+          started_at: string | null
+          status: string
+          steps: Json | null
+          success_criteria: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          action_code: string
+          action_name: string
+          action_type: string
+          assigned_to: string
+          assigned_to_email?: string | null
+          assigned_to_phone?: string | null
+          assigned_to_role: string
+          bc_id: string
+          checklist?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completed_by_name?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          deadline_at?: string | null
+          deadline_minutes: number
+          escalate_to?: string | null
+          escalate_to_email?: string | null
+          escalate_to_phone?: string | null
+          escalated?: boolean | null
+          escalated_at?: string | null
+          escalated_reason?: string | null
+          escalation_after_minutes?: number | null
+          id?: string
+          notification_id?: string | null
+          phase: number
+          phase_name: string
+          priority?: string
+          started_at?: string | null
+          status?: string
+          steps?: Json | null
+          success_criteria?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          action_code?: string
+          action_name?: string
+          action_type?: string
+          assigned_to?: string
+          assigned_to_email?: string | null
+          assigned_to_phone?: string | null
+          assigned_to_role?: string
+          bc_id?: string
+          checklist?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          completed_by_name?: string | null
+          completion_notes?: string | null
+          created_at?: string | null
+          deadline_at?: string | null
+          deadline_minutes?: number
+          escalate_to?: string | null
+          escalate_to_email?: string | null
+          escalate_to_phone?: string | null
+          escalated?: boolean | null
+          escalated_at?: string | null
+          escalated_reason?: string | null
+          escalation_after_minutes?: number | null
+          id?: string
+          notification_id?: string | null
+          phase?: number
+          phase_name?: string
+          priority?: string
+          started_at?: string | null
+          status?: string
+          steps?: Json | null
+          success_criteria?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_bc_action_items_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "emergency_bc_notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       emergency_bc_approvals: {
         Row: {
           approval_notes: string | null
@@ -2990,6 +3147,51 @@ export type Database = {
           statut?: string
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      escalation_contacts: {
+        Row: {
+          availability: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          level: number
+          name: string
+          phone: string | null
+          response_time_sla_minutes: number | null
+          role: string
+          updated_at: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          availability?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          level: number
+          name: string
+          phone?: string | null
+          response_time_sla_minutes?: number | null
+          role: string
+          updated_at?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          availability?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          level?: number
+          name?: string
+          phone?: string | null
+          response_time_sla_minutes?: number | null
+          role?: string
+          updated_at?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -6809,6 +7011,54 @@ export type Database = {
             Returns: string
           }
         | { Args: { p_bc_id: string; p_volume_m3?: number }; Returns: string }
+      create_emergency_bc_action_items: {
+        Args: {
+          p_base_time?: string
+          p_bc_id: string
+          p_notification_id: string
+        }
+        Returns: {
+          action_code: string
+          action_name: string
+          action_type: string
+          assigned_to: string
+          assigned_to_email: string | null
+          assigned_to_phone: string | null
+          assigned_to_role: string
+          bc_id: string
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          completed_by_name: string | null
+          completion_notes: string | null
+          created_at: string | null
+          deadline_at: string | null
+          deadline_minutes: number
+          escalate_to: string | null
+          escalate_to_email: string | null
+          escalate_to_phone: string | null
+          escalated: boolean | null
+          escalated_at: string | null
+          escalated_reason: string | null
+          escalation_after_minutes: number | null
+          id: string
+          notification_id: string | null
+          phase: number
+          phase_name: string
+          priority: string
+          started_at: string | null
+          status: string
+          steps: Json | null
+          success_criteria: Json | null
+          updated_at: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "emergency_bc_action_items"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       create_emergency_bc_approval: {
         Args: {
           p_bc_id: string
@@ -6917,6 +7167,36 @@ export type Database = {
           total_pending: number
           total_spent: number
           utilization_pct: number
+        }[]
+      }
+      get_emergency_bc_action_items: {
+        Args: { p_notification_id: string }
+        Returns: {
+          action_code: string
+          action_name: string
+          action_type: string
+          assigned_to: string
+          assigned_to_role: string
+          checklist: Json
+          completed_at: string
+          completed_by_name: string
+          deadline_at: string
+          deadline_minutes: number
+          escalate_to: string
+          escalated: boolean
+          escalated_at: string
+          escalation_after_minutes: number
+          id: string
+          is_overdue: boolean
+          minutes_remaining: number
+          phase: number
+          phase_name: string
+          priority: string
+          should_escalate: boolean
+          started_at: string
+          status: string
+          steps: Json
+          success_criteria: Json
         }[]
       }
       get_fixed_assets_summary: {
@@ -7111,6 +7391,50 @@ export type Database = {
           p_notification_id: string
         }
         Returns: boolean
+      }
+      update_action_item_status: {
+        Args: { p_action_id: string; p_notes?: string; p_status: string }
+        Returns: {
+          action_code: string
+          action_name: string
+          action_type: string
+          assigned_to: string
+          assigned_to_email: string | null
+          assigned_to_phone: string | null
+          assigned_to_role: string
+          bc_id: string
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          completed_by_name: string | null
+          completion_notes: string | null
+          created_at: string | null
+          deadline_at: string | null
+          deadline_minutes: number
+          escalate_to: string | null
+          escalate_to_email: string | null
+          escalate_to_phone: string | null
+          escalated: boolean | null
+          escalated_at: string | null
+          escalated_reason: string | null
+          escalation_after_minutes: number | null
+          id: string
+          notification_id: string | null
+          phase: number
+          phase_name: string
+          priority: string
+          started_at: string | null
+          status: string
+          steps: Json | null
+          success_criteria: Json | null
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "emergency_bc_action_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       update_asset_depreciation: { Args: never; Returns: number }
       use_ceo_bypass_token: {

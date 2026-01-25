@@ -17,6 +17,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Zap,
   FlaskConical,
@@ -26,10 +27,13 @@ import {
   CheckCircle,
   Package,
   Loader2,
+  ListChecks,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { format, parseISO, isToday } from 'date-fns';
+import { useEmergencyBcNotifications } from '@/hooks/useEmergencyBcNotifications';
+import { EmergencyBcActionItemsPanel } from './EmergencyBcActionItemsPanel';
+import { format, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 interface EmergencyBc {
@@ -54,10 +58,12 @@ interface EmergencyBcQualityViewProps {
 
 export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQualityViewProps) {
   const { isResponsableTechnique, isCeo, isSuperviseur, canViewEmergencyBcs } = useAuth();
+  const { productionNotifications } = useEmergencyBcNotifications();
   const [emergencyBcs, setEmergencyBcs] = useState<EmergencyBc[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBc, setSelectedBc] = useState<EmergencyBc | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('details');
 
   const fetchEmergencyBcs = async () => {
     if (!canViewEmergencyBcs) {
@@ -222,7 +228,7 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
 
       {/* Detail Dialog for Technical Review */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5 text-primary" />
@@ -234,94 +240,133 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
           </DialogHeader>
           
           {selectedBc && (
-            <div className="space-y-4">
-              {/* Emergency Info */}
-              <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap className="h-4 w-4 text-amber-500" />
-                  <span className="font-semibold text-amber-700">Commande Urgence</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  <strong>Raison:</strong> {parseEmergencyReason(selectedBc.notes)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Créé le {format(parseISO(selectedBc.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
-                </p>
-              </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="details" className="gap-2">
+                  <FlaskConical className="h-4 w-4" />
+                  Détails BC
+                </TabsTrigger>
+                <TabsTrigger value="actions" className="gap-2">
+                  <ListChecks className="h-4 w-4" />
+                  Actions Production
+                </TabsTrigger>
+              </TabsList>
 
-              {/* Client & Formula Details */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs text-muted-foreground">Client</p>
-                  <p className="font-semibold">{selectedBc.client?.nom_client}</p>
-                </div>
-                <div className="p-3 rounded-lg bg-muted">
-                  <p className="text-xs text-muted-foreground">Volume</p>
-                  <p className="font-semibold">{selectedBc.volume_m3} m³</p>
-                </div>
-              </div>
-
-              {/* Formula Technical Details */}
-              <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
-                <div className="flex items-center gap-2 mb-3">
-                  <Package className="h-4 w-4 text-primary" />
-                  <span className="font-semibold">Formule: {selectedBc.formule_id}</span>
-                </div>
-                <p className="text-sm mb-2">{selectedBc.formule?.designation}</p>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Ciment:</span>{' '}
-                    <span className="font-mono">{selectedBc.formule?.ciment_kg_m3 || '—'} kg/m³</span>
+              <TabsContent value="details" className="space-y-4 mt-4">
+                {/* Emergency Info */}
+                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Zap className="h-4 w-4 text-amber-500" />
+                    <span className="font-semibold text-amber-700">Commande Urgence</span>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground">Adjuvant:</span>{' '}
-                    <span className="font-mono">{selectedBc.formule?.adjuvant_l_m3 || '—'} L/m³</span>
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Raison:</strong> {parseEmergencyReason(selectedBc.notes)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Créé le {format(parseISO(selectedBc.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                  </p>
+                </div>
+
+                {/* Client & Formula Details */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-3 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground">Client</p>
+                    <p className="font-semibold">{selectedBc.client?.nom_client}</p>
+                  </div>
+                  <div className="p-3 rounded-lg bg-muted">
+                    <p className="text-xs text-muted-foreground">Volume</p>
+                    <p className="font-semibold">{selectedBc.volume_m3} m³</p>
                   </div>
                 </div>
-              </div>
 
-              {/* Verification Checklist */}
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Points de vérification:</p>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    Formule adaptée au type d'ouvrage
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    Dosage ciment conforme
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    Adjuvants appropriés
-                  </li>
-                </ul>
-              </div>
+                {/* Formula Technical Details */}
+                <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Package className="h-4 w-4 text-primary" />
+                    <span className="font-semibold">Formule: {selectedBc.formule_id}</span>
+                  </div>
+                  <p className="text-sm mb-2">{selectedBc.formule?.designation}</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Ciment:</span>{' '}
+                      <span className="font-mono">{selectedBc.formule?.ciment_kg_m3 || '—'} kg/m³</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Adjuvant:</span>{' '}
+                      <span className="font-mono">{selectedBc.formule?.adjuvant_l_m3 || '—'} L/m³</span>
+                    </div>
+                  </div>
+                </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  className="flex-1"
-                  onClick={() => setDetailOpen(false)}
-                >
-                  Fermer
-                </Button>
-                {onNavigateToPlanning && selectedBc.date_livraison_souhaitee && (
+                {/* Verification Checklist */}
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Points de vérification:</p>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Formule adaptée au type d'ouvrage
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Dosage ciment conforme
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Adjuvants appropriés
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2">
                   <Button 
-                    className="flex-1 gap-2"
-                    onClick={() => {
-                      setDetailOpen(false);
-                      onNavigateToPlanning(selectedBc.date_livraison_souhaitee!);
-                    }}
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => setDetailOpen(false)}
                   >
-                    <Clock className="h-4 w-4" />
-                    Voir Planning
+                    Fermer
                   </Button>
-                )}
-              </div>
-            </div>
+                  {onNavigateToPlanning && selectedBc.date_livraison_souhaitee && (
+                    <Button 
+                      className="flex-1 gap-2"
+                      onClick={() => {
+                        setDetailOpen(false);
+                        onNavigateToPlanning(selectedBc.date_livraison_souhaitee!);
+                      }}
+                    >
+                      <Clock className="h-4 w-4" />
+                      Voir Planning
+                    </Button>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="actions" className="mt-4">
+                {/* Find matching production notification for this BC */}
+                {(() => {
+                  const matchingNotification = productionNotifications.find(
+                    n => n.bc_id === selectedBc.bc_id
+                  );
+                  
+                  if (matchingNotification) {
+                    return (
+                      <EmergencyBcActionItemsPanel 
+                        notificationId={matchingNotification.id}
+                        bcId={selectedBc.bc_id}
+                      />
+                    );
+                  }
+                  
+                  return (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <ListChecks className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>Aucune action de production associée</p>
+                      <p className="text-sm">Les actions seront créées après approbation du BC</p>
+                    </div>
+                  );
+                })()}
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>
