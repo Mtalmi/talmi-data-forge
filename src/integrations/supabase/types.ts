@@ -2634,6 +2634,86 @@ export type Database = {
           },
         ]
       }
+      emergency_bc_approvals: {
+        Row: {
+          approval_notes: string | null
+          approval_timeout_minutes: number
+          approved_at: string | null
+          approved_by: string | null
+          approved_by_name: string | null
+          bc_id: string
+          bc_uuid: string | null
+          created_at: string
+          delivery_date: string
+          emergency_condition: string
+          emergency_reason: string
+          expires_at: string
+          id: string
+          notified_production: boolean | null
+          notified_production_at: string | null
+          notified_resp_technique: boolean | null
+          notified_resp_technique_at: string | null
+          requested_at: string
+          requested_by: string
+          requested_by_name: string | null
+          status: string
+        }
+        Insert: {
+          approval_notes?: string | null
+          approval_timeout_minutes?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          bc_id: string
+          bc_uuid?: string | null
+          created_at?: string
+          delivery_date: string
+          emergency_condition: string
+          emergency_reason: string
+          expires_at: string
+          id?: string
+          notified_production?: boolean | null
+          notified_production_at?: string | null
+          notified_resp_technique?: boolean | null
+          notified_resp_technique_at?: string | null
+          requested_at?: string
+          requested_by: string
+          requested_by_name?: string | null
+          status?: string
+        }
+        Update: {
+          approval_notes?: string | null
+          approval_timeout_minutes?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          bc_id?: string
+          bc_uuid?: string | null
+          created_at?: string
+          delivery_date?: string
+          emergency_condition?: string
+          emergency_reason?: string
+          expires_at?: string
+          id?: string
+          notified_production?: boolean | null
+          notified_production_at?: string | null
+          notified_resp_technique?: boolean | null
+          notified_resp_technique_at?: string | null
+          requested_at?: string
+          requested_by?: string
+          requested_by_name?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_bc_approvals_bc_uuid_fkey"
+            columns: ["bc_uuid"]
+            isOneToOne: false
+            referencedRelation: "bons_commande"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employes: {
         Row: {
           actif: boolean
@@ -5959,6 +6039,60 @@ export type Database = {
           },
         ]
       }
+      tight_times_status: {
+        Row: {
+          activated_at: string
+          activated_by: string
+          activated_by_name: string | null
+          affected_materials: string[] | null
+          created_at: string
+          deactivated_at: string | null
+          deactivated_by: string | null
+          deactivated_by_name: string | null
+          duration_minutes: number
+          expires_at: string
+          id: string
+          notes: string | null
+          reason: string
+          status: string
+          triggered_by: Database["public"]["Enums"]["tight_times_trigger_type"]
+        }
+        Insert: {
+          activated_at?: string
+          activated_by: string
+          activated_by_name?: string | null
+          affected_materials?: string[] | null
+          created_at?: string
+          deactivated_at?: string | null
+          deactivated_by?: string | null
+          deactivated_by_name?: string | null
+          duration_minutes?: number
+          expires_at: string
+          id?: string
+          notes?: string | null
+          reason: string
+          status?: string
+          triggered_by: Database["public"]["Enums"]["tight_times_trigger_type"]
+        }
+        Update: {
+          activated_at?: string
+          activated_by?: string
+          activated_by_name?: string | null
+          affected_materials?: string[] | null
+          created_at?: string
+          deactivated_at?: string | null
+          deactivated_by?: string | null
+          deactivated_by_name?: string | null
+          duration_minutes?: number
+          expires_at?: string
+          id?: string
+          notes?: string | null
+          reason?: string
+          status?: string
+          triggered_by?: Database["public"]["Enums"]["tight_times_trigger_type"]
+        }
+        Relationships: []
+      }
       user_certifications: {
         Row: {
           badge_level: string | null
@@ -6293,6 +6427,16 @@ export type Database = {
         }
         Returns: Json
       }
+      activate_tight_times: {
+        Args: {
+          p_affected_materials?: string[]
+          p_duration_minutes?: number
+          p_notes?: string
+          p_reason: string
+          p_triggered_by: Database["public"]["Enums"]["tight_times_trigger_type"]
+        }
+        Returns: string
+      }
       approve_administrative_devis: {
         Args: { p_action?: string; p_devis_id: string; p_notes?: string }
         Returns: Json
@@ -6456,6 +6600,11 @@ export type Database = {
           match_type: string
         }[]
       }
+      check_emergency_bc_eligibility: {
+        Args: { p_delivery_date: string }
+        Returns: Json
+      }
+      check_stock_criticality: { Args: never; Returns: Json }
       consume_ceo_override: {
         Args: { p_override_type: string; p_record_id?: string; p_token: string }
         Returns: boolean
@@ -6479,6 +6628,15 @@ export type Database = {
             Returns: string
           }
         | { Args: { p_bc_id: string; p_volume_m3?: number }; Returns: string }
+      create_emergency_bc_approval: {
+        Args: {
+          p_bc_id: string
+          p_bc_uuid: string
+          p_delivery_date: string
+          p_emergency_reason: string
+        }
+        Returns: string
+      }
       create_quality_stock_entry: {
         Args: {
           p_fournisseur: string
@@ -6493,6 +6651,7 @@ export type Database = {
         }
         Returns: Json
       }
+      deactivate_tight_times: { Args: never; Returns: boolean }
       detect_deposit_patterns: {
         Args: { check_date?: string }
         Returns: {
@@ -6529,6 +6688,7 @@ export type Database = {
         Returns: number
       }
       generate_loan_number: { Args: never; Returns: string }
+      get_active_tight_times: { Args: never; Returns: Json }
       get_approval_status: { Args: { p_devis_id: string }; Returns: Json }
       get_associate_balance: {
         Args: { p_associate_id: string }
@@ -6686,6 +6846,7 @@ export type Database = {
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
+      is_tight_times_active: { Args: never; Returns: boolean }
       log_approval_audit: {
         Args: {
           p_action: string
@@ -6718,6 +6879,10 @@ export type Database = {
           p_severity: string
         }
         Returns: string
+      }
+      process_emergency_bc_approval: {
+        Args: { p_action: string; p_approval_id: string; p_notes?: string }
+        Returns: boolean
       }
       release_edit_lock: {
         Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
@@ -6832,6 +6997,13 @@ export type Database = {
         | "patente"
         | "taxe_professionnelle"
         | "other"
+      tight_times_trigger_type:
+        | "STOCK_CRITICAL"
+        | "ORDER_SURGE"
+        | "EQUIPMENT_BREAKDOWN"
+        | "SUPPLIER_FAILURE"
+        | "QUALITY_ISSUE"
+        | "MANUAL"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -7021,6 +7193,14 @@ export const Constants = {
         "patente",
         "taxe_professionnelle",
         "other",
+      ],
+      tight_times_trigger_type: [
+        "STOCK_CRITICAL",
+        "ORDER_SURGE",
+        "EQUIPMENT_BREAKDOWN",
+        "SUPPLIER_FAILURE",
+        "QUALITY_ISSUE",
+        "MANUAL",
       ],
     },
   },
