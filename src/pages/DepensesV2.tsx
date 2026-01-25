@@ -8,6 +8,7 @@ import { ExpenseDetailDialog } from '@/components/expenses/ExpenseDetailDialog';
 import { DepartmentBudgetWidget } from '@/components/expenses/DepartmentBudgetWidget';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { SecurityComplianceButton } from '@/components/reports/SecurityComplianceButton';
+import { CashPaymentDialog } from '@/components/treasury';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -150,16 +151,22 @@ export default function DepensesV2() {
     }
   };
 
-  const handleMarkPaid = async (expense: ExpenseControlled) => {
-    const method = prompt('Méthode de paiement (Espèces, Virement, Chèque):');
-    if (!method) return;
+  const [paymentDialogExpense, setPaymentDialogExpense] = useState<ExpenseControlled | null>(null);
+
+  const handleMarkPaid = (expense: ExpenseControlled) => {
+    setPaymentDialogExpense(expense);
+  };
+
+  const handlePaymentConfirm = async (method: string, fournisseurId?: string, fournisseurNom?: string, overrideReason?: string) => {
+    if (!paymentDialogExpense) return;
     
-    const success = await markAsPaid(expense.id, method);
+    const success = await markAsPaid(paymentDialogExpense.id, method);
     if (success) {
       toast.success('Marqué comme payé');
     } else {
       toast.error('Erreur lors de la mise à jour');
     }
+    setPaymentDialogExpense(null);
   };
 
   const handleOverrideCap = async (expense: ExpenseControlled) => {

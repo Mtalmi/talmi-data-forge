@@ -980,6 +980,84 @@ export type Database = {
           },
         ]
       }
+      cash_payment_audit: {
+        Row: {
+          amount: number
+          created_at: string | null
+          created_by: string | null
+          created_by_name: string | null
+          decision: string
+          decision_reason: string | null
+          expense_id: string | null
+          fournisseur_id: string | null
+          fournisseur_nom: string
+          id: string
+          monthly_total_after: number
+          monthly_total_before: number
+          override_by: string | null
+          override_by_name: string | null
+          payment_method: string
+          penalty_amount: number | null
+          penalty_applicable: boolean | null
+          stamp_duty_amount: number | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          created_by?: string | null
+          created_by_name?: string | null
+          decision: string
+          decision_reason?: string | null
+          expense_id?: string | null
+          fournisseur_id?: string | null
+          fournisseur_nom: string
+          id?: string
+          monthly_total_after: number
+          monthly_total_before: number
+          override_by?: string | null
+          override_by_name?: string | null
+          payment_method: string
+          penalty_amount?: number | null
+          penalty_applicable?: boolean | null
+          stamp_duty_amount?: number | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          created_by?: string | null
+          created_by_name?: string | null
+          decision?: string
+          decision_reason?: string | null
+          expense_id?: string | null
+          fournisseur_id?: string | null
+          fournisseur_nom?: string
+          id?: string
+          monthly_total_after?: number
+          monthly_total_before?: number
+          override_by?: string | null
+          override_by_name?: string | null
+          payment_method?: string
+          penalty_amount?: number | null
+          penalty_applicable?: boolean | null
+          stamp_duty_amount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_payment_audit_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses_controlled"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_payment_audit_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ceo_emergency_codes: {
         Row: {
           approved_at: string | null
@@ -1885,11 +1963,18 @@ export type Database = {
           approval_level: Database["public"]["Enums"]["expense_approval_level"]
           cap_override_by: string | null
           cap_override_reason: string | null
+          cash_limit_override_at: string | null
+          cash_limit_override_by: string | null
+          cash_limit_override_reason: string | null
+          cash_penalty_amount: number | null
+          cash_stamp_duty: number | null
           categorie: Database["public"]["Enums"]["expense_category"]
           contract_id: string | null
           created_at: string | null
           department: string | null
           description: string
+          fournisseur_id: string | null
+          fournisseur_nom: string | null
           id: string
           kilometrage: number | null
           level1_approved_at: string | null
@@ -1934,11 +2019,18 @@ export type Database = {
           approval_level: Database["public"]["Enums"]["expense_approval_level"]
           cap_override_by?: string | null
           cap_override_reason?: string | null
+          cash_limit_override_at?: string | null
+          cash_limit_override_by?: string | null
+          cash_limit_override_reason?: string | null
+          cash_penalty_amount?: number | null
+          cash_stamp_duty?: number | null
           categorie: Database["public"]["Enums"]["expense_category"]
           contract_id?: string | null
           created_at?: string | null
           department?: string | null
           description: string
+          fournisseur_id?: string | null
+          fournisseur_nom?: string | null
           id?: string
           kilometrage?: number | null
           level1_approved_at?: string | null
@@ -1983,11 +2075,18 @@ export type Database = {
           approval_level?: Database["public"]["Enums"]["expense_approval_level"]
           cap_override_by?: string | null
           cap_override_reason?: string | null
+          cash_limit_override_at?: string | null
+          cash_limit_override_by?: string | null
+          cash_limit_override_reason?: string | null
+          cash_penalty_amount?: number | null
+          cash_stamp_duty?: number | null
           categorie?: Database["public"]["Enums"]["expense_category"]
           contract_id?: string | null
           created_at?: string | null
           department?: string | null
           description?: string
+          fournisseur_id?: string | null
+          fournisseur_nom?: string | null
           id?: string
           kilometrage?: number | null
           level1_approved_at?: string | null
@@ -2034,6 +2133,13 @@ export type Database = {
             columns: ["contract_id"]
             isOneToOne: false
             referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_controlled_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
             referencedColumns: ["id"]
           },
         ]
@@ -3834,6 +3940,53 @@ export type Database = {
           station?: string | null
         }
         Relationships: []
+      }
+      supplier_cash_tracking: {
+        Row: {
+          fournisseur_id: string
+          fournisseur_nom: string
+          id: string
+          last_updated_at: string | null
+          limit_exceeded: boolean | null
+          month_year: string
+          payment_count: number
+          penalty_incurred: number | null
+          stamp_duty_incurred: number | null
+          total_cash_amount: number
+        }
+        Insert: {
+          fournisseur_id: string
+          fournisseur_nom: string
+          id?: string
+          last_updated_at?: string | null
+          limit_exceeded?: boolean | null
+          month_year: string
+          payment_count?: number
+          penalty_incurred?: number | null
+          stamp_duty_incurred?: number | null
+          total_cash_amount?: number
+        }
+        Update: {
+          fournisseur_id?: string
+          fournisseur_nom?: string
+          id?: string
+          last_updated_at?: string | null
+          limit_exceeded?: boolean | null
+          month_year?: string
+          payment_count?: number
+          penalty_incurred?: number | null
+          stamp_duty_incurred?: number | null
+          total_cash_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_cash_tracking_fournisseur_id_fkey"
+            columns: ["fournisseur_id"]
+            isOneToOne: false
+            referencedRelation: "fournisseurs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       system_errors: {
         Row: {
