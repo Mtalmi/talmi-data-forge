@@ -4245,52 +4245,97 @@ export type Database = {
           created_at: string
           created_by: string | null
           fournisseur: string | null
+          front_desk_notes: string | null
+          front_desk_validated_at: string | null
+          front_desk_validated_by: string | null
+          front_desk_validated_by_name: string | null
+          front_desk_validation_status: string | null
+          gravel_grade: string | null
+          humidity_test_pct: number | null
           id: string
           materiau: string
           notes: string | null
           numero_bl_fournisseur: string | null
           photo_bl_url: string | null
+          quality_assessment: string | null
           quantite: number
           quantite_apres: number
           quantite_avant: number
           reason_code: string | null
           reference_id: string | null
           reference_table: string | null
+          tech_approval_at: string | null
+          tech_approval_by: string | null
+          tech_approval_by_name: string | null
+          tech_approval_notes: string | null
+          tech_approval_photos: string[] | null
+          tech_approval_status: string | null
           type_mouvement: string
+          workflow_status: string | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
           fournisseur?: string | null
+          front_desk_notes?: string | null
+          front_desk_validated_at?: string | null
+          front_desk_validated_by?: string | null
+          front_desk_validated_by_name?: string | null
+          front_desk_validation_status?: string | null
+          gravel_grade?: string | null
+          humidity_test_pct?: number | null
           id?: string
           materiau: string
           notes?: string | null
           numero_bl_fournisseur?: string | null
           photo_bl_url?: string | null
+          quality_assessment?: string | null
           quantite: number
           quantite_apres: number
           quantite_avant: number
           reason_code?: string | null
           reference_id?: string | null
           reference_table?: string | null
+          tech_approval_at?: string | null
+          tech_approval_by?: string | null
+          tech_approval_by_name?: string | null
+          tech_approval_notes?: string | null
+          tech_approval_photos?: string[] | null
+          tech_approval_status?: string | null
           type_mouvement: string
+          workflow_status?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
           fournisseur?: string | null
+          front_desk_notes?: string | null
+          front_desk_validated_at?: string | null
+          front_desk_validated_by?: string | null
+          front_desk_validated_by_name?: string | null
+          front_desk_validation_status?: string | null
+          gravel_grade?: string | null
+          humidity_test_pct?: number | null
           id?: string
           materiau?: string
           notes?: string | null
           numero_bl_fournisseur?: string | null
           photo_bl_url?: string | null
+          quality_assessment?: string | null
           quantite?: number
           quantite_apres?: number
           quantite_avant?: number
           reason_code?: string | null
           reference_id?: string | null
           reference_table?: string | null
+          tech_approval_at?: string | null
+          tech_approval_by?: string | null
+          tech_approval_by_name?: string | null
+          tech_approval_notes?: string | null
+          tech_approval_photos?: string[] | null
+          tech_approval_status?: string | null
           type_mouvement?: string
+          workflow_status?: string | null
         }
         Relationships: []
       }
@@ -5914,6 +5959,17 @@ export type Database = {
         Args: { p_devis_id: string; p_user_id?: string }
         Returns: Json
       }
+      approve_technical_reception: {
+        Args: {
+          p_gravel_grade?: string
+          p_humidity_pct?: number
+          p_mouvement_id: string
+          p_notes?: string
+          p_photos?: string[]
+          p_quality_assessment: string
+        }
+        Returns: Json
+      }
       calculate_cut: {
         Args: {
           p_adjuvant_l: number
@@ -6140,6 +6196,41 @@ export type Database = {
           total_amount: number
         }[]
       }
+      get_pending_frontdesk_validations: {
+        Args: never
+        Returns: {
+          created_at: string
+          fournisseur: string
+          front_desk_validation_status: string
+          gravel_grade: string
+          humidity_test_pct: number
+          id: string
+          materiau: string
+          numero_bl_fournisseur: string
+          photo_bl_url: string
+          quality_assessment: string
+          quantite: number
+          tech_approval_at: string
+          tech_approval_by_name: string
+          tech_approval_notes: string
+          tech_approval_status: string
+          workflow_status: string
+        }[]
+      }
+      get_pending_technical_approvals: {
+        Args: never
+        Returns: {
+          created_at: string
+          fournisseur: string
+          id: string
+          materiau: string
+          numero_bl_fournisseur: string
+          photo_bl_url: string
+          quantite: number
+          tech_approval_status: string
+          workflow_status: string
+        }[]
+      }
       get_receivables_aging_summary: {
         Args: never
         Returns: {
@@ -6230,6 +6321,14 @@ export type Database = {
       update_asset_depreciation: { Args: never; Returns: number }
       validate_devis: {
         Args: { p_devis_id: string; p_user_id?: string }
+        Returns: Json
+      }
+      validate_frontdesk_reception: {
+        Args: {
+          p_confirmed_quantity: number
+          p_mouvement_id: string
+          p_notes?: string
+        }
         Returns: Json
       }
       validate_stock_reception: {
