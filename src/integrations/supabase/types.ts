@@ -938,6 +938,12 @@ export type Database = {
       cash_deposits: {
         Row: {
           amount: number
+          approved_at: string | null
+          approved_by: string | null
+          approved_by_name: string | null
+          bank_account: string | null
+          bank_reference: string | null
+          capital_decision_url: string | null
           client_id: string | null
           created_at: string
           created_by: string
@@ -945,15 +951,27 @@ export type Database = {
           deposit_date: string
           facture_id: string | null
           id: string
+          justification_status: string | null
+          loan_agreement_url: string | null
+          match_variance_pct: number | null
+          matched_invoice_amount: number | null
           notes: string | null
+          pattern_flags: Json | null
           receipt_photo_url: string
           reference: string
+          reimbursement_expense_id: string | null
           source_description: string | null
           source_type: Database["public"]["Enums"]["cash_source_type"]
           updated_at: string
         }
         Insert: {
           amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          bank_account?: string | null
+          bank_reference?: string | null
+          capital_decision_url?: string | null
           client_id?: string | null
           created_at?: string
           created_by: string
@@ -961,15 +979,27 @@ export type Database = {
           deposit_date?: string
           facture_id?: string | null
           id?: string
+          justification_status?: string | null
+          loan_agreement_url?: string | null
+          match_variance_pct?: number | null
+          matched_invoice_amount?: number | null
           notes?: string | null
+          pattern_flags?: Json | null
           receipt_photo_url: string
           reference?: string
+          reimbursement_expense_id?: string | null
           source_description?: string | null
           source_type: Database["public"]["Enums"]["cash_source_type"]
           updated_at?: string
         }
         Update: {
           amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          approved_by_name?: string | null
+          bank_account?: string | null
+          bank_reference?: string | null
+          capital_decision_url?: string | null
           client_id?: string | null
           created_at?: string
           created_by?: string
@@ -977,9 +1007,15 @@ export type Database = {
           deposit_date?: string
           facture_id?: string | null
           id?: string
+          justification_status?: string | null
+          loan_agreement_url?: string | null
+          match_variance_pct?: number | null
+          matched_invoice_amount?: number | null
           notes?: string | null
+          pattern_flags?: Json | null
           receipt_photo_url?: string
           reference?: string
+          reimbursement_expense_id?: string | null
           source_description?: string | null
           source_type?: Database["public"]["Enums"]["cash_source_type"]
           updated_at?: string
@@ -1738,6 +1774,51 @@ export type Database = {
           montant?: number
           photo_recu_url?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      deposit_pattern_alerts: {
+        Row: {
+          alert_date: string
+          alert_type: string
+          created_at: string
+          deposit_ids: string[]
+          details: Json | null
+          id: string
+          resolution_notes: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_by: string | null
+          risk_level: string | null
+          total_amount: number
+        }
+        Insert: {
+          alert_date: string
+          alert_type: string
+          created_at?: string
+          deposit_ids: string[]
+          details?: Json | null
+          id?: string
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          risk_level?: string | null
+          total_amount: number
+        }
+        Update: {
+          alert_date?: string
+          alert_type?: string
+          created_at?: string
+          deposit_ids?: string[]
+          details?: Json | null
+          id?: string
+          resolution_notes?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          risk_level?: string | null
+          total_amount?: number
         }
         Relationships: []
       }
@@ -4457,6 +4538,21 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_deposit_summary: {
+        Row: {
+          flagged_amount: number | null
+          flagged_count: number | null
+          justification_rate: number | null
+          justified_amount: number | null
+          justified_count: number | null
+          month: string | null
+          total_amount: number | null
+          total_deposits: number | null
+          unjustified_amount: number | null
+          unjustified_count: number | null
+        }
+        Relationships: []
+      }
       v_quality_feed: {
         Row: {
           camion: string | null
@@ -4600,6 +4696,17 @@ export type Database = {
         }
         Returns: Json
       }
+      detect_deposit_patterns: {
+        Args: { check_date?: string }
+        Returns: {
+          deposit_count: number
+          deposit_ids: string[]
+          description: string
+          pattern_type: string
+          risk_level: string
+          total_amount: number
+        }[]
+      }
       generate_consolidated_invoice: {
         Args: { p_bc_id: string; p_facture_id: string }
         Returns: string
@@ -4671,6 +4778,7 @@ export type Database = {
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
+      match_deposit_to_invoice: { Args: { deposit_id: string }; Returns: Json }
       release_edit_lock: {
         Args: { p_record_id: string; p_table_name: string; p_user_id?: string }
         Returns: boolean

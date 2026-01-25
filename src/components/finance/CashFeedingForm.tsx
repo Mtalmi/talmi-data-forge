@@ -89,19 +89,62 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
   const [depositDate, setDepositDate] = useState(new Date().toISOString().split('T')[0]);
   const [receiptPhotoUrl, setReceiptPhotoUrl] = useState('');
   const [notes, setNotes] = useState('');
+  const [bankReference, setBankReference] = useState('');
   
   // Clients for customer_payment
   const [clients, setClients] = useState<{ client_id: string; nom_client: string }[]>([]);
   const [loadingClients, setLoadingClients] = useState(false);
+  
+  // Invoices for auto-matching
+  const [invoices, setInvoices] = useState<{ facture_id: string; total_ttc: number; date_facture: string }[]>([]);
+  const [loadingInvoices, setLoadingInvoices] = useState(false);
+  const [matchStatus, setMatchStatus] = useState<'none' | 'perfect' | 'close' | 'variance' | 'no_match'>('none');
 
   const loadClients = async () => {
     setLoadingClients(true);
     const { data } = await supabase
       .from('clients')
       .select('client_id, nom_client')
-      .order('nom_client');
+      .order('nom_client') as { data: any[] | null };
     if (data) setClients(data);
     setLoadingClients(false);
+  };
+
+  const loadInvoices = async (selectedClientId: string) => {
+    if (!selectedClientId) {
+      setInvoices([]);
+      return;
+    }
+    setLoadingInvoices(true);
+    const { data } = await supabase
+      .from('factures')
+      .select('facture_id, total_ttc, date_facture')
+      .eq('client_id', selectedClientId)
+      .neq('statut', 'Payé')
+      .order('date_facture', { ascending: false }) as { data: any[] | null };
+    if (data) setInvoices(data);
+    setLoadingInvoices(false);
+  };
+
+  // Auto-check match when amount or invoice changes
+  const checkMatch = () => {
+    if (!factureId || !amount) {
+      setMatchStatus('none');
+      return;
+    }
+    const invoice = invoices.find(inv => inv.facture_id === factureId);
+    if (!invoice) {
+      setMatchStatus('no_match');
+      return;
+    }
+    const variance = Math.abs((parseFloat(amount) - invoice.total_ttc) / invoice.total_ttc) * 100;
+    if (variance <= 1) {
+      setMatchStatus('perfect');
+    } else if (variance <= 5) {
+      setMatchStatus('close');
+    } else {
+      setMatchStatus('variance');
+    }
   };
 
   const handleFileUpload = async (file: File): Promise<string | null> => {
@@ -135,6 +178,9 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
     setDepositDate(new Date().toISOString().split('T')[0]);
     setReceiptPhotoUrl('');
     setNotes('');
+    setBankReference('');
+    setInvoices([]);
+    setMatchStatus('none');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,6 +216,15 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
     setIsSubmitting(true);
 
     try {
+      // Determine justification status based on source and matching
+      let justificationStatus = 'pending';
+      if (sourceType === 'customer_payment' && factureId) {
+        justificationStatus = matchStatus === 'perfect' ? 'justified' : 
+                              matchStatus === 'close' ? 'pending' : 'flagged';
+      } else if (sourceType === 'ceo_injection' || sourceType === 'loan') {
+        justificationStatus = sourceDescription ? 'justified' : 'pending';
+      }
+
       const { error } = await supabase
         .from('cash_deposits')
         .insert({
@@ -181,6 +236,8 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
           deposit_date: depositDate,
           receipt_photo_url: receiptPhotoUrl,
           notes: notes || null,
+          bank_reference: bankReference || null,
+          justification_status: justificationStatus,
           created_by: user?.id,
           created_by_name: user?.email,
         });
@@ -316,7 +373,15 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
           {sourceType === 'customer_payment' && (
             <div className="space-y-2">
               <Label>Client *</Label>
-              <Select value={clientId} onValueChange={setClientId}>
+              <Select 
+                value={clientId} 
+                onValueChange={(val) => {
+                  setClientId(val);
+                  setFactureId('');
+                  setMatchStatus('none');
+                  loadInvoices(val);
+                }}
+              >
                 <SelectTrigger className="bg-background">
                   <SelectValue placeholder={loadingClients ? "Chargement..." : "Sélectionner le client"} />
                 </SelectTrigger>
@@ -331,6 +396,80 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
             </div>
           )}
 
+          {/* Invoice Selection (for customer_payment with client selected) */}
+          {sourceType === 'customer_payment' && clientId && (
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                Facture Associée
+                {matchStatus === 'perfect' && (
+                  <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-xs">
+                    ✅ Match Parfait
+                  </Badge>
+                )}
+                {matchStatus === 'close' && (
+                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-xs">
+                    ⚠️ Écart &lt;5%
+                  </Badge>
+                )}
+                {matchStatus === 'variance' && (
+                  <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 text-xs">
+                    ❌ Écart &gt;5%
+                  </Badge>
+                )}
+              </Label>
+              <Select 
+                value={factureId} 
+                onValueChange={(val) => {
+                  setFactureId(val);
+                  // Auto-fill amount if invoice selected
+                  const invoice = invoices.find(inv => inv.facture_id === val);
+                  if (invoice && !amount) {
+                    setAmount(invoice.total_ttc.toString());
+                  }
+                  setTimeout(checkMatch, 100);
+                }}
+              >
+                <SelectTrigger className="bg-background">
+                  <SelectValue placeholder={loadingInvoices ? "Chargement..." : "Sélectionner la facture"} />
+                </SelectTrigger>
+                <SelectContent className="bg-popover z-50">
+                  {invoices.length === 0 ? (
+                    <SelectItem value="none" disabled>
+                      Aucune facture impayée
+                    </SelectItem>
+                  ) : (
+                    invoices.map((invoice) => (
+                      <SelectItem key={invoice.facture_id} value={invoice.facture_id}>
+                        {invoice.facture_id} - {invoice.total_ttc.toLocaleString('fr-MA')} DH
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              {invoices.length === 0 && !loadingInvoices && (
+                <p className="text-xs text-muted-foreground">
+                  Aucune facture impayée pour ce client. Le dépôt sera marqué pour vérification.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Match Status Warning */}
+          {matchStatus === 'variance' && (
+            <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-destructive">Écart Détecté</p>
+                  <p className="text-xs text-muted-foreground">
+                    Le montant du dépôt diffère de plus de 5% du montant de la facture. 
+                    Ce dépôt sera signalé pour vérification.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Amount & Date Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -341,7 +480,10 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
                   step="0.01"
                   min="0.01"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => {
+                    setAmount(e.target.value);
+                    setTimeout(checkMatch, 100);
+                  }}
                   placeholder="0.00"
                   className="pr-16 text-lg font-semibold bg-background"
                   required
@@ -363,19 +505,6 @@ export function CashFeedingForm({ onSuccess }: CashFeedingFormProps) {
               />
             </div>
           </div>
-
-          {/* Optional: Facture Reference */}
-          {sourceType === 'customer_payment' && (
-            <div className="space-y-2">
-              <Label>Référence Facture (optionnel)</Label>
-              <Input
-                value={factureId}
-                onChange={(e) => setFactureId(e.target.value)}
-                placeholder="FAC-XXXXXX"
-                className="bg-background"
-              />
-            </div>
-          )}
 
           {/* Source Description (for other types) */}
           {sourceType && sourceType !== 'customer_payment' && (
