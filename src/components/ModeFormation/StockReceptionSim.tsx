@@ -1,4 +1,5 @@
 // Stock Reception Simulation - God-Tier Two-Step Quality Check Workflow
+// Technical Approval MUST come before Front Desk Validation
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +12,8 @@ import {
   ArrowRight,
   Shield,
   Users,
+  Lock,
+  XCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -165,7 +168,7 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
           {/* Introduction Phase */}
           {phase === 'intro' && (
             <div className="space-y-6 animate-fade-in">
-              {/* Workflow Overview */}
+              {/* GOD-TIER Workflow Overview */}
               <div className="p-6 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-950/30 dark:to-amber-900/20 border border-amber-200 dark:border-amber-800">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 rounded-full bg-amber-500/20">
@@ -173,27 +176,27 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                   </div>
                   <div>
                     <h3 className="font-bold text-lg text-amber-900 dark:text-amber-100">
-                      Two-Step Quality Check Workflow
+                      🔐 GOD-TIER Two-Step Approval
                     </h3>
                     <p className="text-sm text-amber-700 dark:text-amber-300">
-                      Séparation des rôles - Prévention des conflits
+                      Technical Approval MUST Come First
                     </p>
                   </div>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                  {/* Phase 1 */}
+                  {/* Phase 1 - REQUIRED */}
                   <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
                     <div className="flex items-center gap-2 mb-2">
                       <Badge className="bg-blue-500/20 text-blue-700 dark:text-blue-300">
-                        Phase 1
+                        ÉTAPE 1 (REQUISE)
                       </Badge>
                     </div>
                     <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                      Contrôle Qualité Technique
+                      Approbation Technique
                     </h4>
                     <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
-                      Responsable: Abdel Sadek / Karim
+                      Responsable: <strong>Abdel Sadek</strong> ou <strong>Karim</strong>
                     </p>
                     <ul className="text-xs space-y-1 text-blue-600 dark:text-blue-400">
                       <li>• Test d'humidité du sable</li>
@@ -202,11 +205,17 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                     </ul>
                   </div>
 
-                  {/* Phase 2 */}
-                  <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800">
+                  {/* Phase 2 - BLOCKED until Phase 1 */}
+                  <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 relative">
+                    <div className="absolute top-2 right-2">
+                      <Badge className="bg-red-500/20 text-red-700 border-red-300 gap-1">
+                        <Lock className="h-3 w-3" />
+                        BLOQUÉE
+                      </Badge>
+                    </div>
                     <div className="flex items-center gap-2 mb-2">
                       <Badge className="bg-purple-500/20 text-purple-700 dark:text-purple-300">
-                        Phase 2
+                        ÉTAPE 2 (BLOQUÉE)
                       </Badge>
                     </div>
                     <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-1">
@@ -215,37 +224,34 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                     <p className="text-xs text-purple-700 dark:text-purple-300 mb-2">
                       Responsable: Personnel Accueil
                     </p>
-                    <ul className="text-xs space-y-1 text-purple-600 dark:text-purple-400">
-                      <li>• Validation si Conforme ✅</li>
-                      <li>• Formulaire si À vérifier ⚠️</li>
-                      <li>• Rejet si Non-conforme ❌</li>
-                    </ul>
+                    <div className="p-2 rounded bg-red-100 dark:bg-red-900/30 border border-red-200 mt-2">
+                      <p className="text-xs text-red-700 dark:text-red-300 flex items-center gap-1">
+                        <Lock className="h-3 w-3" />
+                        En attente de l'étape 1
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Conflict Prevention Rules */}
-              <div className="p-4 rounded-lg bg-muted/50 border">
-                <h4 className="font-semibold flex items-center gap-2 mb-3">
-                  <Users className="h-4 w-4 text-primary" />
-                  Règles de Prévention des Conflits
+              {/* CRITICAL ENFORCEMENT RULES */}
+              <div className="p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
+                <h4 className="font-semibold flex items-center gap-2 mb-3 text-red-800 dark:text-red-200">
+                  <Lock className="h-4 w-4" />
+                  Règles d'Enforcement (AUCUNE Exception)
                 </h4>
-                <ul className="text-sm space-y-2 text-muted-foreground">
+                <ul className="text-sm space-y-2 text-red-700 dark:text-red-300">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5" />
-                    <span><strong>Séparation des rôles:</strong> Technicien ≠ Front Desk</span>
+                    <XCircle className="h-4 w-4 mt-0.5 text-red-500" />
+                    <span><strong>Front Desk BLOQUÉ</strong> jusqu'à approbation technique</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5" />
-                    <span><strong>Formulaires obligatoires:</strong> Si non-conforme ou à vérifier</span>
+                    <XCircle className="h-4 w-4 mt-0.5 text-red-500" />
+                    <span><strong>Pas de bypass</strong> d'urgence pour ce workflow</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5" />
-                    <span><strong>Photos requises:</strong> Toutes les étapes documentées</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5" />
-                    <span><strong>Audit complet:</strong> Traçabilité de chaque action</span>
+                    <CheckCircle2 className="h-4 w-4 mt-0.5 text-emerald-500" />
+                    <span>Seul <strong>Abdel Sadek</strong> ou <strong>Karim</strong> peut débloquer</span>
                   </li>
                 </ul>
               </div>
@@ -277,7 +283,7 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                 className="w-full gap-2 bg-amber-500 hover:bg-amber-600"
                 onClick={() => setPhase('technical_check')}
               >
-                Commencer le Workflow
+                Commencer le Workflow (Phase 1: Tech)
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
