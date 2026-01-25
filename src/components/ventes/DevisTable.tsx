@@ -17,6 +17,23 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   FileText,
   CheckCircle,
   XCircle,
@@ -31,6 +48,8 @@ import {
   Shield,
   Lock,
   ShieldCheck,
+  ChevronDown,
+  Ban,
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { useAuth } from '@/hooks/useAuth';
@@ -104,6 +123,55 @@ export function DevisTable({
 }: DevisTableProps) {
   const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo, user, loading: authLoading } = useAuth();
   const [validating, setValidating] = useState<string | null>(null);
+  const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
+  const [cancelConfirmDevis, setCancelConfirmDevis] = useState<Devis | null>(null);
+  
+  // Status options for dropdown (excluding locked states like 'converti')
+  const STATUS_OPTIONS = [
+    { value: 'en_attente', label: 'En Attente', icon: <Clock className="h-3 w-3" /> },
+    { value: 'accepte', label: 'Accepté', icon: <CheckCircle className="h-3 w-3" /> },
+    { value: 'refuse', label: 'Refusé', icon: <XCircle className="h-3 w-3" /> },
+    { value: 'annule', label: 'Annulé', icon: <Ban className="h-3 w-3" />, requiresConfirm: true },
+  ];
+  
+  // Handle status change with audit logging
+  const handleStatusChange = async (devis: Devis, newStatus: string) => {
+    // Check if this requires confirmation (Annulé)
+    if (newStatus === 'annule') {
+      setCancelConfirmDevis(devis);
+      return;
+    }
+    
+    await executeStatusChange(devis, newStatus);
+  };
+  
+  const executeStatusChange = async (devis: Devis, newStatus: string) => {
+    setUpdatingStatus(devis.devis_id);
+    try {
+      const oldStatus = devis.statut;
+      
+      const { error } = await supabase
+        .from('devis')
+        .update({ statut: newStatus })
+        .eq('devis_id', devis.devis_id);
+      
+      if (error) throw error;
+      
+      // The universal audit trigger will automatically log this change
+      toast.success(`Statut mis à jour: ${DEVIS_STATUS_CONFIG[newStatus]?.label || newStatus}`);
+      onRefresh?.();
+    } catch (error: any) {
+      toast.error(error.message || 'Erreur lors de la mise à jour du statut');
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+  
+  const handleConfirmCancel = async () => {
+    if (!cancelConfirmDevis) return;
+    await executeStatusChange(cancelConfirmDevis, 'annule');
+    setCancelConfirmDevis(null);
+  };
   
   // =====================================================
   // HARD PERMISSION WALL - Devis Approval Authority
@@ -273,193 +341,264 @@ export function DevisTable({
   };
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-10">
-            <Checkbox 
-              checked={allSelected}
-              onCheckedChange={handleSelectAll}
-              aria-label="Tout sélectionner"
-              className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
-            />
-          </TableHead>
-          <TableHead>N° Devis</TableHead>
-          <TableHead>Client</TableHead>
-          <TableHead>Formule</TableHead>
-          <TableHead className="text-right">Volume</TableHead>
-          <TableHead className="text-right">Total HT</TableHead>
-          <TableHead>Statut</TableHead>
-          <TableHead>Priorité</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {devisList.map((devis) => {
-          const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
-          const expirationBadge = renderExpirationBadge(devis);
-          const priorityBadge = renderPriorityBadge(devis);
-          const isSelected = selectedIds.includes(devis.id);
-          
-          return (
-            <TableRow 
-              key={devis.id}
-              className={cn(
-                "cursor-pointer hover:bg-muted/50 transition-colors",
-                getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
-                isSelected && "bg-primary/5"
-              )}
-              onClick={() => onRowClick?.(devis)}
-            >
-              <TableCell onClick={(e) => e.stopPropagation()}>
-                <Checkbox 
-                  checked={isSelected}
-                  onCheckedChange={(checked) => handleSelectOne(devis.id, !!checked)}
-                  aria-label={`Sélectionner ${devis.devis_id}`}
-                />
-              </TableCell>
-              <TableCell className="font-mono font-medium">{devis.devis_id}</TableCell>
-              <TableCell>
-                {devis.client ? (
-                  <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
-                ) : (
-                  '—'
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-10">
+              <Checkbox 
+                checked={allSelected}
+                onCheckedChange={handleSelectAll}
+                aria-label="Tout sélectionner"
+                className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
+              />
+            </TableHead>
+            <TableHead>N° Devis</TableHead>
+            <TableHead>Client</TableHead>
+            <TableHead>Formule</TableHead>
+            <TableHead className="text-right">Volume</TableHead>
+            <TableHead className="text-right">Total HT</TableHead>
+            <TableHead>Statut</TableHead>
+            <TableHead>Priorité</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {devisList.map((devis) => {
+            const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
+            const expirationBadge = renderExpirationBadge(devis);
+            const priorityBadge = renderPriorityBadge(devis);
+            const isSelected = selectedIds.includes(devis.id);
+            
+            return (
+              <TableRow 
+                key={devis.id}
+                className={cn(
+                  "cursor-pointer hover:bg-muted/50 transition-colors",
+                  getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
+                  isSelected && "bg-primary/5"
                 )}
-              </TableCell>
-              <TableCell>
-                <span className="text-xs">{devis.formule_id}</span>
-              </TableCell>
-              <TableCell className="text-right font-mono">{devis.volume_m3} m³</TableCell>
-              <TableCell className="text-right font-mono font-medium">
-                {devis.total_ht.toLocaleString()} DH
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-1 flex-wrap">
-                  <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
-                    {statusConfig.icon}
-                    {statusConfig.label}
-                  </Badge>
-                  {/* Security Seal for locked devis */}
-                  {statusConfig.isLocked && (
-                    <Badge className="gap-0.5 h-5 text-[10px] bg-slate-800 text-white border-slate-700">
-                      <Lock className="h-2.5 w-2.5" />
-                    </Badge>
-                  )}
-                  {/* Public Accountability Badge - Visible to ALL roles */}
-                  <RollbackAccountabilityBadge 
-                    rollbackCount={(devis as any).rollback_count} 
-                    compact 
+                onClick={() => onRowClick?.(devis)}
+              >
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <Checkbox 
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleSelectOne(devis.id, !!checked)}
+                    aria-label={`Sélectionner ${devis.devis_id}`}
                   />
-                  {expirationBadge}
-                </div>
-              </TableCell>
-              <TableCell>
-                {priorityBadge || <span className="text-muted-foreground">—</span>}
-              </TableCell>
-              <TableCell onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center gap-1 flex-wrap">
-                  {/* Technical Approval Badge for special formulas */}
-                  {(devis as any).requires_technical_approval && (
-                    <TechnicalApprovalBadge
-                      devisId={devis.devis_id}
-                      requiresApproval={(devis as any).requires_technical_approval}
-                      isApproved={!!(devis as any).technical_approved_at}
-                      approvedByName={(devis as any).technical_approved_by_name}
-                      approvedAt={(devis as any).technical_approved_at}
-                      canApprove={canApproveTechnical}
-                      onApproved={onRefresh}
+                </TableCell>
+                <TableCell className="font-mono font-medium">{devis.devis_id}</TableCell>
+                <TableCell>
+                  {devis.client ? (
+                    <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
+                  ) : (
+                    '—'
+                  )}
+                </TableCell>
+                <TableCell>
+                  <span className="text-xs">{devis.formule_id}</span>
+                </TableCell>
+                <TableCell className="text-right font-mono">{devis.volume_m3} m³</TableCell>
+                <TableCell className="text-right font-mono font-medium">
+                  {devis.total_ht.toLocaleString()} DH
+                </TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {/* Clickable Status Dropdown - only for non-locked statuses */}
+                    {statusConfig.isLocked ? (
+                      <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                        {statusConfig.icon}
+                        {statusConfig.label}
+                      </Badge>
+                    ) : (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button 
+                            className={cn(
+                              "inline-flex items-center gap-1 px-2 py-1 rounded-md border text-xs font-medium",
+                              "hover:bg-muted/50 transition-colors cursor-pointer",
+                              statusConfig.color
+                            )}
+                            disabled={updatingStatus === devis.devis_id}
+                          >
+                            {updatingStatus === devis.devis_id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              statusConfig.icon
+                            )}
+                            {statusConfig.label}
+                            <ChevronDown className="h-3 w-3 opacity-50" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-40 bg-background">
+                          {STATUS_OPTIONS.map((option) => (
+                            <DropdownMenuItem
+                              key={option.value}
+                              onClick={() => handleStatusChange(devis, option.value)}
+                              disabled={option.value === devis.statut}
+                              className={cn(
+                                "gap-2 cursor-pointer",
+                                option.value === devis.statut && "opacity-50"
+                              )}
+                            >
+                              {option.icon}
+                              {option.label}
+                              {option.value === devis.statut && (
+                                <CheckCircle className="h-3 w-3 ml-auto text-success" />
+                              )}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                    {/* Security Seal for locked devis */}
+                    {statusConfig.isLocked && (
+                      <Badge className="gap-0.5 h-5 text-[10px] bg-slate-800 text-white border-slate-700">
+                        <Lock className="h-2.5 w-2.5" />
+                      </Badge>
+                    )}
+                    {/* Public Accountability Badge - Visible to ALL roles */}
+                    <RollbackAccountabilityBadge 
+                      rollbackCount={(devis as any).rollback_count} 
+                      compact 
                     />
-                  )}
-                  
-                  {/* Responsibility Stamp if validated */}
-                  {(devis as any).validated_by_name && (
-                    <ResponsibilityStamp
-                      actionType="validated"
-                      userName={(devis as any).validated_by_name}
-                      userRole={(devis as any).validated_by_role}
-                      timestamp={(devis as any).validated_at}
-                      compact
-                    />
-                  )}
-                  
-                  {/* Duplicate Button */}
-                  <DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact />
-                  
-                  {/* Quick Send Button - prominent for pending devis */}
-                  {devis.statut === 'en_attente' && devis.client_id && (
-                    <>
-                      <WhatsAppShareButton devis={devis} compact />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span>
-                            <DevisSendDialog devis={devis} />
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>Envoyer par email</TooltipContent>
-                      </Tooltip>
-                    </>
-                  )}
-                  <DevisPdfGenerator devis={devis} />
-                  
-                  {/* =====================================================
-                      VALIDATE BUTTON - Conditional Rendering with Role Check
-                      Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
-                      Hidden for: DIR_OPS, CENTRALISTE (read-only roles)
-                      ANTI-FRAUD: Creator cannot approve their own Devis
-                      Shows skeleton while auth is loading
-                  ===================================================== */}
-                  {devis.statut === 'en_attente' && devis.client_id && (
-                    authLoading ? (
-                      <Skeleton className="w-20 h-8 rounded-md" />
-                    ) : canApproveSpecificDevis(devis) ? (
+                    {expirationBadge}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {priorityBadge || <span className="text-muted-foreground">—</span>}
+                </TableCell>
+                <TableCell onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    {/* Technical Approval Badge for special formulas */}
+                    {(devis as any).requires_technical_approval && (
+                      <TechnicalApprovalBadge
+                        devisId={devis.devis_id}
+                        requiresApproval={(devis as any).requires_technical_approval}
+                        isApproved={!!(devis as any).technical_approved_at}
+                        approvedByName={(devis as any).technical_approved_by_name}
+                        approvedAt={(devis as any).technical_approved_at}
+                        canApprove={canApproveTechnical}
+                        onApproved={onRefresh}
+                      />
+                    )}
+                    
+                    {/* Responsibility Stamp if validated */}
+                    {(devis as any).validated_by_name && (
+                      <ResponsibilityStamp
+                        actionType="validated"
+                        userName={(devis as any).validated_by_name}
+                        userRole={(devis as any).validated_by_role}
+                        timestamp={(devis as any).validated_at}
+                        compact
+                      />
+                    )}
+                    
+                    {/* Duplicate Button */}
+                    <DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact />
+                    
+                    {/* Quick Send Button - prominent for pending devis */}
+                    {devis.statut === 'en_attente' && devis.client_id && (
+                      <>
+                        <WhatsAppShareButton devis={devis} compact />
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span>
+                              <DevisSendDialog devis={devis} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>Envoyer par email</TooltipContent>
+                        </Tooltip>
+                      </>
+                    )}
+                    
+                    {/* PDF Button */}
+                    <DevisPdfGenerator devis={devis} />
+                    
+                    {/* Validate Button - SECURITY HARDENED */}
+                    {devis.statut === 'en_attente' && (
+                      canApproveSpecificDevis(devis) ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1 text-success hover:bg-success/10"
+                          onClick={() => handleValidateDevis(devis)}
+                          disabled={validating === devis.devis_id}
+                        >
+                          {validating === devis.devis_id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <ShieldCheck className="h-3 w-3" />
+                          )}
+                          Valider
+                        </Button>
+                      ) : isCreator(devis) ? (
+                        <span className="text-xs text-amber-600 italic">
+                          Attente validation tiers
+                        </span>
+                      ) : isReadOnlyRole ? (
+                        <Badge variant="outline" className="text-orange-500 border-orange-500">
+                          En attente de validation
+                        </Badge>
+                      ) : null
+                    )}
+                    
+                    {/* Convert to BC Button after validation */}
+                    {(devis.statut === 'valide' || devis.statut === 'accepte') && devis.client_id && canApproveDevis && (
                       <Button
                         size="sm"
-                        onClick={() => handleValidateDevis(devis)}
-                        disabled={validating === devis.devis_id}
-                        className="gap-1 bg-success hover:bg-success/90"
+                        onClick={() => onConvert(devis)}
+                        className="gap-1"
                       >
-                        {validating === devis.devis_id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <CheckCircle className="h-3 w-3" />
-                        )}
-                        Valider
+                        <ArrowRight className="h-3 w-3" />
+                        Créer BC
                       </Button>
-                    ) : isCreator(devis) && canApproveDevis ? (
-                      // Anti-fraud warning for creators with approval role
-                      <span className="text-xs text-muted-foreground italic">
-                        Auto-validation impossible
+                    )}
+                    
+                    {devis.statut === 'en_attente' && !devis.client_id && (
+                      <span className="text-xs text-muted-foreground">
+                        Client requis
                       </span>
-                    ) : isReadOnlyRole ? (
-                      <Badge variant="outline" className="text-orange-500 border-orange-500">
-                        En attente de validation
-                      </Badge>
-                    ) : null
-                  )}
-                  
-                  {/* Convert to BC Button after validation */}
-                  {(devis.statut === 'valide' || devis.statut === 'accepte') && devis.client_id && canApproveDevis && (
-                    <Button
-                      size="sm"
-                      onClick={() => onConvert(devis)}
-                      className="gap-1"
-                    >
-                      <ArrowRight className="h-3 w-3" />
-                      Créer BC
-                    </Button>
-                  )}
-                  
-                  {devis.statut === 'en_attente' && !devis.client_id && (
-                    <span className="text-xs text-muted-foreground">
-                      Client requis
-                    </span>
-                  )}
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+      
+      {/* Confirmation Dialog for Annulé Status */}
+      <AlertDialog open={!!cancelConfirmDevis} onOpenChange={(open) => !open && setCancelConfirmDevis(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5 text-warning" />
+              Confirmer l'Annulation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2">
+              <p>
+                Vous êtes sur le point d'annuler le devis <strong>{cancelConfirmDevis?.devis_id}</strong>.
+              </p>
+              <p className="text-warning font-medium">
+                ⚠️ Cette action sera enregistrée dans le Journal d'Audit Forensic.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Le devis sera conservé dans la base de données mais exclu des totaux du pipeline actif.
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmCancel}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Confirmer l'Annulation
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
