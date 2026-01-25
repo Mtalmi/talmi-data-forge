@@ -27,7 +27,8 @@ import {
   Receipt, 
   X,
   CheckCircle,
-  AlertCircle 
+  AlertCircle,
+  Shield
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -217,21 +218,31 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
                 )}
               </div>
             ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                className={cn(
-                  "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
-                  "hover:border-primary hover:bg-primary/5",
-                  "flex flex-col items-center gap-2"
-                )}
-              >
-                <Camera className="h-10 w-10 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  Cliquez pour prendre ou importer une photo
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  JPG, PNG (max 5MB)
-                </p>
+              <div className="space-y-2">
+                {/* Golden Audit Requirement Badge */}
+                <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 rounded-full w-fit mx-auto">
+                  <Shield className="h-3.5 w-3.5 text-amber-500" />
+                  <span className="text-xs font-semibold text-amber-500">
+                    Audit Requirement: Photo Mandatory
+                  </span>
+                </div>
+                
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className={cn(
+                    "border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors",
+                    "hover:border-primary hover:bg-primary/5",
+                    "flex flex-col items-center gap-2"
+                  )}
+                >
+                  <Camera className="h-10 w-10 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    Cliquez pour prendre ou importer une photo
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    JPG, PNG (max 5MB)
+                  </p>
+                </div>
               </div>
             )}
             

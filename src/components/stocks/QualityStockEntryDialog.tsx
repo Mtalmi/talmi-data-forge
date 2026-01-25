@@ -8,7 +8,8 @@ import {
   ChevronRight, 
   Droplets,
   Eye,
-  AlertTriangle
+  AlertTriangle,
+  Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -370,6 +371,14 @@ export function QualityStockEntryDialog({ stocks, onRefresh }: QualityStockEntry
                 </div>
               ) : (
                 <div className="flex flex-col items-center gap-4 py-8">
+                  {/* Golden Audit Requirement Badge */}
+                  <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 rounded-full">
+                    <Shield className="h-3.5 w-3.5 text-amber-500" />
+                    <span className="text-xs font-semibold text-amber-500">
+                      Audit Requirement: Photo Mandatory
+                    </span>
+                  </div>
+                  
                   <div className="p-6 rounded-full bg-primary/10">
                     <Camera className="h-12 w-12 text-primary" />
                   </div>
