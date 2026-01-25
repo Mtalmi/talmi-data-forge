@@ -23,11 +23,8 @@ import {
   CreateQuoteSim,
   ValidateDeliverySim,
   BudgetManagementSim,
-  QualityControlSim,
   FleetPredatorSim,
   ProductionManagementSim,
-  AuditComplianceSim,
-  CeoOverrideSim,
   ForensicAnalysisSim,
   FinancialReportingSim,
   ClientManagementSim,
@@ -106,14 +103,6 @@ const SIMULATIONS: SimulationConfig[] = [
   },
   // Tier 2 - Advanced
   {
-    type: 'quality_control',
-    title: 'Contrôle Qualité',
-    description: 'Inspectez un lot, mesurez l\'affaissement et générez le rapport QC.',
-    duration: '~5 min',
-    tier: 'advanced',
-    difficulty: 'medium',
-  },
-  {
     type: 'fleet_predator',
     title: 'Fleet Predator GPS',
     description: 'Surveillance véhicules, carburant, maintenance et geofencing.',
@@ -129,23 +118,7 @@ const SIMULATIONS: SimulationConfig[] = [
     tier: 'advanced',
     difficulty: 'medium',
   },
-  {
-    type: 'audit_compliance',
-    title: 'Audit & Conformité',
-    description: 'Revue du trail d\'audit, vérification RLS et rapport de conformité.',
-    duration: '~5 min',
-    tier: 'advanced',
-    difficulty: 'hard',
-  },
   // Tier 3 - Executive
-  {
-    type: 'ceo_override',
-    title: 'CEO Emergency Override',
-    description: 'Générez un token 30 min, autorisez une transaction bloquée.',
-    duration: '~4 min',
-    tier: 'executive',
-    difficulty: 'hard',
-  },
   {
     type: 'forensic_analysis',
     title: 'Analyse Forensique',
@@ -281,16 +254,10 @@ export default function ModeFormation() {
         return <ValidateDeliverySim {...simProps} />;
       case 'budget_management':
         return <BudgetManagementSim {...simProps} />;
-      case 'quality_control':
-        return <QualityControlSim {...simProps} />;
       case 'fleet_predator':
         return <FleetPredatorSim {...simProps} />;
       case 'production_management':
         return <ProductionManagementSim {...simProps} />;
-      case 'audit_compliance':
-        return <AuditComplianceSim {...simProps} />;
-      case 'ceo_override':
-        return <CeoOverrideSim {...simProps} />;
       case 'forensic_analysis':
         return <ForensicAnalysisSim {...simProps} />;
       case 'financial_reporting':
