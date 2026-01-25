@@ -15,7 +15,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -38,7 +37,6 @@ import {
   Clock,
   XCircle,
   ArrowRight,
-  Send,
   Shield,
   Loader2,
   Lock,
@@ -52,8 +50,10 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
-import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { TechnicalApprovalBadge } from '@/components/ventes/TechnicalApprovalBadge';
+import { TechnicalApprovalForm } from '@/components/ventes/TechnicalApprovalForm';
+import { QuoteApprovalStatusCard } from '@/components/ventes/QuoteApprovalStatusCard';
+import { ValiderButton } from '@/components/ventes/ValiderButton';
 import { RollbackAccountabilityBadge } from '@/components/ventes/RollbackAccountabilityBadge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -157,13 +157,20 @@ export function DevisDetailDialog({
   // GOD-TIER TWO-STEP APPROVAL ENFORCEMENT
   // Step 1: Technical Approval (Resp. Technique)
   // Step 2: Administrative Validation (Front Desk)
+  // Uses new tech_approval_status field for granular status tracking
   // =====================================================
   const requiresTechnicalApproval = (devis as any).requires_technical_approval || (devis as any).is_special_formula;
-  const technicalApprovalStatus = (devis as any).technical_approved_by ? 'APPROVED' : 'PENDING';
-  const isTechnicallyApproved = !!((devis as any).technical_approved_by);
   
-  // BLOCKED: Cannot validate if technical approval is required but not yet given
+  // Use new status field if available, fallback to checking approved_by
+  const techApprovalStatus = (devis as any).tech_approval_status || 
+    ((devis as any).technical_approved_by ? 'APPROVED' : 'PENDING');
+  const isTechnicallyApproved = techApprovalStatus === 'APPROVED';
+  const isTechBlocked = techApprovalStatus?.startsWith('BLOCKED');
+  const isTechRejected = techApprovalStatus === 'REJECTED';
+  
+  // BLOCKED: Cannot validate if technical approval is required but not yet given/approved
   const isTechnicallyBlocked = requiresTechnicalApproval && !isTechnicallyApproved;
+  const blockingReason = (devis as any).blocking_reason;
   
   // =====================================================
   // ANTI-FRAUD: Self-Approval Block
@@ -550,88 +557,25 @@ export function DevisDetailDialog({
           {/* =====================================================
               GOD-TIER TWO-STEP APPROVAL STATUS DISPLAY
               Shows technical approval requirement and status
+              Uses new QuoteApprovalStatusCard component
           ===================================================== */}
           {requiresTechnicalApproval && devis.statut === 'en_attente' && (
-            <Card className={cn(
-              "border-2",
-              isTechnicallyApproved 
-                ? "border-emerald-500/30 bg-emerald-500/5" 
-                : "border-amber-500/30 bg-amber-500/5"
-            )}>
-              <CardContent className="p-4">
-                <div className="flex flex-col gap-3">
-                  {/* Step 1: Technical Approval */}
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                      isTechnicallyApproved 
-                        ? "bg-emerald-500 text-white" 
-                        : "bg-amber-500/20 text-amber-600 border-2 border-amber-500"
-                    )}>
-                      {isTechnicallyApproved ? '✓' : '1'}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-sm">
-                        Étape 1: Approbation Technique
-                        {isTechnicallyApproved && (
-                          <Badge className="ml-2 bg-emerald-500/20 text-emerald-600 border-emerald-500/30">
-                            ✓ Approuvé
-                          </Badge>
-                        )}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {isTechnicallyApproved 
-                          ? `Approuvé par ${(devis as any).technical_approved_by_name || 'Resp. Technique'}`
-                          : 'Responsable: Abdel Sadek ou Karim'
-                        }
-                      </p>
-                    </div>
-                    {!isTechnicallyApproved && (
-                      <TechnicalApprovalBadge
-                        devisId={devis.devis_id}
-                        requiresApproval={requiresTechnicalApproval}
-                        isApproved={isTechnicallyApproved}
-                        approvedByName={(devis as any).technical_approved_by_name}
-                        approvedAt={(devis as any).technical_approved_at}
-                        canApprove={canApproveDevis && !isReadOnlyRole}
-                        onApproved={() => onOpenChange(false)}
-                      />
-                    )}
-                  </div>
-                  
-                  {/* Step 2: Front Desk Validation */}
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                      !isTechnicallyApproved 
-                        ? "bg-muted text-muted-foreground" 
-                        : "bg-blue-500/20 text-blue-600 border-2 border-blue-500"
-                    )}>
-                      {!isTechnicallyApproved ? <Lock className="h-4 w-4" /> : '2'}
-                    </div>
-                    <div className="flex-1">
-                      <p className={cn(
-                        "font-semibold text-sm",
-                        !isTechnicallyApproved && "text-muted-foreground"
-                      )}>
-                        Étape 2: Validation Administrative
-                        {!isTechnicallyApproved && (
-                          <Badge className="ml-2 bg-red-500/20 text-red-600 border-red-500/30">
-                            🔒 BLOQUÉE
-                          </Badge>
-                        )}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {!isTechnicallyApproved 
-                          ? 'En attente de l\'approbation technique (Étape 1)'
-                          : 'Prête pour validation Front Desk'
-                        }
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              {/* Status Card showing both approval steps */}
+              <QuoteApprovalStatusCard 
+                devisId={devis.devis_id}
+                requiresTechnicalApproval={requiresTechnicalApproval}
+                currentStatus={devis.statut}
+              />
+              
+              {/* Technical Approval Form - Only for authorized users when step 1 is pending */}
+              {!isTechnicallyApproved && canApproveDevis && !isReadOnlyRole && (
+                <TechnicalApprovalForm
+                  devisId={devis.devis_id}
+                  onSubmit={() => onOpenChange(false)}
+                />
+              )}
+            </div>
           )}
 
           {/* Actions */}
@@ -641,38 +585,33 @@ export function DevisDetailDialog({
             
             {/* =====================================================
                 VALIDATE BUTTON - GOD-TIER Two-Step Financial Gate
-                Only visible for: CEO, SUPERVISEUR, AGENT_ADMIN
-                Hidden for: DIR_OPS, CENTRALISTE
-                BLOCKED if technical approval required but not given
-                Hidden when devis is already locked
+                Uses new ValiderButton component with built-in enforcement
             ===================================================== */}
             {devis.statut === 'en_attente' && devis.client_id && !isLocked && (
               authLoading ? (
                 <Skeleton className="w-24 h-9 rounded-md ml-auto" />
-              ) : isTechnicallyBlocked ? (
-                // GOD-TIER BLOCK: Technical approval required first
-                <div className="ml-auto flex items-center gap-2">
-                  <Badge variant="outline" className="bg-red-500/10 text-red-600 border-red-500/30 gap-1">
-                    <Lock className="h-3 w-3" />
-                    Validation Bloquée
-                  </Badge>
-                  <p className="text-xs text-muted-foreground max-w-[200px]">
-                    Approbation technique requise avant validation.
-                  </p>
-                </div>
               ) : canApprove ? (
-                <Button 
-                  onClick={handleValidate}
-                  disabled={validating}
-                  className="gap-2 ml-auto bg-success hover:bg-success/90"
-                >
-                  {validating ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <CheckCircle className="h-4 w-4" />
-                  )}
-                  Valider le Devis
-                </Button>
+                <div className="ml-auto">
+                  <ValiderButton
+                    devisId={devis.devis_id}
+                    techApprovalStatus={techApprovalStatus}
+                    blockingReason={blockingReason}
+                    onValidated={() => onOpenChange(false)}
+                  />
+                </div>
+              ) : isTechnicallyBlocked ? (
+                // Show blocked status for non-approvers
+                <div className="ml-auto flex items-center gap-2">
+                  <Badge variant="outline" className={cn(
+                    "gap-1",
+                    isTechBlocked && "bg-amber-500/10 text-amber-600 border-amber-500/30",
+                    isTechRejected && "bg-destructive/10 text-destructive border-destructive/30",
+                    !isTechBlocked && !isTechRejected && "bg-red-500/10 text-red-600 border-red-500/30"
+                  )}>
+                    <Lock className="h-3 w-3" />
+                    {isTechBlocked ? 'Bloqué - Discordances' : isTechRejected ? 'Rejeté' : 'En attente Tech.'}
+                  </Badge>
+                </div>
               ) : isCreator && canApproveDevis ? (
                 // Anti-fraud warning for creators with approval role
                 <div className="ml-auto text-right">
