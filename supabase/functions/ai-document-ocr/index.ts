@@ -40,6 +40,30 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Convert image URL to base64 data URL for AI gateway compatibility
+    let imageDataUrl: string;
+    try {
+      const imageResponse = await fetch(image_url);
+      if (!imageResponse.ok) {
+        throw new Error(`Failed to fetch image: ${imageResponse.status}`);
+      }
+      
+      const contentType = imageResponse.headers.get("content-type") || "image/jpeg";
+      const imageBuffer = await imageResponse.arrayBuffer();
+      const base64Image = btoa(
+        new Uint8Array(imageBuffer).reduce((data, byte) => data + String.fromCharCode(byte), "")
+      );
+      imageDataUrl = `data:${contentType};base64,${base64Image}`;
+      
+      console.log("Image converted to data URL, content-type:", contentType, "size:", imageBuffer.byteLength);
+    } catch (fetchError) {
+      console.error("Error fetching image:", fetchError);
+      return new Response(
+        JSON.stringify({ success: false, error: "Failed to fetch image from URL" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Build the prompt based on document type
     const docTypeLabel = document_type === 'expense' ? 'facture/reçu' : 'bon de livraison';
     
@@ -80,7 +104,7 @@ IMPORTANT: Réponds UNIQUEMENT avec l'appel de fonction, pas de texte.`;
             role: "user",
             content: [
               { type: "text", text: userPrompt },
-              { type: "image_url", image_url: { url: image_url } },
+              { type: "image_url", image_url: { url: imageDataUrl } },
             ],
           },
         ],
