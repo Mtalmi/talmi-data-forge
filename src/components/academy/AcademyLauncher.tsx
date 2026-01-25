@@ -73,6 +73,7 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
   const [isExpanded, setIsExpanded] = useState(false);
   const [showVideoPlayer, setShowVideoPlayer] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [currentVideoProgress, setCurrentVideoProgress] = useState(0);
   const [completedVideos, setCompletedVideos] = useState<string[]>(() => {
     try {
       const stored = localStorage.getItem('tbos-completed-videos');
@@ -90,6 +91,11 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
     }
   }, [loading, isCertified, showOnFirstVisit]);
 
+  // Reset progress when changing videos
+  useEffect(() => {
+    setCurrentVideoProgress(0);
+  }, [currentVideoIndex]);
+
   const handleStart = () => {
     console.log('[Academy] Commencer clicked - opening video player');
     
@@ -102,6 +108,7 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
     );
     
     setCurrentVideoIndex(firstIncompleteIndex >= 0 ? firstIncompleteIndex : 0);
+    setCurrentVideoProgress(0);
     setShowVideoPlayer(true);
     
     console.log('[Academy] ✅ Video player opened');
@@ -121,14 +128,13 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
                      'midnight_alert';
       completeStep(stepId);
     }
-    
-    // Auto-advance to next video if available
-    if (currentVideoIndex < TRAINING_VIDEOS.length - 1) {
-      setTimeout(() => {
-        setCurrentVideoIndex(prev => prev + 1);
-      }, 2000);
-    }
   };
+
+  const handleProgressChange = (progress: number) => {
+    setCurrentVideoProgress(progress);
+  };
+
+  const canAdvance = currentVideoProgress >= 95 || completedVideos.includes(TRAINING_VIDEOS[currentVideoIndex]?.id);
 
   const currentVideo = TRAINING_VIDEOS[currentVideoIndex];
   const videoProgress = (completedVideos.length / TRAINING_VIDEOS.length) * 100;
@@ -185,6 +191,7 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
               videoTitle={currentVideo.title}
               videoId={currentVideo.id}
               onComplete={handleVideoComplete}
+              onProgressChange={handleProgressChange}
               className="aspect-video"
             />
             
@@ -217,9 +224,19 @@ export function AcademyLauncher({ showOnFirstVisit = true }: AcademyLauncherProp
                     setShowVideoPlayer(false);
                   }
                 }}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                disabled={!canAdvance}
+                className={cn(
+                  "transition-all",
+                  canAdvance 
+                    ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                    : "bg-slate-600 cursor-not-allowed opacity-60"
+                )}
+                title={!canAdvance ? "Regardez 95% de la vidéo pour continuer" : undefined}
               >
                 {currentVideoIndex < TRAINING_VIDEOS.length - 1 ? 'Suivant' : 'Terminer'}
+                {!canAdvance && (
+                  <span className="ml-2 text-xs">({Math.round(currentVideoProgress)}%)</span>
+                )}
               </Button>
             </div>
           </div>
