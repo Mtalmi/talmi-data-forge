@@ -30,6 +30,7 @@ import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
 import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
 import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
+import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -234,6 +235,7 @@ export default function Dashboard() {
               {/* Action Buttons */}
               {isCeo && <SystemManualPdf />}
               {isCeo && <DailyReportGenerator />}
+              {isCeo && <HawaiiReportButton />}
               <button 
                 onClick={handleRefresh}
                 disabled={refreshing}
