@@ -40,21 +40,21 @@ const TRAINING_VIDEOS = [
     id: 'reception_stock',
     title: 'Réception Stock - Le Handshake Photo-First',
     description: 'Règle d\'Or #1: Toujours prendre la photo AVANT de saisir les données.',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', // Placeholder
+    videoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663300837112/DIPZYBaZWnJRVgek.mp4',
     duration: '~5 min'
   },
   {
     id: 'expense_entry',
     title: 'Saisie Dépense - La Limite 15k DH',
     description: 'Comprendre le plafond mensuel et le système d\'approbation CEO.',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4', // Placeholder
+    videoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663300837112/FBJNgiKsqAFsrsnQ.mp4',
     duration: '~4 min'
   },
   {
     id: 'midnight_protocol',
     title: 'Le Protocole Minuit (18h-00h)',
     description: 'Toute transaction requiert une justification d\'urgence.',
-    videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4', // Placeholder
+    videoUrl: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663300837112/mhzFkSnSzfwlwuAF.mp4',
     duration: '~3 min'
   }
 ];
