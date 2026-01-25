@@ -227,6 +227,66 @@ export type Database = {
         }
         Relationships: []
       }
+      ar_ap_reconciliation: {
+        Row: {
+          adjustments: number | null
+          closing_balance: number
+          created_at: string
+          dso_dpo_days: number | null
+          id: string
+          invoices_issued: number | null
+          on_time_rate: number | null
+          opening_balance: number
+          payments_received: number | null
+          period_month: string
+          reconciled_at: string | null
+          reconciled_by: string | null
+          status: string | null
+          type: string
+          variance: number | null
+          variance_explanation: string | null
+          write_offs: number | null
+        }
+        Insert: {
+          adjustments?: number | null
+          closing_balance: number
+          created_at?: string
+          dso_dpo_days?: number | null
+          id?: string
+          invoices_issued?: number | null
+          on_time_rate?: number | null
+          opening_balance: number
+          payments_received?: number | null
+          period_month: string
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          status?: string | null
+          type: string
+          variance?: number | null
+          variance_explanation?: string | null
+          write_offs?: number | null
+        }
+        Update: {
+          adjustments?: number | null
+          closing_balance?: number
+          created_at?: string
+          dso_dpo_days?: number | null
+          id?: string
+          invoices_issued?: number | null
+          on_time_rate?: number | null
+          opening_balance?: number
+          payments_received?: number | null
+          period_month?: string
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          status?: string | null
+          type?: string
+          variance?: number | null
+          variance_explanation?: string | null
+          write_offs?: number | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action_type: string
@@ -1208,6 +1268,7 @@ export type Database = {
       clients: {
         Row: {
           adresse: string | null
+          average_days_to_pay: number | null
           client_id: string
           code_postal: string | null
           contact_personne: string | null
@@ -1215,21 +1276,29 @@ export type Database = {
           credit_bloque: boolean | null
           delai_paiement_jours: number | null
           derniere_commande_at: string | null
+          disputes_count: number | null
           email: string | null
           ice: string | null
           identifiant_fiscal: string | null
+          last_payment_date: string | null
+          late_payments: number | null
           limite_credit_dh: number | null
           nom_client: string
+          on_time_payments: number | null
           patente: string | null
+          payment_score: number | null
           rc: string | null
           rc_document_url: string | null
           solde_du: number | null
           telephone: string | null
+          total_invoiced: number | null
+          total_paid: number | null
           updated_at: string
           ville: string | null
         }
         Insert: {
           adresse?: string | null
+          average_days_to_pay?: number | null
           client_id: string
           code_postal?: string | null
           contact_personne?: string | null
@@ -1237,21 +1306,29 @@ export type Database = {
           credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
           derniere_commande_at?: string | null
+          disputes_count?: number | null
           email?: string | null
           ice?: string | null
           identifiant_fiscal?: string | null
+          last_payment_date?: string | null
+          late_payments?: number | null
           limite_credit_dh?: number | null
           nom_client: string
+          on_time_payments?: number | null
           patente?: string | null
+          payment_score?: number | null
           rc?: string | null
           rc_document_url?: string | null
           solde_du?: number | null
           telephone?: string | null
+          total_invoiced?: number | null
+          total_paid?: number | null
           updated_at?: string
           ville?: string | null
         }
         Update: {
           adresse?: string | null
+          average_days_to_pay?: number | null
           client_id?: string
           code_postal?: string | null
           contact_personne?: string | null
@@ -1259,20 +1336,80 @@ export type Database = {
           credit_bloque?: boolean | null
           delai_paiement_jours?: number | null
           derniere_commande_at?: string | null
+          disputes_count?: number | null
           email?: string | null
           ice?: string | null
           identifiant_fiscal?: string | null
+          last_payment_date?: string | null
+          late_payments?: number | null
           limite_credit_dh?: number | null
           nom_client?: string
+          on_time_payments?: number | null
           patente?: string | null
+          payment_score?: number | null
           rc?: string | null
           rc_document_url?: string | null
           solde_du?: number | null
           telephone?: string | null
+          total_invoiced?: number | null
+          total_paid?: number | null
           updated_at?: string
           ville?: string | null
         }
         Relationships: []
+      }
+      collection_logs: {
+        Row: {
+          action_date: string
+          action_type: string
+          bl_id: string | null
+          client_id: string
+          created_at: string
+          facture_id: string | null
+          id: string
+          metadata: Json | null
+          next_action_date: string | null
+          notes: string | null
+          performed_by: string | null
+          performed_by_name: string | null
+        }
+        Insert: {
+          action_date?: string
+          action_type: string
+          bl_id?: string | null
+          client_id: string
+          created_at?: string
+          facture_id?: string | null
+          id?: string
+          metadata?: Json | null
+          next_action_date?: string | null
+          notes?: string | null
+          performed_by?: string | null
+          performed_by_name?: string | null
+        }
+        Update: {
+          action_date?: string
+          action_type?: string
+          bl_id?: string | null
+          client_id?: string
+          created_at?: string
+          facture_id?: string | null
+          id?: string
+          metadata?: Json | null
+          next_action_date?: string | null
+          notes?: string | null
+          performed_by?: string | null
+          performed_by_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
+          },
+        ]
       }
       communication_logs: {
         Row: {
@@ -2718,6 +2855,7 @@ export type Database = {
         Row: {
           actif: boolean | null
           adresse: string | null
+          average_days_to_pay: number | null
           code_fournisseur: string
           conditions_paiement: string | null
           contact_email: string | null
@@ -2725,15 +2863,24 @@ export type Database = {
           contact_telephone: string | null
           created_at: string
           delai_livraison_jours: number | null
+          discount_terms: string | null
           id: string
+          last_payment_date: string | null
+          late_payments: number | null
           nom_fournisseur: string
           note_qualite: number | null
+          on_time_payments: number | null
+          preferred_payment_method: string | null
+          reliability_score: number | null
+          total_ordered: number | null
+          total_paid: number | null
           updated_at: string
           ville: string | null
         }
         Insert: {
           actif?: boolean | null
           adresse?: string | null
+          average_days_to_pay?: number | null
           code_fournisseur: string
           conditions_paiement?: string | null
           contact_email?: string | null
@@ -2741,15 +2888,24 @@ export type Database = {
           contact_telephone?: string | null
           created_at?: string
           delai_livraison_jours?: number | null
+          discount_terms?: string | null
           id?: string
+          last_payment_date?: string | null
+          late_payments?: number | null
           nom_fournisseur: string
           note_qualite?: number | null
+          on_time_payments?: number | null
+          preferred_payment_method?: string | null
+          reliability_score?: number | null
+          total_ordered?: number | null
+          total_paid?: number | null
           updated_at?: string
           ville?: string | null
         }
         Update: {
           actif?: boolean | null
           adresse?: string | null
+          average_days_to_pay?: number | null
           code_fournisseur?: string
           conditions_paiement?: string | null
           contact_email?: string | null
@@ -2757,9 +2913,17 @@ export type Database = {
           contact_telephone?: string | null
           created_at?: string
           delai_livraison_jours?: number | null
+          discount_terms?: string | null
           id?: string
+          last_payment_date?: string | null
+          late_payments?: number | null
           nom_fournisseur?: string
           note_qualite?: number | null
+          on_time_payments?: number | null
+          preferred_payment_method?: string | null
+          reliability_score?: number | null
+          total_ordered?: number | null
+          total_paid?: number | null
           updated_at?: string
           ville?: string | null
         }
@@ -3571,6 +3735,66 @@ export type Database = {
           },
         ]
       }
+      payment_schedules: {
+        Row: {
+          amount: number
+          bank_account: string | null
+          created_at: string
+          entity_id: string
+          entity_name: string | null
+          executed_by: string | null
+          executed_by_name: string | null
+          executed_date: string | null
+          id: string
+          notes: string | null
+          payment_method: string | null
+          reference_id: string
+          reference_number: string | null
+          scheduled_date: string
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          bank_account?: string | null
+          created_at?: string
+          entity_id: string
+          entity_name?: string | null
+          executed_by?: string | null
+          executed_by_name?: string | null
+          executed_date?: string | null
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          reference_id: string
+          reference_number?: string | null
+          scheduled_date: string
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          bank_account?: string | null
+          created_at?: string
+          entity_id?: string
+          entity_name?: string | null
+          executed_by?: string | null
+          executed_by_name?: string | null
+          executed_date?: string | null
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          reference_id?: string
+          reference_number?: string | null
+          scheduled_date?: string
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pointages: {
         Row: {
           created_at: string
@@ -3937,6 +4161,68 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "bank_transactions"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivable_status: {
+        Row: {
+          amount: number
+          bl_id: string | null
+          client_id: string
+          collection_stage: number | null
+          created_at: string
+          dispute_reason: string | null
+          due_date: string
+          facture_id: string | null
+          id: string
+          last_contact_date: string | null
+          last_reminder_sent_at: string | null
+          status: string
+          updated_at: string
+          write_off_approved_by: string | null
+          write_off_reason: string | null
+        }
+        Insert: {
+          amount: number
+          bl_id?: string | null
+          client_id: string
+          collection_stage?: number | null
+          created_at?: string
+          dispute_reason?: string | null
+          due_date: string
+          facture_id?: string | null
+          id?: string
+          last_contact_date?: string | null
+          last_reminder_sent_at?: string | null
+          status?: string
+          updated_at?: string
+          write_off_approved_by?: string | null
+          write_off_reason?: string | null
+        }
+        Update: {
+          amount?: number
+          bl_id?: string | null
+          client_id?: string
+          collection_stage?: number | null
+          created_at?: string
+          dispute_reason?: string | null
+          due_date?: string
+          facture_id?: string | null
+          id?: string
+          last_contact_date?: string | null
+          last_reminder_sent_at?: string | null
+          status?: string
+          updated_at?: string
+          write_off_approved_by?: string | null
+          write_off_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivable_status_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["client_id"]
           },
         ]
       }
@@ -4853,6 +5139,26 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_dpo: {
+        Args: { p_fournisseur_id?: string; p_period_days?: number }
+        Returns: {
+          dpo_days: number
+          fournisseur_id: string
+          fournisseur_name: string
+          total_payables: number
+          total_purchases: number
+        }[]
+      }
+      calculate_dso: {
+        Args: { p_client_id?: string; p_period_days?: number }
+        Returns: {
+          client_id: string
+          client_name: string
+          dso_days: number
+          total_receivables: number
+          total_revenue: number
+        }[]
+      }
       calculate_fleet_maintenance_status: {
         Args: {
           p_date_next_visite: string
@@ -4979,6 +5285,26 @@ export type Database = {
           total_pending: number
           total_spent: number
           utilization_pct: number
+        }[]
+      }
+      get_payables_aging_summary: {
+        Args: never
+        Returns: {
+          bucket: string
+          bucket_order: number
+          invoice_count: number
+          percentage: number
+          total_amount: number
+        }[]
+      }
+      get_receivables_aging_summary: {
+        Args: never
+        Returns: {
+          bucket: string
+          bucket_order: number
+          invoice_count: number
+          percentage: number
+          total_amount: number
         }[]
       }
       get_rls_policies_for_report: {
