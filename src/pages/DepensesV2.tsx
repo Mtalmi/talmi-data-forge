@@ -516,6 +516,19 @@ export default function DepensesV2() {
             onClose={() => setSelectedExpense(null)}
           />
         )}
+
+        {/* Cash Payment Dialog */}
+        {paymentDialogExpense && (
+          <CashPaymentDialog
+            open={!!paymentDialogExpense}
+            onOpenChange={(open) => !open && setPaymentDialogExpense(null)}
+            expenseId={paymentDialogExpense.id}
+            expenseReference={paymentDialogExpense.reference}
+            amount={paymentDialogExpense.montant_ttc}
+            description={paymentDialogExpense.description}
+            onConfirm={handlePaymentConfirm}
+          />
+        )}
       </div>
     </MainLayout>
   );
