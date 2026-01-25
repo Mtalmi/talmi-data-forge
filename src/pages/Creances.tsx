@@ -166,6 +166,9 @@ export default function Creances() {
     );
   }
 
+  const hasData = receivables.length > 0;
+  const startDate = new Date('2026-01-25'); // System start date
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -177,7 +180,8 @@ export default function Creances() {
               Créances Clients
             </h1>
             <p className="text-muted-foreground">
-              Gestion des créances et recouvrement • DSO: {stats.dsoAverage} jours
+              Suivi automatique des créances depuis le {format(startDate, 'dd MMM yyyy', { locale: fr })}
+              {hasData && ` • DSO: ${stats.dsoAverage} jours`}
             </p>
           </div>
           <div className="flex gap-2">
@@ -187,6 +191,40 @@ export default function Creances() {
             </Button>
           </div>
         </div>
+
+        {/* Fresh Start Info Banner */}
+        {!hasData && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1">Système de Recouvrement Activé</h3>
+                  <p className="text-muted-foreground mb-3">
+                    Le suivi automatique des créances est maintenant actif. Toutes les nouvelles livraisons 
+                    seront automatiquement suivies pour le recouvrement.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-warning" />
+                      <span>Rappel automatique à 7 jours</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Send className="h-4 w-4 text-accent-foreground" />
+                      <span>Escalade à 15-30 jours</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Target className="h-4 w-4 text-success" />
+                      <span>Objectif: 95% recouvrement</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -262,6 +300,7 @@ export default function Creances() {
         </div>
 
         {/* Aging Summary */}
+        {hasData && (
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
@@ -288,6 +327,7 @@ export default function Creances() {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="receivables" className="space-y-4">
@@ -356,7 +396,21 @@ export default function Creances() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredReceivables.slice(0, 50).map((receivable) => {
+                    {filteredReceivables.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={canManageReceivables ? 7 : 6} className="h-32 text-center">
+                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                            <FileText className="h-8 w-8" />
+                            <p className="font-medium">Aucune créance</p>
+                            <p className="text-sm">
+                              {!hasData 
+                                ? "Les créances apparaîtront automatiquement à la création de nouvelles livraisons"
+                                : "Aucune créance ne correspond à vos critères de recherche"}
+                            </p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : filteredReceivables.slice(0, 50).map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
                       return (
                         <TableRow key={receivable.id}>
@@ -439,6 +493,21 @@ export default function Creances() {
 
           {/* By Client Tab */}
           <TabsContent value="by-client" className="space-y-4">
+            {overdueByClient.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Users className="h-12 w-12" />
+                    <p className="font-medium text-lg">Aucun client en retard</p>
+                    <p className="text-sm text-center max-w-md">
+                      {!hasData 
+                        ? "Les retards de paiement apparaîtront ici automatiquement lorsque des créances dépasseront leur date d'échéance."
+                        : "Félicitations ! Tous vos clients sont à jour dans leurs paiements."}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {overdueByClient.slice(0, 12).map((client) => (
                 <Card key={client.client_name} className="border-warning/30">
@@ -472,6 +541,7 @@ export default function Creances() {
                 </Card>
               ))}
             </div>
+            )}
           </TabsContent>
 
           {/* Logs Tab */}
@@ -482,6 +552,15 @@ export default function Creances() {
                 <CardDescription>Dernières actions de recouvrement</CardDescription>
               </CardHeader>
               <CardContent>
+                {collectionLogs.length === 0 ? (
+                  <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
+                    <Clock className="h-10 w-10" />
+                    <p className="font-medium">Aucune action enregistrée</p>
+                    <p className="text-sm text-center max-w-md">
+                      L'historique des rappels et actions de recouvrement apparaîtra ici automatiquement.
+                    </p>
+                  </div>
+                ) : (
                 <div className="space-y-4">
                   {collectionLogs.slice(0, 20).map((log) => (
                     <div key={log.id} className="flex items-start gap-4 p-3 rounded-lg bg-muted/50">
@@ -513,6 +592,7 @@ export default function Creances() {
                     </div>
                   ))}
                 </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

@@ -156,6 +156,9 @@ export default function Dettes() {
     );
   }
 
+  const hasData = payables.length > 0;
+  const startDate = new Date('2026-01-25'); // System start date
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -167,7 +170,8 @@ export default function Dettes() {
               Dettes Fournisseurs
             </h1>
             <p className="text-muted-foreground">
-              Gestion des paiements fournisseurs • DPO: {stats.dpoAverage} jours
+              Suivi des paiements fournisseurs depuis le {format(startDate, 'dd MMM yyyy', { locale: fr })}
+              {hasData && ` • DPO: ${stats.dpoAverage} jours`}
             </p>
           </div>
           <div className="flex gap-2">
@@ -178,8 +182,42 @@ export default function Dettes() {
           </div>
         </div>
 
+        {/* Fresh Start Info Banner */}
+        {!hasData && (
+          <Card className="border-primary/30 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg mb-1">Système de Paiements Fournisseurs Activé</h3>
+                  <p className="text-muted-foreground mb-3">
+                    Le suivi automatique des dettes fournisseurs est maintenant actif. Toutes les nouvelles 
+                    factures seront automatiquement suivies pour éviter les retards de paiement.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Timer className="h-4 w-4 text-warning" />
+                      <span>Alerte 7 jours avant échéance</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-accent-foreground" />
+                      <span>Programmation des paiements</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                      <span>Objectif: 100% à temps</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Urgent Alerts */}
-        {(dueSoon.length > 0 || overdue.length > 0) && (
+        {hasData && (dueSoon.length > 0 || overdue.length > 0) && (
           <Card className="border-warning/50 bg-warning/5">
             <CardContent className="pt-4">
               <div className="flex items-center gap-4">
@@ -273,6 +311,7 @@ export default function Dettes() {
         </div>
 
         {/* Aging Chart */}
+        {hasData && (
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Antériorité des Dettes</CardTitle>
@@ -295,6 +334,7 @@ export default function Dettes() {
             </div>
           </CardContent>
         </Card>
+        )}
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="payables" className="space-y-4">
@@ -361,7 +401,21 @@ export default function Dettes() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredPayables.slice(0, 50).map((payable) => {
+                    {filteredPayables.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={canManagePayables ? 7 : 6} className="h-32 text-center">
+                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                            <FileText className="h-8 w-8" />
+                            <p className="font-medium">Aucune dette fournisseur</p>
+                            <p className="text-sm">
+                              {!hasData 
+                                ? "Les dettes apparaîtront automatiquement à la réception de nouvelles factures"
+                                : "Aucune dette ne correspond à vos critères de recherche"}
+                            </p>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ) : filteredPayables.slice(0, 50).map((payable) => {
                       const statusConfig = STATUS_CONFIG[payable.status];
                       return (
                         <TableRow key={payable.id}>
@@ -448,6 +502,21 @@ export default function Dettes() {
 
           {/* By Supplier Tab */}
           <TabsContent value="by-supplier" className="space-y-4">
+            {payablesBySupplier.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                    <Building2 className="h-12 w-12" />
+                    <p className="font-medium text-lg">Aucune dette fournisseur</p>
+                    <p className="text-sm text-center max-w-md">
+                      {!hasData 
+                        ? "Les dettes fournisseurs apparaîtront ici automatiquement à la réception de nouvelles factures."
+                        : "Toutes vos factures fournisseurs sont réglées."}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {payablesBySupplier.slice(0, 12).map((supplier) => (
                 <Card key={supplier.fournisseur_name} className={supplier.total_overdue > 0 ? 'border-destructive/30' : ''}>
@@ -489,6 +558,7 @@ export default function Dettes() {
                 </Card>
               ))}
             </div>
+            )}
           </TabsContent>
 
           {/* Calendar Tab */}
