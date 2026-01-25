@@ -38,6 +38,7 @@ import {
   StockLevelsWidget, 
   SalesFunnelWidget 
 } from '@/components/dashboard/DashboardWidgets';
+import { TaxComplianceWidget } from '@/components/compliance';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
@@ -319,6 +320,11 @@ export default function Dashboard() {
             {/* Treasury & Cash Flow - Financial Constitution */}
             <ParallaxCard className="bento-wide" glowColor="gold">
               <TreasuryWidget />
+            </ParallaxCard>
+            
+            {/* Tax & Social Compliance Widget */}
+            <ParallaxCard className="bento-wide" glowColor="emerald">
+              <TaxComplianceWidget />
             </ParallaxCard>
             
             {/* Cash-Flow Time Machine - 30-Day Forecast */}
