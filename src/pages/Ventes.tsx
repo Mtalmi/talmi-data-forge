@@ -21,6 +21,8 @@ import { PipelineStats } from '@/components/ventes/PipelineStats';
 import { FluxCommercialWidget } from '@/components/ventes/FluxCommercialWidget';
 import { DevisTable } from '@/components/ventes/DevisTable';
 import { BcTable } from '@/components/ventes/BcTable';
+import { DevisTableResponsive } from '@/components/ventes/DevisTableResponsive';
+import { BcTableResponsive } from '@/components/ventes/BcTableResponsive';
 import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
 import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
 import { VentesFilters } from '@/components/ventes/VentesFilters';
@@ -613,7 +615,7 @@ export default function Ventes() {
               />
               <Card>
                 <CardContent className="pt-6">
-                  <DevisTable
+                  <DevisTableResponsive
                     devisList={filteredDevis}
                     loading={loading}
                     onConvert={openConvertDialog}
@@ -651,14 +653,14 @@ export default function Ventes() {
               />
               <Card>
                 <CardContent className="pt-6">
-                  <BcTable
+                  <BcTableResponsive
                     bcList={filteredBc}
                     loading={loading}
-                    launchingProduction={launchingProduction}
-                    onLaunchProduction={handleLaunchProduction}
-                    onSubmitForValidation={handleSubmitForValidation}
-                    onCopyBc={handleCopyBc}
-                    onOpenDetail={handleOpenBcDetail}
+                    onRowClick={handleOpenBcDetail}
+                    onCreateBL={(bc) => {
+                      // Handle BL creation
+                      console.log('Create BL for:', bc);
+                    }}
                     onGenerateInvoice={generateConsolidatedInvoice}
                     selectedIds={selectedBcIds}
                     onSelectionChange={setSelectedBcIds}
