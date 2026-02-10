@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -51,7 +53,25 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [receiptUploaded, setReceiptUploaded] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
   const totalSteps = 5;
+
+  const {
+    getCoachFeedback,
+    generateScenario,
+    isCoaching,
+    isGenerating,
+    lastFeedback,
+    averageScore,
+    resetSession,
+  } = useAITrainingCoach();
+
+  // Generate dynamic scenario on mount
+  useEffect(() => {
+    generateScenario('expense_entry').then(data => {
+      if (data) setScenario(data);
+    });
+  }, [generateScenario]);
 
   const amountNum = parseFloat(amount) || 0;
   const newTotal = DEMO_BUDGET.current + amountNum;
@@ -79,6 +99,19 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
     setAmount('');
     setDescription('');
     setReceiptUploaded(false);
+    resetSession();
+  };
+
+  // Coach feedback on step transitions
+  const handleStepChange = (nextStep: number, action: string) => {
+    setStep(nextStep);
+    getCoachFeedback({
+      simulation: 'expense_entry',
+      step: nextStep,
+      totalSteps,
+      action,
+      data: { category, amount: amountNum, description, receiptUploaded, budgetExceeded },
+    });
   };
 
   const progress = (step / totalSteps) * 100;
@@ -170,7 +203,7 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
 
                 <Button
                   className="w-full gap-2 bg-amber-500 hover:bg-amber-600"
-                  onClick={() => setStep(2)}
+                  onClick={() => handleStepChange(2, 'Consulte le budget mensuel')}
                 >
                   Nouvelle Dépense
                   <ArrowRight className="h-4 w-4" />
@@ -205,7 +238,7 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
 
                 <Button
                   className="w-full mt-4 gap-2 bg-amber-500 hover:bg-amber-600"
-                  onClick={() => setStep(3)}
+                  onClick={() => handleStepChange(3, `Sélectionne la catégorie: ${category}`)}
                   disabled={!category}
                 >
                   Continuer
@@ -276,7 +309,7 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
 
                 <Button
                   className="w-full mt-4 gap-2 bg-amber-500 hover:bg-amber-600"
-                  onClick={() => setStep(4)}
+                  onClick={() => handleStepChange(4, `Saisie montant: ${amount} DH, description: ${description}`)}
                   disabled={!amount || !description}
                 >
                   Continuer
@@ -326,7 +359,7 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
 
                 <Button
                   className="w-full mt-4 gap-2 bg-amber-500 hover:bg-amber-600"
-                  onClick={() => setStep(5)}
+                  onClick={() => handleStepChange(5, 'Justificatif photo téléchargé')}
                   disabled={!receiptUploaded}
                 >
                   Continuer
@@ -416,6 +449,22 @@ export function ExpenseEntrySim({ onComplete, onClose }: ExpenseEntrySimProps) {
                 </Button>
               </CardContent>
             </Card>
+          )}
+        </div>
+
+        {/* AI Coach Panel */}
+        <div className="max-w-2xl mx-auto w-full mt-4">
+          <AICoachPanel
+            feedback={lastFeedback}
+            isCoaching={isCoaching}
+            averageScore={averageScore}
+          />
+          {scenario && (
+            <div className="mt-3 p-3 rounded-lg bg-muted/30 border border-border">
+              <p className="text-xs text-muted-foreground">
+                🎲 <strong>Scénario dynamique:</strong> {scenario.context || scenario.description || 'Scénario AI généré'}
+              </p>
+            </div>
           )}
         </div>
       </div>
