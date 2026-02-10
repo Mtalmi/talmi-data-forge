@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, BarChart3, ArrowRight, RotateCcw, TrendingUp, TrendingDown, Wallet, FileCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface FinancialReportingSimProps {
   onComplete: () => void;
@@ -19,13 +21,22 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
   const [marginsChecked, setMarginsChecked] = useState(false);
   const [forecastViewed, setForecastViewed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('financial_reporting').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'financial_reporting', step: next, totalSteps, action: `Étape ${step} complétée`, data: { dailyReviewed, cashFlowAnalyzed, marginsChecked, forecastViewed } });
     }
   };
 
@@ -54,6 +65,7 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
     setCashFlowAnalyzed(false);
     setMarginsChecked(false);
     setForecastViewed(false);
+    resetSession();
   };
 
   return (
@@ -302,6 +314,14 @@ export function FinancialReportingSim({ onComplete, onClose }: FinancialReportin
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, FlaskConical, ArrowRight, RotateCcw, Camera, FileCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface QualityControlSimProps {
   onComplete: () => void;
@@ -21,6 +23,7 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
   const [photoTaken, setPhotoTaken] = useState(false);
   const [reportGenerated, setReportGenerated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
@@ -28,9 +31,17 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
   const slumpOk = parseInt(slumpValue) >= 100 && parseInt(slumpValue) <= 150;
   const tempOk = parseInt(tempValue) >= 15 && parseInt(tempValue) <= 30;
 
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('quality_control').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'quality_control', step: next, totalSteps, action: `Étape ${step} complétée`, data: { slumpValue, tempValue, photoTaken, reportGenerated } });
     }
   };
 
@@ -59,6 +70,7 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
     setTempValue('');
     setPhotoTaken(false);
     setReportGenerated(false);
+    resetSession();
   };
 
   return (
@@ -256,6 +268,14 @@ export function QualityControlSim({ onComplete, onClose }: QualityControlSimProp
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

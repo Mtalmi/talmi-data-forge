@@ -27,6 +27,21 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
+  Moon,
+  CheckCircle2,
+  ArrowRight,
+  RotateCcw,
+  AlertTriangle,
+  X,
+  Clock,
+  ShieldAlert,
+  Zap,
+  KeyRound,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface MidnightProtocolSimProps {
   onComplete: () => void;
@@ -56,7 +71,19 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
   const [ceoReason, setCeoReason] = useState('');
   const [overrideToken, setOverrideToken] = useState('');
   const [isApproving, setIsApproving] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
   const totalSteps = 4;
+
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('midnight_protocol').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
+  const handleStepChange = (nextStep: number, action: string) => {
+    setStep(nextStep);
+    getCoachFeedback({ simulation: 'midnight_protocol', step: nextStep, totalSteps, action, data: { currentTime, justification, ceoReason, overrideToken } });
+  };
 
   useEffect(() => {
     // Simulate night time
@@ -90,6 +117,7 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
     setJustification('Coulage de dalle prévu cette nuit, délai critique pour le client');
     setCeoReason('');
     setOverrideToken('');
+    resetSession();
   };
 
   const progress = (step / totalSteps) * 100;
@@ -208,7 +236,7 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
 
                 <Button
                   className="w-full gap-2 bg-pink-500 hover:bg-pink-600"
-                  onClick={() => setStep(2)}
+                  onClick={() => handleStepChange(2, 'Transaction urgence consultée')}
                 >
                   Justifier l'Urgence
                   <ArrowRight className="h-4 w-4" />
@@ -266,7 +294,7 @@ export function MidnightProtocolSim({ onComplete, onClose }: MidnightProtocolSim
 
                 <Button
                   className="w-full mt-4 gap-2 bg-pink-500 hover:bg-pink-600"
-                  onClick={() => setStep(3)}
+                  onClick={() => handleStepChange(3, 'Justification saisie')}
                   disabled={!justificationValid}
                 >
                   Continuer

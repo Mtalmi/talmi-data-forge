@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Users, ArrowRight, RotateCcw, Building2, Phone, Mail, History } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface ClientManagementSimProps {
   onComplete: () => void;
@@ -23,13 +25,22 @@ export function ClientManagementSim({ onComplete, onClose }: ClientManagementSim
   const [historyViewed, setHistoryViewed] = useState(false);
   const [receivablesChecked, setReceivablesChecked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('client_management').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'client_management', step: next, totalSteps, action: `Étape ${step} complétée`, data: { clientName, clientPhone, clientCreated, historyViewed, receivablesChecked } });
     }
   };
 
@@ -61,6 +72,7 @@ export function ClientManagementSim({ onComplete, onClose }: ClientManagementSim
     setClientCreated(false);
     setHistoryViewed(false);
     setReceivablesChecked(false);
+    resetSession();
   };
 
   const isFormValid = clientName.length >= 3 && clientPhone.length >= 10;
@@ -300,6 +312,14 @@ export function ClientManagementSim({ onComplete, onClose }: ClientManagementSim
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

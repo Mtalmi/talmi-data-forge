@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2, FileText, ArrowRight, RotateCcw, MapPin, Package, Calculator, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface CreateQuoteSimProps {
   onComplete: () => void;
@@ -40,9 +42,21 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
   const [quantity, setQuantity] = useState('10');
   const [notes, setNotes] = useState('Livraison samedi matin, site en montée');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 6;
   const progress = (step / totalSteps) * 100;
+
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('create_quote').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
+  const handleStepChange = (nextStep: number, action: string) => {
+    setStep(nextStep);
+    getCoachFeedback({ simulation: 'create_quote', step: nextStep, totalSteps, action, data: { clientName, selectedZone, selectedProduct, quantity } });
+  };
 
   const zone = DELIVERY_ZONES.find(z => z.id === selectedZone);
   const product = CONCRETE_PRODUCTS.find(p => p.id === selectedProduct);
@@ -84,6 +98,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
     setSelectedProduct(null);
     setQuantity('10');
     setNotes('Livraison samedi matin, site en montée');
+    resetSession();
   };
 
   return (
@@ -144,7 +159,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                 </div>
               </div>
               <Button 
-                onClick={() => setStep(2)} 
+                onClick={() => handleStepChange(2, 'Info client saisie')} 
                 disabled={!clientName || !contactName}
                 className="w-full gap-2"
               >
@@ -185,7 +200,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                 </div>
               </div>
               <Button 
-                onClick={() => setStep(3)} 
+                onClick={() => handleStepChange(3, `Zone sélectionnée: ${selectedZone}`)} 
                 disabled={!selectedZone}
                 className="w-full gap-2"
               >
@@ -249,7 +264,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                 )}
               </div>
               <Button 
-                onClick={() => setStep(4)} 
+                onClick={() => handleStepChange(4, `Produit: ${selectedProduct}`)} 
                 disabled={!selectedProduct}
                 className="w-full gap-2"
               >
@@ -310,7 +325,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                 )}
               </div>
               <Button 
-                onClick={() => setStep(5)} 
+                onClick={() => handleStepChange(5, `Quantité: ${quantity} M³`)} 
                 disabled={qty < (product?.minOrder || 2) || qty > (product?.maxOrder || 50)}
                 className="w-full gap-2"
               >
@@ -335,7 +350,7 @@ export function CreateQuoteSim({ onComplete, onClose }: CreateQuoteSimProps) {
                 />
               </div>
               <Button 
-                onClick={() => setStep(6)} 
+                onClick={() => handleStepChange(6, 'Notes ajoutées')} 
                 className="w-full gap-2"
               >
                 Continuer <ArrowRight className="h-4 w-4" />

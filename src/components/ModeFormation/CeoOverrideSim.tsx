@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Key, ArrowRight, RotateCcw, Shield, Timer, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface CeoOverrideSimProps {
   onComplete: () => void;
@@ -19,13 +21,20 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
   const [step, setStep] = useState(1);
   const [tokenGenerated, setTokenGenerated] = useState(false);
   const [generatedToken, setGeneratedToken] = useState('');
-  const [tokenExpiry, setTokenExpiry] = useState(30 * 60); // 30 minutes
+  const [tokenExpiry, setTokenExpiry] = useState(30 * 60);
   const [enteredToken, setEnteredToken] = useState('');
   const [justification, setJustification] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 3;
   const progress = (step / totalSteps) * 100;
+
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('ceo_override').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
 
   // Token expiry countdown
   useEffect(() => {
@@ -52,7 +61,9 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
 
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'ceo_override', step: next, totalSteps, action: `Étape ${step} complétée`, data: { tokenGenerated, enteredToken, justification } });
     }
   };
 
@@ -80,6 +91,7 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
     setTokenExpiry(30 * 60);
     setEnteredToken('');
     setJustification('');
+    resetSession();
   };
 
   const tokenValid = enteredToken === generatedToken && tokenExpiry > 0;
@@ -259,6 +271,14 @@ export function CeoOverrideSim({ onComplete, onClose }: CeoOverrideSimProps) {
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">
