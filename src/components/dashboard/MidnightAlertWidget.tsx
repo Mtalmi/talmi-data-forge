@@ -305,13 +305,13 @@ export function MidnightAlertWidget() {
                 position="bottom"
               />
             </CardTitle>
-            <CardDescription className="text-xs flex items-center gap-1">
+            <div className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" />
               <span>Transactions 18h-00h</span>
               <Badge variant="outline" className="text-[9px] ml-1">
                 🇲🇦 Casablanca
               </Badge>
-            </CardDescription>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             {transactions.length > 0 && (
