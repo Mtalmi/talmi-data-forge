@@ -10,7 +10,13 @@ interface Employee {
   email: string;
   full_name: string;
   role: string;
-  password: string;
+}
+
+/** Generate a cryptographically random password */
+function generatePassword(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+  const values = crypto.getRandomValues(new Uint8Array(20));
+  return Array.from(values, v => chars[v % chars.length]).join('') + '!A1';
 }
 
 serve(async (req) => {
@@ -19,74 +25,46 @@ serve(async (req) => {
   }
 
   try {
-    // Create admin client
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Define employees to create
+    // Employee definitions — no hardcoded passwords
     const employees: Employee[] = [
-      {
-        email: "imad@talmi-beton.ma",
-        full_name: "Imad",
-        role: "directeur_operations",
-        password: "TalmiImad2024!",
-      },
-      {
-        email: "abdel.sadek@talmi-beton.ma",
-        full_name: "Abdel Sadek",
-        role: "responsable_technique",
-        password: "TalmiAbdel2024!",
-      },
-      {
-        email: "tarek@talmi-beton.ma",
-        full_name: "Tarek",
-        role: "responsable_technique",
-        password: "TalmiTarek2024!",
-      },
-      {
-        email: "agent.admin@talmi-beton.ma",
-        full_name: "Agent Administratif",
-        role: "agent_administratif",
-        password: "TalmiAgent2024!",
-      },
-      {
-        email: "centraliste@talmi-beton.ma",
-        full_name: "Centraliste",
-        role: "centraliste",
-        password: "TalmiCentral2024!",
-      },
-      {
-        email: "auditeur@talmi-beton.ma",
-        full_name: "Auditeur Externe",
-        role: "auditeur",
-        password: "TalmiAudit2024!",
-      },
+      { email: "imad@talmi-beton.ma", full_name: "Imad", role: "directeur_operations" },
+      { email: "abdel.sadek@talmi-beton.ma", full_name: "Abdel Sadek", role: "responsable_technique" },
+      { email: "tarek@talmi-beton.ma", full_name: "Tarek", role: "responsable_technique" },
+      { email: "agent.admin@talmi-beton.ma", full_name: "Agent Administratif", role: "agent_administratif" },
+      { email: "centraliste@talmi-beton.ma", full_name: "Centraliste", role: "centraliste" },
+      { email: "auditeur@talmi-beton.ma", full_name: "Auditeur Externe", role: "auditeur" },
     ];
 
     const results = [];
 
     for (const emp of employees) {
-      // Check if user already exists
       const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
       const existingUser = existingUsers?.users?.find(u => u.email === emp.email);
 
       if (existingUser) {
+        // Ensure role is set
+        await supabaseAdmin.from("user_roles_v2").upsert({
+          user_id: existingUser.id,
+          role: emp.role,
+          full_name: emp.full_name,
+          email: emp.email,
+        });
         results.push({ email: emp.email, status: "already_exists", user_id: existingUser.id });
         continue;
       }
 
-      // Create auth user
+      // Generate random password — never returned or logged
+      const password = generatePassword();
+
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: emp.email,
-        password: emp.password,
+        password,
         email_confirm: true,
         user_metadata: { full_name: emp.full_name },
       });
@@ -98,41 +76,33 @@ serve(async (req) => {
 
       const userId = authData.user.id;
 
-      // Create profile
       const { error: profileError } = await supabaseAdmin
         .from("profiles")
-        .upsert({
-          user_id: userId,
-          full_name: emp.full_name,
-          email: emp.email,
-        });
+        .upsert({ user_id: userId, full_name: emp.full_name, email: emp.email });
 
       if (profileError) {
         results.push({ email: emp.email, status: "profile_error", error: profileError.message, user_id: userId });
         continue;
       }
 
-      // Assign role
       const { error: roleError } = await supabaseAdmin
         .from("user_roles_v2")
-        .upsert({
-          user_id: userId,
-          role: emp.role,
-          full_name: emp.full_name,
-          email: emp.email,
-        });
+        .upsert({ user_id: userId, role: emp.role, full_name: emp.full_name, email: emp.email });
 
       if (roleError) {
         results.push({ email: emp.email, status: "role_error", error: roleError.message, user_id: userId });
         continue;
       }
 
+      // Generate password reset link so user sets their own password
+      await supabaseAdmin.auth.admin.generateLink({ type: "recovery", email: emp.email });
+
       results.push({ 
         email: emp.email, 
         status: "created", 
         user_id: userId, 
         role: emp.role,
-        password: emp.password 
+        note: "Password reset link generated",
       });
     }
 
