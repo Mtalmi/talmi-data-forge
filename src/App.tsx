@@ -49,6 +49,8 @@ import NotFound from "./pages/NotFound";
 import AIAssistant from "./pages/AIAssistant";
 import Landing from "./pages/Landing";
 import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
+import WS7Import from "./pages/WS7Import";
+import WS7Batches from "./pages/WS7Batches";
 
 const queryClient = new QueryClient();
 
@@ -113,6 +115,9 @@ const App = () => (
                 {/* AI Assistant */}
                 <Route path="/ai" element={<AIAssistant />} />
                 <Route path="/landing" element={<Landing />} />
+                {/* WS7 Integration */}
+                <Route path="/ws7-import" element={<WS7Import />} />
+                <Route path="/ws7-batches" element={<WS7Batches />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
