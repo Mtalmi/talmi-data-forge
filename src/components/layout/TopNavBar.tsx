@@ -179,13 +179,13 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Glass Background */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-b border-border/50" />
+      <div className="absolute inset-0 bg-background/70 backdrop-blur-2xl border-b border-primary/8 shadow-[0_1px_30px_hsl(var(--primary)/0.04)]" />
 
       <div className="relative flex items-center justify-between h-16 px-4 lg:px-6">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
-            <Building2 className="h-5 w-5 text-primary" />
+          <div className="p-2 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/15 shadow-[0_0_20px_hsl(var(--primary)/0.1)]">
+            <Building2 className="h-5 w-5 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />
           </div>
           <div className="hidden sm:block">
             <h1 className="text-lg font-bold tracking-tight">TBOS</h1>
@@ -194,7 +194,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 px-2 py-1 rounded-2xl bg-muted/30 border border-border/30">
+        <nav className="hidden lg:flex items-center gap-1 px-2 py-1.5 rounded-2xl bg-muted/20 border border-primary/8 backdrop-blur-sm">
           {mainNavItems.map(item => (
             <NavLinkItem key={item.to} item={item} />
           ))}
