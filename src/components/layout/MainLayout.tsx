@@ -40,7 +40,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         
         {/* Main Content Area - Maximum breathing room */}
         <main className={`flex-1 overflow-y-auto scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-          <div className="p-3 sm:p-5 lg:p-8 max-w-[1800px] mx-auto mobile-content safe-area-bottom animate-fade-in">
+          <div className="p-3 sm:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom page-enter">
             {children}
           </div>
         </main>

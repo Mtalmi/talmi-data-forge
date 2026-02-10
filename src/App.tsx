@@ -47,6 +47,7 @@ import Immobilisations from "./pages/Immobilisations";
 import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 import AIAssistant from "./pages/AIAssistant";
+import Landing from "./pages/Landing";
 import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 
 const queryClient = new QueryClient();
@@ -111,6 +112,7 @@ const App = () => (
                 <Route path="/user_profile" element={<UserProfile />} />
                 {/* AI Assistant */}
                 <Route path="/ai" element={<AIAssistant />} />
+                <Route path="/landing" element={<Landing />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
