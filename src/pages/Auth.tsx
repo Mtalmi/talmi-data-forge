@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Building2, Shield, AlertCircle } from 'lucide-react';
+import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe } from 'lucide-react';
 import { z } from 'zod';
+import { cn } from '@/lib/utils';
 
 const loginSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -23,55 +23,82 @@ const signupSchema = loginSchema.extend({
   path: ["confirmPassword"],
 });
 
+// Animated counter component
+function AnimatedStat({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let start = 0;
+    const duration = 2000;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * value));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+
+    const timer = setTimeout(() => requestAnimationFrame(animate), 500);
+    return () => clearTimeout(timer);
+  }, [value]);
+
+  return (
+    <div ref={ref} className="text-center">
+      <div className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+        {count.toLocaleString()}{suffix}
+      </div>
+      <div className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">{label}</div>
+    </div>
+  );
+}
+
 export default function Auth() {
   const navigate = useNavigate();
   const { user, signIn, signUp, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
 
-  // Login form state
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-
-  // Signup form state
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
   const [signupConfirmPassword, setSignupConfirmPassword] = useState('');
   const [signupFullName, setSignupFullName] = useState('');
 
   useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
+    if (user) navigate('/');
   }, [user, navigate]);
+
+  // Mouse tracking for ambient glow
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener('mousemove', handleMove);
+    return () => window.removeEventListener('mousemove', handleMove);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-
     try {
       const validation = loginSchema.safeParse({ email: loginEmail, password: loginPassword });
-      if (!validation.success) {
-        setError(validation.error.errors[0].message);
-        setLoading(false);
-        return;
-      }
-
+      if (!validation.success) { setError(validation.error.errors[0].message); setLoading(false); return; }
       const { error } = await signIn(loginEmail, loginPassword);
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setError('Email ou mot de passe incorrect');
-        } else {
-          setError(error.message);
-        }
+        setError(error.message.includes('Invalid login credentials') ? 'Email ou mot de passe incorrect' : error.message);
       }
-    } catch (err) {
-      setError('Une erreur est survenue');
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError('Une erreur est survenue'); }
+    finally { setLoading(false); }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -79,40 +106,18 @@ export default function Auth() {
     setError(null);
     setSuccess(null);
     setLoading(true);
-
     try {
-      const validation = signupSchema.safeParse({
-        email: signupEmail,
-        password: signupPassword,
-        confirmPassword: signupConfirmPassword,
-        fullName: signupFullName,
-      });
-
-      if (!validation.success) {
-        setError(validation.error.errors[0].message);
-        setLoading(false);
-        return;
-      }
-
+      const validation = signupSchema.safeParse({ email: signupEmail, password: signupPassword, confirmPassword: signupConfirmPassword, fullName: signupFullName });
+      if (!validation.success) { setError(validation.error.errors[0].message); setLoading(false); return; }
       const { error } = await signUp(signupEmail, signupPassword, signupFullName);
       if (error) {
-        if (error.message.includes('already registered')) {
-          setError('Cet email est déjà utilisé');
-        } else {
-          setError(error.message);
-        }
+        setError(error.message.includes('already registered') ? 'Cet email est déjà utilisé' : error.message);
       } else {
-        setSuccess('Compte créé avec succès! Vous pouvez maintenant vous connecter.');
-        setSignupEmail('');
-        setSignupPassword('');
-        setSignupConfirmPassword('');
-        setSignupFullName('');
+        setSuccess('Compte créé! Vérifiez votre email pour confirmer.');
+        setSignupEmail(''); setSignupPassword(''); setSignupConfirmPassword(''); setSignupFullName('');
       }
-    } catch (err) {
-      setError('Une erreur est survenue');
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError('Une erreur est survenue'); }
+    finally { setLoading(false); }
   };
 
   if (authLoading) {
@@ -124,36 +129,172 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen flex bg-background relative overflow-hidden">
+      {/* Ambient Background Effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute rounded-full transition-all duration-[3000ms]"
+          style={{
+            width: 800,
+            height: 800,
+            left: `${mousePos.x}%`,
+            top: `${mousePos.y}%`,
+            transform: 'translate(-50%, -50%)',
+            background: 'radial-gradient(circle, hsl(51 100% 50% / 0.06) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}
+        />
+        <div
+          className="absolute rounded-full"
+          style={{
+            width: 400,
+            height: 400,
+            right: '10%',
+            bottom: '10%',
+            background: 'radial-gradient(circle, hsl(350 100% 50% / 0.03) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+        />
+        {/* Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(hsl(51 100% 50% / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(51 100% 50% / 0.3) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+      </div>
+
+      {/* Left Panel - Branding & Stats (hidden on mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative flex-col justify-between p-12 xl:p-16">
         {/* Logo & Title */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-              <Building2 className="h-12 w-12 text-primary" />
+        <div className="relative z-10">
+          <div className="flex items-center gap-4 mb-2">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-glow-lg"
+              style={{
+                background: 'linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 42%))',
+              }}
+            >
+              <span className="text-xl font-black text-primary-foreground tracking-tight">TB</span>
             </div>
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">TBOS</h1>
-            <p className="text-muted-foreground mt-1">
-              Talmi Beton Operating System
-            </p>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight">TBOS</h1>
+              <p className="text-xs text-muted-foreground tracking-[0.2em] uppercase">Enterprise Suite</p>
+            </div>
           </div>
         </div>
 
-        {/* Auth Card */}
-        <Card className="card-industrial">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-xl">Bienvenue</CardTitle>
-            <CardDescription>
-              Connectez-vous pour accéder au système
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Center Content */}
+        <div className="relative z-10 max-w-lg">
+          <h2
+            className="text-4xl xl:text-5xl font-black tracking-tight leading-[1.1] mb-6"
+            style={{
+              background: 'linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--muted-foreground)) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            La centrale à béton.
+            <br />
+            <span
+              style={{
+                background: 'linear-gradient(135deg, hsl(51 100% 50%) 0%, hsl(45 100% 60%) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Réinventée.
+            </span>
+          </h2>
+          <p className="text-muted-foreground text-lg leading-relaxed mb-10">
+            Contrôle total de vos opérations, finances et logistique en temps réel.
+            Sécurité de niveau bancaire. Intelligence artificielle intégrée.
+          </p>
+
+          {/* Feature Pills */}
+          <div className="flex flex-wrap gap-3 mb-12">
+            {[
+              { icon: Zap, label: 'Temps Réel' },
+              { icon: Shield, label: 'Sécurité Bancaire' },
+              { icon: BarChart3, label: 'IA Intégrée' },
+              { icon: Globe, label: 'Multi-Sites' },
+            ].map((f) => (
+              <div
+                key={f.label}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-card/30 backdrop-blur-sm text-sm text-muted-foreground"
+              >
+                <f.icon className="h-3.5 w-3.5 text-primary" />
+                {f.label}
+              </div>
+            ))}
+          </div>
+
+          {/* Animated Stats */}
+          <div className="grid grid-cols-3 gap-8 p-6 rounded-2xl border border-border/30 bg-card/20 backdrop-blur-sm">
+            <AnimatedStat value={99} suffix="%" label="Uptime SLA" />
+            <AnimatedStat value={50} suffix="+" label="Modules" />
+            <AnimatedStat value={24} suffix="/7" label="Monitoring" />
+          </div>
+        </div>
+
+        {/* Bottom Trust Badges */}
+        <div className="relative z-10 flex items-center gap-6 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Lock className="h-3.5 w-3.5 text-primary/70" />
+            Chiffrement AES-256
+          </div>
+          <div className="flex items-center gap-2">
+            <Shield className="h-3.5 w-3.5 text-primary/70" />
+            RLS Enterprise
+          </div>
+          <div className="flex items-center gap-2">
+            <Globe className="h-3.5 w-3.5 text-primary/70" />
+            Cloud Souverain
+          </div>
+        </div>
+      </div>
+
+      {/* Right Panel - Auth Form */}
+      <div className="w-full lg:w-1/2 xl:w-[45%] flex items-center justify-center p-6 sm:p-8 relative">
+        {/* Subtle border glow on left edge */}
+        <div className="hidden lg:block absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent" />
+
+        <div className="w-full max-w-md space-y-8">
+          {/* Mobile Logo (shown only on small screens) */}
+          <div className="lg:hidden text-center space-y-4">
+            <div className="flex justify-center">
+              <div
+                className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-glow"
+                style={{
+                  background: 'linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 42%))',
+                }}
+              >
+                <span className="text-2xl font-black text-primary-foreground tracking-tight">TB</span>
+              </div>
+            </div>
+            <div>
+              <h1 className="text-2xl font-black tracking-tight">TBOS</h1>
+              <p className="text-sm text-muted-foreground">Talmi Beton Operating System</p>
+            </div>
+          </div>
+
+          {/* Welcome Text */}
+          <div className="text-center lg:text-left">
+            <h2 className="text-2xl font-bold tracking-tight">Bienvenue</h2>
+            <p className="text-muted-foreground text-sm mt-1">Connectez-vous pour accéder au système</p>
+          </div>
+
+          {/* Auth Card */}
+          <div className="rounded-2xl border border-border/50 bg-card/30 backdrop-blur-xl p-6 sm:p-8 shadow-glass">
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Connexion</TabsTrigger>
-                <TabsTrigger value="signup">Inscription</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50">
+                <TabsTrigger value="login" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
+                  Connexion
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-semibold">
+                  Inscription
+                </TabsTrigger>
               </TabsList>
 
               {error && (
@@ -162,7 +303,6 @@ export default function Auth() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-
               {success && (
                 <Alert className="mb-4 border-success/50 text-success">
                   <Shield className="h-4 w-4" />
@@ -171,43 +311,20 @@ export default function Auth() {
               )}
 
               <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
+                <form onSubmit={handleLogin} className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="login-email" className="form-label-industrial">
-                      Email
-                    </Label>
-                    <Input
-                      id="login-email"
-                      type="email"
-                      placeholder="vous@exemple.com"
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
+                    <Label htmlFor="login-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</Label>
+                    <Input id="login-email" type="email" placeholder="vous@exemple.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl focus:border-primary focus:ring-primary/20 transition-all" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="login-password" className="form-label-industrial">
-                      Mot de passe
-                    </Label>
-                    <Input
-                      id="login-password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
+                    <Label htmlFor="login-password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mot de passe</Label>
+                    <Input id="login-password" type="password" placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl focus:border-primary focus:ring-primary/20 transition-all" />
                   </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full h-12 rounded-xl font-bold text-sm tracking-wide bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-[0_4px_20px_hsl(var(--primary)/0.35)] hover:shadow-[0_6px_30px_hsl(var(--primary)/0.5)] transition-all duration-300" disabled={loading}>
                     {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Connexion...
-                      </>
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Connexion...</>
                     ) : (
-                      'Se connecter'
+                      <>Se connecter<ArrowRight className="ml-2 h-4 w-4" /></>
                     )}
                   </Button>
                 </form>
@@ -216,81 +333,40 @@ export default function Auth() {
               <TabsContent value="signup">
                 <form onSubmit={handleSignup} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="signup-name" className="form-label-industrial">
-                      Nom complet
-                    </Label>
-                    <Input
-                      id="signup-name"
-                      type="text"
-                      placeholder="Votre nom"
-                      value={signupFullName}
-                      onChange={(e) => setSignupFullName(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
+                    <Label htmlFor="signup-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Nom complet</Label>
+                    <Input id="signup-name" type="text" placeholder="Votre nom" value={signupFullName} onChange={(e) => setSignupFullName(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="form-label-industrial">
-                      Email
-                    </Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      placeholder="vous@exemple.com"
-                      value={signupEmail}
-                      onChange={(e) => setSignupEmail(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
+                    <Label htmlFor="signup-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</Label>
+                    <Input id="signup-email" type="email" placeholder="vous@exemple.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="form-label-industrial">
-                      Mot de passe
-                    </Label>
-                    <Input
-                      id="signup-password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={signupPassword}
-                      onChange={(e) => setSignupPassword(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mot de passe</Label>
+                      <Input id="signup-password" type="password" placeholder="••••••" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-confirm" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Confirmer</Label>
+                      <Input id="signup-confirm" type="password" placeholder="••••••" value={signupConfirmPassword} onChange={(e) => setSignupConfirmPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-confirm" className="form-label-industrial">
-                      Confirmer le mot de passe
-                    </Label>
-                    <Input
-                      id="signup-confirm"
-                      type="password"
-                      placeholder="••••••••"
-                      value={signupConfirmPassword}
-                      onChange={(e) => setSignupConfirmPassword(e.target.value)}
-                      required
-                      className="bg-input"
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
+                  <Button type="submit" className="w-full h-12 rounded-xl font-bold text-sm tracking-wide bg-gradient-to-r from-primary to-primary/80 hover:shadow-[0_6px_30px_hsl(var(--primary)/0.5)] transition-all duration-300" disabled={loading}>
                     {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Création...
-                      </>
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Création...</>
                     ) : (
-                      "S'inscrire"
+                      <>Créer un compte<ArrowRight className="ml-2 h-4 w-4" /></>
                     )}
                   </Button>
                 </form>
               </TabsContent>
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* Footer Note */}
-        <p className="text-center text-xs text-muted-foreground">
-          Système de gestion Talmi Beton • Sécurisé par Lovable Cloud
-        </p>
+          {/* Footer */}
+          <p className="text-center text-xs text-muted-foreground/60">
+            Système sécurisé • Talmi Beton © {new Date().getFullYear()}
+          </p>
+        </div>
       </div>
     </div>
   );
