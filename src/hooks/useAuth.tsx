@@ -143,15 +143,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileData) {
         setRole((profileData as any).role as AppRole);
         
-        // Fetch role permissions
-        const { data: permissionsData, error: permissionsError } = await supabase
-          .from('role_permissions' as any)
-          .select('*')
-          .eq('role', (profileData as any).role);
-
-        if (!permissionsError && permissionsData) {
-          setPermissions(permissionsData as any as RolePermissions[]);
-        }
+        // Role permissions are enforced via role-based logic throughout the app
+        // No separate role_permissions table needed
       }
     } catch (error) {
       console.error('Error fetching role and permissions:', error);
