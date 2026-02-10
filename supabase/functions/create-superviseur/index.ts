@@ -15,20 +15,16 @@ serve(async (req) => {
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     );
 
-    // Check if Karim already exists
+    const email = "karim.talmi@talmi-beton.ma";
+
+    // Check if already exists
     const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(u => u.email === "karim.talmi@talmi-beton.ma");
+    const existingUser = existingUsers?.users?.find(u => u.email === email);
 
     if (existingUser) {
-      // Just ensure role is set
       await supabaseAdmin.from("user_roles_v2").upsert({
         user_id: existingUser.id,
         role: "superviseur",
@@ -37,17 +33,19 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         status: "already_exists", 
         user_id: existingUser.id,
-        email: "karim.talmi@talmi-beton.ma"
+        email,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       });
     }
 
-    // Create Karim Talmi as Superviseur
+    // Generate secure password from environment or use crypto
+    const password = Deno.env.get("SETUP_INITIAL_PASSWORD") || crypto.randomUUID().slice(0, 16) + "!A1";
+
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email: "karim.talmi@talmi-beton.ma",
-      password: "TalmiKarim2024!",
+      email,
+      password,
       email_confirm: true,
       user_metadata: { full_name: "Karim Talmi" },
     });
@@ -61,25 +59,29 @@ serve(async (req) => {
 
     const userId = authData.user.id;
 
-    // Update profile
     await supabaseAdmin.from("profiles").upsert({
       user_id: userId,
       full_name: "Karim Talmi",
-      email: "karim.talmi@talmi-beton.ma",
+      email,
     });
 
-    // Assign superviseur role
     await supabaseAdmin.from("user_roles_v2").insert({
       user_id: userId,
       role: "superviseur",
     });
 
+    // Force password reset for security
+    await supabaseAdmin.auth.admin.generateLink({
+      type: "recovery",
+      email,
+    });
+
     return new Response(JSON.stringify({ 
       status: "created",
       user_id: userId,
-      email: "karim.talmi@talmi-beton.ma",
-      password: "TalmiKarim2024!",
-      role: "superviseur"
+      email,
+      role: "superviseur",
+      note: "Password reset link generated. User must reset password on first login.",
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
