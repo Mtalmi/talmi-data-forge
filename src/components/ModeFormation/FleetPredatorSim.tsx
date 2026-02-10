@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, MapPin, ArrowRight, RotateCcw, Truck, Fuel, AlertTriangle, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface FleetPredatorSimProps {
   onComplete: () => void;
@@ -25,13 +27,22 @@ export function FleetPredatorSim({ onComplete, onClose }: FleetPredatorSimProps)
   const [maintenanceChecked, setMaintenanceChecked] = useState(false);
   const [geofenceSet, setGeofenceSet] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('fleet_predator').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'fleet_predator', step: next, totalSteps, action: `Étape ${step} complétée`, data: { selectedTruck, fuelChecked, maintenanceChecked, geofenceSet } });
     }
   };
 
@@ -60,6 +71,7 @@ export function FleetPredatorSim({ onComplete, onClose }: FleetPredatorSimProps)
     setFuelChecked(false);
     setMaintenanceChecked(false);
     setGeofenceSet(false);
+    resetSession();
   };
 
   const getStatusBadge = (status: string) => {
@@ -297,6 +309,14 @@ export function FleetPredatorSim({ onComplete, onClose }: FleetPredatorSimProps)
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

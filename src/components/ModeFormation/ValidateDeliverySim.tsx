@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle2, Truck, ArrowRight, RotateCcw, Camera, ClipboardCheck, ListChecks } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface ValidateDeliverySimProps {
   onComplete: () => void;
@@ -36,9 +38,21 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
   const [qualityChecks, setQualityChecks] = useState<Record<string, boolean>>({});
   const [qualityNotes, setQualityNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
+
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('validate_delivery').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
+  const handleStepChange = (nextStep: number, action: string) => {
+    setStep(nextStep);
+    getCoachFeedback({ simulation: 'validate_delivery', step: nextStep, totalSteps, action, data: { selectedOrder, deliveredQuantity, photoUploaded, qualityChecks } });
+  };
 
   const order = DEMO_ORDERS.find(o => o.id === selectedOrder);
   const allChecksComplete = QUALITY_CHECKLIST.every(item => qualityChecks[item.id]);
@@ -80,6 +94,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
     setPhotoUploaded(false);
     setQualityChecks({});
     setQualityNotes('');
+    resetSession();
   };
 
   return (
@@ -144,7 +159,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
                 </div>
               </div>
               <Button 
-                onClick={() => setStep(2)} 
+                onClick={() => handleStepChange(2, 'Commande sélectionnée')} 
                 disabled={!selectedOrder}
                 className="w-full gap-2"
               >
@@ -226,7 +241,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
                 </div>
               </div>
               <Button 
-                onClick={() => setStep(3)} 
+                onClick={() => handleStepChange(3, 'Livraison vérifiée')} 
                 disabled={!photoUploaded || parseFloat(deliveredQuantity) <= 0}
                 className="w-full gap-2"
               >
@@ -288,7 +303,7 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
                 )}
               </div>
               <Button 
-                onClick={() => setStep(4)} 
+                onClick={() => handleStepChange(4, 'Qualité inspectée')} 
                 disabled={!allChecksComplete}
                 className="w-full gap-2"
               >
@@ -351,6 +366,14 @@ export function ValidateDeliverySim({ onComplete, onClose }: ValidateDeliverySim
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

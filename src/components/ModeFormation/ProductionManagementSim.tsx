@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CheckCircle2, Factory, ArrowRight, RotateCcw, PlayCircle, Timer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 
 interface ProductionManagementSimProps {
   onComplete: () => void;
@@ -29,13 +31,22 @@ export function ProductionManagementSim({ onComplete, onClose }: ProductionManag
   const [productionProgress, setProductionProgress] = useState(0);
   const [metricsRecorded, setMetricsRecorded] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('production_management').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
+
   const handleNext = () => {
     if (step < totalSteps) {
-      setStep(step + 1);
+      const next = step + 1;
+      setStep(next);
+      getCoachFeedback({ simulation: 'production_management', step: next, totalSteps, action: `Étape ${step} complétée`, data: { selectedFormula, volume, productionStarted, productionProgress, metricsRecorded } });
     }
   };
 
@@ -77,6 +88,7 @@ export function ProductionManagementSim({ onComplete, onClose }: ProductionManag
     setProductionStarted(false);
     setProductionProgress(0);
     setMetricsRecorded(false);
+    resetSession();
   };
 
   const formula = DEMO_FORMULAS.find(f => f.id === selectedFormula);
@@ -300,6 +312,14 @@ export function ProductionManagementSim({ onComplete, onClose }: ProductionManag
             </div>
           )}
         </div>
+
+        {/* AI Coach Panel */}
+        <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+        {scenario && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-border text-xs">
+            <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+          </div>
+        )}
 
         {/* Reset Button */}
         <div className="flex justify-center pt-2 border-t">

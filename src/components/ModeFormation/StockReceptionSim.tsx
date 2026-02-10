@@ -1,7 +1,9 @@
-// Stock Reception Simulation - God-Tier Two-Step Quality Check Workflow
-// Technical Approval MUST come before Front Desk Validation
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
+import { AICoachPanel } from './AICoachPanel';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -50,6 +52,13 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
     verification?: VerificationFormData;
     rejection?: RejectionFormData;
   } | null>(null);
+  const [scenario, setScenario] = useState<Record<string, any> | null>(null);
+
+  const { getCoachFeedback, generateScenario, isCoaching, lastFeedback, averageScore, resetSession } = useAITrainingCoach();
+
+  useEffect(() => {
+    generateScenario('stock_reception').then(data => { if (data) setScenario(data); });
+  }, [generateScenario]);
 
   const handleTechnicalCheckComplete = (data: QualityCheckData) => {
     setQualityCheckData(data);
@@ -97,6 +106,7 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
     setPhase('intro');
     setQualityCheckData(null);
     setFinalData(null);
+    resetSession();
   };
 
   const handleFinish = () => {
@@ -281,7 +291,10 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
 
               <Button
                 className="w-full gap-2 bg-amber-500 hover:bg-amber-600"
-                onClick={() => setPhase('technical_check')}
+                onClick={() => {
+                  setPhase('technical_check');
+                  getCoachFeedback({ simulation: 'stock_reception', step: 1, totalSteps: 4, action: 'Démarrage contrôle technique', data: {} });
+                }}
               >
                 Commencer le Workflow (Phase 1: Tech)
                 <ArrowRight className="h-4 w-4" />
@@ -408,6 +421,19 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
                 <CheckCircle2 className="h-4 w-4" />
                 Terminer la Simulation
               </Button>
+            </div>
+          )}
+        </div>
+
+        {/* AI Coach Panel */}
+        <div className="max-w-2xl mx-auto w-full mt-4">
+          <AICoachPanel feedback={lastFeedback} isCoaching={isCoaching} averageScore={averageScore} />
+          {scenario && (
+            <div className="mt-3 p-3 rounded-lg bg-muted/30 border border-border text-xs">
+              <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
+            </div>
+          )}
+        </div>
             </div>
           )}
         </div>
