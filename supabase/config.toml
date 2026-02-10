@@ -27,5 +27,8 @@ verify_jwt = false
 [functions.tutorial-voice]
 verify_jwt = false
 
+[functions.notify-ceo-audit]
+verify_jwt = false
+
 [functions.admin-manage-users]
 verify_jwt = false
