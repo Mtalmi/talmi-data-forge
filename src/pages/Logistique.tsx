@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useFlotte } from '@/hooks/useFlotte';
+import { supabase } from '@/integrations/supabase/client';
 import { ProviderLeaderboard } from '@/components/logistics/ProviderLeaderboard';
 import { FuelEntryForm } from '@/components/logistics/FuelEntryForm';
 import RotationJournal from '@/components/logistics/RotationJournal';
 import { FleetPredatorPage } from '@/components/fleet/FleetPredatorPage';
+import { GPSConfigSection } from '@/components/fleet/GPSConfigSection';
+import { Vehicle } from '@/types/vehicle';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -75,6 +79,7 @@ export default function Logistique() {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [gpsDialogVehicle, setGpsDialogVehicle] = useState<Vehicle | null>(null);
   
   // New vehicle form state
   const [newIdCamion, setNewIdCamion] = useState('');
@@ -82,6 +87,21 @@ export default function Logistique() {
   const [newProprietaire, setNewProprietaire] = useState('Interne');
   const [newChauffeur, setNewChauffeur] = useState('');
   const [newCapacite, setNewCapacite] = useState('8');
+
+  const handleGPSUpdate = useCallback(async (updates: Partial<Vehicle>) => {
+    if (!gpsDialogVehicle) return;
+    const { error } = await supabase
+      .from('flotte')
+      .update(updates)
+      .eq('id_camion', gpsDialogVehicle.id_camion);
+    if (error) {
+      toast.error('Erreur mise à jour GPS');
+      throw error;
+    }
+    toast.success('Configuration GPS mise à jour');
+    setGpsDialogVehicle(prev => prev ? { ...prev, ...updates } as Vehicle : null);
+    await fetchVehicules();
+  }, [gpsDialogVehicle, fetchVehicules]);
 
   const canManage = isCeo || isDirecteurOperations;
 
@@ -366,7 +386,23 @@ export default function Logistique() {
                             {v.type === 'Toupie' ? `${v.capacite_m3} m³` : '—'}
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setGpsDialogVehicle({
+                                id_camion: v.id_camion,
+                                type: v.type as Vehicle['type'],
+                                proprietaire: v.proprietaire,
+                                chauffeur: v.chauffeur || '',
+                                statut: v.statut as Vehicle['statut'],
+                                gps_enabled: v.gps_enabled,
+                                gps_device_id: v.gps_device_id || undefined,
+                                gps_imei: v.gps_imei || undefined,
+                                gps_provider: v.gps_provider as Vehicle['gps_provider'],
+                                last_latitude: v.last_latitude || undefined,
+                                last_longitude: v.last_longitude || undefined,
+                                last_gps_update: v.last_gps_update || undefined,
+                              })}
+                              className="flex items-center gap-2 hover:opacity-70 transition-opacity cursor-pointer"
+                            >
                               {v.gps_enabled ? (
                                 <>
                                   <MapPin className="w-4 h-4 text-emerald-500" />
@@ -386,7 +422,7 @@ export default function Logistique() {
                               ) : (
                                 <MapPinOff className="w-4 h-4 text-muted-foreground" />
                               )}
-                            </div>
+                            </button>
                           </TableCell>
                           <TableCell>
                             {getStatusBadge(displayStatus, v.bc_mission_id, isOnActiveDelivery ? activeDelivery : null)}
@@ -453,6 +489,24 @@ export default function Logistique() {
               )}
             </div>
           </TabsContent>
+
+          {/* GPS Config Dialog */}
+          <Dialog open={!!gpsDialogVehicle} onOpenChange={(open) => !open && setGpsDialogVehicle(null)}>
+            <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  GPS — {gpsDialogVehicle?.id_camion}
+                </DialogTitle>
+              </DialogHeader>
+              {gpsDialogVehicle && (
+                <GPSConfigSection
+                  vehicle={gpsDialogVehicle}
+                  onUpdate={handleGPSUpdate}
+                />
+              )}
+            </DialogContent>
+          </Dialog>
 
           {/* Provider Performance Tab */}
           <TabsContent value="performance">
