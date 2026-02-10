@@ -217,7 +217,7 @@ export default function Contracts() {
           title: title.trim(),
           description: description.trim() || null,
           provider_name: providerName.trim(),
-          fournisseur_id: selectedFournisseur || null,
+          fournisseur_id: selectedFournisseur && selectedFournisseur !== 'none' ? selectedFournisseur : null,
           monthly_amount: parseFloat(monthlyAmount),
           start_date: startDate,
           end_date: endDate || null,
@@ -360,7 +360,7 @@ export default function Contracts() {
                           <SelectValue placeholder="Sélectionner..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Aucun</SelectItem>
+                          <SelectItem value="none">Aucun</SelectItem>
                           {suppliers.map((s) => (
                             <SelectItem key={s.id} value={s.id}>
                               {s.nom_fournisseur}
