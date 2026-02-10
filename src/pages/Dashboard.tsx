@@ -28,6 +28,7 @@ import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
 import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
 import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
+import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerWidget';
 import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
 import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
 import {
@@ -345,6 +346,11 @@ export default function Dashboard() {
             {/* CEO Emergency Override - Nuclear Key */}
             <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
               <CeoEmergencyOverride />
+            </ParallaxCard>
+            
+            {/* AI Anomaly Scanner - Forensic AI */}
+            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+              <AIAnomalyScannerWidget />
             </ParallaxCard>
             
             {/* Executive Command Center - Full width */}

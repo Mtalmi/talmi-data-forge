@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useAIDataGuard } from '@/hooks/useAIDataGuard';
+import { AIDataGuardBadge } from '@/components/ai/AIDataGuardBadge';
 import { useDepenses } from '@/hooks/useDepenses';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,6 +51,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const { isCeo, isAgentAdministratif, isDirecteurOperations } = useAuth();
   const { uploadReceipt, addDepense } = useDepenses();
   
+  const { validate: aiValidate, isValidating: aiValidating, lastResult: aiResult } = useAIDataGuard();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -136,6 +139,15 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
     if (isNaN(montantNum) || montantNum <= 0) {
       toast.error('Montant invalide');
       return;
+    }
+
+    // AI Guard validation before submit
+    const aiCheck = await aiValidate({
+      context: 'depense',
+      fields: { date: dateDepense, categorie, montant: montantNum, description },
+    });
+    if (!aiCheck.valid && aiCheck.errors.length > 0) {
+      return; // Block submission - toast already shown by hook
     }
 
     setSubmitting(true);
@@ -319,6 +331,9 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
               rows={2}
             />
           </div>
+
+          {/* AI Guard Status */}
+          <AIDataGuardBadge isValidating={aiValidating} result={aiResult} className="mb-2" />
 
           {/* Submit */}
           <div className="flex justify-end gap-3 pt-4">
