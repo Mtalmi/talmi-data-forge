@@ -1,4 +1,6 @@
 import { useState, useRef } from 'react';
+import { useAIDataGuard } from '@/hooks/useAIDataGuard';
+import { AIDataGuardBadge } from '@/components/ai/AIDataGuardBadge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,6 +54,7 @@ interface ReceptionFormProps {
 
 export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProps) {
   const { isCeo, isSuperviseur, isAgentAdministratif } = useAuth();
+  const { validate: aiValidate, isValidating: aiValidating, lastResult: aiResult } = useAIDataGuard();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -154,6 +157,15 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
       }
     }
     
+    // AI Guard validation
+    const aiCheck = await aiValidate({
+      context: 'stock_reception',
+      fields: { materiau, quantite: parseFloat(quantite), fournisseur, numero_bl: numeroBl },
+    });
+    if (!aiCheck.valid && aiCheck.errors.length > 0) {
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -423,6 +435,9 @@ export function ReceptionForm({ stocks, onSubmit, onRefresh }: ReceptionFormProp
               </div>
             </div>
           )}
+
+          {/* AI Guard Status */}
+          <AIDataGuardBadge isValidating={aiValidating} result={aiResult} className="mb-2" />
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="min-h-[44px]">
