@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,7 +47,8 @@ const MATIERES = ['Ciment', 'Sable', 'Gravier', 'Eau', 'Adjuvant', 'Gasoil'];
 const UNITES = ['Tonne', 'Litre', 'm³', 'Kg'];
 
 export default function Prix() {
-  const { isCeo } = useAuth();
+  const { isCeo, canReadPrix, loading: authLoading, user } = useAuth();
+  const navigate = useNavigate();
   const [prix, setPrix] = useState<Prix[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -58,9 +60,18 @@ export default function Prix() {
   const [prixUnitaire, setPrixUnitaire] = useState('');
   const [unite, setUnite] = useState('Tonne');
 
+  // Access gate: CEO/Supervisor only
+  useEffect(() => {
+    if (!authLoading && user && !canReadPrix) {
+      navigate('/404', { replace: true });
+    }
+  }, [authLoading, user, canReadPrix, navigate]);
+
   useEffect(() => {
     fetchPrix();
   }, []);
+
+  if (!authLoading && user && !canReadPrix) return null;
 
   const fetchPrix = async () => {
     try {
