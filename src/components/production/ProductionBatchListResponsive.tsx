@@ -149,7 +149,7 @@ export function ProductionBatchListResponsive({
                   </TableCell>
                   <TableCell>
                     {batch.validation_technique !== null && (
-                      <Badge variant={batch.validation_technique ? "success" : "destructive"}>
+                      <Badge variant={batch.validation_technique ? "secondary" : "destructive"} className={batch.validation_technique ? "bg-success/10 text-success border-success/30" : ""}>
                         {batch.validation_technique ? 'Validé' : 'En Attente'}
                       </Badge>
                     )}

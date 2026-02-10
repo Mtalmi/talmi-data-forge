@@ -26,6 +26,8 @@ import { cn } from '@/lib/utils';
 
 const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
+  en_attente_validation: { label: 'En Attente Admin', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
+  pret_production: { label: 'Prêt Production', color: 'bg-blue-500/10 text-blue-500 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
   valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
   en_production: { label: 'En Production', color: 'bg-blue-500/10 text-blue-500 border-blue-500/30', icon: <Truck className="h-3 w-3" /> },
   livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
@@ -55,12 +57,14 @@ export function BcCardMobile({
   const statusConfig = BC_STATUS_CONFIG[bc.statut] || BC_STATUS_CONFIG.en_attente;
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger if clicking on buttons or dropdowns
     if ((e.target as HTMLElement).closest('button, [role="menuitem"]')) {
       return;
     }
     onClick?.(bc);
   };
+
+  const clientName = bc.client?.nom_client || '—';
+  const formuleName = bc.formule?.designation;
 
   return (
     <div
@@ -75,7 +79,7 @@ export function BcCardMobile({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-mono font-bold text-primary">
-              {bc.numero_bc}
+              {bc.bc_id}
             </span>
             {isEmergency && (
               <Badge variant="destructive" className="text-xs">
@@ -83,7 +87,7 @@ export function BcCardMobile({
                 Urgence
               </Badge>
             )}
-            {bc.technical_approval_status === 'approved' && (
+            {bc.validated_by && (
               <Badge variant="outline" className="text-xs border-success/30 text-success">
                 <Shield className="h-3 w-3 mr-1" />
                 Validé
@@ -91,7 +95,7 @@ export function BcCardMobile({
             )}
           </div>
           <p className="text-base font-semibold text-foreground">
-            {bc.client_nom}
+            {clientName}
           </p>
         </div>
         
@@ -106,7 +110,7 @@ export function BcCardMobile({
               <FileText className="h-4 w-4 mr-2" />
               Voir détails
             </DropdownMenuItem>
-            {canCreateBL && bc.statut === 'valide' && onCreateBL && (
+            {canCreateBL && (bc.statut === 'valide' || bc.statut === 'pret_production') && onCreateBL && (
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -149,7 +153,7 @@ export function BcCardMobile({
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Date</span>
           <span className="text-sm font-medium">
-            {format(new Date(bc.date_bc), 'dd MMM yyyy', { locale: fr })}
+            {format(new Date(bc.created_at), 'dd MMM yyyy', { locale: fr })}
           </span>
         </div>
 
@@ -162,11 +166,11 @@ export function BcCardMobile({
         </div>
 
         {/* Formule */}
-        {bc.formule_nom && (
+        {formuleName && (
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Formule</span>
             <span className="text-sm font-medium truncate max-w-[150px]">
-              {bc.formule_nom}
+              {formuleName}
             </span>
           </div>
         )}
@@ -176,7 +180,7 @@ export function BcCardMobile({
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Devis</span>
             <span className="text-xs font-mono text-muted-foreground">
-              {bc.devis_numero || bc.devis_id}
+              {bc.devis_id}
             </span>
           </div>
         )}
@@ -201,7 +205,7 @@ export function BcCardMobile({
           </span>
         </div>
 
-        {canCreateBL && bc.statut === 'valide' && onCreateBL && (
+        {canCreateBL && (bc.statut === 'valide' || bc.statut === 'pret_production') && onCreateBL && (
           <Button 
             size="sm" 
             onClick={(e) => {

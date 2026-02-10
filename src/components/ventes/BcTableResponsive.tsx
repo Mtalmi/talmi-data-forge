@@ -14,6 +14,11 @@ interface BcTableResponsiveProps {
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   onRefresh?: () => void;
+  // BcTable-specific props
+  launchingProduction?: string | null;
+  onLaunchProduction?: (bc: BonCommande) => void;
+  onCopyBc?: (bc: BonCommande) => void;
+  onOpenDetail?: (bc: BonCommande) => void;
 }
 
 export function BcTableResponsive(props: BcTableResponsiveProps) {
@@ -48,6 +53,9 @@ export function BcTableResponsive(props: BcTableResponsiveProps) {
     );
   }
 
+  // Helper to detect emergency BC from notes
+  const isEmergencyBc = (bc: BonCommande) => bc.notes?.includes('[URGENCE/EMERGENCY') ?? false;
+
   // Mobile view: Card layout
   if (isMobile) {
     return (
@@ -70,7 +78,7 @@ export function BcTableResponsive(props: BcTableResponsiveProps) {
               onGenerateInvoice={props.onGenerateInvoice}
               canCreateBL={canCreateBons}
               canGenerateInvoice={canGenerateInvoice}
-              isEmergency={bc.is_emergency_bc}
+              isEmergency={isEmergencyBc(bc)}
             />
           ))
         )}
@@ -79,5 +87,16 @@ export function BcTableResponsive(props: BcTableResponsiveProps) {
   }
 
   // Desktop view: Table layout
-  return <BcTable {...props} />;
+  return (
+    <BcTable
+      bcList={props.bcList}
+      loading={props.loading}
+      launchingProduction={props.launchingProduction ?? null}
+      onLaunchProduction={props.onLaunchProduction ?? (() => {})}
+      onCopyBc={props.onCopyBc ?? (() => {})}
+      onOpenDetail={props.onOpenDetail ?? props.onRowClick ?? (() => {})}
+      selectedIds={props.selectedIds}
+      onSelectionChange={props.onSelectionChange}
+    />
+  );
 }

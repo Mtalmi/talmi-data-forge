@@ -14,7 +14,6 @@ import {
   XCircle,
   Clock,
   AlertTriangle,
-  Shield,
   Lock,
   ShieldCheck,
   MoreVertical,
@@ -83,8 +82,10 @@ export function DevisCardMobile({
   const expirationInfo = getExpirationInfo?.(devis);
   const isLocked = statusConfig.isLocked;
 
+  const clientName = devis.client?.nom_client || '—';
+  const formuleName = devis.formule?.designation;
+
   const handleCardClick = (e: React.MouseEvent) => {
-    // Don't trigger if clicking on buttons or dropdowns
     if ((e.target as HTMLElement).closest('button, [role="menuitem"]')) {
       return;
     }
@@ -106,7 +107,7 @@ export function DevisCardMobile({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-mono font-bold text-primary">
-              {devis.numero_devis}
+              {devis.devis_id}
             </span>
             {priority.isPriority && (
               <Badge variant="outline" className="text-xs border-primary/30">
@@ -116,7 +117,7 @@ export function DevisCardMobile({
             )}
           </div>
           <p className="text-base font-semibold text-foreground">
-            {devis.client_nom}
+            {clientName}
           </p>
         </div>
         
@@ -188,7 +189,7 @@ export function DevisCardMobile({
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">Date</span>
           <span className="text-sm font-medium">
-            {format(new Date(devis.date_devis), 'dd MMM yyyy', { locale: fr })}
+            {format(new Date(devis.created_at), 'dd MMM yyyy', { locale: fr })}
           </span>
         </div>
 
@@ -201,11 +202,11 @@ export function DevisCardMobile({
         </div>
 
         {/* Formule */}
-        {devis.formule_nom && (
+        {formuleName && (
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Formule</span>
             <span className="text-sm font-medium truncate max-w-[150px]">
-              {devis.formule_nom}
+              {formuleName}
             </span>
           </div>
         )}

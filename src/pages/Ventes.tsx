@@ -661,7 +661,7 @@ export default function Ventes() {
                       // Handle BL creation
                       console.log('Create BL for:', bc);
                     }}
-                    onGenerateInvoice={generateConsolidatedInvoice}
+                    onGenerateInvoice={(bc) => generateConsolidatedInvoice(bc.bc_id)}
                     selectedIds={selectedBcIds}
                     onSelectionChange={setSelectedBcIds}
                   />

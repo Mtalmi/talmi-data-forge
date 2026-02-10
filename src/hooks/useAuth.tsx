@@ -128,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Fetch user profile with role
       const { data: profileData, error: profileError } = await supabase
-        .from('user_profiles')
+        .from('user_profiles' as any)
         .select('role')
         .eq('id', userId)
         .maybeSingle();
@@ -141,16 +141,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (profileData) {
-        setRole(profileData.role as AppRole);
+        setRole((profileData as any).role as AppRole);
         
         // Fetch role permissions
         const { data: permissionsData, error: permissionsError } = await supabase
-          .from('role_permissions')
+          .from('role_permissions' as any)
           .select('*')
-          .eq('role', profileData.role);
+          .eq('role', (profileData as any).role);
 
         if (!permissionsError && permissionsData) {
-          setPermissions(permissionsData);
+          setPermissions(permissionsData as any as RolePermissions[]);
         }
       }
     } catch (error) {
@@ -162,7 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // Try new v2 table first
       const { data, error } = await supabase
-        .from('user_roles_v2')
+        .from('user_roles_v2' as any)
         .select('role')
         .eq('user_id', userId)
         .maybeSingle();
@@ -171,18 +171,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('Error fetching role from v2:', error);
         // Fallback to old table
         const { data: oldData, error: oldError } = await supabase
-          .from('user_roles')
+          .from('user_roles' as any)
           .select('role')
           .eq('user_id', userId)
           .maybeSingle();
         
         if (!oldError && oldData) {
-          setRole(oldData.role as AppRole);
+          setRole((oldData as any).role as AppRole);
         }
         return;
       }
 
-      setRole(data?.role as AppRole ?? null);
+      setRole((data as any)?.role as AppRole ?? null);
     } catch (error) {
       console.error('Error fetching legacy role:', error);
     }
@@ -223,7 +223,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     notifyCeo: boolean = false
   ) => {
     try {
-      await supabase.rpc('log_critical_action', {
+      await supabase.rpc('log_critical_action' as any, {
         action_type_val: actionType,
         module_val: module,
         record_id_val: recordId,

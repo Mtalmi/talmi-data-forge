@@ -4,7 +4,7 @@
    Purpose: Optimize UI for mobile devices (Phase 2)
    ===================================================== */
 
-@layer components {
+/* Components layer - included via index.css @tailwind components */
   /* ===== MOBILE-FIRST RESPONSIVE TABLES ===== */
   
   /* Card-based table layout for mobile */
@@ -91,9 +91,9 @@
 
   .mobile-sidebar {
     @apply fixed left-0 top-0 bottom-0 w-[280px] z-50;
-    @apply bg-sidebar-background border-r border-sidebar-border;
+    background: hsl(var(--sidebar-background));
+    border-right: 1px solid hsl(var(--sidebar-border));
     @apply transform transition-transform duration-300 ease-out;
-    @apply safe-area-top safe-area-bottom;
   }
 
   .mobile-sidebar.closed {
@@ -207,7 +207,7 @@
     @apply fixed inset-x-0 bottom-0 z-50;
     @apply bg-card rounded-t-3xl border-t border-border;
     @apply transform transition-transform duration-300 ease-out;
-    @apply safe-area-bottom;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     max-height: 85vh;
     box-shadow: 0 -8px 32px hsl(0 0% 0% / 0.2);
   }
@@ -376,7 +376,7 @@
     @apply sticky top-0 z-30;
     @apply bg-background/95 backdrop-blur-md;
     @apply border-b border-border;
-    @apply safe-area-top;
+    padding-top: env(safe-area-inset-top, 0px);
   }
 
   /* ===== MOBILE EMPTY STATE ===== */
@@ -430,7 +430,7 @@
   .avatar-mobile-lg {
     @apply w-16 h-16 rounded-full;
   }
-}
+/* end of components */
 
 /* ===== MOBILE-SPECIFIC UTILITIES ===== */
 
