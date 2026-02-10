@@ -323,12 +323,12 @@ export function TruckRescueModal({
                 </div>
               ) : (
                 <>
-                  <Select value={rescueTruckId} onValueChange={setRescueTruckId}>
+                  <Select value={rescueTruckId || 'none'} onValueChange={(v) => setRescueTruckId(v === 'none' ? '' : v)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un camion de secours" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Aucun (ne pas réassigner)</SelectItem>
+                      <SelectItem value="none">Aucun (ne pas réassigner)</SelectItem>
                       {availableTrucks.map((truck) => (
                         <SelectItem key={truck.id_camion} value={truck.id_camion}>
                           <div className="flex items-center gap-2">
