@@ -104,7 +104,7 @@ export function ProductionBatchCardMobile({
         {batch.validation_technique !== null && (
           <div className="flex items-center justify-between py-2 border-b">
             <span className="text-xs text-muted-foreground">Validation Tech.</span>
-            <Badge variant={batch.validation_technique ? "success" : "destructive"}>
+            <Badge variant={batch.validation_technique ? "secondary" : "destructive"} className={batch.validation_technique ? "bg-success/10 text-success border-success/30" : ""}>
               {batch.validation_technique ? 'Validé' : 'En Attente'}
             </Badge>
           </div>
