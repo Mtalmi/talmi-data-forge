@@ -7,7 +7,7 @@ import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
 import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
-import { PeriodSelector, Period } from '@/components/dashboard/PeriodSelector';
+import { type Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
 import { DatabaseHealthWidget } from '@/components/dashboard/DatabaseHealthWidget';
@@ -17,7 +17,6 @@ import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidge
 import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
 import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
 import { MonthlyBudgetGauge } from '@/components/dashboard/MonthlyBudgetGauge';
-import { HandshakeUI } from '@/components/dashboard/HandshakeUI';
 import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
 import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
 import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
@@ -43,7 +42,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { Truck, Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, Droplets, RefreshCw, Receipt, Calculator } from 'lucide-react';
+import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
@@ -300,11 +299,6 @@ export default function Dashboard() {
             {/* Split-View Handshake Center - Double Validation */}
             <ParallaxCard className="bento-wide" glowColor="gold">
               <SplitViewHandshake />
-            </ParallaxCard>
-            
-            {/* Original Handshake UI - Compact Version */}
-            <ParallaxCard className="bento-standard" glowColor="gold">
-              <HandshakeUI />
             </ParallaxCard>
             
             {/* Forensic Alert Feed - War Room Security */}
