@@ -1,0 +1,11 @@
+BatchNumber,DateTime,Client,Formula,Cement,Sand,Gravel,Water,Additives,TotalVolume,Operator
+001,2026-02-10 06:30:00,Groupe Addoha Immobilier,B25,320,850,1050,175,2.5,8,Hassan Benali
+002,2026-02-10 07:15:00,Groupe Addoha Immobilier,B25,325,845,1045,178,2.6,8,Hassan Benali
+003,2026-02-10 08:00:00,Groupe Addoha Immobilier,B25,318,855,1055,174,2.4,8,Hassan Benali
+004,2026-02-10 08:45:00,Groupe Addoha Immobilier,B25,322,848,1048,176,2.5,8,Abdel Sadek
+005,2026-02-10 09:30:00,Groupe Addoha Immobilier,B25,330,840,1040,180,2.7,8,Abdel Sadek
+006,2026-02-10 10:15:00,TGCC Construction,B30,370,820,1020,168,3.2,8,Hassan Benali
+007,2026-02-10 11:00:00,TGCC Construction,B30,375,815,1015,170,3.3,8,Hassan Benali
+008,2026-02-10 11:45:00,TGCC Construction,B30,368,825,1025,166,3.1,8,Abdel Sadek
+009,2026-02-10 13:00:00,TGCC Construction,B30,372,818,1018,169,3.2,8,Abdel Sadek
+010,2026-02-10 14:00:00,TGCC Construction,B35,410,790,990,160,4.0,8,Hassan Benali
