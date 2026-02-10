@@ -18,6 +18,7 @@ export { ForensicAnalysisSim } from './ForensicAnalysisSim';
 export { FinancialReportingSim } from './FinancialReportingSim';
 export { ClientManagementSim } from './ClientManagementSim';
 export { AIReceiptVerificationSim } from './AIReceiptVerificationSim';
+export { AICoachPanel } from './AICoachPanel';
 
 // RBAC components
 export { AccessBadge, RestrictedAccessCard } from './AccessBadge';
