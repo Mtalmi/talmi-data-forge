@@ -215,7 +215,7 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         .from('monthly_expense_caps')
         .select('level1_spent, level1_cap, cap_exceeded')
         .eq('month_year', monthYear)
-        .single();
+        .maybeSingle();
 
       if (data) {
         setMonthlyCapStatus({

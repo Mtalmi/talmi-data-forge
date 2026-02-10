@@ -48,7 +48,7 @@ export function MonthlyBudgetGauge() {
         .from('monthly_expense_caps')
         .select('level1_spent, level1_cap, cap_exceeded')
         .eq('month_year', monthYear)
-        .single();
+        .maybeSingle();
 
       const spent = capData?.level1_spent || 0;
       const cap = capData?.level1_cap || 15000;
