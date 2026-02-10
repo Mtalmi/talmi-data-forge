@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import Map, { Marker, Popup, NavigationControl, Source, Layer } from 'react-map-gl';
+import Map, { Marker, Popup, NavigationControl } from 'react-map-gl';
 import { supabase } from '@/integrations/supabase/client';
 import { MAPBOX_TOKEN } from '@/apiConfig';
-import { Truck, Factory, MapPin, Signal, Clock, AlertTriangle } from 'lucide-react';
+import { Truck, Factory, MapPin, Signal, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-interface GPSVehicle {
+export interface GPSVehicle {
   id_camion: string;
   chauffeur: string | null;
   statut: string;
@@ -19,6 +20,12 @@ interface GPSVehicle {
 
 interface PopupVehicle extends GPSVehicle {
   minutesAgo: number;
+}
+
+export interface FleetGPSMapProps {
+  className?: string;
+  externalVehicles?: GPSVehicle[];
+  hideOverlay?: boolean;
 }
 
 const PLANT_COORDS = { latitude: 33.5731, longitude: -7.5898 };
@@ -49,13 +56,21 @@ function formatTimeAgo(minutesAgo: number): string {
   return `${Math.floor(hours / 24)}j`;
 }
 
-export function FleetGPSMap() {
-  const [vehicles, setVehicles] = useState<GPSVehicle[]>([]);
+export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }: FleetGPSMapProps) {
+  const [internalVehicles, setInternalVehicles] = useState<GPSVehicle[]>([]);
   const [selectedVehicle, setSelectedVehicle] = useState<PopupVehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<any>(null);
 
+  const vehicles = externalVehicles ?? internalVehicles;
+  const hasExternal = !!externalVehicles;
+
   const fetchVehicles = useCallback(async () => {
+    if (hasExternal) {
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from('flotte')
       .select('id_camion, chauffeur, statut, type, last_latitude, last_longitude, last_gps_update, gps_provider')
@@ -68,20 +83,22 @@ export function FleetGPSMap() {
       return;
     }
 
-    setVehicles((data || []).map(v => ({
+    setInternalVehicles((data || []).map(v => ({
       ...v,
       last_latitude: Number(v.last_latitude),
       last_longitude: Number(v.last_longitude),
     })));
     setLoading(false);
-  }, []);
+  }, [hasExternal]);
 
   useEffect(() => {
     fetchVehicles();
   }, [fetchVehicles]);
 
-  // Realtime subscription
+  // Realtime subscription - only when using internal data
   useEffect(() => {
+    if (hasExternal) return;
+
     const channel = supabase
       .channel('fleet-gps-map')
       .on(
@@ -93,14 +110,18 @@ export function FleetGPSMap() {
       )
       .subscribe();
 
-    // Poll every 15s as fallback
     const interval = setInterval(fetchVehicles, 15000);
 
     return () => {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
-  }, [fetchVehicles]);
+  }, [fetchVehicles, hasExternal]);
+
+  // Update loading state when external vehicles change
+  useEffect(() => {
+    if (hasExternal) setLoading(false);
+  }, [hasExternal, externalVehicles]);
 
   const activeCount = vehicles.filter(v => getMinutesAgo(v.last_gps_update) < 5).length;
   const warningCount = vehicles.filter(v => {
@@ -110,7 +131,7 @@ export function FleetGPSMap() {
   const lostCount = vehicles.filter(v => getMinutesAgo(v.last_gps_update) >= 30).length;
 
   return (
-    <div className="relative w-full h-[600px] rounded-2xl overflow-hidden border border-border">
+    <div className={cn("relative w-full rounded-2xl overflow-hidden border border-border", className || "h-[600px]")}>
       <Map
         ref={mapRef}
         initialViewState={{
@@ -210,30 +231,32 @@ export function FleetGPSMap() {
         )}
       </Map>
 
-      {/* Vehicle Count Overlay */}
-      <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 space-y-2 shadow-lg">
-        <div className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
-          <Signal className="h-3.5 w-3.5 text-primary" />
-          Flotte GPS
-        </div>
-        <div className="flex items-center gap-3 text-xs">
-          <div className="flex items-center gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-            <span className="text-muted-foreground">{activeCount} actifs</span>
+      {/* Vehicle Count Overlay - conditionally shown */}
+      {!hideOverlay && (
+        <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 space-y-2 shadow-lg">
+          <div className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
+            <Signal className="h-3.5 w-3.5 text-primary" />
+            Flotte GPS
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
-            <span className="text-muted-foreground">{warningCount} faibles</span>
+          <div className="flex items-center gap-3 text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              <span className="text-muted-foreground">{activeCount} actifs</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-2.5 w-2.5 rounded-full bg-yellow-500" />
+              <span className="text-muted-foreground">{warningCount} faibles</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+              <span className="text-muted-foreground">{lostCount} perdus</span>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
-            <span className="text-muted-foreground">{lostCount} perdus</span>
+          <div className="text-[10px] text-muted-foreground border-t border-border pt-1.5">
+            Total: {vehicles.length} véhicule{vehicles.length !== 1 ? 's' : ''} suivis
           </div>
         </div>
-        <div className="text-[10px] text-muted-foreground border-t border-border pt-1.5">
-          Total: {vehicles.length} véhicule{vehicles.length !== 1 ? 's' : ''} suivis
-        </div>
-      </div>
+      )}
 
       {/* Loading overlay */}
       {loading && (
