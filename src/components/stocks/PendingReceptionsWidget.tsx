@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import {
+  Camera,
   ClipboardCheck,
   FlaskConical,
   Loader2,
@@ -22,6 +23,8 @@ import {
   AlertTriangle,
   Scale,
   FileText,
+  Mountain,
+  Truck,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -38,6 +41,8 @@ interface PendingReception {
   numero_bl: string;
   photo_materiel_url: string | null;
   photo_bl_url: string | null;
+  photo_gravel_url: string | null;
+  photo_humidity_url: string | null;
   humidite_pct: number | null;
   qualite_visuelle: string | null;
   notes_qualite: string | null;
@@ -51,8 +56,9 @@ interface PendingReceptionsWidgetProps {
 }
 
 /**
- * Widget showing pending stock receptions awaiting Admin validation
- * Part of the Double-Lock Protocol (Step 2 - Admin Financial Gate)
+ * Widget showing pending stock receptions awaiting Front Desk validation
+ * Part of the Double-Lock Protocol (Step 2 - Front Desk Financial Gate)
+ * Shows quality photos taken by Resp. Technique for review
  */
 export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetProps) {
   const { isCeo, isSuperviseur, isAgentAdministratif } = useAuth();
@@ -71,7 +77,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
   useEffect(() => {
     fetchPendingReceptions();
     
-    // Realtime subscription
+    // Realtime subscription for live badge updates
     const channel = supabase
       .channel('pending-receptions')
       .on(
@@ -173,8 +179,8 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
         <CardHeader className="pb-2">
           <CardTitle className="text-base flex items-center gap-2">
             <ClipboardCheck className="h-5 w-5 text-primary" />
-            Réceptions à Valider
-            <Badge variant="secondary" className="ml-auto">
+            Réceptions à Valider (Front Desk)
+            <Badge variant="secondary" className="ml-auto animate-pulse bg-primary/20 text-primary">
               {receptions.length}
             </Badge>
           </CardTitle>
@@ -214,7 +220,8 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
                     )}
                   >
                     <Check className="h-3 w-3 mr-1" />
-                    Qualité OK
+                    {reception.qualite_visuelle === 'conforme' ? 'Qualité OK' : 
+                     reception.qualite_visuelle === 'reserve' ? 'Réserve' : 'Non Conforme'}
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-1">
                     {reception.qualite_approuvee_at 
@@ -222,6 +229,25 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
                       : '—'}
                   </p>
                 </div>
+              </div>
+
+              {/* Photo indicators */}
+              <div className="flex gap-1.5 mt-2">
+                {reception.photo_gravel_url && (
+                  <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20">
+                    <Mountain className="h-2.5 w-2.5" /> Gravier
+                  </span>
+                )}
+                {reception.photo_humidity_url && (
+                  <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20">
+                    <Droplets className="h-2.5 w-2.5" /> Humidité
+                  </span>
+                )}
+                {reception.photo_materiel_url && (
+                  <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border">
+                    <Truck className="h-2.5 w-2.5" /> Camion
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -234,7 +260,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ClipboardCheck className="h-5 w-5 text-primary" />
-              Valider Réception - Double-Lock
+              Double Validation - Front Desk
             </DialogTitle>
           </DialogHeader>
 
@@ -244,7 +270,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
               <div className="p-4 rounded-lg bg-success/5 border border-success/30">
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
                   <FlaskConical className="h-4 w-4 text-success" />
-                  Contrôle Qualité Approuvé
+                  Contrôle Qualité Approuvé par Resp. Technique
                 </h3>
                 
                 <div className="grid grid-cols-2 gap-3 text-sm">
@@ -267,7 +293,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
                 </div>
 
                 <div className="flex gap-4 mt-3 pt-3 border-t border-success/20">
-                  {selectedReception.humidite_pct && (
+                  {selectedReception.humidite_pct != null && (
                     <div className="flex items-center gap-1">
                       <Droplets className="h-4 w-4 text-primary" />
                       <span className="text-sm">{selectedReception.humidite_pct}%</span>
@@ -286,58 +312,72 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
                 )}
               </div>
 
-              {/* Photos */}
-              {(selectedReception.photo_materiel_url || selectedReception.photo_bl_url) && (
-                <div className="flex gap-2">
-                  {selectedReception.photo_materiel_url && (
-                    <a 
-                      href={selectedReception.photo_materiel_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex-1"
-                    >
+              {/* Quality Photos - The proof from Resp. Technique */}
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm flex items-center gap-2">
+                  <Camera className="h-4 w-4 text-primary" />
+                  Preuves Photographiques (Resp. Technique)
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {selectedReception.photo_gravel_url && (
+                    <a href={selectedReception.photo_gravel_url} target="_blank" rel="noopener noreferrer">
                       <div className="relative rounded-lg border overflow-hidden group">
-                        <img 
-                          src={selectedReception.photo_materiel_url} 
-                          alt="Matériau"
-                          className="w-full h-24 object-cover"
-                        />
+                        <img src={selectedReception.photo_gravel_url} alt="Gravier" className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <Image className="h-5 w-5 text-white" />
                         </div>
-                        <Badge className="absolute bottom-1 left-1 text-xs">Matériau</Badge>
+                        <Badge className="absolute bottom-1 left-1 text-[10px] bg-success/90 gap-1">
+                          <Mountain className="h-2.5 w-2.5" /> Gravier
+                        </Badge>
+                      </div>
+                    </a>
+                  )}
+                  {selectedReception.photo_humidity_url && (
+                    <a href={selectedReception.photo_humidity_url} target="_blank" rel="noopener noreferrer">
+                      <div className="relative rounded-lg border overflow-hidden group">
+                        <img src={selectedReception.photo_humidity_url} alt="Humidité" className="w-full h-28 object-cover" />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Image className="h-5 w-5 text-white" />
+                        </div>
+                        <Badge className="absolute bottom-1 left-1 text-[10px] bg-primary/90 gap-1">
+                          <Droplets className="h-2.5 w-2.5" /> Humidité
+                        </Badge>
+                      </div>
+                    </a>
+                  )}
+                  {selectedReception.photo_materiel_url && (
+                    <a href={selectedReception.photo_materiel_url} target="_blank" rel="noopener noreferrer">
+                      <div className="relative rounded-lg border overflow-hidden group">
+                        <img src={selectedReception.photo_materiel_url} alt="Camion" className="w-full h-28 object-cover" />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Image className="h-5 w-5 text-white" />
+                        </div>
+                        <Badge variant="outline" className="absolute bottom-1 left-1 text-[10px] gap-1">
+                          <Truck className="h-2.5 w-2.5" /> Camion
+                        </Badge>
                       </div>
                     </a>
                   )}
                   {selectedReception.photo_bl_url && (
-                    <a 
-                      href={selectedReception.photo_bl_url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex-1"
-                    >
+                    <a href={selectedReception.photo_bl_url} target="_blank" rel="noopener noreferrer">
                       <div className="relative rounded-lg border overflow-hidden group">
-                        <img 
-                          src={selectedReception.photo_bl_url} 
-                          alt="BL"
-                          className="w-full h-24 object-cover"
-                        />
+                        <img src={selectedReception.photo_bl_url} alt="BL" className="w-full h-28 object-cover" />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <Image className="h-5 w-5 text-white" />
                         </div>
-                        <Badge variant="outline" className="absolute bottom-1 left-1 text-xs">BL</Badge>
+                        <Badge variant="outline" className="absolute bottom-1 left-1 text-[10px]">BL</Badge>
                       </div>
                     </a>
                   )}
                 </div>
-              )}
+              </div>
 
               {/* Non-Conforme Warning */}
               {selectedReception.qualite_visuelle === 'non_conforme' && (
                 <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" />
                   <p className="text-sm text-destructive">
-                    Attention: Matériau marqué comme NON CONFORME par le contrôle qualité
+                    ⚠️ Matériau marqué NON CONFORME par le Resp. Technique
                   </p>
                 </div>
               )}
@@ -346,7 +386,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="font-semibold text-sm flex items-center gap-2">
                   <Scale className="h-4 w-4" />
-                  Validation Financière (Pont-Bascule)
+                  Validation Front Desk (Pont-Bascule)
                 </h3>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -379,7 +419,7 @@ export function PendingReceptionsWidget({ onRefresh }: PendingReceptionsWidgetPr
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Notes Admin (optionnel)</Label>
+                  <Label>Notes Front Desk (optionnel)</Label>
                   <Textarea
                     placeholder="Remarques..."
                     value={notesAdmin}

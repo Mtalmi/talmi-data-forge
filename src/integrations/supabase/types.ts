@@ -5888,6 +5888,8 @@ export type Database = {
           numero_bl: string
           numero_facture: string | null
           photo_bl_url: string | null
+          photo_gravel_url: string | null
+          photo_humidity_url: string | null
           photo_materiel_url: string | null
           poids_pesee: number | null
           qualite_approuvee_at: string | null
@@ -5912,6 +5914,8 @@ export type Database = {
           numero_bl: string
           numero_facture?: string | null
           photo_bl_url?: string | null
+          photo_gravel_url?: string | null
+          photo_humidity_url?: string | null
           photo_materiel_url?: string | null
           poids_pesee?: number | null
           qualite_approuvee_at?: string | null
@@ -5936,6 +5940,8 @@ export type Database = {
           numero_bl?: string
           numero_facture?: string | null
           photo_bl_url?: string | null
+          photo_gravel_url?: string | null
+          photo_humidity_url?: string | null
           photo_materiel_url?: string | null
           poids_pesee?: number | null
           qualite_approuvee_at?: string | null
@@ -7102,20 +7108,37 @@ export type Database = {
           qc_notification_id: string
         }[]
       }
-      create_quality_stock_entry: {
-        Args: {
-          p_fournisseur: string
-          p_humidite_pct?: number
-          p_materiau: string
-          p_notes?: string
-          p_numero_bl: string
-          p_photo_bl_url?: string
-          p_photo_materiel_url: string
-          p_qualite_visuelle?: string
-          p_quantite: number
-        }
-        Returns: Json
-      }
+      create_quality_stock_entry:
+        | {
+            Args: {
+              p_fournisseur: string
+              p_humidite_pct?: number
+              p_materiau: string
+              p_notes?: string
+              p_numero_bl: string
+              p_photo_bl_url?: string
+              p_photo_materiel_url: string
+              p_qualite_visuelle?: string
+              p_quantite: number
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_fournisseur: string
+              p_humidite_pct?: number
+              p_materiau: string
+              p_notes?: string
+              p_numero_bl: string
+              p_photo_bl_url?: string
+              p_photo_gravel_url?: string
+              p_photo_humidity_url?: string
+              p_photo_materiel_url: string
+              p_qualite_visuelle?: string
+              p_quantite: number
+            }
+            Returns: Json
+          }
       deactivate_tight_times: { Args: never; Returns: boolean }
       detect_deposit_patterns: {
         Args: { check_date?: string }
