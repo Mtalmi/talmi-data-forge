@@ -4,8 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
 import { AICoachPanel } from './AICoachPanel';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import {
   Package,
   CheckCircle2,
@@ -431,9 +429,6 @@ export function StockReceptionSim({ onComplete, onClose }: StockReceptionSimProp
           {scenario && (
             <div className="mt-3 p-3 rounded-lg bg-muted/30 border border-border text-xs">
               <span className="font-medium">🎯 Scénario IA:</span> {JSON.stringify(scenario).substring(0, 120)}...
-            </div>
-          )}
-        </div>
             </div>
           )}
         </div>
