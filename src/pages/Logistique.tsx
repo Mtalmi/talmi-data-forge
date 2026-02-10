@@ -55,6 +55,7 @@ import {
   MapPinOff,
   Factory,
   FileSpreadsheet,
+  Globe,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -206,6 +207,10 @@ export default function Logistique() {
             <Button variant="outline" size="sm" onClick={() => navigate('/ws7-batches')} className="min-h-[40px]">
               <Factory className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Batches WS7</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/ws7-discovery')} className="min-h-[40px] border-accent/30">
+              <Globe className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Découvrir WS7</span>
             </Button>
             <Button variant="outline" size="sm" onClick={() => {
               fetchVehicules();
