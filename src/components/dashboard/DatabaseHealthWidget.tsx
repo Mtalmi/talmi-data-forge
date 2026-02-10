@@ -156,9 +156,20 @@ export function DatabaseHealthWidget() {
 
   useEffect(() => {
     runHealthCheck();
-    // Auto-refresh every 5 minutes
     const interval = setInterval(runHealthCheck, 5 * 60 * 1000);
-    return () => clearInterval(interval);
+
+    // Realtime subscriptions for live health monitoring
+    const channel = supabase
+      .channel('db-health-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'system_errors' }, () => runHealthCheck())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, () => runHealthCheck())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, () => runHealthCheck())
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getStatusIcon = (status: 'green' | 'yellow' | 'red') => {
