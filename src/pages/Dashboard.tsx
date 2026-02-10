@@ -30,6 +30,7 @@ import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
 import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerWidget';
 import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
+import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
 import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
 import {
   PendingApprovalsWidget, 
@@ -351,6 +352,11 @@ export default function Dashboard() {
             {/* AI Anomaly Scanner - Forensic AI */}
             <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
               <AIAnomalyScannerWidget />
+            </ParallaxCard>
+            
+            {/* WS7 Live Production Feed */}
+            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
+              <WS7LiveFeedWidget />
             </ParallaxCard>
             
             {/* Executive Command Center - Full width */}

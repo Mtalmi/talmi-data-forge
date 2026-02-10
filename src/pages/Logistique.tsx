@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useFlotte } from '@/hooks/useFlotte';
@@ -52,6 +53,8 @@ import {
   Crosshair,
   MapPin,
   MapPinOff,
+  Factory,
+  FileSpreadsheet,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -59,6 +62,7 @@ import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Logistique() {
+  const navigate = useNavigate();
   const { isCeo, isDirecteurOperations, isSuperviseur } = useAuth();
   const {
     vehicules,
@@ -195,6 +199,14 @@ export default function Logistique() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Button variant="outline" size="sm" onClick={() => navigate('/ws7-import')} className="min-h-[40px] border-primary/30 text-primary hover:bg-primary/10">
+              <FileSpreadsheet className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Import WS7</span>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/ws7-batches')} className="min-h-[40px]">
+              <Factory className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Batches WS7</span>
+            </Button>
             <Button variant="outline" size="sm" onClick={() => {
               fetchVehicules();
               fetchCarburant();
