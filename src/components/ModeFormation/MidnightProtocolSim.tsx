@@ -29,19 +29,6 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useAITrainingCoach } from '@/hooks/useAITrainingCoach';
 import { AICoachPanel } from './AICoachPanel';
-  Moon,
-  CheckCircle2,
-  ArrowRight,
-  RotateCcw,
-  AlertTriangle,
-  X,
-  Clock,
-  ShieldAlert,
-  Zap,
-  KeyRound,
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
 
 interface MidnightProtocolSimProps {
   onComplete: () => void;
