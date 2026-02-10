@@ -49,7 +49,7 @@ export function MobileBottomNav() {
   const isMoreActive = MORE_NAV_ITEMS.some(item => location.pathname === item.path);
 
   return (
-    <nav className="mobile-bottom-nav">
+    <nav className="mobile-bottom-nav" role="navigation" aria-label="Navigation principale">
       <div className="mobile-bottom-nav-container">
         {PRIMARY_NAV_ITEMS.map((item) => {
           const Icon = item.icon;
@@ -60,9 +60,10 @@ export function MobileBottomNav() {
               key={item.path}
               to={item.path}
               className={cn(
-                "mobile-nav-item",
+                "mobile-nav-item press-down",
                 isActive && "mobile-nav-item-active"
               )}
+              aria-current={isActive ? 'page' : undefined}
             >
               <Icon className="mobile-nav-icon" />
               <span className="mobile-nav-label">{item.label}</span>

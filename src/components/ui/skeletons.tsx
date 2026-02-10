@@ -11,10 +11,11 @@ export function Skeleton({ className, style, ...props }: SkeletonProps) {
   return (
     <div 
       className={cn(
-        "animate-pulse rounded-md bg-muted/50 relative overflow-hidden",
+        "rounded-md relative overflow-hidden",
+        "bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40",
         "after:absolute after:inset-0 after:translate-x-[-100%]",
-        "after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent",
-        "after:animate-[shimmer_2s_infinite]",
+        "after:bg-gradient-to-r after:from-transparent after:via-foreground/[0.04] after:to-transparent",
+        "after:animate-[shimmer_2.5s_ease-in-out_infinite]",
         className
       )}
       style={style}
@@ -90,14 +91,14 @@ export function SkeletonCard({ className }: SkeletonProps) {
 // KPI card skeleton
 export function SkeletonKPI({ className }: SkeletonProps) {
   return (
-    <Card className={cn("p-4", className)}>
+    <div className={cn("kpi-card p-4 rounded-xl border border-border/30 bg-card/50", className)}>
       <div className="flex items-center justify-between mb-3">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="h-3 w-20 rounded-full" />
+        <Skeleton className="h-8 w-8 rounded-lg" />
       </div>
-      <Skeleton className="h-8 w-32 mb-2" />
-      <Skeleton className="h-3 w-24" />
-    </Card>
+      <Skeleton className="h-7 w-28 mb-2 rounded-md" />
+      <Skeleton className="h-3 w-20 rounded-full" />
+    </div>
   );
 }
 
