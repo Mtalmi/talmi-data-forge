@@ -111,9 +111,9 @@ export function useGPSTracking() {
           volume_m3,
           heure_prevue,
           workflow_status,
-          clients (nom_client, adresse),
-          zones_livraison (nom_zone),
-          bons_commande:bc_id (adresse_livraison)
+          clients!client_id (nom_client, adresse),
+          zones_livraison!zone_livraison_id (nom_zone),
+          bons_commande!bc_id (adresse_livraison)
         `)
         .eq('date_livraison', today)
         .in('workflow_status', ['planification', 'production', 'validation_technique', 'en_livraison']);
