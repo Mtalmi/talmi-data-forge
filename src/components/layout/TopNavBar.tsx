@@ -109,6 +109,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         { to: '/paiements', label: 'Paiements', icon: DollarSign },
         { to: '/depenses-v2', label: 'Dépenses', icon: Receipt },
         { to: '/contracts', label: 'Contrats', icon: FileText },
+        { to: '/rapprochement', label: 'Rapprochement', icon: DollarSign },
       ].filter(item => canAccess(item.to)),
     },
     {
@@ -116,14 +117,19 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
       items: [
         { to: '/clients', label: 'Clients', icon: Users },
         { to: '/formules', label: 'Formules', icon: FlaskConical },
+        { to: '/laboratoire', label: 'Laboratoire', icon: FlaskConical },
         { to: '/logistique', label: 'Logistique', icon: Truck },
+        { to: '/fournisseurs', label: 'Fournisseurs', icon: Building2 },
+        { to: '/prestataires', label: 'Prestataires', icon: Truck },
         { to: '/maintenance', label: 'Maintenance', icon: Wrench },
+        { to: '/pointage', label: 'Pointage', icon: Users },
       ].filter(item => canAccess(item.to)),
     },
     ...(isCeo ? [{
       label: 'Contrôle CEO',
       items: [
         { to: '/rapports', label: 'Rapports', icon: BarChart3 },
+        { to: '/prix', label: 'Prix d\'Achat', icon: DollarSign },
         { to: '/securite', label: 'Sécurité', icon: Shield },
         { to: '/users', label: 'Utilisateurs', icon: Users },
       ].filter(item => canAccess(item.to)),
