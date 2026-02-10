@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.ws7-auto-link]
 verify_jwt = false
+
+[functions.ws7-ping]
+verify_jwt = false
