@@ -7365,9 +7365,12 @@ export type Database = {
       is_centraliste: { Args: { _user_id: string }; Returns: boolean }
       is_ceo: { Args: { _user_id: string }; Returns: boolean }
       is_ceo_direct: { Args: { _user_id: string }; Returns: boolean }
+      is_ceo_role: { Args: never; Returns: boolean }
       is_ceo_v2: { Args: { _user_id: string }; Returns: boolean }
       is_commercial: { Args: { _user_id: string }; Returns: boolean }
       is_directeur_operations: { Args: { _user_id: string }; Returns: boolean }
+      is_finance_role: { Args: never; Returns: boolean }
+      is_management_role: { Args: never; Returns: boolean }
       is_master_admin: { Args: never; Returns: boolean }
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
