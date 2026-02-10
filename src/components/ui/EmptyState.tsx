@@ -26,28 +26,31 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center text-center',
+        'flex flex-col items-center justify-center text-center animate-fade-in',
         variant === 'default' ? 'py-12 px-6' : 'py-8 px-4',
         className
       )}
     >
+      {/* Branded icon with subtle glow */}
       <div
         className={cn(
-          'rounded-full bg-muted/50 flex items-center justify-center mb-4',
-          variant === 'default' ? 'h-16 w-16' : 'h-12 w-12'
+          'rounded-2xl flex items-center justify-center mb-5 transition-all duration-500',
+          variant === 'default' ? 'h-20 w-20' : 'h-14 w-14',
+          'bg-gradient-to-br from-muted/60 to-muted/30 border border-border/40',
+          'shadow-[0_0_30px_hsl(var(--primary)/0.05)]'
         )}
       >
         <Icon
           className={cn(
-            'text-muted-foreground',
-            variant === 'default' ? 'h-8 w-8' : 'h-6 w-6'
+            'text-muted-foreground/70',
+            variant === 'default' ? 'h-9 w-9' : 'h-6 w-6'
           )}
         />
       </div>
 
       <h3
         className={cn(
-          'font-semibold text-foreground mb-2',
+          'font-bold text-foreground mb-1.5 tracking-tight',
           variant === 'default' ? 'text-lg' : 'text-base'
         )}
       >
@@ -56,8 +59,8 @@ export function EmptyState({
 
       <p
         className={cn(
-          'text-muted-foreground max-w-sm mb-4',
-          variant === 'default' ? 'text-sm' : 'text-xs'
+          'text-muted-foreground max-w-xs leading-relaxed',
+          variant === 'default' ? 'text-sm mb-6' : 'text-xs mb-4'
         )}
       >
         {description}
@@ -67,7 +70,7 @@ export function EmptyState({
         <Button
           onClick={onAction}
           size={variant === 'default' ? 'default' : 'sm'}
-          className="gap-2 min-h-[44px]"
+          className="gap-2 min-h-[44px] rounded-xl shadow-[0_4px_16px_hsl(var(--primary)/0.2)]"
         >
           {ActionIcon && <ActionIcon className="h-4 w-4" />}
           {actionLabel}

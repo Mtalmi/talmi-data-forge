@@ -44,6 +44,7 @@ import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
 import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SkeletonKPI } from '@/components/ui/skeletons';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
 import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
 import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
@@ -371,82 +372,103 @@ export default function Dashboard() {
 
         {/* Period-Aware KPI Grid - Mobile optimized */}
         <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <PeriodKPICard
-            title="Volume Total"
-            value={periodLoading ? '...' : `${periodStats.totalVolume.toFixed(0)} m³`}
-            subtitle={periodStats.periodLabel || 'Chargement...'}
-            icon={Package}
-            trend={periodStats.volumeTrend}
-            trendLabel={periodStats.previousPeriodLabel}
-            variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
-            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-          />
-          <PeriodKPICard
-            title="Chiffre d'Affaires"
-            value={periodLoading ? '...' : `${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
-            subtitle={`${periodStats.nbFactures} factures`}
-            icon={DollarSign}
-            trend={periodStats.caTrend}
-            trendLabel={periodStats.previousPeriodLabel}
-            variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
-            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-          />
-          <PeriodKPICard
-            title="CUR Moyen"
-            value={periodLoading ? '...' : (periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—')}
-            subtitle="Coût Unitaire Réel"
-            icon={Gauge}
-            trend={periodStats.curTrend}
-            trendLabel={periodStats.previousPeriodLabel}
-            variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
-            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-          />
-          <PeriodKPICard
-            title="Marge Brute"
-            value={periodLoading ? '...' : (periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—')}
-            subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
-            icon={TrendingUp}
-            trend={periodStats.margeTrend}
-            trendLabel={periodStats.previousPeriodLabel}
-            variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
-            className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-          />
+          {periodLoading ? (
+            <>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonKPI key={i} />
+              ))}
+            </>
+          ) : (
+            <>
+              <PeriodKPICard
+                title="Volume Total"
+                value={`${periodStats.totalVolume.toFixed(0)} m³`}
+                subtitle={periodStats.periodLabel || 'Chargement...'}
+                icon={Package}
+                trend={periodStats.volumeTrend}
+                trendLabel={periodStats.previousPeriodLabel}
+                variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
+                className="animate-fade-in"
+              />
+              <PeriodKPICard
+                title="Chiffre d'Affaires"
+                value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
+                subtitle={`${periodStats.nbFactures} factures`}
+                icon={DollarSign}
+                trend={periodStats.caTrend}
+                trendLabel={periodStats.previousPeriodLabel}
+                variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
+                className="animate-fade-in"
+                style={{ animationDelay: '50ms' }}
+              />
+              <PeriodKPICard
+                title="CUR Moyen"
+                value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
+                subtitle="Coût Unitaire Réel"
+                icon={Gauge}
+                trend={periodStats.curTrend}
+                trendLabel={periodStats.previousPeriodLabel}
+                variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
+                className="animate-fade-in"
+                style={{ animationDelay: '100ms' }}
+              />
+              <PeriodKPICard
+                title="Marge Brute"
+                value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
+                subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
+                icon={TrendingUp}
+                trend={periodStats.margeTrend}
+                trendLabel={periodStats.previousPeriodLabel}
+                variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
+                className="animate-fade-in"
+                style={{ animationDelay: '150ms' }}
+              />
+            </>
+          )}
         </div>
 
         {/* Profit Net & Dépenses - CEO Only */}
         {(isCeo || isAccounting) && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <PeriodKPICard
-              title="Profit Net"
-              value={periodLoading ? '...' : `${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
-              subtitle="CA - Coûts - Dépenses"
-              icon={Calculator}
-              variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
-              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-            />
-            <PeriodKPICard
-              title="Total Dépenses"
-              value={periodLoading ? '...' : `${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
-              subtitle={periodStats.periodLabel}
-              icon={Receipt}
-              variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
-              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-            />
-            <KPICard
-              title="Alertes Marge"
-              value={stats.marginAlerts}
-              subtitle="Écarts > 5%"
-              icon={AlertTriangle}
-              variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
-            />
-            <PeriodKPICard
-              title="Clients Actifs"
-              value={periodLoading ? '...' : periodStats.nbClients}
-              subtitle={periodStats.periodLabel}
-              icon={Users}
-              variant="default"
-              className={periodLoading ? 'opacity-50 animate-pulse' : ''}
-            />
+            {periodLoading ? (
+              Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
+            ) : (
+              <>
+                <PeriodKPICard
+                  title="Profit Net"
+                  value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
+                  subtitle="CA - Coûts - Dépenses"
+                  icon={Calculator}
+                  variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
+                  className="animate-fade-in"
+                />
+                <PeriodKPICard
+                  title="Total Dépenses"
+                  value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
+                  subtitle={periodStats.periodLabel}
+                  icon={Receipt}
+                  variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
+                  className="animate-fade-in"
+                  style={{ animationDelay: '50ms' }}
+                />
+                <KPICard
+                  title="Alertes Marge"
+                  value={stats.marginAlerts}
+                  subtitle="Écarts > 5%"
+                  icon={AlertTriangle}
+                  variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
+                />
+                <PeriodKPICard
+                  title="Clients Actifs"
+                  value={periodStats.nbClients}
+                  subtitle={periodStats.periodLabel}
+                  icon={Users}
+                  variant="default"
+                  className="animate-fade-in"
+                  style={{ animationDelay: '100ms' }}
+                />
+              </>
+            )}
           </div>
         )}
 

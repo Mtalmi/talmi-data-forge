@@ -10,6 +10,7 @@ interface PeriodKPICardProps {
   trendLabel?: string;
   variant?: 'default' | 'positive' | 'negative' | 'warning';
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export function PeriodKPICard({
@@ -21,6 +22,7 @@ export function PeriodKPICard({
   trendLabel,
   variant = 'default',
   className,
+  style,
 }: PeriodKPICardProps) {
   const getTrendIcon = () => {
     if (trend === undefined || trend === 0) return <Minus className="h-3 w-3" />;
@@ -45,14 +47,17 @@ export function PeriodKPICard({
   };
 
   return (
-    <div className={cn(
-      'p-3 sm:p-4 rounded-lg border transition-all',
-      variant === 'positive' && 'bg-success/5 border-success/30',
-      variant === 'negative' && 'bg-destructive/5 border-destructive/30',
-      variant === 'warning' && 'bg-warning/5 border-warning/30',
-      variant === 'default' && 'bg-card border-border/50',
-      className
-    )}>
+    <div 
+      className={cn(
+        'kpi-card p-3 sm:p-4 rounded-xl border transition-all duration-300 hover-lift',
+        variant === 'positive' && 'positive bg-success/5 border-success/20',
+        variant === 'negative' && 'negative bg-destructive/5 border-destructive/20',
+        variant === 'warning' && 'warning bg-warning/5 border-warning/20',
+        variant === 'default' && 'bg-card border-border/40',
+        className
+      )}
+      style={style}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider truncate">{title}</p>

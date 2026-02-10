@@ -151,22 +151,25 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
       onClick={onClick}
       className={cn(
         'relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium',
-        'transition-all duration-300',
+        'transition-all duration-300 ease-out',
         isActive(item.to) ? [
           'text-primary-foreground',
           'bg-gradient-to-r from-primary to-primary/80',
-          'shadow-[0_0_20px_hsl(var(--primary)/0.3)]',
+          'shadow-[0_2px_16px_hsl(var(--primary)/0.35)]',
+          'scale-[1.02]',
         ] : [
           'text-muted-foreground',
           'hover:text-foreground',
-          'hover:bg-muted/50',
+          'hover:bg-muted/40',
+          'hover:scale-[1.02]',
+          'active:scale-[0.98]',
         ]
       )}
     >
-      <item.icon className="h-4 w-4" />
+      <item.icon className={cn("h-4 w-4 transition-transform duration-200", isActive(item.to) && "scale-110")} />
       <span>{item.label}</span>
       {item.badge !== undefined && item.badge > 0 && (
-        <span className="flex items-center justify-center h-5 min-w-[20px] px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold">
+        <span className="flex items-center justify-center h-5 min-w-[20px] px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-bold animate-scale-in">
           {item.badge}
         </span>
       )}
