@@ -93,7 +93,7 @@ export function TreasuryWidget() {
         .from('monthly_expense_caps')
         .select('level1_spent, level1_cap, cap_exceeded')
         .eq('month_year', monthYear)
-        .single();
+        .maybeSingle();
 
       // Get monthly stats
       const { data: monthlyData } = await supabase

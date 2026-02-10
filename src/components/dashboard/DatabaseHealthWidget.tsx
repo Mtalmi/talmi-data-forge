@@ -50,10 +50,15 @@ export function DatabaseHealthWidget() {
 
       for (const table of criticalTables) {
         try {
-          // Try to fetch - if RLS is working, this should succeed or fail gracefully
+          // Use correct PK for each table
+          const pkMap: Record<string, string> = {
+            bons_livraison_reels: 'bl_id',
+            clients: 'client_id',
+          };
+          const pk = pkMap[table] || 'id';
           const { error } = await supabase
             .from(table as 'clients')
-            .select('id')
+            .select(pk)
             .limit(1);
           
           healthChecks.push({
