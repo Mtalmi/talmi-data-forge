@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, Play, X, Clock, CheckCircle2, Video, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,7 @@ interface InfoTooltipProps {
   videoThumbnail?: string; // Optional thumbnail for video
 }
 
-export function InfoTooltip({ 
+export const InfoTooltip = forwardRef<HTMLDivElement, InfoTooltipProps>(function InfoTooltip({ 
   id, 
   title, 
   content, 
@@ -27,7 +27,7 @@ export function InfoTooltip({
   className,
   videoUrl,
   videoThumbnail
-}: InfoTooltipProps) {
+}, ref) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentAnimStep, setCurrentAnimStep] = useState(0);
@@ -119,7 +119,7 @@ export function InfoTooltip({
   };
 
   return (
-    <div className={cn("relative inline-flex", className)}>
+    <div ref={ref} className={cn("relative inline-flex", className)}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -346,4 +346,4 @@ export function InfoTooltip({
       </AnimatePresence>
     </div>
   );
-}
+});
