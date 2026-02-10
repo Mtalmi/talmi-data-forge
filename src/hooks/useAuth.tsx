@@ -263,45 +263,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ===================================================================
   // MATRICE DES PERMISSIONS - Granular Role-Based Access Control
+  // Uses legacy booleans (which include OR fallback for both new + legacy role strings)
   // ===================================================================
   
   // Prix d'Achat: CEO & Supervisor ONLY
-  const canReadPrix = isCeo || isSupervisor;
+  const canReadPrix = isCeo || isSuperviseur;
   
   // Formules: CEO & Supervisor can edit; Others read-only
-  const canEditFormules = isCeo || isSupervisor;
+  const canEditFormules = isCeo || isSuperviseur;
   
   // Clients: CEO/Supervisor/FrontDesk can manage
-  const canManageClients = isCeo || isSupervisor || isFrontDesk;
-  const canEditClients = isCeo || isSupervisor || isFrontDesk;
+  const canManageClients = isCeo || isSuperviseur || isAgentAdministratif;
+  const canEditClients = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Bons Creation: CEO/Supervisor/FrontDesk
-  const canCreateBons = isCeo || isSupervisor || isFrontDesk;
+  const canCreateBons = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Validation Technique: CEO/Supervisor/Resp Technique
-  const canValidateTechnique = isCeo || isSupervisor || isRespTechnique;
+  const canValidateTechnique = isCeo || isSuperviseur || isResponsableTechnique;
   
   // Consumption Updates: CEO/Supervisor/Centraliste
-  const canUpdateConsumption = isCeo || isSupervisor || isCentraliste;
+  const canUpdateConsumption = isCeo || isSuperviseur || isCentraliste;
   
   // Truck Assignment: CEO/Supervisor/Dir Ops/FrontDesk
-  const canAssignTrucks = isCeo || isSupervisor || isDirecteurOperationnel || isFrontDesk;
+  const canAssignTrucks = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
   
   // Invoice Generation: CEO/Supervisor/FrontDesk
-  const canGenerateInvoice = isCeo || isSupervisor || isFrontDesk;
+  const canGenerateInvoice = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Planning Edit: CEO/Supervisor/Dir Ops/FrontDesk
-  const canEditPlanning = isCeo || isSupervisor || isDirecteurOperationnel || isFrontDesk;
+  const canEditPlanning = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
   
   // Credit Block Override: CEO/Supervisor/FrontDesk
-  const canOverrideCreditBlock = isCeo || isSupervisor || isFrontDesk;
+  const canOverrideCreditBlock = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Derogations: CEO/Supervisor can approve; Dir Ops can only request
-  const canApproveDerogations = isCeo || isSupervisor;
-  const canRequestDerogations = isCeo || isSupervisor || isDirecteurOperationnel || isFrontDesk;
+  const canApproveDerogations = isCeo || isSuperviseur;
+  const canRequestDerogations = isCeo || isSuperviseur || isDirecteurOperations || isAgentAdministratif;
   
   // DEVIS APPROVAL: Only CEO, Supervisor, or FrontDesk
-  const canApproveDevis = isCeo || isSupervisor || isFrontDesk;
+  const canApproveDevis = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Audit Portal: CEO ONLY
   const canAccessAuditPortal = isCeo;
@@ -311,10 +312,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ===================================================================
   
   // Stock Reception: CEO/Supervisor/Resp Technique (for quality approval)
-  const canAddStockReception = isCeo || isSupervisor || isRespTechnique;
+  const canAddStockReception = isCeo || isSuperviseur || isResponsableTechnique;
   
   // Manual Stock Adjustment: CEO/Supervisor ONLY
-  const canAdjustStockManually = isCeo || isSupervisor;
+  const canAdjustStockManually = isCeo || isSuperviseur;
   
   // View Stock Module: Everyone EXCEPT Centraliste
   const canViewStockModule = !isCentraliste;
@@ -324,10 +325,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ===================================================================
   
   // Direct BC Creation: CEO/Supervisor/FrontDesk (standard path)
-  const canCreateBcDirect = isCeo || isSupervisor || isFrontDesk;
+  const canCreateBcDirect = isCeo || isSuperviseur || isAgentAdministratif;
   
   // BC Price Validation: CEO/Supervisor/FrontDesk
-  const canValidateBcPrice = isCeo || isSupervisor || isFrontDesk;
+  const canValidateBcPrice = isCeo || isSuperviseur || isAgentAdministratif;
   
   // Emergency Window Check: 18:00 - 00:00 (Midnight Emergency Protocol)
   const currentHour = new Date().getHours();
@@ -335,10 +336,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // Emergency Bypass: Dir Ops can use emergency bypass ONLY during 18:00-00:00
   // Requires CEO approval
-  const canUseEmergencyBypass = (isCeo || isSupervisor || isDirecteurOperationnel) && isInEmergencyWindow;
+  const canUseEmergencyBypass = (isCeo || isSuperviseur || isDirecteurOperations) && isInEmergencyWindow;
   
   // Emergency BC View: Resp. Technique needs to see emergency BCs for quality checks
-  const canViewEmergencyBcs = isCeo || isSupervisor || isRespTechnique || isDirecteurOperationnel || isFrontDesk;
+  const canViewEmergencyBcs = isCeo || isSuperviseur || isResponsableTechnique || isDirecteurOperations || isAgentAdministratif;
 
   const value: AuthContextType = {
     user,
