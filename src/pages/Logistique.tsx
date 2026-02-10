@@ -46,6 +46,8 @@ import {
   TrendingUp,
   RotateCcw,
   Crosshair,
+  MapPin,
+  MapPinOff,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -332,6 +334,7 @@ export default function Logistique() {
                       <TableHead>Propriétaire</TableHead>
                       <TableHead>Chauffeur</TableHead>
                       <TableHead className="text-right">Capacité</TableHead>
+                      <TableHead>GPS</TableHead>
                       <TableHead>Statut</TableHead>
                       <TableHead className="text-right">Conso. Moy.</TableHead>
                       {canManage && <TableHead className="w-32"></TableHead>}
@@ -361,6 +364,29 @@ export default function Logistique() {
                           <TableCell>{v.chauffeur || '—'}</TableCell>
                           <TableCell className="text-right font-mono">
                             {v.type === 'Toupie' ? `${v.capacite_m3} m³` : '—'}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {v.gps_enabled ? (
+                                <>
+                                  <MapPin className="w-4 h-4 text-emerald-500" />
+                                  {v.last_gps_update && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {(() => {
+                                        const minutesAgo = Math.floor(
+                                          (Date.now() - new Date(v.last_gps_update).getTime()) / 60000
+                                        );
+                                        return minutesAgo < 60
+                                          ? `${minutesAgo}m`
+                                          : `${Math.floor(minutesAgo / 60)}h`;
+                                      })()}
+                                    </span>
+                                  )}
+                                </>
+                              ) : (
+                                <MapPinOff className="w-4 h-4 text-muted-foreground" />
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             {getStatusBadge(displayStatus, v.bc_mission_id, isOnActiveDelivery ? activeDelivery : null)}

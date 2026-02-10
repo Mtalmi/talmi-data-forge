@@ -18,6 +18,13 @@ interface Vehicule {
   notes: string | null;
   bc_mission_id: string | null;
   mission_updated_at: string | null;
+  gps_enabled: boolean;
+  gps_device_id: string | null;
+  gps_imei: string | null;
+  gps_provider: string | null;
+  last_latitude: number | null;
+  last_longitude: number | null;
+  last_gps_update: string | null;
 }
 
 interface SuiviCarburant {
