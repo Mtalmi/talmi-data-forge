@@ -5520,6 +5520,7 @@ export type Database = {
           variance_eau_pct: number | null
           variance_gravette_pct: number | null
           variance_sable_pct: number | null
+          ws7_batch_id: string | null
         }
         Insert: {
           adjuvant_reel_l?: number | null
@@ -5549,6 +5550,7 @@ export type Database = {
           variance_eau_pct?: number | null
           variance_gravette_pct?: number | null
           variance_sable_pct?: number | null
+          ws7_batch_id?: string | null
         }
         Update: {
           adjuvant_reel_l?: number | null
@@ -5578,6 +5580,7 @@ export type Database = {
           variance_eau_pct?: number | null
           variance_gravette_pct?: number | null
           variance_sable_pct?: number | null
+          ws7_batch_id?: string | null
         }
         Relationships: [
           {
@@ -5593,6 +5596,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "client_delivery_tracking_view"
             referencedColumns: ["bl_id"]
+          },
+          {
+            foreignKeyName: "production_batches_ws7_batch_id_fkey"
+            columns: ["ws7_batch_id"]
+            isOneToOne: false
+            referencedRelation: "ws7_batches"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -6607,6 +6617,120 @@ export type Database = {
           id?: string
           step_id?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      ws7_batches: {
+        Row: {
+          additives_liters: number
+          batch_datetime: string
+          batch_number: string
+          cement_kg: number
+          client_name: string
+          created_at: string
+          formula: string
+          gravel_kg: number
+          id: string
+          import_datetime: string
+          link_confidence: number | null
+          link_status: string
+          linked_bl_id: string | null
+          operator_name: string | null
+          raw_data: Json | null
+          sand_kg: number
+          total_volume_m3: number
+          updated_at: string
+          water_liters: number
+        }
+        Insert: {
+          additives_liters?: number
+          batch_datetime: string
+          batch_number: string
+          cement_kg?: number
+          client_name: string
+          created_at?: string
+          formula: string
+          gravel_kg?: number
+          id?: string
+          import_datetime?: string
+          link_confidence?: number | null
+          link_status?: string
+          linked_bl_id?: string | null
+          operator_name?: string | null
+          raw_data?: Json | null
+          sand_kg?: number
+          total_volume_m3?: number
+          updated_at?: string
+          water_liters?: number
+        }
+        Update: {
+          additives_liters?: number
+          batch_datetime?: string
+          batch_number?: string
+          cement_kg?: number
+          client_name?: string
+          created_at?: string
+          formula?: string
+          gravel_kg?: number
+          id?: string
+          import_datetime?: string
+          link_confidence?: number | null
+          link_status?: string
+          linked_bl_id?: string | null
+          operator_name?: string | null
+          raw_data?: Json | null
+          sand_kg?: number
+          total_volume_m3?: number
+          updated_at?: string
+          water_liters?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ws7_batches_linked_bl_id_fkey"
+            columns: ["linked_bl_id"]
+            isOneToOne: false
+            referencedRelation: "bons_livraison_reels"
+            referencedColumns: ["bl_id"]
+          },
+          {
+            foreignKeyName: "ws7_batches_linked_bl_id_fkey"
+            columns: ["linked_bl_id"]
+            isOneToOne: false
+            referencedRelation: "client_delivery_tracking_view"
+            referencedColumns: ["bl_id"]
+          },
+        ]
+      }
+      ws7_import_log: {
+        Row: {
+          created_at: string
+          errors: Json | null
+          filename: string
+          id: string
+          import_datetime: string
+          imported_by: string | null
+          rows_failed: number
+          rows_imported: number
+        }
+        Insert: {
+          created_at?: string
+          errors?: Json | null
+          filename: string
+          id?: string
+          import_datetime?: string
+          imported_by?: string | null
+          rows_failed?: number
+          rows_imported?: number
+        }
+        Update: {
+          created_at?: string
+          errors?: Json | null
+          filename?: string
+          id?: string
+          import_datetime?: string
+          imported_by?: string | null
+          rows_failed?: number
+          rows_imported?: number
         }
         Relationships: []
       }
