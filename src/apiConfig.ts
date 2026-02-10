@@ -1,5 +1,7 @@
 export const API_BASE_URL = 'http://localhost:3000';
 
+export const MAPBOX_TOKEN = 'pk.eyJ1IjoiNDMyMTU2IiwiYSI6ImNtbGdsMXFyczAydHcza29pN3N0OTI3M2YifQ.4AWpJ2tldi48bBhyVYBdVg';
+
 interface ApiFetchOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
 }
