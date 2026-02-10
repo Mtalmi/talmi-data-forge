@@ -70,7 +70,7 @@ export function MidnightAlertWidget() {
       // Fetch deliveries (BL) - use bons_livraison_reels with client join
       const { data: deliveries } = await supabase
         .from('bons_livraison_reels')
-        .select('bl_id, volume_m3, created_at, clients(nom)')
+        .select('bl_id, volume_m3, created_at, clients(nom_client)')
         .gte('created_at', twentyFourHoursAgo.toISOString())
         .order('created_at', { ascending: false });
 
@@ -110,7 +110,7 @@ export function MidnightAlertWidget() {
       // Process deliveries - using timezone-locked Casablanca time
       deliveries?.forEach((del: any) => {
         if (del.created_at && isOffHoursCasablanca(del.created_at)) {
-          const clientName = del.clients?.nom || 'Client';
+          const clientName = del.clients?.nom_client || 'Client';
           allTransactions.push({
             id: del.bl_id,
             type: 'delivery',
