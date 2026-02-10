@@ -82,60 +82,106 @@ function validateRow(row: Record<string, string>, index: number): { valid: boole
   return { valid: errors.length === 0, errors };
 }
 
+interface LinkCandidate {
+  bl_id: string;
+  confidence: number;
+  scores: { date: number; client: number; volume: number; formula: number };
+}
+
+function fuzzyMatch(a: string, b: string): boolean {
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const na = normalize(a);
+  const nb = normalize(b);
+  return na.includes(nb) || nb.includes(na);
+}
+
 async function autoLinkBatch(
   supabase: ReturnType<typeof createClient>,
   batch: { client_name: string; batch_datetime: string; formula: string; total_volume_m3: number }
-): Promise<{ linked_bl_id: string | null; link_confidence: number; link_status: string }> {
-  // Find matching BLs by client name, date, and formula
-  const batchDate = batch.batch_datetime.split("T")[0] || batch.batch_datetime.split(" ")[0];
+): Promise<{ linked_bl_id: string | null; link_confidence: number; link_status: string; candidates: LinkCandidate[] }> {
+  const batchTime = new Date(batch.batch_datetime.replace(" ", "T"));
+  const twoHoursBefore = new Date(batchTime.getTime() - 2 * 60 * 60 * 1000);
+  const twoHoursAfter = new Date(batchTime.getTime() + 2 * 60 * 60 * 1000);
+  const batchDate = batchTime.toISOString().split("T")[0];
 
+  // Query BLs on same day with client info
   const { data: bls } = await supabase
     .from("bons_livraison_reels")
-    .select("bl_id, client_id, formule_id, volume_m3, date_livraison, clients!inner(nom)")
+    .select("bl_id, client_id, formule_id, volume_m3, date_livraison, heure_depart_centrale, heure_prevue, created_at, clients!inner(nom)")
     .eq("date_livraison", batchDate)
-    .limit(50);
+    .limit(100);
 
   if (!bls || bls.length === 0) {
-    return { linked_bl_id: null, link_confidence: 0, link_status: "no_match" };
+    return { linked_bl_id: null, link_confidence: 0, link_status: "no_match", candidates: [] };
   }
 
-  let bestMatch: { bl_id: string; confidence: number } | null = null;
+  const candidates: LinkCandidate[] = [];
 
   for (const bl of bls) {
-    let confidence = 0;
+    const scores = { date: 0, client: 0, volume: 0, formula: 0 };
+
+    // --- Date/time match: 25 points ---
+    // Use heure_depart_centrale or heure_prevue or created_at for time comparison
+    const blTimeStr = (bl as any).heure_depart_centrale || (bl as any).heure_prevue || null;
+    if (blTimeStr) {
+      const blFullTime = new Date(`${batchDate}T${blTimeStr}`);
+      if (!isNaN(blFullTime.getTime()) && blFullTime >= twoHoursBefore && blFullTime <= twoHoursAfter) {
+        // Closer = more points
+        const diffMs = Math.abs(batchTime.getTime() - blFullTime.getTime());
+        const diffMinutes = diffMs / 60000;
+        if (diffMinutes <= 30) scores.date = 25;
+        else if (diffMinutes <= 60) scores.date = 20;
+        else scores.date = 15;
+      }
+    } else {
+      // Same day but no time info — partial credit
+      scores.date = 10;
+    }
+
+    // --- Client match: 35 points ---
     const clientName = (bl as any).clients?.nom || "";
-
-    // Client name match (fuzzy)
-    if (clientName.toLowerCase().includes(batch.client_name.toLowerCase()) ||
-        batch.client_name.toLowerCase().includes(clientName.toLowerCase())) {
-      confidence += 40;
+    if (clientName && batch.client_name) {
+      const exactNorm = (s: string) => s.toLowerCase().trim();
+      if (exactNorm(clientName) === exactNorm(batch.client_name)) {
+        scores.client = 35;
+      } else if (fuzzyMatch(clientName, batch.client_name)) {
+        scores.client = 25;
+      }
     }
 
-    // Volume match (within 10%)
-    const volumeDiff = Math.abs(bl.volume_m3 - batch.total_volume_m3) / batch.total_volume_m3;
-    if (volumeDiff <= 0.05) confidence += 30;
-    else if (volumeDiff <= 0.1) confidence += 20;
-    else if (volumeDiff <= 0.2) confidence += 10;
-
-    // Formula match
-    if (bl.formule_id?.toLowerCase().includes(batch.formula.toLowerCase())) {
-      confidence += 30;
+    // --- Volume match: 25 points ---
+    if (batch.total_volume_m3 > 0 && bl.volume_m3 > 0) {
+      const pctDiff = Math.abs(bl.volume_m3 - batch.total_volume_m3) / batch.total_volume_m3;
+      if (pctDiff <= 0.02) scores.volume = 25;
+      else if (pctDiff <= 0.05) scores.volume = 20;
+      else if (pctDiff <= 0.10) scores.volume = 15;
     }
 
-    if (!bestMatch || confidence > bestMatch.confidence) {
-      bestMatch = { bl_id: bl.bl_id, confidence };
+    // --- Formula match: 15 points ---
+    const blFormula = (bl.formule_id || "").toLowerCase();
+    const batchFormula = batch.formula.toLowerCase();
+    if (blFormula === batchFormula || blFormula.includes(batchFormula) || batchFormula.includes(blFormula)) {
+      scores.formula = 15;
     }
+
+    const confidence = scores.date + scores.client + scores.volume + scores.formula;
+    candidates.push({ bl_id: bl.bl_id, confidence, scores });
   }
 
-  if (bestMatch && bestMatch.confidence >= 60) {
-    return { linked_bl_id: bestMatch.bl_id, link_confidence: bestMatch.confidence, link_status: "auto_linked" };
+  // Sort by confidence descending
+  candidates.sort((a, b) => b.confidence - a.confidence);
+  const best = candidates[0];
+
+  if (!best || best.confidence < 70) {
+    return { linked_bl_id: null, link_confidence: best?.confidence || 0, link_status: "no_match", candidates: candidates.slice(0, 5) };
   }
 
-  return {
-    linked_bl_id: bestMatch?.bl_id || null,
-    link_confidence: bestMatch?.confidence || 0,
-    link_status: "pending",
-  };
+  if (best.confidence >= 90) {
+    return { linked_bl_id: best.bl_id, link_confidence: best.confidence, link_status: "auto_linked", candidates: candidates.slice(0, 5) };
+  }
+
+  // 70-89: pending manual review
+  return { linked_bl_id: best.bl_id, link_confidence: best.confidence, link_status: "pending", candidates: candidates.slice(0, 5) };
 }
 
 Deno.serve(async (req) => {

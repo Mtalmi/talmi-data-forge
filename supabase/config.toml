@@ -44,3 +44,6 @@ verify_jwt = false
 
 [functions.ws7-link-batch]
 verify_jwt = false
+
+[functions.ws7-auto-link]
+verify_jwt = false
