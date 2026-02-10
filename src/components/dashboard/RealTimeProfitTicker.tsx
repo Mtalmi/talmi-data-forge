@@ -97,9 +97,21 @@ export function RealTimeProfitTicker() {
 
   useEffect(() => {
     fetchProfitData();
-    // Auto-refresh every minute
     const interval = setInterval(fetchProfitData, 60000);
-    return () => clearInterval(interval);
+
+    // Realtime subscriptions for live profit updates
+    const channel = supabase
+      .channel('profit-ticker-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetchProfitData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'depenses' }, () => fetchProfitData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses_controlled' }, () => fetchProfitData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'suivi_carburant' }, () => fetchProfitData())
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, [fetchProfitData]);
 
   const formatCurrency = (value: number) => {

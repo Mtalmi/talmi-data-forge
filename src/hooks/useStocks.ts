@@ -332,6 +332,21 @@ export function useStocks() {
       setLoading(false);
     };
     loadData();
+
+    // Realtime subscriptions for live inventory updates
+    const channel = supabase
+      .channel('stocks-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchStocks())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => {
+        fetchMouvements();
+        fetchStocks();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_receptions' }, () => fetchStocks())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [fetchStocks, fetchMouvements]);
 
   useEffect(() => {

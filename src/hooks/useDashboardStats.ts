@@ -267,9 +267,21 @@ export function useDashboardStats() {
 
   useEffect(() => {
     fetchStats();
-    // Refresh every 30 seconds
     const interval = setInterval(fetchStats, 30000);
-    return () => clearInterval(interval);
+
+    // Realtime subscriptions for live KPI updates
+    const channel = supabase
+      .channel('dashboard-stats-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetchStats())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'clients' }, () => fetchStats())
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, [fetchStats]);
 
   return { stats, loading, refresh: fetchStats };
