@@ -3819,6 +3819,10 @@ export type Database = {
           date_last_visite_technique: string | null
           date_next_visite_technique: string | null
           derniere_maintenance_at: string | null
+          gps_device_id: string | null
+          gps_enabled: boolean
+          gps_imei: string | null
+          gps_provider: string | null
           id: string
           id_camion: string
           immatriculation: string | null
@@ -3852,6 +3856,10 @@ export type Database = {
           date_last_visite_technique?: string | null
           date_next_visite_technique?: string | null
           derniere_maintenance_at?: string | null
+          gps_device_id?: string | null
+          gps_enabled?: boolean
+          gps_imei?: string | null
+          gps_provider?: string | null
           id?: string
           id_camion: string
           immatriculation?: string | null
@@ -3885,6 +3893,10 @@ export type Database = {
           date_last_visite_technique?: string | null
           date_next_visite_technique?: string | null
           derniere_maintenance_at?: string | null
+          gps_device_id?: string | null
+          gps_enabled?: boolean
+          gps_imei?: string | null
+          gps_provider?: string | null
           id?: string
           id_camion?: string
           immatriculation?: string | null
@@ -4220,6 +4232,7 @@ export type Database = {
           latitude: number
           longitude: number
           recorded_at: string
+          source: string
           speed_kmh: number | null
         }
         Insert: {
@@ -4233,6 +4246,7 @@ export type Database = {
           latitude: number
           longitude: number
           recorded_at?: string
+          source?: string
           speed_kmh?: number | null
         }
         Update: {
@@ -4246,6 +4260,7 @@ export type Database = {
           latitude?: number
           longitude?: number
           recorded_at?: string
+          source?: string
           speed_kmh?: number | null
         }
         Relationships: [
