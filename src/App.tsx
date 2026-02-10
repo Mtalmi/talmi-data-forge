@@ -44,6 +44,7 @@ import Creances from "./pages/Creances";
 import Dettes from "./pages/Dettes";
 import Prets from "./pages/Prets";
 import Immobilisations from "./pages/Immobilisations";
+import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -104,6 +105,8 @@ const App = () => (
                 <Route path="/immobilisations" element={<Immobilisations />} />
                 {/* Mode Formation - Interactive Training Simulations */}
                 <Route path="/formation" element={<ModeFormation />} />
+                {/* User Profile */}
+                <Route path="/user_profile" element={<UserProfile />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
