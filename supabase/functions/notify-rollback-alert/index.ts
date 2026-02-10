@@ -25,15 +25,23 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    const body = await req.json();
     const {
       devisId,
-      userName,
-      userRole,
-      reason,
-      rollbackNumber,
-      timestamp,
-      tableName,
-    }: RollbackAlertRequest = await req.json();
+      userName = 'Utilisateur inconnu',
+      userRole = 'unknown',
+      reason = 'Non spécifié',
+      rollbackNumber = 0,
+      timestamp = new Date().toISOString(),
+      tableName = 'devis',
+    } = body as RollbackAlertRequest;
+
+    if (!devisId) {
+      return new Response(JSON.stringify({ error: "Missing required field: devisId" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     // CEO email - in production, this should be fetched from profiles/settings
     const ceoEmail = Deno.env.get("CEO_EMAIL") || "ceo@talmibeton.ma";

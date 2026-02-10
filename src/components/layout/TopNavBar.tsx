@@ -243,6 +243,14 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
           <ThemeToggle />
           <NotificationCenter />
+          
+          {/* Role Preview Switcher - CEO Only */}
+          {onPreviewRoleChange && (
+            <RolePreviewSwitcher 
+              previewRole={previewRole || null} 
+              onPreviewRoleChange={onPreviewRoleChange} 
+            />
+          )}
 
           {/* User Menu */}
           <DropdownMenu>
