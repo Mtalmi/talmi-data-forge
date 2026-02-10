@@ -35,3 +35,12 @@ verify_jwt = false
 
 [functions.ai-assistant]
 verify_jwt = false
+
+[functions.ws7-import]
+verify_jwt = false
+
+[functions.ws7-batches]
+verify_jwt = false
+
+[functions.ws7-link-batch]
+verify_jwt = false
