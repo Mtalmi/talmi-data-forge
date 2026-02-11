@@ -4,6 +4,8 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+// Use modal={false} to prevent Radix from setting pointer-events:none on body
+// which blocks Select/Dropdown portals on touch devices (iPad/mobile)
 const Dialog = ({ modal = false, ...props }: DialogPrimitive.DialogProps) => (
   <DialogPrimitive.Root modal={modal} {...props} />
 );
@@ -34,13 +36,21 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
+    {/* Manual overlay since modal={false} doesn't render Radix overlay automatically */}
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
       onPointerDownOutside={(e) => {
         // Prevent dialog from closing when interacting with Select/Dropdown portals
         const target = e.target as HTMLElement;
-        if (target?.closest('[role="listbox"], [role="menu"], [data-radix-popper-content-wrapper]')) {
+        if (target?.closest('[role="listbox"], [role="menu"], [data-radix-popper-content-wrapper], [data-radix-select-viewport]')) {
+          e.preventDefault();
+        }
+      }}
+      onInteractOutside={(e) => {
+        // Also prevent interact outside for touch devices
+        const target = e.target as HTMLElement;
+        if (target?.closest('[role="listbox"], [role="menu"], [data-radix-popper-content-wrapper], [data-radix-select-viewport]')) {
           e.preventDefault();
         }
       }}
