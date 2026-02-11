@@ -50,3 +50,6 @@ verify_jwt = false
 
 [functions.ws7-ping]
 verify_jwt = false
+
+[functions.camera-webhook]
+verify_jwt = false

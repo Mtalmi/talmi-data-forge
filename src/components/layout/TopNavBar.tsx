@@ -39,6 +39,7 @@ import {
   HelpCircle,
   FileText,
   GraduationCap,
+  Video,
 } from 'lucide-react';
 
 interface TopNavBarProps {
@@ -131,6 +132,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         { to: '/rapports', label: 'Rapports', icon: BarChart3 },
         { to: '/prix', label: 'Prix d\'Achat', icon: DollarSign },
         { to: '/securite', label: 'Sécurité', icon: Shield },
+        { to: '/surveillance', label: 'Surveillance IA', icon: Video },
         { to: '/users', label: 'Utilisateurs', icon: Users },
       ].filter(item => canAccess(item.to)),
     }] : []),
