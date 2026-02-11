@@ -111,9 +111,8 @@ export function useGPSTracking() {
           volume_m3,
           heure_prevue,
           workflow_status,
-          clients!client_id (nom_client, adresse),
-          zones_livraison!zone_livraison_id (nom_zone),
-          bons_commande!bc_id (adresse_livraison)
+          clients!bons_livraison_reels_client_id_fkey(nom_client, adresse),
+          zones_livraison!bons_livraison_reels_zone_livraison_id_fkey(nom_zone)
         `)
         .eq('date_livraison', today)
         .in('workflow_status', ['planification', 'production', 'validation_technique', 'en_livraison']);
@@ -126,7 +125,7 @@ export function useGPSTracking() {
           bl_id: bl.bl_id,
           client_nom: bl.clients?.nom_client || 'Client inconnu',
           volume_m3: bl.volume_m3 || 0,
-          adresse_livraison: bl.bons_commande?.adresse_livraison || bl.clients?.adresse || null,
+          adresse_livraison: bl.clients?.adresse || null,
           zone_nom: bl.zones_livraison?.nom_zone || null,
           heure_prevue: bl.heure_prevue,
           workflow_status: bl.workflow_status || 'planification',
