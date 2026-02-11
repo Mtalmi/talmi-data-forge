@@ -1573,3 +1573,13 @@
   background: linear-gradient(145deg, hsl(40 20% 100% / 0.95), hsl(40 15% 98%));
   border-color: hsl(45 100% 42% / 0.1);
 }
+
+/* Fix Radix Select/Dropdown inside Dialog on touch devices */
+[data-radix-popper-content-wrapper] {
+  pointer-events: auto !important;
+  z-index: 200 !important;
+}
+
+[data-radix-select-viewport] {
+  pointer-events: auto !important;
+}
