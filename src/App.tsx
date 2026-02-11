@@ -52,6 +52,7 @@ import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 import WS7Import from "./pages/WS7Import";
 import WS7Batches from "./pages/WS7Batches";
 import WS7Discovery from "./pages/WS7Discovery";
+import Surveillance from "./pages/Surveillance";
 
 const queryClient = new QueryClient();
 
@@ -120,6 +121,7 @@ const App = () => (
                 <Route path="/ws7-import" element={<WS7Import />} />
                 <Route path="/ws7-batches" element={<WS7Batches />} />
                 <Route path="/ws7-discovery" element={<WS7Discovery />} />
+                <Route path="/surveillance" element={<Surveillance />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

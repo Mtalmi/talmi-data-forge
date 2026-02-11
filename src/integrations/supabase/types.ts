@@ -1456,6 +1456,128 @@ export type Database = {
           },
         ]
       }
+      camera_devices: {
+        Row: {
+          brand: string | null
+          capabilities: string[] | null
+          config: Json | null
+          created_at: string
+          hls_url: string | null
+          id: string
+          ip_address: string | null
+          is_active: boolean
+          last_heartbeat: string | null
+          location: string
+          model: string | null
+          name: string
+          rtsp_url: string | null
+          updated_at: string
+          zone: string
+        }
+        Insert: {
+          brand?: string | null
+          capabilities?: string[] | null
+          config?: Json | null
+          created_at?: string
+          hls_url?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_heartbeat?: string | null
+          location: string
+          model?: string | null
+          name: string
+          rtsp_url?: string | null
+          updated_at?: string
+          zone: string
+        }
+        Update: {
+          brand?: string | null
+          capabilities?: string[] | null
+          config?: Json | null
+          created_at?: string
+          hls_url?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean
+          last_heartbeat?: string | null
+          location?: string
+          model?: string | null
+          name?: string
+          rtsp_url?: string | null
+          updated_at?: string
+          zone?: string
+        }
+        Relationships: []
+      }
+      camera_events: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          auto_action_taken: string | null
+          camera_id: string | null
+          created_at: string
+          description: string
+          details: Json | null
+          event_type: string
+          id: string
+          is_acknowledged: boolean
+          matched_bl_id: string | null
+          matched_vehicle_id: string | null
+          plate_number: string | null
+          severity: string
+          snapshot_url: string | null
+          video_clip_url: string | null
+          zone: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          auto_action_taken?: string | null
+          camera_id?: string | null
+          created_at?: string
+          description: string
+          details?: Json | null
+          event_type: string
+          id?: string
+          is_acknowledged?: boolean
+          matched_bl_id?: string | null
+          matched_vehicle_id?: string | null
+          plate_number?: string | null
+          severity?: string
+          snapshot_url?: string | null
+          video_clip_url?: string | null
+          zone?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          auto_action_taken?: string | null
+          camera_id?: string | null
+          created_at?: string
+          description?: string
+          details?: Json | null
+          event_type?: string
+          id?: string
+          is_acknowledged?: boolean
+          matched_bl_id?: string | null
+          matched_vehicle_id?: string | null
+          plate_number?: string | null
+          severity?: string
+          snapshot_url?: string | null
+          video_clip_url?: string | null
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "camera_events_camera_id_fkey"
+            columns: ["camera_id"]
+            isOneToOne: false
+            referencedRelation: "camera_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_deposits: {
         Row: {
           amount: number
