@@ -6,7 +6,6 @@ import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
-import { DailyProfitSummary } from '@/components/dashboard/DailyProfitSummary';
 import { type Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
 import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
@@ -16,7 +15,6 @@ import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
 import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
 import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
-import { MonthlyBudgetGauge } from '@/components/dashboard/MonthlyBudgetGauge';
 import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
 import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
 import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
@@ -51,6 +49,7 @@ import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerato
 import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
 import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
 import { SystemManualPdf } from '@/components/documents/SystemManualPdf';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting } = useAuth();
@@ -285,13 +284,8 @@ export default function Dashboard() {
             </ParallaxCard>
             
             {/* Circular Budget Gauge - Financial Constitution */}
-            <ParallaxCard className="bento-standard" glowColor="gold">
+            <ParallaxCard className="bento-wide" glowColor="gold">
               <CircularBudgetGauge />
-            </ParallaxCard>
-            
-            {/* Monthly Budget Gauge - Linear View */}
-            <ParallaxCard className="bento-standard" glowColor="gold">
-              <MonthlyBudgetGauge />
             </ParallaxCard>
             
             {/* Midnight Alert Widget - Off-Hours Transactions */}
@@ -304,14 +298,20 @@ export default function Dashboard() {
               <SplitViewHandshake />
             </ParallaxCard>
             
-            {/* Forensic Alert Feed - War Room Security */}
+            {/* Unified Forensic Feed - Tabbed: Security Alerts + Audit Trail */}
             <ParallaxCard className="bento-wide" glowColor="ruby">
-              <ForensicAlertFeed />
-            </ParallaxCard>
-            
-            {/* Forensic Audit Feed - Price/Formule Changes */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <ForensicAuditFeed />
+              <Tabs defaultValue="alerts" className="w-full">
+                <TabsList className="w-full grid grid-cols-2 mb-2">
+                  <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
+                  <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
+                </TabsList>
+                <TabsContent value="alerts" className="mt-0">
+                  <ForensicAlertFeed />
+                </TabsContent>
+                <TabsContent value="audit" className="mt-0">
+                  <ForensicAuditFeed />
+                </TabsContent>
+              </Tabs>
             </ParallaxCard>
             
             {/* Treasury & Cash Flow - Financial Constitution */}
@@ -503,37 +503,32 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RecentDeliveries />
           
-          {/* Daily Profit Summary - CEO Only */}
-          {isCeo ? (
-            <DailyProfitSummary />
-          ) : (
-            /* Production Summary Card */
-            <div className="card-industrial p-6 animate-fade-in">
-              <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                  <span className="text-sm text-muted-foreground">Formules actives</span>
-                  <span className="font-semibold">{productionStats.formulesActives}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                  <span className="text-sm text-muted-foreground">Prix mis à jour</span>
-                  <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                  <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
-                  <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
-                    {productionStats.tauxECMoyen}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                  <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
-                  <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
-                    {productionStats.curMoyen}
-                  </span>
-                </div>
+          {/* Production Summary Card - visible for all roles */}
+          <div className="card-industrial p-6 animate-fade-in">
+            <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <span className="text-sm text-muted-foreground">Formules actives</span>
+                <span className="font-semibold">{productionStats.formulesActives}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <span className="text-sm text-muted-foreground">Prix mis à jour</span>
+                <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
+                <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
+                  {productionStats.tauxECMoyen}
+                </span>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
+                <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
+                  {productionStats.curMoyen}
+                </span>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </MainLayout>
