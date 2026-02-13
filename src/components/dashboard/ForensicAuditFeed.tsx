@@ -864,7 +864,7 @@ export function ForensicAuditFeed() {
               <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <FileSearch className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 🔐 Forensic Black Box
-                <Badge variant="outline" className="text-[9px] ml-1">CEO ONLY</Badge>
+                <Badge variant="outline" className="text-[9px] ml-1">DIRECTION</Badge>
               </CardTitle>
               <CardDescription className="text-xs">
                 Audit en temps réel • Cliquez pour comparer les changements

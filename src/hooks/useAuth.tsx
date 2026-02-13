@@ -304,8 +304,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // DEVIS APPROVAL: Only CEO, Supervisor, or FrontDesk
   const canApproveDevis = isCeo || isSuperviseur || isAgentAdministratif;
   
-  // Audit Portal: CEO ONLY
-  const canAccessAuditPortal = isCeo;
+  // Audit Portal: CEO & Supervisor
+  const canAccessAuditPortal = isCeo || isSuperviseur;
   
   // ===================================================================
   // STOCK MANAGEMENT PERMISSIONS - SEPARATION OF POWERS
