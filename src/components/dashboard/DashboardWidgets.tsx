@@ -271,6 +271,17 @@ export function StockLevelsWidget() {
       setLoading(false);
     };
     fetchStocks();
+
+    // Real-time subscription for stock changes
+    const channel = supabase
+      .channel('dashboard-stocks-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchStocks())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchStocks())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getStockColor = (niveau: number, seuil: number) => {
