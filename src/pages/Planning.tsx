@@ -61,6 +61,7 @@ import { CeoCodeRequestDialog } from '@/components/planning/CeoCodeRequestDialog
 import { formatTimeHHmm, normalizeTimeHHmm, timeToMinutes } from '@/lib/time';
 import { buildProductionUrl } from '@/lib/workflowStatus';
 import { useAuth } from '@/hooks/useAuth';
+import { MidnightJustificationDialog, useNightModeCheck } from '@/components/security/MidnightJustificationDialog';
 
 interface BonLivraison {
   bl_id: string;
@@ -123,6 +124,12 @@ export default function Planning() {
   
   // Directeur Opérations is READ-ONLY on Planning board
   const isReadOnly = isDirecteurOperations && !isCeo && !isAgentAdministratif;
+  
+  // Midnight Protocol
+  const isNightMode = useNightModeCheck();
+  const [midnightDialogOpen, setMidnightDialogOpen] = useState(false);
+  const [pendingNightBon, setPendingNightBon] = useState<BonLivraison | null>(null);
+  const [midnightLoading, setMidnightLoading] = useState(false);
   
   // CEO Approval Dialog State
   const [ceoApprovalOpen, setCeoApprovalOpen] = useState(false);
@@ -518,13 +525,7 @@ export default function Planning() {
   };
 
   // Start production: advance to 'production' status and navigate to Production page
-  const startProduction = async (bon: BonLivraison) => {
-    // Block if read-only
-    if (isReadOnly) {
-      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour lancer.');
-      return;
-    }
-    
+  const executeStartProduction = async (bon: BonLivraison, nightJustification?: string) => {
     try {
       // Update workflow status to production
       const { error } = await supabase
@@ -537,22 +538,54 @@ export default function Planning() {
 
       if (error) throw error;
       
-      // Log the action
+      // Log the action (with night justification if applicable)
       await logPlanningAction('START_PRODUCTION', bon.bl_id, {
         action: 'Started production',
         client_id: bon.client_id,
         volume_m3: bon.volume_m3,
         started_by: user?.email,
         timestamp: new Date().toISOString(),
+        ...(nightJustification && { 
+          midnight_protocol: true, 
+          justification_urgence: nightJustification 
+        }),
       });
+
+      // If night mode, also create a system alert for CEO War Room
+      if (nightJustification) {
+        await supabase.from('alertes_systeme').insert({
+          type_alerte: 'midnight_production',
+          niveau: 'critical',
+          titre: '🚨 Production Nocturne Lancée',
+          message: `BL ${bon.bl_id} lancé en production hors horaires par ${user?.email}. Justification: ${nightJustification}`,
+          reference_id: bon.bl_id,
+          reference_table: 'bons_livraison_reels',
+        });
+      }
       
       toast.success('Production lancée! Redirection vers le Centre Production...');
-      // Navigate to Production page with BL ID and date context
       navigate(buildProductionUrl(bon.bl_id, parseISO(selectedDate)));
     } catch (error) {
       console.error('Error starting production:', error);
       toast.error('Erreur lors du lancement');
     }
+  };
+
+  const startProduction = async (bon: BonLivraison) => {
+    // Block if read-only
+    if (isReadOnly) {
+      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour lancer.');
+      return;
+    }
+    
+    // Midnight Protocol: require justification during off-hours
+    if (isNightMode) {
+      setPendingNightBon(bon);
+      setMidnightDialogOpen(true);
+      return;
+    }
+    
+    await executeStartProduction(bon);
   };
 
   // View in production center without starting - preserves date context
@@ -1787,6 +1820,28 @@ export default function Planning() {
             }}
           />
         )}
+
+        {/* Midnight Protocol Justification Dialog */}
+        <MidnightJustificationDialog
+          open={midnightDialogOpen}
+          onOpenChange={(open) => {
+            setMidnightDialogOpen(open);
+            if (!open) setPendingNightBon(null);
+          }}
+          actionLabel="Lancer Production (Urgence)"
+          loading={midnightLoading}
+          onConfirm={async (justification) => {
+            if (!pendingNightBon) return;
+            setMidnightLoading(true);
+            try {
+              await executeStartProduction(pendingNightBon, justification);
+            } finally {
+              setMidnightLoading(false);
+              setMidnightDialogOpen(false);
+              setPendingNightBon(null);
+            }
+          }}
+        />
 
         {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
         {!isMobile && (

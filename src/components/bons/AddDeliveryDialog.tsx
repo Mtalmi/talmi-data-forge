@@ -35,6 +35,7 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { MidnightJustificationDialog, useNightModeCheck } from '@/components/security/MidnightJustificationDialog';
 
 interface Camion {
   id: string;
@@ -66,6 +67,8 @@ export function AddDeliveryDialog({
   const [camions, setCamions] = useState<Camion[]>([]);
   const [creating, setCreating] = useState(false);
   const [loadingTrucks, setLoadingTrucks] = useState(false);
+  const isNightMode = useNightModeCheck();
+  const [midnightOpen, setMidnightOpen] = useState(false);
 
   // Fetch available trucks
   useEffect(() => {
@@ -113,7 +116,7 @@ export function AddDeliveryDialog({
   const isTruckOverloaded = selectedTruckData && volume > selectedTruckData.capacite_m3;
   const isLastDelivery = volume >= volumeRestant;
 
-  const handleCreate = async () => {
+  const executeCreate = async () => {
     if (!isVolumeValid || !deliveryDate) return;
 
     setCreating(true);
@@ -122,7 +125,6 @@ export function AddDeliveryDialog({
       if (blId) {
         onRefresh();
         onOpenChange(false);
-        // Reset form
         setDeliveryVolume('');
         setSelectedTruck('');
       }
@@ -131,7 +133,19 @@ export function AddDeliveryDialog({
     }
   };
 
+  const handleCreate = async () => {
+    if (!isVolumeValid || !deliveryDate) return;
+    
+    if (isNightMode) {
+      setMidnightOpen(true);
+      return;
+    }
+    
+    await executeCreate();
+  };
+
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
@@ -379,5 +393,17 @@ export function AddDeliveryDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+
+      <MidnightJustificationDialog
+        open={midnightOpen}
+        onOpenChange={setMidnightOpen}
+        actionLabel={`Créer BL (${volume.toFixed(1)} m³) — Urgence`}
+        loading={creating}
+        onConfirm={async () => {
+          setMidnightOpen(false);
+          await executeCreate();
+        }}
+      />
+    </>
   );
 }
