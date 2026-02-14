@@ -59,11 +59,12 @@ export function getHourInCasablanca(isoDateStr: string): number {
 }
 
 /**
- * Check if we are currently in the off-hours window (18:00-00:00) in Casablanca.
+ * Check if we are currently in the off-hours window (18:00-06:00) in Casablanca.
+ * Extended to cover the full night operations window.
  */
 export function isCurrentlyOffHours(): boolean {
   const hour = getCasablancaHour();
-  return hour >= 18 && hour <= 23;
+  return hour >= 18 || hour < 6;
 }
 
 /**
