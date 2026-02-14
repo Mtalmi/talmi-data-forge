@@ -11,11 +11,32 @@ interface LinkCandidate {
   scores: { date: number; client: number; volume: number; formula: number };
 }
 
+function normalizeText(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip diacritics (é→e, à→a)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .trim();
+}
+
 function fuzzyMatch(a: string, b: string): boolean {
-  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const na = normalize(a);
-  const nb = normalize(b);
-  return na.includes(nb) || nb.includes(na);
+  const na = normalizeText(a).replace(/\s+/g, "");
+  const nb = normalizeText(b).replace(/\s+/g, "");
+  // Substring match
+  if (na.includes(nb) || nb.includes(na)) return true;
+  // Word-set match: all words of shorter string found in longer string
+  const wordsA = new Set(normalizeText(a).split(/\s+/).filter(Boolean));
+  const wordsB = new Set(normalizeText(b).split(/\s+/).filter(Boolean));
+  const [smaller, larger] = wordsA.size <= wordsB.size ? [wordsA, wordsB] : [wordsB, wordsA];
+  if (smaller.size >= 2) {
+    let matched = 0;
+    for (const w of smaller) {
+      if (larger.has(w)) matched++;
+    }
+    if (matched / smaller.size >= 0.8) return true;
+  }
+  return false;
 }
 
 async function autoLinkBatchToBL(

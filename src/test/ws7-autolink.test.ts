@@ -8,11 +8,30 @@ import { describe, it, expect } from 'vitest';
 
 // --- Replicate edge function logic locally for unit testing ---
 
+function normalizeText(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .trim();
+}
+
 function fuzzyMatch(a: string, b: string): boolean {
-  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const na = normalize(a);
-  const nb = normalize(b);
-  return na.includes(nb) || nb.includes(na);
+  const na = normalizeText(a).replace(/\s+/g, '');
+  const nb = normalizeText(b).replace(/\s+/g, '');
+  if (na.includes(nb) || nb.includes(na)) return true;
+  const wordsA = new Set(normalizeText(a).split(/\s+/).filter(Boolean));
+  const wordsB = new Set(normalizeText(b).split(/\s+/).filter(Boolean));
+  const [smaller, larger] = wordsA.size <= wordsB.size ? [wordsA, wordsB] : [wordsB, wordsA];
+  if (smaller.size >= 2) {
+    let matched = 0;
+    for (const w of smaller) {
+      if (larger.has(w)) matched++;
+    }
+    if (matched / smaller.size >= 0.8) return true;
+  }
+  return false;
 }
 
 interface Scores { date: number; client: number; volume: number; formula: number }
@@ -90,13 +109,12 @@ describe('WS7 Auto-Link: fuzzyMatch', () => {
     expect(fuzzyMatch('Beton Plus', 'SARL Beton Plus International')).toBe(true);
   });
 
-  it('strips special characters (dots)', () => {
+  it('strips special characters and normalizes accents', () => {
     expect(fuzzyMatch('S.A.R.L. Beton', 'SARL Beton')).toBe(true);
   });
 
-  it('accented chars are NOT normalized (known limitation)', () => {
-    // 'é' → stripped to empty, so 'béton' → 'bton' ≠ 'beton'
-    expect(fuzzyMatch('S.A.R.L. Béton', 'SARL Beton')).toBe(false);
+  it('accented chars ARE now normalized (é→e, à→a)', () => {
+    expect(fuzzyMatch('S.A.R.L. Béton', 'SARL Beton')).toBe(true);
   });
 
   it('rejects completely different names', () => {
@@ -155,8 +173,7 @@ describe('WS7 Auto-Link: Scoring Engine', () => {
     expect(classifyLink(totalConfidence(scores))).toBe('pending');
   });
 
-  it('reordered words fail fuzzy match (known limitation)', () => {
-    // "Beton Plus SARL" does NOT contain "SARL Beton Plus" as substring
+  it('reordered words NOW match via word-set matching', () => {
     const bl = {
       heure_depart_centrale: '10:30:00',
       client_name: 'Beton Plus SARL',
@@ -164,7 +181,7 @@ describe('WS7 Auto-Link: Scoring Engine', () => {
       formule_id: 'B25',
     };
     const scores = computeScores(baseBatch, bl);
-    expect(scores.client).toBe(0); // no substring match
+    expect(scores.client).toBe(25); // word-set fuzzy match
   });
 
   it('no time info + different client → low score (no_match)', () => {
