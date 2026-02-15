@@ -13,7 +13,8 @@ import {
   Minus
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 interface DailyStats {
@@ -27,6 +28,10 @@ interface DailyStats {
 }
 
 export function DailyProfitSummary() {
+  const { t, lang } = useI18n();
+  const dp = t.dailyProfit;
+  const dateLocale = getDateLocale(lang);
+  const numberLocale = getNumberLocale(lang);
   const [stats, setStats] = useState<DailyStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -117,10 +122,10 @@ export function DailyProfitSummary() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary" />
-            Rapport de Clôture
+            {dp.closingReport}
           </CardTitle>
           <Badge variant="outline" className="font-mono text-xs">
-            {format(new Date(), 'EEEE d MMMM', { locale: fr })}
+            {format(new Date(), 'EEEE d MMMM', { locale: dateLocale || undefined })}
           </Badge>
         </div>
       </CardHeader>
@@ -133,7 +138,7 @@ export function DailyProfitSummary() {
             : "bg-destructive/10 border-2 border-destructive/30"
         )}>
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-            Profit Net du Jour
+            {dp.netProfitToday}
           </p>
           <div className="flex items-center justify-center gap-2">
             {isProfitPositive ? (
@@ -145,7 +150,7 @@ export function DailyProfitSummary() {
               "text-4xl font-bold font-mono tabular-nums",
               isProfitPositive ? "text-success" : "text-destructive"
             )}>
-              {stats.profitNet >= 0 ? '+' : ''}{stats.profitNet.toLocaleString('fr-FR', { 
+              {stats.profitNet >= 0 ? '+' : ''}{stats.profitNet.toLocaleString(numberLocale, { 
                 minimumFractionDigits: 0, 
                 maximumFractionDigits: 0 
               })}
@@ -166,9 +171,9 @@ export function DailyProfitSummary() {
               <FileText className="h-4 w-4" />
             </div>
             <p className="text-lg font-bold font-mono">
-              {stats.totalFacture.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+              {stats.totalFacture.toLocaleString(numberLocale, { maximumFractionDigits: 0 })}
             </p>
-            <p className="text-xs text-muted-foreground">Facturé HT</p>
+            <p className="text-xs text-muted-foreground">{dp.invoicedHT}</p>
           </div>
 
           <div className="flex flex-col items-center justify-center">
@@ -180,9 +185,9 @@ export function DailyProfitSummary() {
               <DollarSign className="h-4 w-4" />
             </div>
             <p className="text-lg font-bold font-mono">
-              {stats.totalCoutReel.toLocaleString('fr-FR', { maximumFractionDigits: 0 })}
+              {stats.totalCoutReel.toLocaleString(numberLocale, { maximumFractionDigits: 0 })}
             </p>
-            <p className="text-xs text-muted-foreground">Coût Réel</p>
+            <p className="text-xs text-muted-foreground">{dp.realCost}</p>
           </div>
         </div>
 
@@ -191,7 +196,7 @@ export function DailyProfitSummary() {
           <div className="text-center p-2">
             <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
               <FileText className="h-3 w-3" />
-              <span className="text-xs">Factures</span>
+              <span className="text-xs">{dp.invoices}</span>
             </div>
             <p className="font-bold font-mono">{stats.nbFactures}</p>
           </div>
@@ -207,7 +212,7 @@ export function DailyProfitSummary() {
           <div className="text-center p-2">
             <div className="flex items-center justify-center gap-1 text-muted-foreground mb-1">
               <TrendingUp className="h-3 w-3" />
-              <span className="text-xs">Marge Moy.</span>
+              <span className="text-xs">{dp.avgMargin}</span>
             </div>
             <p className={cn(
               "font-bold font-mono",
@@ -221,7 +226,7 @@ export function DailyProfitSummary() {
         {/* No Activity Message */}
         {stats.nbLivraisons === 0 && stats.nbFactures === 0 && (
           <div className="text-center text-muted-foreground text-sm py-2">
-            Aucune activité enregistrée aujourd'hui
+            {dp.noActivity}
           </div>
         )}
       </CardContent>

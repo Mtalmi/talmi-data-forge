@@ -16,9 +16,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ProductionBatch {
   id: string;
@@ -63,7 +63,8 @@ const statusConfig = {
 
 export function LiveProductionWidget() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [batches, setBatches] = useState<ProductionBatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -271,7 +272,7 @@ export function LiveProductionWidget() {
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          {format(new Date(batch.entered_at), 'HH:mm', { locale: fr })}
+                          {format(new Date(batch.entered_at), 'HH:mm', { locale: dateLocale || undefined })}
                           {batch.entered_by_name && ` • ${batch.entered_by_name}`}
                         </p>
                       </div>
