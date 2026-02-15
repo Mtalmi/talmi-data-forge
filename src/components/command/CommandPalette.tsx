@@ -10,6 +10,7 @@ import {
 import { cn } from '@/lib/utils';
 import { playSound } from '@/lib/sounds';
 import { hapticTap } from '@/lib/haptics';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface CommandItem {
   id: string;
@@ -28,6 +29,8 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const cp = t.commandPalette;
 
   const goTo = useCallback((path: string) => {
     setOpen(false);
@@ -35,35 +38,33 @@ export function CommandPalette() {
     navigate(path);
   }, [navigate]);
 
+  // Navigation items use nav keys from i18n where available
   const items: CommandItem[] = [
-    // Navigation
     { id: 'nav-dashboard', label: 'Sanctum (Dashboard)', icon: LayoutDashboard, action: () => goTo('/'), category: 'navigation', keywords: ['accueil', 'home', 'tableau de bord'] },
-    { id: 'nav-ventes', label: 'Ventes', icon: ShoppingCart, action: () => goTo('/ventes'), category: 'navigation', keywords: ['sales', 'chiffre'] },
-    { id: 'nav-planning', label: 'Planning', icon: CalendarClock, action: () => goTo('/planning'), category: 'navigation', keywords: ['schedule', 'livraison'] },
-    { id: 'nav-production', label: 'Production', icon: Factory, action: () => goTo('/production'), category: 'navigation', keywords: ['béton', 'concrete', 'batch'] },
-    { id: 'nav-stocks', label: 'Stocks', icon: Warehouse, action: () => goTo('/stocks'), category: 'navigation', keywords: ['inventory', 'matériaux'] },
-    { id: 'nav-bons', label: 'Archive BL', icon: Receipt, action: () => goTo('/bons'), category: 'navigation', keywords: ['bon livraison', 'delivery'] },
-    { id: 'nav-clients', label: 'Clients', icon: Users, action: () => goTo('/clients'), category: 'navigation', keywords: ['customer'] },
-    { id: 'nav-formules', label: 'Formules', icon: FlaskConical, action: () => goTo('/formules'), category: 'navigation', keywords: ['recipe', 'mix'] },
-    { id: 'nav-lab', label: 'Laboratoire', icon: FlaskConical, action: () => goTo('/laboratoire'), category: 'navigation', keywords: ['test', 'quality'] },
-    { id: 'nav-logistique', label: 'Logistique', icon: Truck, action: () => goTo('/logistique'), category: 'navigation', keywords: ['fleet', 'camion'] },
-    { id: 'nav-depenses', label: 'Dépenses', icon: Receipt, action: () => goTo('/depenses-v2'), category: 'navigation', keywords: ['expenses'] },
-    { id: 'nav-fournisseurs', label: 'Fournisseurs', icon: Building2, action: () => goTo('/fournisseurs'), category: 'navigation', keywords: ['supplier'] },
-    { id: 'nav-paiements', label: 'Paiements', icon: DollarSign, action: () => goTo('/paiements'), category: 'navigation', keywords: ['payment'] },
-    { id: 'nav-rapports', label: 'Rapports', icon: BarChart3, action: () => goTo('/rapports'), category: 'navigation', keywords: ['report', 'analytics'] },
-    { id: 'nav-maintenance', label: 'Maintenance', icon: Wrench, action: () => goTo('/maintenance'), category: 'navigation', keywords: ['repair'] },
-    { id: 'nav-securite', label: 'Sécurité', icon: Shield, action: () => goTo('/securite'), category: 'navigation', keywords: ['security', 'audit'] },
-    { id: 'nav-surveillance', label: 'Surveillance IA', icon: Video, action: () => goTo('/surveillance'), category: 'navigation', keywords: ['camera', 'video'] },
-    { id: 'nav-contracts', label: 'Contrats', icon: FileText, action: () => goTo('/contracts'), category: 'navigation', keywords: ['contract'] },
-    { id: 'nav-formation', label: 'Mode Formation', icon: GraduationCap, action: () => goTo('/formation'), category: 'navigation', keywords: ['training'] },
-    { id: 'nav-aide', label: 'Manuel Système', icon: HelpCircle, action: () => goTo('/aide'), category: 'navigation', keywords: ['help', 'support'] },
-    // Quick Actions
-    { id: 'act-ai', label: 'Ouvrir Assistant AI', description: 'Chat avec TBOS AI', icon: Bot, action: () => { setOpen(false); navigate('/ai'); }, category: 'action', keywords: ['intelligence', 'chat'] },
-    { id: 'act-pointage', label: 'Pointage', description: 'Gestion présence employés', icon: Users, action: () => goTo('/pointage'), category: 'action', keywords: ['attendance'] },
-    { id: 'act-rapprochement', label: 'Rapprochement Bancaire', description: 'Réconciliation financière', icon: DollarSign, action: () => goTo('/rapprochement'), category: 'action', keywords: ['bank', 'reconciliation'] },
+    { id: 'nav-ventes', label: t.nav.sales, icon: ShoppingCart, action: () => goTo('/ventes'), category: 'navigation', keywords: ['sales', 'chiffre', 'ventes'] },
+    { id: 'nav-planning', label: t.nav.planning, icon: CalendarClock, action: () => goTo('/planning'), category: 'navigation', keywords: ['schedule', 'livraison', 'planning'] },
+    { id: 'nav-production', label: t.nav.production, icon: Factory, action: () => goTo('/production'), category: 'navigation', keywords: ['béton', 'concrete', 'batch'] },
+    { id: 'nav-stocks', label: t.nav.stocks, icon: Warehouse, action: () => goTo('/stocks'), category: 'navigation', keywords: ['inventory', 'matériaux'] },
+    { id: 'nav-bons', label: t.nav.deliveries, icon: Receipt, action: () => goTo('/bons'), category: 'navigation', keywords: ['bon livraison', 'delivery'] },
+    { id: 'nav-clients', label: t.nav.clients, icon: Users, action: () => goTo('/clients'), category: 'navigation', keywords: ['customer'] },
+    { id: 'nav-formules', label: t.nav.formulas, icon: FlaskConical, action: () => goTo('/formules'), category: 'navigation', keywords: ['recipe', 'mix'] },
+    { id: 'nav-lab', label: t.nav.laboratory, icon: FlaskConical, action: () => goTo('/laboratoire'), category: 'navigation', keywords: ['test', 'quality'] },
+    { id: 'nav-logistique', label: t.nav.logistics, icon: Truck, action: () => goTo('/logistique'), category: 'navigation', keywords: ['fleet', 'camion'] },
+    { id: 'nav-depenses', label: t.nav.expenses, icon: Receipt, action: () => goTo('/depenses-v2'), category: 'navigation', keywords: ['expenses'] },
+    { id: 'nav-fournisseurs', label: t.nav.suppliers, icon: Building2, action: () => goTo('/fournisseurs'), category: 'navigation', keywords: ['supplier'] },
+    { id: 'nav-paiements', label: t.nav.payments, icon: DollarSign, action: () => goTo('/paiements'), category: 'navigation', keywords: ['payment'] },
+    { id: 'nav-rapports', label: t.nav.reports, icon: BarChart3, action: () => goTo('/rapports'), category: 'navigation', keywords: ['report', 'analytics'] },
+    { id: 'nav-maintenance', label: t.nav.maintenance, icon: Wrench, action: () => goTo('/maintenance'), category: 'navigation', keywords: ['repair'] },
+    { id: 'nav-securite', label: t.nav.security, icon: Shield, action: () => goTo('/securite'), category: 'navigation', keywords: ['security', 'audit'] },
+    { id: 'nav-surveillance', label: t.nav.aiSurveillance, icon: Video, action: () => goTo('/surveillance'), category: 'navigation', keywords: ['camera', 'video'] },
+    { id: 'nav-contracts', label: t.nav.contracts, icon: FileText, action: () => goTo('/contracts'), category: 'navigation', keywords: ['contract'] },
+    { id: 'nav-formation', label: t.nav.trainingMode, icon: GraduationCap, action: () => goTo('/formation'), category: 'navigation', keywords: ['training'] },
+    { id: 'nav-aide', label: t.nav.systemManual, icon: HelpCircle, action: () => goTo('/aide'), category: 'navigation', keywords: ['help', 'support'] },
+    { id: 'act-ai', label: cp.askAi, description: 'Chat TBOS AI', icon: Bot, action: () => { setOpen(false); navigate('/ai'); }, category: 'action', keywords: ['intelligence', 'chat'] },
+    { id: 'act-pointage', label: t.nav.attendance, icon: Users, action: () => goTo('/pointage'), category: 'action', keywords: ['attendance'] },
+    { id: 'act-rapprochement', label: t.nav.reconciliation, icon: DollarSign, action: () => goTo('/rapprochement'), category: 'action', keywords: ['bank', 'reconciliation'] },
   ];
 
-  // AI-powered query detection
   const isAIQuery = query.length > 3 && !items.some(i =>
     i.label.toLowerCase().includes(query.toLowerCase()) ||
     i.keywords?.some(k => k.includes(query.toLowerCase()))
@@ -80,7 +81,6 @@ export function CommandPalette() {
         );
       });
 
-  // Group by category
   const navItems = filtered.filter(i => i.category === 'navigation');
   const actionItems = filtered.filter(i => i.category === 'action');
   const allItems = [...navItems, ...actionItems];
@@ -106,7 +106,6 @@ export function CommandPalette() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [open]);
 
-  // Arrow key navigation
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
     const total = allItems.length + (isAIQuery ? 1 : 0);
     if (e.key === 'ArrowDown') {
@@ -176,7 +175,7 @@ export function CommandPalette() {
                   value={query}
                   onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
                   onKeyDown={handleInputKeyDown}
-                  placeholder="Rechercher ou demander à l'IA..."
+                  placeholder={cp.searchOrAsk}
                   className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
                   autoComplete="off"
                   spellCheck={false}
@@ -191,38 +190,31 @@ export function CommandPalette() {
                 {navItems.length > 0 && (
                   <div className="mb-1">
                     <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-                      Navigation
+                      {cp.navigation}
                     </p>
-                    {navItems.map((item, i) => {
-                      const idx = i;
-                      return (
-                        <button
-                          key={item.id}
-                          data-index={idx}
-                          onClick={() => { item.action(); hapticTap(); }}
-                          onMouseEnter={() => setSelectedIndex(idx)}
-                          className={cn(
-                            'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all duration-150',
-                            selectedIndex === idx
-                              ? 'bg-primary/10 text-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
-                          )}
-                        >
-                          <item.icon className={cn("h-4 w-4 shrink-0", selectedIndex === idx && "text-primary")} />
-                          <span className="flex-1 text-left font-medium">{item.label}</span>
-                          {selectedIndex === idx && (
-                            <ArrowRight className="h-3.5 w-3.5 text-primary animate-fade-in" />
-                          )}
-                        </button>
-                      );
-                    })}
+                    {navItems.map((item, i) => (
+                      <button
+                        key={item.id}
+                        data-index={i}
+                        onClick={() => { item.action(); hapticTap(); }}
+                        onMouseEnter={() => setSelectedIndex(i)}
+                        className={cn(
+                          'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all duration-150',
+                          selectedIndex === i ? 'bg-primary/10 text-foreground' : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        <item.icon className={cn("h-4 w-4 shrink-0", selectedIndex === i && "text-primary")} />
+                        <span className="flex-1 text-left font-medium">{item.label}</span>
+                        {selectedIndex === i && <ArrowRight className="h-3.5 w-3.5 text-primary animate-fade-in" />}
+                      </button>
+                    ))}
                   </div>
                 )}
 
                 {actionItems.length > 0 && (
                   <div className="mb-1">
                     <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-                      Actions Rapides
+                      {cp.quickActions}
                     </p>
                     {actionItems.map((item, i) => {
                       const idx = navItems.length + i;
@@ -234,33 +226,26 @@ export function CommandPalette() {
                           onMouseEnter={() => setSelectedIndex(idx)}
                           className={cn(
                             'flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all duration-150',
-                            selectedIndex === idx
-                              ? 'bg-primary/10 text-foreground'
-                              : 'text-muted-foreground hover:text-foreground'
+                            selectedIndex === idx ? 'bg-primary/10 text-foreground' : 'text-muted-foreground hover:text-foreground'
                           )}
                         >
                           <item.icon className={cn("h-4 w-4 shrink-0", selectedIndex === idx && "text-primary")} />
                           <div className="flex-1 text-left">
                             <span className="font-medium">{item.label}</span>
-                            {item.description && (
-                              <span className="ml-2 text-xs text-muted-foreground/60">{item.description}</span>
-                            )}
+                            {item.description && <span className="ml-2 text-xs text-muted-foreground/60">{item.description}</span>}
                           </div>
-                          {selectedIndex === idx && (
-                            <ArrowRight className="h-3.5 w-3.5 text-primary animate-fade-in" />
-                          )}
+                          {selectedIndex === idx && <ArrowRight className="h-3.5 w-3.5 text-primary animate-fade-in" />}
                         </button>
                       );
                     })}
                   </div>
                 )}
 
-                {/* AI Query Suggestion */}
                 {isAIQuery && (
                   <div className="mt-1 border-t border-border/20 pt-2">
                     <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
                       <Sparkles className="h-3 w-3 inline mr-1" />
-                      Intelligence Artificielle
+                      {cp.ai}
                     </p>
                     <button
                       data-index={allItems.length}
@@ -281,7 +266,7 @@ export function CommandPalette() {
                         <Bot className="h-4 w-4 text-primary-foreground" />
                       </div>
                       <div className="flex-1 text-left">
-                        <span className="font-semibold">Demander à TBOS AI</span>
+                        <span className="font-semibold">{cp.askAi}</span>
                         <p className="text-xs text-muted-foreground mt-0.5 truncate">"{query}"</p>
                       </div>
                       <Zap className="h-4 w-4 text-primary" />
@@ -292,7 +277,7 @@ export function CommandPalette() {
                 {filtered.length === 0 && !isAIQuery && (
                   <div className="py-8 text-center text-sm text-muted-foreground">
                     <Search className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                    <p>Aucun résultat pour "{query}"</p>
+                    <p>{cp.noResults} "{query}"</p>
                   </div>
                 )}
               </div>
@@ -301,10 +286,10 @@ export function CommandPalette() {
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-border/20 text-[10px] text-muted-foreground/50">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 rounded border border-border/30 bg-muted/30">↑↓</kbd> naviguer
+                    <kbd className="px-1 py-0.5 rounded border border-border/30 bg-muted/30">↑↓</kbd> {cp.navigate}
                   </span>
                   <span className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 rounded border border-border/30 bg-muted/30">↵</kbd> sélectionner
+                    <kbd className="px-1 py-0.5 rounded border border-border/30 bg-muted/30">↵</kbd> {cp.select}
                   </span>
                 </div>
                 <span className="flex items-center gap-1">

@@ -3,38 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  Zap,
-  FlaskConical,
-  AlertTriangle,
-  Eye,
-  Clock,
-  CheckCircle,
-  Package,
-  Loader2,
-  ListChecks,
+  Zap, FlaskConical, AlertTriangle, Eye, Clock, CheckCircle, Package, Loader2, ListChecks,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useEmergencyBcNotifications } from '@/hooks/useEmergencyBcNotifications';
 import { EmergencyBcActionItemsPanel } from './EmergencyBcActionItemsPanel';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface EmergencyBc {
   id: string;
@@ -59,6 +43,10 @@ interface EmergencyBcQualityViewProps {
 export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQualityViewProps) {
   const { isResponsableTechnique, isCeo, isSuperviseur, canViewEmergencyBcs } = useAuth();
   const { productionNotifications } = useEmergencyBcNotifications();
+  const { t, lang } = useI18n();
+  const eq = t.emergencyQuality;
+  const c = t.common;
+  const dateLocale = getDateLocale(lang);
   const [emergencyBcs, setEmergencyBcs] = useState<EmergencyBc[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedBc, setSelectedBc] = useState<EmergencyBc | null>(null);
@@ -72,7 +60,6 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
     }
 
     try {
-      // Get today's date range
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
@@ -92,7 +79,6 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
 
       if (error) throw error;
       
-      // Filter for emergency BCs (those with URGENCE/EMERGENCY in notes)
       const emergencyOnly = (data || []).filter(bc => 
         bc.notes?.includes('[URGENCE/EMERGENCY')
       );
@@ -108,7 +94,6 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
   useEffect(() => {
     fetchEmergencyBcs();
     
-    // Subscribe to realtime updates
     const channel = supabase
       .channel('emergency-bc-changes')
       .on('postgres_changes', {
@@ -126,19 +111,13 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
   }, [canViewEmergencyBcs]);
 
   const parseEmergencyReason = (notes: string | null): string => {
-    if (!notes) return 'Non spécifié';
+    if (!notes) return eq.notSpecified;
     const match = notes.match(/\[URGENCE\/EMERGENCY - [^\]]+\]\s*([^\n]+)/);
-    return match ? match[1] : 'Non spécifié';
+    return match ? match[1] : eq.notSpecified;
   };
 
-  if (!canViewEmergencyBcs || emergencyBcs.length === 0) {
-    return null;
-  }
-
-  // Only show to Resp. Technique primarily, but also CEO/Superviseur
-  if (!isResponsableTechnique && !isCeo && !isSuperviseur) {
-    return null;
-  }
+  if (!canViewEmergencyBcs || emergencyBcs.length === 0) return null;
+  if (!isResponsableTechnique && !isCeo && !isSuperviseur) return null;
 
   return (
     <>
@@ -152,15 +131,13 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
               </span>
             </div>
-            Commandes d'Urgence (Nuit)
+            {eq.nightEmergencyOrders}
             <Badge variant="destructive" className="ml-auto gap-1">
               <AlertTriangle className="h-3 w-3" />
-              {emergencyBcs.length} à vérifier
+              {emergencyBcs.length} {eq.toVerify}
             </Badge>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            BC créés en urgence cette nuit - Vérification technique obligatoire avant départ camion
-          </p>
+          <p className="text-sm text-muted-foreground">{eq.nightBcCreated}</p>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -172,11 +149,11 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
               <TableHeader>
                 <TableRow>
                   <TableHead>BC</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                  <TableHead>Raison Urgence</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{c.client}</TableHead>
+                  <TableHead>{eq.formula}</TableHead>
+                  <TableHead className="text-right">{c.volume}</TableHead>
+                  <TableHead>{eq.urgencyReason}</TableHead>
+                  <TableHead>{c.actions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -186,7 +163,7 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-semibold">{bc.bc_id}</span>
                         <Badge variant="outline" className="text-xs text-amber-600 border-amber-500">
-                          {format(parseISO(bc.created_at), 'HH:mm', { locale: fr })}
+                          {format(parseISO(bc.created_at), 'HH:mm', { locale: dateLocale || undefined })}
                         </Badge>
                       </div>
                     </TableCell>
@@ -209,13 +186,10 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                         size="sm"
                         variant="outline"
                         className="gap-1"
-                        onClick={() => {
-                          setSelectedBc(bc);
-                          setDetailOpen(true);
-                        }}
+                        onClick={() => { setSelectedBc(bc); setDetailOpen(true); }}
                       >
                         <Eye className="h-4 w-4" />
-                        Vérifier
+                        {eq.verify}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -226,17 +200,14 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
         </CardContent>
       </Card>
 
-      {/* Detail Dialog for Technical Review */}
       <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5 text-primary" />
-              Vérification Technique - {selectedBc?.bc_id}
+              {eq.techVerification} - {selectedBc?.bc_id}
             </DialogTitle>
-            <DialogDescription>
-              Vérifiez que la formule sélectionnée est correcte avant le départ du premier camion.
-            </DialogDescription>
+            <DialogDescription>{eq.verifyFormula}</DialogDescription>
           </DialogHeader>
           
           {selectedBc && (
@@ -244,87 +215,78 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details" className="gap-2">
                   <FlaskConical className="h-4 w-4" />
-                  Détails BC
+                  {eq.bcDetails}
                 </TabsTrigger>
                 <TabsTrigger value="actions" className="gap-2">
                   <ListChecks className="h-4 w-4" />
-                  Actions Production
+                  {eq.productionActions}
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-4 mt-4">
-                {/* Emergency Info */}
                 <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30">
                   <div className="flex items-center gap-2 mb-2">
                     <Zap className="h-4 w-4 text-amber-500" />
-                    <span className="font-semibold text-amber-700">Commande Urgence</span>
+                    <span className="font-semibold text-amber-700">{eq.emergencyOrder}</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    <strong>Raison:</strong> {parseEmergencyReason(selectedBc.notes)}
+                    <strong>{eq.reason}:</strong> {parseEmergencyReason(selectedBc.notes)}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Créé le {format(parseISO(selectedBc.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
+                    {eq.createdOn} {format(parseISO(selectedBc.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })}
                   </p>
                 </div>
 
-                {/* Client & Formula Details */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 rounded-lg bg-muted">
-                    <p className="text-xs text-muted-foreground">Client</p>
+                    <p className="text-xs text-muted-foreground">{c.client}</p>
                     <p className="font-semibold">{selectedBc.client?.nom_client}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-muted">
-                    <p className="text-xs text-muted-foreground">Volume</p>
+                    <p className="text-xs text-muted-foreground">{c.volume}</p>
                     <p className="font-semibold">{selectedBc.volume_m3} m³</p>
                   </div>
                 </div>
 
-                {/* Formula Technical Details */}
                 <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
                   <div className="flex items-center gap-2 mb-3">
                     <Package className="h-4 w-4 text-primary" />
-                    <span className="font-semibold">Formule: {selectedBc.formule_id}</span>
+                    <span className="font-semibold">{eq.formula}: {selectedBc.formule_id}</span>
                   </div>
                   <p className="text-sm mb-2">{selectedBc.formule?.designation}</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Ciment:</span>{' '}
+                      <span className="text-muted-foreground">{eq.ciment}:</span>{' '}
                       <span className="font-mono">{selectedBc.formule?.ciment_kg_m3 || '—'} kg/m³</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Adjuvant:</span>{' '}
+                      <span className="text-muted-foreground">{eq.adjuvant}:</span>{' '}
                       <span className="font-mono">{selectedBc.formule?.adjuvant_l_m3 || '—'} L/m³</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Verification Checklist */}
                 <div className="space-y-2">
-                  <p className="text-sm font-medium">Points de vérification:</p>
+                  <p className="text-sm font-medium">{eq.verificationPoints}</p>
                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Formule adaptée au type d'ouvrage
+                      {eq.formulaAdapted}
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Dosage ciment conforme
+                      {eq.cementDosage}
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Adjuvants appropriés
+                      {eq.adjuvantsOk}
                     </li>
                   </ul>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => setDetailOpen(false)}
-                  >
-                    Fermer
+                  <Button variant="outline" className="flex-1" onClick={() => setDetailOpen(false)}>
+                    {c.close}
                   </Button>
                   {onNavigateToPlanning && selectedBc.date_livraison_souhaitee && (
                     <Button 
@@ -335,14 +297,13 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                       }}
                     >
                       <Clock className="h-4 w-4" />
-                      Voir Planning
+                      {eq.viewPlanning}
                     </Button>
                   )}
                 </div>
               </TabsContent>
 
               <TabsContent value="actions" className="mt-4">
-                {/* Find matching production notification for this BC */}
                 {(() => {
                   const matchingNotification = productionNotifications.find(
                     n => n.bc_id === selectedBc.bc_id
@@ -360,8 +321,8 @@ export function EmergencyBcQualityView({ onNavigateToPlanning }: EmergencyBcQual
                   return (
                     <div className="text-center py-8 text-muted-foreground">
                       <ListChecks className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                      <p>Aucune action de production associée</p>
-                      <p className="text-sm">Les actions seront créées après approbation du BC</p>
+                      <p>{eq.noProductionActions}</p>
+                      <p className="text-sm">{eq.actionsAfterApproval}</p>
                     </div>
                   );
                 })()}

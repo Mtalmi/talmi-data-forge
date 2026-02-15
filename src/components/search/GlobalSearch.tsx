@@ -1,24 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { 
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
 import { Search, Users, Truck, FileText, Loader2, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface SearchResult {
   type: 'client' | 'bl' | 'facture';
@@ -29,6 +16,8 @@ interface SearchResult {
 }
 
 export function GlobalSearch() {
+  const { t } = useI18n();
+  const gs = t.globalSearch;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -58,7 +47,6 @@ export function GlobalSearch() {
       const searchResults: SearchResult[] = [];
 
       try {
-        // Search clients
         const { data: clients } = await supabase
           .from('clients')
           .select('client_id, nom_client, telephone')
@@ -77,7 +65,6 @@ export function GlobalSearch() {
           });
         }
 
-        // Search BLs
         const { data: bls } = await supabase
           .from('bons_livraison_reels')
           .select('bl_id, client_id, formule_id, date_livraison')
@@ -96,7 +83,6 @@ export function GlobalSearch() {
           });
         }
 
-        // Search Factures
         const { data: factures } = await supabase
           .from('factures')
           .select('facture_id, client_id, date_facture, total_ttc')
@@ -143,10 +129,10 @@ export function GlobalSearch() {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'client': return 'Clients';
-      case 'bl': return 'Bons de Livraison';
-      case 'facture': return 'Factures';
-      default: return 'Résultats';
+      case 'client': return gs.clients;
+      case 'bl': return gs.deliveryNotes;
+      case 'facture': return gs.invoices;
+      default: return gs.results;
     }
   };
 
@@ -166,8 +152,8 @@ export function GlobalSearch() {
           className="w-full md:w-80 justify-start text-muted-foreground min-h-[44px]"
         >
           <Search className="mr-2 h-4 w-4 shrink-0" />
-          <span className="hidden sm:inline">Recherche rapide...</span>
-          <span className="sm:hidden">Rechercher</span>
+          <span className="hidden sm:inline">{gs.quickSearch}</span>
+          <span className="sm:hidden">{gs.search}</span>
           <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
@@ -181,16 +167,11 @@ export function GlobalSearch() {
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher clients, BLs, factures..."
+              placeholder={gs.searchPlaceholder}
               className="flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
             />
             {query && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setQuery('')}
-                className="h-8 w-8 p-0"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setQuery('')} className="h-8 w-8 p-0">
                 <X className="h-4 w-4" />
               </Button>
             )}
@@ -202,14 +183,14 @@ export function GlobalSearch() {
               </div>
             )}
             {!loading && query.length >= 2 && results.length === 0 && (
-              <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+              <CommandEmpty>{gs.noResultsFound}</CommandEmpty>
             )}
             {!loading && query.length < 2 && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Tapez au moins 2 caractères pour rechercher
+                {gs.typeMinChars}
               </div>
             )}
-            {!loading && Object.entries(groupedResults).map(([type, items], index) => (
+            {!loading && Object.entries(groupedResults).map(([type, items]) => (
               <CommandGroup key={type} heading={getTypeLabel(type)}>
                 {items.map((result) => (
                   <CommandItem
