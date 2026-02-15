@@ -175,21 +175,72 @@ export default function Dashboard() {
         {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
           ref={kpiSectionRef}
-          className="dashboard-header sticky top-0 z-10 p-4 sm:p-5"
+          className="dashboard-header sticky top-0 z-10 p-3 sm:p-4 md:p-5"
         >
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
-                {t('dashboard.greeting.morning')}, Master 👋
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm text-muted-foreground font-mono">Casablanca • 24°C ☀️</span>
+          <div className="relative z-10 flex flex-col gap-3 md:gap-4">
+            {/* Top row: greeting + user controls */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tighter font-display truncate">
+                  {t('dashboard.greeting.morning')}, Master 👋
+                </h1>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <MapPin className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                  <span className="text-xs sm:text-sm text-muted-foreground font-mono truncate">Casablanca • 24°C ☀️</span>
+                </div>
+              </div>
+
+              {/* User controls - always visible */}
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button 
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="btn-premium min-h-[36px] sm:min-h-[40px] px-3 sm:px-5"
+                >
+                  <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span className="hidden md:inline">{t('common.refresh')}</span>
+                </button>
+
+                <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                  <Bell className="h-4 w-4 text-muted-foreground" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                    3
+                  </span>
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                      <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary">MT</span>
+                      </div>
+                      <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">{t('common.myAccount')}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                      <User className="h-4 w-4 mr-2" />
+                      {t('common.profile')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                      <Settings className="h-4 w-4 mr-2" />
+                      {t('nav.settings')}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {t('nav.logout')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-              <div className="period-selector-premium">
+            {/* Bottom row: period selector + action buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="period-selector-premium flex-shrink-0">
                 {[
                   { value: 'today' as Period, label: t('dashboard.periods.today'), shortLabel: t('dashboard.periods.todayShort') },
                   { value: 'week' as Period, label: t('dashboard.periods.week'), shortLabel: t('dashboard.periods.weekShort') },
@@ -218,58 +269,15 @@ export default function Dashboard() {
                     }}
                     className={`period-btn ${period === p.value ? 'active' : ''}`}
                   >
-                    <span className="hidden sm:inline">{p.label}</span>
-                    <span className="sm:hidden">{p.shortLabel}</span>
+                    <span className="hidden md:inline">{p.label}</span>
+                    <span className="md:hidden">{p.shortLabel}</span>
                   </button>
                 ))}
               </div>
 
-              {isCeo && <SystemManualPdf />}
-              {isCeo && <DailyReportGenerator />}
+              {isCeo && <div className="hidden lg:block"><SystemManualPdf /></div>}
+              {isCeo && <div className="hidden md:block"><DailyReportGenerator /></div>}
               {isCeo && <HawaiiReportButton />}
-              <button 
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="btn-premium min-h-[40px]"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{t('common.refresh')}</span>
-              </button>
-
-              <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                  3
-                </span>
-              </button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                    <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                      <span className="text-xs font-bold text-primary">MT</span>
-                    </div>
-                    <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">{t('common.myAccount')}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                    <User className="h-4 w-4 mr-2" />
-                    {t('common.profile')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                    <Settings className="h-4 w-4 mr-2" />
-                    {t('nav.settings')}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    {t('nav.logout')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -405,7 +413,7 @@ export default function Dashboard() {
 
             {/* Quick Access Widgets */}
             {(isCeo || isAccounting) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
                 <PendingApprovalsWidget />
                 <TodaysPipelineWidget />
                 <ARAgingWidget />
