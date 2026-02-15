@@ -526,8 +526,8 @@ export default function Ventes() {
           <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
 
           {/* Stats Cards + Revenue Forecast */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div className="xl:col-span-2">
               <PipelineStats stats={stats} onStageClick={handleStageClick} />
             </div>
             <RevenueForecastChart bcList={bcList} devisList={devisList} />

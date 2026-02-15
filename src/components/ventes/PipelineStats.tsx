@@ -62,7 +62,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
   return (
     <>
       {/* Enhanced Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         {/* Devis en attente */}
         <Card 
           className={cn(
