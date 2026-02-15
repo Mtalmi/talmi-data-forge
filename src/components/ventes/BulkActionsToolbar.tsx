@@ -4,7 +4,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -21,15 +20,14 @@ import { useState } from 'react';
 import {
   CheckSquare,
   XCircle,
-  Download,
   Trash2,
   ChevronDown,
-  Mail,
   FileSpreadsheet,
 } from 'lucide-react';
 import { Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface BulkActionsToolbarProps {
   selectedCount: number;
@@ -48,6 +46,8 @@ export function BulkActionsToolbar({
   onExportCSV,
   onClearSelection,
 }: BulkActionsToolbarProps) {
+  const { t } = useI18n();
+  const ba = t.bulkActions;
   const [confirmAction, setConfirmAction] = useState<'refuse' | 'cancel' | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -58,14 +58,14 @@ export function BulkActionsToolbar({
     try {
       if (confirmAction === 'refuse' && onMarkRefused) {
         await onMarkRefused();
-        toast.success(`${selectedCount} élément(s) marqué(s) comme refusé(s)`);
+        toast.success(ba.refusedSuccess.replace('{count}', String(selectedCount)));
       } else if (confirmAction === 'cancel' && onCancel) {
         await onCancel();
-        toast.success(`${selectedCount} élément(s) annulé(s)`);
+        toast.success(ba.cancelledSuccess.replace('{count}', String(selectedCount)));
       }
       onClearSelection();
     } catch (error) {
-      toast.error('Erreur lors de l\'action');
+      toast.error(ba.actionError);
     } finally {
       setIsProcessing(false);
       setConfirmAction(null);
@@ -77,87 +77,66 @@ export function BulkActionsToolbar({
       <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20 animate-in slide-in-from-top-2">
         <Badge variant="secondary" className="gap-1">
           <CheckSquare className="h-3 w-3" />
-          {selectedCount} sélectionné{selectedCount > 1 ? 's' : ''}
+          {ba.selected.replace('{count}', String(selectedCount))}
         </Badge>
 
         <div className="flex items-center gap-2 ml-auto">
-          {/* Export CSV */}
           {onExportCSV && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onExportCSV}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={onExportCSV} className="gap-2">
               <FileSpreadsheet className="h-4 w-4" />
-              Exporter CSV
+              {ba.exportCsv}
             </Button>
           )}
 
-          {/* Actions Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="gap-2">
-                Actions
+                {ba.actions}
                 <ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {type === 'devis' && onMarkRefused && (
-                <DropdownMenuItem 
-                  onClick={() => setConfirmAction('refuse')}
-                  className="gap-2 text-destructive"
-                >
+                <DropdownMenuItem onClick={() => setConfirmAction('refuse')} className="gap-2 text-destructive">
                   <XCircle className="h-4 w-4" />
-                  Marquer comme Refusé
+                  {ba.markRefused}
                 </DropdownMenuItem>
               )}
               {type === 'bc' && onCancel && (
-                <DropdownMenuItem 
-                  onClick={() => setConfirmAction('cancel')}
-                  className="gap-2 text-destructive"
-                >
+                <DropdownMenuItem onClick={() => setConfirmAction('cancel')} className="gap-2 text-destructive">
                   <Trash2 className="h-4 w-4" />
-                  Annuler les BC
+                  {ba.cancelBc}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Clear Selection */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClearSelection}
-          >
-            Désélectionner
+          <Button variant="ghost" size="sm" onClick={onClearSelection}>
+            {ba.deselect}
           </Button>
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
       <AlertDialog open={confirmAction !== null} onOpenChange={() => setConfirmAction(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirmAction === 'refuse' 
-                ? 'Marquer comme Refusé?' 
-                : 'Annuler les éléments sélectionnés?'}
+              {confirmAction === 'refuse' ? ba.confirmRefuse : ba.confirmCancel}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmAction === 'refuse' 
-                ? `Vous êtes sur le point de marquer ${selectedCount} devis comme refusé(s). Cette action est réversible.`
-                : `Vous êtes sur le point d'annuler ${selectedCount} bon(s) de commande. Cette action est irréversible.`}
+              {confirmAction === 'refuse'
+                ? ba.refuseDesc.replace('{count}', String(selectedCount))
+                : ba.cancelDesc.replace('{count}', String(selectedCount))}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isProcessing}>Annuler</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel disabled={isProcessing}>{ba.cancel}</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleConfirmAction}
               disabled={isProcessing}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isProcessing ? 'En cours...' : 'Confirmer'}
+              {isProcessing ? ba.processing : ba.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -166,11 +145,11 @@ export function BulkActionsToolbar({
   );
 }
 
-// CSV Export utilities
-export function exportDevisToCSV(devisList: Devis[], selectedIds: string[]) {
+// CSV Export utilities - these use the i18n keys from the calling component
+export function exportDevisToCSV(devisList: Devis[], selectedIds: string[], headers?: string[]) {
   const selected = devisList.filter(d => selectedIds.includes(d.id));
   
-  const headers = ['N° Devis', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³', 'Total HT', 'Statut', 'Date Création'];
+  const csvHeaders = headers || ['N° Devis', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³', 'Total HT', 'Statut', 'Date Création'];
   const rows = selected.map(d => [
     d.devis_id,
     d.client?.nom_client || '',
@@ -182,13 +161,13 @@ export function exportDevisToCSV(devisList: Devis[], selectedIds: string[]) {
     format(new Date(d.created_at), 'dd/MM/yyyy'),
   ]);
 
-  downloadCSV([headers, ...rows], `devis_export_${format(new Date(), 'yyyyMMdd')}.csv`);
+  downloadCSV([csvHeaders, ...rows], `devis_export_${format(new Date(), 'yyyyMMdd')}.csv`);
 }
 
-export function exportBcToCSV(bcList: BonCommande[], selectedIds: string[]) {
+export function exportBcToCSV(bcList: BonCommande[], selectedIds: string[], headers?: string[]) {
   const selected = bcList.filter(bc => selectedIds.includes(bc.id));
   
-  const headers = ['N° BC', 'Client', 'Formule', 'Volume (m³)', 'Total HT', 'Date Livraison', 'Statut'];
+  const csvHeaders = headers || ['N° BC', 'Client', 'Formule', 'Volume (m³)', 'Total HT', 'Date Livraison', 'Statut'];
   const rows = selected.map(bc => [
     bc.bc_id,
     bc.client?.nom_client || '',
@@ -199,7 +178,7 @@ export function exportBcToCSV(bcList: BonCommande[], selectedIds: string[]) {
     bc.statut,
   ]);
 
-  downloadCSV([headers, ...rows], `bc_export_${format(new Date(), 'yyyyMMdd')}.csv`);
+  downloadCSV([csvHeaders, ...rows], `bc_export_${format(new Date(), 'yyyyMMdd')}.csv`);
 }
 
 function downloadCSV(data: string[][], filename: string) {
@@ -217,5 +196,5 @@ function downloadCSV(data: string[][], filename: string) {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
   
-  toast.success(`Fichier ${filename} téléchargé`);
+  toast.success(`${filename}`);
 }

@@ -14,7 +14,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -35,6 +34,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { compressImage } from '@/lib/imageCompression';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface PhotoVerifiedHumidityProps {
   type: 'reception' | 'quotidien';
@@ -56,6 +56,8 @@ interface GeoLocation {
 
 export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: PhotoVerifiedHumidityProps) {
   const { user } = useAuth();
+  const { t } = useI18n();
+  const ph = t.photoHumidity;
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
@@ -70,10 +72,8 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
   
   // Calculate water correction in real-time
   const humidityValue = parseFloat(tauxHumidite) || 0;
-  const standardHumidity = 3.0; // 3% standard
+  const standardHumidity = 3.0;
   const excessHumidity = Math.max(0, humidityValue - standardHumidity);
-  // Formula: excess_water (L/m³) = (humidity_diff% / 100) * sand_volume_m3 * sand_density
-  // Using 0.4 m³ sand per m³ concrete, 1600 kg/m³ sand density
   const waterCorrection = (excessHumidity / 100) * 0.4 * 1600;
 
   // Get geolocation on mount
@@ -102,14 +102,12 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
       
       const compressedFile = await compressImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result as string);
       };
       reader.readAsDataURL(compressedFile);
       
-      // Upload to Supabase storage
       const fileName = `humidity_${type}_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
       const { data, error } = await supabase.storage
         .from('qc-photos')
@@ -122,10 +120,10 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
         .getPublicUrl(`humidity/${fileName}`);
       
       setPhotoUrl(urlData.publicUrl);
-      toast.success('Photo téléchargée avec succès');
+      toast.success(ph.uploadSuccess);
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error('Erreur lors du téléchargement');
+      toast.error(ph.uploadError);
     } finally {
       setUploadingPhoto(false);
     }
@@ -142,21 +140,19 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // STRICT: Photo is MANDATORY
     if (!photoUrl) {
-      toast.error('Photo du test d\'humidité obligatoire!');
+      toast.error(ph.photoRequired);
       return;
     }
     
     if (!tauxHumidite || humidityValue < 0 || humidityValue > 100) {
-      toast.error('Taux d\'humidité invalide');
+      toast.error(ph.invalidRate);
       return;
     }
     
     setSubmitting(true);
 
     try {
-      // Get user info
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
@@ -183,7 +179,7 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
 
       if (error) throw error;
 
-      toast.success('Contrôle d\'humidité enregistré');
+      toast.success(ph.savedSuccess);
       
       if (onSubmit) {
         onSubmit({
@@ -193,7 +189,6 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
         });
       }
       
-      // Reset form
       setTauxHumidite('');
       setPhotoUrl(null);
       setPhotoPreview(null);
@@ -201,7 +196,7 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
       setOpen(false);
     } catch (error) {
       console.error('Error saving humidity control:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(ph.saveError);
     } finally {
       setSubmitting(false);
     }
@@ -213,7 +208,7 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
         {trigger || (
           <Button variant="outline" className="gap-2 min-h-[44px]">
             <Droplets className="h-4 w-4" />
-            Contrôle Humidité
+            {ph.triggerLabel}
           </Button>
         )}
       </DialogTrigger>
@@ -221,19 +216,18 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Droplets className="h-5 w-5 text-primary" />
-            Contrôle Humidité du Sable
+            {ph.title}
           </DialogTitle>
           <DialogDescription className="flex items-center gap-2 text-warning">
             <Camera className="h-4 w-4" />
-            Photo obligatoire du test (hygromètre ou balance)
+            {ph.photoMandatory}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          {/* Humidity Input */}
           <div className="space-y-2">
             <Label className="form-label-industrial">
-              Taux d'Humidité du Sable (%)
+              {ph.humidityRate}
               <span className="text-destructive ml-1">*</span>
             </Label>
             <Input
@@ -248,11 +242,10 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
               className="min-h-[48px] text-lg font-mono"
             />
             <p className="text-xs text-muted-foreground">
-              Standard: {standardHumidity}% | Actuel: {humidityValue}%
+              {ph.standard}: {standardHumidity}% | {ph.current}: {humidityValue}%
             </p>
           </div>
 
-          {/* Real-time Water Correction Calculator */}
           {humidityValue > 0 && (
             <Card className={cn(
               'border-2',
@@ -261,12 +254,12 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Calculator className="h-4 w-4" />
-                  Correction d'Eau Automatique
+                  {ph.autoWaterCorrection}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Écart humidité:</span>
+                  <span className="text-sm text-muted-foreground">{ph.humidityGap}:</span>
                   <span className={cn(
                     'font-mono font-bold',
                     excessHumidity > 0 ? 'text-warning' : 'text-success'
@@ -275,7 +268,7 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Correction eau/m³:</span>
+                  <span className="text-sm text-muted-foreground">{ph.waterCorrectionPerM3}:</span>
                   <span className={cn(
                     'font-mono font-bold text-lg',
                     waterCorrection > 0 ? 'text-destructive' : 'text-success'
@@ -285,19 +278,18 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
                 </div>
                 {waterCorrection > 0 && (
                   <p className="text-xs text-warning mt-2 p-2 bg-warning/20 rounded">
-                    ⚠️ Le centraliste doit SOUSTRAIRE {waterCorrection.toFixed(1)}L d'eau par m³ de béton
+                    ⚠️ {ph.centralWarning.replace('{value}', waterCorrection.toFixed(1))}
                   </p>
                 )}
               </CardContent>
             </Card>
           )}
 
-          {/* MANDATORY Photo Upload */}
           <div className="space-y-2">
             <Label className="form-label-industrial flex items-center gap-2">
               <Camera className="h-4 w-4" />
-              Photo du Test
-              <span className="text-destructive">* OBLIGATOIRE</span>
+              {ph.testPhoto}
+              <span className="text-destructive">* {ph.mandatory}</span>
             </Label>
             
             <input
@@ -327,14 +319,13 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
                 </Button>
                 <div className="flex items-center gap-2 mt-2 text-success text-sm">
                   <CheckCircle className="h-4 w-4" />
-                  Photo vérifiée
+                  {ph.photoVerified}
                 </div>
                 
-                {/* Geo & Time Stamp */}
                 <div className="flex flex-wrap gap-3 mt-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    {new Date().toLocaleString('fr-FR')}
+                    {new Date().toLocaleString()}
                   </span>
                   {geoLocation && (
                     <span className="flex items-center gap-1">
@@ -358,34 +349,32 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
                 {uploadingPhoto ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Téléchargement...
+                    {ph.uploading}
                   </>
                 ) : (
                   <div className="flex flex-col items-center gap-2">
                     <Upload className="h-8 w-8" />
-                    <span>Prendre Photo du Test</span>
-                    <span className="text-xs">(Hygromètre ou Balance)</span>
+                    <span>{ph.takePhoto}</span>
+                    <span className="text-xs">{ph.hygrometerOrBalance}</span>
                   </div>
                 )}
               </Button>
             )}
           </div>
 
-          {/* Notes */}
           <div className="space-y-2">
-            <Label className="form-label-industrial">Notes (optionnel)</Label>
+            <Label className="form-label-industrial">{ph.notesOptional}</Label>
             <Textarea
-              placeholder="Observations sur le test..."
+              placeholder={ph.notesPlaceholder}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
             />
           </div>
 
-          {/* Submit */}
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="min-h-[44px]">
-              Annuler
+              {ph.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -395,12 +384,12 @@ export function PhotoVerifiedHumidity({ type, receptionId, onSubmit, trigger }: 
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  {ph.saving}
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-4 w-4 mr-2" />
-                  Valider Contrôle
+                  {ph.validate}
                 </>
               )}
             </Button>

@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Lock, Shield, DollarSign, Phone } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface CeoApprovalCodeDialogProps {
   open: boolean;
@@ -24,7 +25,6 @@ interface CeoApprovalCodeDialogProps {
   onApproved: () => void;
 }
 
-// CEO approval code - in production, this would be verified server-side
 const CEO_APPROVAL_CODE = 'CEO2024';
 
 export function CeoApprovalCodeDialog({
@@ -36,6 +36,8 @@ export function CeoApprovalCodeDialog({
   limite,
   onApproved,
 }: CeoApprovalCodeDialogProps) {
+  const { t } = useI18n();
+  const ca = t.ceoApprovalCode;
   const [code, setCode] = useState('');
   const [error, setError] = useState(false);
   const [attempts, setAttempts] = useState(0);
@@ -44,7 +46,7 @@ export function CeoApprovalCodeDialog({
     e.preventDefault();
     
     if (code.trim().toUpperCase() === CEO_APPROVAL_CODE) {
-      toast.success('Code CEO accepté - Livraison autorisée');
+      toast.success(ca.codeAccepted);
       setCode('');
       setError(false);
       setAttempts(0);
@@ -55,13 +57,13 @@ export function CeoApprovalCodeDialog({
       setAttempts(prev => prev + 1);
       
       if (attempts >= 2) {
-        toast.error('Trop de tentatives. Veuillez contacter le CEO directement.');
+        toast.error(ca.tooManyAttempts);
         onOpenChange(false);
         setCode('');
         setError(false);
         setAttempts(0);
       } else {
-        toast.error('Code incorrect. Veuillez réessayer.');
+        toast.error(ca.incorrectCode);
       }
     }
   };
@@ -85,35 +87,32 @@ export function CeoApprovalCodeDialog({
               <Lock className="h-5 w-5 text-destructive" />
             </div>
             <div>
-              <DialogTitle className="text-destructive">Dépassement Limite Crédit</DialogTitle>
-              <DialogDescription>
-                Approbation CEO requise pour continuer
-              </DialogDescription>
+              <DialogTitle className="text-destructive">{ca.title}</DialogTitle>
+              <DialogDescription>{ca.subtitle}</DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Client Info Card */}
           <div className="p-4 rounded-lg bg-muted/50 border space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Client</span>
+              <span className="text-sm text-muted-foreground">{ca.client}</span>
               <span className="font-medium">{clientName}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Solde Dû</span>
+              <span className="text-sm text-muted-foreground">{ca.balanceDue}</span>
               <Badge variant="destructive" className="text-sm">
                 <DollarSign className="h-3 w-3 mr-1" />
                 {solde.toLocaleString()} DH
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Limite Crédit</span>
+              <span className="text-sm text-muted-foreground">{ca.creditLimit}</span>
               <span className="font-medium">{limite.toLocaleString()} DH</span>
             </div>
             <div className="pt-2 border-t">
               <div className="flex items-center justify-between text-destructive">
-                <span className="text-sm font-medium">Dépassement</span>
+                <span className="text-sm font-medium">{ca.overrun}</span>
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" />
                   <span className="font-bold">+{depassement.toLocaleString()} DH ({depassementPct}%)</span>
@@ -122,23 +121,19 @@ export function CeoApprovalCodeDialog({
             </div>
           </div>
 
-          {/* Warning Message */}
           <div className="flex items-start gap-3 p-3 rounded-lg bg-warning/10 border border-warning/30">
             <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
             <div className="text-sm">
-              <p className="font-medium text-warning">Action requise</p>
-              <p className="text-muted-foreground">
-                Ce client a dépassé sa limite de crédit. Veuillez obtenir un code d'approbation auprès du CEO pour autoriser cette livraison.
-              </p>
+              <p className="font-medium text-warning">{ca.actionRequired}</p>
+              <p className="text-muted-foreground">{ca.overrunMessage}</p>
             </div>
           </div>
 
-          {/* Approval Code Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="approval-code" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Code d'approbation CEO
+                {ca.approvalCode}
               </Label>
               <Input
                 id="approval-code"
@@ -148,33 +143,32 @@ export function CeoApprovalCodeDialog({
                   setCode(e.target.value.toUpperCase());
                   setError(false);
                 }}
-                placeholder="Entrez le code CEO"
+                placeholder={ca.enterCode}
                 className={error ? 'border-destructive' : ''}
                 autoComplete="off"
               />
               {error && (
                 <p className="text-xs text-destructive">
-                  Code incorrect. Tentative {attempts}/3
+                  {ca.incorrectAttempt.replace('{attempts}', String(attempts))}
                 </p>
               )}
             </div>
 
             <DialogFooter className="gap-2 sm:gap-0">
               <Button type="button" variant="outline" onClick={handleClose}>
-                Annuler la livraison
+                {ca.cancelDelivery}
               </Button>
               <Button type="submit" disabled={!code.trim()}>
                 <Lock className="h-4 w-4 mr-2" />
-                Valider le code
+                {ca.validateCode}
               </Button>
             </DialogFooter>
           </form>
 
-          {/* Contact CEO Option */}
           <div className="pt-2 border-t">
             <p className="text-xs text-muted-foreground text-center">
               <Phone className="h-3 w-3 inline mr-1" />
-              Besoin d'un code? Contactez le CEO directement.
+              {ca.needCode}
             </p>
           </div>
         </div>
