@@ -1447,6 +1447,61 @@ const ar = {
       reason: 'السبب',
       ref: 'المرجع',
       capUnblocked: 'تم رفع السقف',
+      // DepensesV2 keys
+      controlledExpenses: 'إدارة المصاريف المراقبة',
+      controlledSubtitle: 'سير عمل متعدد المستويات مع ميزانيات الأقسام',
+      filters: 'الفلاتر',
+      expensesTab: 'المصاريف',
+      budgetsTab: 'الميزانيات',
+      newRequest: 'مصروف جديد',
+      noExpensesFound: 'لم يتم العثور على مصاريف',
+      clearFilters: 'مسح الفلاتر',
+      reference: 'المرجع',
+      viewDetails: 'عرض التفاصيل',
+      approve: 'موافقة',
+      reject: 'رفض',
+      unblockCap: 'رفع السقف',
+      markPaid: 'تحديد كمدفوع',
+      deleteLabel: 'حذف',
+      newExpenseRequest: 'طلب مصروف جديد',
+      expenseApproved: 'تمت الموافقة على المصروف',
+      approveError: 'خطأ أثناء الموافقة',
+      rejectReason: 'سبب الرفض:',
+      expenseRejected: 'تم رفض المصروف',
+      rejectError: 'خطأ أثناء الرفض',
+      markedPaid: 'تم التحديد كمدفوع',
+      markPaidError: 'خطأ أثناء التحديث',
+      capOverrideReason: 'سبب تجاوز السقف:',
+      capUnblockedSuccess: 'تم رفع السقف',
+      capUnblockError: 'خطأ أثناء رفع السقف',
+      deleteConfirm: 'حذف هذا المصروف؟',
+      expenseDeleted: 'تم حذف المصروف',
+      deletionBlocked: '🔒 رفض الحذف',
+      deletionBlockedDesc: 'فقط الرئيس يمكنه حذف المصاريف الموافق عليها.',
+      deleteError: 'خطأ أثناء الحذف',
+      ignoredManually: 'تم التجاهل يدوياً',
+      searchPlaceholder: 'بحث...',
+      statusPlaceholder: 'الحالة',
+      modePlaceholder: 'الطريقة',
+      agingPlaceholder: 'الأقدمية',
+      sendReminderTooltip: 'إرسال تذكير',
+      level: 'المستوى',
+      blocked: 'محظورة',
+      approvedLabel: 'موافق عليها',
+      paidLabel: 'مدفوعة',
+      rejectedLabel: 'مرفوضة',
+      waitingLabel: 'قيد الانتظار',
+      exportDate: 'التاريخ',
+      exportCategory: 'الفئة',
+      exportDescription: 'الوصف',
+      exportAmount: 'المبلغ (درهم)',
+      exportReference: 'المرجع',
+      exportRequester: 'مقدم الطلب',
+      exportAmountHT: 'المبلغ بدون ضريبة',
+      exportVAT: 'الضريبة %',
+      exportAmountTTC: 'المبلغ شامل الضريبة',
+      exportLevel: 'المستوى',
+      exportStatus: 'الحالة',
     },
     bcApproval: {
       created: 'تم الإنشاء',

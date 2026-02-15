@@ -135,7 +135,7 @@ export default function Paiements() {
     }
   };
 
-  const formatCurrency = (value: number) => `${value.toLocaleString('fr-MA')} DH`;
+  const formatCurrency = (value: number) => `${value.toLocaleString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-MA')} DH`;
 
   // Prepare chart data
   const agingChartData = stats.agingBuckets.map((bucket, index) => ({
@@ -362,7 +362,7 @@ export default function Paiements() {
                     <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-xs" />
                     <Tooltip 
                       formatter={(value: number) => formatCurrency(value)}
-                      labelFormatter={(label) => `Tranche: ${label}`}
+                      labelFormatter={(label) => `${t.pages.paiements.agingBreakdown}: ${label}`}
                     />
                     <Bar dataKey="montant" radius={[4, 4, 0, 0]}>
                       {agingChartData.map((entry, index) => (
@@ -468,7 +468,7 @@ export default function Paiements() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher..."
+                    placeholder={t.pages.depenses.searchPlaceholder}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-9 w-[200px]"
@@ -476,7 +476,7 @@ export default function Paiements() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Statut" />
+                    <SelectValue placeholder={t.pages.depenses.statusPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                      <SelectItem value="all">{t.pages.paiements.allStatuses}</SelectItem>
@@ -487,7 +487,7 @@ export default function Paiements() {
                 </Select>
                 <Select value={modeFilter} onValueChange={setModeFilter}>
                   <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Mode" />
+                    <SelectValue placeholder={t.pages.depenses.modePlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t.pages.paiements.allModes}</SelectItem>
@@ -498,7 +498,7 @@ export default function Paiements() {
                 </Select>
                 <Select value={agingFilter} onValueChange={setAgingFilter}>
                   <SelectTrigger className="w-[130px]">
-                    <SelectValue placeholder="Antériorité" />
+                    <SelectValue placeholder={t.pages.depenses.agingPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{t.pages.paiements.allAging}</SelectItem>
@@ -586,7 +586,7 @@ export default function Paiements() {
                                       }
                                     }}
                                     className="gap-1 text-warning hover:text-warning hover:bg-warning/10"
-                                    title="Envoyer un rappel"
+                                    title={t.pages.depenses.sendReminderTooltip}
                                   >
                                     <Mail className="h-3 w-3" />
                                   </Button>

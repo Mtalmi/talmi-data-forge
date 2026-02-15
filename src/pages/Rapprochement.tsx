@@ -108,7 +108,7 @@ export default function Rapprochement() {
   };
 
   const handleIgnore = async (transactionId: string) => {
-    const result = await ignoreTransaction(transactionId, 'Ignoré manuellement');
+    const result = await ignoreTransaction(transactionId, t.pages.depenses.ignoredManually);
     if (result.success) {
       toast({
         title: r.transactionIgnored,
@@ -174,7 +174,7 @@ export default function Rapprochement() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('fr-MA', {
+    return new Intl.NumberFormat(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-MA', {
       style: 'currency',
       currency: 'MAD',
       minimumFractionDigits: 2,
