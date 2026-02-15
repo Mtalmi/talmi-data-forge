@@ -5,9 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Factory, CheckCircle, Clock, AlertTriangle, Link2 } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
-import { fr as frLocale } from 'date-fns/locale';
-import { ar as arLocale } from 'date-fns/locale';
-import { enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface WS7Batch {
   id: string;
@@ -23,7 +21,7 @@ interface WS7Batch {
 
 export function WS7LiveFeedWidget() {
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? arLocale : lang === 'fr' ? frLocale : enUS;
+  const dateFnsLocale = getDateLocale(lang);
   const [batches, setBatches] = useState<WS7Batch[]>([]);
   const [lastImport, setLastImport] = useState<string | null>(null);
   const [todayCount, setTodayCount] = useState(0);

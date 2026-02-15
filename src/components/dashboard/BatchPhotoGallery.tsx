@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
-import { fr as frLocale } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface BatchPhoto {
   id: string;
@@ -72,6 +72,8 @@ const statusConfig = {
 };
 
 export function BatchPhotoGallery() {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [photos, setPhotos] = useState<BatchPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -350,7 +352,7 @@ export function BatchPhotoGallery() {
                   <div>
                     <span className="text-muted-foreground">Heure:</span>
                     <span className="ml-2 font-medium">
-                      {format(new Date(selectedPhoto.entered_at), 'HH:mm', { locale: frLocale })}
+                      {format(new Date(selectedPhoto.entered_at), 'HH:mm')}
                     </span>
                   </div>
                   <div>

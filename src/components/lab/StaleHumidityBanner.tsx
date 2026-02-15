@@ -4,7 +4,8 @@ import { AlertTriangle, Droplets, Clock, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { PhotoVerifiedHumidity } from './PhotoVerifiedHumidity';
 
 interface StaleHumidityBannerProps {
@@ -21,6 +22,8 @@ export function StaleHumidityBanner({
   className,
   thresholdHours = 4,
 }: StaleHumidityBannerProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [lastTestTime, setLastTestTime] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -72,7 +75,7 @@ export function StaleHumidityBanner({
   const isCritical = hoursSinceTest > thresholdHours * 2;
 
   const timeAgo = lastTestTime
-    ? formatDistanceToNow(lastTestTime, { locale: fr, addSuffix: true })
+    ? formatDistanceToNow(lastTestTime, { locale: dateLocale, addSuffix: true })
     : 'Jamais';
 
   return (

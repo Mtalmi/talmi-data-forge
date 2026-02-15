@@ -30,7 +30,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 interface DeliveryData {
@@ -121,7 +120,7 @@ export function SmartInvoiceDialog({
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return '--:--';
     try {
-      return format(new Date(timestamp), 'HH:mm', { locale: fr });
+      return format(new Date(timestamp), 'HH:mm');
     } catch {
       return '--:--';
     }

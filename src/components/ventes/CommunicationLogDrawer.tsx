@@ -38,7 +38,8 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { getRecentCommunications, CommunicationLog, CommunicationType, CommunicationCategory } from '@/lib/communicationLogger';
 import { cn } from '@/lib/utils';
 
@@ -73,6 +74,8 @@ interface CommunicationLogDrawerProps {
 }
 
 export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLogDrawerProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [logs, setLogs] = useState<CommunicationLog[]>([]);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -155,7 +158,7 @@ export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLo
                 {Object.entries(groupedLogs).map(([date, dayLogs]) => (
                   <div key={date}>
                     <h4 className="text-sm font-medium text-muted-foreground mb-3 sticky top-0 bg-background py-1">
-                      {format(new Date(date), 'EEEE d MMMM yyyy', { locale: fr })}
+                      {format(new Date(date), 'EEEE d MMMM yyyy', { locale: dateLocale })}
                     </h4>
                     <div className="space-y-3">
                       {dayLogs.map((log) => {
@@ -224,7 +227,7 @@ export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLo
                                 <p className="text-xs text-muted-foreground">
                                   {formatDistanceToNow(new Date(log.created_at), { 
                                     addSuffix: true,
-                                    locale: fr 
+                                    locale: dateLocale 
                                   })}
                                 </p>
                               </div>

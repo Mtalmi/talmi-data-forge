@@ -27,7 +27,8 @@ import {
   FileDown
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { toast } from 'sonner';
 
 interface DeliveryItem {
@@ -57,11 +58,13 @@ interface DailyPlanningReportProps {
 }
 
 export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningReportProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [open, setOpen] = useState(false);
   const [printing, setPrinting] = useState(false);
   const [exporting, setExporting] = useState(false);
 
-  const formattedDate = format(date, "EEEE d MMMM yyyy", { locale: fr });
+  const formattedDate = format(date, "EEEE d MMMM yyyy", { locale: dateLocale });
 
   const getStatusLabel = (status: string): string => {
     const labels: Record<string, string> = {
@@ -262,7 +265,7 @@ export function DailyPlanningReport({ date, stats, deliveries }: DailyPlanningRe
         </table>
 
         <div class="print-time">
-          Imprimé le ${format(new Date(), "dd/MM/yyyy 'à' HH:mm", { locale: fr })}
+          Imprimé le ${format(new Date(), "dd/MM/yyyy 'à' HH:mm", { locale: dateLocale })}
         </div>
 
         <div class="footer">
