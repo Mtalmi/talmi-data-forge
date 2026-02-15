@@ -1566,6 +1566,7 @@ const en = {
       certificate: 'Certificate',
       passed: 'Passed',
       failed: 'Failed',
+      waitingStatus: 'Pending',
     },
     logistique: {
       title: 'Logistics & Fleet',
@@ -1621,6 +1622,13 @@ const en = {
       statusDelivery: 'On Delivery',
       statusMaintenance: 'Maintenance',
       statusOutOfService: 'Out of Service',
+      typeToupie: 'Mixer Truck',
+      typePompe: 'Pump',
+      ownerPlaceholder: 'Internal or provider name',
+      statusPlanned: 'Planned',
+      statusInProduction: 'In Production',
+      statusTechValidation: 'Tech. Validation',
+      statusEnRoute: 'En Route',
     },
     formulas: {
       title: 'Theoretical Formulas',
