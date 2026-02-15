@@ -30,9 +30,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, ar, enUS } from 'date-fns/locale';
 import { compressImage } from '@/lib/imageCompression';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface PendingHandshake {
   id: string;
@@ -55,6 +56,8 @@ interface PendingHandshake {
 
 export function SplitViewHandshake() {
   const { user, isResponsableTechnique, isAgentAdministratif, isCeo, isSuperviseur } = useAuth();
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [pendingItems, setPendingItems] = useState<PendingHandshake[]>([]);
@@ -138,11 +141,11 @@ export function SplitViewHandshake() {
         .update({ [updateField]: urlData.publicUrl })
         .eq('id', selectedItem.id);
 
-      toast.success('Photo téléchargée');
+      toast.success(t.widgets.handshake.photoUploaded);
       fetchPendingItems();
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t.widgets.handshake.uploadError);
     } finally {
       setUploading(false);
     }
@@ -166,13 +169,13 @@ export function SplitViewHandshake() {
 
       if (error) throw error;
 
-      toast.success(approved ? 'Qualité approuvée ✓' : 'Qualité rejetée');
+      toast.success(approved ? t.widgets.handshake.qualityApproved : t.widgets.handshake.qualityRejected);
       setSelectedItem(null);
       setNotes('');
       fetchPendingItems();
     } catch (error) {
       console.error('Quality approval error:', error);
-      toast.error('Erreur lors de l\'approbation');
+      toast.error(t.widgets.handshake.approvalError);
     } finally {
       setProcessing(false);
     }
@@ -209,18 +212,17 @@ export function SplitViewHandshake() {
         changes: { materiau: selectedItem.materiau, quantite: selectedItem.quantite },
       });
 
-      toast.success('Réception finalisée et ajoutée au stock');
+      toast.success(t.widgets.handshake.finalized);
       setSelectedItem(null);
       fetchPendingItems();
     } catch (error) {
       console.error('Finalization error:', error);
-      toast.error('Erreur lors de la finalisation');
+      toast.error(t.widgets.handshake.finalizeError);
     } finally {
       setProcessing(false);
     }
   };
 
-  // Separate items by stage
   const qualityPending = pendingItems.filter(item => !item.qualite_approuvee_at);
   const finalizePending = pendingItems.filter(item => item.qualite_approuvee_at && !item.admin_approuve_at);
 
@@ -247,7 +249,7 @@ export function SplitViewHandshake() {
         <div className="flex items-start justify-between gap-2 mb-1.5">
           <div className="min-w-0">
             <p className="font-bold text-xs truncate">{item.materiau}</p>
-            <p className="text-[10px] text-muted-foreground font-mono">{item.numero_bl || 'Sans BL'}</p>
+            <p className="text-[10px] text-muted-foreground font-mono">{item.numero_bl || t.widgets.handshake.withoutBL}</p>
           </div>
           <Badge 
             variant="outline" 
@@ -262,7 +264,7 @@ export function SplitViewHandshake() {
 
         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
           <Clock className="h-2.5 w-2.5" />
-          {formatDistanceToNow(new Date(item.created_at), { locale: fr, addSuffix: true })}
+          {formatDistanceToNow(new Date(item.created_at), { locale: dateFnsLocale, addSuffix: true })}
           
           {item.photo_materiel_url ? (
             <span className="flex items-center gap-0.5 text-emerald-500">
@@ -309,23 +311,18 @@ export function SplitViewHandshake() {
             <div>
               <CardTitle className="text-sm sm:text-base flex items-center gap-2">
                 <Handshake className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                Centre Handshake
+                {t.widgets.handshake.title}
                 <InfoTooltip
                   id="handshake-help"
-                  title="Réception de Stock"
-                  content="Le processus 'Handshake' garantit une double validation: d'abord le Responsable Technique valide la qualité, puis l'Agent Administratif finalise l'entrée en stock."
+                  title={t.widgets.handshake.stockReception}
+                  content={t.widgets.handshake.subtitle}
                   videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                  steps={[
-                    "L'opérateur saisit la réception avec photo",
-                    "Le Resp. Technique valide la qualité visuelle",
-                    "L'Agent Admin vérifie et finalise le stock",
-                    "Les quantités sont ajoutées automatiquement"
-                  ]}
+                  steps={[]}
                   position="bottom"
                 />
               </CardTitle>
               <CardDescription className="text-xs">
-                Double validation: Qualité → Administratif
+                {t.widgets.handshake.subtitle}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -350,12 +347,12 @@ export function SplitViewHandshake() {
               <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
                 <CheckCircle className="h-7 w-7 text-emerald-500" />
               </div>
-              <p className="font-medium text-sm">Aucune réception en attente</p>
-              <p className="text-xs text-muted-foreground">Tout est finalisé</p>
+              <p className="font-medium text-sm">{t.widgets.handshake.noPending}</p>
+              <p className="text-xs text-muted-foreground">{t.widgets.handshake.allFinalized}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* LEFT: Quality (Resp. Tech) */}
+              {/* LEFT: Quality */}
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="p-1.5 rounded-md bg-amber-500/10">
@@ -363,9 +360,9 @@ export function SplitViewHandshake() {
                   </div>
                   <div>
                     <p className="font-semibold text-xs text-amber-600 dark:text-amber-400">
-                      Validation Qualité
+                      {t.widgets.handshake.qualityValidation}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">Resp. Technique</p>
+                    <p className="text-[10px] text-muted-foreground">{t.widgets.handshake.techManager}</p>
                   </div>
                   <Badge variant="outline" className="ml-auto text-[10px] border-amber-500 text-amber-500">
                     {qualityPending.length}
@@ -375,7 +372,7 @@ export function SplitViewHandshake() {
                 <ScrollArea className="h-[220px] pr-2">
                   {qualityPending.length === 0 ? (
                     <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
-                      Aucune en attente
+                      {t.widgets.handshake.noneWaiting}
                     </div>
                   ) : (
                     qualityPending.map(item => renderItemCard(item, 'quality'))
@@ -383,10 +380,9 @@ export function SplitViewHandshake() {
                 </ScrollArea>
               </div>
 
-              {/* Vertical Separator */}
               <Separator orientation="vertical" className="hidden md:block absolute left-1/2 h-[260px]" />
 
-              {/* RIGHT: Finalize (Agent Admin) */}
+              {/* RIGHT: Finalize */}
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="p-1.5 rounded-md bg-blue-500/10">
@@ -394,9 +390,9 @@ export function SplitViewHandshake() {
                   </div>
                   <div>
                     <p className="font-semibold text-xs text-blue-600 dark:text-blue-400">
-                      Finalisation Stock
+                      {t.widgets.handshake.stockFinalization}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">Agent Admin</p>
+                    <p className="text-[10px] text-muted-foreground">{t.widgets.handshake.adminAgent}</p>
                   </div>
                   <Badge variant="outline" className="ml-auto text-[10px] border-blue-500 text-blue-500">
                     {finalizePending.length}
@@ -406,7 +402,7 @@ export function SplitViewHandshake() {
                 <ScrollArea className="h-[220px] pr-2">
                   {finalizePending.length === 0 ? (
                     <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
-                      En attente de qualité
+                      {t.widgets.handshake.waitingForQuality}
                     </div>
                   ) : (
                     finalizePending.map(item => renderItemCard(item, 'finalize'))
@@ -424,11 +420,11 @@ export function SplitViewHandshake() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Handshake className="h-5 w-5 text-primary" />
-              {actionType === 'quality' ? 'Validation Qualité' : 
-               actionType === 'finalize' ? 'Finalisation Stock' : 'Détails Réception'}
+              {actionType === 'quality' ? t.widgets.handshake.qualityApproval : 
+               actionType === 'finalize' ? t.widgets.handshake.stockFinalize : t.widgets.handshake.receptionDetails}
             </DialogTitle>
             <DialogDescription>
-              {selectedItem?.numero_bl || 'Sans BL'} - {selectedItem?.materiau}
+              {selectedItem?.numero_bl || t.widgets.handshake.withoutBL} - {selectedItem?.materiau}
             </DialogDescription>
           </DialogHeader>
 
@@ -436,12 +432,12 @@ export function SplitViewHandshake() {
             <div className="space-y-4">
               {/* Photo Section */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Photo du matériel</label>
+                <label className="text-sm font-medium">{t.widgets.handshake.materialPhoto}</label>
                 {previewUrl || selectedItem.photo_materiel_url ? (
                   <div className="relative">
                     <img 
                       src={previewUrl || selectedItem.photo_materiel_url || ''} 
-                      alt="Réception" 
+                      alt={t.widgets.handshake.materialPhoto} 
                       className="w-full h-48 object-cover rounded-lg border"
                     />
                     {actionType === 'quality' && (
@@ -482,7 +478,7 @@ export function SplitViewHandshake() {
                       ) : (
                         <>
                           <Camera className="h-8 w-8 text-muted-foreground mb-2" />
-                          <span className="text-sm text-muted-foreground">Photo obligatoire</span>
+                          <span className="text-sm text-muted-foreground">{t.widgets.handshake.mandatoryPhoto}</span>
                         </>
                       )}
                     </div>
@@ -493,21 +489,21 @@ export function SplitViewHandshake() {
               {/* Info Grid */}
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Quantité</span>
+                  <span className="text-muted-foreground">{t.widgets.handshake.quantity}</span>
                   <p className="font-medium">{selectedItem.quantite} T</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Fournisseur</span>
+                  <span className="text-muted-foreground">{t.widgets.handshake.supplier}</span>
                   <p className="font-medium">{selectedItem.fournisseur || 'N/A'}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Humidité</span>
+                  <span className="text-muted-foreground">{t.widgets.handshake.moistureLevel}</span>
                   <p className="font-medium">{selectedItem.humidite_pct ? `${selectedItem.humidite_pct}%` : 'N/A'}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Reçu le</span>
+                  <span className="text-muted-foreground">{t.widgets.handshake.receivedOn}</span>
                   <p className="font-medium">
-                    {format(new Date(selectedItem.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}
+                    {format(new Date(selectedItem.created_at), 'dd/MM/yyyy HH:mm', { locale: dateFnsLocale })}
                   </p>
                 </div>
               </div>
@@ -518,7 +514,7 @@ export function SplitViewHandshake() {
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-emerald-500" />
                     <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                      Qualité validée le {format(new Date(selectedItem.qualite_approuvee_at), 'dd/MM HH:mm', { locale: fr })}
+                      {t.widgets.handshake.qualityValidatedOn} {format(new Date(selectedItem.qualite_approuvee_at), 'dd/MM HH:mm', { locale: dateFnsLocale })}
                     </p>
                   </div>
                 </div>
@@ -528,7 +524,7 @@ export function SplitViewHandshake() {
               {actionType === 'quality' && (
                 <div className="space-y-3">
                   <Textarea
-                    placeholder="Notes sur la qualité (optionnel)..."
+                    placeholder={t.widgets.handshake.qualityNotes}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     rows={2}
@@ -540,7 +536,7 @@ export function SplitViewHandshake() {
 
           <DialogFooter className="flex gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setSelectedItem(null)} disabled={processing}>
-              Fermer
+              {t.widgets.handshake.close}
             </Button>
             
             {actionType === 'quality' && (
@@ -552,7 +548,7 @@ export function SplitViewHandshake() {
                   className="gap-1"
                 >
                   {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
-                  Rejeter
+                  {t.widgets.handshake.rejectQuality}
                 </Button>
                 <Button 
                   onClick={() => handleQualityApproval(true)}
@@ -560,7 +556,7 @@ export function SplitViewHandshake() {
                   className="gap-1"
                 >
                   {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                  Approuver Qualité
+                  {t.widgets.handshake.approveQuality}
                 </Button>
               </>
             )}
@@ -591,7 +587,7 @@ export function SplitViewHandshake() {
                         ) : (
                           <CheckCircle className="h-4 w-4" />
                         )}
-                        Finaliser Stock
+                        {t.widgets.handshake.finalizeStock}
                       </Button>
                     </span>
                   </TooltipTrigger>
@@ -599,7 +595,7 @@ export function SplitViewHandshake() {
                     <TooltipContent side="top" className="max-w-xs">
                       <div className="flex items-center gap-2">
                         <Lock className="h-4 w-4 text-warning" />
-                        <span>En attente de validation qualité par Abdel Sadek</span>
+                        <span>{t.widgets.handshake.waitingQualityValidation}</span>
                       </div>
                     </TooltipContent>
                   )}

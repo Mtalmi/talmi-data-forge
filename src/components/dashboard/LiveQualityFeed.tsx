@@ -16,7 +16,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { 
   Camera, 
@@ -32,8 +31,9 @@ import {
   Shield
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, ar, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface QualityFeedItem {
   type: 'depart' | 'humidite';
@@ -54,6 +54,8 @@ interface QualityFeedItem {
 
 export function LiveQualityFeed() {
   const { isCeo, isSuperviseur } = useAuth();
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
   const [items, setItems] = useState<QualityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<QualityFeedItem | null>(null);
@@ -62,7 +64,6 @@ export function LiveQualityFeed() {
     try {
       setLoading(true);
       
-      // Fetch from both tables and combine
       const [departuresRes, humidityRes] = await Promise.all([
         supabase
           .from('controles_depart')
@@ -91,7 +92,6 @@ export function LiveQualityFeed() {
 
       const feedItems: QualityFeedItem[] = [];
 
-      // Process departures
       if (departuresRes.data) {
         departuresRes.data.forEach((d: any) => {
           feedItems.push({
@@ -104,16 +104,15 @@ export function LiveQualityFeed() {
             photo_timestamp: d.photo_slump_timestamp,
             latitude: d.photo_slump_latitude,
             longitude: d.photo_slump_longitude,
-            operateur: d.valide_par_name || 'Inconnu',
+            operateur: d.valide_par_name || t.widgets.qualityFeed.unknown,
             created_at: d.valide_at,
-            description: 'Contrôle Départ - Slump Test',
+            description: t.widgets.qualityFeed.departureControl,
             camion: d.bons_livraison_reels?.camion_assigne,
             client: d.clients?.clients?.nom_client || null
           });
         });
       }
 
-      // Process humidity
       if (humidityRes.data) {
         humidityRes.data.forEach((h: any) => {
           feedItems.push({
@@ -126,16 +125,15 @@ export function LiveQualityFeed() {
             photo_timestamp: h.photo_timestamp,
             latitude: h.photo_latitude,
             longitude: h.photo_longitude,
-            operateur: h.verified_by_name || 'Inconnu',
+            operateur: h.verified_by_name || t.widgets.qualityFeed.unknown,
             created_at: h.created_at,
-            description: `Contrôle Humidité - ${h.materiau}`,
+            description: `${t.widgets.qualityFeed.humidityControl} - ${h.materiau}`,
             camion: null,
             client: null
           });
         });
       }
 
-      // Sort by date
       feedItems.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       
       setItems(feedItems.slice(0, 30));
@@ -150,7 +148,6 @@ export function LiveQualityFeed() {
     if (isCeo || isSuperviseur) {
       fetchQualityFeed();
       
-      // Refresh every 30 seconds
       const interval = setInterval(fetchQualityFeed, 30000);
       return () => clearInterval(interval);
     }
@@ -165,10 +162,10 @@ export function LiveQualityFeed() {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Camera className="h-5 w-5 text-primary" />
-              Live Quality Feed
+              {t.widgets.qualityFeed.title}
             </CardTitle>
             <CardDescription>
-              Contrôles qualité en temps réel - Photos vérifiées
+              {t.widgets.qualityFeed.subtitle}
             </CardDescription>
           </div>
           <Button variant="ghost" size="icon" onClick={fetchQualityFeed} disabled={loading}>
@@ -184,7 +181,7 @@ export function LiveQualityFeed() {
         ) : items.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <Shield className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>Aucun contrôle qualité récent</p>
+            <p>{t.widgets.qualityFeed.noRecentChecks}</p>
           </div>
         ) : (
           <ScrollArea className="h-[400px] pr-4">
@@ -223,12 +220,12 @@ export function LiveQualityFeed() {
                       {item.type === 'depart' ? (
                         <Badge variant="outline" className="text-xs">
                           <Truck className="h-3 w-3 mr-1" />
-                          Départ
+                          {t.widgets.qualityFeed.departure}
                         </Badge>
                       ) : (
                         <Badge variant="outline" className="text-xs">
                           <Droplets className="h-3 w-3 mr-1" />
-                          Humidité
+                          {t.widgets.qualityFeed.humidity}
                         </Badge>
                       )}
                       <span className={cn(
@@ -246,7 +243,7 @@ export function LiveQualityFeed() {
                     <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {format(new Date(item.created_at), 'HH:mm', { locale: fr })}
+                        {format(new Date(item.created_at), 'HH:mm', { locale: dateFnsLocale })}
                       </span>
                       {item.latitude && (
                         <span className="flex items-center gap-1 text-success">
@@ -263,7 +260,7 @@ export function LiveQualityFeed() {
                     </div>
                     
                     <p className="text-xs mt-1">
-                      Par: <span className="font-medium">{item.operateur}</span>
+                      {t.widgets.qualityFeed.by}: <span className="font-medium">{item.operateur}</span>
                     </p>
                   </div>
                 </div>
@@ -291,7 +288,7 @@ export function LiveQualityFeed() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Valeur</p>
+                    <p className="text-sm text-muted-foreground">{t.widgets.qualityFeed.value}</p>
                     <p className={cn(
                       "text-2xl font-mono font-bold",
                       selectedPhoto.conforme ? "text-success" : "text-destructive"
@@ -302,26 +299,26 @@ export function LiveQualityFeed() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Statut</p>
+                    <p className="text-sm text-muted-foreground">{t.widgets.qualityFeed.status}</p>
                     <Badge className={selectedPhoto.conforme ? "bg-success" : "bg-destructive"}>
-                      {selectedPhoto.conforme ? 'Conforme' : 'Non Conforme'}
+                      {selectedPhoto.conforme ? t.widgets.qualityFeed.compliant : t.widgets.qualityFeed.nonCompliant}
                     </Badge>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Date/Heure</p>
+                    <p className="text-sm text-muted-foreground">{t.widgets.qualityFeed.dateTime}</p>
                     <p className="font-medium">
-                      {format(new Date(selectedPhoto.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: fr })}
+                      {format(new Date(selectedPhoto.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: dateFnsLocale })}
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">Opérateur</p>
+                    <p className="text-sm text-muted-foreground">{t.widgets.qualityFeed.operator}</p>
                     <p className="font-medium">{selectedPhoto.operateur}</p>
                   </div>
                   {selectedPhoto.latitude && selectedPhoto.longitude && (
                     <div className="space-y-2 col-span-2">
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
-                        Géolocalisation
+                        {t.widgets.qualityFeed.geolocation}
                       </p>
                       <p className="font-mono text-sm">
                         {selectedPhoto.latitude.toFixed(6)}, {selectedPhoto.longitude.toFixed(6)}

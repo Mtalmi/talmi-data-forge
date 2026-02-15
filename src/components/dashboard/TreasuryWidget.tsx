@@ -15,16 +15,16 @@ import {
   AlertTriangle,
   ShieldAlert,
   TrendingUp,
-  TrendingDown,
   ExternalLink,
   Receipt
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, ar, enUS } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface PendingExpense {
   id: string;
@@ -57,6 +57,8 @@ const levelLabels = {
 
 export function TreasuryWidget() {
   const navigate = useNavigate();
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [pendingExpenses, setPendingExpenses] = useState<PendingExpense[]>([]);
@@ -77,7 +79,6 @@ export function TreasuryWidget() {
       const monthYear = new Date().toISOString().slice(0, 7);
       const monthStart = `${monthYear}-01`;
       
-      // Get pending expenses
       const { data: pending, error: pendingError } = await supabase
         .from('expenses_controlled')
         .select('id, reference, description, montant_ttc, categorie, approval_level, statut, requested_by_name, requested_at, receipt_photo_url')
@@ -88,14 +89,12 @@ export function TreasuryWidget() {
       if (pendingError) throw pendingError;
       setPendingExpenses((pending || []) as PendingExpense[]);
 
-      // Get monthly cap
       const { data: capData } = await supabase
         .from('monthly_expense_caps')
         .select('level1_spent, level1_cap, cap_exceeded')
         .eq('month_year', monthYear)
         .maybeSingle();
 
-      // Get monthly stats
       const { data: monthlyData } = await supabase
         .from('expenses_controlled')
         .select('montant_ttc, statut, approval_level')
@@ -129,7 +128,6 @@ export function TreasuryWidget() {
   useEffect(() => {
     fetchData();
 
-    // Realtime subscription
     const channel = supabase
       .channel('treasury_widget')
       .on(
@@ -160,15 +158,15 @@ export function TreasuryWidget() {
 
       if (error) throw error;
 
-      toast.success(`Dépense ${expense.reference} approuvée`);
+      toast.success(`${expense.reference} ✓`);
       setSelectedExpense(null);
       fetchData();
     } catch (error: any) {
       console.error('Approval error:', error);
       if (error.message?.includes('CHAIN_OF_COMMAND')) {
-        toast.error('Permission insuffisante pour ce niveau');
+        toast.error(t.widgets.treasury.insufficientPermission);
       } else {
-        toast.error('Erreur lors de l\'approbation');
+        toast.error(t.widgets.treasury.approvalError);
       }
     } finally {
       setApproving(false);
@@ -189,12 +187,12 @@ export function TreasuryWidget() {
 
       if (error) throw error;
 
-      toast.success(`Dépense ${expense.reference} rejetée`);
+      toast.success(`${expense.reference} ✗`);
       setSelectedExpense(null);
       fetchData();
     } catch (error) {
       console.error('Rejection error:', error);
-      toast.error('Erreur lors du rejet');
+      toast.error(t.widgets.treasury.rejectionError);
     } finally {
       setApproving(false);
     }
@@ -221,23 +219,18 @@ export function TreasuryWidget() {
               </div>
               <div>
                 <CardTitle className="text-base flex items-center gap-2">
-                  Trésorerie
+                  {t.widgets.treasury.title}
                   <InfoTooltip
                     id="treasury-help"
-                    title="Contrôle des Dépenses"
-                    content="Ce widget affiche le plafond mensuel Level 1 (≤2000 MAD) et les dépenses en attente d'approbation. Quand le plafond est atteint, toutes les nouvelles dépenses sont automatiquement bloquées."
+                    title={t.widgets.treasury.expenseControl}
+                    content={t.widgets.treasury.subtitle}
                     videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                    steps={[
-                      "Consultez le plafond Level 1 restant",
-                      "Vérifiez les dépenses en attente",
-                      "Cliquez sur une dépense pour voir les détails",
-                      "Approuvez ou rejetez selon le justificatif"
-                    ]}
+                    steps={[]}
                     position="bottom"
                   />
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">
-                  Contrôle des Dépenses
+                  {t.widgets.treasury.expenseControl}
                 </p>
               </div>
             </div>
@@ -268,11 +261,11 @@ export function TreasuryWidget() {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="flex items-center gap-2">
-                Plafond Level 1
+                {t.widgets.treasury.level1Cap}
                 {monthlyStats.capExceeded && (
                   <Badge variant="destructive" className="text-xs">
                     <ShieldAlert className="h-3 w-3 mr-1" />
-                    Dépassé
+                    {t.widgets.treasury.exceeded}
                   </Badge>
                 )}
               </span>
@@ -291,7 +284,7 @@ export function TreasuryWidget() {
               )}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString()} MAD restant
+              {(monthlyStats.level1Cap - monthlyStats.level1Spent).toLocaleString()} MAD {t.widgets.treasury.remaining}
             </p>
           </div>
 
@@ -300,19 +293,19 @@ export function TreasuryWidget() {
             <div className="p-2 bg-warning/10 rounded-lg">
               <Clock className="h-4 w-4 text-warning mx-auto mb-1" />
               <span className="text-lg font-bold">{monthlyStats.pendingCount}</span>
-              <p className="text-[10px] text-muted-foreground">En attente</p>
+              <p className="text-[10px] text-muted-foreground">{t.widgets.treasury.pending}</p>
             </div>
             <div className="p-2 bg-success/10 rounded-lg">
               <CheckCircle className="h-4 w-4 text-success mx-auto mb-1" />
               <span className="text-lg font-bold">{monthlyStats.approvedCount}</span>
-              <p className="text-[10px] text-muted-foreground">Approuvées</p>
+              <p className="text-[10px] text-muted-foreground">{t.widgets.treasury.approved}</p>
             </div>
             <div className="p-2 bg-muted/30 rounded-lg">
               <TrendingUp className="h-4 w-4 text-primary mx-auto mb-1" />
               <span className="text-lg font-bold font-mono text-xs">
                 {(monthlyStats.totalSpent / 1000).toFixed(1)}K
               </span>
-              <p className="text-[10px] text-muted-foreground">Ce mois</p>
+              <p className="text-[10px] text-muted-foreground">{t.widgets.treasury.thisMonth}</p>
             </div>
           </div>
 
@@ -320,7 +313,7 @@ export function TreasuryWidget() {
           <div>
             <h4 className="text-sm font-medium mb-2 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-warning" />
-              Approbations en attente
+              {t.widgets.treasury.pendingApprovals}
             </h4>
             <ScrollArea className="h-[160px]">
               {loading ? (
@@ -332,7 +325,7 @@ export function TreasuryWidget() {
               ) : pendingExpenses.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-6 text-center">
                   <CheckCircle className="h-8 w-8 text-success/30 mb-2" />
-                  <p className="text-sm text-muted-foreground">Aucune approbation en attente</p>
+                  <p className="text-sm text-muted-foreground">{t.widgets.treasury.noPending}</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -364,7 +357,7 @@ export function TreasuryWidget() {
                               </Badge>
                               {isBlocked && (
                                 <Badge variant="destructive" className="text-[10px] h-4">
-                                  Bloqué
+                                  {t.widgets.treasury.blocked}
                                 </Badge>
                               )}
                             </div>
@@ -399,55 +392,52 @@ export function TreasuryWidget() {
               </DialogHeader>
 
               <div className="space-y-4">
-                {/* Receipt Photo */}
                 {selectedExpense.receipt_photo_url && (
                   <img
                     src={selectedExpense.receipt_photo_url}
-                    alt="Justificatif"
+                    alt={t.widgets.treasury.receipt}
                     className="w-full h-48 object-contain bg-muted rounded-lg"
                   />
                 )}
 
-                {/* Details */}
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Montant TTC:</span>
+                    <span className="text-muted-foreground">{t.widgets.treasury.amountTTC}:</span>
                     <span className="font-mono font-bold">
                       {selectedExpense.montant_ttc.toLocaleString()} MAD
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Catégorie:</span>
+                    <span className="text-muted-foreground">{t.widgets.treasury.category}:</span>
                     <Badge variant="outline">{selectedExpense.categorie}</Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Niveau:</span>
+                    <span className="text-muted-foreground">{t.widgets.treasury.level}:</span>
                     <Badge className={levelLabels[selectedExpense.approval_level].color}>
                       {levelLabels[selectedExpense.approval_level].desc}
                     </Badge>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Demandé par:</span>
+                    <span className="text-muted-foreground">{t.widgets.treasury.requestedBy}:</span>
                     <span>{selectedExpense.requested_by_name || '—'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Date:</span>
-                    <span>{format(new Date(selectedExpense.requested_at), 'dd/MM/yyyy HH:mm', { locale: fr })}</span>
+                    <span className="text-muted-foreground">{t.widgets.treasury.date}:</span>
+                    <span>{format(new Date(selectedExpense.requested_at), 'dd/MM/yyyy HH:mm', { locale: dateFnsLocale })}</span>
                   </div>
                 </div>
 
                 <p className="text-sm">{selectedExpense.description}</p>
 
-                {/* Actions */}
                 <div className="flex gap-3 pt-4 border-t">
                   <Button
                     variant="destructive"
                     className="flex-1 gap-2"
-                    onClick={() => handleReject(selectedExpense, 'Rejeté par CEO')}
+                    onClick={() => handleReject(selectedExpense, t.widgets.treasury.rejectedByCeo)}
                     disabled={approving}
                   >
                     <XCircle className="h-4 w-4" />
-                    Rejeter
+                    {t.widgets.treasury.reject}
                   </Button>
                   <Button
                     className="flex-1 gap-2"
@@ -455,7 +445,7 @@ export function TreasuryWidget() {
                     disabled={approving}
                   >
                     <CheckCircle className="h-4 w-4" />
-                    Approuver
+                    {t.widgets.treasury.approve}
                   </Button>
                 </div>
               </div>
