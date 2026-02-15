@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,7 +62,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useContractCompliance } from '@/hooks/useContractCompliance';
 import { toast } from 'sonner';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 type ContractType = 'camion_rental' | 'trax_rental' | 'terrain_rental';
@@ -82,27 +82,11 @@ interface Contract {
   created_at: string;
 }
 
-const CONTRACT_TYPE_CONFIG: Record<ContractType, { label: string; icon: React.ReactNode; color: string }> = {
-  camion_rental: { 
-    label: 'Location Camion', 
-    icon: <Truck className="h-4 w-4" />, 
-    color: 'bg-blue-500/10 text-blue-500 border-blue-500/30' 
-  },
-  trax_rental: { 
-    label: 'Location Trax', 
-    icon: <Tractor className="h-4 w-4" />, 
-    color: 'bg-orange-500/10 text-orange-500 border-orange-500/30' 
-  },
-  terrain_rental: { 
-    label: 'Location Terrain', 
-    icon: <MapPin className="h-4 w-4" />, 
-    color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' 
-  },
-};
-
 export default function Contracts() {
   const { user, canApproveDevis, isCeo } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const c = t.pages.contracts;
   const { stats, expirationAlerts, suppliers } = useContractCompliance();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +94,6 @@ export default function Contracts() {
   const [submitting, setSubmitting] = useState(false);
   const [uploading, setUploading] = useState(false);
   
-  // Form state
   const [contractType, setContractType] = useState<ContractType>('camion_rental');
   const [title, setTitle] = useState('');
   const [providerName, setProviderName] = useState('');
@@ -129,6 +112,12 @@ export default function Contracts() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const CONTRACT_TYPE_CONFIG: Record<ContractType, { label: string; icon: React.ReactNode; color: string }> = {
+    camion_rental: { label: c.truckRental, icon: <Truck className="h-4 w-4" />, color: 'bg-blue-500/10 text-blue-500 border-blue-500/30' },
+    trax_rental: { label: c.traxRental, icon: <Tractor className="h-4 w-4" />, color: 'bg-orange-500/10 text-orange-500 border-orange-500/30' },
+    terrain_rental: { label: c.landRental, icon: <MapPin className="h-4 w-4" />, color: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/30' },
+  };
+
   const fetchContracts = async () => {
     try {
       const { data, error } = await supabase
@@ -139,7 +128,7 @@ export default function Contracts() {
       if (error) throw error;
       setContracts(data || []);
     } catch (error: any) {
-      toast.error('Erreur lors du chargement des contrats');
+      toast.error(c.loadError);
     } finally {
       setLoading(false);
     }
@@ -154,12 +143,12 @@ export default function Contracts() {
     if (!file) return;
 
     if (file.type !== 'application/pdf') {
-      toast.error('Seuls les fichiers PDF sont acceptés');
+      toast.error(c.pdfOnly);
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error('Le fichier ne doit pas dépasser 10 MB');
+      toast.error(c.fileTooLarge);
       return;
     }
 
@@ -178,9 +167,9 @@ export default function Contracts() {
 
       setPdfUrl(urlData.publicUrl);
       setPdfFileName(file.name);
-      toast.success('PDF téléchargé avec succès');
+      toast.success(c.pdfUploaded);
     } catch (error: any) {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(c.uploadError);
     } finally {
       setUploading(false);
     }
@@ -206,7 +195,7 @@ export default function Contracts() {
 
   const handleSubmit = async () => {
     if (!title.trim() || !providerName.trim() || !monthlyAmount || !startDate || !pdfUrl) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
+      toast.error(c.fillRequired);
       return;
     }
 
@@ -237,12 +226,12 @@ export default function Contracts() {
 
       if (error) throw error;
 
-      toast.success('Contrat ajouté avec succès');
+      toast.success(c.contractAdded);
       setDialogOpen(false);
       resetForm();
       fetchContracts();
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de l\'ajout du contrat');
+      toast.error(error.message || c.loadError);
     } finally {
       setSubmitting(false);
     }
@@ -257,10 +246,10 @@ export default function Contracts() {
 
       if (error) throw error;
 
-      toast.success(`Contrat ${contract.is_active ? 'désactivé' : 'activé'}`);
+      toast.success(contract.is_active ? c.contractDeactivated : c.contractActivated);
       fetchContracts();
     } catch (error: any) {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(c.updateError);
     }
   };
 
@@ -278,11 +267,9 @@ export default function Contracts() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <FileText className="h-6 w-6 text-primary" />
-              {t.pages.contracts.title}
+              {c.title}
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {t.pages.contracts.subtitle || 'Gestion des contrats de location (Camion, Trax, Terrain)'}
-            </p>
+            <p className="text-sm text-muted-foreground mt-1">{c.subtitle}</p>
           </div>
           
           {canApproveDevis && (
@@ -290,28 +277,23 @@ export default function Contracts() {
               <DialogTrigger asChild>
                 <Button className="gap-2">
                   <Plus className="h-4 w-4" />
-                  Nouveau Contrat
+                  {c.newContract}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5 text-primary" />
-                    Ajouter un Contrat
+                    {c.addContract}
                   </DialogTitle>
-                  <DialogDescription>
-                    Téléchargez le PDF du contrat et renseignez les informations
-                  </DialogDescription>
+                  <DialogDescription>{c.addContractDesc}</DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
-                  {/* Contract Type */}
                   <div className="space-y-2">
-                    <Label>Type de Contrat *</Label>
+                    <Label>{c.contractType} *</Label>
                     <Select value={contractType} onValueChange={(v) => setContractType(v as ContractType)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.entries(CONTRACT_TYPE_CONFIG).map(([key, config]) => (
                           <SelectItem key={key} value={key}>
@@ -325,165 +307,93 @@ export default function Contracts() {
                     </Select>
                   </div>
 
-                  {/* Terrain Rental RAS Notice */}
                   {contractType === 'terrain_rental' && (
                     <div className="flex items-center gap-2 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
                       <Shield className="h-4 w-4 text-amber-500 flex-shrink-0" />
                       <span className="text-xs text-amber-500">
-                        <strong>RAS 15%</strong> sera automatiquement appliquée aux dépenses liées à ce contrat
+                        <strong>RAS 15%</strong> {c.rasNotice}
                       </span>
                     </div>
                   )}
 
-                  {/* Title */}
                   <div className="space-y-2">
-                    <Label>Titre du Contrat *</Label>
-                    <Input 
-                      placeholder="Ex: Location Camion Benne 20T" 
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
+                    <Label>{c.contractTitle} *</Label>
+                    <Input placeholder="Ex: Location Camion Benne 20T" value={title} onChange={(e) => setTitle(e.target.value)} />
                   </div>
 
-                  {/* Provider */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Prestataire *</Label>
-                      <Input 
-                        placeholder="Nom du prestataire" 
-                        value={providerName}
-                        onChange={(e) => setProviderName(e.target.value)}
-                      />
+                      <Label>{c.provider} *</Label>
+                      <Input placeholder={c.providerName} value={providerName} onChange={(e) => setProviderName(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Lier à Fournisseur</Label>
+                      <Label>{c.linkSupplier}</Label>
                       <Select value={selectedFournisseur} onValueChange={setSelectedFournisseur}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner..." />
-                        </SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder={c.selectSupplier} /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">Aucun</SelectItem>
+                          <SelectItem value="none">{c.none}</SelectItem>
                           {suppliers.map((s) => (
-                            <SelectItem key={s.id} value={s.id}>
-                              {s.nom_fournisseur}
-                            </SelectItem>
+                            <SelectItem key={s.id} value={s.id}>{s.nom_fournisseur}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
-                  {/* Monthly Amount & Equipment */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Montant Mensuel (MAD) *</Label>
-                      <Input 
-                        type="number"
-                        placeholder="0.00" 
-                        value={monthlyAmount}
-                        onChange={(e) => setMonthlyAmount(e.target.value)}
-                      />
+                      <Label>{c.monthlyAmount} *</Label>
+                      <Input type="number" placeholder="0.00" value={monthlyAmount} onChange={(e) => setMonthlyAmount(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Nombre d'Équipements</Label>
-                      <Input 
-                        type="number"
-                        placeholder="1" 
-                        value={equipmentCount}
-                        onChange={(e) => setEquipmentCount(e.target.value)}
-                        min="1"
-                      />
+                      <Label>{c.equipmentCount}</Label>
+                      <Input type="number" placeholder="1" value={equipmentCount} onChange={(e) => setEquipmentCount(e.target.value)} min="1" />
                     </div>
                   </div>
 
-                  {/* Equipment Description */}
                   <div className="space-y-2">
-                    <Label>Description Équipement</Label>
-                    <Input 
-                      placeholder="Ex: Camion 1 (MAT-123), Camion 2 (MAT-456)" 
-                      value={equipmentDescription}
-                      onChange={(e) => setEquipmentDescription(e.target.value)}
-                    />
+                    <Label>{c.equipmentDesc}</Label>
+                    <Input placeholder={c.equipmentPlaceholder} value={equipmentDescription} onChange={(e) => setEquipmentDescription(e.target.value)} />
                   </div>
 
-                  {/* Dates */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Date Début *</Label>
-                      <Input 
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                      />
+                      <Label>{c.startDate} *</Label>
+                      <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <Label>Date Fin</Label>
-                      <Input 
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                      />
+                      <Label>{c.endDate}</Label>
+                      <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                     </div>
                   </div>
 
-                  {/* Contact Info */}
                   <Separator />
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Personne de Contact
-                    </Label>
-                    <Input 
-                      placeholder="Nom du contact" 
-                      value={contactPerson}
-                      onChange={(e) => setContactPerson(e.target.value)}
-                    />
+                    <Label className="flex items-center gap-2"><User className="h-4 w-4" />{c.contactPerson}</Label>
+                    <Input placeholder={c.contactName} value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
-                        Téléphone
-                      </Label>
-                      <Input 
-                        placeholder="+212 6XX XXX XXX" 
-                        value={contactPhone}
-                        onChange={(e) => setContactPhone(e.target.value)}
-                      />
+                      <Label className="flex items-center gap-2"><Phone className="h-4 w-4" />{c.phone}</Label>
+                      <Input placeholder="+212 6XX XXX XXX" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} />
                     </div>
                     <div className="space-y-2">
-                      <Label className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
-                        Email
-                      </Label>
-                      <Input 
-                        type="email"
-                        placeholder="contact@example.com" 
-                        value={contactEmail}
-                        onChange={(e) => setContactEmail(e.target.value)}
-                      />
+                      <Label className="flex items-center gap-2"><Mail className="h-4 w-4" />{c.email}</Label>
+                      <Input type="email" placeholder="contact@example.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} />
                     </div>
                   </div>
 
-                  {/* PDF Upload */}
                   <Separator />
                   <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" />
-                      Document PDF *
-                    </Label>
+                    <Label className="flex items-center gap-2"><Upload className="h-4 w-4" />{c.pdfDocument} *</Label>
                     
                     {pdfUrl ? (
                       <div className="flex items-center gap-2 p-3 bg-success/10 border border-success/30 rounded-lg">
                         <FileText className="h-5 w-5 text-success" />
                         <span className="text-sm flex-1 truncate">{pdfFileName}</span>
                         <Check className="h-4 w-4 text-success" />
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => { setPdfUrl(''); setPdfFileName(''); }}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => { setPdfUrl(''); setPdfFileName(''); }}>
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
@@ -501,50 +411,28 @@ export default function Contracts() {
                         ) : (
                           <>
                             <Upload className="h-8 w-8 text-muted-foreground" />
-                            <p className="text-sm text-muted-foreground">
-                              Cliquez pour télécharger le PDF
-                            </p>
+                            <p className="text-sm text-muted-foreground">{c.uploadPdf}</p>
                           </>
                         )}
                       </div>
                     )}
                     
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="application/pdf"
-                      className="hidden"
-                      onChange={handleFileUpload}
-                    />
+                    <input ref={fileInputRef} type="file" accept="application/pdf" className="hidden" onChange={handleFileUpload} />
                   </div>
 
-                  {/* Description */}
                   <div className="space-y-2">
-                    <Label>Notes (optionnel)</Label>
-                    <Textarea 
-                      placeholder="Notes additionnelles" 
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      rows={2}
-                    />
+                    <Label>{c.notes}</Label>
+                    <Textarea placeholder={c.notesPlaceholder} value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                    Annuler
-                  </Button>
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={submitting || !pdfUrl}
-                  >
+                  <Button variant="outline" onClick={() => setDialogOpen(false)}>{c.cancel}</Button>
+                  <Button onClick={handleSubmit} disabled={submitting || !pdfUrl}>
                     {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Enregistrement...
-                      </>
+                      <><Loader2 className="h-4 w-4 mr-2 animate-spin" />{c.saving}</>
                     ) : (
-                      'Enregistrer'
+                      c.save
                     )}
                   </Button>
                 </div>
@@ -560,10 +448,10 @@ export default function Contracts() {
             <AlertDescription className="flex items-center justify-between">
               <div>
                 <span className="font-semibold text-warning">
-                  ⚠️ {stats.missingContracts} contrats manquants détectés
+                  ⚠️ {stats.missingContracts} {c.missingContracts}
                 </span>
                 <span className="text-muted-foreground ml-2">
-                  Risque fiscal: {stats.potentialNonDeductible.toLocaleString('fr-FR')} DH/an
+                  {c.taxRisk}: {stats.potentialNonDeductible.toLocaleString('fr-FR')} DH/{lang === 'en' ? 'yr' : 'an'}
                 </span>
               </div>
               <Button
@@ -572,7 +460,7 @@ export default function Contracts() {
                 className="border-warning text-warning hover:bg-warning/10"
                 onClick={() => setDialogOpen(true)}
               >
-                Ajouter Contrats
+                {c.addContracts}
               </Button>
             </AlertDescription>
           </Alert>
@@ -589,7 +477,7 @@ export default function Contracts() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Taux de Conformité
+                {c.complianceRate}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -617,7 +505,7 @@ export default function Contracts() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Contrats Actifs
+                {c.activeContracts}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -627,7 +515,7 @@ export default function Contracts() {
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {stats.missingContracts > 0 && (
-                  <span className="text-warning">{stats.missingContracts} manquants</span>
+                  <span className="text-warning">{stats.missingContracts} {c.missing}</span>
                 )}
               </p>
             </CardContent>
@@ -637,7 +525,7 @@ export default function Contracts() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
-                Total Mensuel
+                {c.monthlyTotal}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -646,18 +534,16 @@ export default function Contracts() {
                 <span className="text-sm font-normal text-muted-foreground ml-1">DH</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {(stats.monthlyTotal * 12).toLocaleString('fr-FR')} DH/an
+                {(stats.monthlyTotal * 12).toLocaleString('fr-FR')} DH{c.perYear}
               </p>
             </CardContent>
           </Card>
 
-          <Card className={cn(
-            stats.expiringSoon > 0 && "border-warning/50"
-          )}>
+          <Card className={cn(stats.expiringSoon > 0 && "border-warning/50")}>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
                 <Clock className="h-4 w-4" />
-                Expirations
+                {c.expirations}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -668,11 +554,11 @@ export default function Contracts() {
                 )}>
                   {stats.expiringSoon}
                 </span>
-                <span className="text-sm text-muted-foreground">&lt; 30 jours</span>
+                <span className="text-sm text-muted-foreground">{c.lessThan30}</span>
               </div>
               {expirationAlerts.length > 0 && (
                 <p className="text-xs text-warning mt-1">
-                  Prochain: {expirationAlerts[0]?.providerName}
+                  {c.next}: {expirationAlerts[0]?.providerName}
                 </p>
               )}
             </CardContent>
@@ -704,10 +590,10 @@ export default function Contracts() {
                 <CardContent>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold">{activeCount}</span>
-                    <span className="text-sm text-muted-foreground">contrat(s) actif(s)</span>
+                    <span className="text-sm text-muted-foreground">{c.activeCount}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Total mensuel: <span className="font-mono font-semibold text-foreground">
+                    {c.monthlyTotalLabel}: <span className="font-mono font-semibold text-foreground">
                       {totalMonthly.toLocaleString()} MAD
                     </span>
                   </p>
@@ -722,7 +608,7 @@ export default function Contracts() {
         {/* Contracts Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Liste des Contrats</CardTitle>
+            <CardTitle>{c.contractList}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -732,20 +618,20 @@ export default function Contracts() {
             ) : contracts.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>Aucun contrat enregistré</p>
+                <p>{c.noContracts}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Titre</TableHead>
-                    <TableHead>Prestataire</TableHead>
-                    <TableHead>Montant/mois</TableHead>
-                    <TableHead>Période</TableHead>
-                    <TableHead>RAS</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{c.type}</TableHead>
+                    <TableHead>{c.titleCol}</TableHead>
+                    <TableHead>{c.providerCol}</TableHead>
+                    <TableHead>{c.amountPerMonth}</TableHead>
+                    <TableHead>{c.period}</TableHead>
+                    <TableHead>{c.ras}</TableHead>
+                    <TableHead>{c.status}</TableHead>
+                    <TableHead>{c.actions}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -772,11 +658,11 @@ export default function Contracts() {
                         <TableCell className="text-sm">
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3 text-muted-foreground" />
-                            {format(new Date(contract.start_date), 'dd/MM/yy', { locale: fr })}
+                            {format(new Date(contract.start_date), 'dd/MM/yy', { locale: dateLocale || undefined })}
                             {contract.end_date && (
                               <>
                                 {' → '}
-                                {format(new Date(contract.end_date), 'dd/MM/yy', { locale: fr })}
+                                {format(new Date(contract.end_date), 'dd/MM/yy', { locale: dateLocale || undefined })}
                               </>
                             )}
                           </div>
@@ -784,7 +670,7 @@ export default function Contracts() {
                         <TableCell>
                           {contract.ras_applicable ? (
                             <Badge variant="outline" className="bg-amber-500/10 text-amber-500 border-amber-500/30">
-                              {contract.ras_rate}% RAS
+                              {contract.ras_rate}% {c.ras}
                             </Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>
@@ -795,7 +681,7 @@ export default function Contracts() {
                             variant={contract.is_active ? 'default' : 'secondary'}
                             className={contract.is_active ? 'bg-success/10 text-success border-success/30' : ''}
                           >
-                            {contract.is_active ? 'Actif' : 'Inactif'}
+                            {contract.is_active ? c.active : c.inactive}
                           </Badge>
                         </TableCell>
                         <TableCell>

@@ -44,7 +44,7 @@ import {
   Package
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 const CATEGORY_CONFIG: Record<string, { icon: React.ReactNode; color: string }> = {
@@ -56,7 +56,8 @@ const CATEGORY_CONFIG: Record<string, { icon: React.ReactNode; color: string }> 
 
 export default function Depenses() {
   const { isCeo } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { depenses, stats, loading, refresh, deleteDepense } = useDepenses();
   
   const [selectedDepense, setSelectedDepense] = useState<Depense | null>(null);
@@ -188,7 +189,7 @@ export default function Depenses() {
                 {depenses.map((dep) => (
                   <TableRow key={dep.id}>
                     <TableCell>
-                      {format(new Date(dep.date_depense), 'dd/MM/yyyy', { locale: fr })}
+                      {format(new Date(dep.date_depense), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                     </TableCell>
                     <TableCell>{getCategoryBadge(dep.categorie)}</TableCell>
                     <TableCell className="max-w-[200px] truncate">
@@ -239,28 +240,28 @@ export default function Depenses() {
             </DialogHeader>
             {selectedDepense && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Date</p>
-                    <p className="font-medium">
-                      {format(new Date(selectedDepense.date_depense), 'dd MMMM yyyy', { locale: fr })}
-                    </p>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">{t.pages.depenses.date}</p>
+                      <p className="font-medium">
+                        {format(new Date(selectedDepense.date_depense), 'dd MMMM yyyy', { locale: dateLocale || undefined })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t.pages.depenses.category}</p>
+                      <div className="mt-1">{getCategoryBadge(selectedDepense.categorie)}</div>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t.pages.depenses.amount}</p>
+                      <p className="font-bold font-mono text-lg">
+                        {selectedDepense.montant.toLocaleString('fr-FR')} DH
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t.pages.depenses.description}</p>
+                      <p className="font-medium">{selectedDepense.description || '—'}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-muted-foreground">Catégorie</p>
-                    <div className="mt-1">{getCategoryBadge(selectedDepense.categorie)}</div>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Montant</p>
-                    <p className="font-bold font-mono text-lg">
-                      {selectedDepense.montant.toLocaleString('fr-FR')} DH
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Description</p>
-                    <p className="font-medium">{selectedDepense.description || '—'}</p>
-                  </div>
-                </div>
                 
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">{t.pages.depenses.receiptPhoto}</p>
