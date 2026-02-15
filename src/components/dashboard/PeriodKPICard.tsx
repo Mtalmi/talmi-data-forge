@@ -1,5 +1,6 @@
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 interface PeriodKPICardProps {
   title: string;
@@ -13,6 +14,31 @@ interface PeriodKPICardProps {
   style?: React.CSSProperties;
 }
 
+/**
+ * Parse a display value like "1284 m³" or "892.4K DH" into { num, prefix, suffix, decimals }
+ */
+function parseDisplayValue(value: string | number) {
+  if (typeof value === 'number') {
+    return { num: value, prefix: '', suffix: '', decimals: value % 1 !== 0 ? 1 : 0 };
+  }
+  const str = String(value);
+  if (str === '—' || str === '0') return null;
+  
+  const match = str.match(/^([^\d-]*)(-?[\d,.]+)(.*)$/);
+  if (!match) return null;
+  
+  const num = parseFloat(match[2].replace(',', '.'));
+  if (isNaN(num)) return null;
+  
+  const decPart = match[2].split(/[.,]/)[1];
+  return {
+    prefix: match[1],
+    num,
+    suffix: match[3],
+    decimals: decPart ? decPart.length : 0,
+  };
+}
+
 export function PeriodKPICard({
   title,
   value,
@@ -24,6 +50,17 @@ export function PeriodKPICard({
   className,
   style,
 }: PeriodKPICardProps) {
+  const parsed = parseDisplayValue(value);
+  const animatedNum = useAnimatedCounter(
+    parsed?.num ?? 0,
+    1200,
+    parsed?.decimals ?? 0
+  );
+
+  const displayValue = parsed
+    ? `${parsed.prefix}${animatedNum}${parsed.suffix}`
+    : value;
+
   const getTrendIcon = () => {
     if (trend === undefined || trend === 0) return <Minus className="h-3 w-3" />;
     return trend > 0 
@@ -33,11 +70,9 @@ export function PeriodKPICard({
 
   const getTrendColor = () => {
     if (trend === undefined) return 'text-muted-foreground';
-    // For CUR, lower is better (negative trend is good)
     if (title.includes('CUR')) {
       return trend <= 0 ? 'text-success' : 'text-destructive';
     }
-    // For others, higher is better
     return trend >= 0 ? 'text-success' : 'text-destructive';
   };
 
@@ -49,7 +84,8 @@ export function PeriodKPICard({
   return (
     <div 
       className={cn(
-        'kpi-card p-3 sm:p-4 rounded-xl border transition-all duration-300 hover-lift',
+        'kpi-card p-3 sm:p-4 rounded-xl border transition-all duration-300',
+        'hover:scale-[1.02] hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)]',
         variant === 'positive' && 'positive bg-success/5 border-success/20',
         variant === 'negative' && 'negative bg-destructive/5 border-destructive/20',
         variant === 'warning' && 'warning bg-warning/5 border-warning/20',
@@ -67,14 +103,14 @@ export function PeriodKPICard({
             variant === 'negative' && 'text-destructive',
             variant === 'warning' && 'text-warning'
           )}>
-            {value}
+            {displayValue}
           </p>
           {subtitle && (
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>
           )}
         </div>
         <div className={cn(
-          'p-1.5 sm:p-2 rounded-md flex-shrink-0',
+          'p-1.5 sm:p-2 rounded-md flex-shrink-0 transition-transform duration-300 group-hover:scale-110',
           variant === 'positive' && 'bg-success/10',
           variant === 'negative' && 'bg-destructive/10',
           variant === 'warning' && 'bg-warning/10',

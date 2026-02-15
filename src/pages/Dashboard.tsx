@@ -29,6 +29,7 @@ import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
 import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
 import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
 import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
+import { HourlyProductionChart } from '@/components/dashboard/HourlyProductionChart';
 import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerWidget';
 import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
 import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
@@ -448,6 +449,11 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* Hourly Production Chart */}
+            <div className="card-industrial p-4 sm:p-6 animate-fade-in">
+              <HourlyProductionChart />
+            </div>
+
             {/* Production Summary + Recent Deliveries */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentDeliveries />
@@ -474,6 +480,14 @@ export default function Dashboard() {
                       {productionStats.curMoyen}
                     </span>
                   </div>
+                  {productionStats.formulesActives === 0 && (
+                    <button
+                      onClick={() => navigate('/formules')}
+                      className="w-full mt-2 py-2.5 rounded-lg border border-dashed border-primary/40 text-sm text-primary hover:bg-primary/5 transition-colors"
+                    >
+                      + Ajouter un produit
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
