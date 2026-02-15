@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr, ar, enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
@@ -58,7 +58,7 @@ const levelLabels = {
 export function TreasuryWidget() {
   const navigate = useNavigate();
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
+  const dateFnsLocale = getDateLocale(lang);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [pendingExpenses, setPendingExpenses] = useState<PendingExpense[]>([]);

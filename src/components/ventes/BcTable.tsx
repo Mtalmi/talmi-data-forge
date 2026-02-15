@@ -32,7 +32,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { BonCommande } from '@/hooks/useSalesWorkflow';
 import { BcPdfGenerator } from '@/components/documents/BcPdfGenerator';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
@@ -261,7 +261,7 @@ export function BcTable({
         ) : isTomorrow(date) ? (
           <span className="text-warning">Demain</span>
         ) : (
-          format(date, 'dd/MM/yyyy', { locale: fr })
+          format(date, 'dd/MM/yyyy')
         )}
       </span>
     );

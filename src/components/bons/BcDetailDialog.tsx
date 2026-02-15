@@ -41,7 +41,7 @@ import {
   Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
@@ -339,7 +339,7 @@ export function BcDetailDialog({
                         <TableRow key={bl.bl_id}>
                           <TableCell className="font-mono font-medium">{bl.bl_id}</TableCell>
                           <TableCell>
-                            {format(new Date(bl.date_livraison), 'dd/MM/yy', { locale: fr })}
+                            {format(new Date(bl.date_livraison), 'dd/MM/yy')}
                           </TableCell>
                           <TableCell className="text-right font-mono">{bl.volume_m3} m³</TableCell>
                           <TableCell>
