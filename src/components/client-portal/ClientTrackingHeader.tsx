@@ -1,6 +1,7 @@
 import { Package, MapPin, Calendar, Clock } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ClientTrackingHeaderProps {
   bcId: string;
@@ -23,8 +24,10 @@ export function ClientTrackingHeader({
   address,
   zone,
 }: ClientTrackingHeaderProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const formattedDate = deliveryDate 
-    ? format(new Date(deliveryDate), 'EEEE d MMMM yyyy', { locale: fr })
+    ? format(new Date(deliveryDate), 'EEEE d MMMM yyyy', { locale: dateLocale })
     : null;
 
   return (

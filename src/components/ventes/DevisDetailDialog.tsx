@@ -46,7 +46,8 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import DevisPdfGenerator from '@/components/quotes/DevisPdfGenerator';
 import { DevisSendDialog } from '@/components/quotes/DevisSendDialog';
@@ -96,6 +97,8 @@ export function DevisDetailDialog({
   onConvert,
 }: DevisDetailDialogProps) {
   const { canApproveDevis, isDirecteurOperations, isCentraliste, isCeo, isSuperviseur, user, loading: authLoading } = useAuth();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [validating, setValidating] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
@@ -300,7 +303,7 @@ export function DevisDetailDialog({
             Devis {devis.devis_id}
           </DialogTitle>
           <DialogDescription>
-            Créé le {format(new Date(devis.created_at), 'dd MMMM yyyy', { locale: fr })}
+            Créé le {format(new Date(devis.created_at), 'dd MMMM yyyy', { locale: dateLocale })}
           </DialogDescription>
         </DialogHeader>
 
@@ -359,7 +362,7 @@ export function DevisDetailDialog({
                 {(devis as any).validated_by_name && (
                   <span className="block text-xs mt-1 opacity-80">
                     Validé par {(devis as any).validated_by_name} 
-                    {(devis as any).validated_at && ` le ${format(new Date((devis as any).validated_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}`}
+                    {(devis as any).validated_at && ` le ${format(new Date((devis as any).validated_at), 'dd/MM/yyyy à HH:mm', { locale: dateLocale })}`}
                   </span>
                 )}
               </AlertDescription>
@@ -518,7 +521,7 @@ export function DevisDetailDialog({
                             {entry.user_name || 'Utilisateur inconnu'}
                           </span>
                           <span className="text-xs text-muted-foreground font-mono">
-                            {format(new Date(entry.created_at), 'dd/MM/yyyy à HH:mm:ss', { locale: fr })}
+                            {format(new Date(entry.created_at), 'dd/MM/yyyy à HH:mm:ss', { locale: dateLocale })}
                           </span>
                         </div>
                         {entry.changes?.reason && (

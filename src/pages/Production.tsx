@@ -72,7 +72,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, isWithinInterval, startOfDay, endOfDay, parseISO, isSameDay } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { cn } from '@/lib/utils';
 import { buildPlanningUrl } from '@/lib/workflowStatus';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
