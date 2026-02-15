@@ -9,6 +9,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { PreviewRoleProvider } from "@/hooks/usePreviewRole";
 import { SecurityProvider } from "@/components/security/SecurityProvider";
 import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
+import { I18nProvider } from "@/i18n/I18nContext";
 
 // Critical path — loaded eagerly
 import Index from "./pages/Index";
@@ -71,7 +72,8 @@ function RouteLoader() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <I18nProvider>
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
         <Toaster />
@@ -139,6 +141,7 @@ const App = () => (
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
+  </I18nProvider>
 );
 
 export default App;
