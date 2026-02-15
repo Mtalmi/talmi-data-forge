@@ -59,7 +59,7 @@ function AnimatedStat({ value, label, suffix = '' }: { value: number; label: str
 export default function Auth() {
   const navigate = useNavigate();
   const { user, signIn, signUp, loading: authLoading } = useAuth();
-  const { enterDemoMode } = useDemoMode();
+  const { isDemoMode, enterDemoMode, exitDemoMode } = useDemoMode();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -73,8 +73,15 @@ export default function Auth() {
   const [signupFullName, setSignupFullName] = useState('');
 
   useEffect(() => {
-    if (user) navigate('/');
-  }, [user, navigate]);
+    if (user && !isDemoMode) navigate('/');
+  }, [user, navigate, isDemoMode]);
+
+  // If user navigates to /auth while in demo mode, exit demo
+  useEffect(() => {
+    if (isDemoMode) {
+      exitDemoMode();
+    }
+  }, []);
 
   // Mouse tracking for ambient glow
   useEffect(() => {
