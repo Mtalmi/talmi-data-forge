@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -44,7 +45,6 @@ import {
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 interface BonLivraison {
@@ -111,7 +111,8 @@ const WORKFLOW_STEPS_META = [
 
 export default function Bons() {
   const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { transitionWorkflow, canTransitionTo } = useBonWorkflow();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const [searchParams] = useSearchParams();
@@ -428,7 +429,7 @@ export default function Bons() {
           isTouchDevice ? "h-14 grid-cols-4" : "h-10 grid-cols-7"
         )}>
           <TabsTrigger value="all" className={cn(isTouchDevice && "h-12 text-xs")}>
-            Tous
+            {t.pages.bons.all}
             <Badge variant="secondary" className="ml-1 text-[10px]">{bons.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="planification" className={cn(isTouchDevice && "h-12 text-xs")}>
@@ -442,9 +443,9 @@ export default function Bons() {
           </TabsTrigger>
           {!isTouchDevice && (
             <>
-              <TabsTrigger value="production">Production</TabsTrigger>
-              <TabsTrigger value="facture">Facturé</TabsTrigger>
-              <TabsTrigger value="annule">Annulé</TabsTrigger>
+               <TabsTrigger value="production">{t.pages.bons.stepProduction}</TabsTrigger>
+               <TabsTrigger value="facture">{t.pages.bons.stepInvoiced}</TabsTrigger>
+               <TabsTrigger value="annule">{t.pages.bons.stepCancelled}</TabsTrigger>
             </>
           )}
         </TabsList>
@@ -794,7 +795,7 @@ export default function Bons() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      {format(new Date(b.date_livraison), 'dd/MM/yyyy', { locale: fr })}
+                      {format(new Date(b.date_livraison), 'dd/MM/yyyy', { locale: dateLocale })}
                     </TableCell>
                     <TableCell>{b.client_id}</TableCell>
                     <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
