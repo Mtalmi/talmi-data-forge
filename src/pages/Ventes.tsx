@@ -490,31 +490,6 @@ export default function Ventes() {
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
           </div>
 
-          {/* Workflow Stepper - Sticky */}
-          <div className="sticky top-14 sm:top-16 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6">
-            <Card className="p-4 shadow-lg border-b-2 border-primary/10 backdrop-blur-sm bg-card/95">
-              <WorkflowStepper 
-                currentStage={activeTab === 'factures' ? 'facture' : activeTab === 'calendar' ? undefined : activeTab as WorkflowStage}
-                onStageClick={(stage) => {
-                  if (stage === 'bl') {
-                    navigate('/planning');
-                  } else if (stage === 'facture') {
-                    setActiveTab('factures');
-                    // Scroll to tabs section after a brief delay
-                    setTimeout(() => {
-                      document.getElementById('ventes-tabs-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
-                  } else {
-                    setActiveTab(stage);
-                    // Scroll to tabs section after a brief delay
-                    setTimeout(() => {
-                      document.getElementById('ventes-tabs-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
-                  }
-                }}
-              />
-            </Card>
-          </div>
 
           {/* Flux Commercial Widget */}
           <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
