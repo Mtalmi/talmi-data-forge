@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { CalendarIcon, Plus, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,11 +16,11 @@ import {
   CreateAssetInput, 
   AssetCategory, 
   DepreciationMethod,
-  CATEGORY_LABELS,
   CATEGORY_USEFUL_LIFE,
-  DEPRECIATION_METHOD_LABELS 
 } from '@/hooks/useFixedAssets';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface CreateAssetDialogProps {
   open: boolean;
@@ -35,9 +34,16 @@ interface Supplier {
 
 export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps) {
   const { createAsset, checkDuplicate } = useFixedAssets();
+  const { t, lang } = useI18n();
+  const fa = t.fixedAssets;
+  const cr = fa.create;
+  const dateLocale = getDateLocale(lang);
   const [loading, setLoading] = useState(false);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [duplicateWarning, setDuplicateWarning] = useState<string | null>(null);
+
+  const categoryLabels = fa.categories as Record<AssetCategory, string>;
+  const deprMethodLabels = fa.depreciationMethods as Record<DepreciationMethod, string>;
 
   const [formData, setFormData] = useState<Partial<CreateAssetInput>>({
     category: 'equipements',
@@ -63,7 +69,6 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
   }, [open]);
 
   useEffect(() => {
-    // Update useful life when category changes
     if (formData.category) {
       setFormData(prev => ({
         ...prev,
@@ -86,8 +91,8 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
     if (result.isDuplicate) {
       setDuplicateWarning(
         result.matchType === 'serial_number'
-          ? `Attention: Un actif avec ce numéro de série existe déjà (${result.duplicateAssetId})`
-          : `Attention: Un actif similaire existe déjà (${result.duplicateAssetId})`
+          ? cr.duplicateWarning.replace('{id}', result.duplicateAssetId || '')
+          : cr.duplicateWarningSimilar.replace('{id}', result.duplicateAssetId || '')
       );
     } else {
       setDuplicateWarning(null);
@@ -106,9 +111,7 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.description || !formData.purchase_price || !formData.purchase_date) {
-      return;
-    }
+    if (!formData.description || !formData.purchase_price || !formData.purchase_date) return;
 
     setLoading(true);
     try {
@@ -133,17 +136,17 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
     }
   };
 
+  const calendarLocale = dateLocale || undefined;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            Nouvelle Immobilisation
+            {cr.title}
           </DialogTitle>
-          <DialogDescription>
-            Enregistrez un nouvel actif avec calcul automatique de l'amortissement
-          </DialogDescription>
+          <DialogDescription>{cr.subtitle}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -154,19 +157,17 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
             </Alert>
           )}
 
-          {/* Category & Description */}
+          {/* Category & Depreciation Method */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Catégorie *</Label>
+              <Label>{cr.category} *</Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as AssetCategory }))}
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
+                  {Object.entries(categoryLabels).map(([key, label]) => (
                     <SelectItem key={key} value={key}>{label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -174,16 +175,14 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
             </div>
 
             <div className="space-y-2">
-              <Label>Méthode d'Amortissement</Label>
+              <Label>{cr.depreciationMethod}</Label>
               <Select
                 value={formData.depreciation_method}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, depreciation_method: value as DepreciationMethod }))}
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {Object.entries(DEPRECIATION_METHOD_LABELS).map(([key, label]) => (
+                  {Object.entries(deprMethodLabels).map(([key, label]) => (
                     <SelectItem key={key} value={key}>{label}</SelectItem>
                   ))}
                 </SelectContent>
@@ -192,11 +191,11 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
           </div>
 
           <div className="space-y-2">
-            <Label>Description *</Label>
+            <Label>{cr.description} *</Label>
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Description détaillée de l'actif..."
+              placeholder={cr.descriptionPlaceholder}
               required
             />
           </div>
@@ -204,16 +203,15 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
           {/* Serial & Barcode */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Numéro de Série</Label>
+              <Label>{cr.serialNumber}</Label>
               <Input
                 value={formData.serial_number || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, serial_number: e.target.value }))}
                 placeholder="SN-123456"
               />
             </div>
-
             <div className="space-y-2">
-              <Label>Code-barres</Label>
+              <Label>{cr.barcode}</Label>
               <Input
                 value={formData.barcode || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, barcode: e.target.value }))}
@@ -225,43 +223,35 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
           {/* Purchase Details */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Date d'Acquisition *</Label>
+              <Label>{cr.purchaseDate} *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !formData.purchase_date && 'text-muted-foreground'
-                    )}
+                    className={cn('w-full justify-start text-left font-normal', !formData.purchase_date && 'text-muted-foreground')}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.purchase_date
-                      ? format(new Date(formData.purchase_date), 'P', { locale: fr })
-                      : 'Sélectionner'}
+                      ? format(new Date(formData.purchase_date), 'P', { locale: calendarLocale })
+                      : cr.select}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={formData.purchase_date ? new Date(formData.purchase_date) : undefined}
-                    onSelect={(date) => setFormData(prev => ({ 
-                      ...prev, 
-                      purchase_date: date ? format(date, 'yyyy-MM-dd') : '' 
-                    }))}
+                    onSelect={(date) => setFormData(prev => ({ ...prev, purchase_date: date ? format(date, 'yyyy-MM-dd') : '' }))}
                     initialFocus
-                    locale={fr}
+                    locale={calendarLocale}
                   />
                 </PopoverContent>
               </Popover>
             </div>
 
             <div className="space-y-2">
-              <Label>Prix d'Acquisition (DH) *</Label>
+              <Label>{cr.purchasePrice} *</Label>
               <Input
-                type="number"
-                min="0"
-                step="0.01"
+                type="number" min="0" step="0.01"
                 value={formData.purchase_price || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, purchase_price: parseFloat(e.target.value) || 0 }))}
                 required
@@ -269,14 +259,12 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
             </div>
 
             <div className="space-y-2">
-              <Label>Fournisseur</Label>
+              <Label>{cr.supplier}</Label>
               <Select
                 value={formData.supplier_id || ''}
                 onValueChange={(value) => setFormData(prev => ({ ...prev, supplier_id: value || undefined }))}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner" />
-                </SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={cr.select} /></SelectTrigger>
                 <SelectContent>
                   {suppliers.map((s) => (
                     <SelectItem key={s.id} value={s.id}>{s.nom_fournisseur}</SelectItem>
@@ -289,21 +277,20 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
           {/* Location & Responsible */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Emplacement *</Label>
+              <Label>{cr.location} *</Label>
               <Input
                 value={formData.location || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                placeholder="Centrale, Bureau, Entrepôt..."
+                placeholder={cr.locationPlaceholder}
                 required
               />
             </div>
-
             <div className="space-y-2">
-              <Label>Responsable</Label>
+              <Label>{cr.responsible}</Label>
               <Input
                 value={formData.responsible_person || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, responsible_person: e.target.value }))}
-                placeholder="Nom du responsable"
+                placeholder={cr.responsiblePlaceholder}
               />
             </div>
           </div>
@@ -311,72 +298,56 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
           {/* Depreciation Settings */}
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Durée de Vie (mois)</Label>
+              <Label>{cr.usefulLife}</Label>
               <Input
-                type="number"
-                min="1"
+                type="number" min="1"
                 value={formData.useful_life_months || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, useful_life_months: parseInt(e.target.value) || 0 }))}
               />
             </div>
-
             <div className="space-y-2">
-              <Label>Valeur Résiduelle (DH)</Label>
+              <Label>{cr.residualValue}</Label>
               <Input
-                type="number"
-                min="0"
-                step="0.01"
+                type="number" min="0" step="0.01"
                 value={formData.residual_value || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, residual_value: parseFloat(e.target.value) || 0 }))}
               />
             </div>
-
             <div className="space-y-2">
-              <Label>Amort. Mensuel (DH)</Label>
-              <Input
-                value={calculateMonthlyDepreciation()}
-                disabled
-                className="bg-muted font-mono"
-              />
+              <Label>{cr.monthlyDepr}</Label>
+              <Input value={calculateMonthlyDepreciation()} disabled className="bg-muted font-mono" />
             </div>
           </div>
 
           {/* Warranty */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Fin de Garantie</Label>
+              <Label>{cr.warrantyEnd}</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !formData.warranty_end_date && 'text-muted-foreground'
-                    )}
+                    className={cn('w-full justify-start text-left font-normal', !formData.warranty_end_date && 'text-muted-foreground')}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {formData.warranty_end_date
-                      ? format(new Date(formData.warranty_end_date), 'P', { locale: fr })
-                      : 'Sélectionner'}
+                      ? format(new Date(formData.warranty_end_date), 'P', { locale: calendarLocale })
+                      : cr.select}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={formData.warranty_end_date ? new Date(formData.warranty_end_date) : undefined}
-                    onSelect={(date) => setFormData(prev => ({ 
-                      ...prev, 
-                      warranty_end_date: date ? format(date, 'yyyy-MM-dd') : undefined 
-                    }))}
+                    onSelect={(date) => setFormData(prev => ({ ...prev, warranty_end_date: date ? format(date, 'yyyy-MM-dd') : undefined }))}
                     initialFocus
-                    locale={fr}
+                    locale={calendarLocale}
                   />
                 </PopoverContent>
               </Popover>
             </div>
-
             <div className="space-y-2">
-              <Label>N° Facture</Label>
+              <Label>{cr.invoiceNumber}</Label>
               <Input
                 value={formData.invoice_number || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, invoice_number: e.target.value }))}
@@ -387,10 +358,10 @@ export function CreateAssetDialog({ open, onOpenChange }: CreateAssetDialogProps
 
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {cr.cancel}
             </Button>
             <Button type="submit" disabled={loading || !!duplicateWarning}>
-              {loading ? 'Enregistrement...' : 'Créer l\'Immobilisation'}
+              {loading ? cr.saving : cr.submit}
             </Button>
           </div>
         </form>
