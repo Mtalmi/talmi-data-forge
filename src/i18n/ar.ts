@@ -1234,6 +1234,11 @@ const ar = {
       pricePerM3: 'السعر/م³',
       designation: 'التسمية',
       cur: 'التكلفة الفعلية',
+      chartCA: 'رقم المعاملات',
+      chartMargin: 'الهامش',
+      chartMarginPct: 'الهامش %',
+      chartTarget25: 'الهدف 25%',
+      chartVolume: 'الحجم',
     },
     surveillance: {
       title: 'المراقبة بالذكاء الاصطناعي',
@@ -2113,6 +2118,126 @@ const ar = {
       notifications: 'الإشعارات',
       markAsRead: 'تحديد كمقروء',
       clearAll: 'مسح الكل',
+      total: 'المجموع',
+      unread: 'غير مقروءة',
+      critical: 'حرجة',
+      information: 'معلومات',
+      markAllRead: 'تحديد الكل كمقروء',
+      unreadTab: 'غير مقروءة',
+      allTab: 'الكل',
+      noUnread: 'لا توجد إشعارات غير مقروءة',
+      upToDate: 'أنت على اطلاع!',
+      noAlerts: 'لا توجد تنبيهات',
+      view: 'عرض',
+      read: 'مقروء',
+      ref: 'مرجع',
+      readAgo: 'قُرئ',
+      search: 'بحث...',
+      alertType: 'نوع التنبيه',
+      level: 'المستوى',
+      allLevels: 'جميع المستويات',
+      allTypes: 'جميع الأنواع',
+      reset: 'إعادة تعيين',
+      niveauCritical: 'حرج',
+      niveauWarning: 'تحذير',
+      niveauInfo: 'معلومة',
+      niveauSuccess: 'نجاح',
+      typeQuality: 'الجودة',
+      typeStock: 'المخزون',
+      typeMargin: 'الهامش',
+      typeCredit: 'الائتمان',
+      typePayment: 'الدفع',
+      typeReminder: 'تذكير',
+      typeProduction: 'الإنتاج',
+      typeLogistics: 'اللوجستيك',
+      typePrice: 'السعر',
+    },
+    warRoom: {
+      title: 'غرفة الحرب',
+      subtitle: 'مركز القيادة الآمن',
+      period: 'الفترة:',
+      days7: '7 أيام',
+      days30: '30 يوم',
+      days90: '90 يوم',
+      from: 'من...',
+      to: 'إلى...',
+      results: 'نتائج',
+      refresh: 'تحديث',
+      exportPdf: 'تصدير PDF',
+      compliance: 'الامتثال',
+      testDaily: 'اختبار يومي',
+      testWeekly: 'اختبار أسبوعي',
+      rollbacks: 'التراجعات',
+      rollbacksSub: 'عروض أسعار مفتوحة',
+      controls: 'الرقابة',
+      controlsSub: 'في انتظار الصور',
+      blocked: 'محظور',
+      blockedSub: 'وصول مرفوض',
+      auditLogs: 'سجلات التدقيق',
+      auditLogsSub: 'إجمالي المدخلات',
+      inPeriod: 'في الفترة',
+      forensicFeed: 'التدفق الجنائي',
+      searchPlaceholder: 'بحث...',
+      filterAll: 'الكل',
+      filterRollbacks: 'التراجعات',
+      filterBlocked: 'محظور',
+      filterSuccess: 'نجاح',
+      feedDescription: 'الإجراءات الحساسة في الوقت الفعلي',
+      entries: 'مدخلات',
+      filter: 'تصفية',
+      actionRollback: 'تراجع عرض الأسعار',
+      actionApproval: 'موافقة',
+      actionStockFinalized: 'تم إنهاء المخزون',
+      actionPriceChange: 'تعديل السعر',
+      actionAccessDenied: 'انتهاك أمني',
+      actionInsert: 'إنشاء',
+      actionUpdate: 'تعديل',
+      actionDelete: 'حذف',
+      actionDefault: 'إجراء',
+      roleCeo: 'المدير العام',
+      roleSuperviseur: 'المشرف',
+      roleAgentAdmin: 'وكيل إداري',
+      roleDirOps: 'مدير العمليات',
+      roleRespTech: 'مسؤول تقني',
+      roleCentraliste: 'مشغل المحطة',
+      roleCommercial: 'تجاري',
+      roleAccounting: 'المحاسبة',
+      roleAuditeur: 'مدقق',
+      roleOperator: 'مشغل',
+      targetDevis: 'عرض سعر',
+      targetBC: 'أمر شراء',
+      targetBL: 'إذن تسليم',
+      targetReception: 'استلام',
+      targetClient: 'عميل',
+      targetInvoice: 'فاتورة',
+      targetSilo: 'صومعة',
+      displayTarget: 'عرض',
+      table: 'جدول',
+      clearSkies: 'أجواء صافية ☀️',
+      clearSkiesDesc: 'لا توجد تنبيهات أمنية في آخر 24 ساعة. كل شيء تحت السيطرة.',
+      noName: 'بدون اسم',
+      unknownEmail: 'بريد@مجهول',
+      unknownUser: 'مستخدم مجهول',
+      team: 'الفريق',
+      activeUsers: 'مستخدمين نشطين',
+      noUsers: 'لا يوجد مستخدمين',
+      footerDesktop: 'بيانات مشفرة • تدقيق غير قابل للتغيير • وصول مسجل',
+      footerMobile: 'مؤمن',
+      rollbackDetected: '🚨 تم اكتشاف تراجع',
+      unlocked: 'فتح',
+      popupBlocked: 'تم حظر النافذة المنبثقة. اسمح بالنوافذ المنبثقة لإنشاء ملف PDF.',
+      forensicReady: 'التقرير الجنائي جاهز',
+      forensicReadyDesc: 'استخدم "حفظ كـ PDF" في مربع الحوار.',
+      pdfError: 'خطأ أثناء إنشاء التقرير',
+      complianceGenerated: 'تم إنشاء تقرير الامتثال',
+      complianceError: 'خطأ أثناء الإنشاء',
+      digestSent: 'تم إرسال الملخص بنجاح',
+      riskScore: 'درجة المخاطر',
+      digestError: 'خطأ أثناء إرسال الملخص',
+      dailyDigestSent: 'تم إرسال الملخص اليومي',
+      dailyDigestError: 'خطأ أثناء الإرسال',
+      status: 'الحالة',
+      events: 'أحداث',
     },
     approbations: {
       title: 'موافقات المدير',
