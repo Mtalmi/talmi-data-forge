@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
 import { useCameraSurveillance, CameraEvent } from '@/hooks/useCameraSurveillance';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +48,7 @@ const SEVERITY_CONFIG: Record<string, { color: string; bg: string }> = {
 
 export default function Surveillance() {
   const { isCeo } = useAuth();
+  const { t } = useI18n();
   const { cameras, events, stats, loading, acknowledgeEvent, addCamera } = useCameraSurveillance();
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -83,24 +85,24 @@ export default function Surveillance() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Video className="h-8 w-8 text-primary" />
-              Surveillance IA
+              {t.pages.surveillance.title}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Monitoring caméras intelligentes en temps réel
+              {t.pages.surveillance.subtitle}
             </p>
           </div>
-          {isCeo && <AddCameraDialog onAdd={addCamera} />}
+          {isCeo && <AddCameraDialog onAdd={addCamera} t={t} />}
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          <StatCard label="Caméras" value={stats.totalCameras} icon={Camera} />
-          <StatCard label="Actives" value={stats.activeCameras} icon={Wifi} accent="text-green-500" />
-          <StatCard label="Aujourd'hui" value={stats.todayEvents} icon={Eye} />
-          <StatCard label="Critiques" value={stats.criticalEvents} icon={AlertTriangle} accent="text-red-500" />
-          <StatCard label="Alertes" value={stats.warningEvents} icon={CircleAlert} accent="text-amber-500" />
-          <StatCard label="Plaques" value={stats.anprEvents} icon={Car} accent="text-blue-500" />
-          <StatCard label="Total" value={stats.totalEvents} icon={Video} />
+          <StatCard label={t.pages.surveillance.cameras} value={stats.totalCameras} icon={Camera} />
+          <StatCard label={t.pages.surveillance.active} value={stats.activeCameras} icon={Wifi} accent="text-green-500" />
+          <StatCard label={t.pages.surveillance.today} value={stats.todayEvents} icon={Eye} />
+          <StatCard label={t.pages.surveillance.critical} value={stats.criticalEvents} icon={AlertTriangle} accent="text-red-500" />
+          <StatCard label={t.pages.surveillance.alerts} value={stats.warningEvents} icon={CircleAlert} accent="text-amber-500" />
+          <StatCard label={t.pages.surveillance.plates} value={stats.anprEvents} icon={Car} accent="text-blue-500" />
+          <StatCard label={t.pages.surveillance.total} value={stats.totalEvents} icon={Video} />
         </div>
 
         {/* Camera Grid */}
@@ -109,7 +111,7 @@ export default function Surveillance() {
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Camera className="h-5 w-5" />
-                Caméras enregistrées
+                {t.pages.surveillance.registeredCameras}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -151,7 +153,7 @@ export default function Surveillance() {
               <div className="relative flex-1 min-w-[200px] max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher (plaque, description...)"
+                  placeholder={t.pages.surveillance.searchPlaceholder}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -162,7 +164,7 @@ export default function Surveillance() {
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous types</SelectItem>
+                  <SelectItem value="all">{t.pages.surveillance.allTypes}</SelectItem>
                   {Object.entries(EVENT_TYPE_CONFIG).map(([key, cfg]) => (
                     <SelectItem key={key} value={key}>{cfg.label}</SelectItem>
                   ))}
@@ -173,7 +175,7 @@ export default function Surveillance() {
                   <SelectValue placeholder="Zone" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes zones</SelectItem>
+                  <SelectItem value="all">{t.pages.surveillance.allZones}</SelectItem>
                   {Object.entries(ZONE_CONFIG).map(([key, cfg]) => (
                     <SelectItem key={key} value={key}>{cfg.label}</SelectItem>
                   ))}
@@ -184,10 +186,10 @@ export default function Surveillance() {
                   <SelectValue placeholder="Sévérité" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes</SelectItem>
-                  <SelectItem value="critical">Critique</SelectItem>
-                  <SelectItem value="warning">Alerte</SelectItem>
-                  <SelectItem value="info">Info</SelectItem>
+                  <SelectItem value="all">{t.pages.surveillance.allSeverities}</SelectItem>
+                  <SelectItem value="critical">{t.pages.surveillance.severityCritical}</SelectItem>
+                  <SelectItem value="warning">{t.pages.surveillance.severityWarning}</SelectItem>
+                  <SelectItem value="info">{t.pages.surveillance.severityInfo}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -199,21 +201,21 @@ export default function Surveillance() {
           <TabsList>
             <TabsTrigger value="live" className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              Flux en direct
+              {t.pages.surveillance.liveFeed}
               {stats.criticalEvents > 0 && (
                 <Badge variant="destructive">{stats.criticalEvents}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="all">Historique ({filteredEvents.length})</TabsTrigger>
+            <TabsTrigger value="all">{t.pages.surveillance.history} ({filteredEvents.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="live" className="space-y-2">
             {filteredEvents.filter(e => !e.is_acknowledged).length === 0 ? (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <Shield className="h-12 w-12 mx-auto text-green-500/50 mb-4" />
-                  <p className="text-muted-foreground">Aucun événement non acquitté</p>
-                  <p className="text-sm text-muted-foreground">Tout est sous contrôle ✅</p>
+                   <Shield className="h-12 w-12 mx-auto text-green-500/50 mb-4" />
+                   <p className="text-muted-foreground">{t.pages.surveillance.noUnacknowledged}</p>
+                   <p className="text-sm text-muted-foreground">{t.pages.surveillance.allUnderControl}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -234,7 +236,7 @@ export default function Surveillance() {
               <Card>
                 <CardContent className="py-12 text-center">
                   <Video className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-                  <p className="text-muted-foreground">Aucun événement</p>
+                  <p className="text-muted-foreground">{t.pages.surveillance.noEvents}</p>
                 </CardContent>
               </Card>
             ) : (
@@ -272,6 +274,7 @@ function StatCard({ label, value, icon: Icon, accent }: {
 }
 
 function EventCard({ event, onAcknowledge }: { event: CameraEvent; onAcknowledge: (id: string) => void }) {
+  const { t } = useI18n();
   const typeConfig = EVENT_TYPE_CONFIG[event.event_type] || { icon: Eye, label: event.event_type, color: 'text-muted-foreground' };
   const sevConfig = SEVERITY_CONFIG[event.severity] || SEVERITY_CONFIG.info;
   const TypeIcon = typeConfig.icon;
@@ -297,7 +300,7 @@ function EventCard({ event, onAcknowledge }: { event: CameraEvent; onAcknowledge
                 </Badge>
               )}
               <Badge className={cn('text-xs', sevConfig.bg, sevConfig.color)}>
-                {event.severity === 'critical' ? 'Critique' : event.severity === 'warning' ? 'Alerte' : 'Info'}
+                {event.severity === 'critical' ? t.pages.surveillance.severityCritical : event.severity === 'warning' ? t.pages.surveillance.severityWarning : t.pages.surveillance.severityInfo}
               </Badge>
               {event.plate_number && (
                 <Badge variant="secondary" className="font-mono text-xs">
@@ -326,12 +329,13 @@ function EventCard({ event, onAcknowledge }: { event: CameraEvent; onAcknowledge
             {!event.is_acknowledged && (
               <Button variant="outline" size="sm" onClick={() => onAcknowledge(event.id)}>
                 <Check className="h-4 w-4 mr-1" />
-                Acquitter
+                {/* Keep short label */}
+                ✓
               </Button>
             )}
             {event.is_acknowledged && (
               <Badge variant="outline" className="text-green-600">
-                <Check className="h-3 w-3 mr-1" /> Acquitté
+                <Check className="h-3 w-3 mr-1" /> ✓
               </Badge>
             )}
           </div>
@@ -341,7 +345,7 @@ function EventCard({ event, onAcknowledge }: { event: CameraEvent; onAcknowledge
   );
 }
 
-function AddCameraDialog({ onAdd }: { onAdd: (cam: Record<string, unknown>) => void }) {
+function AddCameraDialog({ onAdd, t }: { onAdd: (cam: Record<string, unknown>) => void; t: any }) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', location: '', zone: 'security', brand: '', ip_address: '' });
 
@@ -357,43 +361,43 @@ function AddCameraDialog({ onAdd }: { onAdd: (cam: Record<string, unknown>) => v
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Ajouter Caméra
+          {t.pages.surveillance.addCamera}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Nouvelle Caméra</DialogTitle>
+          <DialogTitle>{t.pages.surveillance.newCamera}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Nom</Label>
-            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="CAM-01 Entrée" />
+            <Label>{t.pages.surveillance.name}</Label>
+            <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="CAM-01" />
           </div>
           <div>
-            <Label>Emplacement</Label>
-            <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Portail principal" />
+            <Label>{t.pages.surveillance.location}</Label>
+            <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="..." />
           </div>
           <div>
-            <Label>Zone</Label>
+            <Label>{t.pages.surveillance.zone}</Label>
             <Select value={form.zone} onValueChange={v => setForm(f => ({ ...f, zone: v }))}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="security">Sécurité</SelectItem>
-                <SelectItem value="production">Production</SelectItem>
-                <SelectItem value="fleet">Flotte</SelectItem>
-                <SelectItem value="inventory">Inventaire</SelectItem>
+                <SelectItem value="security">{t.pages.surveillance.zoneSecurity}</SelectItem>
+                <SelectItem value="production">{t.pages.surveillance.zoneProduction}</SelectItem>
+                <SelectItem value="fleet">{t.pages.surveillance.zoneFleet}</SelectItem>
+                <SelectItem value="inventory">{t.pages.surveillance.zoneInventory}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
-            <Label>Marque</Label>
+            <Label>{t.pages.surveillance.brand}</Label>
             <Input value={form.brand} onChange={e => setForm(f => ({ ...f, brand: e.target.value }))} placeholder="Hikvision" />
           </div>
           <div>
-            <Label>Adresse IP</Label>
+            <Label>{t.pages.surveillance.ipAddress}</Label>
             <Input value={form.ip_address} onChange={e => setForm(f => ({ ...f, ip_address: e.target.value }))} placeholder="192.168.1.100" />
           </div>
-          <Button onClick={handleSubmit} className="w-full">Enregistrer</Button>
+          <Button onClick={handleSubmit} className="w-full">{t.pages.surveillance.save}</Button>
         </div>
       </DialogContent>
     </Dialog>

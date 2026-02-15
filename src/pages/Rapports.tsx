@@ -85,10 +85,10 @@ export default function Rapports() {
 
   const getPeriodLabel = (): string => {
     switch (selectedPeriod) {
-      case '6m': return 'période précédente';
-      case '12m': return 'année précédente';
-      case 'ytd': return 'même période année préc.';
-      default: return 'période précédente';
+      case '6m': return t.pages.rapports.previousPeriod;
+      case '12m': return t.pages.rapports.previousYear;
+      case 'ytd': return t.pages.rapports.samePeriodLastYear;
+      default: return t.pages.rapports.previousPeriod;
     }
   };
 
@@ -176,9 +176,9 @@ export default function Rapports() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="6m">6 derniers mois</SelectItem>
-                  <SelectItem value="12m">12 derniers mois</SelectItem>
-                  <SelectItem value="ytd">Depuis janvier</SelectItem>
+                  <SelectItem value="6m">{t.pages.rapports.last6Months}</SelectItem>
+                  <SelectItem value="12m">{t.pages.rapports.last12Months}</SelectItem>
+                  <SelectItem value="ytd">{t.pages.rapports.sinceJanuary}</SelectItem>
                 </SelectContent>
               </Select>
               <MonthlyReportPdfGenerator data={data} period={selectedPeriod} />
@@ -188,7 +188,7 @@ export default function Rapports() {
           {/* Summary Cards with Trends */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
             <ReportKPICard
-              title="Chiffre d'Affaires"
+              title={t.pages.rapports.revenue}
               value={`${(data.summary.totalCA / 1000000).toFixed(2)} M DH`}
               icon={DollarSign}
               trend={caTrend}
@@ -196,7 +196,7 @@ export default function Rapports() {
               variant="primary"
             />
             <ReportKPICard
-              title="Profit Net"
+              title={t.pages.rapports.netProfit}
               value={`${(data.summary.profitNet / 1000).toFixed(0)} K DH`}
               icon={Target}
               trend={profitTrend}
@@ -204,7 +204,7 @@ export default function Rapports() {
               variant="success"
             />
             <ReportKPICard
-              title="Volume Total"
+              title={t.pages.rapports.totalVolume}
               value={`${data.summary.totalVolume.toLocaleString()} m³`}
               icon={Package}
               trend={volumeTrend}
@@ -212,7 +212,7 @@ export default function Rapports() {
               variant="accent"
             />
             <ReportKPICard
-              title="Marge Moyenne"
+              title={t.pages.rapports.avgMargin}
               value={`${data.summary.avgMargePct}%`}
               icon={TrendingUp}
               trend={margeTrend}
@@ -227,21 +227,21 @@ export default function Rapports() {
               <TabsList className="inline-flex w-full sm:w-auto">
                 <TabsTrigger value="overview" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                   <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden xs:inline">Vue d'ensemble</span>
-                  <span className="xs:hidden">Aperçu</span>
+                  <span className="hidden xs:inline">{t.pages.rapports.overview}</span>
+                  <span className="xs:hidden">{t.pages.rapports.overview}</span>
                 </TabsTrigger>
                 <TabsTrigger value="clients" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                   <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                  Clients
+                  {t.pages.rapports.clients}
                 </TabsTrigger>
                 <TabsTrigger value="formulas" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                   <Package className="h-3 w-3 sm:h-4 sm:w-4" />
-                  Formules
+                  {t.pages.rapports.formulas}
                 </TabsTrigger>
                 <TabsTrigger value="forecast" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3">
                   <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">Prévisions</span>
-                  <span className="sm:hidden">Prévu</span>
+                  <span className="hidden sm:inline">{t.pages.rapports.forecast}</span>
+                  <span className="sm:hidden">{t.pages.rapports.forecast}</span>
                 </TabsTrigger>
               </TabsList>
               <ScrollBar orientation="horizontal" />
@@ -253,8 +253,8 @@ export default function Rapports() {
                 {/* Monthly Revenue & Margin Trend */}
                 <Card>
                   <CardHeader className="pb-2 sm:pb-4">
-                    <CardTitle className="text-base sm:text-lg">Évolution Mensuelle</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Chiffre d'affaires et marge brute</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">{t.pages.rapports.monthlyEvolution}</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">{t.pages.rapports.revenueAndMargin}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {data.monthlyTrends.length === 0 ? (
@@ -305,8 +305,8 @@ export default function Rapports() {
                 {/* Volume Trend */}
                 <Card>
                   <CardHeader className="pb-2 sm:pb-4">
-                    <CardTitle className="text-base sm:text-lg">Volume de Production</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">m³ livrés par mois</CardDescription>
+                    <CardTitle className="text-base sm:text-lg">{t.pages.rapports.productionVolume}</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">{t.pages.rapports.deliveredPerMonth}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     {data.monthlyTrends.length === 0 ? (
@@ -332,8 +332,8 @@ export default function Rapports() {
               {/* Margin % Trend Line */}
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg">Évolution de la Marge (%)</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">Tendance de rentabilité sur la période</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{t.pages.rapports.marginEvolution}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{t.pages.rapports.profitabilityTrend}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {data.monthlyTrends.length === 0 ? (
@@ -379,19 +379,19 @@ export default function Rapports() {
                   <CardHeader className="pb-2 sm:pb-4">
                     <CardTitle className="text-base sm:text-lg flex items-center gap-2">
                       <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 text-success" />
-                      Top 5 Clients (Marge)
+                      {t.pages.rapports.topClients}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {data.topClients.length === 0 ? (
-                      <ReportEmptyState type="table" message="Aucun client avec des données de marge" />
+                      <ReportEmptyState type="table" message={t.pages.rapports.noClientData} />
                     ) : (
                       <div className="overflow-x-auto -mx-4 sm:mx-0">
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead className="text-xs">Client</TableHead>
-                              <TableHead className="text-right text-xs">Marge</TableHead>
+                           <TableRow>
+                              <TableHead className="text-xs">{t.pages.rapports.clients}</TableHead>
+                              <TableHead className="text-right text-xs">{t.pages.rapports.margin}</TableHead>
                               <TableHead className="text-right text-xs">%</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -422,23 +422,23 @@ export default function Rapports() {
                 </Card>
 
                 <Card className="border-destructive/30">
-                  <CardHeader className="pb-2 sm:pb-4">
-                    <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                      <ArrowDownRight className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
-                      Clients à Surveiller
+                   <CardHeader className="pb-2 sm:pb-4">
+                     <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                       <ArrowDownRight className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
+                       {t.pages.rapports.clientsToWatch}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {data.bottomClients.length === 0 ? (
-                      <ReportEmptyState type="table" message="Aucun client avec une marge faible" />
+                      <ReportEmptyState type="table" message={t.pages.rapports.noLowMarginClients} />
                     ) : (
                       <div className="overflow-x-auto -mx-4 sm:mx-0">
                         <Table>
                           <TableHeader>
-                            <TableRow>
-                              <TableHead className="text-xs">Client</TableHead>
-                              <TableHead className="text-right text-xs">Marge</TableHead>
-                              <TableHead className="text-right text-xs">%</TableHead>
+                             <TableRow>
+                               <TableHead className="text-xs">{t.pages.rapports.clients}</TableHead>
+                               <TableHead className="text-right text-xs">{t.pages.rapports.margin}</TableHead>
+                               <TableHead className="text-right text-xs">%</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -481,25 +481,25 @@ export default function Rapports() {
             <TabsContent value="clients" className="space-y-4 sm:space-y-6 mt-4">
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg">P&L par Client</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">Performance financière détaillée par client</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{t.pages.rapports.clientsPL}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{t.pages.rapports.clientsPLDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {data.clientsPL.length === 0 ? (
-                    <ReportEmptyState type="table" message="Aucune donnée client pour cette période" />
+                    <ReportEmptyState type="table" message={t.pages.rapports.noClientData} />
                   ) : (
                     <ScrollArea className="w-full">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs min-w-[120px]">Client</TableHead>
-                            <TableHead className="text-right text-xs">Volume</TableHead>
-                            <TableHead className="text-right text-xs">CA</TableHead>
-                            <TableHead className="text-right text-xs hidden sm:table-cell">Coût</TableHead>
-                            <TableHead className="text-right text-xs">Marge</TableHead>
-                            <TableHead className="text-right text-xs">%</TableHead>
-                            <TableHead className="text-right text-xs hidden md:table-cell">Prix/m³</TableHead>
-                            <TableHead className="text-right text-xs hidden lg:table-cell">Livr.</TableHead>
+                           <TableRow>
+                             <TableHead className="text-xs min-w-[120px]">{t.pages.rapports.clients}</TableHead>
+                             <TableHead className="text-right text-xs">{t.pages.rapports.volume2}</TableHead>
+                             <TableHead className="text-right text-xs">{t.pages.rapports.revenue}</TableHead>
+                             <TableHead className="text-right text-xs hidden sm:table-cell">{t.pages.rapports.cost}</TableHead>
+                             <TableHead className="text-right text-xs">{t.pages.rapports.margin}</TableHead>
+                             <TableHead className="text-right text-xs">%</TableHead>
+                             <TableHead className="text-right text-xs hidden md:table-cell">{t.pages.rapports.pricePerM3}</TableHead>
+                             <TableHead className="text-right text-xs hidden lg:table-cell">{t.pages.rapports.deliveries}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -540,7 +540,7 @@ export default function Rapports() {
               {/* Client Distribution Pie */}
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg">Répartition CA par Client</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">{t.pages.rapports.clientDistribution}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {data.clientsPL.length === 0 ? (
@@ -577,26 +577,26 @@ export default function Rapports() {
             <TabsContent value="formulas" className="space-y-4 sm:space-y-6 mt-4">
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg">P&L par Formule Béton</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">Rentabilité par type de produit</CardDescription>
+                  <CardTitle className="text-base sm:text-lg">{t.pages.rapports.formulasPL}</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">{t.pages.rapports.formulasPLDesc}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {data.formulasPL.length === 0 ? (
-                    <ReportEmptyState type="table" message="Aucune formule avec des données pour cette période" />
+                    <ReportEmptyState type="table" message={t.pages.rapports.noClientData} />
                   ) : (
                     <ScrollArea className="w-full">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-xs min-w-[80px]">Formule</TableHead>
-                            <TableHead className="text-xs hidden sm:table-cell">Désignation</TableHead>
-                            <TableHead className="text-right text-xs">Volume</TableHead>
-                            <TableHead className="text-right text-xs">CA</TableHead>
-                            <TableHead className="text-right text-xs">Marge</TableHead>
-                            <TableHead className="text-right text-xs">%</TableHead>
-                            <TableHead className="text-right text-xs hidden md:table-cell">CUR</TableHead>
-                            <TableHead className="text-right text-xs hidden lg:table-cell">Livr.</TableHead>
-                          </TableRow>
+                             <TableRow>
+                               <TableHead className="text-xs min-w-[80px]">{t.pages.rapports.formulas}</TableHead>
+                               <TableHead className="text-xs hidden sm:table-cell">{t.pages.rapports.designation}</TableHead>
+                               <TableHead className="text-right text-xs">{t.pages.rapports.volume2}</TableHead>
+                               <TableHead className="text-right text-xs">{t.pages.rapports.revenue}</TableHead>
+                               <TableHead className="text-right text-xs">{t.pages.rapports.margin}</TableHead>
+                               <TableHead className="text-right text-xs">%</TableHead>
+                               <TableHead className="text-right text-xs hidden md:table-cell">{t.pages.rapports.cur}</TableHead>
+                               <TableHead className="text-right text-xs hidden lg:table-cell">{t.pages.rapports.deliveries}</TableHead>
+                             </TableRow>
                         </TableHeader>
                         <TableBody>
                           {data.formulasPL.map((f) => (
@@ -636,7 +636,7 @@ export default function Rapports() {
               {/* Formula Volume Bar Chart */}
               <Card>
                 <CardHeader className="pb-2 sm:pb-4">
-                  <CardTitle className="text-base sm:text-lg">Volume par Formule</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">{t.pages.rapports.volumeByFormula}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {data.formulasPL.length === 0 ? (
@@ -666,7 +666,7 @@ export default function Rapports() {
                   <CardContent className="pt-6">
                     <ReportEmptyState 
                       type="forecast" 
-                      message="Pas assez de données historiques pour générer des prévisions fiables"
+                      message={t.pages.rapports.noForecastData}
                     />
                   </CardContent>
                 </Card>
@@ -686,16 +686,16 @@ export default function Rapports() {
                             {f.trend === 'stable' && <Minus className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />}
                           </CardTitle>
                           <CardDescription className="text-xs sm:text-sm">
-                            Confiance: {f.confidence}%
+                            {t.pages.rapports.forecastConfidence}: {f.confidence}%
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-3 sm:space-y-4">
                           <div>
-                            <p className="text-xs sm:text-sm text-muted-foreground">Volume prévu</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{t.pages.rapports.forecastVolume}</p>
                             <p className="text-xl sm:text-2xl font-bold">{f.predicted_volume} m³</p>
                           </div>
                           <div>
-                            <p className="text-xs sm:text-sm text-muted-foreground">CA prévu</p>
+                            <p className="text-xs sm:text-sm text-muted-foreground">{t.pages.rapports.forecastCA}</p>
                             <p className="text-lg sm:text-xl font-semibold text-primary">{f.predicted_ca.toLocaleString()} DH</p>
                           </div>
                           <Badge variant="outline" className={cn(
