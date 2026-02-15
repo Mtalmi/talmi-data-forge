@@ -252,6 +252,7 @@ const ar = {
     dateFrom: 'تاريخ البداية',
     dateTo: 'تاريخ النهاية',
     downloadPdf: 'تحميل PDF',
+    clear: 'مسح',
     saving: 'جاري الحفظ...',
   },
   widgets: {
