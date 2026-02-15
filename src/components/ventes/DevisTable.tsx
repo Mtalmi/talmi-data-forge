@@ -63,9 +63,10 @@ import { ResponsibilityStamp } from '@/components/ventes/ResponsibilityStamp';
 import { RollbackAccountabilityBadge } from '@/components/ventes/RollbackAccountabilityBadge';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
   en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" />, isLocked: false },
@@ -122,6 +123,9 @@ export function DevisTable({
   onRefresh,
 }: DevisTableProps) {
   const { canApproveDevis, isResponsableTechnique, isDirecteurOperations, isCentraliste, isCeo, user, loading: authLoading } = useAuth();
+  const { t, lang } = useI18n();
+  const dt = t.devisTable;
+  const dateLocale = getDateLocale(lang);
   const [validating, setValidating] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [cancelConfirmDevis, setCancelConfirmDevis] = useState<Devis | null>(null);
@@ -158,10 +162,10 @@ export function DevisTable({
       if (error) throw error;
       
       // The universal audit trigger will automatically log this change
-      toast.success(`Statut mis à jour: ${DEVIS_STATUS_CONFIG[newStatus]?.label || newStatus}`);
+      toast.success(`${dt.statusUpdated}: ${DEVIS_STATUS_CONFIG[newStatus]?.label || newStatus}`);
       onRefresh?.();
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de la mise à jour du statut');
+      toast.error(error.message || dt.statusError);
     } finally {
       setUpdatingStatus(null);
     }
@@ -211,11 +215,11 @@ export function DevisTable({
       const result = data as { success: boolean; approved_by?: string; approved_role?: string };
       
       if (result.success) {
-        toast.success(`Devis approuvé par ${result.approved_by} (${result.approved_role})`);
+        toast.success(`${dt.approvedBy} ${result.approved_by} (${result.approved_role})`);
         onRefresh?.();
       }
     } catch (error: any) {
-      toast.error(error.message || 'Erreur lors de l\'approbation');
+      toast.error(error.message || dt.approvalError);
     } finally {
       setValidating(null);
     }
@@ -252,9 +256,9 @@ export function DevisTable({
     return (
       <div className="text-center py-12">
         <FileText className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-        <p className="text-muted-foreground">Aucun devis trouvé</p>
+        <p className="text-muted-foreground">{dt.noQuotes}</p>
         <p className="text-sm text-muted-foreground mt-1">
-          Utilisez le Calculateur de Devis ou modifiez vos filtres
+          {dt.useCalculator}
         </p>
       </div>
     );
@@ -275,7 +279,7 @@ export function DevisTable({
             </Badge>
           </TooltipTrigger>
           <TooltipContent>
-            Expiré depuis {Math.abs(info.daysUntilExpiration)} jours
+            {dt.expiredSince} {Math.abs(info.daysUntilExpiration)} {dt.days}
           </TooltipContent>
         </Tooltip>
       );
@@ -300,12 +304,12 @@ export function DevisTable({
           </TooltipTrigger>
           <TooltipContent>
             {info.daysUntilExpiration === 0 
-              ? "Expire aujourd'hui!"
-              : `Expire dans ${info.daysUntilExpiration} jour${info.daysUntilExpiration > 1 ? 's' : ''}`
+              ? dt.expiresToday
+              : `${dt.expiresIn} ${info.daysUntilExpiration} ${info.daysUntilExpiration > 1 ? dt.days : dt.day}`
             }
             {devis.date_expiration && (
               <span className="block text-xs opacity-70">
-                {format(new Date(devis.date_expiration), 'dd MMMM yyyy', { locale: fr })}
+                {format(new Date(devis.date_expiration), 'dd MMMM yyyy', { locale: dateLocale })}
               </span>
             )}
           </TooltipContent>
@@ -507,7 +511,7 @@ export function DevisTable({
                               <DevisSendDialog devis={devis} />
                             </span>
                           </TooltipTrigger>
-                          <TooltipContent>Envoyer par email</TooltipContent>
+                          <TooltipContent>{dt.sendByEmail}</TooltipContent>
                         </Tooltip>
                       </>
                     )}
@@ -530,15 +534,15 @@ export function DevisTable({
                           ) : (
                             <ShieldCheck className="h-3 w-3" />
                           )}
-                          Valider
+                          {dt.validate}
                         </Button>
                       ) : isCreator(devis) ? (
                         <span className="text-xs text-amber-600 italic">
-                          Attente validation tiers
+                          {dt.awaitingThirdParty}
                         </span>
                       ) : isReadOnlyRole ? (
                         <Badge variant="outline" className="text-orange-500 border-orange-500">
-                          En attente de validation
+                          {dt.awaitingValidation}
                         </Badge>
                       ) : null
                     )}
@@ -551,13 +555,13 @@ export function DevisTable({
                         className="gap-1"
                       >
                         <ArrowRight className="h-3 w-3" />
-                        Créer BC
+                        {dt.createBC}
                       </Button>
                     )}
                     
                     {devis.statut === 'en_attente' && !devis.client_id && (
                       <span className="text-xs text-muted-foreground">
-                        Client requis
+                        {dt.clientRequired}
                       </span>
                     )}
                   </div>
@@ -574,27 +578,27 @@ export function DevisTable({
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-warning" />
-              Confirmer l'Annulation
+              {dt.confirmCancel}
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
               <p>
-                Vous êtes sur le point d'annuler le devis <strong>{cancelConfirmDevis?.devis_id}</strong>.
+                {dt.cancelDesc1} <strong>{cancelConfirmDevis?.devis_id}</strong>.
               </p>
               <p className="text-warning font-medium">
-                ⚠️ Cette action sera enregistrée dans le Journal d'Audit Forensic.
+                ⚠️ {dt.cancelAuditWarning}
               </p>
               <p className="text-sm text-muted-foreground">
-                Le devis sera conservé dans la base de données mais exclu des totaux du pipeline actif.
+                {dt.cancelDesc2}
               </p>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{dt.cancelBtn}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmCancel}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Confirmer l'Annulation
+              {dt.confirmCancelBtn}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

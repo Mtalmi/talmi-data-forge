@@ -14,7 +14,8 @@ import {
 import { TrendingUp, Target, Calendar } from 'lucide-react';
 import { BonCommande, Devis } from '@/hooks/useSalesWorkflow';
 import { format, startOfWeek, endOfWeek, addWeeks, isWithinInterval, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface RevenueForecastChartProps {
   bcList: BonCommande[];
@@ -30,6 +31,10 @@ interface WeeklyForecast {
 }
 
 export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
+  const { t, lang } = useI18n();
+  const rf = t.revenueForecast;
+  const dateLocale = getDateLocale(lang);
+
   const forecastData = useMemo<WeeklyForecast[]>(() => {
     const today = new Date();
     const weeks: WeeklyForecast[] = [];
@@ -56,7 +61,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         .reduce((sum, d) => sum + (d.total_ht * CONVERSION_RATE * (1 / (i + 1))), 0);
       
       weeks.push({
-        week: format(weekStart, 'dd MMM', { locale: fr }),
+        week: format(weekStart, 'dd MMM', { locale: dateLocale }),
         weekStart,
         confirmed: confirmedRevenue,
         potential: potentialRevenue,
@@ -85,16 +90,16 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
     if (active && payload && payload.length) {
       return (
         <div className="bg-background border rounded-lg shadow-lg p-3 space-y-2">
-          <p className="font-medium">Semaine du {label}</p>
+          <p className="font-medium">{rf.weekOf} {label}</p>
           <div className="space-y-1 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-primary" />
-              <span>Confirmé:</span>
+              <span>{rf.confirmed}:</span>
               <span className="font-medium">{payload[0]?.value?.toLocaleString()} DH</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-primary/30" />
-              <span>Potentiel:</span>
+              <span>{rf.potential}:</span>
               <span className="font-medium">{payload[1]?.value?.toLocaleString()} DH</span>
             </div>
           </div>
@@ -110,11 +115,11 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-primary" />
-            Prévision de Revenus
+            {rf.title}
           </CardTitle>
           <Badge variant="outline" className="gap-1">
             <Calendar className="h-3 w-3" />
-            6 semaines
+            {rf.weeks}
           </Badge>
         </div>
       </CardHeader>
@@ -125,13 +130,13 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
             <p className="text-2xl font-bold text-primary">
               {formatValue(totalConfirmed)} DH
             </p>
-            <p className="text-xs text-muted-foreground">Confirmé</p>
+            <p className="text-xs text-muted-foreground">{rf.confirmed}</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-primary/50">
               {formatValue(totalPotential)} DH
             </p>
-            <p className="text-xs text-muted-foreground">Potentiel</p>
+            <p className="text-xs text-muted-foreground">{rf.potential}</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold">
@@ -139,7 +144,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
             </p>
             <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
               <Target className="h-3 w-3" />
-              Prévision
+              {rf.forecast}
             </p>
           </div>
         </div>
@@ -178,7 +183,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
                 x={forecastData[0]?.week} 
                 stroke="hsl(var(--primary))" 
                 strokeDasharray="3 3"
-                label={{ value: "Aujourd'hui", position: 'top', fontSize: 10 }}
+                label={{ value: rf.today, position: 'top', fontSize: 10 }}
               />
               <Area
                 type="monotone"
@@ -205,11 +210,11 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <div className="w-3 h-0.5 bg-primary" />
-            <span>Commandes confirmées</span>
+            <span>{rf.confirmedOrders}</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-3 h-0.5 bg-primary/40 border-t border-dashed border-primary" />
-            <span>Potentiel (devis)</span>
+            <span>{rf.potentialQuotes}</span>
           </div>
         </div>
       </CardContent>

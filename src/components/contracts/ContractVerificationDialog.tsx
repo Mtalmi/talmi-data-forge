@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,16 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  FileText,
   AlertTriangle,
   XCircle,
   CheckCircle,
   ExternalLink,
   Upload,
-  Building2,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useContractCompliance } from '@/hooks/useContractCompliance';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ContractVerificationDialogProps {
   open: boolean;
@@ -40,6 +37,8 @@ export function ContractVerificationDialog({
   onUploadContract,
 }: ContractVerificationDialogProps) {
   const { validatePaymentAgainstContract, getContractForSupplier } = useContractCompliance();
+  const { t } = useI18n();
+  const cv = t.contractVerification;
 
   const validation = fournisseurId 
     ? validatePaymentAgainstContract(fournisseurId, amount)
@@ -48,7 +47,6 @@ export function ContractVerificationDialog({
   const contract = fournisseurId ? getContractForSupplier(fournisseurId) : undefined;
 
   if (!validation.hasContract) {
-    // No contract - BLOCKED
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl">
@@ -57,7 +55,7 @@ export function ContractVerificationDialog({
               <div className="p-2 rounded-lg bg-destructive/10 border border-destructive/20">
                 <XCircle className="h-5 w-5 text-destructive" />
               </div>
-              Paiement Bloqué - Contrat Manquant
+              {cv.blocked}
             </DialogTitle>
           </DialogHeader>
 
@@ -65,16 +63,16 @@ export function ContractVerificationDialog({
             <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Fournisseur:</span>
+                  <span className="text-muted-foreground">{cv.supplier}:</span>
                   <span className="font-medium">{fournisseurNom}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Montant:</span>
+                  <span className="text-muted-foreground">{cv.amount}:</span>
                   <span className="font-mono font-bold">{amount.toLocaleString('fr-FR')} DH</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Motif:</span>
-                  <span className="text-destructive font-medium">Aucun contrat actif trouvé</span>
+                  <span className="text-muted-foreground">{cv.reason}:</span>
+                  <span className="text-destructive font-medium">{cv.noContract}</span>
                 </div>
               </div>
             </div>
@@ -82,34 +80,26 @@ export function ContractVerificationDialog({
             <Alert className="border-warning/50 bg-warning/10">
               <AlertTriangle className="h-4 w-4 text-warning" />
               <AlertDescription className="text-sm text-warning">
-                <strong>⚠️ Loi Marocaine:</strong> Les paiements sans contrat ne sont pas 
-                déductibles fiscalement
+                <strong>⚠️ {cv.lawLabel}</strong> {cv.lawWarning}
               </AlertDescription>
             </Alert>
 
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
-              <p className="text-sm font-medium mb-2">Actions requises:</p>
+              <p className="text-sm font-medium mb-2">{cv.requiredActions}</p>
               <ol className="text-sm text-muted-foreground space-y-1 list-decimal ml-4">
-                <li>Télécharger le contrat du fournisseur</li>
-                <li>Remplir les détails du contrat</li>
-                <li>Réessayer le paiement</li>
+                <li>{cv.step1}</li>
+                <li>{cv.step2}</li>
+                <li>{cv.step3}</li>
               </ol>
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => onOpenChange(false)}
-              >
-                Annuler
+              <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+                {cv.cancel}
               </Button>
-              <Button
-                className="flex-1 gap-2"
-                onClick={onUploadContract}
-              >
+              <Button className="flex-1 gap-2" onClick={onUploadContract}>
                 <Upload className="h-4 w-4" />
-                Télécharger Contrat
+                {cv.uploadContract}
               </Button>
             </div>
           </div>
@@ -118,11 +108,9 @@ export function ContractVerificationDialog({
     );
   }
 
-  // Has contract - check variance
   const hasVariance = validation.variancePercent && Math.abs(validation.variancePercent) > 5;
 
   if (hasVariance && validation.isOverpayment) {
-    // Variance detected - WARNING
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl">
@@ -131,7 +119,7 @@ export function ContractVerificationDialog({
               <div className="p-2 rounded-lg bg-warning/10 border border-warning/20">
                 <AlertTriangle className="h-5 w-5 text-warning" />
               </div>
-              Écart Détecté - Vérification Requise
+              {cv.varianceDetected}
             </DialogTitle>
           </DialogHeader>
 
@@ -139,20 +127,20 @@ export function ContractVerificationDialog({
             <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Fournisseur:</span>
+                  <span className="text-muted-foreground">{cv.supplier}:</span>
                   <span className="font-medium">{fournisseurNom}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Montant Contrat:</span>
+                  <span className="text-muted-foreground">{cv.contractAmount}:</span>
                   <span className="font-mono">{contract?.monthly_amount.toLocaleString('fr-FR')} DH</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Montant Facture:</span>
+                  <span className="text-muted-foreground">{cv.invoiceAmount}:</span>
                   <span className="font-mono font-bold">{amount.toLocaleString('fr-FR')} DH</span>
                 </div>
                 <hr className="border-warning/30 my-2" />
                 <div className="flex justify-between font-semibold">
-                  <span>Écart:</span>
+                  <span>{cv.variance}:</span>
                   <span className="text-warning">
                     {validation.variance! > 0 ? '+' : ''}{validation.variance?.toLocaleString('fr-FR')} DH 
                     ({validation.variancePercent?.toFixed(1)}%)
@@ -164,39 +152,28 @@ export function ContractVerificationDialog({
             <Alert className="border-warning/50 bg-warning/10">
               <AlertTriangle className="h-4 w-4 text-warning" />
               <AlertDescription className="text-sm text-warning">
-                ⚠️ La facture dépasse le montant du contrat de plus de 5%
+                ⚠️ {cv.varianceWarning}
               </AlertDescription>
             </Alert>
 
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
-              <p className="text-sm font-medium mb-2">Actions possibles:</p>
+              <p className="text-sm font-medium mb-2">{cv.possibleActions}</p>
               <ul className="text-sm text-muted-foreground space-y-1 list-disc ml-4">
-                <li>Vérifier la facture avec le fournisseur</li>
-                <li>Mettre à jour le contrat si les tarifs ont changé</li>
-                <li>Approuver l'écart (CEO/Karim)</li>
+                <li>{cv.verifyInvoice}</li>
+                <li>{cv.updateContract}</li>
+                <li>{cv.approveCeo}</li>
               </ul>
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => onOpenChange(false)}
-              >
-                Annuler
+              <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+                {cv.cancel}
               </Button>
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={onUploadContract}
-              >
-                Mettre à jour Contrat
+              <Button variant="outline" className="flex-1" onClick={onUploadContract}>
+                {cv.updateContractBtn}
               </Button>
-              <Button
-                className="flex-1"
-                onClick={onProceed}
-              >
-                Approuver Écart
+              <Button className="flex-1" onClick={onProceed}>
+                {cv.approveVariance}
               </Button>
             </div>
           </div>
@@ -205,7 +182,6 @@ export function ContractVerificationDialog({
     );
   }
 
-  // Contract exists and amount matches - APPROVED
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md bg-background/95 backdrop-blur-xl">
@@ -214,7 +190,7 @@ export function ContractVerificationDialog({
             <div className="p-2 rounded-lg bg-success/10 border border-success/20">
               <CheckCircle className="h-5 w-5 text-success" />
             </div>
-            Contrat Vérifié
+            {cv.verified}
           </DialogTitle>
         </DialogHeader>
 
@@ -222,19 +198,19 @@ export function ContractVerificationDialog({
           <div className="p-4 rounded-lg bg-success/10 border border-success/30">
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Fournisseur:</span>
+                <span className="text-muted-foreground">{cv.supplier}:</span>
                 <span className="font-medium">{fournisseurNom}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Contrat:</span>
+                <span className="text-muted-foreground">{cv.contract}:</span>
                 <span className="font-medium">{contract?.title}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Montant mensuel:</span>
+                <span className="text-muted-foreground">{cv.monthlyAmount}:</span>
                 <span className="font-mono">{contract?.monthly_amount.toLocaleString('fr-FR')} DH</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Montant facture:</span>
+                <span className="text-muted-foreground">{cv.invoiceAmount}:</span>
                 <span className="font-mono font-bold">{amount.toLocaleString('fr-FR')} DH</span>
               </div>
             </div>
@@ -247,24 +223,17 @@ export function ContractVerificationDialog({
               onClick={() => window.open(contract.pdf_url, '_blank')}
             >
               <ExternalLink className="h-4 w-4" />
-              Voir le Contrat PDF
+              {cv.viewPdf}
             </Button>
           )}
 
           <div className="flex gap-3 pt-2">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => onOpenChange(false)}
-            >
-              Annuler
+            <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+              {cv.cancel}
             </Button>
-            <Button
-              className="flex-1 gap-2"
-              onClick={onProceed}
-            >
+            <Button className="flex-1 gap-2" onClick={onProceed}>
               <CheckCircle className="h-4 w-4" />
-              Procéder au Paiement
+              {cv.proceedPayment}
             </Button>
           </div>
         </div>

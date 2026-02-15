@@ -25,13 +25,17 @@ import {
   Info
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { CreateLoanDialog } from './CreateLoanDialog';
 import { LoanPaymentDialog } from './LoanPaymentDialog';
 import { LoanDetailDialog } from './LoanDetailDialog';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 export function LoansDashboard() {
+  const { t, lang } = useI18n();
+  const ld = t.loansDashboard;
+  const dateLocale = getDateLocale(lang);
   const { 
     associates, 
     loans, 
@@ -69,7 +73,7 @@ export function LoansDashboard() {
     return (
       <Alert variant="destructive">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>Erreur</AlertTitle>
+        <AlertTitle>{ld.error}</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
     );
@@ -82,14 +86,14 @@ export function LoansDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Gestion des Prêts Associés</h1>
+          <h1 className="text-2xl font-bold">{ld.title}</h1>
           <p className="text-muted-foreground">
-            Suivi des prêts entre la société et les associés
+            {ld.subtitle}
           </p>
         </div>
         <Button onClick={() => setCreateLoanOpen(true)} className="gap-2">
           <Plus className="h-4 w-4" />
-          Nouveau Prêt
+          {ld.newLoan}
         </Button>
       </div>
 
@@ -99,13 +103,13 @@ export function LoansDashboard() {
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Prêts Actifs
+              {ld.activeLoans}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{summary.activeLoans}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              sur {summary.totalLoans} total
+              {summary.totalLoans} {ld.totalLabel}
             </p>
           </CardContent>
         </Card>
@@ -114,7 +118,7 @@ export function LoansDashboard() {
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <ArrowDownLeft className="h-4 w-4 text-amber-500" />
-              Prêts Reçus (Société doit)
+              {ld.loansReceived}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -122,7 +126,7 @@ export function LoansDashboard() {
               {summary.toCompanyBalance.toLocaleString('fr-MA')} DH
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {summary.loansToCompany} prêts en cours
+              {summary.loansToCompany} {ld.loansInProgress}
             </p>
           </CardContent>
         </Card>
@@ -131,7 +135,7 @@ export function LoansDashboard() {
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <ArrowUpRight className="h-4 w-4 text-emerald-500" />
-              Prêts Accordés (Société reçoit)
+              {ld.loansGranted}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -139,7 +143,7 @@ export function LoansDashboard() {
               {summary.fromCompanyBalance.toLocaleString('fr-MA')} DH
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {summary.loansFromCompany} prêts en cours
+              {summary.loansFromCompany} {ld.loansInProgress}
             </p>
           </CardContent>
         </Card>
@@ -153,7 +157,7 @@ export function LoansDashboard() {
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <AlertTriangle className={cn("h-4 w-4", overduePayments.length > 0 && "text-destructive")} />
-              Échéances en Retard
+              {ld.overdueSection}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -161,7 +165,7 @@ export function LoansDashboard() {
               {overduePayments.length}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {upcomingPayments.length} à venir ce mois
+              {upcomingPayments.length} {ld.upcomingThisMonth}
             </p>
           </CardContent>
         </Card>
@@ -171,9 +175,9 @@ export function LoansDashboard() {
       {overduePayments.length > 0 && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Échéances en Retard</AlertTitle>
+          <AlertTitle>{ld.overdueSection}</AlertTitle>
           <AlertDescription>
-            {overduePayments.length} paiement(s) en retard nécessitent une action immédiate.
+            {overduePayments.length} {ld.overdueAlert}
           </AlertDescription>
         </Alert>
       )}
@@ -185,14 +189,13 @@ export function LoansDashboard() {
             <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
               <FileText className="h-8 w-8 text-primary" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Aucun prêt enregistré</h3>
+            <h3 className="text-lg font-semibold mb-2">{ld.noLoans}</h3>
             <p className="text-muted-foreground text-center max-w-md mb-4">
-              Commencez par créer un prêt entre la société et un associé. 
-              Le système générera automatiquement l'échéancier de remboursement.
+              {ld.noLoansDesc}
             </p>
             <Button onClick={() => setCreateLoanOpen(true)} className="gap-2">
               <Plus className="h-4 w-4" />
-              Créer le Premier Prêt
+              {ld.createFirstLoan}
             </Button>
           </CardContent>
         </Card>
@@ -204,11 +207,11 @@ export function LoansDashboard() {
           <TabsList>
             <TabsTrigger value="loans" className="gap-2">
               <FileText className="h-4 w-4" />
-              Prêts ({loans.length})
+              {ld.loansTab} ({loans.length})
             </TabsTrigger>
             <TabsTrigger value="schedule" className="gap-2">
               <Calendar className="h-4 w-4" />
-              Échéancier
+              {ld.scheduleTab}
               {overduePayments.length > 0 && (
                 <Badge variant="destructive" className="ml-1 h-5 min-w-[20px]">
                   {overduePayments.length}
@@ -217,7 +220,7 @@ export function LoansDashboard() {
             </TabsTrigger>
             <TabsTrigger value="associates" className="gap-2">
               <Users className="h-4 w-4" />
-              Associés ({associates.length})
+              {ld.associatesTab} ({associates.length})
             </TabsTrigger>
           </TabsList>
 
@@ -258,35 +261,35 @@ export function LoansDashboard() {
                           loan.status === 'paid_off' ? 'secondary' :
                           loan.status === 'defaulted' ? 'destructive' : 'outline'
                         }>
-                          {loan.status === 'active' ? 'Actif' :
-                           loan.status === 'paid_off' ? 'Soldé' :
-                           loan.status === 'defaulted' ? 'Défaut' : 'Annulé'}
+                          {loan.status === 'active' ? ld.active :
+                           loan.status === 'paid_off' ? ld.paidOff :
+                           loan.status === 'defaulted' ? ld.defaulted : ld.cancelled}
                         </Badge>
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div>
-                          <p className="text-xs text-muted-foreground">Principal</p>
+                          <p className="text-xs text-muted-foreground">{ld.principal}</p>
                           <p className="font-semibold">{Number(loan.principal_amount).toLocaleString('fr-MA')} DH</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Taux</p>
+                          <p className="text-xs text-muted-foreground">{ld.rate}</p>
                           <p className="font-semibold">{(Number(loan.interest_rate) * 100).toFixed(1)}%</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Mensualité</p>
+                          <p className="text-xs text-muted-foreground">{ld.monthly}</p>
                           <p className="font-semibold">{Number(loan.monthly_payment).toLocaleString('fr-MA')} DH</p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Solde Restant</p>
+                          <p className="text-xs text-muted-foreground">{ld.outstanding}</p>
                           <p className="font-semibold text-amber-500">{outstanding.toLocaleString('fr-MA')} DH</p>
                         </div>
                       </div>
                       
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs">
-                          <span>Progression: {paidPayments}/{loan.term_months} échéances</span>
+                          <span>{ld.progressLabel}: {paidPayments}/{loan.term_months} {ld.installments}</span>
                           <span>{Math.round(progress)}%</span>
                         </div>
                         <Progress value={progress} className="h-2" />
@@ -306,7 +309,7 @@ export function LoansDashboard() {
                 <CardHeader>
                   <CardTitle className="text-base text-destructive flex items-center gap-2">
                     <XCircle className="h-4 w-4" />
-                    Échéances en Retard ({overduePayments.length})
+                    {ld.overdueSection} ({overduePayments.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -324,13 +327,13 @@ export function LoansDashboard() {
                           <div>
                             <p className="font-medium">{loan?.loan_number}</p>
                             <p className="text-sm text-muted-foreground">
-                              Échéance #{payment.payment_number} • {loan?.associate_name}
+                              {ld.installmentNum} #{payment.payment_number} • {loan?.associate_name}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">{Number(payment.scheduled_amount).toLocaleString('fr-MA')} DH</p>
                             <p className="text-xs text-destructive">
-                              {daysLate} jours de retard
+                              {daysLate} {ld.daysLate}
                             </p>
                           </div>
                         </div>
@@ -346,13 +349,13 @@ export function LoansDashboard() {
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Échéances à Venir ({upcomingPayments.length})
+                  {ld.upcomingSection} ({upcomingPayments.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {upcomingPayments.length === 0 ? (
                   <p className="text-muted-foreground text-center py-4">
-                    Aucune échéance dans les 30 prochains jours
+                    {ld.noUpcoming}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -369,16 +372,16 @@ export function LoansDashboard() {
                           <div>
                             <p className="font-medium">{loan?.loan_number}</p>
                             <p className="text-sm text-muted-foreground">
-                              Échéance #{payment.payment_number} • {loan?.associate_name}
+                              {ld.installmentNum} #{payment.payment_number} • {loan?.associate_name}
                             </p>
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">{Number(payment.scheduled_amount).toLocaleString('fr-MA')} DH</p>
                             <p className="text-xs text-muted-foreground">
-                              {format(new Date(payment.due_date), 'dd MMM yyyy', { locale: fr })}
+                              {format(new Date(payment.due_date), 'dd MMM yyyy', { locale: dateLocale })}
                               {daysUntil <= 7 && (
                                 <Badge variant="outline" className="ml-2 text-amber-500 border-amber-500">
-                                  {daysUntil} jours
+                                  {daysUntil} {ld.daysLabel}
                                 </Badge>
                               )}
                             </p>
@@ -398,8 +401,8 @@ export function LoansDashboard() {
               <Card className="border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-12">
                   <Users className="h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    Aucun associé enregistré. Les associés seront créés automatiquement lors de la création d'un prêt.
+                   <p className="text-muted-foreground">
+                    {ld.noAssociates}
                   </p>
                 </CardContent>
               </Card>
@@ -418,7 +421,7 @@ export function LoansDashboard() {
                       <CardContent>
                         <div className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-sm text-muted-foreground">Prêts actifs</span>
+                            <span className="text-sm text-muted-foreground">{ld.activeLoans}</span>
                             <span className="font-medium">{activeLoans.length}</span>
                           </div>
                           {associate.email && (
@@ -429,7 +432,7 @@ export function LoansDashboard() {
                           )}
                           {associate.phone && (
                             <div className="flex justify-between">
-                              <span className="text-sm text-muted-foreground">Téléphone</span>
+                              <span className="text-sm text-muted-foreground">{t.createLoan.phone}</span>
                               <span className="text-sm">{associate.phone}</span>
                             </div>
                           )}

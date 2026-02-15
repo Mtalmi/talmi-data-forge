@@ -10,7 +10,8 @@ import { AlertTriangle, Loader2, CheckCircle2 } from 'lucide-react';
 import { TaxObligation } from '@/hooks/useTaxCompliance';
 import { useTaxCompliance } from '@/hooks/useTaxCompliance';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface TaxPaymentDialogProps {
   obligationId: string;
@@ -28,6 +29,9 @@ export function TaxPaymentDialog({
   onSuccess 
 }: TaxPaymentDialogProps) {
   const { recordPayment, calculatePenalty } = useTaxCompliance();
+  const { t, lang } = useI18n();
+  const tp = t.taxPayment;
+  const dateLocale = getDateLocale(lang);
   
   const obligation = obligations.find(o => o.id === obligationId);
   
@@ -72,46 +76,44 @@ export function TaxPaymentDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            Enregistrer Paiement
-            {isOverdue && <Badge variant="destructive">En Retard</Badge>}
+            {tp.title}
+            {isOverdue && <Badge variant="destructive">{tp.overdue}</Badge>}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Obligation Details */}
           <div className="p-4 rounded-lg bg-muted/50 space-y-2">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Obligation:</span>
+              <span className="text-muted-foreground">{tp.obligation}:</span>
               <span className="font-medium">{obligation.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Échéance:</span>
-              <span>{format(new Date(obligation.due_date), 'dd MMM yyyy', { locale: fr })}</span>
+              <span className="text-muted-foreground">{tp.dueDate}:</span>
+              <span>{format(new Date(obligation.due_date), 'dd MMM yyyy', { locale: dateLocale })}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Montant:</span>
+              <span className="text-muted-foreground">{tp.amount}:</span>
               <span className="font-medium">{Number(obligation.amount).toLocaleString()} DH</span>
             </div>
             {Number(obligation.paid_amount) > 0 && (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Déjà payé:</span>
+                <span className="text-muted-foreground">{tp.alreadyPaid}:</span>
                 <span className="text-green-600">{Number(obligation.paid_amount).toLocaleString()} DH</span>
               </div>
             )}
             <div className="flex justify-between border-t pt-2">
-              <span className="font-medium">Reste à payer:</span>
+              <span className="font-medium">{tp.remaining}:</span>
               <span className="font-bold">{remainingAmount.toLocaleString()} DH</span>
             </div>
           </div>
 
-          {/* Penalty Warning */}
           {isOverdue && penalty > 0 && (
             <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/30">
               <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
               <div>
-                <p className="font-medium text-destructive">Pénalité de Retard</p>
+                <p className="font-medium text-destructive">{tp.penaltyTitle}</p>
                 <p className="text-sm text-muted-foreground">
-                  {obligation.days_overdue} jours de retard à 6%/mois
+                  {obligation.days_overdue} {tp.penaltyDesc}
                 </p>
                 <p className="font-bold text-destructive mt-1">
                   +{penalty.toLocaleString()} DH
@@ -120,11 +122,10 @@ export function TaxPaymentDialog({
             </div>
           )}
 
-          {/* Payment Form */}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="paidAmount">Montant Payé (DH)</Label>
+                <Label htmlFor="paidAmount">{tp.paidAmount}</Label>
                 <Input
                   id="paidAmount"
                   type="number"
@@ -136,7 +137,7 @@ export function TaxPaymentDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paidDate">Date de Paiement</Label>
+                <Label htmlFor="paidDate">{tp.paymentDate}</Label>
                 <Input
                   id="paidDate"
                   type="date"
@@ -149,75 +150,74 @@ export function TaxPaymentDialog({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="paymentMethod">Mode de Paiement</Label>
+                <Label htmlFor="paymentMethod">{tp.paymentMethod}</Label>
                 <Select
                   value={formData.paymentMethod}
                   onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner" />
+                    <SelectValue placeholder={tp.selectPlaceholder} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="virement">Virement Bancaire</SelectItem>
-                    <SelectItem value="cheque">Chèque</SelectItem>
-                    <SelectItem value="especes">Espèces</SelectItem>
-                    <SelectItem value="prelevement">Prélèvement</SelectItem>
+                    <SelectItem value="virement">{tp.bankTransfer}</SelectItem>
+                    <SelectItem value="cheque">{tp.cheque}</SelectItem>
+                    <SelectItem value="especes">{tp.cash}</SelectItem>
+                    <SelectItem value="prelevement">{tp.directDebit}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="paymentReference">Référence</Label>
+                <Label htmlFor="paymentReference">{tp.reference}</Label>
                 <Input
                   id="paymentReference"
                   value={formData.paymentReference}
                   onChange={(e) => setFormData(prev => ({ ...prev, paymentReference: e.target.value }))}
-                  placeholder="N° virement, chèque..."
+                  placeholder={tp.referencePlaceholder}
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Notes (optionnel)</Label>
+              <Label htmlFor="notes">{tp.notesOptional}</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-                placeholder="Notes additionnelles..."
+                placeholder={tp.notesPlaceholder}
                 rows={2}
               />
             </div>
           </div>
 
-          {/* Total Summary */}
           <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
             <div className="flex justify-between items-center">
-              <span className="font-medium">Total à Payer:</span>
+              <span className="font-medium">{tp.totalToPay}:</span>
               <span className="text-2xl font-bold text-primary">
                 {totalWithPenalty.toLocaleString()} DH
               </span>
             </div>
             {penalty > 0 && (
               <p className="text-xs text-muted-foreground mt-1">
-                Principal: {formData.paidAmount.toLocaleString()} DH + Pénalité: {penalty.toLocaleString()} DH
+                {tp.principalLabel}: {formData.paidAmount.toLocaleString()} DH + {tp.penaltyLabel}: {penalty.toLocaleString()} DH
               </p>
             )}
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {tp.cancel}
             </Button>
             <Button type="submit" disabled={loading || formData.paidAmount <= 0}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Enregistrement...
+                  {tp.saving}
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Enregistrer Paiement
+                  {tp.save}
                 </>
               )}
             </Button>
