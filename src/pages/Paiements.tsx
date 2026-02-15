@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { usePaymentTracking, PaymentRecord } from '@/hooks/usePaymentTracking';
 import { useAuth } from '@/hooks/useAuth';
@@ -75,6 +76,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 
 export default function Paiements() {
   const { isCeo, role } = useAuth();
+  const { t } = useI18n();
   const { payments, stats, loading, refetch, markAsPaid, getAgingReminders, sendPaymentReminders } = usePaymentTracking();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -164,9 +166,9 @@ export default function Paiements() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Paiements & Conformité</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.pages.paiements.title}</h1>
             <p className="text-muted-foreground">
-              Suivi des créances et conformité fiscale & sociale
+              {t.pages.paiements.subtitle}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">

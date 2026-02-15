@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useZonesLivraison, ZoneLivraison, PrestaireTransport } from '@/hooks/useZonesLivraison';
@@ -40,6 +41,7 @@ import { cn } from '@/lib/utils';
 
 export default function Prestataires() {
   const { isCeo, isDirecteurOperations } = useAuth();
+  const { t } = useI18n();
   const { zones, prestataires, loading, fetchData, updateZonePrix } = useZonesLivraison();
   
   const [editingZone, setEditingZone] = useState<ZoneLivraison | null>(null);
@@ -127,9 +129,9 @@ export default function Prestataires() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Transport & Livraison</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.pages.prestataires.title}</h1>
             <p className="text-muted-foreground mt-1">
-              Gestion des zones tarifaires et prestataires de transport
+              {t.pages.prestataires.subtitle}
             </p>
           </div>
         </div>

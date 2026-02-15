@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -36,6 +37,7 @@ interface Approbation {
 
 export default function Approbations() {
   const { user, isCeo } = useAuth();
+  const { t } = useI18n();
   const [approbations, setApprobations] = useState<Approbation[]>([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -118,9 +120,9 @@ export default function Approbations() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Approbations CEO</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.pages.approbations.title}</h1>
             <p className="text-muted-foreground mt-1">
-              Demandes en attente de votre validation
+              {t.pages.approbations.subtitle || 'Demandes en attente de votre validation'}
             </p>
           </div>
           {pendingCount > 0 && (

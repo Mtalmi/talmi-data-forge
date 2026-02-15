@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { usePointage } from '@/hooks/usePointage';
@@ -52,6 +53,7 @@ import { cn } from '@/lib/utils';
 
 export default function Pointage() {
   const { isCeo, isDirecteurOperations, isSuperviseur, user } = useAuth();
+  const { t } = useI18n();
   const {
     employes,
     pointages,
@@ -247,10 +249,10 @@ export default function Pointage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
               <Clock className="h-7 w-7 text-primary" />
-              Pointage & Rapports
+              {t.pages.pointage.title}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Suivi de présence et rapports journaliers des équipes
+              {t.pages.pointage.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-3">
