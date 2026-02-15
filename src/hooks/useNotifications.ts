@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { playSound } from '@/lib/sounds';
 
 export interface SystemAlert {
   id: string;
@@ -251,6 +252,14 @@ export function useNotifications() {
                 warning: newAlert.niveau === 'warning' ? prev.warning + 1 : prev.warning,
                 info: newAlert.niveau === 'info' ? prev.info + 1 : prev.info,
               }));
+              // 🔊 Play sound alert based on severity
+              if (newAlert.niveau === 'critical') {
+                playSound('error');
+              } else if (newAlert.niveau === 'warning') {
+                playSound('notification');
+              } else {
+                playSound('notification');
+              }
             }
           } else if (payload.eventType === 'UPDATE') {
             setAlerts(prev => prev.map(a => 
