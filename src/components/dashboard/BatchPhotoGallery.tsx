@@ -18,8 +18,9 @@ import {
   ImageOff
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr as frLocale } from 'date-fns/locale';
 
 interface BatchPhoto {
   id: string;
@@ -349,7 +350,7 @@ export function BatchPhotoGallery() {
                   <div>
                     <span className="text-muted-foreground">Heure:</span>
                     <span className="ml-2 font-medium">
-                      {format(new Date(selectedPhoto.entered_at), 'HH:mm', { locale: fr })}
+                      {format(new Date(selectedPhoto.entered_at), 'HH:mm', { locale: frLocale })}
                     </span>
                   </div>
                   <div>
