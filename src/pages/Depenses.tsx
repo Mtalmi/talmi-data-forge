@@ -56,6 +56,7 @@ const CATEGORY_CONFIG: Record<string, { icon: React.ReactNode; color: string }> 
 
 export default function Depenses() {
   const { isCeo } = useAuth();
+  const { t } = useI18n();
   const { depenses, stats, loading, refresh, deleteDepense } = useDepenses();
   
   const [selectedDepense, setSelectedDepense] = useState<Depense | null>(null);
@@ -94,9 +95,9 @@ export default function Depenses() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Gestion des Dépenses</h1>
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">{t.pages.depenses.totalExpenses || t.pages.expenses.title}</h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Suivi des dépenses avec justificatifs obligatoires
+              {t.pages.depenses.receiptTracking || t.pages.expenses.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -117,7 +118,7 @@ export default function Depenses() {
             />
             <Button variant="outline" size="sm" onClick={refresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t.pages.depenses.refresh}</span>
             </Button>
             <ExpenseForm onSuccess={refresh} />
           </div>
@@ -128,7 +129,7 @@ export default function Depenses() {
           <Card className="lg:col-span-1">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Dépenses
+                {t.pages.depenses.totalExpenses}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -153,7 +154,7 @@ export default function Depenses() {
                   <span className="text-xs font-normal text-muted-foreground ml-1">DH</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {stats.countByCategorie[cat] || 0} entrées
+                  {stats.countByCategorie[cat] || 0} {t.pages.depenses.entries}
                 </p>
               </CardContent>
             </Card>
@@ -169,17 +170,17 @@ export default function Depenses() {
           ) : depenses.length === 0 ? (
             <div className="p-8 text-center">
               <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucune dépense enregistrée</p>
+              <p className="text-muted-foreground">{t.pages.depenses.noExpenses}</p>
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead className="text-right">Montant</TableHead>
-                  <TableHead>Reçu</TableHead>
+                  <TableHead>{t.pages.depenses.date}</TableHead>
+                  <TableHead>{t.pages.depenses.category}</TableHead>
+                  <TableHead>{t.pages.depenses.description}</TableHead>
+                  <TableHead className="text-right">{t.pages.depenses.amount}</TableHead>
+                  <TableHead>{t.pages.depenses.receipt}</TableHead>
                   {isCeo && <TableHead className="w-10"></TableHead>}
                 </TableRow>
               </TableHeader>
@@ -233,7 +234,7 @@ export default function Depenses() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Receipt className="h-5 w-5" />
-                Détail de la Dépense
+                {t.pages.depenses.expenseDetail}
               </DialogTitle>
             </DialogHeader>
             {selectedDepense && (
@@ -262,7 +263,7 @@ export default function Depenses() {
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Photo du Reçu</p>
+                  <p className="text-sm text-muted-foreground">{t.pages.depenses.receiptPhoto}</p>
                   <img
                     src={selectedDepense.photo_recu_url}
                     alt="Reçu"
@@ -278,13 +279,13 @@ export default function Depenses() {
         <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Supprimer cette dépense ?</AlertDialogTitle>
+              <AlertDialogTitle>{t.pages.depenses.deleteExpense}</AlertDialogTitle>
               <AlertDialogDescription>
-                Cette action est irréversible. La dépense sera définitivement supprimée.
+                {t.pages.depenses.deleteIrreversible}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogCancel>{t.pages.depenses.cancel}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDeleteConfirm}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -293,7 +294,7 @@ export default function Depenses() {
                 {deleting ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  'Supprimer'
+                  t.pages.depenses.delete
                 )}
               </AlertDialogAction>
             </AlertDialogFooter>
