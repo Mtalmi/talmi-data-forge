@@ -146,5 +146,40 @@
     "fr": "Français",
     "ar": "العربية",
     "en": "English"
+  },
+  "widgets": {
+    "approvals": "Approvals",
+    "pending": "pending",
+    "pipelineToday": "Today's Pipeline",
+    "planned": "Planned",
+    "inProgress": "In Progress",
+    "delivered": "Delivered",
+    "clientReceivables": "Client Receivables",
+    "stockLevels": "Stock Levels",
+    "noStock": "No stock recorded",
+    "salesPipeline": "Sales Pipeline",
+    "quotes": "Quotes",
+    "activeOrders": "Active POs",
+    "conversion": "Conversion",
+    "pendingQuoteValue": "Pending quote value"
+  },
+  "search": {
+    "quickSearch": "Quick search...",
+    "search": "Search",
+    "searchPlaceholder": "Search clients, BLs, invoices...",
+    "noResults": "No results found.",
+    "minChars": "Type at least 2 characters to search",
+    "clients": "Clients",
+    "deliveryNotes": "Delivery Notes",
+    "invoices": "Invoices",
+    "results": "Results",
+    "commandPlaceholder": "Search or ask AI...",
+    "noCommandResults": "No results for \"{{query}}\"",
+    "openAI": "Open AI Assistant",
+    "aiChat": "Chat with TBOS AI",
+    "attendance": "Attendance",
+    "attendanceDesc": "Employee attendance management",
+    "bankReconciliation": "Bank Reconciliation",
+    "bankReconciliationDesc": "Financial reconciliation"
   }
 }

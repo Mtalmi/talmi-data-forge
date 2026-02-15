@@ -146,5 +146,40 @@
     "fr": "Français",
     "ar": "العربية",
     "en": "English"
+  },
+  "widgets": {
+    "approvals": "Approbations",
+    "pending": "en attente",
+    "pipelineToday": "Pipeline Aujourd'hui",
+    "planned": "Planifié",
+    "inProgress": "En cours",
+    "delivered": "Livré",
+    "clientReceivables": "Créances Clients",
+    "stockLevels": "Niveaux Stock",
+    "noStock": "Aucun stock enregistré",
+    "salesPipeline": "Pipeline Commercial",
+    "quotes": "Devis",
+    "activeOrders": "BC Actifs",
+    "conversion": "Conversion",
+    "pendingQuoteValue": "Valeur Devis en attente"
+  },
+  "search": {
+    "quickSearch": "Recherche rapide...",
+    "search": "Rechercher",
+    "searchPlaceholder": "Rechercher clients, BLs, factures...",
+    "noResults": "Aucun résultat trouvé.",
+    "minChars": "Tapez au moins 2 caractères pour rechercher",
+    "clients": "Clients",
+    "deliveryNotes": "Bons de Livraison",
+    "invoices": "Factures",
+    "results": "Résultats",
+    "commandPlaceholder": "Rechercher ou demander à l'IA...",
+    "noCommandResults": "Aucun résultat pour \"{{query}}\"",
+    "openAI": "Ouvrir Assistant AI",
+    "aiChat": "Chat avec TBOS AI",
+    "attendance": "Pointage",
+    "attendanceDesc": "Gestion présence employés",
+    "bankReconciliation": "Rapprochement Bancaire",
+    "bankReconciliationDesc": "Réconciliation financière"
   }
 }
