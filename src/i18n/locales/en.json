@@ -60,7 +60,10 @@
     "actions": "Actions",
     "noData": "No data",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "refresh": "Refresh",
+    "myAccount": "My Account",
+    "profile": "Profile"
   },
   "auth": {
     "login": "Sign In",
@@ -96,6 +99,40 @@
       "weekShort": "Week",
       "month": "This Month",
       "monthShort": "Month"
+    },
+    "sections": {
+      "performanceKpis": "Performance & KPIs",
+      "productionQuality": "Production & Quality",
+      "financeTreasury": "Finance & Treasury",
+      "fleetLogistics": "Fleet & Logistics",
+      "securityAudit": "Security & Audit",
+      "commandCenter": "Command Center"
+    },
+    "kpi": {
+      "totalVolume": "Total Volume",
+      "revenue": "Revenue",
+      "avgCUR": "Avg CUR",
+      "unitCost": "Real Unit Cost",
+      "grossMargin": "Gross Margin",
+      "netProfit": "Net Profit",
+      "profitSubtitle": "Revenue - Costs - Expenses",
+      "totalExpenses": "Total Expenses",
+      "marginAlerts": "Margin Alerts",
+      "marginAlertsSubtitle": "Variances > 5%",
+      "activeClients": "Active Clients",
+      "invoices": "{{count}} invoices"
+    },
+    "production": {
+      "summary": "Production Summary",
+      "activeFormulas": "Active formulas",
+      "pricesUpdated": "Prices updated",
+      "avgECRatio": "Avg W/C ratio",
+      "avgCUR7d": "Avg CUR (7d)",
+      "addProduct": "+ Add product"
+    },
+    "security": {
+      "securityAlerts": "🛡️ Security Alerts",
+      "auditTrail": "🔍 Audit Trail"
     }
   },
   "pwa": {
