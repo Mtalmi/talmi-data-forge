@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 interface KPICardProps {
   title: string;
@@ -20,6 +21,11 @@ export default function KPICard({
   trendValue,
   variant = 'default',
 }: KPICardProps) {
+  // Animate numeric values
+  const numericValue = typeof value === 'number' ? value : parseInt(String(value), 10);
+  const isNumeric = !isNaN(numericValue) && typeof value === 'number';
+  const animatedNum = useAnimatedCounter(isNumeric ? numericValue : 0, 1200, 0);
+
   const variantStyles = {
     default: '',
     positive: 'positive',
@@ -58,6 +64,7 @@ export default function KPICard({
   return (
     <div className={cn(
       'kpi-card animate-fade-in group',
+      'hover:scale-[1.02] hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)] transition-all duration-300',
       variantStyles[variant]
     )}>
       <div className="flex items-start justify-between gap-3">
@@ -66,7 +73,7 @@ export default function KPICard({
             {title}
           </p>
           <p className="text-2xl sm:text-3xl font-black tracking-tight tabular-nums">
-            {value}
+            {isNumeric ? animatedNum : value}
           </p>
           {subtitle && (
             <p className="text-sm text-muted-foreground truncate">{subtitle}</p>
