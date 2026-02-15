@@ -34,7 +34,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, addDays, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { toast } from 'sonner';
 
 interface DailyForecast {
@@ -66,12 +67,12 @@ interface CashFlowSummary {
 }
 
 // Known recurring payments (configurable)
-const RECURRING_PAYMENTS: RecurringPayment[] = [
-  { type: 'salary', label: 'Salaires', amount: 85000, dayOfMonth: 25, frequency: 'monthly' },
-  { type: 'supplier', label: 'Fournisseur Ciment', amount: 120000, dayOfMonth: 5, frequency: 'monthly' },
-  { type: 'supplier', label: 'Fournisseur Agrégats', amount: 45000, dayOfMonth: 10, frequency: 'monthly' },
-  { type: 'rent', label: 'Loyer & Charges', amount: 15000, dayOfMonth: 1, frequency: 'monthly' },
-  { type: 'other', label: 'Assurances', amount: 8000, dayOfMonth: 15, frequency: 'monthly' },
+const RECURRING_PAYMENT_KEYS = [
+  { type: 'salary', key: 'salaries' as const, amount: 85000, dayOfMonth: 25, frequency: 'monthly' },
+  { type: 'supplier', key: 'cementSupplier' as const, amount: 120000, dayOfMonth: 5, frequency: 'monthly' },
+  { type: 'supplier', key: 'aggregateSupplier' as const, amount: 45000, dayOfMonth: 10, frequency: 'monthly' },
+  { type: 'rent', key: 'rentCharges' as const, amount: 15000, dayOfMonth: 1, frequency: 'monthly' },
+  { type: 'other', key: 'insurance' as const, amount: 8000, dayOfMonth: 15, frequency: 'monthly' },
 ];
 
 const PAYMENT_ICONS: Record<string, React.ReactNode> = {
@@ -82,6 +83,9 @@ const PAYMENT_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function CashFlowForecast() {
+  const { t, lang } = useI18n();
+  const cf = t.cashFlow;
+  const dateLocale = getDateLocale(lang);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [forecast, setForecast] = useState<DailyForecast[]>([]);
@@ -186,7 +190,7 @@ export function CashFlowForecast() {
         let outflow = avgDailyExpense * (isWeekend ? 0.3 : 1);
 
         // Add recurring payments
-        RECURRING_PAYMENTS.forEach(payment => {
+        RECURRING_PAYMENT_KEYS.forEach(payment => {
           if (payment.dayOfMonth === dayOfMonth) {
             outflow += payment.amount;
           }
@@ -199,7 +203,7 @@ export function CashFlowForecast() {
 
         forecastData.push({
           date: dateStr,
-          dateLabel: format(day, 'dd MMM', { locale: fr }),
+          dateLabel: format(day, 'dd MMM', { locale: dateLocale || undefined }),
           projectedBalance: Math.round(runningBalance),
           inflow: Math.round(inflow),
           outflow: Math.round(outflow),
@@ -240,7 +244,7 @@ export function CashFlowForecast() {
         const exp = dailyExpenses.get(dateStr) || 0;
         histBalance += rev - exp;
         historical.push({
-          date: format(day, 'dd MMM', { locale: fr }),
+          date: format(day, 'dd MMM', { locale: dateLocale || undefined }),
           balance: Math.round(histBalance),
         });
       });
@@ -249,7 +253,7 @@ export function CashFlowForecast() {
 
     } catch (error) {
       console.error('Error fetching cash flow data:', error);
-      toast.error('Erreur chargement prévisions');
+      toast.error(cf.loadError);
     } finally {
       setLoading(false);
     }
@@ -259,7 +263,7 @@ export function CashFlowForecast() {
     setRefreshing(true);
     await fetchCashFlowData();
     setRefreshing(false);
-    toast.success('Prévisions actualisées');
+    toast.success(cf.refreshed);
   };
 
   useEffect(() => {
@@ -268,18 +272,18 @@ export function CashFlowForecast() {
 
   const chartConfig = useMemo(() => ({
     balance: {
-      label: "Solde",
+      label: cf.balance,
       color: "hsl(var(--primary))",
     },
     inflow: {
-      label: "Entrées",
+      label: cf.inflow,
       color: "hsl(var(--success))",
     },
     outflow: {
-      label: "Sorties",
+      label: cf.outflow,
       color: "hsl(var(--destructive))",
     },
-  }), []);
+  }), [cf]);
 
   const riskColors = {
     low: 'bg-success/20 text-success border-success/30',
@@ -289,10 +293,10 @@ export function CashFlowForecast() {
   };
 
   const riskLabels = {
-    low: 'Sain',
-    medium: 'Attention',
-    high: 'Risque',
-    critical: 'Critique',
+    low: cf.riskLow,
+    medium: cf.riskMedium,
+    high: cf.riskHigh,
+    critical: cf.riskCritical,
   };
 
   // Upcoming payments in next 7 days
@@ -304,11 +308,11 @@ export function CashFlowForecast() {
       const checkDay = addDays(today, i);
       const dayOfMonth = checkDay.getDate();
       
-      RECURRING_PAYMENTS.forEach(p => {
+      RECURRING_PAYMENT_KEYS.forEach(p => {
         if (p.dayOfMonth === dayOfMonth) {
           payments.push({
-            date: format(checkDay, 'dd MMM', { locale: fr }),
-            label: p.label,
+            date: format(checkDay, 'dd MMM', { locale: dateLocale || undefined }),
+            label: cf[p.key],
             amount: p.amount,
             type: p.type,
           });
@@ -329,7 +333,7 @@ export function CashFlowForecast() {
             </div>
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                Cash-Flow Time Machine
+                {cf.title}
                 {summary && (
                   <Badge 
                     variant="outline" 
@@ -340,7 +344,7 @@ export function CashFlowForecast() {
                 )}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Prévisions 30 jours
+                {cf.forecast30Days}
               </p>
             </div>
           </div>
@@ -367,7 +371,7 @@ export function CashFlowForecast() {
             {summary && (
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Solde Actuel</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{cf.currentBalance}</p>
                   <p className="text-lg font-bold font-mono">
                     {(summary.currentBalance / 1000).toFixed(0)}K
                   </p>
@@ -378,7 +382,7 @@ export function CashFlowForecast() {
                     ? "bg-success/10 border-success/20" 
                     : "bg-warning/10 border-warning/20"
                 )}>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Fin de Mois</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{cf.endOfMonth}</p>
                   <div className="flex items-center gap-1">
                     <p className="text-lg font-bold font-mono">
                       {(summary.projectedEndBalance / 1000).toFixed(0)}K
@@ -391,13 +395,13 @@ export function CashFlowForecast() {
                   </div>
                 </div>
                 <div className="p-3 bg-success/10 rounded-lg border border-success/20">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Entrées Prévues</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{cf.projectedInflow}</p>
                   <p className="text-lg font-bold font-mono text-success">
                     +{(summary.totalInflow / 1000).toFixed(0)}K
                   </p>
                 </div>
                 <div className="p-3 bg-destructive/10 rounded-lg border border-destructive/20">
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Sorties Prévues</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{cf.projectedOutflow}</p>
                   <p className="text-lg font-bold font-mono text-destructive">
                     -{(summary.totalOutflow / 1000).toFixed(0)}K
                   </p>
@@ -413,7 +417,7 @@ export function CashFlowForecast() {
               )}>
                 <AlertTriangle className="h-4 w-4 flex-shrink-0" />
                 <p className="text-xs">
-                  Point bas prévu: <strong>{(summary.lowestPoint / 1000).toFixed(0)}K MAD</strong> le {summary.lowestPointDate}
+                  {cf.lowPointExpected}: <strong>{(summary.lowestPoint / 1000).toFixed(0)}K MAD</strong> {cf.on} {summary.lowestPointDate}
                 </p>
               </div>
             )}
@@ -421,8 +425,8 @@ export function CashFlowForecast() {
             {/* Forecast Chart */}
             <Tabs defaultValue="balance" className="w-full">
               <TabsList className="grid w-full grid-cols-2 h-8">
-                <TabsTrigger value="balance" className="text-xs">Solde Projeté</TabsTrigger>
-                <TabsTrigger value="flow" className="text-xs">Flux Quotidien</TabsTrigger>
+                <TabsTrigger value="balance" className="text-xs">{cf.projectedBalance}</TabsTrigger>
+                <TabsTrigger value="flow" className="text-xs">{cf.dailyFlow}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="balance" className="mt-2">
@@ -449,14 +453,14 @@ export function CashFlowForecast() {
                     />
                     <ChartTooltip 
                       content={<ChartTooltipContent />}
-                      formatter={(value: number) => [`${(value / 1000).toFixed(1)}K MAD`, 'Solde']}
+                      formatter={(value: number) => [`${(value / 1000).toFixed(1)}K MAD`, cf.balance]}
                     />
                     {summary && (
                       <ReferenceLine 
                         y={150000} 
                         stroke="hsl(var(--warning))" 
                         strokeDasharray="5 5"
-                        label={{ value: 'Seuil Min', fontSize: 10, fill: 'hsl(var(--warning))' }}
+                        label={{ value: cf.minThreshold, fontSize: 10, fill: 'hsl(var(--warning))' }}
                       />
                     )}
                     <Area
@@ -493,7 +497,7 @@ export function CashFlowForecast() {
                       stroke="hsl(var(--success))"
                       strokeWidth={2}
                       dot={false}
-                      name="Entrées"
+                      name={cf.inflow}
                     />
                     <Line
                       type="monotone"
@@ -501,7 +505,7 @@ export function CashFlowForecast() {
                       stroke="hsl(var(--destructive))"
                       strokeWidth={2}
                       dot={false}
-                      name="Sorties"
+                      name={cf.outflow}
                     />
                   </LineChart>
                 </ChartContainer>
@@ -512,7 +516,7 @@ export function CashFlowForecast() {
             {upcomingPayments.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  Échéances 7 Jours
+                  {cf.upcoming7Days}
                 </h4>
                 <div className="space-y-1.5">
                   {upcomingPayments.map((payment, i) => (

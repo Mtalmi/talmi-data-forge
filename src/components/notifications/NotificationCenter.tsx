@@ -22,7 +22,8 @@ import {
 } from 'lucide-react';
 import { useNotifications, SystemAlert } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 const NIVEAU_CONFIG: Record<string, { icon: React.ElementType; color: string; bgColor: string }> = {
@@ -41,9 +42,11 @@ interface NotificationItemProps {
 }
 
 function NotificationItem({ alert, onRead, onDismiss, onNavigate, getTypeLabel }: NotificationItemProps) {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const config = NIVEAU_CONFIG[alert.niveau] || NIVEAU_CONFIG.info;
   const Icon = config.icon;
-  const timeAgo = formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: fr });
+  const timeAgo = formatDistanceToNow(new Date(alert.created_at), { addSuffix: true, locale: dateLocale || undefined });
 
   const handleClick = () => {
     if (!alert.lu) {
@@ -119,6 +122,8 @@ function NotificationItem({ alert, onRead, onDismiss, onNavigate, getTypeLabel }
 
 export default function NotificationCenter() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const n = t.notifications;
   const [open, setOpen] = useState(false);
   const {
     alerts,
@@ -160,12 +165,12 @@ export default function NotificationCenter() {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div>
-            <h3 className="font-semibold">Notifications</h3>
+            <h3 className="font-semibold">{n.title}</h3>
             <p className="text-xs text-muted-foreground">
-              {stats.unread} non lue{stats.unread !== 1 && 's'}
+              {stats.unread} {stats.unread !== 1 ? n.unreadPlural : n.unread}
               {stats.critical > 0 && (
                 <span className="text-red-600 ml-2">
-                  • {stats.critical} critique{stats.critical !== 1 && 's'}
+                  • {stats.critical} {stats.critical !== 1 ? n.criticalPlural : n.critical}
                 </span>
               )}
             </p>
@@ -173,7 +178,7 @@ export default function NotificationCenter() {
           {stats.unread > 0 && (
             <Button variant="ghost" size="sm" onClick={markAllAsRead}>
               <CheckCheck className="h-4 w-4 mr-1" />
-              Tout lire
+              {n.markAllRead}
             </Button>
           )}
         </div>
@@ -187,9 +192,9 @@ export default function NotificationCenter() {
           ) : alerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
               <Bell className="h-10 w-10 text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucune notification</p>
+              <p className="text-muted-foreground">{n.noNotifications}</p>
               <p className="text-xs text-muted-foreground/70">
-                Les alertes système apparaîtront ici
+                {n.alertsAppearHere}
               </p>
             </div>
           ) : (
@@ -198,7 +203,7 @@ export default function NotificationCenter() {
               {unreadAlerts.length > 0 && (
                 <>
                   <p className="text-xs font-medium text-muted-foreground px-2 py-1">
-                    Nouvelles
+                    {n.new}
                   </p>
                   {unreadAlerts.map(alert => (
                     <NotificationItem
@@ -218,7 +223,7 @@ export default function NotificationCenter() {
                 <>
                   {unreadAlerts.length > 0 && <Separator className="my-2" />}
                   <p className="text-xs font-medium text-muted-foreground px-2 py-1">
-                    Précédentes
+                    {n.previous}
                   </p>
                   {readAlerts.map(alert => (
                     <NotificationItem
@@ -246,7 +251,7 @@ export default function NotificationCenter() {
               navigate('/alertes');
             }}
           >
-            Voir toutes les alertes
+            {n.viewAllAlerts}
           </Button>
         </div>
       </PopoverContent>
