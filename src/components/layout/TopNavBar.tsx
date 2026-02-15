@@ -6,7 +6,6 @@ import { GlobalSearch } from '@/components/search/GlobalSearch';
 import NotificationCenter from '@/components/notifications/NotificationCenter';
 import { ThemeToggle } from './ThemeToggle';
 import { SoundToggle } from './SoundToggle';
-import { LanguageSwitcher } from './LanguageSwitcher';
 import { RolePreviewSwitcher } from './RolePreviewSwitcher';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -248,7 +247,6 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             <GlobalSearch />
           </div>
 
-          <LanguageSwitcher />
           <SoundToggle />
           <ThemeToggle />
           <NotificationCenter />
