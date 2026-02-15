@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import { SplashScreen } from '@/components/layout/SplashScreen';
 import { useAuth } from '@/hooks/useAuth';
@@ -8,23 +8,17 @@ const SPLASH_SHOWN_KEY = 'tbos_splash_shown';
 
 export default function Index() {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
 
   const [showSplash, setShowSplash] = useState(() => {
     return !sessionStorage.getItem(SPLASH_SHOWN_KEY);
   });
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/landing', { replace: true });
-    }
-  }, [user, loading, navigate]);
 
   const handleSplashComplete = () => {
     sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
     setShowSplash(false);
   };
 
+  // Show loading spinner while auth is resolving
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -33,7 +27,10 @@ export default function Index() {
     );
   }
 
-  if (!user) return null;
+  // SYNCHRONOUS redirect — no useEffect delay, no flash of dashboard
+  if (!user) {
+    return <Navigate to="/landing" replace />;
+  }
 
   return (
     <>
