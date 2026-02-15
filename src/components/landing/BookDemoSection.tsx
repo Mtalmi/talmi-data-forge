@@ -4,12 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { CheckCircle2, Send, Clock, Gift, ShieldCheck, Loader2 } from 'lucide-react';
-
-const badges = [
-  { icon: ShieldCheck, label: 'Sans engagement' },
-  { icon: Gift, label: 'Gratuit' },
-  { icon: Clock, label: 'Réponse 24h' },
-];
+import { useI18n } from '@/i18n/I18nContext';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[\+]?[\d\s\-\(\)]{7,20}$/;
@@ -21,6 +16,8 @@ interface FormErrors {
 }
 
 export default function BookDemoSection() {
+  const { t } = useI18n();
+  const l = t.landing;
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -32,10 +29,15 @@ export default function BookDemoSection() {
     nombre_centrales: '',
   });
 
+  const badges = [
+    { icon: ShieldCheck, label: l.demoBadge1 },
+    { icon: Gift, label: l.demoBadge2 },
+    { icon: Clock, label: l.demoBadge3 },
+  ];
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-    // Clear error on change
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -43,21 +45,15 @@ export default function BookDemoSection() {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
-
-    if (!form.nom_complet.trim()) {
-      newErrors.nom_complet = 'Le nom complet est requis';
-    }
-
+    if (!form.nom_complet.trim()) newErrors.nom_complet = l.demoNameRequired;
     if (!form.email.trim()) {
-      newErrors.email = "L'email est requis";
+      newErrors.email = l.demoEmailRequired;
     } else if (!EMAIL_REGEX.test(form.email.trim())) {
-      newErrors.email = 'Format email invalide';
+      newErrors.email = l.demoEmailInvalid;
     }
-
     if (form.telephone.trim() && !PHONE_REGEX.test(form.telephone.trim())) {
-      newErrors.telephone = 'Format téléphone invalide';
+      newErrors.telephone = l.demoPhoneInvalid;
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -67,7 +63,7 @@ export default function BookDemoSection() {
     if (!validate()) return;
 
     setLoading(true);
-    toast.loading('Envoi en cours...', { id: 'demo-submit' });
+    toast.loading(l.demoSubmitting, { id: 'demo-submit' });
 
     const { error } = await supabase.from('demo_requests').insert({
       nom_complet: form.nom_complet.trim(),
@@ -79,33 +75,31 @@ export default function BookDemoSection() {
     setLoading(false);
 
     if (error) {
-      toast.error("Erreur lors de l'enregistrement. Réessayez.", { id: 'demo-submit' });
+      toast.error(l.demoError, { id: 'demo-submit' });
       return;
     }
 
     setSubmitted(true);
-    toast.success('Demande envoyée avec succès ✓', { id: 'demo-submit' });
+    toast.success(l.demoSent, { id: 'demo-submit' });
   };
 
   return (
     <section className="relative py-24 sm:py-32 overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-card/60 to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(var(--primary)/0.06),transparent_70%)]" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">Démo</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">{l.demoLabel}</p>
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-            Prêt à transformer{' '}
-            <span className="text-gradient-gold">votre centrale</span> ?
+            {l.demoTitle1}{' '}
+            <span className="text-gradient-gold">{l.demoTitle2}</span> ?
           </h2>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Réservez une démo personnalisée. Réponse sous 24h.
+            {l.demoDesc}
           </p>
         </div>
 
-        {/* Trust badges */}
         <div className="flex flex-wrap items-center justify-center gap-4 mb-12">
           {badges.map((b) => (
             <div key={b.label} className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
@@ -118,8 +112,8 @@ export default function BookDemoSection() {
         {submitted ? (
           <div className="max-w-md mx-auto text-center py-12 rounded-2xl bg-card border border-border">
             <CheckCircle2 className="h-14 w-14 text-primary mx-auto mb-4" />
-            <h3 className="text-xl font-bold mb-2">Demande reçue !</h3>
-            <p className="text-muted-foreground">Notre équipe vous contactera sous 24h.</p>
+            <h3 className="text-xl font-bold mb-2">{l.demoSuccess}</h3>
+            <p className="text-muted-foreground">{l.demoSuccessDesc}</p>
           </div>
         ) : (
           <form
@@ -128,20 +122,20 @@ export default function BookDemoSection() {
             noValidate
           >
             <div className="space-y-1">
-              <Input name="nom_complet" placeholder="Nom complet *" value={form.nom_complet} onChange={handleChange} required maxLength={100} className={errors.nom_complet ? 'border-destructive' : ''} />
+              <Input name="nom_complet" placeholder={l.demoNamePlaceholder} value={form.nom_complet} onChange={handleChange} required maxLength={100} className={errors.nom_complet ? 'border-destructive' : ''} />
               {errors.nom_complet && <p className="text-xs text-destructive">{errors.nom_complet}</p>}
             </div>
             <div className="space-y-1">
-              <Input name="email" type="email" placeholder="Email professionnel *" value={form.email} onChange={handleChange} required maxLength={255} className={errors.email ? 'border-destructive' : ''} />
+              <Input name="email" type="email" placeholder={l.demoEmailPlaceholder} value={form.email} onChange={handleChange} required maxLength={255} className={errors.email ? 'border-destructive' : ''} />
               {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
             <div className="space-y-1">
-              <Input name="telephone" placeholder="Téléphone" value={form.telephone} onChange={handleChange} maxLength={20} className={errors.telephone ? 'border-destructive' : ''} />
+              <Input name="telephone" placeholder={l.demoPhonePlaceholder} value={form.telephone} onChange={handleChange} maxLength={20} className={errors.telephone ? 'border-destructive' : ''} />
               {errors.telephone && <p className="text-xs text-destructive">{errors.telephone}</p>}
             </div>
-            <Input name="entreprise" placeholder="Nom de l'entreprise" value={form.entreprise} onChange={handleChange} maxLength={100} />
+            <Input name="entreprise" placeholder={l.demoCompanyPlaceholder} value={form.entreprise} onChange={handleChange} maxLength={100} />
             <div className="sm:col-span-2">
-              <Input name="nombre_centrales" type="number" min={1} max={100} placeholder="Nombre de centrales" value={form.nombre_centrales} onChange={handleChange} />
+              <Input name="nombre_centrales" type="number" min={1} max={100} placeholder={l.demoPlantsPlaceholder} value={form.nombre_centrales} onChange={handleChange} />
             </div>
             <div className="sm:col-span-2">
               <Button
@@ -153,11 +147,11 @@ export default function BookDemoSection() {
                 {loading ? (
                   <>
                     <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Envoi en cours...
+                    {l.demoSubmitting}
                   </>
                 ) : (
                   <>
-                    Réserver ma démo
+                    {l.demoSubmit}
                     <Send className="h-5 w-5 ml-2" />
                   </>
                 )}

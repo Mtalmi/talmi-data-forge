@@ -19,53 +19,29 @@ import SocialProofSection from '@/components/landing/SocialProofSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const stats = [
-  { value: '50+', label: 'Modules', icon: Zap, num: 50, suffix: '+' },
-  { value: '99.9%', label: 'Uptime', icon: Shield, num: 99.9, suffix: '%', decimals: 1 },
-  { value: '< 2s', label: 'Load Time', icon: TrendingUp, num: 2, suffix: 's', prefix: '< ' },
-  { value: 'AES-256', label: 'Encryption', icon: Lock, num: 256, prefix: 'AES-' },
-];
-
-const features = [
-  {
-    icon: Factory,
-    title: 'Production Intelligence',
-    desc: 'Real-time batch monitoring, AI quality control, and automated deviation alerts. Every cubic meter tracked from silo to site.',
-  },
-  {
-    icon: Truck,
-    title: 'Fleet Command Center',
-    desc: 'Live GPS tracking, geofence alerts, fuel theft detection, and driver rotation optimization across your entire fleet.',
-  },
-  {
-    icon: BarChart3,
-    title: 'Financial Fortress',
-    desc: 'Treasury management, AR/AP reconciliation, tax compliance calendar, and cash flow forecasting with forensic audit trails.',
-  },
-  {
-    icon: FlaskConical,
-    title: 'Laboratory & Quality',
-    desc: 'Digital test certificates, humidity photo verification, slump tracking, and automated QC departure gates.',
-  },
-  {
-    icon: Eye,
-    title: 'CEO God Mode',
-    desc: 'Executive command center with real-time profit tickers, anomaly detection, emergency overrides, and midnight transaction alerts.',
-  },
-  {
-    icon: Users,
-    title: 'Role-Based Access',
-    desc: '10+ distinct roles from CEO to driver. Every action logged, every modification traced, every decision accountable.',
-  },
-];
-
-const trusted = [
-  'ISO 9001 Compliant', 'GDPR Ready', 'SOC 2 Aligned', 'Multi-Tenant Architecture',
-];
-
 export default function Landing() {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
+  const l = t.landing;
+
+  const stats = [
+    { value: '50+', label: l.statModules, icon: Zap, num: 50, suffix: '+' },
+    { value: '99.9%', label: l.statUptime, icon: Shield, num: 99.9, suffix: '%', decimals: 1 },
+    { value: '< 2s', label: l.statLoadTime, icon: TrendingUp, num: 2, suffix: 's', prefix: '< ' },
+    { value: 'AES-256', label: l.statEncryption, icon: Lock, num: 256, prefix: 'AES-' },
+  ];
+
+  const features = [
+    { icon: Factory, title: l.featProductionTitle, desc: l.featProductionDesc },
+    { icon: Truck, title: l.featFleetTitle, desc: l.featFleetDesc },
+    { icon: BarChart3, title: l.featFinanceTitle, desc: l.featFinanceDesc },
+    { icon: FlaskConical, title: l.featLabTitle, desc: l.featLabDesc },
+    { icon: Eye, title: l.featCeoTitle, desc: l.featCeoDesc },
+    { icon: Users, title: l.featRolesTitle, desc: l.featRolesDesc },
+  ];
+
+  const trusted = [l.trustIso, l.trustGdpr, l.trustSoc, l.trustMulti];
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -190,22 +166,21 @@ export default function Landing() {
           {/* Badge */}
           <div className="hero-badge inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 mb-8">
             <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-xs font-semibold text-primary tracking-wide uppercase">Enterprise Operating System</span>
+            <span className="text-xs font-semibold text-primary tracking-wide uppercase">{l.badge}</span>
           </div>
 
           {/* Headline */}
           <h1 className="hero-headline text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
-            <span className="text-gradient-gold">The Operating System</span>
+            <span className="text-gradient-gold">{l.headline1}</span>
             <br />
-            <span className="text-foreground/90">for Concrete Titans</span>
+            <span className="text-foreground/90">{l.headline2}</span>
           </h1>
 
           {/* Subtitle */}
           <p className="hero-subtitle text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            TBOS unifies production, logistics, finance, quality, and fleet management
-            into one{' '}
-            <span className="text-foreground font-semibold">military-grade platform</span>{' '}
-            built for ready-mix concrete operations.
+            {l.subtitle}{' '}
+            <span className="text-foreground font-semibold">{l.subtitleBold}</span>{' '}
+            {l.subtitleEnd}
           </p>
 
           {/* CTA */}
@@ -215,7 +190,7 @@ export default function Landing() {
               onClick={() => navigate('/auth')}
               className="text-base px-8 py-6 rounded-2xl shadow-[0_4px_30px_hsl(var(--primary)/0.3)] hover:shadow-[0_8px_50px_hsl(var(--primary)/0.45)] transition-all duration-300"
             >
-              Access Platform
+              {l.accessPlatform}
               <ArrowRight className="h-5 w-5 ml-1" />
             </Button>
             <Button
@@ -226,7 +201,7 @@ export default function Landing() {
               }}
               className="text-base px-8 py-6 rounded-2xl"
             >
-              Explore Modules
+              {l.exploreModules}
             </Button>
           </div>
         </div>
@@ -282,14 +257,12 @@ export default function Landing() {
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="features-heading text-center mb-16">
-            <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">Modules</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">{l.featuresLabel}</p>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-              Built for the{' '}
-              <span className="text-gradient-gold">Real World</span>
+              {l.featuresTitle1}{' '}
+              <span className="text-gradient-gold">{l.featuresTitle2}</span>
             </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-              Every module is battle-tested in live batching plant operations, not a lab.
-            </p>
+            <p className="text-muted-foreground max-w-xl mx-auto text-lg">{l.featuresDesc}</p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -312,7 +285,7 @@ export default function Landing() {
       {/* TRUST BAR */}
       <section className="border-t border-border py-16 bg-background">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <p className="trust-heading text-xs font-bold uppercase tracking-widest text-muted-foreground mb-8">Enterprise Standards</p>
+          <p className="trust-heading text-xs font-bold uppercase tracking-widest text-muted-foreground mb-8">{l.trustTitle}</p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {trusted.map((item) => (
               <div key={item} className="trust-item flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
@@ -336,18 +309,16 @@ export default function Landing() {
           <div className="final-cta">
             <Building2 className="h-12 w-12 text-primary/40 mx-auto mb-6" />
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-              Ready to{' '}
-              <span className="text-gradient-gold">Dominate</span>?
+              {l.readyTo}{' '}
+              <span className="text-gradient-gold">{l.dominate}</span>?
             </h2>
-            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
-              Join the next generation of concrete operators running their empire from a single screen.
-            </p>
+            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">{l.finalCtaDesc}</p>
             <Button
               size="lg"
               onClick={() => navigate('/auth')}
               className="text-base px-10 py-6 rounded-2xl shadow-[0_4px_30px_hsl(var(--primary)/0.3)]"
             >
-              Get Started
+              {l.getStarted}
               <ArrowRight className="h-5 w-5 ml-1" />
             </Button>
           </div>
@@ -360,11 +331,11 @@ export default function Landing() {
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-primary/50" />
             <span className="font-bold text-foreground/70">TBOS</span>
-            <span>• Enterprise Suite v2.0</span>
+            <span>• {l.footerVersion}</span>
           </div>
           <div className="flex items-center gap-1">
             <Globe className="h-3.5 w-3.5" />
-            <span>Built for global concrete operations</span>
+            <span>{l.footerGlobal}</span>
           </div>
         </div>
       </footer>

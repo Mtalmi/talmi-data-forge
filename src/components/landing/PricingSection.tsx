@@ -1,71 +1,57 @@
 import { CheckCircle2, ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-
-const tiers = [
-  {
-    name: 'Starter',
-    price: '2 900',
-    unit: 'DH/mois',
-    description: '1 centrale',
-    popular: false,
-    features: [
-      'Production & Planning',
-      'Livraisons & GPS',
-      'Stocks basiques',
-      'Support email',
-    ],
-    cta: 'Commencer',
-    ctaVariant: 'outline' as const,
-  },
-  {
-    name: 'Professional',
-    price: '5 900',
-    unit: 'DH/mois',
-    description: "Jusqu'à 3 centrales",
-    popular: true,
-    features: [
-      'Tout Starter +',
-      'Finance & Devis',
-      'Laboratoire & Qualité',
-      'Rapports avancés',
-      'Support prioritaire',
-    ],
-    cta: 'Essai gratuit 14 jours',
-    ctaVariant: 'default' as const,
-  },
-  {
-    name: 'Enterprise',
-    price: 'Sur devis',
-    unit: '',
-    description: '4+ centrales',
-    popular: false,
-    features: [
-      'Tout Professional +',
-      'Multi-sites unifié',
-      'API & Intégrations',
-      'IA & Prédictions',
-      'Support dédié 24/7',
-    ],
-    cta: "Contacter l'équipe",
-    ctaVariant: 'outline' as const,
-  },
-];
+import { useI18n } from '@/i18n/I18nContext';
 
 export default function PricingSection() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const l = t.landing;
+
+  const tiers = [
+    {
+      name: l.pricingStarter,
+      price: '2 900',
+      unit: l.pricingPerMonth,
+      description: l.pricingStarterDesc,
+      popular: false,
+      features: [l.pricingFeat1, l.pricingFeat2, l.pricingFeat3, l.pricingFeat4],
+      cta: l.pricingStarterCta,
+      ctaVariant: 'outline' as const,
+    },
+    {
+      name: l.pricingPro,
+      price: '5 900',
+      unit: l.pricingPerMonth,
+      description: l.pricingProDesc,
+      popular: true,
+      features: [l.pricingFeat5, l.pricingFeat6, l.pricingFeat7, l.pricingFeat8, l.pricingFeat9],
+      cta: l.pricingProCta,
+      ctaVariant: 'default' as const,
+    },
+    {
+      name: l.pricingEnterprise,
+      price: l.pricingOnQuote,
+      unit: '',
+      description: l.pricingEnterpriseDesc,
+      popular: false,
+      features: [l.pricingFeat10, l.pricingFeat11, l.pricingFeat12, l.pricingFeat13, l.pricingFeat14],
+      cta: l.pricingEntCta,
+      ctaVariant: 'outline' as const,
+    },
+  ];
 
   return (
     <section id="pricing" className="py-24 sm:py-32 bg-background">
       <div className="max-w-6xl mx-auto px-6">
         <div className="pricing-heading text-center mb-16">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">Tarifs</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">{l.pricingLabel}</p>
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
-            Un plan pour chaque{' '}
-            <span className="text-gradient-gold">ambition</span>
+            {l.pricingTitle1}{' '}
+            <span className="text-gradient-gold">{l.pricingTitle2}</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto text-lg">
-            Transparent. Sans engagement. Scalable.
+            {l.pricingDesc}
           </p>
         </div>
 
@@ -85,7 +71,7 @@ export default function PricingSection() {
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
                   <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-primary text-primary-foreground text-xs font-bold uppercase tracking-wide">
                     <Star className="h-3.5 w-3.5 fill-current" />
-                    Le plus populaire
+                    {l.pricingMostPopular}
                   </span>
                 </div>
               )}

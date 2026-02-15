@@ -17,28 +17,34 @@ import {
   Car, HardHat, Footprints, CircleAlert
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
-const EVENT_TYPE_CONFIG: Record<string, { icon: React.ElementType; label: string; color: string }> = {
-  anpr: { icon: Car, label: 'ANPR (Plaque)', color: 'text-blue-500' },
-  intrusion: { icon: AlertTriangle, label: 'Intrusion', color: 'text-red-500' },
-  ppe_violation: { icon: HardHat, label: 'Violation EPI', color: 'text-red-500' },
-  motion: { icon: Eye, label: 'Mouvement', color: 'text-muted-foreground' },
-  line_crossing: { icon: Footprints, label: 'Franchissement', color: 'text-amber-500' },
-  zone_entry: { icon: Footprints, label: 'Entrée zone', color: 'text-green-500' },
-  zone_exit: { icon: Footprints, label: 'Sortie zone', color: 'text-amber-500' },
-  loitering: { icon: CircleAlert, label: 'Rôdage', color: 'text-amber-500' },
-  unattended_object: { icon: Package, label: 'Objet suspect', color: 'text-red-500' },
-  object_removal: { icon: Package, label: 'Retrait objet', color: 'text-amber-500' },
-};
+function getEventTypeConfig(t: any) {
+  const s = t.pages.surveillance;
+  return {
+    anpr: { icon: Car, label: s.eventAnpr || 'ANPR', color: 'text-blue-500' },
+    intrusion: { icon: AlertTriangle, label: s.eventIntrusion || 'Intrusion', color: 'text-red-500' },
+    ppe_violation: { icon: HardHat, label: s.eventPpe || 'PPE', color: 'text-red-500' },
+    motion: { icon: Eye, label: s.eventMotion || 'Motion', color: 'text-muted-foreground' },
+    line_crossing: { icon: Footprints, label: s.eventLineCrossing || 'Line Crossing', color: 'text-amber-500' },
+    zone_entry: { icon: Footprints, label: s.eventZoneEntry || 'Zone Entry', color: 'text-green-500' },
+    zone_exit: { icon: Footprints, label: s.eventZoneExit || 'Zone Exit', color: 'text-amber-500' },
+    loitering: { icon: CircleAlert, label: s.eventLoitering || 'Loitering', color: 'text-amber-500' },
+    unattended_object: { icon: Package, label: s.eventUnattended || 'Unattended', color: 'text-red-500' },
+    object_removal: { icon: Package, label: s.eventRemoval || 'Removal', color: 'text-amber-500' },
+  } as Record<string, { icon: React.ElementType; label: string; color: string }>;
+}
 
-const ZONE_CONFIG: Record<string, { icon: React.ElementType; label: string; color: string }> = {
-  security: { icon: Shield, label: 'Sécurité', color: 'bg-red-500/10 text-red-500' },
-  production: { icon: Factory, label: 'Production', color: 'bg-blue-500/10 text-blue-500' },
-  fleet: { icon: Truck, label: 'Flotte', color: 'bg-green-500/10 text-green-500' },
-  inventory: { icon: Package, label: 'Inventaire', color: 'bg-amber-500/10 text-amber-500' },
-};
+function getZoneConfig(t: any) {
+  const s = t.pages.surveillance;
+  return {
+    security: { icon: Shield, label: s.zoneSecurity, color: 'bg-red-500/10 text-red-500' },
+    production: { icon: Factory, label: s.zoneProduction, color: 'bg-blue-500/10 text-blue-500' },
+    fleet: { icon: Truck, label: s.zoneFleet, color: 'bg-green-500/10 text-green-500' },
+    inventory: { icon: Package, label: s.zoneInventory, color: 'bg-amber-500/10 text-amber-500' },
+  } as Record<string, { icon: React.ElementType; label: string; color: string }>;
+}
 
 const SEVERITY_CONFIG: Record<string, { color: string; bg: string }> = {
   critical: { color: 'text-red-500', bg: 'bg-red-500/10 border-red-500/30' },
@@ -48,7 +54,10 @@ const SEVERITY_CONFIG: Record<string, { color: string; bg: string }> = {
 
 export default function Surveillance() {
   const { isCeo } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const EVENT_TYPE_CONFIG = getEventTypeConfig(t);
+  const ZONE_CONFIG = getZoneConfig(t);
   const { cameras, events, stats, loading, acknowledgeEvent, addCamera } = useCameraSurveillance();
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
@@ -274,11 +283,15 @@ function StatCard({ label, value, icon: Icon, accent }: {
 }
 
 function EventCard({ event, onAcknowledge }: { event: CameraEvent; onAcknowledge: (id: string) => void }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const EVENT_TYPE_CONFIG = getEventTypeConfig(t);
+  const ZONE_CONFIG = getZoneConfig(t);
   const typeConfig = EVENT_TYPE_CONFIG[event.event_type] || { icon: Eye, label: event.event_type, color: 'text-muted-foreground' };
   const sevConfig = SEVERITY_CONFIG[event.severity] || SEVERITY_CONFIG.info;
   const TypeIcon = typeConfig.icon;
-  const timeAgo = formatDistanceToNow(new Date(event.created_at), { addSuffix: true, locale: fr });
+  const fmtOpts = dateLocale ? { addSuffix: true, locale: dateLocale } : { addSuffix: true };
+  const timeAgo = formatDistanceToNow(new Date(event.created_at), fmtOpts);
 
   return (
     <Card className={cn(
