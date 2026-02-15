@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { ClipboardCheck, TrendingUp, TrendingDown, RefreshCw, AlertTriangle, Shield, Award } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday, addMonths, subMonths, startOfWeek, endOfWeek, isSameMonth, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,6 +35,8 @@ const PlanningCalendarHeaderComponent = ({
   isOpen,
   onOpenChange,
 }: PlanningCalendarHeaderProps) => {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const currentDate = parseISO(selectedDate);
   const [viewMonth, setViewMonth] = useState(startOfMonth(currentDate));
 
@@ -82,7 +85,7 @@ const PlanningCalendarHeaderComponent = ({
               <div>
                 <h3 className="font-semibold">Calendrier des Livraisons</h3>
                 <p className="text-sm text-muted-foreground">
-                  {format(currentDate, 'EEEE d MMMM yyyy', { locale: fr })}
+                  {format(currentDate, 'EEEE d MMMM yyyy', { locale: dateLocale })}
                 </p>
               </div>
             </div>
@@ -113,7 +116,7 @@ const PlanningCalendarHeaderComponent = ({
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <span className="font-semibold min-w-[150px] text-center">
-                  {format(viewMonth, 'MMMM yyyy', { locale: fr })}
+                  {format(viewMonth, 'MMMM yyyy', { locale: dateLocale })}
                 </span>
                 <Button
                   variant="ghost"

@@ -30,7 +30,8 @@ import {
   Radio,
 } from 'lucide-react';
 import { format, formatDistanceToNow, differenceInMinutes } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -101,6 +102,8 @@ const ROLE_COLORS: Record<string, string> = {
 
 // Active Session Card
 function SessionCard({ session }: { session: ActiveSession }) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const DeviceIcon = session.device_type === 'mobile' ? Smartphone : Monitor;
   const isActive = differenceInMinutes(new Date(), new Date(session.last_activity)) < 5;
 
@@ -136,7 +139,7 @@ function SessionCard({ session }: { session: ActiveSession }) {
           <DeviceIcon className="h-3 w-3" />
           <span className="truncate">{session.browser}</span>
           <span>•</span>
-          <span>{formatDistanceToNow(new Date(session.last_activity), { addSuffix: true, locale: fr })}</span>
+          <span>{formatDistanceToNow(new Date(session.last_activity), { addSuffix: true, locale: dateLocale })}</span>
         </div>
       </div>
       
@@ -152,6 +155,8 @@ function SessionCard({ session }: { session: ActiveSession }) {
 
 // Auth Attempt Card
 function AuthAttemptCard({ attempt }: { attempt: AuthAttempt }) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const isSuccess = attempt.status === 'success';
   const isFailed = attempt.status === 'failed';
   const isBlocked = attempt.status === 'blocked';
@@ -198,7 +203,7 @@ function AuthAttemptCard({ attempt }: { attempt: AuthAttempt }) {
           {isSuccess ? 'SUCCÈS' : isFailed ? 'ÉCHEC' : 'BLOQUÉ'}
         </Badge>
         <p className="text-[10px] text-muted-foreground">
-          {formatDistanceToNow(new Date(attempt.timestamp), { addSuffix: true, locale: fr })}
+          {formatDistanceToNow(new Date(attempt.timestamp), { addSuffix: true, locale: dateLocale })}
         </p>
       </div>
     </div>
@@ -207,6 +212,8 @@ function AuthAttemptCard({ attempt }: { attempt: AuthAttempt }) {
 
 // Breach Alert Card
 function BreachAlertCard({ alert, onAcknowledge }: { alert: BreachAlert; onAcknowledge: (id: string) => void }) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const severityConfig = {
     low: { color: 'border-l-blue-500 bg-blue-500/5', badge: 'bg-blue-500/20 text-blue-500' },
     medium: { color: 'border-l-amber-500 bg-amber-500/5', badge: 'bg-amber-500/20 text-amber-500' },
@@ -235,7 +242,7 @@ function BreachAlertCard({ alert, onAcknowledge }: { alert: BreachAlert; onAckno
           {typeLabels[alert.type] || alert.type}
         </Badge>
         <span className="text-[10px] text-muted-foreground">
-          {formatDistanceToNow(new Date(alert.timestamp), { addSuffix: true, locale: fr })}
+          {formatDistanceToNow(new Date(alert.timestamp), { addSuffix: true, locale: dateLocale })}
         </span>
       </div>
       

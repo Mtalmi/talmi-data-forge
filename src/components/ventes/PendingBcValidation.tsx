@@ -35,7 +35,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { triggerHaptic } from '@/lib/haptics';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 interface PendingBc {
   id: string;
