@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import {
   Wrench,
   AlertTriangle,
@@ -81,7 +81,7 @@ interface IncidentCentrale {
 
 export default function Maintenance() {
   const { user, isCeo, isResponsableTechnique } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const canManageCalibration = isCeo || isResponsableTechnique;
   const queryClient = useQueryClient();
   const [showCleaningForm, setShowCleaningForm] = useState(false);
@@ -162,10 +162,10 @@ export default function Maintenance() {
         [`${type}_photo_url`]: publicUrl,
       }));
 
-      toast.success('Photo uploadée');
+      toast.success(t.pages.maintenance.photoUploaded);
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Erreur lors de l\'upload');
+      toast.error(t.pages.maintenance.uploadError);
     } finally {
       setUploadingPhoto(null);
     }
@@ -176,13 +176,13 @@ export default function Maintenance() {
     mutationFn: async () => {
       // Validate mandatory photos
       if (!cleaningData.malaxeur_photo_url) {
-        throw new Error('Photo du malaxeur obligatoire');
+        throw new Error(t.pages.maintenance.mixerPhotoRequired);
       }
       if (!cleaningData.goulotte_photo_url) {
-        throw new Error('Photo de la goulotte obligatoire');
+        throw new Error(t.pages.maintenance.chutePhotoRequired);
       }
       if (!cleaningData.residus_photo_url) {
-        throw new Error('Photo des résidus ciment obligatoire');
+        throw new Error(t.pages.maintenance.residuesPhotoRequired);
       }
 
       const { error } = await supabase
@@ -196,7 +196,7 @@ export default function Maintenance() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success('Nettoyage enregistré');
+      toast.success(t.pages.maintenance.cleaningRecorded);
       queryClient.invalidateQueries({ queryKey: ['nettoyage-today'] });
       setShowCleaningForm(false);
     },
@@ -303,7 +303,7 @@ export default function Maintenance() {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      📷 Photo de l'intérieur du malaxeur après nettoyage (OBLIGATOIRE)
+                      {t.pages.maintenance.mixerPhotoHint}
                     </p>
                   </div>
 
@@ -336,7 +336,7 @@ export default function Maintenance() {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      📷 Photo de la goulotte propre (OBLIGATOIRE)
+                      {t.pages.maintenance.chutePhotoHint}
                     </p>
                   </div>
 
@@ -369,7 +369,7 @@ export default function Maintenance() {
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      📷 Photo de la zone sans résidus de ciment (OBLIGATOIRE)
+                      {t.pages.maintenance.residuesPhotoHint}
                     </p>
                   </div>
 
@@ -499,12 +499,12 @@ export default function Maintenance() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <ClipboardCheck className="h-5 w-5" />
-              Nettoyage du jour - {format(new Date(), 'EEEE dd MMMM', { locale: fr })}
+              {t.pages.maintenance.todayCleaning} - {format(new Date(), 'EEEE dd MMMM', { locale: getDateLocale(lang) })}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {loadingCleaning ? (
-              <p className="text-muted-foreground">Chargement...</p>
+              <p className="text-muted-foreground">{t.pages.maintenance.loading}</p>
             ) : todayCleaning ? (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="flex items-center gap-2">
@@ -513,11 +513,11 @@ export default function Maintenance() {
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-destructive" />
                   )}
-                  <span>Malaxeur</span>
+                  <span>{t.pages.maintenance.mixer}</span>
                   {todayCleaning.malaxeur_photo_url && (
                     <Badge variant="outline" className="text-xs">
-                      <Camera className="h-3 w-3 mr-1" />
-                      Photo
+                     <Camera className="h-3 w-3 mr-1" />
+                       {t.pages.maintenance.photo}
                     </Badge>
                   )}
                 </div>
@@ -527,11 +527,11 @@ export default function Maintenance() {
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-destructive" />
                   )}
-                  <span>Goulotte</span>
+                  <span>{t.pages.maintenance.chute}</span>
                   {todayCleaning.goulotte_photo_url && (
                     <Badge variant="outline" className="text-xs">
-                      <Camera className="h-3 w-3 mr-1" />
-                      Photo
+                     <Camera className="h-3 w-3 mr-1" />
+                       {t.pages.maintenance.photo}
                     </Badge>
                   )}
                 </div>
@@ -541,11 +541,11 @@ export default function Maintenance() {
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-destructive" />
                   )}
-                  <span>Résidus</span>
+                  <span>{t.pages.maintenance.residues}</span>
                   {todayCleaning.residus_photo_url && (
                     <Badge variant="outline" className="text-xs">
-                      <Camera className="h-3 w-3 mr-1" />
-                      Photo
+                     <Camera className="h-3 w-3 mr-1" />
+                       {t.pages.maintenance.photo}
                     </Badge>
                   )}
                 </div>
@@ -555,21 +555,21 @@ export default function Maintenance() {
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-muted-foreground" />
                   )}
-                  <span>Zone centrale</span>
+                  <span>{t.pages.maintenance.centralZone}</span>
                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-3 p-4 bg-warning/10 rounded-lg">
                 <FileWarning className="h-6 w-6 text-warning" />
                 <div>
-                  <p className="font-medium text-warning">Nettoyage non enregistré</p>
-                  <p className="text-sm text-muted-foreground">
-                    Le checklist de nettoyage quotidien n'a pas encore été soumis
-                  </p>
+                   <p className="font-medium text-warning">{t.pages.maintenance.cleaningNotRecorded}</p>
+                   <p className="text-sm text-muted-foreground">
+                     {t.pages.maintenance.cleaningNotSubmitted}
+                   </p>
                 </div>
                 <Button variant="outline" className="ml-auto" onClick={() => setShowCleaningForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Soumettre
+                  {t.pages.maintenance.submit}
                 </Button>
               </div>
             )}
@@ -614,12 +614,12 @@ export default function Maintenance() {
                   <table className="w-full">
                     <thead className="bg-muted/50">
                       <tr>
-                        <th className="text-left p-3 font-medium">Équipement</th>
-                        <th className="text-left p-3 font-medium">Type</th>
-                        <th className="text-left p-3 font-medium">Criticité</th>
-                        <th className="text-left p-3 font-medium">Statut</th>
-                        <th className="text-left p-3 font-medium">Proch. Maintenance</th>
-                        <th className="text-left p-3 font-medium">Proch. Étalonnage</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.equipmentCol}</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.typeCol}</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.criticalityCol}</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.statusCol}</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.nextMaintenance}</th>
+                         <th className="text-left p-3 font-medium">{t.pages.maintenance.nextCalibration}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -668,13 +668,13 @@ export default function Maintenance() {
           <TabsContent value="incidents" className="mt-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Incidents Récents</CardTitle>
+                <CardTitle className="text-lg">{t.pages.maintenance.recentIncidents}</CardTitle>
               </CardHeader>
               <CardContent>
                 {incidents.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success" />
-                    <p>Aucun incident récent</p>
+                    <p>{t.pages.maintenance.noRecentIncidents}</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -691,8 +691,8 @@ export default function Maintenance() {
                           <div>
                             <div className="flex items-center gap-2">
                               <h4 className="font-medium">{incident.titre}</h4>
-                              <Badge variant={incident.resolu ? 'outline' : 'destructive'}>
-                                {incident.resolu ? 'Résolu' : 'Ouvert'}
+                               <Badge variant={incident.resolu ? 'outline' : 'destructive'}>
+                                 {incident.resolu ? t.pages.maintenance.resolved : t.pages.maintenance.open}
                               </Badge>
                               <Badge variant="outline">{incident.type_incident}</Badge>
                             </div>
@@ -714,10 +714,10 @@ export default function Maintenance() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle className="text-lg">Équipements à Étalonner</CardTitle>
-                  <CardDescription>
-                    Balances, doseurs et instruments de mesure nécessitant un étalonnage
-                  </CardDescription>
+                   <CardTitle className="text-lg">{t.pages.maintenance.equipmentToCalibrate}</CardTitle>
+                   <CardDescription>
+                     {t.pages.maintenance.calibrationDescription}
+                   </CardDescription>
                 </div>
                 {canManageCalibration && (
                   <EtalonnageForm
@@ -744,9 +744,9 @@ export default function Maintenance() {
                         </div>
                         <div className="text-right">
                           <p className="text-sm">
-                            Dernier: {equip.dernier_etalonnage_at 
-                              ? format(new Date(equip.dernier_etalonnage_at), 'dd/MM/yyyy')
-                              : 'N/A'}
+                             {t.pages.maintenance.lastCalibration}: {equip.dernier_etalonnage_at 
+                               ? format(new Date(equip.dernier_etalonnage_at), 'dd/MM/yyyy')
+                               : 'N/A'}
                           </p>
                           <p className={cn(
                             'text-sm font-medium',
@@ -754,9 +754,9 @@ export default function Maintenance() {
                               ? 'text-destructive' 
                               : 'text-muted-foreground'
                           )}>
-                            Prochain: {equip.prochain_etalonnage_at 
-                              ? format(new Date(equip.prochain_etalonnage_at), 'dd/MM/yyyy')
-                              : 'À planifier'}
+                             {t.pages.maintenance.nextCalibrationLabel}: {equip.prochain_etalonnage_at 
+                               ? format(new Date(equip.prochain_etalonnage_at), 'dd/MM/yyyy')
+                               : t.pages.maintenance.toPlan}
                           </p>
                         </div>
                       </div>
