@@ -58,7 +58,7 @@ export default function PricingSection() {
   return (
     <section id="pricing" className="py-24 sm:py-32 bg-background">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="pricing-heading text-center mb-16">
           <p className="text-xs font-bold uppercase tracking-widest text-primary/70 mb-4">Tarifs</p>
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight mb-4">
             Un plan pour chaque{' '}
@@ -74,7 +74,7 @@ export default function PricingSection() {
             <div
               key={tier.name}
               className={`
-                relative rounded-2xl p-8 transition-all duration-300
+                pricing-card relative rounded-2xl p-8 transition-all duration-300
                 ${tier.popular
                   ? 'bg-card border-2 border-primary shadow-[0_0_40px_hsl(var(--primary)/0.15)] scale-[1.03] lg:scale-105'
                   : 'bg-card border border-border hover:border-primary/25 hover:shadow-glow-sm'

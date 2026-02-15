@@ -111,6 +111,18 @@ export default function Landing() {
         });
       });
 
+      // Pricing section
+      gsap.from('.pricing-heading', {
+        opacity: 0, y: 30, duration: 0.7,
+        scrollTrigger: { trigger: '.pricing-heading', start: 'top 85%' },
+      });
+      gsap.utils.toArray<HTMLElement>('.pricing-card').forEach((card, i) => {
+        gsap.from(card, {
+          opacity: 0, y: 50, duration: 0.6, delay: i * 0.12,
+          scrollTrigger: { trigger: card, start: 'top 90%', toggleActions: 'play none none none' },
+        });
+      });
+
       // Trust bar items
       gsap.from('.trust-heading', {
         opacity: 0, y: 20, duration: 0.5,
