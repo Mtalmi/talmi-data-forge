@@ -6,6 +6,7 @@ import { RolePreviewBanner } from './RolePreviewSwitcher';
 import { MobileBottomNav } from './MobileBottomNav';
 import { AppSidebar } from './AppSidebar';
 import { PageTransition } from './PageTransition';
+import { CommandPalette } from '@/components/command/CommandPalette';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
@@ -74,6 +75,9 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
           {/* Quick Action FAB */}
           <QuickActionFAB />
+
+          {/* Command Palette (Cmd+K) */}
+          <CommandPalette />
 
           {/* Mobile Bottom Navigation */}
           {!hideBottomNav && showMobileNav && <MobileBottomNav />}
