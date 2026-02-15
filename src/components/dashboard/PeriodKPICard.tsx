@@ -1,6 +1,6 @@
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import { useAnimatedCounterWithGlow } from '@/hooks/useAnimatedCounter';
 
 interface PeriodKPICardProps {
   title: string;
@@ -14,9 +14,6 @@ interface PeriodKPICardProps {
   style?: React.CSSProperties;
 }
 
-/**
- * Parse a display value like "1284 m³" or "892.4K DH" into { num, prefix, suffix, decimals }
- */
 function parseDisplayValue(value: string | number) {
   if (typeof value === 'number') {
     return { num: value, prefix: '', suffix: '', decimals: value % 1 !== 0 ? 1 : 0 };
@@ -51,9 +48,9 @@ export function PeriodKPICard({
   style,
 }: PeriodKPICardProps) {
   const parsed = parseDisplayValue(value);
-  const animatedNum = useAnimatedCounter(
+  const { display: animatedNum, done } = useAnimatedCounterWithGlow(
     parsed?.num ?? 0,
-    1200,
+    1500,
     parsed?.decimals ?? 0
   );
 
@@ -98,10 +95,11 @@ export function PeriodKPICard({
         <div className="flex-1 min-w-0">
           <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider truncate">{title}</p>
           <p className={cn(
-            'text-lg sm:text-2xl font-bold font-mono mt-0.5 tabular-nums',
+            'text-lg sm:text-2xl font-bold font-mono mt-0.5 tabular-nums transition-all duration-700',
             variant === 'positive' && 'text-success',
             variant === 'negative' && 'text-destructive',
-            variant === 'warning' && 'text-warning'
+            variant === 'warning' && 'text-warning',
+            done && parsed?.num ? 'drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : ''
           )}>
             {displayValue}
           </p>
