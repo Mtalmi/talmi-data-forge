@@ -12,14 +12,17 @@ createRoot(document.getElementById("root")!).render(
 
 // PWA Service Worker is auto-registered by vite-plugin-pwa (registerType: "autoUpdate")
 // Force unregister any stale manual SW on first load
+// Clean up only legacy manual SWs — do NOT touch vite-plugin-pwa's workbox SW
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {
     registrations.forEach((reg) => {
-      // If the SW isn't from vite-plugin-pwa, unregister it
-      if (reg.active?.scriptURL?.endsWith('/sw.js')) {
+      const url = reg.active?.scriptURL ?? '';
+      // vite-plugin-pwa generates SWs with hashed names or at /sw.js with workbox
+      // Only unregister if it's NOT a workbox-managed SW (workbox SWs contain "workbox" in scope)
+      const isLegacyManualSW = url.endsWith('/sw.js') && !reg.scope?.includes('workbox');
+      if (isLegacyManualSW && !url.includes('workbox')) {
         reg.unregister().then(() => {
-          console.log('TBOS: Stale SW unregistered, reloading...');
-          window.location.reload();
+          console.log('TBOS: Stale legacy SW unregistered');
         });
       }
     });
