@@ -38,6 +38,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { compressImage } from '@/lib/imageCompression';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface QCDepartureGateProps {
   blId: string;
@@ -73,6 +74,8 @@ function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 export function QCDepartureGate({ blId, camion, formule, volume, onApproved, trigger }: QCDepartureGateProps) {
   const { user, canValidateTechnique } = useAuth();
+  const { t } = useI18n();
+  const qc = t.qcDeparture;
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingSlump, setUploadingSlump] = useState(false);
@@ -169,10 +172,10 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
         .getPublicUrl(`departures/${fileName}`);
       
       setPhotoUrl(urlData.publicUrl);
-      toast.success(`Photo ${type === 'slump' ? 'Slump' : 'Texture'} téléchargée`);
+      toast.success(type === 'slump' ? qc.slumpUploaded : qc.textureUploaded);
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error('Erreur lors du téléchargement');
+      toast.error(qc.uploadError);
     } finally {
       setUploading(false);
     }
@@ -183,17 +186,17 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
     
     // STRICT VALIDATION: Both photos MANDATORY
     if (!slumpPhotoUrl) {
-      toast.error('Photo du Slump Test obligatoire!');
+      toast.error(qc.slumpPhotoRequired);
       return;
     }
     if (!texturePhotoUrl) {
-      toast.error('Photo de la Texture obligatoire!');
+      toast.error(qc.texturePhotoRequired);
       return;
     }
     
     const affaissementValue = parseInt(affaissement);
     if (isNaN(affaissementValue) || affaissementValue < 0 || affaissementValue > 300) {
-      toast.error('Affaissement invalide (0-300mm)');
+      toast.error(qc.invalidSlump);
       return;
     }
     
@@ -239,13 +242,13 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
 
       if (error) throw error;
 
-      toast.success('Contrôle départ validé - Camion autorisé');
+      toast.success(qc.validated);
       
       onApproved?.();
       setOpen(false);
     } catch (error) {
       console.error('Error saving departure control:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(qc.saveError);
     } finally {
       setSubmitting(false);
     }
@@ -261,7 +264,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
         {trigger || (
           <Button className="gap-2 min-h-[44px] bg-success hover:bg-success/90">
             <Shield className="h-4 w-4" />
-            Contrôle Départ QC
+            {qc.triggerLabel}
           </Button>
         )}
       </DialogTrigger>
@@ -269,7 +272,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-success" />
-            Contrôle Qualité - Départ
+            {qc.title}
           </DialogTitle>
           <DialogDescription>
             <div className="flex flex-wrap gap-2 mt-2">
@@ -286,13 +289,13 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Eye className="h-4 w-4 text-primary" />
-                Photo 1: Test Slump (Affaissement)
+                {qc.photo1Title}
                 <span className="text-destructive">*</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="space-y-2">
-                <Label>Affaissement (mm)</Label>
+                <Label>{qc.slump}</Label>
                 <Input
                   type="number"
                   min="0"
@@ -337,7 +340,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
                         isWithinPlant(slumpGeo) ? "text-success" : "text-warning"
                       )}>
                         <MapPin className="h-3 w-3" />
-                        {isWithinPlant(slumpGeo) ? '✓ Zone Centrale' : '⚠ Hors Zone'}
+                        {isWithinPlant(slumpGeo) ? qc.plantZone : qc.outsideZone}
                       </span>
                     )}
                   </div>
@@ -355,7 +358,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
                   ) : (
                     <>
                       <Camera className="h-5 w-5 mr-2" />
-                      Photographier le Slump Test
+                      {qc.photoSlump}
                     </>
                   )}
                 </Button>
@@ -368,13 +371,13 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Droplets className="h-4 w-4 text-primary" />
-                Photo 2: Texture du Béton (Tambour)
+                {qc.photo2Title}
                 <span className="text-destructive">*</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label>Texture Conforme</Label>
+                <Label>{qc.textureConform}</Label>
                 <Switch
                   checked={textureConforme}
                   onCheckedChange={setTextureConforme}
@@ -413,7 +416,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
                         isWithinPlant(textureGeo) ? "text-success" : "text-warning"
                       )}>
                         <MapPin className="h-3 w-3" />
-                        {isWithinPlant(textureGeo) ? '✓ Zone Centrale' : '⚠ Hors Zone'}
+                        {isWithinPlant(textureGeo) ? qc.plantZone : qc.outsideZone}
                       </span>
                     )}
                   </div>
@@ -431,7 +434,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
                   ) : (
                     <>
                       <Camera className="h-5 w-5 mr-2" />
-                      Photographier la Texture
+                      {qc.photoTexture}
                     </>
                   )}
                 </Button>
@@ -442,7 +445,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
           {/* Water Correction Applied */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="text-xs">Humidité Sable (%)</Label>
+              <Label className="text-xs">{qc.sandHumidity}</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -453,7 +456,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-xs">Correction Eau (L)</Label>
+              <Label className="text-xs">{qc.waterCorrection}</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -467,9 +470,9 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label className="form-label-industrial">Notes (optionnel)</Label>
+            <Label className="form-label-industrial">{qc.notesOptional}</Label>
             <Textarea
-              placeholder="Observations..."
+              placeholder={qc.observations}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
@@ -479,7 +482,7 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
           {/* Submit */}
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="min-h-[44px]">
-              Annuler
+              {qc.cancel}
             </Button>
             <Button 
               type="submit" 
@@ -489,12 +492,12 @@ export function QCDepartureGate({ blId, camion, formule, volume, onApproved, tri
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Validation...
+                  {qc.validating}
                 </>
               ) : (
                 <>
                   <Shield className="h-4 w-4 mr-2" />
-                  Autoriser Départ
+                  {qc.authorize}
                 </>
               )}
             </Button>
