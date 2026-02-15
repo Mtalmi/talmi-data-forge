@@ -1595,3 +1595,178 @@
 [data-radix-select-viewport] {
   pointer-events: auto !important;
 }
+
+/* ===== PHASE 1: GOD-TIER MICRO-INTERACTIONS ===== */
+
+/* Ripple effect for interactive cards */
+.ripple-container {
+  @apply relative overflow-hidden;
+}
+
+.ripple-container::after {
+  content: '';
+  @apply absolute rounded-full pointer-events-none;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease-out, height 0.6s ease-out, opacity 0.6s ease-out;
+  opacity: 0;
+}
+
+.ripple-container:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 1;
+  transition: width 0s, height 0s, opacity 0s;
+}
+
+/* Premium press feedback — tactile depth */
+.press-feedback {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.press-feedback:active {
+  transform: scale(0.97) translateY(1px);
+  box-shadow: 
+    0 1px 4px hsl(var(--primary) / 0.1),
+    inset 0 2px 4px hsl(0 0% 0% / 0.15);
+}
+
+/* Card magnetic hover — lift + glow + border light */
+.card-magnetic {
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              border-color 0.35s ease;
+}
+
+.card-magnetic:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 
+    0 12px 40px hsl(var(--primary) / 0.08),
+    0 0 0 1px hsl(var(--primary) / 0.12),
+    inset 0 1px 0 hsl(var(--primary) / 0.06);
+  border-color: hsl(var(--primary) / 0.25);
+}
+
+.card-magnetic:active {
+  transform: translateY(-1px) scale(0.99);
+  transition-duration: 0.1s;
+}
+
+/* Staggered entrance — children animate in sequence */
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: stagger-fade-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes stagger-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gold shimmer sweep — premium loading */
+@keyframes gold-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.shimmer-gold {
+  @apply relative overflow-hidden;
+}
+
+.shimmer-gold::after {
+  content: '';
+  @apply absolute inset-0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    hsl(51 100% 50% / 0.06) 20%,
+    hsl(51 100% 50% / 0.12) 50%,
+    hsl(51 100% 50% / 0.06) 80%,
+    transparent 100%
+  );
+  animation: gold-shimmer 2.5s ease-in-out infinite;
+}
+
+/* Icon bounce on hover */
+.icon-bounce {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.icon-bounce:hover {
+  transform: scale(1.15) rotate(-3deg);
+}
+
+/* Success checkmark pop */
+@keyframes check-pop {
+  0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(0deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.animate-check-pop {
+  animation: check-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Number tick animation */
+@keyframes number-tick {
+  0% { transform: translateY(0); opacity: 1; }
+  40% { transform: translateY(-100%); opacity: 0; }
+  60% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.animate-number-tick {
+  animation: number-tick 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Section reveal on scroll */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-reveal-up {
+  animation: reveal-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Reduced motion - respect user preference */
+@media (prefers-reduced-motion: reduce) {
+  .stagger-children > *,
+  .card-magnetic,
+  .press-feedback,
+  .ripple-container::after,
+  .shimmer-gold::after,
+  .icon-bounce,
+  .animate-reveal-up {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
