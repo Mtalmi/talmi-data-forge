@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe, Eye } from 'lucide-react';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
+import authIndustrial from '@/assets/auth-industrial.jpg';
 
 
 const loginSchema = z.object({
@@ -168,6 +169,12 @@ export default function Auth() {
 
       {/* Left Panel - Branding & Stats (hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative flex-col justify-between p-12 xl:p-16">
+        {/* Cinematic Industrial Background */}
+        <div className="absolute inset-0 z-0">
+          <img src={authIndustrial} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/60" />
+        </div>
         {/* Logo & Title */}
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-2">

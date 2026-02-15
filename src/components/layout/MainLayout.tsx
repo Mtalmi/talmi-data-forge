@@ -9,6 +9,7 @@ import { PageTransition } from './PageTransition';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
+import noiseTexture from '@/assets/noise-texture.png';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -25,6 +26,16 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       <div className="relative min-h-[100dvh] bg-background overflow-hidden flex w-full">
         {/* Ambient Glow Background */}
         <AmbientGlow intensity="subtle" />
+
+        {/* Noise Grain Overlay — premium depth */}
+        <div
+          className="fixed inset-0 pointer-events-none z-[1] opacity-[0.035] dark:opacity-[0.04] mix-blend-overlay"
+          style={{
+            backgroundImage: `url(${noiseTexture})`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: '256px 256px',
+          }}
+        />
 
         {/* Left Sidebar - hidden on mobile (uses bottom nav instead) */}
         {!showMobileNav && <AppSidebar />}
