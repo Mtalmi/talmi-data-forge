@@ -252,6 +252,7 @@ const fr = {
     dateFrom: 'Date début',
     dateTo: 'Date fin',
     downloadPdf: 'Télécharger PDF',
+    clear: 'Effacer',
     saving: 'Enregistrement...',
   },
   widgets: {
