@@ -1,6 +1,8 @@
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { SiloVisual } from '@/components/stocks/SiloVisual';
 import { TwoStepReceptionWizard } from '@/components/stocks/TwoStepReceptionWizard';
 import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog';
@@ -31,10 +33,11 @@ import {
   Lock,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 export default function Stocks() {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually, loading: authLoading } = useAuth();
   const {
     stocks,
@@ -78,11 +81,11 @@ export default function Stocks() {
   const getMovementLabel = (type: string) => {
     switch (type) {
       case 'reception':
-        return 'Réception';
+        return t.pages.stocks.reception;
       case 'consommation':
-        return 'Consommation';
+        return t.pages.stocks.consumption;
       default:
-        return 'Ajustement';
+        return t.pages.stocks.adjustment;
     }
   };
 
@@ -99,16 +102,16 @@ export default function Stocks() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
               <Warehouse className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">Gestion des Stocks</span>
+              <span className="truncate">{t.pages.stocks.title}</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Suivi en temps réel des niveaux de matières premières
+              {t.pages.stocks.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleRefresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t.common.refresh}</span>
             </Button>
             
             {/* =====================================================
@@ -154,10 +157,10 @@ export default function Stocks() {
             <div>
               <h3 className="font-semibold flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Mode Consultation
+                {t.pages.stocks.readOnlyMode}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Les stocks sont mis à jour automatiquement lors de la production. Aucune modification manuelle autorisée.
+                {t.pages.stocks.readOnlyDescription}
               </p>
             </div>
           </div>
@@ -179,10 +182,10 @@ export default function Stocks() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-destructive uppercase tracking-wide">
-                ⚠️ Commande Critique Requise
+                {t.pages.stocks.criticalOrderRequired}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {criticalStocks.map(s => s.materiau).join(', ')} - Stock en dessous du seuil d'alerte
+                {criticalStocks.map(s => s.materiau).join(', ')} - {t.pages.stocks.belowAlertThreshold}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -210,7 +213,7 @@ export default function Stocks() {
           <div className="card-industrial p-8">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-muted-foreground" />
-              Niveaux des Silos
+              {t.pages.stocks.siloLevels}
             </h2>
             <div className="flex flex-wrap justify-center gap-12">
               {stocks.map((stock) => (
@@ -231,18 +234,18 @@ export default function Stocks() {
         {/* Stock Table Summary */}
         <div className="card-industrial overflow-x-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">Résumé des Stocks</h2>
+            <h2 className="font-semibold">{t.pages.stocks.stockSummary}</h2>
           </div>
           <Table className="data-table-industrial">
             <TableHeader>
               <TableRow>
-                <TableHead>Matériau</TableHead>
-                <TableHead className="text-right">Quantité Actuelle</TableHead>
-                <TableHead className="text-right">Seuil Alerte</TableHead>
-                <TableHead className="text-right">Capacité Max</TableHead>
-                <TableHead className="text-right">Jours Restants</TableHead>
-                <TableHead>Dernière Réception</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead>{t.pages.stocks.material}</TableHead>
+                <TableHead className="text-right">{t.pages.stocks.currentStock}</TableHead>
+                <TableHead className="text-right">{t.pages.stocks.alertThreshold}</TableHead>
+                <TableHead className="text-right">{t.pages.stocks.maxCapacity}</TableHead>
+                <TableHead className="text-right">{t.pages.stocks.daysRemaining}</TableHead>
+                <TableHead>{t.pages.stocks.lastReception}</TableHead>
+                <TableHead>{t.common.status}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -274,22 +277,22 @@ export default function Stocks() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {stock.derniere_reception_at
-                        ? format(new Date(stock.derniere_reception_at), 'dd/MM/yyyy HH:mm', { locale: fr })
+                        ? format(new Date(stock.derniere_reception_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })
                         : '—'}
                     </TableCell>
                     <TableCell>
                       {isCritical ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-destructive/20 text-destructive animate-pulse">
                           <AlertTriangle className="h-3 w-3" />
-                          Critique
+                          {t.pages.stocks.critical}
                         </span>
                       ) : stock.quantite_actuelle <= stock.seuil_alerte * 1.5 ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-warning/20 text-warning">
-                          Bas
+                          {t.pages.stocks.low}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-success/20 text-success">
-                          OK
+                          {t.pages.stocks.ok}
                         </span>
                       )}
                     </TableCell>
@@ -303,30 +306,30 @@ export default function Stocks() {
         {/* Recent Movements */}
         <div className="card-industrial overflow-x-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">Derniers Mouvements</h2>
+            <h2 className="font-semibold">{t.pages.stocks.recentMovements}</h2>
           </div>
           {mouvements.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              Aucun mouvement enregistré
+              {t.pages.stocks.noMovements}
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Matériau</TableHead>
-                  <TableHead className="text-right">Quantité</TableHead>
-                  <TableHead className="text-right">Avant</TableHead>
-                  <TableHead className="text-right">Après</TableHead>
-                  <TableHead>Référence</TableHead>
+                  <TableHead>{t.common.date}</TableHead>
+                  <TableHead>{t.pages.stocks.type}</TableHead>
+                  <TableHead>{t.pages.stocks.material}</TableHead>
+                  <TableHead className="text-right">{t.pages.stocks.quantity}</TableHead>
+                  <TableHead className="text-right">{t.pages.stocks.before}</TableHead>
+                  <TableHead className="text-right">{t.pages.stocks.after}</TableHead>
+                  <TableHead>{t.pages.stocks.reference}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {mouvements.slice(0, 20).map((m) => (
                   <TableRow key={m.id}>
                     <TableCell className="text-muted-foreground">
-                      {format(new Date(m.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}
+                      {format(new Date(m.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })}
                     </TableCell>
                     <TableCell>
                       <span className="inline-flex items-center gap-1">

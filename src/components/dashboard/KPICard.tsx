@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useAnimatedCounterWithGlow } from '@/hooks/useAnimatedCounter';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface KPICardProps {
   title: string;
@@ -14,6 +15,7 @@ interface KPICardProps {
 
 export default function KPICard({
   title,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   value,
   subtitle,
   icon: Icon,
@@ -21,6 +23,7 @@ export default function KPICard({
   trendValue,
   variant = 'default',
 }: KPICardProps) {
+  const { t } = useI18n();
   const numericValue = typeof value === 'number' ? value : parseInt(String(value), 10);
   const isNumeric = !isNaN(numericValue) && typeof value === 'number';
   const { display: animatedNum, done } = useAnimatedCounterWithGlow(isNumeric ? numericValue : 0, 1500, 0);
@@ -99,7 +102,7 @@ export default function KPICard({
             <TrendIcon className={cn('h-3.5 w-3.5', trendColors[trend])} />
             <span className={trendColors[trend]}>{trendValue}</span>
           </div>
-          <span className="text-xs text-muted-foreground">vs. hier</span>
+          <span className="text-xs text-muted-foreground">{t.common.vs}. {t.common.yesterday}</span>
         </div>
       )}
     </div>

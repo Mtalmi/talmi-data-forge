@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { motion } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -70,7 +71,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function Dashboard() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { role, isCeo, isAccounting, signOut } = useAuth();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
@@ -114,7 +115,7 @@ export default function Dashboard() {
       setProductionStats({
         formulesActives: formulesCount || 0,
         prixUpdatedAt: latestPrice?.date_mise_a_jour 
-          ? new Date(latestPrice.date_mise_a_jour).toLocaleDateString('fr-FR') 
+          ? new Date(latestPrice.date_mise_a_jour).toLocaleDateString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR') 
           : '—',
         tauxECMoyen: stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—',
         curMoyen: stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)} DH` : '—',
@@ -180,7 +181,7 @@ export default function Dashboard() {
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
-                {t.dashboard.greeting}, Master 👋
+                {t.dashboard.greeting}, {t.dashboard.master} 👋
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <MapPin className="h-3.5 w-3.5 text-primary" />
