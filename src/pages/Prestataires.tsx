@@ -71,7 +71,7 @@ export default function Prestataires() {
 
   const handleAddPrestataire = async () => {
     if (!prestataireForm.code_prestataire || !prestataireForm.nom_prestataire || !prestataireForm.tarif_base_m3) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
+      toast.error(t.pages.prestataires.requiredFields);
       return;
     }
 
@@ -87,7 +87,7 @@ export default function Prestataires() {
       });
 
       if (error) throw error;
-      toast.success('Prestataire ajouté');
+      toast.success(t.pages.prestataires.providerAdded);
       setAddPrestataireOpen(false);
       setPrestataireForm({
         code_prestataire: '',
@@ -100,7 +100,7 @@ export default function Prestataires() {
       fetchData();
     } catch (error) {
       console.error('Error adding prestataire:', error);
-      toast.error('Erreur lors de l\'ajout');
+      toast.error(t.pages.prestataires.addError);
     } finally {
       setAddingPrestataire(false);
     }
@@ -140,11 +140,11 @@ export default function Prestataires() {
           <TabsList>
             <TabsTrigger value="zones" className="gap-2">
               <MapPin className="h-4 w-4" />
-              Zones de Livraison
+              {t.pages.prestataires.zones}
             </TabsTrigger>
             <TabsTrigger value="prestataires" className="gap-2">
               <Truck className="h-4 w-4" />
-              Prestataires
+              {t.pages.prestataires.providers}
             </TabsTrigger>
           </TabsList>
 
@@ -154,7 +154,7 @@ export default function Prestataires() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  Tarification par Zone
+                  {t.pages.prestataires.zonePricing}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -193,7 +193,7 @@ export default function Prestataires() {
                             )}
                           </div>
                           <div className="mt-4 p-3 rounded-lg bg-muted/50">
-                            <div className="text-xs text-muted-foreground">Prix Livraison</div>
+                            <div className="text-xs text-muted-foreground">{t.pages.prestataires.price}</div>
                             <div className="text-2xl font-bold font-mono text-primary">
                               {zone.prix_livraison_m3.toLocaleString()} DH
                               <span className="text-sm font-normal text-muted-foreground">/m³</span>
@@ -214,12 +214,12 @@ export default function Prestataires() {
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2">
                   <Truck className="h-5 w-5 text-primary" />
-                  Prestataires de Transport
+                   Prestataires
                 </CardTitle>
                 {canManage && (
                   <Button onClick={() => setAddPrestataireOpen(true)} className="gap-2">
                     <Plus className="h-4 w-4" />
-                    Nouveau Prestataire
+                    {t.pages.prestataires.newProvider}
                   </Button>
                 )}
               </CardHeader>
@@ -231,17 +231,17 @@ export default function Prestataires() {
                 ) : prestataires.length === 0 ? (
                   <div className="text-center py-12">
                     <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-                    <p className="text-muted-foreground">Aucun prestataire enregistré</p>
+                    <p className="text-muted-foreground">{t.pages.prestataires.providers}</p>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Code</TableHead>
-                        <TableHead>Prestataire</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead className="text-right">Tarif Base</TableHead>
-                        <TableHead>Note Service</TableHead>
+                         <TableHead>{t.pages.prestataires.providerCode}</TableHead>
+                        <TableHead>{t.pages.prestataires.providerName}</TableHead>
+                        <TableHead>{t.pages.prestataires.contactName}</TableHead>
+                        <TableHead className="text-right">{t.pages.prestataires.baseRate}</TableHead>
+                        <TableHead>{t.pages.prestataires.serviceRating}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -282,15 +282,15 @@ export default function Prestataires() {
       <Dialog open={!!editingZone} onOpenChange={() => setEditingZone(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Modifier le Prix - Zone {editingZone?.code_zone}</DialogTitle>
+            <DialogTitle>{t.pages.prestataires.editPrice} - Zone {editingZone?.code_zone}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Zone</Label>
+              <Label>{t.pages.prestataires.zone}</Label>
               <p className="text-sm text-muted-foreground">{editingZone?.nom_zone}</p>
             </div>
             <div className="space-y-2">
-              <Label>Prix Livraison (DH/m³)</Label>
+              <Label>{t.pages.prestataires.price} (DH/m³)</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -300,11 +300,11 @@ export default function Prestataires() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingZone(null)}>
-              Annuler
+             <Button variant="outline" onClick={() => setEditingZone(null)}>
+              {t.pages.prestataires.cancel}
             </Button>
             <Button onClick={handleSaveZonePrix} disabled={saving}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enregistrer'}
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : t.pages.prestataires.save}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -314,12 +314,12 @@ export default function Prestataires() {
       <Dialog open={addPrestataireOpen} onOpenChange={setAddPrestataireOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Nouveau Prestataire</DialogTitle>
+            <DialogTitle>{t.pages.prestataires.newProvider}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Code *</Label>
+                <Label>{t.pages.prestataires.providerCode} *</Label>
                 <Input
                   value={prestataireForm.code_prestataire}
                   onChange={(e) => setPrestataireForm(f => ({ ...f, code_prestataire: e.target.value }))}
@@ -327,7 +327,7 @@ export default function Prestataires() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Tarif Base (DH/m³) *</Label>
+                <Label>{t.pages.prestataires.baseRate} (DH/m³) *</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -338,7 +338,7 @@ export default function Prestataires() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Nom du Prestataire *</Label>
+              <Label>{t.pages.prestataires.providerName} *</Label>
               <Input
                 value={prestataireForm.nom_prestataire}
                 onChange={(e) => setPrestataireForm(f => ({ ...f, nom_prestataire: e.target.value }))}
@@ -347,7 +347,7 @@ export default function Prestataires() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Contact</Label>
+                <Label>{t.pages.prestataires.contactName}</Label>
                 <Input
                   value={prestataireForm.contact_nom}
                   onChange={(e) => setPrestataireForm(f => ({ ...f, contact_nom: e.target.value }))}
@@ -355,7 +355,7 @@ export default function Prestataires() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Téléphone</Label>
+                <Label>{t.pages.prestataires.contactPhone}</Label>
                 <Input
                   value={prestataireForm.contact_telephone}
                   onChange={(e) => setPrestataireForm(f => ({ ...f, contact_telephone: e.target.value }))}
@@ -364,7 +364,7 @@ export default function Prestataires() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Note Service (1-5)</Label>
+              <Label>{t.pages.prestataires.serviceRating} (1-5)</Label>
               <Input
                 type="number"
                 min="1"
@@ -375,11 +375,11 @@ export default function Prestataires() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddPrestataireOpen(false)}>
-              Annuler
+             <Button variant="outline" onClick={() => setAddPrestataireOpen(false)}>
+              {t.pages.prestataires.cancel}
             </Button>
             <Button onClick={handleAddPrestataire} disabled={addingPrestataire}>
-              {addingPrestataire ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Ajouter'}
+              {addingPrestataire ? <Loader2 className="h-4 w-4 animate-spin" /> : t.pages.prestataires.addProvider}
             </Button>
           </DialogFooter>
         </DialogContent>
