@@ -33,8 +33,10 @@ import {
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export default function Stocks() {
+  const { t } = useTranslation();
   const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually, loading: authLoading } = useAuth();
   const {
     stocks,
@@ -78,11 +80,11 @@ export default function Stocks() {
   const getMovementLabel = (type: string) => {
     switch (type) {
       case 'reception':
-        return 'Réception';
+        return t('stocks.reception');
       case 'consommation':
-        return 'Consommation';
+        return t('stocks.consumption');
       default:
-        return 'Ajustement';
+        return t('stocks.adjustment');
     }
   };
 
@@ -99,16 +101,16 @@ export default function Stocks() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
               <Warehouse className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">Gestion des Stocks</span>
+              <span className="truncate">{t('stocks.title')}</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Suivi en temps réel des niveaux de matières premières
+              {t('stocks.subtitle')}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <Button variant="outline" size="sm" onClick={handleRefresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t('common.refresh')}</span>
             </Button>
             
             {/* =====================================================
@@ -154,10 +156,10 @@ export default function Stocks() {
             <div>
               <h3 className="font-semibold flex items-center gap-2">
                 <Shield className="h-4 w-4" />
-                Mode Consultation
+                {t('stocks.consultationMode')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                Les stocks sont mis à jour automatiquement lors de la production. Aucune modification manuelle autorisée.
+                {t('stocks.consultationDesc')}
               </p>
             </div>
           </div>
@@ -179,10 +181,10 @@ export default function Stocks() {
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-destructive uppercase tracking-wide">
-                ⚠️ Commande Critique Requise
+                {t('stocks.criticalOrder')}
               </h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {criticalStocks.map(s => s.materiau).join(', ')} - Stock en dessous du seuil d'alerte
+                {criticalStocks.map(s => s.materiau).join(', ')} - {t('stocks.belowThreshold')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -210,7 +212,7 @@ export default function Stocks() {
           <div className="card-industrial p-8">
             <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <TrendingDown className="h-5 w-5 text-muted-foreground" />
-              Niveaux des Silos
+              {t('stocks.siloLevels')}
             </h2>
             <div className="flex flex-wrap justify-center gap-12">
               {stocks.map((stock) => (
@@ -231,18 +233,18 @@ export default function Stocks() {
         {/* Stock Table Summary */}
         <div className="card-industrial overflow-x-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">Résumé des Stocks</h2>
+            <h2 className="font-semibold">{t('stocks.stockSummary')}</h2>
           </div>
           <Table className="data-table-industrial">
             <TableHeader>
               <TableRow>
-                <TableHead>Matériau</TableHead>
-                <TableHead className="text-right">Quantité Actuelle</TableHead>
-                <TableHead className="text-right">Seuil Alerte</TableHead>
-                <TableHead className="text-right">Capacité Max</TableHead>
-                <TableHead className="text-right">Jours Restants</TableHead>
-                <TableHead>Dernière Réception</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead>{t('stocks.material')}</TableHead>
+                <TableHead className="text-right">{t('stocks.currentQty')}</TableHead>
+                <TableHead className="text-right">{t('stocks.alertThreshold')}</TableHead>
+                <TableHead className="text-right">{t('stocks.maxCapacity')}</TableHead>
+                <TableHead className="text-right">{t('stocks.daysRemaining')}</TableHead>
+                <TableHead>{t('stocks.lastReception')}</TableHead>
+                <TableHead>{t('common.status')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -281,15 +283,15 @@ export default function Stocks() {
                       {isCritical ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-destructive/20 text-destructive animate-pulse">
                           <AlertTriangle className="h-3 w-3" />
-                          Critique
+                          {t('stocks.critical')}
                         </span>
                       ) : stock.quantite_actuelle <= stock.seuil_alerte * 1.5 ? (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-warning/20 text-warning">
-                          Bas
+                          {t('stocks.low')}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-success/20 text-success">
-                          OK
+                          {t('stocks.ok')}
                         </span>
                       )}
                     </TableCell>
@@ -303,23 +305,23 @@ export default function Stocks() {
         {/* Recent Movements */}
         <div className="card-industrial overflow-x-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">Derniers Mouvements</h2>
+            <h2 className="font-semibold">{t('stocks.recentMovements')}</h2>
           </div>
           {mouvements.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              Aucun mouvement enregistré
+              {t('stocks.noMovements')}
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Matériau</TableHead>
-                  <TableHead className="text-right">Quantité</TableHead>
-                  <TableHead className="text-right">Avant</TableHead>
-                  <TableHead className="text-right">Après</TableHead>
-                  <TableHead>Référence</TableHead>
+                  <TableHead>{t('common.date')}</TableHead>
+                  <TableHead>{t('common.type')}</TableHead>
+                  <TableHead>{t('stocks.material')}</TableHead>
+                  <TableHead className="text-right">{t('common.quantity')}</TableHead>
+                  <TableHead className="text-right">{t('common.before')}</TableHead>
+                  <TableHead className="text-right">{t('common.after')}</TableHead>
+                  <TableHead>{t('common.reference')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
