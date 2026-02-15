@@ -14,6 +14,7 @@ import statsTexture from '@/assets/stats-texture.jpg';
 import modulesBg from '@/assets/modules-bg.jpg';
 import PricingSection from '@/components/landing/PricingSection';
 import BookDemoSection from '@/components/landing/BookDemoSection';
+import SocialProofSection from '@/components/landing/SocialProofSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -134,6 +135,22 @@ export default function Landing() {
           opacity: 0, scale: 0.85, duration: 0.4, delay: i * 0.1,
           scrollTrigger: { trigger: item, start: 'top 92%' },
         });
+      });
+
+      // Social proof
+      gsap.from('.social-heading', {
+        opacity: 0, y: 20, duration: 0.5,
+        scrollTrigger: { trigger: '.social-heading', start: 'top 88%' },
+      });
+      gsap.utils.toArray<HTMLElement>('.social-logo').forEach((el, i) => {
+        gsap.from(el, {
+          opacity: 0, y: 20, duration: 0.4, delay: i * 0.12,
+          scrollTrigger: { trigger: el, start: 'top 92%' },
+        });
+      });
+      gsap.from('.social-testimonial', {
+        opacity: 0, y: 30, duration: 0.7,
+        scrollTrigger: { trigger: '.social-testimonial', start: 'top 85%' },
       });
 
       // Final CTA
@@ -305,6 +322,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* SOCIAL PROOF */}
+      <SocialProofSection />
 
       {/* BOOK DEMO */}
       <BookDemoSection />
