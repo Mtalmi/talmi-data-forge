@@ -62,8 +62,7 @@ export default function KPICard({
 
   return (
     <div className={cn(
-      'kpi-card animate-fade-in group',
-      'hover:scale-[1.02] hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)] transition-all duration-300',
+      'kpi-card animate-fade-in group card-magnetic press-feedback ripple-container',
       variantStyles[variant]
     )}>
       <div className="flex items-start justify-between gap-3">

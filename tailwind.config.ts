@@ -167,6 +167,23 @@ export default {
           from: { transform: "translateX(-100%)" },
           to: { transform: "translateX(100%)" },
         },
+        "gold-shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(200%)" },
+        },
+        "stagger-in": {
+          from: { opacity: "0", transform: "translateY(12px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "reveal-up": {
+          from: { opacity: "0", transform: "translateY(30px) scale(0.98)", filter: "blur(4px)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)", filter: "blur(0)" },
+        },
+        "check-pop": {
+          "0%": { transform: "scale(0) rotate(-45deg)", opacity: "0" },
+          "50%": { transform: "scale(1.2) rotate(0deg)" },
+          "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -184,6 +201,10 @@ export default {
         "photo-snap": "photo-snap 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "badge-pop": "badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "shimmer": "shimmer 2s infinite",
+        "gold-shimmer": "gold-shimmer 2.5s ease-in-out infinite",
+        "stagger-in": "stagger-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+        "reveal-up": "reveal-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+        "check-pop": "check-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
       },
       backdropBlur: {
         xs: '2px',

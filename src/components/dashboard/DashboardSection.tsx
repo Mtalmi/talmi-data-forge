@@ -50,8 +50,8 @@ export function DashboardSection({
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center gap-3 py-3 px-1 group cursor-pointer select-none">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="p-1.5 rounded-md bg-primary/10 group-hover:bg-primary/15 transition-colors">
-              <Icon className="h-4 w-4 text-primary" />
+            <div className="p-1.5 rounded-md bg-primary/10 group-hover:bg-primary/15 transition-all duration-300 group-hover:scale-110">
+              <Icon className="h-4 w-4 text-primary transition-transform duration-300 group-hover:rotate-[-6deg]" />
             </div>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
               {title}
