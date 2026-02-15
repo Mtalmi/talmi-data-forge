@@ -1,5 +1,6 @@
 import { ClipboardList, Factory, Truck, FileText, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ProductionWorkflowStepperProps {
   currentStatus: string;
@@ -8,20 +9,22 @@ interface ProductionWorkflowStepperProps {
   onNavigate?: (target: 'bc' | 'planning' | 'facture') => void;
 }
 
-const STEPS = [
-  { key: 'bc', label: 'Bon Commande', icon: ClipboardList, statuses: ['pret_production'] },
-  { key: 'production', label: 'Production', icon: Factory, statuses: ['production'] },
-  { key: 'validation', label: 'Validation', icon: CheckCircle, statuses: ['validation_technique'] },
-  { key: 'livraison', label: 'Livraison', icon: Truck, statuses: ['en_livraison', 'livre'] },
-  { key: 'facture', label: 'Facture', icon: FileText, statuses: ['facture'] },
-];
-
 export function ProductionWorkflowStepper({ 
   currentStatus, 
   blId,
   bcId,
   onNavigate 
 }: ProductionWorkflowStepperProps) {
+  const { t } = useI18n();
+
+  const STEPS = [
+    { key: 'bc', label: t.pages.production.stepBonCommande, icon: ClipboardList, statuses: ['pret_production'] },
+    { key: 'production', label: t.pages.production.stepProduction, icon: Factory, statuses: ['production'] },
+    { key: 'validation', label: t.pages.production.stepValidation, icon: CheckCircle, statuses: ['validation_technique'] },
+    { key: 'livraison', label: t.pages.production.stepLivraison, icon: Truck, statuses: ['en_livraison', 'livre'] },
+    { key: 'facture', label: t.pages.production.stepFacture, icon: FileText, statuses: ['facture'] },
+  ];
+
   const getCurrentStepIndex = () => {
     for (let i = 0; i < STEPS.length; i++) {
       if (STEPS[i].statuses.includes(currentStatus)) {

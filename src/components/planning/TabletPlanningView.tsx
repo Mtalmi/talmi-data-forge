@@ -4,12 +4,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { DriverDispatchCard } from './DriverDispatchCard';
 import { DailyPlanningReport } from './DailyPlanningReport';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
+import { useI18n } from '@/i18n/I18nContext';
 import { parseISO } from 'date-fns';
 import { 
   Clock, 
@@ -26,7 +26,6 @@ import {
   X,
   Package,
   Sparkles,
-  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -94,13 +93,13 @@ export function TabletPlanningView({
   onRejectBl,
   loading = false,
 }: TabletPlanningViewProps) {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState('produire');
   const [pendingOpen, setPendingOpen] = useState(true);
 
   const handleRefresh = useCallback(async () => {
     await new Promise<void>((resolve) => {
       onRefresh();
-      // Give time for the refresh to complete
       setTimeout(resolve, 500);
     });
   }, [onRefresh]);
@@ -116,16 +115,15 @@ export function TabletPlanningView({
       ref={containerRef}
       className="space-y-4 pb-20 overflow-y-auto h-[calc(100vh-64px)] -mx-4 px-4"
     >
-      {/* Pull to Refresh Indicator */}
       <PullToRefreshIndicator
         pullDistance={pullDistance}
         isRefreshing={isRefreshing}
         progress={progress}
       />
-      {/* Header - Sticky on tablet */}
+      {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm pb-4 pt-2 -mx-4 px-4 border-b">
         <div className="flex items-center justify-between gap-3 mb-4">
-          <h1 className="text-xl font-bold">Dispatch</h1>
+          <h1 className="text-xl font-bold">{t.pages.planning.dispatchTitle}</h1>
           <div className="flex items-center gap-2">
             <DailyPlanningReport
               date={parseISO(selectedDate)}
@@ -166,40 +164,40 @@ export function TabletPlanningView({
           </div>
         </div>
 
-        {/* Quick Stats - Touch-friendly */}
+        {/* Quick Stats */}
         <div className="grid grid-cols-4 gap-2">
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 min-h-[60px]">
             <Calendar className="h-5 w-5 text-primary" />
             <div>
               <p className="text-xl font-bold">{totalBonsToday}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Total</p>
+              <p className="text-[10px] text-muted-foreground uppercase">{t.pages.planning.totalShort}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-lg bg-warning/10 min-h-[60px]">
             <Clock className="h-5 w-5 text-warning" />
             <div>
               <p className="text-xl font-bold">{pendingBons}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Attente</p>
+              <p className="text-[10px] text-muted-foreground uppercase">{t.pages.planning.waitingShort}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 min-h-[60px]">
             <Truck className="h-5 w-5 text-success" />
             <div>
               <p className="text-xl font-bold">{availableCamions}/{totalCamions}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Dispo</p>
+              <p className="text-[10px] text-muted-foreground uppercase">{t.pages.planning.availableLabel}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 min-h-[60px]">
             <Navigation className="h-5 w-5 text-primary" />
             <div>
               <p className="text-xl font-bold">{enLivraison.length}</p>
-              <p className="text-[10px] text-muted-foreground uppercase">Route</p>
+              <p className="text-[10px] text-muted-foreground uppercase">{t.pages.planning.routeShort}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 🆕 Pending Validation Section - Mobile/Tablet */}
+      {/* Pending Validation Section */}
       {pendingValidation.length > 0 && onConfirmBl && onRejectBl && (
         <Collapsible open={pendingOpen} onOpenChange={setPendingOpen}>
           <Card className="border-2 border-dashed border-amber-500/50 bg-gradient-to-r from-amber-500/5 to-orange-500/5">
@@ -211,7 +209,7 @@ export function TabletPlanningView({
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span>À Confirmer</span>
+                      <span>{t.pages.planning.toConfirm}</span>
                       <Badge className="bg-amber-500 text-white">{pendingValidation.length}</Badge>
                       <Sparkles className="h-4 w-4 text-amber-500" />
                     </div>
@@ -237,7 +235,7 @@ export function TabletPlanningView({
                           </p>
                         </div>
                         <Badge variant="outline" className="border-amber-500 text-amber-600">
-                          Nouveau
+                          {t.pages.planning.newLabel}
                         </Badge>
                       </div>
                       
@@ -259,7 +257,7 @@ export function TabletPlanningView({
                           onClick={() => onConfirmBl(bon)}
                         >
                           <CheckCircle className="h-5 w-5" />
-                          Confirmer
+                          {t.pages.planning.confirm}
                         </Button>
                         <Button 
                           size="lg" 
@@ -285,16 +283,16 @@ export function TabletPlanningView({
           <CardContent className="p-4 flex items-start gap-3">
             <AlertTriangle className="h-6 w-6 text-destructive flex-shrink-0" />
             <div>
-              <p className="font-semibold text-destructive text-base">Conflit Détecté!</p>
+              <p className="font-semibold text-destructive text-base">{t.pages.planning.conflictTitle}</p>
               <p className="text-sm text-muted-foreground">
-                {conflicts.length} livraison(s) planifiées à moins de 15 min d'intervalle
+                {conflicts.length} {t.pages.planning.conflictShortDescription}
               </p>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Tab Navigation - Large Touch Targets */}
+      {/* Tab Navigation */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full h-14 p-1 grid grid-cols-3">
           <TabsTrigger 
@@ -302,7 +300,7 @@ export function TabletPlanningView({
             className="h-12 text-sm gap-2 touch-manipulation data-[state=active]:bg-warning/20"
           >
             <Factory className="h-4 w-4" />
-            <span className="hidden sm:inline">À Produire</span>
+            <span className="hidden sm:inline">{t.pages.planning.toProduceTab}</span>
             <Badge variant="secondary" className="ml-1">{aProduire.length}</Badge>
           </TabsTrigger>
           <TabsTrigger 
@@ -310,7 +308,7 @@ export function TabletPlanningView({
             className="h-12 text-sm gap-2 touch-manipulation data-[state=active]:bg-secondary"
           >
             <Truck className="h-4 w-4" />
-            <span className="hidden sm:inline">Chargement</span>
+            <span className="hidden sm:inline">{t.pages.planning.loadingTab}</span>
             <Badge variant="secondary" className="ml-1">{enChargement.length}</Badge>
           </TabsTrigger>
           <TabsTrigger 
@@ -318,7 +316,7 @@ export function TabletPlanningView({
             className="h-12 text-sm gap-2 touch-manipulation data-[state=active]:bg-primary/20"
           >
             <Navigation className="h-4 w-4" />
-            <span className="hidden sm:inline">En Route</span>
+            <span className="hidden sm:inline">{t.pages.planning.enRouteTab}</span>
             <Badge className="ml-1">{enLivraison.length}</Badge>
           </TabsTrigger>
         </TabsList>
@@ -328,7 +326,7 @@ export function TabletPlanningView({
             <Card>
               <CardContent className="p-8 text-center">
                 <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">Aucune production planifiée</p>
+                <p className="text-muted-foreground">{t.pages.planning.noProductionPlanned}</p>
               </CardContent>
             </Card>
           ) : (
@@ -348,7 +346,7 @@ export function TabletPlanningView({
             <Card>
               <CardContent className="p-8 text-center">
                 <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">Aucun chargement en cours</p>
+                <p className="text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
               </CardContent>
             </Card>
           ) : (
@@ -368,7 +366,7 @@ export function TabletPlanningView({
             <Card>
               <CardContent className="p-8 text-center">
                 <Navigation className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">Aucun camion en route</p>
+                <p className="text-muted-foreground">{t.pages.planning.noTruckOnRoute}</p>
               </CardContent>
             </Card>
           ) : (
@@ -384,13 +382,13 @@ export function TabletPlanningView({
         </TabsContent>
       </Tabs>
 
-      {/* Livraisons Terminées - Shows at bottom */}
+      {/* Delivered Today */}
       {livresAujourdhui.length > 0 && (
         <Card className="border-success/30 bg-success/5 mt-4">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <CheckCircle className="h-5 w-5 text-success" />
-              Livrées Aujourd'hui
+              {t.pages.planning.deliveredTodayTitle}
               <Badge variant="outline" className="ml-auto border-success/30 text-success">
                 {livresAujourdhui.length}
               </Badge>
@@ -417,7 +415,7 @@ export function TabletPlanningView({
               ))}
               {livresAujourdhui.length > 5 && (
                 <p className="text-xs text-center text-muted-foreground">
-                  +{livresAujourdhui.length - 5} autres livraisons
+                  +{livresAujourdhui.length - 5} {t.pages.planning.otherDeliveries}
                 </p>
               )}
             </div>

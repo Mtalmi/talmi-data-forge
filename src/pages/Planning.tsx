@@ -789,37 +789,37 @@ export default function Planning() {
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
       en_attente_validation: { 
-        label: 'À Confirmer', 
+        label: t.pages.planning.statusToConfirm, 
         variant: 'outline', 
         className: 'border-amber-400/60 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30' 
       },
       planification: { 
-        label: 'À Démarrer', 
+        label: t.pages.planning.statusToStart, 
         variant: 'outline', 
         className: 'border-blue-400/60 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/30' 
       },
       production: { 
-        label: 'En Chargement', 
+        label: t.pages.planning.statusLoading, 
         variant: 'secondary', 
         className: 'bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-700 dark:text-violet-300 border border-violet-400/30' 
       },
       validation_technique: { 
-        label: 'À Valider', 
+        label: t.pages.planning.statusToValidate, 
         variant: 'secondary', 
         className: 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30' 
       },
       en_livraison: { 
-        label: 'En Route', 
+        label: t.pages.planning.statusEnRoute, 
         variant: 'default', 
         className: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-rose-500/25 border-0' 
       },
       livre: { 
-        label: 'Livré', 
+        label: t.pages.planning.statusDelivered, 
         variant: 'default', 
         className: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/25 border-0' 
       },
       facture: { 
-        label: 'Facturé', 
+        label: t.pages.planning.statusInvoiced, 
         variant: 'default', 
         className: 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md shadow-emerald-600/25 border-0' 
       },
@@ -872,22 +872,22 @@ export default function Planning() {
     const CreditIndicator = () => {
       if (creditStatus === 'green') {
         return (
-          <div className="flex items-center gap-1" title="Client en règle">
+          <div className="flex items-center gap-1" title={t.pages.planning.clientOk}>
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50" />
           </div>
         );
       } else if (creditStatus === 'blocked') {
         return (
-          <div className="flex items-center gap-1" title="Client bloqué">
+          <div className="flex items-center gap-1" title={t.pages.planning.clientBlocked}>
             <div className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-sm shadow-red-600/50 animate-pulse" />
-            <span className="text-[10px] text-red-500 font-medium">BLOQUÉ</span>
+            <span className="text-[10px] text-red-500 font-medium">{t.pages.planning.blocked}</span>
           </div>
         );
       } else {
         return (
-          <div className="flex items-center gap-1" title="Facture en retard">
+          <div className="flex items-center gap-1" title={t.pages.planning.unpaidInvoices}>
             <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm shadow-red-500/50" />
-            <span className="text-[10px] text-red-400 font-medium">IMPAYÉ</span>
+            <span className="text-[10px] text-red-400 font-medium">{t.pages.planning.unpaid}</span>
           </div>
         );
       }

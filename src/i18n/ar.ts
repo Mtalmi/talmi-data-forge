@@ -584,6 +584,12 @@ const ar = {
       explainDeviation: 'اشرح الانحراف...',
       linkedOrder: 'طلب مرتبط',
       batchValidatedSent: 'دفعة(ات) تم التحقق منها وإرسالها للتسليم',
+      // تسميات خطوات سير العمل
+      stepBonCommande: 'أمر الشراء',
+      stepProduction: 'الإنتاج',
+      stepValidation: 'التحقق',
+      stepLivraison: 'التسليم',
+      stepFacture: 'الفاتورة',
     },
     accessDenied: 'الوصول مرفوض',
     moduleNotAccessible: 'هذا القسم غير متاح لدورك.',
@@ -949,6 +955,30 @@ const ar = {
       refresh: 'تحديث',
       launchProductionUrgency: 'بدء الإنتاج (طارئ)',
       nightProductionAlert: '🚨 تم بدء إنتاج ليلي',
+      // تسميات حالة الشارات
+      statusToConfirm: 'للتأكيد',
+      statusToStart: 'للبدء',
+      statusLoading: 'قيد التحميل',
+      statusToValidate: 'للتحقق',
+      statusEnRoute: 'في الطريق',
+      statusDelivered: 'تم التسليم',
+      statusInvoiced: 'مفوتر',
+      // تسميات قصيرة للتابلت
+      dispatchTitle: 'الإرسال',
+      totalShort: 'الإجمالي',
+      waitingShort: 'انتظار',
+      availableLabel: 'متاح',
+      routeShort: 'الطريق',
+      noProductionPlanned: 'لا يوجد إنتاج مجدول',
+      noTruckOnRoute: 'لا توجد شاحنات في الطريق',
+      deliveredTodayTitle: 'تسليمات اليوم',
+      otherDeliveries: 'تسليمات أخرى',
+      conflictTitle: 'تعارض مكتشف!',
+      conflictShortDescription: 'تسليم(ات) مجدولة في فاصل زمني أقل من 15 دقيقة',
+      // تبويبات التابلت
+      toProduceTab: 'للإنتاج',
+      loadingTab: 'التحميل',
+      enRouteTab: 'في الطريق',
     },
     bons: {
       title: 'أرشيف وصلات التسليم',
