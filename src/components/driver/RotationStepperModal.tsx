@@ -30,7 +30,8 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { format, differenceInMinutes } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { ProofOfDeliveryModal } from './ProofOfDeliveryModal';
 
 interface RotationStepperModalProps {
@@ -56,13 +57,6 @@ interface Step {
   color: string;
 }
 
-const steps: Step[] = [
-  { key: 'depart', label: 'Départ', sublabel: 'Quitter la centrale', icon: Play, color: 'primary' },
-  { key: 'arrivee', label: 'Arrivée', sublabel: 'Sur le chantier', icon: MapPin, color: 'warning' },
-  { key: 'signe', label: 'Signé', sublabel: 'Preuve de livraison', icon: FileCheck, color: 'success' },
-  { key: 'retour', label: 'Retour', sublabel: 'Fin de mission', icon: Home, color: 'primary' },
-];
-
 export function RotationStepperModal({
   open,
   onOpenChange,
@@ -75,6 +69,17 @@ export function RotationStepperModal({
   workflowStatus,
   onComplete,
 }: RotationStepperModalProps) {
+  const { t, lang } = useI18n();
+  const r = t.driverRotation;
+  const dateLocale = getDateLocale(lang);
+
+  const steps: Step[] = useMemo(() => [
+    { key: 'depart', label: r.departure, sublabel: r.leavePlant, icon: Play, color: 'primary' },
+    { key: 'arrivee', label: r.arrival, sublabel: r.onSite, icon: MapPin, color: 'warning' },
+    { key: 'signe', label: r.signed, sublabel: r.proofOfDelivery, icon: FileCheck, color: 'success' },
+    { key: 'retour', label: r.returnPlant, sublabel: r.endOfMission, icon: Home, color: 'primary' },
+  ], [r]);
+
   const [localHeureDepart, setLocalHeureDepart] = useState(heureDepart);
   const [localHeureArrivee, setLocalHeureArrivee] = useState(heureArrivee);
   const [localHeureRetour, setLocalHeureRetour] = useState(heureRetour);
@@ -83,13 +88,11 @@ export function RotationStepperModal({
   const [proofModalOpen, setProofModalOpen] = useState(false);
   const [lastKmReading, setLastKmReading] = useState<number | null>(null);
   
-  // Retour form state (Fin de Mission)
   const [kmFinal, setKmFinal] = useState('');
   const [didRefuel, setDidRefuel] = useState(false);
   const [litresCarburant, setLitresCarburant] = useState('');
   const [noteAttente, setNoteAttente] = useState('');
 
-  // Sync props with local state when modal opens
   useEffect(() => {
     if (open) {
       setLocalHeureDepart(heureDepart);
@@ -97,7 +100,6 @@ export function RotationStepperModal({
       setLocalHeureRetour(heureRetour);
       setLocalWorkflowStatus(workflowStatus);
       
-      // Fetch last km reading for this truck
       if (camionId) {
         supabase
           .from('flotte')
@@ -113,58 +115,47 @@ export function RotationStepperModal({
 
   const isDelivered = ['livre', 'facture'].includes(localWorkflowStatus);
 
-  // Determine current step (0-indexed)
   const getCurrentStep = (): number => {
     if (!localHeureDepart) return 0;
     if (!localHeureArrivee) return 1;
     if (!isDelivered) return 2;
     if (!localHeureRetour) return 3;
-    return 4; // All done
+    return 4;
   };
 
   const currentStep = getCurrentStep();
   const isComplete = currentStep === 4;
   const isRetourStep = currentStep === 3;
 
-  // Auto-calculations
   const calculations = useMemo(() => {
     const kmVal = parseFloat(kmFinal) || 0;
     const litresVal = parseFloat(litresCarburant) || 0;
     const kmParcourus = lastKmReading && kmVal > lastKmReading ? kmVal - lastKmReading : null;
     
-    // L/100km calculation
     let consommation: number | null = null;
     if (kmParcourus && kmParcourus > 0 && litresVal > 0) {
       consommation = (litresVal / kmParcourus) * 100;
     }
 
-    // Cycle time (Retour - Départ)
     let cycleMinutes: number | null = null;
     if (localHeureDepart) {
       const now = new Date();
       cycleMinutes = differenceInMinutes(now, new Date(localHeureDepart));
     }
 
-    // Waiting time (Signé - Arrivée) - Use validated_at from workflow or estimate
     let attenteMinutes: number | null = null;
     if (localHeureArrivee && isDelivered) {
-      // Approximate: assume signature happened shortly after arrival for now
-      // In reality, we'd use the validated_at timestamp
-      attenteMinutes = 15; // Placeholder, will be calculated from real data
+      attenteMinutes = 15;
     }
 
-    return {
-      kmParcourus,
-      consommation,
-      cycleMinutes,
-      attenteMinutes,
-    };
+    return { kmParcourus, consommation, cycleMinutes, attenteMinutes };
   }, [kmFinal, litresCarburant, lastKmReading, localHeureDepart, localHeureArrivee, isDelivered]);
 
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return null;
     try {
-      return format(new Date(timestamp), 'HH:mm', { locale: fr });
+      const fmtOpts = dateLocale ? { locale: dateLocale } : {};
+      return format(new Date(timestamp), 'HH:mm', fmtOpts);
     } catch {
       return timestamp.slice(0, 5);
     }
@@ -178,7 +169,6 @@ export function RotationStepperModal({
     return `${mins} min`;
   };
 
-  // Single-click timestamp recording for Départ and Arrivée
   const recordTimestamp = async (stepKey: 'depart' | 'arrivee') => {
     setUpdating(stepKey);
     try {
@@ -192,7 +182,6 @@ export function RotationStepperModal({
 
       if (error) throw error;
 
-      // Update local state immediately for instant feedback
       if (stepKey === 'depart') {
         setLocalHeureDepart(now);
       } else {
@@ -200,15 +189,15 @@ export function RotationStepperModal({
       }
 
       const labels = {
-        depart: '📍 Départ enregistré',
-        arrivee: '📍 Arrivée enregistrée',
+        depart: r.departRecorded,
+        arrivee: r.arrivalRecorded,
       };
       
       toast.success(labels[stepKey]);
       onComplete();
     } catch (error) {
       console.error('Error recording timestamp:', error);
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(r.errorRecording);
     } finally {
       setUpdating(null);
     }
@@ -219,14 +208,14 @@ export function RotationStepperModal({
     
     const kmVal = parseFloat(kmFinal);
     if (isNaN(kmVal) || kmVal <= 0) {
-      toast.error('Veuillez entrer le KM Final');
+      toast.error(r.enterKmFinal);
       setUpdating(null);
       return;
     }
 
     const litresVal = didRefuel ? parseFloat(litresCarburant) : 0;
     if (didRefuel && (isNaN(litresVal) || litresVal <= 0)) {
-      toast.error('Veuillez entrer les litres de carburant');
+      toast.error(r.enterFuelLiters);
       setUpdating(null);
       return;
     }
@@ -235,7 +224,6 @@ export function RotationStepperModal({
       const now = new Date().toISOString();
       const nowDate = new Date();
       
-      // Calculate values
       let kmParcourus: number | null = null;
       let consommation: number | null = null;
       let tempsRotation: number | null = null;
@@ -248,14 +236,11 @@ export function RotationStepperModal({
         }
       }
 
-      // Calculate Cycle Time (Retour - Départ)
       if (localHeureDepart) {
         tempsRotation = differenceInMinutes(nowDate, new Date(localHeureDepart));
       }
 
-      // Calculate Waiting Time (we'll fetch validated_at for accurate calculation)
       if (localHeureArrivee) {
-        // Fetch the actual signature time
         const { data: blData } = await supabase
           .from('bons_livraison_reels')
           .select('validated_at')
@@ -267,10 +252,8 @@ export function RotationStepperModal({
         }
       }
 
-      // Determine if attente should be billed (>30 min)
       const facturerAttente = tempsAttente !== null && tempsAttente > 30;
 
-      // Record fuel entry if refueled
       if (didRefuel && camionId && litresVal > 0) {
         await supabase.from('suivi_carburant').insert([{
           id_camion: camionId,
@@ -282,7 +265,6 @@ export function RotationStepperModal({
         }]);
       }
 
-      // Update truck km counter and set to Disponible
       if (camionId) {
         await supabase
           .from('flotte')
@@ -294,7 +276,6 @@ export function RotationStepperModal({
           .eq('id_camion', camionId);
       }
 
-      // Update BL with all debrief data - syncs to Journal
       const { error } = await supabase
         .from('bons_livraison_reels')
         .update({
@@ -316,22 +297,19 @@ export function RotationStepperModal({
 
       setLocalHeureRetour(now);
       
-      // Show success with calculations summary
       const summaryParts = [`KM: ${kmVal.toLocaleString()}`];
       if (kmParcourus) summaryParts.push(`Dist: ${kmParcourus}km`);
       if (consommation) summaryParts.push(`${consommation.toFixed(1)} L/100km`);
       if (tempsRotation) summaryParts.push(`Cycle: ${formatDuration(tempsRotation)}`);
       
-      toast.success('🏠 Rotation validée - Camion libéré!', {
+      toast.success(r.rotationValidated, {
         description: summaryParts.join(' • '),
       });
       
       onComplete();
       
-      // Close modal after a brief delay
       setTimeout(() => {
         onOpenChange(false);
-        // Reset form
         setKmFinal('');
         setDidRefuel(false);
         setLitresCarburant('');
@@ -339,7 +317,7 @@ export function RotationStepperModal({
       }, 1500);
     } catch (error) {
       console.error('Error completing debrief:', error);
-      toast.error("Erreur lors de la validation");
+      toast.error(r.errorValidation);
     } finally {
       setUpdating(null);
     }
@@ -354,7 +332,7 @@ export function RotationStepperModal({
     setUpdating('signe');
     try {
       const justificationParts = [
-        `Signé par: ${proofData.signerName}`,
+        `${r.signedBy}: ${proofData.signerName}`,
         proofData.photoUrl ? `Photo BL: ${proofData.photoUrl}` : 'Sans photo BL',
         'Signature digitale capturée',
       ];
@@ -373,13 +351,13 @@ export function RotationStepperModal({
       setLocalWorkflowStatus('livre');
       setProofModalOpen(false);
       
-      toast.success('✅ BL signé et archivé', {
-        description: `Signé par ${proofData.signerName}`,
+      toast.success(r.blSignedArchived, {
+        description: `${r.signedBy} ${proofData.signerName}`,
       });
       onComplete();
     } catch (error) {
       console.error('Error completing proof:', error);
-      toast.error("Erreur lors de l'enregistrement");
+      toast.error(r.errorRecording);
       throw error;
     } finally {
       setUpdating(null);
@@ -406,14 +384,11 @@ export function RotationStepperModal({
     <>
       <Dialog open={open && !proofModalOpen} onOpenChange={onOpenChange}>
         <DialogContent className={cn(
-          // Fullscreen on mobile, modal on desktop
           "fixed inset-0 sm:relative sm:inset-auto",
           "w-full h-full sm:h-auto sm:max-w-[520px] sm:max-h-[90vh]",
           "overflow-y-auto rounded-none sm:rounded-xl",
-          // Glassmorphism effect
           "bg-background/95 sm:bg-background/80 backdrop-blur-xl border-0 sm:border sm:border-border/50",
           "shadow-none sm:shadow-2xl sm:shadow-primary/5",
-          // OLED optimization for mobile
           "dark:bg-background"
         )}>
           <DialogHeader>
@@ -422,7 +397,7 @@ export function RotationStepperModal({
                 <div className="p-1.5 rounded-lg bg-primary/10">
                   <Truck className="h-5 w-5 text-primary" />
                 </div>
-                Rotation {blId}
+                {r.rotation} {blId}
               </span>
               <span className={cn(
                 "text-sm font-semibold px-3 py-1 rounded-full",
@@ -430,7 +405,7 @@ export function RotationStepperModal({
                   ? "bg-success/20 text-success" 
                   : "bg-primary/10 text-primary"
               )}>
-                {currentStep}/4 étapes
+                {currentStep}/4 {r.steps}
               </span>
             </DialogTitle>
             <DialogDescription className="flex items-center gap-2">
@@ -445,7 +420,6 @@ export function RotationStepperModal({
           </DialogHeader>
 
           <div className="py-4 space-y-4">
-            {/* Steps Progress - Compact single-click design */}
             <div className="space-y-2">
               {steps.map((step, index) => {
                 const status = getStepStatus(index);
@@ -455,25 +429,20 @@ export function RotationStepperModal({
                 const isUpdating = updating === step.key;
                 const isSingleClick = step.key === 'depart' || step.key === 'arrivee';
 
-                // Hide Retour step row when in Retour mode (show expanded form instead)
                 if (step.key === 'retour' && isRetourStep) return null;
 
                 return (
                   <div
                     key={step.key}
                     className={cn(
-                      // Larger touch targets on mobile
                       "relative flex items-center gap-4 p-4 sm:p-3 rounded-xl border transition-all",
-                      // Glassmorphism step cards
                       status === 'completed' && "bg-success/10 border-success/30 backdrop-blur-sm",
                       status === 'current' && "bg-gradient-to-r from-primary/10 to-primary/5 border-primary/40 shadow-lg shadow-primary/10",
                       status === 'pending' && "bg-muted/30 border-border/30 opacity-50"
                     )}
                   >
-                    {/* Step Icon - Larger on mobile */}
                     <div
                       className={cn(
-                        // 48px+ touch targets
                         "flex-shrink-0 w-12 h-12 sm:w-11 sm:h-11 rounded-full flex items-center justify-center font-bold shadow-inner",
                         status === 'completed' && "bg-success text-success-foreground",
                         status === 'current' && step.color === 'primary' && "bg-primary text-primary-foreground animate-pulse-glow",
@@ -489,7 +458,6 @@ export function RotationStepperModal({
                       )}
                     </div>
 
-                    {/* Step Info */}
                     <div className="flex-1 min-w-0">
                       <p className={cn(
                         "font-semibold text-base sm:text-sm",
@@ -502,7 +470,6 @@ export function RotationStepperModal({
                       </p>
                     </div>
 
-                    {/* Timestamp or Action */}
                     {time ? (
                       <span className="text-sm font-mono font-semibold text-foreground bg-muted/50 px-3 py-2 rounded-lg">
                         {time}
@@ -519,11 +486,9 @@ export function RotationStepperModal({
                         }}
                         disabled={isUpdating}
                         className={cn(
-                          // Large glowing touch target for drivers (56px)
                           "min-h-[56px] min-w-[56px] h-14 sm:h-11 px-6 sm:px-5",
                           "text-base sm:text-sm font-bold rounded-xl shadow-xl transition-all",
                           "hover:scale-105 active:scale-95",
-                          // Glow effect for current action
                           step.color === 'warning' && "bg-warning hover:bg-warning/90 text-warning-foreground glow-warning",
                           step.color === 'success' && "bg-success hover:bg-success/90 glow-success",
                           step.color === 'primary' && "bg-primary hover:bg-primary/90 glow-primary"
@@ -533,8 +498,8 @@ export function RotationStepperModal({
                           <Loader2 className="h-5 w-5 animate-spin" />
                         ) : (
                           <>
-                            {step.key === 'signe' ? 'Signer' : (
-                              <><Zap className="h-5 w-5 mr-2 sm:mr-1" /> Maintenant</>
+                            {step.key === 'signe' ? r.sign : (
+                              <><Zap className="h-5 w-5 mr-2 sm:mr-1" /> {r.now}</>
                             )}
                           </>
                         )}
@@ -558,27 +523,25 @@ export function RotationStepperModal({
                     <Home className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">Fin de Mission</h3>
+                    <h3 className="font-bold text-lg">{r.finDeMission}</h3>
                     <p className="text-xs text-muted-foreground">
-                      Données obligatoires avant libération
+                      {r.mandatoryData}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  {/* Previous KM Info */}
                   {lastKmReading && (
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl border">
-                      <span className="text-sm text-muted-foreground">Dernier relevé</span>
+                      <span className="text-sm text-muted-foreground">{r.lastReading}</span>
                       <span className="font-mono font-bold text-lg">{lastKmReading.toLocaleString()} km</span>
                     </div>
                   )}
 
-                  {/* KM Final - Large touch-friendly input */}
                   <div className="space-y-2">
                     <Label htmlFor="km-final" className="flex items-center gap-2 font-semibold">
                       <Gauge className="h-4 w-4 text-primary" />
-                      KM Final <span className="text-destructive">*</span>
+                      {r.kmFinal} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                       id="km-final"
@@ -591,20 +554,19 @@ export function RotationStepperModal({
                     />
                     {calculations.kmParcourus && calculations.kmParcourus > 0 && (
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Distance parcourue</span>
+                        <span className="text-muted-foreground">{r.distanceTraveled}</span>
                         <span className="font-mono font-bold text-primary">{calculations.kmParcourus.toLocaleString()} km</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Fuel Toggle */}
                   <div className={cn(
                     "flex items-center justify-between p-4 rounded-xl border-2 transition-all",
                     didRefuel ? "border-warning/50 bg-warning/10" : "border-border/50 bg-muted/30"
                   )}>
                     <Label htmlFor="did-refuel" className="flex items-center gap-3 cursor-pointer">
                       <Fuel className={cn("h-5 w-5", didRefuel ? "text-warning" : "text-muted-foreground")} />
-                      <span className="font-medium">Carburant Ajouté</span>
+                      <span className="font-medium">{r.fuelAdded}</span>
                     </Label>
                     <Checkbox
                       id="did-refuel"
@@ -614,12 +576,11 @@ export function RotationStepperModal({
                     />
                   </div>
 
-                  {/* Fuel Amount - Conditional */}
                   {didRefuel && (
                     <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
                       <Label htmlFor="litres" className="flex items-center gap-2 font-semibold">
                         <Fuel className="h-4 w-4 text-warning" />
-                        Litres <span className="text-destructive">*</span>
+                        {r.liters} <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="litres"
@@ -633,7 +594,7 @@ export function RotationStepperModal({
                       />
                       {calculations.consommation && (
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">Consommation</span>
+                          <span className="text-muted-foreground">{r.consumption}</span>
                           <span className={cn(
                             "font-mono font-bold",
                             calculations.consommation > 35 ? "text-destructive" : "text-success"
@@ -645,28 +606,26 @@ export function RotationStepperModal({
                     </div>
                   )}
 
-                  {/* Note d'Attente */}
                   <div className="space-y-2">
                     <Label htmlFor="note-attente" className="flex items-center gap-2">
                       <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                      Note d'Attente
-                      <span className="text-xs text-muted-foreground">(optionnel)</span>
+                      {r.waitingNote}
+                      <span className="text-xs text-muted-foreground">({r.optional})</span>
                     </Label>
                     <Textarea
                       id="note-attente"
-                      placeholder="Raison du délai, problème chantier..."
+                      placeholder={r.waitingNotePlaceholder}
                       value={noteAttente}
                       onChange={(e) => setNoteAttente(e.target.value)}
                       className="min-h-[80px] rounded-xl resize-none"
                     />
                   </div>
 
-                  {/* Auto-Calculated Summary Preview */}
                   <div className="grid grid-cols-2 gap-3 p-4 bg-muted/30 rounded-xl border">
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
                         <Timer className="h-3 w-3" />
-                        Cycle Total
+                        {r.totalCycle}
                       </div>
                       <span className="font-mono font-bold text-lg">
                         {formatDuration(calculations.cycleMinutes)}
@@ -675,7 +634,7 @@ export function RotationStepperModal({
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
                         <Clock className="h-3 w-3" />
-                        Attente
+                        {r.waiting}
                       </div>
                       <span className="font-mono font-bold text-lg">
                         {formatDuration(calculations.attenteMinutes)}
@@ -683,7 +642,6 @@ export function RotationStepperModal({
                     </div>
                   </div>
 
-                  {/* Submit Button - 52px touch target for industrial use */}
                   <Button
                     className={cn(
                       "w-full min-h-[52px] h-14 text-lg font-bold rounded-xl",
@@ -699,7 +657,7 @@ export function RotationStepperModal({
                     ) : (
                       <>
                         <Check className="h-5 w-5 mr-2" />
-                        Valider & Libérer Camion
+                        {r.validateReleaseTruck}
                       </>
                     )}
                   </Button>
@@ -716,24 +674,23 @@ export function RotationStepperModal({
               )}>
                 <div className="flex items-center justify-center gap-2 text-success font-bold text-lg mb-2">
                   <Check className="h-6 w-6" />
-                  Rotation Complète!
+                  {r.rotationComplete}!
                 </div>
                 {camionId && (
                   <p className="text-sm text-muted-foreground">
-                    Camion <span className="font-mono font-semibold text-foreground">{camionId}</span> libéré et disponible
+                    Camion <span className="font-mono font-semibold text-foreground">{camionId}</span> {r.truckReleasedAvailable}
                   </p>
                 )}
               </div>
             )}
 
-            {/* Truck Info Banner (when not in Retour step) */}
             {camionId && !isComplete && !isRetourStep && (
               <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border/50">
                 <Truck className="h-5 w-5 text-muted-foreground" />
                 <div className="text-sm">
                   <p className="font-mono font-medium">{camionId}</p>
                   <p className="text-xs text-muted-foreground">
-                    Sera libéré à l'étape 4/4 (Retour)
+                    {r.releasedAtStep}
                   </p>
                 </div>
               </div>
@@ -742,7 +699,6 @@ export function RotationStepperModal({
         </DialogContent>
       </Dialog>
 
-      {/* Proof of Delivery Modal for Signature Step */}
       <ProofOfDeliveryModal
         open={proofModalOpen}
         onOpenChange={setProofModalOpen}

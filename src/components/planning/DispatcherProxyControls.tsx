@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Radio, CheckCircle } from 'lucide-react';
 import { RotationStepperModal } from '@/components/driver/RotationStepperModal';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface DispatcherProxyControlsProps {
   blId: string;
@@ -26,16 +27,17 @@ export function DispatcherProxyControls({
   onUpdate,
 }: DispatcherProxyControlsProps) {
   const [stepperOpen, setStepperOpen] = useState(false);
+  const { t } = useI18n();
+  const r = t.driverRotation;
 
   const isDelivered = ['livre', 'facture'].includes(workflowStatus);
 
-  // Calculate current step for badge
   const getCurrentStep = (): number => {
     if (!heureDepart) return 1;
     if (!heureArrivee) return 2;
     if (!isDelivered) return 3;
     if (!heureRetour) return 4;
-    return 4; // Complete
+    return 4;
   };
 
   const currentStep = getCurrentStep();
@@ -45,7 +47,7 @@ export function DispatcherProxyControls({
     return (
       <div className="flex items-center justify-center gap-2 py-2 px-3 bg-success/10 rounded-lg border border-success/20">
         <CheckCircle className="h-4 w-4 text-success" />
-        <span className="text-success font-medium text-sm">Rotation Complète</span>
+        <span className="text-success font-medium text-sm">{r.completeRotation}</span>
       </div>
     );
   }
@@ -66,7 +68,7 @@ export function DispatcherProxyControls({
         )}
       >
         <Radio className="h-4 w-4 text-primary animate-pulse" />
-        <span className="text-xs font-semibold">Rotation</span>
+        <span className="text-xs font-semibold">{r.rotation}</span>
         <span className="text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded font-bold">
           {currentStep}/4
         </span>
