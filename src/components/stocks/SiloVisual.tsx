@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { AlertTriangle, TrendingDown, Clock, Gauge } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface SiloVisualProps {
   materiau: string;
@@ -24,6 +25,7 @@ export function SiloVisual({
   avgDailyUsage,
   className,
 }: SiloVisualProps) {
+  const { t } = useI18n();
   const percentage = capacite > 0 ? Math.min((quantite / capacite) * 100, 100) : 0;
   const seuilPercentage = capacite > 0 ? (seuil / capacite) * 100 : 0;
   const isCritical = quantite <= seuil;
@@ -58,12 +60,11 @@ export function SiloVisual({
 
   return (
     <div className={cn('flex flex-col items-center', className)}>
-      {/* Critical Alert */}
       {isCritical && (
         <div className="mb-2 flex items-center gap-1 px-2 py-1 rounded bg-destructive/20 border border-destructive/50 animate-pulse">
           <AlertTriangle className="h-3 w-3 text-destructive" />
           <span className="text-xs font-bold text-destructive uppercase">
-            Commande Critique Requise
+            {t.pages.stocks.criticalOrderRequired}
           </span>
         </div>
       )}
@@ -186,7 +187,7 @@ export function SiloVisual({
                   : 'text-primary'
             )} />
             <span className="text-xs font-medium">
-              Autonomie Estimée
+              {t.pages.stocks.estimatedAutonomy}
             </span>
           </div>
           <div className={cn(
@@ -204,7 +205,7 @@ export function SiloVisual({
           {avgDailyUsage !== undefined && avgDailyUsage > 0 && (
             <div className="mt-1 text-[10px] text-muted-foreground text-center flex items-center justify-center gap-1">
               <TrendingDown className="h-3 w-3" />
-              <span>Conso. moy: {avgDailyUsage.toFixed(0)} {unite}/jour</span>
+              <span>{t.pages.stocks.avgConsumption}: {avgDailyUsage.toFixed(0)} {unite}{t.pages.stocks.perDay}</span>
             </div>
           )}
         </div>
@@ -217,7 +218,7 @@ export function SiloVisual({
           'bg-muted text-muted-foreground'
         )}>
           <Clock className="h-3 w-3" />
-          <span>Calcul en cours...</span>
+          <span>{t.pages.stocks.calculationInProgress}</span>
         </div>
       )}
 
