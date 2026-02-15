@@ -456,7 +456,7 @@ export default function Clients() {
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">ID Client</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.clientId}</Label>
                       <Input
                         placeholder="CLI-001"
                         value={clientId}
@@ -467,23 +467,23 @@ export default function Clients() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Délai Paiement</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.paymentDelay}</Label>
                       <Select value={delaiPaiement} onValueChange={setDelaiPaiement}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Comptant</SelectItem>
-                          <SelectItem value="30">30 jours</SelectItem>
-                          <SelectItem value="60">60 jours</SelectItem>
-                          <SelectItem value="90">90 jours</SelectItem>
+                           <SelectItem value="0">{t.pages.clients.cash}</SelectItem>
+                           <SelectItem value="30">30 {t.pages.clients.days}</SelectItem>
+                           <SelectItem value="60">60 {t.pages.clients.days}</SelectItem>
+                           <SelectItem value="90">90 {t.pages.clients.days}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="form-label-industrial">Nom de l'entreprise</Label>
+                    <Label className="form-label-industrial">{t.pages.clients.companyName}</Label>
                     <Input
                       placeholder="Entreprise ABC"
                       value={nomClient}
@@ -494,7 +494,7 @@ export default function Clients() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Contact</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.contact}</Label>
                       <Input
                         placeholder="M. Dupont"
                         value={contactPersonne}
@@ -502,7 +502,7 @@ export default function Clients() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Téléphone</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.phone}</Label>
                       <Input
                         placeholder="+212 6XX XXX XXX"
                         value={telephone}
@@ -512,7 +512,7 @@ export default function Clients() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="form-label-industrial">Email</Label>
+                    <Label className="form-label-industrial">{t.pages.clients.email}</Label>
                     <Input
                       type="email"
                       placeholder="contact@entreprise.ma"
@@ -522,7 +522,7 @@ export default function Clients() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="form-label-industrial">Adresse</Label>
+                    <Label className="form-label-industrial">{t.pages.clients.address}</Label>
                     <Input
                       placeholder="Adresse complète"
                       value={adresse}
@@ -532,7 +532,7 @@ export default function Clients() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Ville</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.city}</Label>
                       <Input
                         placeholder="Casablanca"
                         value={ville}
@@ -540,7 +540,7 @@ export default function Clients() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Code Postal</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.postalCode}</Label>
                       <Input
                         placeholder="20000"
                         value={codePostal}
@@ -551,12 +551,12 @@ export default function Clients() {
 
                   {/* Business Identifiers Section */}
                   <div className="border-t pt-4 mt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                      Identifiants Légaux
+                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                       {t.pages.clients.legalIds}
                     </p>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">RC</Label>
+                        <Label className="form-label-industrial">{t.pages.clients.rc}</Label>
                         <Input
                           placeholder="123456"
                           value={rc}
@@ -564,9 +564,9 @@ export default function Clients() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">
-                          ICE <span className="text-xs text-muted-foreground font-normal">(15 chiffres)</span>
-                        </Label>
+                         <Label className="form-label-industrial">
+                           {t.pages.clients.ice} <span className="text-xs text-muted-foreground font-normal">({t.pages.clients.iceDigitsFormat})</span>
+                         </Label>
                         <Input
                           placeholder="001234567890123"
                           value={ice}
@@ -583,20 +583,20 @@ export default function Clients() {
                         {ice && ice.length > 0 && ice.length !== 15 && (
                           <p className="text-xs text-warning flex items-center gap-1">
                             <AlertTriangle className="h-3 w-3" />
-                            {15 - ice.length} chiffres restants
+                             {15 - ice.length} {t.pages.clients.digitsRemaining}
                           </p>
                         )}
                         {ice && ice.length === 15 && (
                           <p className="text-xs text-success flex items-center gap-1">
                             <CheckCircle className="h-3 w-3" />
-                            Format valide
+                            {t.pages.clients.validFormat}
                           </p>
                         )}
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">IF</Label>
+                        <Label className="form-label-industrial">{t.pages.clients.ifLabel}</Label>
                         <Input
                           placeholder="12345678"
                           value={identifiantFiscal}
@@ -604,7 +604,7 @@ export default function Clients() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">Patente</Label>
+                        <Label className="form-label-industrial">{t.pages.clients.patent}</Label>
                         <Input
                           placeholder="12345678"
                           value={patente}
@@ -615,7 +615,7 @@ export default function Clients() {
 
                     {/* RC Document Upload */}
                     <div className="mt-4 space-y-2">
-                      <Label className="form-label-industrial">Document RC (Photo/Scan)</Label>
+                      <Label className="form-label-industrial">{t.pages.clients.rcDocumentUpload}</Label>
                       {!rcDocument ? (
                         <div className="relative">
                           <input
@@ -626,11 +626,11 @@ export default function Clients() {
                           />
                           <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 text-center hover:border-primary/50 transition-colors">
                             <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
-                            <p className="text-sm text-muted-foreground">
-                              Cliquez ou déposez votre fichier
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              JPG, PNG, WebP ou PDF (max 5 Mo)
+                             <p className="text-sm text-muted-foreground">
+                               {t.pages.clients.clickOrDrop}
+                             </p>
+                             <p className="text-xs text-muted-foreground mt-1">
+                               {t.pages.clients.maxFileSize}
                             </p>
                           </div>
                         </div>
@@ -670,18 +670,18 @@ export default function Clients() {
                   </div>
 
                   <div className="flex justify-end gap-3 pt-4">
-                    <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Annuler
-                    </Button>
-                    <Button type="submit" disabled={submitting || uploadingDocument}>
-                      {submitting || uploadingDocument ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          {uploadingDocument ? 'Upload...' : (isEditMode ? 'Mise à jour...' : 'Création...')}
-                        </>
-                      ) : (
-                        isEditMode ? 'Enregistrer' : 'Créer'
-                      )}
+                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                       {t.common.cancel}
+                     </Button>
+                     <Button type="submit" disabled={submitting || uploadingDocument}>
+                       {submitting || uploadingDocument ? (
+                         <>
+                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                           {uploadingDocument ? t.pages.clients.uploading : (isEditMode ? t.pages.clients.updating : t.pages.clients.creating)}
+                         </>
+                       ) : (
+                         isEditMode ? t.common.save : t.pages.clients.createClient
+                       )}
                     </Button>
                   </div>
                 </form>
@@ -721,7 +721,7 @@ export default function Clients() {
                       <Users className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Clients</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t.pages.clients.totalClientsLabel}</p>
                       <p className="text-xl font-bold">{clients.length}</p>
                     </div>
                   </div>
@@ -732,7 +732,7 @@ export default function Clients() {
                       <AlertTriangle className="h-5 w-5 text-warning" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Soldes Dus</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t.pages.clients.outstandingDues}</p>
                       <p className="text-xl font-bold">{clientsWithDebt.length}</p>
                     </div>
                   </div>
@@ -743,7 +743,7 @@ export default function Clients() {
                       <Ban className="h-5 w-5 text-destructive" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Bloqués</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{t.pages.clients.blockedLabel}</p>
                       <p className="text-xl font-bold">{blockedClients.length}</p>
                     </div>
                   </div>
@@ -760,21 +760,21 @@ export default function Clients() {
           ) : clients.length === 0 ? (
             <div className="p-8 text-center">
               <Users className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucun client enregistré</p>
+              <p className="text-muted-foreground">{t.pages.clients.noClients}</p>
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Entreprise</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Téléphone</TableHead>
-                  <TableHead>Délai</TableHead>
-                  <TableHead>Statut</TableHead>
-                  {(isCeo || isAgentAdministratif) && <TableHead className="text-right">Solde Dû</TableHead>}
-                  <TableHead className="w-8"></TableHead>
-                  {canEdit && <TableHead className="w-32">Actions</TableHead>}
+                   <TableHead>ID</TableHead>
+                   <TableHead>{t.pages.clients.entreprise}</TableHead>
+                   <TableHead>{t.pages.clients.contact}</TableHead>
+                   <TableHead>{t.pages.clients.phone}</TableHead>
+                   <TableHead>{t.pages.clients.delai}</TableHead>
+                   <TableHead>{t.pages.clients.statut}</TableHead>
+                   {(isCeo || isAgentAdministratif) && <TableHead className="text-right">{t.pages.clients.soldeDu}</TableHead>}
+                   <TableHead className="w-8"></TableHead>
+                  {canEdit && <TableHead className="w-32">{t.pages.clients.actions}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
