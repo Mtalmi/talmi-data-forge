@@ -1408,6 +1408,15 @@ const en = {
       requestDate: 'Request date',
     },
   },
+  landing: {
+    badge: 'Enterprise Operating System',
+    headline1: 'The Operating System',
+    headline2: 'for Concrete Titans',
+    subtitle: 'TBOS unifies',
+    accessPlatform: 'Access Platform',
+    exploreModules: 'Explore Modules',
+    getStarted: 'Get Started',
+  },
   languages: {
     ar: 'العربية',
     fr: 'Français',
