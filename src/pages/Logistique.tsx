@@ -204,15 +204,15 @@ export default function Logistique() {
           <div className="flex items-center gap-2 flex-wrap">
             <Button variant="outline" size="sm" onClick={() => navigate('/ws7-import')} className="min-h-[40px] border-primary/30 text-primary hover:bg-primary/10">
               <FileSpreadsheet className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Import WS7</span>
+              <span className="hidden sm:inline">{t.pages.logistique.importWs7}</span>
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate('/ws7-batches')} className="min-h-[40px]">
               <Factory className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Batches WS7</span>
+              <span className="hidden sm:inline">{t.pages.logistique.ws7Batches}</span>
             </Button>
             <Button variant="outline" size="sm" onClick={() => navigate('/ws7-discovery')} className="min-h-[40px] border-accent/30">
               <Globe className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Découvrir WS7</span>
+              <span className="hidden sm:inline">{t.pages.logistique.discoverWs7}</span>
             </Button>
             <Button variant="outline" size="sm" onClick={() => {
               fetchVehicules();
@@ -220,7 +220,7 @@ export default function Logistique() {
               fetchActiveDeliveries();
             }} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t.pages.maintenance.refresh}</span>
             </Button>
             <FuelEntryForm vehicules={vehicules} onSubmit={addFuelEntry} />
             {canManage && (
@@ -228,18 +228,18 @@ export default function Logistique() {
                 <DialogTrigger asChild>
                   <Button className="min-h-[40px]">
                     <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Nouveau Véhicule</span>
-                    <span className="sm:hidden">Véhicule</span>
+                     <span className="hidden sm:inline">{t.pages.logistique.newVehicle}</span>
+                    <span className="sm:hidden">{t.pages.logistique.addVehicle}</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>Ajouter un Véhicule</DialogTitle>
+                    <DialogTitle>{t.pages.logistique.addVehicle}</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleAddVehicule} className="space-y-4 mt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">ID Camion</Label>
+                        <Label className="form-label-industrial">{t.pages.logistique.truckId}</Label>
                         <Input
                           placeholder="T-001"
                           value={newIdCamion}
@@ -248,7 +248,7 @@ export default function Logistique() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">Type</Label>
+                        <Label className="form-label-industrial">{t.pages.logistique.type}</Label>
                         <Select value={newType} onValueChange={setNewType}>
                           <SelectTrigger>
                             <SelectValue />
@@ -262,7 +262,7 @@ export default function Logistique() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">Propriétaire</Label>
+                        <Label className="form-label-industrial">{t.pages.logistique.owner}</Label>
                         <Input
                           placeholder="Interne ou nom prestataire"
                           value={newProprietaire}
@@ -271,7 +271,7 @@ export default function Logistique() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="form-label-industrial">Capacité (m³)</Label>
+                        <Label className="form-label-industrial">{t.pages.logistique.capacity}</Label>
                         <Input
                           type="number"
                           placeholder="8"
@@ -281,9 +281,9 @@ export default function Logistique() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Chauffeur</Label>
+                      <Label className="form-label-industrial">{t.pages.logistique.driver}</Label>
                       <Input
-                        placeholder="Nom du chauffeur"
+                        placeholder={t.pages.logistique.driverName}
                         value={newChauffeur}
                         onChange={(e) => setNewChauffeur(e.target.value)}
                       />
@@ -306,19 +306,19 @@ export default function Logistique() {
         {/* Fleet Status Summary */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
           <div className="kpi-card p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Total</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.total}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1">{vehicules.length}</p>
           </div>
           <div className="kpi-card positive p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Disponibles</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.available}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1 text-success">{disponibles}</p>
           </div>
           <div className="kpi-card p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">En Livraison</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.onDelivery}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1 text-primary">{enLivraisonCount}</p>
           </div>
           <div className="kpi-card warning p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">Maintenance</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.inMaintenance}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1 text-warning">{maintenance}</p>
           </div>
         </div>
@@ -329,25 +329,25 @@ export default function Logistique() {
             <TabsList className="inline-flex w-full sm:w-auto">
               <TabsTrigger value="predator" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px] data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
                 <Crosshair className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Fleet Predator</span>
+                <span className="hidden sm:inline">{t.pages.logistique.fleetPredator}</span>
                 <span className="sm:hidden">GPS</span>
               </TabsTrigger>
               <TabsTrigger value="flotte" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Truck className="h-3 w-3 sm:h-4 sm:w-4" />
-                Flotte
+                {t.pages.logistique.fleet}
               </TabsTrigger>
               <TabsTrigger value="performance" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Trophy className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Performance</span>
+                <span className="hidden sm:inline">{t.pages.logistique.performance}</span>
                 <span className="sm:hidden">Perf.</span>
               </TabsTrigger>
               <TabsTrigger value="rotations" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
-                Rotations
+                {t.pages.logistique.rotations}
               </TabsTrigger>
               <TabsTrigger value="carburant" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Fuel className="h-3 w-3 sm:h-4 sm:w-4" />
-                Carburant
+                {t.pages.logistique.fuel}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -368,14 +368,14 @@ export default function Logistique() {
                 <Table className="data-table-industrial">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID Camion</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Propriétaire</TableHead>
-                      <TableHead>Chauffeur</TableHead>
-                      <TableHead className="text-right">Capacité</TableHead>
-                      <TableHead>GPS</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead className="text-right">Conso. Moy.</TableHead>
+                       <TableHead>{t.pages.logistique.truckId}</TableHead>
+                      <TableHead>{t.pages.logistique.type}</TableHead>
+                      <TableHead>{t.pages.logistique.owner}</TableHead>
+                      <TableHead>{t.pages.logistique.driver}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.capacity}</TableHead>
+                      <TableHead>{t.pages.logistique.gps}</TableHead>
+                      <TableHead>{t.pages.laboratoire.status}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.avgConsumption}</TableHead>
                       {canManage && <TableHead className="w-32"></TableHead>}
                     </TableRow>
                   </TableHeader>
