@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils';
 import { ClipboardList, Factory, Truck, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 interface ClientStatusStepperProps {
   status: string;
@@ -43,7 +42,7 @@ export function ClientStatusStepper({
     }
     if (stepKey === 'livre' && (confirmedAt || arrivalTime)) {
       const time = confirmedAt || arrivalTime;
-      return time ? format(new Date(time), 'HH:mm', { locale: fr }) : null;
+      return time ? format(new Date(time), 'HH:mm') : null;
     }
     return null;
   };

@@ -25,7 +25,8 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ForensicAlert {
   id: string;
@@ -111,6 +112,8 @@ const ACTION_CONFIG: Record<string, {
 type AlertFilter = 'all' | 'critical' | 'blocked' | 'success';
 
 export function ForensicAlertFeed() {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -203,7 +206,7 @@ export function ForensicAlertFeed() {
             {alert.user_name || 'Système'}
           </span>
           <span className="text-xs text-muted-foreground shrink-0">
-            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: false, locale: fr })}
+            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: false, locale: dateLocale || undefined })}
           </span>
         </div>
 

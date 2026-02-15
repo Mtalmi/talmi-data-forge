@@ -22,7 +22,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useGPSTracking, TruckPosition, Geofence, GeofenceEvent, GPSHistoryPoint } from '@/hooks/useGPSTracking';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 // Morocco bounds for initial view
 const MOROCCO_CENTER: [number, number] = [-7.0926, 31.7917];
@@ -78,6 +79,8 @@ export function TacticalMap({
   onAcknowledgeDemoAlert,
   getDemoTruckHistory,
 }: TacticalMapProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
@@ -501,7 +504,7 @@ export function TacticalMap({
                   <span className="text-gray-300 text-sm">
                     {formatDistanceToNow(new Date(selectedTruckData.last_gps_update), { 
                       addSuffix: true, 
-                      locale: fr 
+                      locale: dateLocale || undefined 
                     })}
                   </span>
                 </div>

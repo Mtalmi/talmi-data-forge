@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
-import { fr, ar, enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { Truck, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,7 +20,7 @@ interface Delivery {
 
 export default function RecentDeliveries() {
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
+  const dateFnsLocale = getDateLocale(lang);
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
