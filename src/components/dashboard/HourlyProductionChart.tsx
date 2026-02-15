@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Clock } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 const SAMPLE_HOURLY_DATA = [
   { hour: '06h', volume: 12 },
@@ -19,10 +20,8 @@ const SAMPLE_HOURLY_DATA = [
 ];
 
 export function HourlyProductionChart() {
-  const data = useMemo(() => {
-    // In production, this would come from a real query
-    return SAMPLE_HOURLY_DATA;
-  }, []);
+  const { t } = useI18n();
+  const data = useMemo(() => SAMPLE_HOURLY_DATA, []);
 
   const currentHour = new Date().getHours();
   const totalToday = data.reduce((sum, d) => sum + d.volume, 0);
@@ -34,13 +33,13 @@ export function HourlyProductionChart() {
         <div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold uppercase tracking-wider">Production Journalière</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider">{t.widgets.hourlyChart.title}</h3>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Volume produit par heure (m³)</p>
+          <p className="text-xs text-muted-foreground mt-1">{t.widgets.hourlyChart.subtitle}</p>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
-          <span>Total: <strong className="text-foreground font-mono">{totalToday} m³</strong></span>
-          <span>Pic: <strong className="text-primary font-mono">{peakHour.hour}</strong></span>
+          <span>{t.widgets.hourlyChart.total}: <strong className="text-foreground font-mono">{totalToday} m³</strong></span>
+          <span>{t.widgets.hourlyChart.peak}: <strong className="text-primary font-mono">{peakHour.hour}</strong></span>
         </div>
       </div>
 
@@ -66,7 +65,7 @@ export function HourlyProductionChart() {
                 borderRadius: '8px',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [`${value} m³`, 'Volume']}
+              formatter={(value: number) => [`${value} m³`, t.widgets.hourlyChart.volume]}
             />
             <Bar dataKey="volume" radius={[4, 4, 0, 0]}>
               {data.map((entry, index) => {

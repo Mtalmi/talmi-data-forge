@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, ar, enUS } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { Truck, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Delivery {
   bl_id: string;
@@ -18,13 +19,14 @@ interface Delivery {
 }
 
 export default function RecentDeliveries() {
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   const fetchDeliveries = useCallback(async () => {
     try {
-      // Fetch deliveries with client names via join
       const { data, error } = await supabase
         .from('bons_livraison_reels')
         .select(`
@@ -43,7 +45,6 @@ export default function RecentDeliveries() {
 
       if (error) throw error;
       
-      // Map data to include client_name
       const mappedDeliveries = (data || []).map(d => ({
         bl_id: d.bl_id,
         date_livraison: d.date_livraison,
@@ -65,29 +66,23 @@ export default function RecentDeliveries() {
     }
   }, []);
 
-  // Auto-refresh every 30 seconds
   useEffect(() => {
     fetchDeliveries();
     const interval = setInterval(fetchDeliveries, 30000);
     return () => clearInterval(interval);
   }, [fetchDeliveries]);
 
-  // Subscribe to realtime updates
   useEffect(() => {
     const channel = supabase
       .channel('recent-deliveries')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'bons_livraison_reels' },
-        () => {
-          fetchDeliveries();
-        }
+        () => { fetchDeliveries(); }
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [fetchDeliveries]);
 
   const getStatusPill = (status: string) => {
@@ -102,7 +97,7 @@ export default function RecentDeliveries() {
   if (loading) {
     return (
       <div className="card-industrial p-6 animate-fade-in">
-        <h3 className="text-lg font-semibold mb-4">Dernières Livraisons</h3>
+        <h3 className="text-lg font-semibold mb-4">{t.widgets.recentDeliveries.title}</h3>
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-16 bg-muted/50 rounded animate-pulse" />
@@ -116,13 +111,13 @@ export default function RecentDeliveries() {
     <div className="card-industrial p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold">Dernières Livraisons</h3>
+          <h3 className="text-lg font-semibold">{t.widgets.recentDeliveries.title}</h3>
           <p className="text-xs text-muted-foreground">
-            Mise à jour: {format(lastUpdate, 'HH:mm:ss', { locale: fr })}
+            {t.widgets.recentDeliveries.updated}: {format(lastUpdate, 'HH:mm:ss', { locale: dateFnsLocale })}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-success animate-pulse" title="Auto-actualisation active" />
+          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
           <Truck className="h-5 w-5 text-muted-foreground" />
         </div>
       </div>
@@ -130,7 +125,7 @@ export default function RecentDeliveries() {
       {deliveries.length === 0 ? (
         <div className="text-center py-8 text-muted-foreground">
           <Truck className="h-12 w-12 mx-auto mb-3 opacity-50" />
-          <p>Aucune livraison récente</p>
+          <p>{t.widgets.recentDeliveries.noRecent}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -163,7 +158,7 @@ export default function RecentDeliveries() {
                     {delivery.statut_paiement}
                   </span>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {format(new Date(delivery.date_livraison), 'dd MMM', { locale: fr })}
+                    {format(new Date(delivery.date_livraison), 'dd MMM', { locale: dateFnsLocale })}
                   </p>
                 </div>
               </div>
@@ -173,7 +168,7 @@ export default function RecentDeliveries() {
                     'text-xs font-medium',
                     delivery.ecart_marge > 0 ? 'text-success' : 'text-destructive'
                   )}>
-                    Écart marge: {delivery.ecart_marge > 0 ? '+' : ''}{delivery.ecart_marge.toFixed(2)} DH/m³
+                    {t.widgets.recentDeliveries.marginVariance}: {delivery.ecart_marge > 0 ? '+' : ''}{delivery.ecart_marge.toFixed(2)} DH/m³
                   </p>
                 </div>
               )}

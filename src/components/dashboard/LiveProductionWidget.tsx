@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ProductionBatch {
   id: string;
@@ -62,6 +63,7 @@ const statusConfig = {
 
 export function LiveProductionWidget() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [batches, setBatches] = useState<ProductionBatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,7 +76,6 @@ export function LiveProductionWidget() {
 
   const fetchBatches = useCallback(async () => {
     try {
-      // Get today's batches
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -90,7 +91,6 @@ export function LiveProductionWidget() {
       const typedData = (data || []) as ProductionBatch[];
       setBatches(typedData);
 
-      // Calculate stats for today
       const { count: totalCount } = await supabase
         .from('production_batches')
         .select('*', { count: 'exact', head: true })
@@ -130,7 +130,6 @@ export function LiveProductionWidget() {
   useEffect(() => {
     fetchBatches();
 
-    // Realtime subscription
     const channel = supabase
       .channel('ceo_production_feed')
       .on(
@@ -159,7 +158,6 @@ export function LiveProductionWidget() {
     ? Math.round((stats.ok / stats.total) * 100) 
     : 100;
 
-  // Determine breathing animation speed based on activity
   const isActiveProduction = stats.total > 0;
   const hasCriticalIssues = stats.critical > 0;
 
@@ -181,39 +179,27 @@ export function LiveProductionWidget() {
                 'h-5 w-5',
                 stats.critical > 0 ? 'text-destructive' : stats.warning > 0 ? 'text-warning' : 'text-success'
               )} />
-              {/* Sanctum glow effect */}
               {isActiveProduction && (
                 <div className="absolute inset-0 rounded-xl sanctum-icon" />
               )}
             </div>
             <div>
               <CardTitle className="text-base flex items-center gap-2">
-                Live Production
+                {t.widgets.liveProduction.title}
                 {isActiveProduction && (
                   <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
                 )}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                5 derniers batches
+                {t.widgets.liveProduction.lastBatches}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={handleRefresh}
-              disabled={refreshing}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleRefresh} disabled={refreshing}>
               <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} />
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => navigate('/production')}
-            >
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate('/production')}>
               <ExternalLink className="h-4 w-4" />
             </Button>
           </div>
@@ -221,11 +207,10 @@ export function LiveProductionWidget() {
       </CardHeader>
 
       <CardContent className="p-4 space-y-4">
-        {/* Quality Stats Bar */}
         <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/30">
           <div className="flex-1">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Qualité Aujourd'hui</span>
+              <span className="text-sm font-medium">{t.widgets.liveProduction.qualityToday}</span>
               <span className={cn(
                 'text-lg font-bold font-mono',
                 qualityRate >= 95 ? 'text-success' : qualityRate >= 80 ? 'text-warning' : 'text-destructive'
@@ -236,21 +221,20 @@ export function LiveProductionWidget() {
             <div className="flex gap-3 text-xs">
               <span className="flex items-center gap-1">
                 <CheckCircle className="h-3 w-3 text-success" />
-                {stats.ok} OK
+                {stats.ok} {t.widgets.liveProduction.ok}
               </span>
               <span className="flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3 text-warning" />
-                {stats.warning} Écarts
+                {stats.warning} {t.widgets.liveProduction.variances}
               </span>
               <span className="flex items-center gap-1">
                 <XCircle className="h-3 w-3 text-destructive" />
-                {stats.critical} Critiques
+                {stats.critical} {t.widgets.liveProduction.critical}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Recent Batches */}
         <ScrollArea className="h-[200px]">
           {loading ? (
             <div className="space-y-2">
@@ -261,7 +245,7 @@ export function LiveProductionWidget() {
           ) : batches.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Activity className="h-8 w-8 text-muted-foreground/30 mb-2" />
-              <p className="text-sm text-muted-foreground">Aucun batch aujourd'hui</p>
+              <p className="text-sm text-muted-foreground">{t.widgets.liveProduction.noBatchToday}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -318,7 +302,7 @@ export function LiveProductionWidget() {
                             ? `C:${batch.variance_ciment_pct.toFixed(0)}%` 
                             : batch.variance_eau_pct && batch.variance_eau_pct > 2
                               ? `E:${batch.variance_eau_pct.toFixed(0)}%`
-                              : 'Écart'
+                              : t.widgets.liveProduction.variance
                           }
                         </Badge>
                       )}
