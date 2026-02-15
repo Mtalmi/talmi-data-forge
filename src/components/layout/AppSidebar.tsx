@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   LayoutDashboard,
   Factory,
@@ -26,32 +27,33 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
-const mainNav = [
-  { title: 'Accueil', url: '/', icon: LayoutDashboard },
-  { title: 'Production', url: '/production', icon: Factory },
-  { title: 'Planning', url: '/planning', icon: CalendarClock },
-  { title: 'Livraisons', url: '/bons', icon: Truck },
-];
-
-const managementNav = [
-  { title: 'Finance', url: '/ventes', icon: DollarSign },
-  { title: 'Stocks', url: '/stocks', icon: Warehouse },
-  { title: 'Clients', url: '/clients', icon: Users },
-  { title: 'Rapports', url: '/rapports', icon: BarChart3 },
-];
-
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { signOut } = useAuth();
+  const { t } = useI18n();
   const { state } = useSidebar();
   const collapsed = state === 'collapsed';
+
+  const mainNav = [
+    { title: t.nav.dashboard, url: '/', icon: LayoutDashboard },
+    { title: t.nav.production, url: '/production', icon: Factory },
+    { title: t.nav.planning, url: '/planning', icon: CalendarClock },
+    { title: t.nav.deliveries, url: '/bons', icon: Truck },
+  ];
+
+  const managementNav = [
+    { title: t.nav.sales, url: '/ventes', icon: DollarSign },
+    { title: t.nav.stocks, url: '/stocks', icon: Warehouse },
+    { title: t.nav.clients, url: '/clients', icon: Users },
+    { title: t.nav.reports, url: '/rapports', icon: BarChart3 },
+  ];
 
   const isActive = (path: string) => location.pathname === path;
 
   const renderItems = (items: typeof mainNav) =>
     items.map((item) => (
-      <SidebarMenuItem key={item.title}>
+      <SidebarMenuItem key={item.url}>
         <SidebarMenuButton
           onClick={() => navigate(item.url)}
           tooltip={item.title}
@@ -91,7 +93,7 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 px-3">
-            Principal
+            {t.nav.main}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderItems(mainNav)}</SidebarMenu>
@@ -100,7 +102,7 @@ export function AppSidebar() {
 
         <SidebarGroup>
           <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-muted-foreground/60 px-3">
-            Gestion
+            {t.nav.management}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderItems(managementNav)}</SidebarMenu>
@@ -113,21 +115,21 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => navigate('/user_profile')}
-              tooltip="Paramètres"
+              tooltip={t.nav.settings}
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
             >
               <Settings className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span>Paramètres</span>}
+              {!collapsed && <span>{t.nav.settings}</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => signOut()}
-              tooltip="Déconnexion"
+              tooltip={t.nav.logout}
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
             >
               <LogOut className="h-4 w-4 flex-shrink-0" />
-              {!collapsed && <span>Déconnexion</span>}
+              {!collapsed && <span>{t.nav.logout}</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
