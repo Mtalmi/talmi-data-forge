@@ -241,23 +241,17 @@
   /* Vault Header */
   .dashboard-header {
     @apply relative overflow-hidden rounded-2xl;
-    background: linear-gradient(
-      145deg,
-      hsl(0 0% 4% / 0.95) 0%,
-      hsl(0 0% 2% / 0.98) 100%
-    );
-    border: 1px solid hsl(51 100% 50% / 0.15);
-    box-shadow: 
-      0 0 60px hsl(51 100% 50% / 0.05),
-      inset 0 1px 0 hsl(51 100% 50% / 0.08);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 2px 16px hsl(var(--primary) / 0.04);
   }
 
   .dashboard-header::before {
     content: '';
-    @apply absolute inset-0 opacity-30 pointer-events-none;
+    @apply absolute inset-0 opacity-20 pointer-events-none;
     background: radial-gradient(
       ellipse 100% 60% at 50% -30%,
-      hsl(51 100% 50% / 0.12),
+      hsl(var(--primary) / 0.1),
       transparent 60%
     );
   }
@@ -516,16 +510,18 @@
   /* ===== OBSIDIAN INDUSTRIAL CARDS ===== */
   .card-industrial {
     @apply relative overflow-hidden rounded-xl border border-border;
-    background: transparent;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: hsl(var(--card));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card-industrial:hover {
-    border-color: hsl(51 100% 50% / 0.3);
-    box-shadow: 0 0 30px hsl(51 100% 50% / 0.12), 0 0 60px hsl(51 100% 50% / 0.06);
-    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.25);
+    box-shadow: 
+      0 4px 24px hsl(var(--primary) / 0.08),
+      0 0 0 1px hsl(var(--primary) / 0.06);
+    transform: translateY(-1px);
   }
 
   /* KPI Card with Gold Accent Bar */
@@ -536,19 +532,19 @@
   .kpi-card::before {
     content: '';
     @apply absolute top-0 left-0 w-1 h-full rounded-l-xl;
-    background: linear-gradient(180deg, hsl(51 100% 50%), hsl(45 100% 40% / 0.6));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
   }
 
   .kpi-card.positive::before {
-    background: linear-gradient(180deg, hsl(51 100% 50%), hsl(45 100% 40% / 0.6));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
   }
 
   .kpi-card.negative::before {
-    background: linear-gradient(180deg, hsl(51 100% 50%), hsl(45 100% 40% / 0.6));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
   }
 
   .kpi-card.warning::before {
-    background: linear-gradient(180deg, hsl(51 100% 50%), hsl(45 100% 40% / 0.6));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
   }
 
   /* ===== ANIMATED GAUGE ===== */

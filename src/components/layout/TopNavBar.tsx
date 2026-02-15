@@ -181,7 +181,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Glass Background */}
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-2xl border-b border-primary/8 shadow-[0_1px_30px_hsl(var(--primary)/0.04)]" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-b border-border" />
 
       <div className="relative flex items-center justify-between h-16 px-4 lg:px-6">
         {/* Logo */}
