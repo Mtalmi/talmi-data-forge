@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "لوحة القيادة",
+    "home": "الرئيسية",
     "sales": "المبيعات",
     "planning": "التخطيط",
     "production": "الإنتاج",
@@ -31,7 +32,12 @@
     "aiSurveillance": "المراقبة الذكية",
     "users": "المستخدمون",
     "systemManual": "دليل النظام",
-    "trainingMode": "وضع التدريب"
+    "trainingMode": "وضع التدريب",
+    "settings": "الإعدادات",
+    "deliveries": "التسليمات",
+    "finance": "المالية",
+    "management": "الإدارة",
+    "principal": "الرئيسي"
   },
   "common": {
     "loading": "جاري التحميل…",
@@ -70,7 +76,27 @@
     "todayProduction": "إنتاج اليوم",
     "pendingDeliveries": "التسليمات المعلقة",
     "revenue": "الإيرادات",
-    "alerts": "التنبيهات"
+    "alerts": "التنبيهات",
+    "greeting": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "مساء الخير",
+      "night": "تصبح على خير"
+    },
+    "efficiency": {
+      "optimal": "كل شيء تحت السيطرة.",
+      "good": "أداء مستقر.",
+      "attention": "يتطلب الانتباه."
+    },
+    "factoryRunning": "المصنع يعمل بكفاءة {{pct}}%",
+    "periods": {
+      "today": "اليوم",
+      "todayShort": "اليوم",
+      "week": "هذا الأسبوع",
+      "weekShort": "أسبوع",
+      "month": "هذا الشهر",
+      "monthShort": "شهر"
+    }
   },
   "pwa": {
     "offline": "غير متصل",

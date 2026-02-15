@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "Sanctum",
+    "home": "Home",
     "sales": "Sales",
     "planning": "Planning",
     "production": "Production",
@@ -31,7 +32,12 @@
     "aiSurveillance": "AI Surveillance",
     "users": "Users",
     "systemManual": "System Manual",
-    "trainingMode": "Training Mode"
+    "trainingMode": "Training Mode",
+    "settings": "Settings",
+    "deliveries": "Deliveries",
+    "finance": "Finance",
+    "management": "Management",
+    "principal": "Main"
   },
   "common": {
     "loading": "Loading…",
@@ -70,7 +76,27 @@
     "todayProduction": "Today's Production",
     "pendingDeliveries": "Pending Deliveries",
     "revenue": "Revenue",
-    "alerts": "Alerts"
+    "alerts": "Alerts",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good night"
+    },
+    "efficiency": {
+      "optimal": "Everything is under control.",
+      "good": "Stable performance.",
+      "attention": "Attention required."
+    },
+    "factoryRunning": "Factory running at {{pct}}% efficiency",
+    "periods": {
+      "today": "Today",
+      "todayShort": "Today",
+      "week": "This Week",
+      "weekShort": "Week",
+      "month": "This Month",
+      "monthShort": "Month"
+    }
   },
   "pwa": {
     "offline": "Offline",

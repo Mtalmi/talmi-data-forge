@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
@@ -64,6 +65,7 @@ interface NavGroup {
 export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) {
   const { user, role: actualRole, signOut, isCeo: actualIsCeo } = useAuth();
   const { count: pendingBLCount } = usePendingBLCount();
+  const { t } = useTranslation();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -96,53 +98,53 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
   // Main navigation items (visible in top bar)
   const mainNavItems: NavItem[] = [
-    { to: '/', label: 'Sanctum', icon: LayoutDashboard },
-    { to: '/ventes', label: 'Ventes', icon: ShoppingCart },
-    { to: '/planning', label: 'Planning', icon: CalendarClock, badge: pendingBLCount },
-    { to: '/production', label: 'Production', icon: Factory },
-    { to: '/stocks', label: 'Stocks', icon: Warehouse },
+    { to: '/', label: t('nav.dashboard'), icon: LayoutDashboard },
+    { to: '/ventes', label: t('nav.sales'), icon: ShoppingCart },
+    { to: '/planning', label: t('nav.planning'), icon: CalendarClock, badge: pendingBLCount },
+    { to: '/production', label: t('nav.production'), icon: Factory },
+    { to: '/stocks', label: t('nav.stocks'), icon: Warehouse },
   ].filter(item => canAccess(item.to));
 
   // Grouped navigation for dropdown
   const navGroups: NavGroup[] = [
     {
-      label: 'Facturation',
+      label: t('nav.billing'),
       items: [
-        { to: '/bons', label: 'Archive BL', icon: Receipt },
-        { to: '/paiements', label: 'Paiements', icon: DollarSign },
-        { to: '/depenses-v2', label: 'Dépenses', icon: Receipt },
-        { to: '/contracts', label: 'Contrats', icon: FileText },
-        { to: '/rapprochement', label: 'Rapprochement', icon: DollarSign },
+        { to: '/bons', label: t('nav.blArchive'), icon: Receipt },
+        { to: '/paiements', label: t('nav.payments'), icon: DollarSign },
+        { to: '/depenses-v2', label: t('nav.expenses'), icon: Receipt },
+        { to: '/contracts', label: t('nav.contracts'), icon: FileText },
+        { to: '/rapprochement', label: t('nav.reconciliation'), icon: DollarSign },
       ].filter(item => canAccess(item.to)),
     },
     {
-      label: 'Ressources',
+      label: t('nav.resources'),
       items: [
-        { to: '/clients', label: 'Clients', icon: Users },
-        { to: '/formules', label: 'Formules', icon: FlaskConical },
-        { to: '/laboratoire', label: 'Laboratoire', icon: FlaskConical },
-        { to: '/logistique', label: 'Logistique', icon: Truck },
-        { to: '/fournisseurs', label: 'Fournisseurs', icon: Building2 },
-        { to: '/prestataires', label: 'Prestataires', icon: Truck },
-        { to: '/maintenance', label: 'Maintenance', icon: Wrench },
-        { to: '/pointage', label: 'Pointage', icon: Users },
+        { to: '/clients', label: t('nav.clients'), icon: Users },
+        { to: '/formules', label: t('nav.formulas'), icon: FlaskConical },
+        { to: '/laboratoire', label: t('nav.laboratory'), icon: FlaskConical },
+        { to: '/logistique', label: t('nav.logistics'), icon: Truck },
+        { to: '/fournisseurs', label: t('nav.suppliers'), icon: Building2 },
+        { to: '/prestataires', label: t('nav.subcontractors'), icon: Truck },
+        { to: '/maintenance', label: t('nav.maintenance'), icon: Wrench },
+        { to: '/pointage', label: t('nav.attendance'), icon: Users },
       ].filter(item => canAccess(item.to)),
     },
     ...(isCeo ? [{
-      label: 'Contrôle CEO',
+      label: t('nav.ceoControl'),
       items: [
-        { to: '/rapports', label: 'Rapports', icon: BarChart3 },
-        { to: '/prix', label: 'Prix d\'Achat', icon: DollarSign },
-        { to: '/securite', label: 'Sécurité', icon: Shield },
-        { to: '/surveillance', label: 'Surveillance IA', icon: Video },
-        { to: '/users', label: 'Utilisateurs', icon: Users },
+        { to: '/rapports', label: t('nav.reports'), icon: BarChart3 },
+        { to: '/prix', label: t('nav.purchasePrice'), icon: DollarSign },
+        { to: '/securite', label: t('nav.security'), icon: Shield },
+        { to: '/surveillance', label: t('nav.aiSurveillance'), icon: Video },
+        { to: '/users', label: t('nav.users'), icon: Users },
       ].filter(item => canAccess(item.to)),
     }] : []),
     {
-      label: 'Support',
+      label: t('nav.support'),
       items: [
-        { to: '/aide', label: 'Manuel Système', icon: HelpCircle },
-        { to: '/formation', label: 'Mode Formation', icon: GraduationCap },
+        { to: '/aide', label: t('nav.systemManual'), icon: HelpCircle },
+        { to: '/formation', label: t('nav.trainingMode'), icon: GraduationCap },
       ],
     },
   ].filter(group => group.items.length > 0);
@@ -212,7 +214,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
                   'text-muted-foreground hover:text-foreground hover:bg-muted/50',
                   'transition-all duration-200'
                 )}>
-                  Plus
+                  {t('nav.more')}
                   <ChevronDown className="h-3 w-3" />
                 </button>
               </DropdownMenuTrigger>
@@ -280,7 +282,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
                 <LogOut className="h-4 w-4 mr-2" />
-                Déconnexion
+                {t('nav.logout')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -333,7 +335,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
                     onClick={() => { signOut(); setMobileMenuOpen(false); }}
                   >
                     <LogOut className="h-4 w-4 mr-2" />
-                    Déconnexion
+                    {t('nav.logout')}
                   </Button>
                 </div>
               </div>
