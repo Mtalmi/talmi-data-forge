@@ -67,7 +67,7 @@ const COLORS = ['hsl(var(--primary))', 'hsl(var(--success))', 'hsl(var(--warning
 
 export default function Rapports() {
   const { data, loading, selectedPeriod, setSelectedPeriod, refresh, previousPeriodData } = useReportingData();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [activeTab, setActiveTab] = useState('overview');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -283,7 +283,7 @@ export default function Rapports() {
                           <Area 
                             type="monotone" 
                             dataKey="chiffre_affaires" 
-                            name="CA" 
+                            name={t.pages.rapports.chartCA} 
                             stroke="hsl(var(--primary))" 
                             fillOpacity={1} 
                             fill="url(#colorCA)" 
@@ -291,7 +291,7 @@ export default function Rapports() {
                           <Area 
                             type="monotone" 
                             dataKey="marge_brute" 
-                            name="Marge" 
+                            name={t.pages.rapports.chartMargin} 
                             stroke="hsl(var(--success))" 
                             fillOpacity={1} 
                             fill="url(#colorMarge)" 
@@ -318,7 +318,7 @@ export default function Rapports() {
                           <XAxis dataKey="monthLabel" className="text-[10px] sm:text-xs" tick={{ fontSize: 10 }} />
                           <YAxis className="text-[10px] sm:text-xs" tick={{ fontSize: 10 }} />
                           <Tooltip 
-                            formatter={(value: number) => [`${value} m³`, 'Volume']}
+                            formatter={(value: number) => [`${value} m³`, t.pages.rapports.chartVolume]}
                             contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', fontSize: '12px' }}
                           />
                           <Bar dataKey="volume" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
@@ -345,7 +345,7 @@ export default function Rapports() {
                         <XAxis dataKey="monthLabel" className="text-[10px] sm:text-xs" tick={{ fontSize: 10 }} />
                         <YAxis domain={[0, 50]} tickFormatter={(v) => `${v}%`} className="text-[10px] sm:text-xs" tick={{ fontSize: 10 }} />
                         <Tooltip 
-                          formatter={(value: number) => [`${value}%`, 'Marge']}
+                          formatter={(value: number) => [`${value}%`, t.pages.rapports.chartMargin]}
                           contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', fontSize: '12px' }}
                         />
                         <Legend wrapperStyle={{ fontSize: '11px' }} />
@@ -355,7 +355,7 @@ export default function Rapports() {
                           stroke="hsl(var(--success))" 
                           strokeWidth={2}
                           dot={{ fill: 'hsl(var(--success))' }}
-                          name="Marge %"
+                          name={t.pages.rapports.chartMarginPct}
                         />
                         {/* Target line at 25% */}
                         <Line 
@@ -365,7 +365,7 @@ export default function Rapports() {
                           strokeDasharray="5 5" 
                           strokeWidth={1}
                           dot={false}
-                          name="Objectif 25%"
+                          name={t.pages.rapports.chartTarget25}
                         />
                       </LineChart>
                     </ResponsiveContainer>
@@ -704,7 +704,7 @@ export default function Rapports() {
                             f.trend === 'down' ? "bg-destructive/10 text-destructive border-destructive/30" :
                             "bg-muted"
                           )}>
-                            Tendance {f.trend === 'up' ? 'Haussière' : f.trend === 'down' ? 'Baissière' : 'Stable'}
+                            {t.pages.rapports.trend} {f.trend === 'up' ? t.pages.rapports.trendUp : f.trend === 'down' ? t.pages.rapports.trendDown : t.pages.rapports.trendStable}
                           </Badge>
                         </CardContent>
                       </Card>
@@ -713,17 +713,11 @@ export default function Rapports() {
 
                   <Card>
                     <CardHeader className="pb-2 sm:pb-4">
-                      <CardTitle className="text-base sm:text-lg">Méthodologie de Prévision</CardTitle>
+                      <CardTitle className="text-base sm:text-lg">{t.pages.rapports.methodologyTitle}</CardTitle>
                     </CardHeader>
                     <CardContent className="text-muted-foreground text-xs sm:text-sm">
-                      <p>
-                        Les prévisions sont calculées sur la base d'une moyenne mobile des 3 derniers mois,
-                        ajustée selon la tendance observée (+5%/-5% par mois selon la direction).
-                        La confiance diminue avec l'horizon de prévision (90% → 60%).
-                      </p>
-                      <p className="mt-2">
-                        Pour des prévisions plus précises, intégrez des données de saisonnalité et de pipeline commercial.
-                      </p>
+                      <p>{t.pages.rapports.methodologyP1}</p>
+                      <p className="mt-2">{t.pages.rapports.methodologyP2}</p>
                     </CardContent>
                   </Card>
                 </>

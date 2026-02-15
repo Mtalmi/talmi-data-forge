@@ -1240,6 +1240,9 @@ const fr = {
       chartMarginPct: 'Marge %',
       chartTarget25: 'Objectif 25%',
       chartVolume: 'Volume',
+      methodologyTitle: 'Méthodologie de Prévision',
+      methodologyP1: "Les prévisions sont calculées sur la base d'une moyenne mobile des 3 derniers mois, ajustée selon la tendance observée (+5%/-5% par mois selon la direction). La confiance diminue avec l'horizon de prévision (90% → 60%).",
+      methodologyP2: 'Pour des prévisions plus précises, intégrez des données de saisonnalité et de pipeline commercial.',
     },
     surveillance: {
       title: 'Surveillance IA',

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import MainLayout from '@/components/layout/MainLayout';
@@ -42,7 +43,6 @@ import {
   CalendarCheck,
 } from 'lucide-react';
 import { format, formatDistanceToNow, startOfDay, endOfDay, subDays, isWithinInterval } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -80,8 +80,8 @@ interface SecurityMetrics {
   totalAuditLogs: number;
 }
 
-// Action styling configurations with enhanced mobile badges
-const ACTION_CONFIG: Record<string, { 
+// Action styling configurations - dynamic for i18n
+function getActionConfig(t: any): Record<string, { 
   label: string; 
   color: string; 
   bgColor: string;
@@ -89,106 +89,113 @@ const ACTION_CONFIG: Record<string, {
   borderColor: string;
   icon: React.ElementType;
   isPulsing?: boolean;
-}> = {
-  ROLLBACK_APPROVAL: { 
-    label: 'DEVIS ROLLBACK', 
-    color: 'text-red-500', 
-    bgColor: 'bg-red-600',
-    badgeBg: 'bg-red-600 text-white',
-    borderColor: 'border-l-red-600',
-    icon: Unlock,
-  },
-  APPROVE_DEVIS: { 
-    label: 'APPROBATION', 
-    color: 'text-emerald-500', 
-    bgColor: 'bg-emerald-600',
-    badgeBg: 'bg-emerald-600 text-white',
-    borderColor: 'border-l-emerald-600',
-    icon: CheckCircle,
-  },
-  STOCK_FINALIZED: { 
-    label: 'STOCK FINALISÉ', 
-    color: 'text-green-500', 
-    bgColor: 'bg-green-600',
-    badgeBg: 'bg-green-600 text-white',
-    borderColor: 'border-l-green-600',
-    icon: Package,
-  },
-  PRICE_CHANGE: { 
-    label: 'MODIF. PRIX', 
-    color: 'text-amber-500', 
-    bgColor: 'bg-amber-600',
-    badgeBg: 'bg-amber-600 text-white',
-    borderColor: 'border-l-amber-600',
-    icon: FileWarning,
-  },
-  ACCESS_DENIED: { 
-    label: 'VIOLATION SÉCURITÉ', 
-    color: 'text-orange-500', 
-    bgColor: 'bg-orange-600',
-    badgeBg: 'bg-orange-600 text-white animate-pulse',
-    borderColor: 'border-l-orange-600',
-    icon: Ban,
-    isPulsing: true,
-  },
-  INSERT: { 
-    label: 'CRÉATION', 
-    color: 'text-blue-500', 
-    bgColor: 'bg-blue-600',
-    badgeBg: 'bg-blue-600 text-white',
-    borderColor: 'border-l-blue-600',
-    icon: CheckCircle,
-  },
-  UPDATE: { 
-    label: 'MODIFICATION', 
-    color: 'text-amber-500', 
-    bgColor: 'bg-amber-600',
-    badgeBg: 'bg-amber-600 text-white',
-    borderColor: 'border-l-amber-600',
-    icon: FileWarning,
-  },
-  DELETE: { 
-    label: 'SUPPRESSION', 
-    color: 'text-red-500', 
-    bgColor: 'bg-red-600',
-    badgeBg: 'bg-red-600 text-white',
-    borderColor: 'border-l-red-600',
-    icon: Ban,
-  },
-  default: { 
-    label: 'ACTION', 
-    color: 'text-muted-foreground', 
-    bgColor: 'bg-muted',
-    badgeBg: 'bg-slate-600 text-white',
-    borderColor: 'border-l-muted',
-    icon: Activity,
-  },
-};
+}> {
+  const w = t.pages.warRoom;
+  return {
+    ROLLBACK_APPROVAL: { 
+      label: w.actionRollback, 
+      color: 'text-red-500', 
+      bgColor: 'bg-red-600',
+      badgeBg: 'bg-red-600 text-white',
+      borderColor: 'border-l-red-600',
+      icon: Unlock,
+    },
+    APPROVE_DEVIS: { 
+      label: w.actionApproval, 
+      color: 'text-emerald-500', 
+      bgColor: 'bg-emerald-600',
+      badgeBg: 'bg-emerald-600 text-white',
+      borderColor: 'border-l-emerald-600',
+      icon: CheckCircle,
+    },
+    STOCK_FINALIZED: { 
+      label: w.actionStockFinalized, 
+      color: 'text-green-500', 
+      bgColor: 'bg-green-600',
+      badgeBg: 'bg-green-600 text-white',
+      borderColor: 'border-l-green-600',
+      icon: Package,
+    },
+    PRICE_CHANGE: { 
+      label: w.actionPriceChange, 
+      color: 'text-amber-500', 
+      bgColor: 'bg-amber-600',
+      badgeBg: 'bg-amber-600 text-white',
+      borderColor: 'border-l-amber-600',
+      icon: FileWarning,
+    },
+    ACCESS_DENIED: { 
+      label: w.actionAccessDenied, 
+      color: 'text-orange-500', 
+      bgColor: 'bg-orange-600',
+      badgeBg: 'bg-orange-600 text-white animate-pulse',
+      borderColor: 'border-l-orange-600',
+      icon: Ban,
+      isPulsing: true,
+    },
+    INSERT: { 
+      label: w.actionInsert, 
+      color: 'text-blue-500', 
+      bgColor: 'bg-blue-600',
+      badgeBg: 'bg-blue-600 text-white',
+      borderColor: 'border-l-blue-600',
+      icon: CheckCircle,
+    },
+    UPDATE: { 
+      label: w.actionUpdate, 
+      color: 'text-amber-500', 
+      bgColor: 'bg-amber-600',
+      badgeBg: 'bg-amber-600 text-white',
+      borderColor: 'border-l-amber-600',
+      icon: FileWarning,
+    },
+    DELETE: { 
+      label: w.actionDelete, 
+      color: 'text-red-500', 
+      bgColor: 'bg-red-600',
+      badgeBg: 'bg-red-600 text-white',
+      borderColor: 'border-l-red-600',
+      icon: Ban,
+    },
+    default: { 
+      label: w.actionDefault, 
+      color: 'text-muted-foreground', 
+      bgColor: 'bg-muted',
+      badgeBg: 'bg-slate-600 text-white',
+      borderColor: 'border-l-muted',
+      icon: Activity,
+    },
+  };
+}
 
-// Role display configurations
-const ROLE_CONFIG: Record<string, { label: string; color: string }> = {
-  ceo: { label: 'CEO', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  superviseur: { label: 'Superviseur', color: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' },
-  agent_administratif: { label: 'Agent Admin', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
-  directeur_operations: { label: 'Dir. Ops', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  responsable_technique: { label: 'Resp. Tech', color: 'bg-teal-500/20 text-teal-400 border-teal-500/30' },
-  centraliste: { label: 'Centraliste', color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' },
-  commercial: { label: 'Commercial', color: 'bg-green-500/20 text-green-400 border-green-500/30' },
-  accounting: { label: 'Comptabilité', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
-  auditeur: { label: 'Auditeur', color: 'bg-rose-500/20 text-rose-400 border-rose-500/30' },
-  operator: { label: 'Opérateur', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
-};
+// Role display configurations - dynamic for i18n
+function getRoleConfig(t: any): Record<string, { label: string; color: string }> {
+  const w = t.pages.warRoom;
+  return {
+    ceo: { label: w.roleCeo, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
+    superviseur: { label: w.roleSuperviseur, color: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' },
+    agent_administratif: { label: w.roleAgentAdmin, color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+    directeur_operations: { label: w.roleDirOps, color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
+    responsable_technique: { label: w.roleRespTech, color: 'bg-teal-500/20 text-teal-400 border-teal-500/30' },
+    centraliste: { label: w.roleCentraliste, color: 'bg-slate-500/20 text-slate-400 border-slate-500/30' },
+    commercial: { label: w.roleCommercial, color: 'bg-green-500/20 text-green-400 border-green-500/30' },
+    accounting: { label: w.roleAccounting, color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
+    auditeur: { label: w.roleAuditeur, color: 'bg-rose-500/20 text-rose-400 border-rose-500/30' },
+    operator: { label: w.roleOperator, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30' },
+  };
+}
 
 // Helper to get target label from table name
-const getTargetLabel = (tableName: string, recordId: string | null): string => {
+const getTargetLabel = (tableName: string, recordId: string | null, t: any): string => {
+  const w = t.pages.warRoom;
   const labels: Record<string, string> = {
-    devis: 'Devis',
-    bons_commande: 'BC',
-    bons_livraison_reels: 'BL',
-    stock_receptions_pending: 'Réception',
-    clients: 'Client',
-    factures: 'Facture',
-    stocks_journaliers: 'Silo',
+    devis: w.targetDevis,
+    bons_commande: w.targetBC,
+    bons_livraison_reels: w.targetBL,
+    stock_receptions_pending: w.targetReception,
+    clients: w.targetClient,
+    factures: w.targetInvoice,
+    stocks_journaliers: w.targetSilo,
   };
   const label = labels[tableName] || tableName;
   return recordId ? `${label} #${recordId.substring(0, 8)}` : label;
@@ -196,14 +203,17 @@ const getTargetLabel = (tableName: string, recordId: string | null): string => {
 
 // Forensic Alert Card Component (Mobile-First, Touch-Optimized)
 function ForensicFeedCard({ log }: { log: AuditLogEntry }) {
-  const config = ACTION_CONFIG[log.action] || ACTION_CONFIG.default;
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const actionConfig = getActionConfig(t);
+  const config = actionConfig[log.action] || actionConfig.default;
   const Icon = config.icon;
   const isRollback = log.action === 'ROLLBACK_APPROVAL';
   const isSuccess = log.action === 'STOCK_FINALIZED' || log.action === 'APPROVE_DEVIS';
   const isViolation = log.action === 'ACCESS_DENIED';
 
   // Format target as clickable element
-  const targetLabel = getTargetLabel(log.table_name, log.record_id);
+  const targetLabel = getTargetLabel(log.table_name, log.record_id, t);
 
   return (
     <div className={cn(
@@ -219,10 +229,10 @@ function ForensicFeedCard({ log }: { log: AuditLogEntry }) {
       {/* Header Row: User Name (left) + Time Ago (right) */}
       <div className="flex items-center justify-between gap-3 mb-3">
         <span className="font-bold text-sm sm:text-[14px] text-foreground truncate">
-          {log.user_name || 'Utilisateur Inconnu'}
+          {log.user_name || t.pages.warRoom.unknownUser}
         </span>
         <span className="text-xs text-muted-foreground/70 shrink-0">
-          {formatDistanceToNow(new Date(log.created_at), { addSuffix: false, locale: fr })}
+          {formatDistanceToNow(new Date(log.created_at), { addSuffix: false, ...(dateLocale ? { locale: dateLocale } : {}) })}
         </span>
       </div>
 
@@ -259,9 +269,8 @@ function ForensicFeedCard({ log }: { log: AuditLogEntry }) {
               "active:scale-[0.98]"
             )}
             onClick={() => {
-              // Could navigate to the record in the future
-              toast.info(`Affichage de ${targetLabel}`, {
-                description: `Table: ${log.table_name}`,
+              toast.info(`${t.pages.warRoom.displayTarget} ${targetLabel}`, {
+                description: `${t.pages.warRoom.table}: ${log.table_name}`,
               });
             }}
           >
@@ -321,24 +330,23 @@ function ForensicCardSkeleton() {
 
 // Clear Skies Empty State
 function ClearSkiesEmptyState() {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      {/* Clear Skies Illustration */}
       <div className="relative mb-6">
         <div className="w-24 h-24 rounded-full bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-sky-900/30 dark:to-emerald-900/30 flex items-center justify-center">
           <ShieldCheck className="h-12 w-12 text-emerald-500" />
         </div>
-        {/* Floating particles */}
         <div className="absolute -top-2 -right-2 w-4 h-4 rounded-full bg-emerald-400/60 animate-bounce" style={{ animationDelay: '0.1s' }} />
         <div className="absolute -bottom-1 -left-3 w-3 h-3 rounded-full bg-sky-400/60 animate-bounce" style={{ animationDelay: '0.3s' }} />
         <div className="absolute top-1/2 -right-4 w-2 h-2 rounded-full bg-amber-400/60 animate-bounce" style={{ animationDelay: '0.5s' }} />
       </div>
       
       <h3 className="text-lg font-semibold text-foreground mb-2">
-        Ciel Dégagé ☀️
+        {t.pages.warRoom.clearSkies}
       </h3>
       <p className="text-sm text-muted-foreground max-w-[240px]">
-        Aucune alerte de sécurité dans les dernières 24 heures. Tout est sous contrôle.
+        {t.pages.warRoom.clearSkiesDesc}
       </p>
     </div>
   );
@@ -346,7 +354,9 @@ function ClearSkiesEmptyState() {
 
 // User Card Component (Mobile-optimized)
 function UserCard({ user }: { user: UserWithRole }) {
-  const roleConfig = ROLE_CONFIG[user.role] || { label: user.role, color: 'bg-gray-500/20 text-gray-400' };
+  const { t } = useI18n();
+  const roleConfigMap = getRoleConfig(t);
+  const roleConfig = roleConfigMap[user.role] || { label: user.role, color: 'bg-gray-500/20 text-gray-400' };
 
   return (
     <div className="flex items-center justify-between p-3 rounded-lg border bg-card/50 hover:bg-muted/30 transition-colors">
@@ -357,8 +367,8 @@ function UserCard({ user }: { user: UserWithRole }) {
           </span>
         </div>
         <div className="min-w-0">
-          <p className="font-medium text-sm truncate">{user.full_name || 'Sans nom'}</p>
-          <p className="text-xs text-muted-foreground truncate">{user.email || 'email@inconnu'}</p>
+          <p className="font-medium text-sm truncate">{user.full_name || t.pages.warRoom.noName}</p>
+          <p className="text-xs text-muted-foreground truncate">{user.email || t.pages.warRoom.unknownEmail}</p>
         </div>
       </div>
       <Badge variant="outline" className={cn("shrink-0 text-xs", roleConfig.color)}>
@@ -423,6 +433,9 @@ function MetricCard({
 
 export default function SecurityDashboard() {
   const navigate = useNavigate();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const w = t.pages.warRoom;
   const { isCeo, isSuperviseur, user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -591,8 +604,8 @@ export default function SecurityDashboard() {
             }
             
             // In-app toast
-            toast.error('🚨 ROLLBACK DÉTECTÉ', {
-              description: `${newLog.user_name} a déverrouillé ${newLog.record_id}`,
+            toast.error(w.rollbackDetected, {
+              description: `${newLog.user_name} ${w.unlocked} ${newLog.record_id}`,
               duration: 10000,
             });
 
@@ -643,10 +656,10 @@ export default function SecurityDashboard() {
         };
       }
       
-      toast.success('Rapport de conformité généré');
+      toast.success(w.complianceGenerated);
     } catch (error) {
       console.error('Error generating compliance PDF:', error);
-      toast.error('Erreur lors de la génération');
+      toast.error(w.complianceError);
     } finally {
       setGeneratingCompliancePdf(false);
     }
@@ -659,18 +672,19 @@ export default function SecurityDashboard() {
       const logsForPdf = hasDateFilter ? filteredLogs : auditLogs;
       const rollbackLogs = logsForPdf.filter(l => l.action === 'ROLLBACK_APPROVAL');
       const blockedLogs = logsForPdf.filter(l => l.action === 'ACCESS_DENIED');
-      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
+      const fmtOpts = dateLocale ? { locale: dateLocale } : {};
+      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', fmtOpts);
       
       // Period based on filter or data
       const periodStart = dateFrom 
-        ? format(dateFrom, 'dd/MM/yyyy', { locale: fr })
+        ? format(dateFrom, 'dd/MM/yyyy', fmtOpts)
         : logsForPdf.length > 0 
-          ? format(new Date(logsForPdf[logsForPdf.length - 1].created_at), 'dd/MM/yyyy', { locale: fr })
+          ? format(new Date(logsForPdf[logsForPdf.length - 1].created_at), 'dd/MM/yyyy', fmtOpts)
           : '-';
       const periodEnd = dateTo 
-        ? format(dateTo, 'dd/MM/yyyy', { locale: fr })
+        ? format(dateTo, 'dd/MM/yyyy', fmtOpts)
         : logsForPdf.length > 0
-          ? format(new Date(logsForPdf[0].created_at), 'dd/MM/yyyy', { locale: fr })
+          ? format(new Date(logsForPdf[0].created_at), 'dd/MM/yyyy', fmtOpts)
           : '-';
 
       const htmlContent = `
@@ -877,7 +891,7 @@ export default function SecurityDashboard() {
                 <tbody>
                   ${rollbackLogs.map(log => `
                     <tr>
-                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}</td>
+                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', fmtOpts)}</td>
                       <td><strong>${log.user_name || 'Inconnu'}</strong></td>
                       <td><span class="badge badge-gray">${log.table_name}</span></td>
                       <td style="font-family:monospace;font-size:9px;">${log.record_id || '-'}</td>
@@ -907,7 +921,7 @@ export default function SecurityDashboard() {
                 <tbody>
                   ${blockedLogs.map(log => `
                     <tr>
-                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}</td>
+                      <td>${format(new Date(log.created_at), 'dd/MM/yyyy HH:mm', fmtOpts)}</td>
                       <td><strong>${log.user_name || 'Inconnu'}</strong></td>
                       <td><span class="badge badge-amber">${log.table_name}</span></td>
                       <td>${log.changes?.new_status || 'Accès non autorisé'}</td>
@@ -940,7 +954,7 @@ export default function SecurityDashboard() {
                       <td><strong>${u.full_name || 'Sans nom'}</strong></td>
                       <td>${u.email || '-'}</td>
                       <td><span class="badge ${roleBadgeClass}">${u.role.toUpperCase()}</span></td>
-                      <td>${format(new Date(u.created_at), 'dd/MM/yyyy', { locale: fr })}</td>
+                      <td>${format(new Date(u.created_at), 'dd/MM/yyyy', fmtOpts)}</td>
                     </tr>
                   `}).join('')}
                 </tbody>
@@ -964,7 +978,7 @@ export default function SecurityDashboard() {
 
       const printWindow = window.open('', '_blank');
       if (!printWindow) {
-        toast.error('Popup bloqué. Autorisez les popups pour générer le PDF.');
+        toast.error(w.popupBlocked);
         return;
       }
 
@@ -973,14 +987,14 @@ export default function SecurityDashboard() {
 
       setTimeout(() => {
         printWindow.print();
-        toast.success('Rapport forensique prêt', {
-          description: 'Utilisez "Enregistrer en PDF" dans la boîte de dialogue.',
+        toast.success(w.forensicReady, {
+          description: w.forensicReadyDesc,
         });
       }, 500);
 
     } catch (error) {
       console.error('PDF generation error:', error);
-      toast.error('Erreur lors de la génération du rapport');
+      toast.error(w.pdfError);
     } finally {
       setGeneratingPdf(false);
     }
@@ -1053,15 +1067,15 @@ export default function SecurityDashboard() {
       if (error) throw error;
       
       if (data?.success) {
-        toast.success('Digest envoyé avec succès', {
-          description: `Score de risque: ${data.summary?.anomalyScore} (${data.summary?.riskLevel})`,
+        toast.success(w.digestSent, {
+          description: `${w.riskScore}: ${data.summary?.anomalyScore} (${data.summary?.riskLevel})`,
         });
       } else {
         throw new Error(data?.error || 'Échec de l\'envoi');
       }
     } catch (error: any) {
       console.error('Error sending test digest:', error);
-      toast.error('Erreur lors de l\'envoi du digest', {
+      toast.error(w.digestError, {
         description: error.message,
       });
     } finally {
@@ -1078,15 +1092,15 @@ export default function SecurityDashboard() {
       if (error) throw error;
       
       if (data?.success) {
-        toast.success('Digest quotidien envoyé', {
-          description: `Statut: ${data.summary?.riskLevel} (${data.summary?.totalEvents} événements)`,
+        toast.success(w.dailyDigestSent, {
+          description: `${w.status}: ${data.summary?.riskLevel} (${data.summary?.totalEvents} ${w.events})`,
         });
       } else {
         throw new Error(data?.error || 'Échec de l\'envoi');
       }
     } catch (error: any) {
       console.error('Error sending daily digest:', error);
-      toast.error('Erreur lors de l\'envoi', {
+      toast.error(w.dailyDigestError, {
         description: error.message,
       });
     } finally {
@@ -1120,9 +1134,9 @@ export default function SecurityDashboard() {
               <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">War Room</h1>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{w.title}</h1>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Centre de Commandement Sécurisé
+                {w.subtitle}
               </p>
             </div>
           </div>
@@ -1155,7 +1169,7 @@ export default function SecurityDashboard() {
               className="gap-1.5 h-8"
             >
               <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{w.refresh}</span>
             </Button>
             
             <DigestRecipientsManager />
@@ -1228,7 +1242,7 @@ export default function SecurityDashboard() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <CalendarIcon className="h-4 w-4" />
-                <span>Période:</span>
+                <span>{w.period}</span>
               </div>
               
               {/* Quick Presets */}
@@ -1239,7 +1253,7 @@ export default function SecurityDashboard() {
                   onClick={() => setPreset(7)}
                   className="h-7 text-xs"
                 >
-                  7 jours
+                  {w.days7}
                 </Button>
                 <Button
                   variant={dateFrom && dateTo && format(dateFrom, 'yyyy-MM-dd') === format(subDays(new Date(), 30), 'yyyy-MM-dd') ? "secondary" : "outline"}
@@ -1247,7 +1261,7 @@ export default function SecurityDashboard() {
                   onClick={() => setPreset(30)}
                   className="h-7 text-xs"
                 >
-                  30 jours
+                  {w.days30}
                 </Button>
                 <Button
                   variant={dateFrom && dateTo && format(dateFrom, 'yyyy-MM-dd') === format(subDays(new Date(), 90), 'yyyy-MM-dd') ? "secondary" : "outline"}
@@ -1255,7 +1269,7 @@ export default function SecurityDashboard() {
                   onClick={() => setPreset(90)}
                   className="h-7 text-xs"
                 >
-                  90 jours
+                  {w.days90}
                 </Button>
               </div>
 
@@ -1272,7 +1286,7 @@ export default function SecurityDashboard() {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                      {dateFrom ? format(dateFrom, 'dd/MM/yyyy', { locale: fr }) : 'Du...'}
+                      {dateFrom ? format(dateFrom, 'dd/MM/yyyy', dateLocale ? { locale: dateLocale } : {}) : w.from}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -1300,7 +1314,7 @@ export default function SecurityDashboard() {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                      {dateTo ? format(dateTo, 'dd/MM/yyyy', { locale: fr }) : 'Au...'}
+                      {dateTo ? format(dateTo, 'dd/MM/yyyy', dateLocale ? { locale: dateLocale } : {}) : w.to}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -1330,7 +1344,7 @@ export default function SecurityDashboard() {
               {/* Filter Status */}
               {hasDateFilter && (
                 <Badge variant="secondary" className="text-xs">
-                  {filteredLogs.length} résultats
+                  {filteredLogs.length} {w.results}
                 </Badge>
               )}
             </div>
@@ -1340,33 +1354,33 @@ export default function SecurityDashboard() {
         {/* Key Metrics Row - Responsive Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <MetricCard
-            title="Rollbacks"
+            title={w.rollbacks}
             value={hasDateFilter ? filteredMetrics.totalRollbacks : metrics.totalRollbacks}
-            subtitle={hasDateFilter ? "Dans la période" : "Devis déverrouillés"}
+            subtitle={hasDateFilter ? w.inPeriod : w.rollbacksSub}
             icon={Unlock}
             color="red"
             loading={loading}
           />
           <MetricCard
-            title="Contrôles"
+            title={w.controls}
             value={metrics.pendingQualityChecks}
-            subtitle="En attente photo"
+            subtitle={w.controlsSub}
             icon={Camera}
             color="amber"
             loading={loading}
           />
           <MetricCard
-            title="Bloqués"
+            title={w.blocked}
             value={hasDateFilter ? filteredMetrics.blockedActions : metrics.blockedActions}
-            subtitle={hasDateFilter ? "Dans la période" : "Accès refusés"}
+            subtitle={hasDateFilter ? w.inPeriod : w.blockedSub}
             icon={Ban}
             color="destructive"
             loading={loading}
           />
           <MetricCard
-            title="Audit Logs"
+            title={w.auditLogs}
             value={hasDateFilter ? filteredMetrics.totalAuditLogs : metrics.totalAuditLogs}
-            subtitle={hasDateFilter ? "Dans la période" : "Entrées totales"}
+            subtitle={hasDateFilter ? w.inPeriod : w.auditLogsSub}
             icon={Activity}
             color="primary"
             loading={loading}
@@ -1385,7 +1399,7 @@ export default function SecurityDashboard() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-base sm:text-lg">Flux Forensique</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">{w.forensicFeed}</CardTitle>
                   {isRealtimeConnected && (
                     <span className="flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
@@ -1396,7 +1410,7 @@ export default function SecurityDashboard() {
                 <div className="relative w-full sm:w-auto">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher..."
+                    placeholder={w.searchPlaceholder}
                     value={searchFilter}
                     onChange={(e) => setSearchFilter(e.target.value)}
                     className="pl-9 h-9 w-full sm:w-48"
@@ -1413,7 +1427,7 @@ export default function SecurityDashboard() {
                   className="h-8 text-xs gap-1.5"
                 >
                   <Activity className="h-3.5 w-3.5" />
-                  Tout
+                  {w.filterAll}
                   <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px]">
                     {auditLogs.length}
                   </Badge>
@@ -1428,7 +1442,7 @@ export default function SecurityDashboard() {
                   )}
                 >
                   <Unlock className="h-3.5 w-3.5" />
-                  Rollbacks
+                  {w.filterRollbacks}
                   <Badge 
                     variant="secondary" 
                     className={cn(
@@ -1449,7 +1463,7 @@ export default function SecurityDashboard() {
                   )}
                 >
                   <Ban className="h-3.5 w-3.5" />
-                  Bloqués
+                  {w.filterBlocked}
                   <Badge 
                     variant="secondary" 
                     className={cn(
@@ -1470,7 +1484,7 @@ export default function SecurityDashboard() {
                   )}
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
-                  Succès
+                  {w.filterSuccess}
                   <Badge 
                     variant="secondary" 
                     className={cn(
@@ -1484,7 +1498,7 @@ export default function SecurityDashboard() {
               </div>
               
               <CardDescription className="text-xs">
-                Actions sensibles en temps réel • {filteredLogs.length} entrées {actionFilter !== 'all' && `(filtre: ${actionFilter})`}
+                {w.feedDescription} • {filteredLogs.length} {w.entries} {actionFilter !== 'all' && `(${w.filter}: ${actionFilter})`}
               </CardDescription>
             </CardHeader>
             <CardContent className="px-3 sm:px-6">
@@ -1515,10 +1529,10 @@ export default function SecurityDashboard() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
-                <CardTitle className="text-base sm:text-lg">Équipe</CardTitle>
+                <CardTitle className="text-base sm:text-lg">{w.team}</CardTitle>
               </div>
               <CardDescription className="text-xs">
-                {users.length} utilisateurs actifs
+                {users.length} {w.activeUsers}
               </CardDescription>
             </CardHeader>
             <CardContent className="px-3 sm:px-6">
@@ -1531,7 +1545,7 @@ export default function SecurityDashboard() {
               ) : users.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Users className="h-10 w-10 mx-auto mb-2 opacity-30" />
-                  <p>Aucun utilisateur</p>
+                  <p>{w.noUsers}</p>
                 </div>
               ) : (
                 <ScrollArea className="h-[300px] sm:h-[500px]">
@@ -1550,10 +1564,10 @@ export default function SecurityDashboard() {
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-4 border-t">
           <Smartphone className="h-3 w-3 sm:hidden" />
           <Lock className="h-3 w-3 hidden sm:block" />
-          <span className="hidden sm:inline">Données chiffrées • Audit immuable • Accès journalisé</span>
-          <span className="sm:hidden">Sécurisé • {format(new Date(), 'HH:mm')}</span>
+          <span className="hidden sm:inline">{w.footerDesktop}</span>
+          <span className="sm:hidden">{w.footerMobile} • {format(new Date(), 'HH:mm')}</span>
           <span className="hidden sm:inline mx-2">|</span>
-          <span className="hidden sm:inline">{format(new Date(), 'HH:mm:ss', { locale: fr })}</span>
+          <span className="hidden sm:inline">{format(new Date(), 'HH:mm:ss', dateLocale ? { locale: dateLocale } : {})}</span>
         </div>
       </div>
     </MainLayout>

@@ -1247,6 +1247,9 @@ const en = {
       chartMarginPct: 'Margin %',
       chartTarget25: 'Target 25%',
       chartVolume: 'Volume',
+      methodologyTitle: 'Forecast Methodology',
+      methodologyP1: 'Forecasts are calculated based on a 3-month moving average, adjusted for observed trends (+5%/-5% per month). Confidence decreases with the forecast horizon (90% → 60%).',
+      methodologyP2: 'For more accurate forecasts, integrate seasonality data and commercial pipeline.',
     },
     surveillance: {
       title: 'AI Surveillance',
