@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -70,6 +71,7 @@ import {
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting, signOut } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
@@ -178,7 +180,7 @@ export default function Dashboard() {
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
-                Bonjour, Master 👋
+                {t('dashboard.greeting.morning')}, Master 👋
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <MapPin className="h-3.5 w-3.5 text-primary" />
@@ -189,9 +191,9 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
               <div className="period-selector-premium">
                 {[
-                  { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
-                  { value: 'week' as Period, label: 'Cette Semaine', shortLabel: 'Sem.' },
-                  { value: 'month' as Period, label: 'Ce Mois', shortLabel: 'Mois' },
+                  { value: 'today' as Period, label: t('dashboard.periods.today'), shortLabel: t('dashboard.periods.todayShort') },
+                  { value: 'week' as Period, label: t('dashboard.periods.week'), shortLabel: t('dashboard.periods.weekShort') },
+                  { value: 'month' as Period, label: t('dashboard.periods.month'), shortLabel: t('dashboard.periods.monthShort') },
                 ].map((p) => (
                   <button
                     key={p.value}

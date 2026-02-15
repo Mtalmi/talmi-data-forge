@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "Sanctum",
+    "home": "Accueil",
     "sales": "Ventes",
     "planning": "Planning",
     "production": "Production",
@@ -31,7 +32,12 @@
     "aiSurveillance": "Surveillance IA",
     "users": "Utilisateurs",
     "systemManual": "Manuel Système",
-    "trainingMode": "Mode Formation"
+    "trainingMode": "Mode Formation",
+    "settings": "Paramètres",
+    "deliveries": "Livraisons",
+    "finance": "Finance",
+    "management": "Gestion",
+    "principal": "Principal"
   },
   "common": {
     "loading": "Chargement…",
@@ -70,7 +76,27 @@
     "todayProduction": "Production du jour",
     "pendingDeliveries": "Livraisons en attente",
     "revenue": "Chiffre d'affaires",
-    "alerts": "Alertes"
+    "alerts": "Alertes",
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir",
+      "night": "Bonne nuit"
+    },
+    "efficiency": {
+      "optimal": "Tout est sous contrôle.",
+      "good": "Performance stable.",
+      "attention": "Attention requise."
+    },
+    "factoryRunning": "L'usine tourne à {{pct}}% d'efficacité",
+    "periods": {
+      "today": "Aujourd'hui",
+      "todayShort": "Auj.",
+      "week": "Cette Semaine",
+      "weekShort": "Sem.",
+      "month": "Ce Mois",
+      "monthShort": "Mois"
+    }
   },
   "pwa": {
     "offline": "Hors ligne",

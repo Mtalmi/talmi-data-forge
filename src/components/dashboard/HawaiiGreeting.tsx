@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +22,7 @@ interface EfficiencyData {
  */
 export function HawaiiGreeting() {
   const { user, isCeo } = useAuth();
+  const { t } = useTranslation();
   const [weather, setWeather] = useState<WeatherData>({ temp: 18, condition: 'sunny', city: 'Casablanca' });
   const [efficiency, setEfficiency] = useState<EfficiencyData>({ percentage: 85, status: 'optimal' });
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -90,10 +92,10 @@ export function HawaiiGreeting() {
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour >= 5 && hour < 12) return 'Bonjour';
-    if (hour >= 12 && hour < 18) return 'Bon après-midi';
-    if (hour >= 18 && hour < 22) return 'Bonsoir';
-    return 'Bonne nuit';
+    if (hour >= 5 && hour < 12) return t('dashboard.greeting.morning');
+    if (hour >= 12 && hour < 18) return t('dashboard.greeting.afternoon');
+    if (hour >= 18 && hour < 22) return t('dashboard.greeting.evening');
+    return t('dashboard.greeting.night');
   };
 
   const getWeatherIcon = () => {
@@ -106,9 +108,9 @@ export function HawaiiGreeting() {
   };
 
   const getStatusMessage = () => {
-    if (efficiency.status === 'optimal') return 'Tout est sous contrôle.';
-    if (efficiency.status === 'good') return 'Performance stable.';
-    return 'Attention requise.';
+    if (efficiency.status === 'optimal') return t('dashboard.efficiency.optimal');
+    if (efficiency.status === 'good') return t('dashboard.efficiency.good');
+    return t('dashboard.efficiency.attention');
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Master';
@@ -152,15 +154,7 @@ export function HawaiiGreeting() {
                     efficiency.status === 'good' ? 'text-warning' : 'text-destructive'
                   )} />
                   <span>
-                    L'usine tourne à{' '}
-                    <span className={cn(
-                      'font-mono font-bold',
-                      efficiency.status === 'optimal' ? 'text-success' :
-                      efficiency.status === 'good' ? 'text-warning' : 'text-destructive'
-                    )}>
-                      {efficiency.percentage}%
-                    </span>
-                    {' '}d'efficacité.
+                    {t('dashboard.factoryRunning', { pct: efficiency.percentage })}
                   </span>
                 </span>
               </p>
