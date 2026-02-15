@@ -793,17 +793,11 @@
   .mobile-bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
     @apply lg:hidden;
-    background: linear-gradient(
-      180deg,
-      hsl(0 0% 3% / 0.98) 0%,
-      hsl(0 0% 2% / 0.99) 100%
-    );
+    background: hsl(var(--card) / 0.98);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-top: 1px solid hsl(51 100% 50% / 0.1);
-    box-shadow: 
-      0 -8px 40px hsl(0 0% 0% / 0.6),
-      inset 0 1px 0 hsl(51 100% 50% / 0.05);
+    border-top: 1px solid hsl(var(--border));
+    box-shadow: 0 -4px 24px hsl(0 0% 0% / 0.15);
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
@@ -1287,11 +1281,7 @@
   box-shadow: 0 0 30px hsl(45 100% 50% / 0.08);
 }
 
-.light .mobile-bottom-nav {
-  background: linear-gradient(180deg, hsl(40 15% 99% / 0.98) 0%, hsl(40 20% 97% / 0.99) 100%);
-  border-top: 1px solid hsl(45 100% 42% / 0.12);
-  box-shadow: 0 -4px 20px hsl(30 15% 12% / 0.06);
-}
+/* Light mode mobile nav inherits from semantic tokens above */
 
 .light .data-table-industrial th {
   color: hsl(45 100% 35%);

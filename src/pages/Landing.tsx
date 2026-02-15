@@ -162,7 +162,7 @@ export default function Landing() {
           </div>
 
           {/* Headline */}
-          <h1 className="hero-headline text-4xl sm:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
+          <h1 className="hero-headline text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter leading-[0.9] mb-6">
             <span className="text-gradient-gold">The Operating System</span>
             <br />
             <span className="text-foreground/90">for Concrete Titans</span>
