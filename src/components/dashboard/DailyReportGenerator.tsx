@@ -123,7 +123,7 @@ export function DailyReportGenerator() {
         depensesByCategory[d.categorie] = (depensesByCategory[d.categorie] || 0) + d.montant;
       });
 
-      const dateStr = format(new Date(), 'dd MMMM yyyy', { locale: fr });
+      const dateStr = format(new Date(), 'dd MMMM yyyy', { locale: dateLocale });
 
       // Determine leakage status color
       const leakageStatus = avgLeakageRate > 7 ? 'critical' : avgLeakageRate > 3 ? 'warning' : 'normal';
@@ -302,7 +302,7 @@ export function DailyReportGenerator() {
           </div>
 
           <div class="footer">
-            <strong>TALMI BETON SARL</strong> | Rapport Hawaii généré le ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: fr })}<br>
+            <strong>TALMI BETON SARL</strong> | Rapport Hawaii généré le ${format(new Date(), 'dd/MM/yyyy à HH:mm', { locale: dateLocale })}<br>
             Ce rapport est confidentiel et destiné à un usage interne uniquement.<br>
             <span style="color: #f59e0b;">🌴 Hawaii Report Engine v2.0 - Financials • Security • Efficiency</span>
           </div>
