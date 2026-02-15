@@ -200,15 +200,15 @@ export default function Laboratoire() {
                   <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                       <FlaskConical className="h-5 w-5 text-primary" />
-                      Enregistrer un Prélèvement
+                      {t.pages.laboratoire.recordSample}
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 pt-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">N° Bon de Livraison *</Label>
+                      <Label className="form-label-industrial">{t.pages.laboratoire.blNumber} *</Label>
                       <Select value={selectedBl} onValueChange={handleBlSelect}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un BL" />
+                          <SelectValue placeholder={t.pages.laboratoire.selectBl} />
                         </SelectTrigger>
                         <SelectContent>
                           {bons.map(bon => (
@@ -223,18 +223,18 @@ export default function Laboratoire() {
                     {selectedFormule && (
                       <div className="p-3 rounded bg-muted/30 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Formule:</span>
+                          <span className="text-muted-foreground">{t.pages.laboratoire.formula}:</span>
                           <span className="font-mono">{selectedFormule.formule_id}</span>
                         </div>
                         <div className="flex justify-between mt-1">
-                          <span className="text-muted-foreground">Affaissement cible:</span>
+                          <span className="text-muted-foreground">{t.pages.laboratoire.targetSlump}:</span>
                           <span>
                             {selectedFormule.affaissement_cible_mm || 150}mm 
                             (±{selectedFormule.affaissement_tolerance_mm || 20}mm)
                           </span>
                         </div>
                         <div className="flex justify-between mt-1">
-                          <span className="text-muted-foreground">Résistance cible 28j:</span>
+                          <span className="text-muted-foreground">{t.pages.laboratoire.targetResistance}:</span>
                           <span>{selectedFormule.resistance_cible_28j_mpa || 25} MPa</span>
                         </div>
                       </div>
@@ -250,21 +250,21 @@ export default function Laboratoire() {
                     />
 
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Technicien</Label>
+                      <Label className="form-label-industrial">{t.pages.laboratoire.technician}</Label>
                       <Input
                         value={technicien}
                         onChange={(e) => setTechnicien(e.target.value)}
-                        placeholder="Nom du technicien"
+                        placeholder={t.pages.laboratoire.technicianName}
                       />
                     </div>
 
                     <div className="flex justify-end gap-3 pt-4 border-t">
                       <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                        Annuler
+                        {t.pages.formulas.cancel}
                       </Button>
                       <Button onClick={handleSubmit} disabled={saving || !selectedBl || !slumpValue}>
                         {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        Enregistrer
+                        {t.pages.laboratoire.register}
                       </Button>
                     </div>
                   </div>
@@ -281,10 +281,10 @@ export default function Laboratoire() {
               <AlertTriangle className="h-6 w-6 text-destructive" />
               <div>
                 <p className="font-semibold text-destructive">
-                  {pendingTests.length} Test(s) à effectuer aujourd'hui ou en retard!
+                  {pendingTests.length} {t.pages.laboratoire.testsToPerform}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Veuillez enregistrer les résultats d'écrasement ci-dessous.
+                  {t.pages.laboratoire.recordResults}
                 </p>
               </div>
             </div>
@@ -298,7 +298,7 @@ export default function Laboratoire() {
               <ClipboardList className="h-8 w-8 text-primary" />
               <div>
                 <p className="text-2xl font-bold">{qualityStats.totalTests}</p>
-                <p className="text-xs text-muted-foreground">Total Tests</p>
+                <p className="text-xs text-muted-foreground">{t.pages.laboratoire.totalTests}</p>
               </div>
             </div>
           </div>
@@ -307,7 +307,7 @@ export default function Laboratoire() {
               <CheckCircle className="h-8 w-8 text-success" />
               <div>
                 <p className="text-2xl font-bold">{qualityStats.slumpConform}</p>
-                <p className="text-xs text-muted-foreground">Affaissement OK</p>
+                <p className="text-xs text-muted-foreground">{t.pages.laboratoire.slumpOk}</p>
               </div>
             </div>
           </div>
@@ -316,7 +316,7 @@ export default function Laboratoire() {
               <TrendingUp className="h-8 w-8 text-success" />
               <div>
                 <p className="text-2xl font-bold">{qualityStats.resistanceConform}</p>
-                <p className="text-xs text-muted-foreground">Résistance OK</p>
+                <p className="text-xs text-muted-foreground">{t.pages.laboratoire.resistanceOk}</p>
               </div>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function Laboratoire() {
               <Calendar className="h-8 w-8 text-warning" />
               <div>
                 <p className="text-2xl font-bold">{qualityStats.pendingResistance}</p>
-                <p className="text-xs text-muted-foreground">En Attente</p>
+                <p className="text-xs text-muted-foreground">{t.pages.laboratoire.pending}</p>
               </div>
             </div>
           </div>
@@ -337,7 +337,7 @@ export default function Laboratoire() {
               )} />
               <div>
                 <p className="text-2xl font-bold">{qualityStats.alerts}</p>
-                <p className="text-xs text-muted-foreground">Alertes Qualité</p>
+                <p className="text-xs text-muted-foreground">{t.pages.laboratoire.qualityAlerts}</p>
               </div>
             </div>
           </div>
@@ -348,11 +348,11 @@ export default function Laboratoire() {
           <TabsList>
             <TabsTrigger value="calendar" className="gap-2">
               <Calendar className="h-4 w-4" />
-              Calendrier Écrasements
+              {t.pages.laboratoire.crushingCalendar}
             </TabsTrigger>
             <TabsTrigger value="history" className="gap-2">
               <ClipboardList className="h-4 w-4" />
-              Historique Tests
+              {t.pages.laboratoire.testHistory}
             </TabsTrigger>
           </TabsList>
 
@@ -373,19 +373,19 @@ export default function Laboratoire() {
               ) : tests.length === 0 ? (
                 <div className="p-8 text-center">
                   <FlaskConical className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                  <p className="text-muted-foreground">Aucun test enregistré</p>
+                  <p className="text-muted-foreground">{t.pages.laboratoire.noTests}</p>
                 </div>
               ) : (
                 <Table className="data-table-industrial">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>N° BL</TableHead>
-                      <TableHead>Date Prélèvement</TableHead>
-                      <TableHead>Formule</TableHead>
-                      <TableHead className="text-center">Affaissement</TableHead>
-                      <TableHead className="text-center">Rés. 7j</TableHead>
-                      <TableHead className="text-center">Rés. 28j</TableHead>
-                      <TableHead>Statut</TableHead>
+                      <TableHead>{t.pages.laboratoire.blCol}</TableHead>
+                      <TableHead>{t.pages.laboratoire.sampleDate}</TableHead>
+                      <TableHead>{t.pages.laboratoire.formula}</TableHead>
+                      <TableHead className="text-center">{t.pages.laboratoire.slump}</TableHead>
+                      <TableHead className="text-center">{t.pages.laboratoire.res7d}</TableHead>
+                      <TableHead className="text-center">{t.pages.laboratoire.res28d}</TableHead>
+                      <TableHead>{t.pages.laboratoire.status}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -427,8 +427,8 @@ export default function Laboratoire() {
                         <TableCell>
                           {test.alerte_qualite ? (
                             <Badge variant="destructive" className="animate-pulse">
-                              <AlertTriangle className="h-3 w-3 mr-1" />
-                              ALERTE
+                             <AlertTriangle className="h-3 w-3 mr-1" />
+                              {t.pages.laboratoire.alert}
                             </Badge>
                           ) : test.resistance_conforme === true ? (
                             <Badge variant="default" className="bg-success">

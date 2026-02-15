@@ -219,11 +219,11 @@ export default function Maintenance() {
   const getStatusBadge = (statut: string) => {
     switch (statut) {
       case 'operationnel':
-        return <Badge className="bg-success/20 text-success">Opérationnel</Badge>;
+        return <Badge className="bg-success/20 text-success">{t.pages.maintenance.operational}</Badge>;
       case 'maintenance':
-        return <Badge className="bg-warning/20 text-warning">Maintenance</Badge>;
+        return <Badge className="bg-warning/20 text-warning">{t.pages.maintenance.maintenance}</Badge>;
       case 'panne':
-        return <Badge className="bg-destructive/20 text-destructive">Panne</Badge>;
+        return <Badge className="bg-destructive/20 text-destructive">{t.pages.maintenance.breakdown}</Badge>;
       default:
         return <Badge variant="outline">{statut}</Badge>;
     }
@@ -232,11 +232,11 @@ export default function Maintenance() {
   const getCriticiteBadge = (criticite: string) => {
     switch (criticite) {
       case 'critique':
-        return <Badge variant="destructive">Critique</Badge>;
+        return <Badge variant="destructive">{t.pages.maintenance.critical}</Badge>;
       case 'important':
-        return <Badge className="bg-warning/20 text-warning border-warning">Important</Badge>;
+        return <Badge className="bg-warning/20 text-warning border-warning">{t.pages.maintenance.important}</Badge>;
       default:
-        return <Badge variant="outline">Normal</Badge>;
+        return <Badge variant="outline">{t.pages.maintenance.normal}</Badge>;
     }
   };
 
@@ -269,8 +269,8 @@ export default function Maintenance() {
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
-                    <ClipboardCheck className="h-5 w-5" />
-                    Nettoyage Quotidien - {format(new Date(), 'dd/MM/yyyy')}
+                     <ClipboardCheck className="h-5 w-5" />
+                    {t.pages.maintenance.dailyCleaning} - {format(new Date(), 'dd/MM/yyyy')}
                   </DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6 py-4">
@@ -284,8 +284,8 @@ export default function Maintenance() {
                           setCleaningData(prev => ({ ...prev, malaxeur_nettoye: !!checked }))
                         }
                       />
-                      <Label htmlFor="malaxeur" className="font-semibold">
-                        Malaxeur nettoyé <span className="text-destructive">*</span>
+                       <Label htmlFor="malaxeur" className="font-semibold">
+                        {t.pages.maintenance.mixerCleaned} <span className="text-destructive">*</span>
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
@@ -317,8 +317,8 @@ export default function Maintenance() {
                           setCleaningData(prev => ({ ...prev, goulotte_nettoyee: !!checked }))
                         }
                       />
-                      <Label htmlFor="goulotte" className="font-semibold">
-                        Goulotte nettoyée <span className="text-destructive">*</span>
+                       <Label htmlFor="goulotte" className="font-semibold">
+                        {t.pages.maintenance.chuteCleaned} <span className="text-destructive">*</span>
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
@@ -350,8 +350,8 @@ export default function Maintenance() {
                           setCleaningData(prev => ({ ...prev, residus_ciment_enleves: !!checked }))
                         }
                       />
-                      <Label htmlFor="residus" className="font-semibold">
-                        Résidus ciment enlevés <span className="text-destructive">*</span>
+                       <Label htmlFor="residus" className="font-semibold">
+                        {t.pages.maintenance.cementResiduesRemoved} <span className="text-destructive">*</span>
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
@@ -383,8 +383,8 @@ export default function Maintenance() {
                           setCleaningData(prev => ({ ...prev, zone_centrale_propre: !!checked }))
                         }
                       />
-                      <Label htmlFor="zone" className="font-semibold">
-                        Zone centrale propre
+                       <Label htmlFor="zone" className="font-semibold">
+                        {t.pages.maintenance.plantAreaClean}
                       </Label>
                     </div>
                     <div className="flex items-center gap-3">
@@ -413,7 +413,7 @@ export default function Maintenance() {
                     ) : (
                       <CheckCircle2 className="h-4 w-4 mr-2" />
                     )}
-                    Soumettre le Nettoyage
+                    {t.pages.maintenance.submitCleaning}
                   </Button>
                 </div>
               </DialogContent>
@@ -431,7 +431,7 @@ export default function Maintenance() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{equipements.length}</p>
-                  <p className="text-xs text-muted-foreground">Équipements</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.maintenance.equipmentCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -445,7 +445,7 @@ export default function Maintenance() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{equipmentsInMaintenance.length}</p>
-                  <p className="text-xs text-muted-foreground">En maintenance</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.maintenance.inMaintenanceCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -459,7 +459,7 @@ export default function Maintenance() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{overdueMaintenances.length}</p>
-                  <p className="text-xs text-muted-foreground">Maint. en retard</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.maintenance.overdueMaintenanceCount}</p>
                 </div>
               </div>
             </CardContent>
@@ -473,7 +473,7 @@ export default function Maintenance() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{overdueCalibrations.length}</p>
-                  <p className="text-xs text-muted-foreground">Étalonnage dû</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.maintenance.overdueCalibration}</p>
                 </div>
               </div>
             </CardContent>
@@ -487,7 +487,7 @@ export default function Maintenance() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{openIncidents.length}</p>
-                  <p className="text-xs text-muted-foreground">Incidents ouverts</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.maintenance.openIncidents}</p>
                 </div>
               </div>
             </CardContent>
@@ -581,15 +581,15 @@ export default function Maintenance() {
           <TabsList className="flex-wrap h-auto gap-1">
             <TabsTrigger value="flotte" className="gap-2">
               <Truck className="h-4 w-4" />
-              Santé Flotte
+               {t.pages.maintenance.fleetHealth}
             </TabsTrigger>
             <TabsTrigger value="equipements" className="gap-2">
               <Settings className="h-4 w-4" />
-              Équipements
+              {t.pages.maintenance.equipmentTab}
             </TabsTrigger>
             <TabsTrigger value="incidents" className="gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Incidents
+              {t.pages.maintenance.incidentsTab}
               {openIncidents.length > 0 && (
                 <Badge variant="destructive" className="ml-1 h-5 px-1.5">
                   {openIncidents.length}
@@ -598,7 +598,7 @@ export default function Maintenance() {
             </TabsTrigger>
             <TabsTrigger value="etalonnage" className="gap-2">
               <Gauge className="h-4 w-4" />
-              Étalonnage
+              {t.pages.maintenance.calibrationTab}
             </TabsTrigger>
           </TabsList>
 
