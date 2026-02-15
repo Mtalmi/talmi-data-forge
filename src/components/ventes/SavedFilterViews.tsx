@@ -23,6 +23,7 @@ import { Label } from '@/components/ui/label';
 import { Bookmark, BookmarkPlus, ChevronDown, Trash2, Check } from 'lucide-react';
 import { VentesFilterState, defaultFilters } from './VentesFilters';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface SavedFilter {
   id: string;
@@ -43,6 +44,8 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [newFilterName, setNewFilterName] = useState('');
   const [activeFilterId, setActiveFilterId] = useState<string | null>(null);
+  const { t } = useI18n();
+  const sf = t.savedFilters;
 
   // Load saved filters from localStorage
   useEffect(() => {
@@ -64,7 +67,7 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
 
   const handleSaveFilter = () => {
     if (!newFilterName.trim()) {
-      toast.error('Veuillez entrer un nom pour le filtre');
+      toast.error(sf.enterFilterName);
       return;
     }
 
@@ -78,13 +81,13 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
     persistFilters([...savedFilters, newFilter]);
     setNewFilterName('');
     setSaveDialogOpen(false);
-    toast.success(`Filtre "${newFilter.name}" enregistré`);
+    toast.success(sf.filterSaved.replace('{name}', newFilter.name));
   };
 
   const handleApplyFilter = (filter: SavedFilter) => {
     onApplyFilter(filter.filters);
     setActiveFilterId(filter.id);
-    toast.info(`Filtre "${filter.name}" appliqué`);
+    toast.info(sf.filterApplied.replace('{name}', filter.name));
   };
 
   const handleDeleteFilter = (filterId: string, filterName: string) => {
@@ -92,7 +95,7 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
     if (activeFilterId === filterId) {
       setActiveFilterId(null);
     }
-    toast.success(`Filtre "${filterName}" supprimé`);
+    toast.success(sf.filterDeleted.replace('{name}', filterName));
   };
 
   const handleClearFilters = () => {
@@ -116,7 +119,7 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <Bookmark className="h-4 w-4" />
-            Vues
+            {sf.views}
             {savedFilters.length > 0 && (
               <Badge variant="secondary" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
                 {savedFilters.length}
@@ -128,13 +131,13 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
         <DropdownMenuContent align="start" className="w-56">
           <DropdownMenuLabel className="flex items-center gap-2">
             <Bookmark className="h-4 w-4" />
-            Filtres Enregistrés
+            {sf.savedFilters}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           
           {savedFilters.length === 0 ? (
             <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-              Aucun filtre enregistré
+              {sf.noSavedFilters}
             </div>
           ) : (
             savedFilters.map((filter) => (
@@ -170,72 +173,68 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
           
           {hasActiveFilters && (
             <DropdownMenuItem onClick={handleClearFilters} className="text-muted-foreground">
-              Effacer les filtres actifs
+              {sf.clearActive}
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Save current filter button */}
       {hasActiveFilters && (
         <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground">
               <BookmarkPlus className="h-4 w-4" />
-              <span className="hidden sm:inline">Enregistrer</span>
+              <span className="hidden sm:inline">{sf.save}</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Enregistrer le filtre</DialogTitle>
-              <DialogDescription>
-                Donnez un nom à cette combinaison de filtres pour la réutiliser facilement.
-              </DialogDescription>
+              <DialogTitle>{sf.saveFilter}</DialogTitle>
+              <DialogDescription>{sf.saveDescription}</DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="filter-name">Nom du filtre</Label>
+                <Label htmlFor="filter-name">{sf.filterName}</Label>
                 <Input
                   id="filter-name"
-                  placeholder="ex: Devis en attente haute valeur"
+                  placeholder={sf.filterNamePlaceholder}
                   value={newFilterName}
                   onChange={(e) => setNewFilterName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveFilter()}
                 />
               </div>
               
-              {/* Preview of active filters */}
               <div className="space-y-2">
-                <Label className="text-muted-foreground text-xs">Filtres actifs</Label>
+                <Label className="text-muted-foreground text-xs">{sf.activeFilters}</Label>
                 <div className="flex flex-wrap gap-1">
                   {currentFilters.status !== 'all' && (
                     <Badge variant="outline" className="text-xs">
-                      Statut: {currentFilters.status}
+                      {sf.status}: {currentFilters.status}
                     </Badge>
                   )}
                   {currentFilters.clientId !== 'all' && (
                     <Badge variant="outline" className="text-xs">
-                      Client sélectionné
+                      {sf.selectedClient}
                     </Badge>
                   )}
                   {currentFilters.formuleId !== 'all' && (
                     <Badge variant="outline" className="text-xs">
-                      Formule: {currentFilters.formuleId}
+                      {sf.formula}: {currentFilters.formuleId}
                     </Badge>
                   )}
                   {currentFilters.dateFrom && (
                     <Badge variant="outline" className="text-xs">
-                      Depuis: {currentFilters.dateFrom.toLocaleDateString()}
+                      {sf.from}: {currentFilters.dateFrom.toLocaleDateString()}
                     </Badge>
                   )}
                   {currentFilters.dateTo && (
                     <Badge variant="outline" className="text-xs">
-                      Jusqu'au: {currentFilters.dateTo.toLocaleDateString()}
+                      {sf.until}: {currentFilters.dateTo.toLocaleDateString()}
                     </Badge>
                   )}
                   {(currentFilters.volumeMin || currentFilters.volumeMax) && (
                     <Badge variant="outline" className="text-xs">
-                      Volume: {currentFilters.volumeMin || '0'} - {currentFilters.volumeMax || '∞'} m³
+                      {sf.volume}: {currentFilters.volumeMin || '0'} - {currentFilters.volumeMax || '∞'} m³
                     </Badge>
                   )}
                 </div>
@@ -243,11 +242,11 @@ export function SavedFilterViews({ currentFilters, onApplyFilter }: SavedFilterV
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>
-                Annuler
+                {sf.cancel}
               </Button>
               <Button onClick={handleSaveFilter} className="gap-1">
                 <BookmarkPlus className="h-4 w-4" />
-                Enregistrer
+                {sf.save}
               </Button>
             </DialogFooter>
           </DialogContent>

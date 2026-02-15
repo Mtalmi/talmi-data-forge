@@ -15,6 +15,7 @@ import {
   Dialog,
   DialogContent,
 } from './dialog';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Column<T> {
   key: keyof T | string;
@@ -44,12 +45,16 @@ export function ForensicDataGrid<T extends Record<string, any>>({
   photoKey,
   onRowClick,
   loading,
-  emptyMessage = 'Aucune donnée',
+  emptyMessage,
   className,
 }: ForensicDataGridProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
+  const { t } = useI18n();
+  const fg = t.forensicGrid;
+
+  const resolvedEmptyMessage = emptyMessage || fg.noData;
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -77,7 +82,7 @@ export function ForensicDataGrid<T extends Record<string, any>>({
       <div className={cn('rounded-xl border border-border/30 overflow-hidden', className)}>
         <div className="p-8 text-center">
           <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-muted-foreground mt-3">Chargement...</p>
+          <p className="text-sm text-muted-foreground mt-3">{fg.loading}</p>
         </div>
       </div>
     );
@@ -88,7 +93,7 @@ export function ForensicDataGrid<T extends Record<string, any>>({
       <div className={cn('rounded-xl border border-border/30 overflow-hidden', className)}>
         <div className="p-8 text-center">
           <FileText className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+          <p className="text-sm text-muted-foreground">{resolvedEmptyMessage}</p>
         </div>
       </div>
     );
@@ -159,13 +164,12 @@ export function ForensicDataGrid<T extends Record<string, any>>({
                       >
                         <img 
                           src={photoUrl as string} 
-                          alt="Preuve" 
+                          alt={fg.proof} 
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <ZoomIn className="h-4 w-4 text-white" />
                         </div>
-                        {/* Verified Badge */}
                         <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center">
                           <span className="text-[8px] text-primary-foreground">✓</span>
                         </div>
@@ -200,10 +204,9 @@ export function ForensicDataGrid<T extends Record<string, any>>({
             <div className="relative">
               <img 
                 src={expandedPhoto} 
-                alt="Preuve agrandie" 
+                alt={fg.enlargedProof} 
                 className="w-full max-h-[80vh] object-contain"
               />
-              {/* Close Button */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -212,10 +215,9 @@ export function ForensicDataGrid<T extends Record<string, any>>({
               >
                 <X className="h-4 w-4" />
               </Button>
-              {/* Visual Proof Badge */}
               <div className="absolute bottom-4 left-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/90 text-primary-foreground">
                 <ImageIcon className="h-4 w-4" />
-                <span className="text-sm font-semibold">Preuve Visuelle Vérifiée</span>
+                <span className="text-sm font-semibold">{fg.verifiedProof}</span>
               </div>
             </div>
           )}

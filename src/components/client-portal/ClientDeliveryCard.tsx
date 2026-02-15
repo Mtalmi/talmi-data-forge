@@ -1,7 +1,6 @@
 import { Package, CheckCircle, Truck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-
+import { useI18n } from '@/i18n/I18nContext';
 
 interface DeliveryData {
   bl_id: string;
@@ -17,12 +16,20 @@ interface ClientDeliveryCardProps {
   onSelect: () => void;
 }
 
-const STATUS_CONFIG: Record<string, { color: string; label: string; icon: typeof Package }> = {
-  planification: { color: 'text-gray-400 bg-gray-500/10 border-gray-500/30', label: 'Préparation', icon: Clock },
-  production: { color: 'text-blue-400 bg-blue-500/10 border-blue-500/30', label: 'Production', icon: Package },
-  validation_technique: { color: 'text-blue-400 bg-blue-500/10 border-blue-500/30', label: 'Validation', icon: Package },
-  en_livraison: { color: 'text-amber-400 bg-amber-500/10 border-amber-500/30', label: 'En Route', icon: Truck },
-  livre: { color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30', label: 'Livré', icon: CheckCircle },
+const STATUS_ICONS: Record<string, typeof Package> = {
+  planification: Clock,
+  production: Package,
+  validation_technique: Package,
+  en_livraison: Truck,
+  livre: CheckCircle,
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  planification: 'text-gray-400 bg-gray-500/10 border-gray-500/30',
+  production: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+  validation_technique: 'text-blue-400 bg-blue-500/10 border-blue-500/30',
+  en_livraison: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+  livre: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
 };
 
 export function ClientDeliveryCard({
@@ -30,8 +37,12 @@ export function ClientDeliveryCard({
   isSelected,
   onSelect,
 }: ClientDeliveryCardProps) {
-  const config = STATUS_CONFIG[delivery.workflow_status] || STATUS_CONFIG.planification;
-  const Icon = config.icon;
+  const { t } = useI18n();
+  const cdc = t.clientDeliveryCard;
+  const statusKey = delivery.workflow_status as keyof typeof cdc.statuses;
+  const label = cdc.statuses[statusKey] || cdc.statuses.planification;
+  const color = STATUS_COLORS[delivery.workflow_status] || STATUS_COLORS.planification;
+  const Icon = STATUS_ICONS[delivery.workflow_status] || Clock;
 
   return (
     <button
@@ -49,10 +60,10 @@ export function ClientDeliveryCard({
         </span>
         <div className={cn(
           "flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full border",
-          config.color
+          color
         )}>
           <Icon className="h-3 w-3" />
-          <span>{config.label}</span>
+          <span>{label}</span>
         </div>
       </div>
       <div className="flex items-baseline justify-between">
@@ -67,7 +78,7 @@ export function ClientDeliveryCard({
       {delivery.client_confirmed_at && (
         <div className="flex items-center gap-1 text-[10px] text-emerald-400 mt-1">
           <CheckCircle className="h-3 w-3" />
-          <span>Confirmé</span>
+          <span>{cdc.confirmed}</span>
         </div>
       )}
     </button>
