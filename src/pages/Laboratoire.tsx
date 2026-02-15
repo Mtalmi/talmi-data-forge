@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useLabTests } from '@/hooks/useLabTests';
 import { TestCalendar } from '@/components/lab/TestCalendar';
@@ -67,6 +68,7 @@ interface BonLivraison {
 
 export default function Laboratoire() {
   const { isCeo, isResponsableTechnique, isCentraliste } = useAuth();
+  const { t } = useI18n();
   const { tests, loading, calendar, createTest, updateResistance, getPendingTests, refresh } = useLabTests();
   
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -174,24 +176,24 @@ export default function Laboratoire() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
               <FlaskConical className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">Laboratoire & Qualité</span>
+              <span className="truncate">{t.pages.laboratoire.title}</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Gestion des tests d'affaissement et d'écrasement
+              {t.pages.laboratoire.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Button variant="outline" size="sm" onClick={refresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t.pages.laboratoire.register}</span>
             </Button>
             {canEdit && (
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="min-h-[40px]">
                     <Plus className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Nouveau Prélèvement</span>
-                    <span className="sm:hidden">Nouveau</span>
+                    <span className="hidden sm:inline">{t.pages.laboratoire.newSample}</span>
+                    <span className="sm:hidden">{t.common.add}</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">

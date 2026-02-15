@@ -1,6 +1,7 @@
 import * as React from 'react';
 const { useState, useRef } = React;
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
 import { useReportingData } from '@/hooks/useReportingData';
 import { MonthlyReportPdfGenerator } from '@/components/reports/MonthlyReportPdfGenerator';
 import { ReportKPICard } from '@/components/reports/ReportKPICard';
@@ -66,6 +67,7 @@ const COLORS = ['hsl(var(--primary))', 'hsl(var(--success))', 'hsl(var(--warning
 
 export default function Rapports() {
   const { data, loading, selectedPeriod, setSelectedPeriod, refresh, previousPeriodData } = useReportingData();
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState('overview');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -103,8 +105,8 @@ export default function Rapports() {
       <MainLayout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
           <AlertTriangle className="h-12 w-12 text-muted-foreground" />
-          <p className="text-muted-foreground">Impossible de charger les données</p>
-          <Button onClick={refresh}>Réessayer</Button>
+          <p className="text-muted-foreground">{t.pages.rapports.unableToLoad}</p>
+          <Button onClick={refresh}>{t.pages.rapports.retry}</Button>
         </div>
       </MainLayout>
     );
@@ -149,10 +151,10 @@ export default function Rapports() {
               <div className="min-w-0">
                 <h1 className="text-xl sm:text-3xl font-bold flex items-center gap-2 sm:gap-3">
                   <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-primary flex-shrink-0" />
-                  <span className="truncate">Rapports & Analytique</span>
+                  <span className="truncate">{t.pages.rapports.title}</span>
                 </h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-                  Intelligence commerciale et analyse de performance
+                  {t.pages.rapports.subtitle}
                 </p>
               </div>
               

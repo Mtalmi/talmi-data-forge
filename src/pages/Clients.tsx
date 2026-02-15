@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
@@ -83,6 +84,7 @@ interface Client {
 
 export default function Clients() {
   const { isCeo, isCommercial, isAgentAdministratif, canEditClients, isDirecteurOperations } = useAuth();
+  const { t } = useI18n();
   const { previewRole } = usePreviewRole();
   const { blockClient, unblockClient, generateMiseEnDemeure, checkPaymentDelays } = usePaymentDelays();
   
@@ -147,7 +149,7 @@ export default function Clients() {
       setClients(data || []);
     } catch (error) {
       console.error('Error fetching clients:', error);
-      toast.error('Erreur lors du chargement des clients');
+      toast.error(t.pages.clients.loadError);
     } finally {
       setLoading(false);
     }
@@ -261,14 +263,14 @@ export default function Clients() {
 
     try {
       if (!clientId || !nomClient) {
-        toast.error('ID et Nom du client requis');
+        toast.error(t.pages.clients.idAndNameRequired);
         setSubmitting(false);
         return;
       }
 
       // Validate ICE format (must be exactly 15 digits if provided)
       if (ice && !/^\d{15}$/.test(ice)) {
-        toast.error('ICE invalide: doit contenir exactement 15 chiffres');
+        toast.error(t.pages.clients.iceInvalid);
         setSubmitting(false);
         return;
       }
@@ -303,7 +305,7 @@ export default function Clients() {
           .eq('client_id', editingClient.client_id);
 
         if (error) throw error;
-        toast.success('Client mis à jour avec succès');
+        toast.success(t.pages.clients.clientUpdated);
       } else {
         // Create new client
         const { error } = await supabase.from('clients').insert([{
@@ -313,14 +315,14 @@ export default function Clients() {
 
         if (error) {
           if (error.code === '23505') {
-            toast.error('Ce client existe déjà');
+            toast.error(t.pages.bons?.existsAlready || 'Ce client existe déjà');
           } else {
             throw error;
           }
           setSubmitting(false);
           return;
         }
-        toast.success('Client créé avec succès');
+        toast.success(t.pages.clients.clientCreated);
       }
 
       resetForm();
@@ -335,7 +337,7 @@ export default function Clients() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer ce client ?')) return;
+    if (!confirm(t.pages.clients.deleteClient)) return;
 
     try {
       const { error } = await supabase
@@ -344,7 +346,7 @@ export default function Clients() {
         .eq('client_id', id);
 
       if (error) throw error;
-      toast.success('Client supprimé');
+      toast.success(t.pages.clients.clientDeleted);
       fetchClients();
     } catch (error) {
       console.error('Error deleting client:', error);
@@ -356,7 +358,7 @@ export default function Clients() {
     if (isBlocked) {
       await unblockClient(clientId);
     } else {
-      if (!confirm('Bloquer ce client ? Il ne pourra plus passer de commandes.')) return;
+      if (!confirm(t.pages.clients.blockClient)) return;
       await blockClient(clientId, 'Blocage manuel par CEO');
     }
     fetchClients();
@@ -382,15 +384,15 @@ export default function Clients() {
 
   const getClientStatus = (client: Client) => {
     if (client.credit_bloque) {
-      return { status: 'blocked', label: 'Bloqué', color: 'text-destructive bg-destructive/10' };
+      return { status: 'blocked', label: t.pages.clients.blocked, color: 'text-destructive bg-destructive/10' };
     }
     if (client.solde_du && client.solde_du > (client.limite_credit_dh || 50000)) {
-      return { status: 'overlimit', label: 'Hors Limite', color: 'text-warning bg-warning/10' };
+      return { status: 'overlimit', label: t.pages.clients.overlimit, color: 'text-warning bg-warning/10' };
     }
     if (client.solde_du && client.solde_du > 0) {
-      return { status: 'debt', label: 'Solde Dû', color: 'text-muted-foreground bg-muted' };
+      return { status: 'debt', label: t.pages.clients.debtLabel, color: 'text-muted-foreground bg-muted' };
     }
-    return { status: 'ok', label: 'OK', color: 'text-success bg-success/10' };
+    return { status: 'ok', label: t.pages.clients.ok, color: 'text-success bg-success/10' };
   };
 
   const clientsWithDebt = clients.filter(c => c.solde_du && c.solde_du > 0);
@@ -402,9 +404,9 @@ export default function Clients() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Clients</h1>
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">{t.pages.clients.title}</h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Gestion des clients, conditions de paiement et scores de crédit
+              {t.pages.clients.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -444,12 +446,12 @@ export default function Clients() {
                 <DialogTrigger asChild>
                   <Button onClick={() => { resetForm(); }}>
                     <Plus className="h-4 w-4 mr-2" />
-                    Nouveau Client
+                    {t.pages.clients.newClient}
                   </Button>
                 </DialogTrigger>
               <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>{isEditMode ? 'Modifier le Client' : 'Créer un Client'}</DialogTitle>
+                  <DialogTitle>{isEditMode ? t.pages.clients.editClient : t.pages.clients.createClient}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">

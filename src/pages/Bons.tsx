@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -100,6 +101,7 @@ const WORKFLOW_STEPS = [
 
 export default function Bons() {
   const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
+  const { t } = useI18n();
   const { transitionWorkflow, canTransitionTo } = useBonWorkflow();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const [searchParams] = useSearchParams();
@@ -158,7 +160,7 @@ export default function Bons() {
       setClients(clientsRes.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Erreur lors du chargement');
+      toast.error(t.pages.bons.createError);
     } finally {
       setLoading(false);
     }
@@ -438,7 +440,7 @@ export default function Bons() {
         <Card>
           <CardContent className="p-8 text-center">
             <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="text-muted-foreground">Aucun bon de livraison</p>
+             <p className="text-muted-foreground">{t.pages.bons.noBons}</p>
           </CardContent>
         </Card>
       ) : (
@@ -496,10 +498,10 @@ export default function Bons() {
             <h1 className={cn(
               "font-bold tracking-tight",
               isTouchDevice ? "text-xl" : "text-2xl"
-            )}>Archive Bons de Livraison</h1>
+            )}>{ t.pages.bons.title }</h1>
             {!isTouchDevice && (
               <p className="text-muted-foreground mt-1">
-                Historique et recherche des livraisons passées
+                {t.pages.bons.subtitle}
               </p>
             )}
           </div>
@@ -560,12 +562,12 @@ export default function Bons() {
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Nouveau Bon
+                  {t.pages.bons.newBon}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Créer un Bon de Livraison</DialogTitle>
+                  <DialogTitle>{t.pages.bons.createBon}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-3 gap-4">
