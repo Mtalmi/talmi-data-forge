@@ -34,10 +34,13 @@ export function HourlyProductionChart() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Clock className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold uppercase tracking-wider">Production Horaire</h3>
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div>
+          <div className="flex items-center gap-2">
+            <Clock className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold uppercase tracking-wider">Production Journalière</h3>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">Volume produit par heure (m³)</p>
         </div>
         <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span>Total: <strong className="text-foreground font-mono">{totalToday} m³</strong></span>
