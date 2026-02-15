@@ -67,8 +67,16 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const fallback: I18nContextValue = {
+  lang: 'fr',
+  setLang: () => {},
+  t: translations.fr,
+  isRTL: false,
+  dir: 'ltr',
+};
+
 export function useI18n() {
   const ctx = useContext(I18nContext);
-  if (!ctx) throw new Error('useI18n must be used inside <I18nProvider>');
-  return ctx;
+  // Return fallback during HMR/fast-refresh edge cases instead of crashing
+  return ctx ?? fallback;
 }
