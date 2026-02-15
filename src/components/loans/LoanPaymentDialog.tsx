@@ -50,7 +50,8 @@ export function LoanPaymentDialog({
 }: LoanPaymentDialogProps) {
   const { recordPayment } = useLoans();
   const { user } = useAuth();
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
+  const lp = t.loanPayment;
   const dateLocale = getDateLocale(lang);
   
   const [loading, setLoading] = useState(false);
@@ -68,30 +69,22 @@ export function LoanPaymentDialog({
   const isPaid = payment.status === 'paid';
 
   const handleSubmit = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      return;
-    }
-
+    if (!amount || parseFloat(amount) <= 0) return;
     setLoading(true);
-    const result = await recordPayment(
-      payment.id,
-      {
-        actual_amount: parseFloat(amount),
-        paid_date: paidDate,
-        payment_method: paymentMethod,
-        payment_reference: reference || undefined,
-        notes: notes || undefined,
-      },
-      user?.email || 'Système'
-    );
-
+    const result = await recordPayment(payment.id, {
+      actual_amount: parseFloat(amount),
+      paid_date: paidDate,
+      payment_method: paymentMethod,
+      payment_reference: reference || undefined,
+      notes: notes || undefined,
+    }, user?.email || 'Système');
     setLoading(false);
-
-    if (result) {
-      onSuccess();
-      onOpenChange(false);
-    }
+    if (result) { onSuccess(); onOpenChange(false); }
   };
+
+  const statusLabel = payment.status === 'paid' ? lp.paid
+    : payment.status === 'late' ? lp.late
+    : payment.status === 'partial' ? lp.partial : lp.pending;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -99,7 +92,7 @@ export function LoanPaymentDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
-            {isPaid ? 'Détails du Paiement' : 'Enregistrer le Paiement'}
+            {isPaid ? lp.detailsTitle : lp.recordTitle}
           </DialogTitle>
           <DialogDescription>
             {loan?.loan_number} • Échéance #{payment.payment_number}
@@ -107,120 +100,84 @@ export function LoanPaymentDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Payment Info Card */}
           <Card className="bg-muted/50">
             <CardContent className="p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Montant Prévu</span>
+                <span className="text-sm text-muted-foreground">{lp.scheduledAmount}</span>
                 <span className="font-semibold">{Number(payment.scheduled_amount).toLocaleString('fr-MA')} DH</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Date d'Échéance</span>
+                <span className="text-sm text-muted-foreground">{lp.dueDate}</span>
                 <span className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   {format(dueDate, 'dd MMM yyyy', { locale: dateLocale })}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Statut</span>
+                <span className="text-sm text-muted-foreground">{lp.status}</span>
                 <Badge variant={
                   payment.status === 'paid' ? 'secondary' :
                   payment.status === 'late' ? 'destructive' :
                   payment.status === 'partial' ? 'outline' : 'default'
-                }>
-                  {payment.status === 'paid' ? 'Payé' :
-                   payment.status === 'late' ? 'En retard' :
-                   payment.status === 'partial' ? 'Partiel' : 'En attente'}
-                </Badge>
+                }>{statusLabel}</Badge>
               </div>
             </CardContent>
           </Card>
 
-          {/* Already Paid Info */}
           {isPaid && (
             <Alert>
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription>
-                Paiement effectué le {format(new Date(payment.paid_date!), 'dd MMM yyyy', { locale: dateLocale })}
-                {payment.payment_method && ` par ${payment.payment_method}`}
-                {payment.days_late > 0 && ` (${payment.days_late} jours de retard)`}
+                {lp.paidOn.replace('{date}', format(new Date(payment.paid_date!), 'dd MMM yyyy', { locale: dateLocale }))}
+                {payment.payment_method && ` ${lp.by.replace('{method}', payment.payment_method)}`}
+                {payment.days_late > 0 && ` (${lp.daysLateInfo.replace('{days}', String(payment.days_late))})`}
               </AlertDescription>
             </Alert>
           )}
 
-          {/* Payment Form */}
           {!isPaid && (
             <>
-              {/* Late Warning */}
               {isLate && (
                 <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    Paiement en retard de {daysLate} jours. 
-                    Pénalité estimée: {lateFee.toLocaleString('fr-MA')} DH
+                    {lp.lateWarning.replace('{days}', String(daysLate))} {lp.latePenalty.replace('{amount}', lateFee.toLocaleString('fr-MA'))}
                   </AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label>Montant Payé (DH)</Label>
-                <Input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  min="0"
-                  step="0.01"
-                />
+                <Label>{lp.amountPaid}</Label>
+                <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} min="0" step="0.01" />
               </div>
-
               <div className="space-y-2">
-                <Label>Date de Paiement</Label>
-                <Input
-                  type="date"
-                  value={paidDate}
-                  onChange={(e) => setPaidDate(e.target.value)}
-                />
+                <Label>{lp.paymentDate}</Label>
+                <Input type="date" value={paidDate} onChange={(e) => setPaidDate(e.target.value)} />
               </div>
-
               <div className="space-y-2">
-                <Label>Méthode de Paiement</Label>
+                <Label>{lp.paymentMethod}</Label>
                 <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="bank_transfer">Virement Bancaire</SelectItem>
-                    <SelectItem value="check">Chèque</SelectItem>
-                    <SelectItem value="cash">Espèces</SelectItem>
+                    <SelectItem value="bank_transfer">{lp.bankTransfer}</SelectItem>
+                    <SelectItem value="check">{lp.check}</SelectItem>
+                    <SelectItem value="cash">{lp.cash}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-
               <div className="space-y-2">
-                <Label>Référence</Label>
-                <Input
-                  value={reference}
-                  onChange={(e) => setReference(e.target.value)}
-                  placeholder="Numéro de virement, chèque..."
-                />
+                <Label>{lp.reference}</Label>
+                <Input value={reference} onChange={(e) => setReference(e.target.value)} placeholder={lp.refPlaceholder} />
               </div>
-
               <div className="space-y-2">
-                <Label>Notes</Label>
-                <Textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Commentaires..."
-                  rows={2}
-                />
+                <Label>{lp.notes}</Label>
+                <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={lp.notesPlaceholder} rows={2} />
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => onOpenChange(false)}>
-                  Annuler
-                </Button>
+                <Button variant="outline" onClick={() => onOpenChange(false)}>{lp.cancel}</Button>
                 <Button onClick={handleSubmit} disabled={loading}>
-                  {loading ? 'Enregistrement...' : 'Enregistrer'}
+                  {loading ? lp.saving : lp.save}
                 </Button>
               </div>
             </>
@@ -228,9 +185,7 @@ export function LoanPaymentDialog({
 
           {isPaid && (
             <div className="flex justify-end">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Fermer
-              </Button>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>{lp.close}</Button>
             </div>
           )}
         </div>

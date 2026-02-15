@@ -12,21 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { 
-  Receipt, 
-  Upload, 
-  Camera,
-  Fuel,
-  Car,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  Loader2,
-  Ban,
-  ShieldAlert,
-  Moon,
-  Clock,
-  Bot,
-  Shield
+  Receipt, Upload, Camera, Fuel, Car, CheckCircle, AlertTriangle,
+  XCircle, Loader2, Ban, ShieldAlert, Moon, Clock, Bot, Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -35,29 +22,29 @@ import { isCurrentlyOffHours, getCasablancaHour } from '@/lib/timezone';
 import { AIVerifiedBadge } from '@/components/ui/AIVerifiedBadge';
 import { AIVerificationPanel } from '@/components/ui/AIVerificationPanel';
 import { useAIDocumentVerification } from '@/hooks/useAIDocumentVerification';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ExpenseRequestFormProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-const EXPENSE_CATEGORIES = [
-  { value: 'carburant', label: 'Carburant', icon: Fuel, requiresFuel: true },
-  { value: 'maintenance', label: 'Maintenance', icon: Car },
-  { value: 'fournitures', label: 'Fournitures', icon: Receipt },
-  { value: 'transport', label: 'Transport', icon: Car },
-  { value: 'reparation', label: 'Réparation', icon: Car },
-  { value: 'nettoyage', label: 'Nettoyage', icon: Receipt },
-  { value: 'petit_equipement', label: 'Petit Équipement', icon: Receipt },
-  { value: 'services_externes', label: 'Services Externes', icon: Receipt },
-  { value: 'frais_administratifs', label: 'Frais Administratifs', icon: Receipt },
-  { value: 'location_camion', label: 'Location Camion', icon: Car, requiresContract: 'camion_rental' },
-  { value: 'location_trax', label: 'Location Trax', icon: Car, requiresContract: 'trax_rental' },
-  { value: 'location_terrain', label: 'Location Terrain', icon: Receipt, requiresContract: 'terrain_rental' },
-  { value: 'autre', label: 'Autre', icon: Receipt },
-];
+const EXPENSE_CATEGORY_KEYS = [
+  { value: 'carburant', icon: Fuel, requiresFuel: true },
+  { value: 'maintenance', icon: Car },
+  { value: 'fournitures', icon: Receipt },
+  { value: 'transport', icon: Car },
+  { value: 'reparation', icon: Car },
+  { value: 'nettoyage', icon: Receipt },
+  { value: 'petit_equipement', icon: Receipt },
+  { value: 'services_externes', icon: Receipt },
+  { value: 'frais_administratifs', icon: Receipt },
+  { value: 'location_camion', icon: Car, requiresContract: 'camion_rental' },
+  { value: 'location_trax', icon: Car, requiresContract: 'trax_rental' },
+  { value: 'location_terrain', icon: Receipt, requiresContract: 'terrain_rental' },
+  { value: 'autre', icon: Receipt },
+] as const;
 
-// Rental categories that require contract linking
 const RENTAL_CATEGORIES = ['location_camion', 'location_trax', 'location_terrain'];
 const CATEGORY_CONTRACT_MAP: Record<string, string> = {
   'location_camion': 'camion_rental',
@@ -65,32 +52,21 @@ const CATEGORY_CONTRACT_MAP: Record<string, string> = {
   'location_terrain': 'terrain_rental',
 };
 
-// INTERDICTIONS - Hard blocked categories per Section 8
 const BLOCKED_KEYWORDS = [
-  'avance personnelle',
-  'personal advance',
-  'prêt personnel',
-  'decision verbale',
-  'verbal decision',
-  'sans justificatif',
-  'no receipt',
+  'avance personnelle', 'personal advance', 'prêt personnel',
+  'decision verbale', 'verbal decision', 'sans justificatif', 'no receipt',
 ];
 
-// Minimum justification length for off-hours transactions (Titanium Shield)
 const MIN_JUSTIFICATION_LENGTH = 20;
 
 export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormProps) {
   const { user } = useAuth();
-  
-  // AI Document Verification
+  const { t } = useI18n();
+  const er = t.expenseRequest;
+
   const {
-    isScanning,
-    extractedData,
-    verificationResult,
-    scanDocument,
-    verifyAgainstUserData,
-    hasCriticalMismatch,
-    reset: resetAI,
+    isScanning, extractedData, verificationResult, scanDocument,
+    verifyAgainstUserData, hasCriticalMismatch, reset: resetAI,
   } = useAIDocumentVerification();
   
   const [description, setDescription] = useState('');
@@ -99,103 +75,59 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   const [categorie, setCategorie] = useState('');
   const [sousCategorie, setSousCategorie] = useState('');
   const [notes, setNotes] = useState('');
-  
-  // Fuel-specific
   const [vehiculeId, setVehiculeId] = useState('');
   const [kilometrage, setKilometrage] = useState('');
-  
-  // Contract-specific (for rental expenses)
   const [contractId, setContractId] = useState('');
   const [availableContracts, setAvailableContracts] = useState<Array<{
-    id: string;
-    title: string;
-    provider_name: string;
-    monthly_amount: number;
-    contract_type: string;
-    ras_applicable: boolean;
-    ras_rate: number;
+    id: string; title: string; provider_name: string; monthly_amount: number;
+    contract_type: string; ras_applicable: boolean; ras_rate: number;
   }>>([]);
   const [rasAmount, setRasAmount] = useState(0);
-  
-  // Receipt
   const [receiptUrl, setReceiptUrl] = useState('');
   const [receiptPreview, setReceiptPreview] = useState('');
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
-  
-  // Off-hours justification (Midnight Alert Protocol)
   const [justificationUrgence, setJustificationUrgence] = useState('');
   const [isOffHoursMode] = useState(() => isCurrentlyOffHours());
   const [currentCasablancaHour] = useState(() => getCasablancaHour());
-  
-  // Monthly cap status
   const [monthlyCapStatus, setMonthlyCapStatus] = useState<{
-    spent: number;
-    cap: number;
-    exceeded: boolean;
+    spent: number; cap: number; exceeded: boolean;
   } | null>(null);
-  
   const [submitting, setSubmitting] = useState(false);
   const [blockedReason, setBlockedReason] = useState<string | null>(null);
   const [showComplianceAlert, setShowComplianceAlert] = useState(false);
 
-  // Check if current category is a rental category
   const isRentalCategory = RENTAL_CATEGORIES.includes(categorie);
   const requiredContractType = CATEGORY_CONTRACT_MAP[categorie] || null;
-
-  // Calculate TTC
-  const montantTTC = montantHT 
-    ? parseFloat(montantHT) * (1 + parseFloat(tvaPct || '0') / 100) 
-    : 0;
-
-  // Determine approval level
+  const montantTTC = montantHT ? parseFloat(montantHT) * (1 + parseFloat(tvaPct || '0') / 100) : 0;
   const approvalLevel = montantTTC <= 2000 ? 'level_1' : montantTTC <= 20000 ? 'level_2' : 'level_3';
-  
-  const approvalLabels = {
-    level_1: { label: 'Niveau 1', desc: '≤ 2,000 MAD - Admin/Exploitation', color: 'text-success' },
-    level_2: { label: 'Niveau 2', desc: '2,001-20,000 MAD - Superviseur', color: 'text-warning' },
-    level_3: { label: 'Niveau 3', desc: '> 20,000 MAD - CEO uniquement', color: 'text-destructive' },
-  };
 
-  // Check for blocked keywords (Section 8 interdictions)
   useEffect(() => {
     const textToCheck = (description + ' ' + notes + ' ' + sousCategorie).toLowerCase();
     const blocked = BLOCKED_KEYWORDS.find(keyword => textToCheck.includes(keyword.toLowerCase()));
-    
     if (blocked) {
-      setBlockedReason(`INTERDIT (Section 8): "${blocked}" n'est pas autorisé.`);
+      setBlockedReason(er.blocked.replace('{keyword}', blocked));
     } else {
       setBlockedReason(null);
     }
-  }, [description, notes, sousCategorie]);
+  }, [description, notes, sousCategorie, er.blocked]);
 
-  // Fetch monthly cap status
-  useEffect(() => {
-    fetchMonthlyCapStatus();
-  }, []);
+  useEffect(() => { fetchMonthlyCapStatus(); }, []);
 
-  // Fetch contracts when rental category selected
   useEffect(() => {
     if (isRentalCategory && requiredContractType) {
       fetchContracts(requiredContractType);
     } else {
-      setContractId('');
-      setAvailableContracts([]);
-      setRasAmount(0);
+      setContractId(''); setAvailableContracts([]); setRasAmount(0);
     }
   }, [categorie, isRentalCategory, requiredContractType]);
 
-  // Calculate RAS when contract changes (for terrain rental)
   useEffect(() => {
     if (contractId && montantHT) {
       const contract = availableContracts.find(c => c.id === contractId);
       if (contract?.ras_applicable && contract?.ras_rate) {
         setRasAmount(parseFloat(montantHT) * (contract.ras_rate / 100));
-      } else {
-        setRasAmount(0);
-      }
-    } else {
-      setRasAmount(0);
-    }
+      } else { setRasAmount(0); }
+    } else { setRasAmount(0); }
   }, [contractId, montantHT, availableContracts]);
 
   const fetchContracts = async (contractType: string) => {
@@ -209,25 +141,18 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
 
   const fetchMonthlyCapStatus = async () => {
     try {
-      const monthYear = new Date().toISOString().slice(0, 7); // YYYY-MM
-      
+      const monthYear = new Date().toISOString().slice(0, 7);
       const { data } = await supabase
         .from('monthly_expense_caps')
         .select('level1_spent, level1_cap, cap_exceeded')
         .eq('month_year', monthYear)
         .maybeSingle();
-
       if (data) {
-        setMonthlyCapStatus({
-          spent: data.level1_spent,
-          cap: data.level1_cap,
-          exceeded: data.cap_exceeded,
-        });
+        setMonthlyCapStatus({ spent: data.level1_spent, cap: data.level1_cap, exceeded: data.cap_exceeded });
       } else {
         setMonthlyCapStatus({ spent: 0, cap: 15000, exceeded: false });
       }
-    } catch (error) {
-      // No data for this month yet
+    } catch {
       setMonthlyCapStatus({ spent: 0, cap: 15000, exceeded: false });
     }
   };
@@ -235,206 +160,115 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   const handleReceiptUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setUploadingReceipt(true);
-    resetAI(); // Reset previous AI state
-    
+    resetAI();
     try {
       const compressedFile = await compressImage(file, { maxWidth: 1920, quality: 0.8 });
-      
       const reader = new FileReader();
       reader.onload = (ev) => setReceiptPreview(ev.target?.result as string);
       reader.readAsDataURL(compressedFile);
-
       const fileName = `expense-${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-      const { data, error } = await supabase.storage
-        .from('expense-receipts')
-        .upload(fileName, compressedFile);
-
+      const { data, error } = await supabase.storage.from('expense-receipts').upload(fileName, compressedFile);
       if (error) throw error;
-
-      const { data: urlData } = supabase.storage
-        .from('expense-receipts')
-        .getPublicUrl(data.path);
-
+      const { data: urlData } = supabase.storage.from('expense-receipts').getPublicUrl(data.path);
       const publicUrl = urlData.publicUrl;
       setReceiptUrl(publicUrl);
-      toast.success('Justificatif téléchargé');
-
-      // 🤖 AI OCR Scan - Smart Fill
+      toast.success(er.receiptUploaded);
       const extracted = await scanDocument(publicUrl, 'expense');
       if (extracted) {
-        // Auto-fill amount if extracted and field is empty
         if (extracted.amount !== null && !montantHT) {
-          // Calculate HT from TTC (assuming 20% TVA by default)
           const calculatedHT = extracted.amount / (1 + parseFloat(tvaPct) / 100);
           setMontantHT(calculatedHT.toFixed(2));
-          toast.success(`🤖 Montant pré-rempli: ${extracted.amount.toLocaleString()} MAD TTC`, { duration: 4000 });
+          toast.success(er.amountPrefilled.replace('{amount}', extracted.amount.toLocaleString()), { duration: 4000 });
         }
-        // Auto-fill description with supplier if empty
         if (extracted.supplier && !description) {
           setDescription(`Facture ${extracted.supplier}${extracted.bl_number ? ` - ${extracted.bl_number}` : ''}`);
         }
       }
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Erreur lors du téléchargement');
+      toast.error(er.uploadError);
     } finally {
       setUploadingReceipt(false);
     }
   };
 
   const handleSubmit = async (asDraft: boolean = false) => {
-    // Validate
-    if (!description.trim()) {
-      toast.error('Description requise');
-      return;
-    }
-    if (!montantHT || parseFloat(montantHT) <= 0) {
-      toast.error('Montant HT invalide');
-      return;
-    }
-    if (!categorie) {
-      toast.error('Catégorie requise');
-      return;
-    }
-    
-    // Block if interdiction detected
-    if (blockedReason) {
-      toast.error(blockedReason);
-      return;
-    }
-
-    // If submitting (not draft), check receipt
-    if (!asDraft && !receiptUrl) {
-      toast.error('Justificatif obligatoire pour soumettre');
-      return;
-    }
-
-    // Fuel protocol checks
+    if (!description.trim()) { toast.error(er.descRequired); return; }
+    if (!montantHT || parseFloat(montantHT) <= 0) { toast.error(er.invalidAmount); return; }
+    if (!categorie) { toast.error(er.categoryRequired); return; }
+    if (blockedReason) { toast.error(blockedReason); return; }
+    if (!asDraft && !receiptUrl) { toast.error(er.receiptRequired); return; }
     if (!asDraft && categorie === 'carburant') {
-      if (!vehiculeId.trim()) {
-        toast.error('ID Véhicule obligatoire pour le carburant');
-        return;
-      }
-      if (!kilometrage || parseFloat(kilometrage) <= 0) {
-        toast.error('Kilométrage obligatoire pour le carburant');
-        return;
-      }
+      if (!vehiculeId.trim()) { toast.error(er.vehicleRequired); return; }
+      if (!kilometrage || parseFloat(kilometrage) <= 0) { toast.error(er.mileageRequired); return; }
     }
-
-    // Contract validation for rental expenses
-    if (!asDraft && isRentalCategory && !contractId) {
-      toast.error('Contrat obligatoire pour les dépenses de location');
-      return;
-    }
-
-    // Off-hours justification check (Midnight Alert Protocol)
+    if (!asDraft && isRentalCategory && !contractId) { toast.error(er.contractReq); return; }
     if (!asDraft && isOffHoursMode) {
-      if (!justificationUrgence.trim()) {
-        toast.error('Justification d\'urgence obligatoire pour les transactions nocturnes');
-        return;
-      }
+      if (!justificationUrgence.trim()) { toast.error(er.nightJustRequired); return; }
       if (justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH) {
-        toast.error(`Justification trop courte (minimum ${MIN_JUSTIFICATION_LENGTH} caractères)`);
-        return;
+        toast.error(er.justTooShort.replace('{min}', String(MIN_JUSTIFICATION_LENGTH))); return;
       }
     }
-
-    // 🤖 AI Verification - Compare extracted data with user input (only on final submit)
     if (!asDraft && extractedData) {
-      const verification = verifyAgainstUserData(extractedData, {
-        amount: montantTTC,
-      });
-
-      // Block submission if critical mismatch detected
+      const verification = verifyAgainstUserData(extractedData, { amount: montantTTC });
       if (verification.mismatches.some(m => m.severity === 'critical')) {
-        toast.error(
-          '🚫 SOUMISSION BLOQUÉE - Écart critique détecté entre le montant saisi et le document. Cette tentative a été enregistrée.',
-          { duration: 8000 }
-        );
-        return;
+        toast.error(er.submissionBlocked, { duration: 8000 }); return;
       }
-
-      // Warn but allow for non-critical mismatches  
       if (verification.mismatches.length > 0) {
-        toast.warning(
-          '⚠️ Écart détecté par l\'AI - Vérifiez le montant avant soumission',
-          { duration: 5000 }
-        );
+        toast.warning(er.mismatchWarning, { duration: 5000 });
       }
     }
 
     setSubmitting(true);
     try {
-      // Get user profile
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('user_id', user?.id)
-        .single();
-
-      // Determine approval level
+      const { data: profile } = await supabase.from('profiles').select('full_name').eq('user_id', user?.id).single();
       const calculatedLevel = montantTTC <= 2000 ? 'level_1' : montantTTC <= 20000 ? 'level_2' : 'level_3';
-
-      const { error } = await supabase
-        .from('expenses_controlled')
-        .insert({
-          description: description.trim(),
-          montant_ht: parseFloat(montantHT),
-          montant_ttc: montantTTC,
-          tva_pct: parseFloat(tvaPct || '0'),
-          categorie: categorie as Database['public']['Enums']['expense_category'],
-          sous_categorie: sousCategorie || null,
-          vehicule_id: categorie === 'carburant' ? vehiculeId : null,
-          kilometrage: categorie === 'carburant' ? parseFloat(kilometrage) : null,
-          contract_id: isRentalCategory ? contractId : null,
-          receipt_photo_url: receiptUrl || null,
-          requested_by: user?.id as string,
-          requested_by_name: profile?.full_name || 'Utilisateur',
-          // Include AI verification status and urgency justification in notes
-          notes: (() => {
-            const parts: string[] = [];
-            // AI verification tag
-            if (extractedData) {
-              const aiTag = verificationResult?.isVerified 
-                ? `[AI_VERIFIED: OK - ${extractedData.confidence}%]`
-                : `[AI_VERIFIED: MISMATCH - ${extractedData.confidence}%]`;
-              parts.push(aiTag);
-            }
-            // Off-hours justification
-            if (isOffHoursMode && justificationUrgence.trim()) {
-              parts.push(`[URGENCE: ${justificationUrgence.trim()}]`);
-            }
-            // User notes
-            if (notes) parts.push(notes);
-            return parts.length > 0 ? parts.join(' | ') : null;
-          })(),
-          statut: asDraft ? 'brouillon' : 'en_attente',
-          approval_level: calculatedLevel as Database['public']['Enums']['expense_approval_level'],
-        });
-
+      const { error } = await supabase.from('expenses_controlled').insert({
+        description: description.trim(),
+        montant_ht: parseFloat(montantHT),
+        montant_ttc: montantTTC,
+        tva_pct: parseFloat(tvaPct || '0'),
+        categorie: categorie as Database['public']['Enums']['expense_category'],
+        sous_categorie: sousCategorie || null,
+        vehicule_id: categorie === 'carburant' ? vehiculeId : null,
+        kilometrage: categorie === 'carburant' ? parseFloat(kilometrage) : null,
+        contract_id: isRentalCategory ? contractId : null,
+        receipt_photo_url: receiptUrl || null,
+        requested_by: user?.id as string,
+        requested_by_name: profile?.full_name || 'Utilisateur',
+        notes: (() => {
+          const parts: string[] = [];
+          if (extractedData) {
+            const aiTag = verificationResult?.isVerified 
+              ? `[AI_VERIFIED: OK - ${extractedData.confidence}%]`
+              : `[AI_VERIFIED: MISMATCH - ${extractedData.confidence}%]`;
+            parts.push(aiTag);
+          }
+          if (isOffHoursMode && justificationUrgence.trim()) {
+            parts.push(`[URGENCE: ${justificationUrgence.trim()}]`);
+          }
+          if (notes) parts.push(notes);
+          return parts.length > 0 ? parts.join(' | ') : null;
+        })(),
+        statut: asDraft ? 'brouillon' : 'en_attente',
+        approval_level: calculatedLevel as Database['public']['Enums']['expense_approval_level'],
+      });
       if (error) throw error;
-
-      toast.success(asDraft ? 'Brouillon enregistré' : 'Demande de dépense soumise');
+      toast.success(asDraft ? er.draftSaved : er.submitted);
       onSuccess();
     } catch (error: any) {
       console.error('Submit error:', error);
-      
-      // Parse specific error messages from database triggers
       const errorMessage = error.message || error.details || '';
-      
       if (errorMessage.includes('LIMIT_EXCEEDED')) {
-        // Show high-visibility compliance alert with Obsidian & Gold styling
         setShowComplianceAlert(true);
-        // Refresh monthly cap status to update UI
         fetchMonthlyCapStatus();
       } else if (errorMessage.includes('EVIDENCE_REQUIRED')) {
-        toast.error('Justificatif obligatoire!');
+        toast.error(er.receiptMandatory);
       } else if (errorMessage.includes('FUEL_PROTOCOL')) {
-        toast.error('Données véhicule manquantes pour le carburant');
+        toast.error(er.fuelDataMissing);
       } else {
-        toast.error('Erreur lors de la soumission');
+        toast.error(er.submitError);
       }
     } finally {
       setSubmitting(false);
@@ -442,45 +276,38 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
   };
 
   const isFuelCategory = categorie === 'carburant';
-  const capPercentage = monthlyCapStatus 
-    ? Math.min(100, (monthlyCapStatus.spent / monthlyCapStatus.cap) * 100) 
-    : 0;
+  const capPercentage = monthlyCapStatus ? Math.min(100, (monthlyCapStatus.spent / monthlyCapStatus.cap) * 100) : 0;
 
   return (
     <div className="space-y-6">
-      {/* Off-Hours Alert Banner (Midnight Protocol) */}
       {isOffHoursMode && (
         <Alert className="border-destructive bg-destructive/10">
           <Moon className="h-4 w-4 text-destructive" />
           <AlertDescription className="text-destructive">
             <div className="flex items-center gap-2">
-              <span className="font-bold">🌙 MODE NUIT ACTIF</span>
+              <span className="font-bold">{er.nightMode}</span>
               <Badge variant="destructive" className="text-[10px] animate-pulse">
                 {currentCasablancaHour}h 🇲🇦
               </Badge>
             </div>
-            <p className="text-xs mt-1">
-              Transaction nocturne (18h-00h Casablanca). <strong>Justification d'urgence obligatoire.</strong>
-            </p>
+            <p className="text-xs mt-1">{er.nightDesc}</p>
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Monthly Cap Warning */}
       {monthlyCapStatus && monthlyCapStatus.exceeded && (
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
           <AlertDescription>
-            <strong>Plafond mensuel atteint!</strong> Les dépenses Level 1 nécessitent maintenant l'approbation du Superviseur.
+            <strong>{er.capReached}</strong> {er.capDesc}
           </AlertDescription>
         </Alert>
       )}
 
-      {/* Monthly Cap Progress */}
       {monthlyCapStatus && approvalLevel === 'level_1' && (
         <div className="p-4 bg-muted/30 rounded-lg space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span>Dépenses Level 1 ce mois</span>
+            <span>{er.level1Expenses}</span>
             <span className={cn(
               'font-mono font-semibold',
               capPercentage >= 90 ? 'text-destructive' : capPercentage >= 70 ? 'text-warning' : 'text-success'
@@ -489,18 +316,14 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
             </span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <div 
-              className={cn(
-                'h-full transition-all',
-                capPercentage >= 90 ? 'bg-destructive' : capPercentage >= 70 ? 'bg-warning' : 'bg-success'
-              )}
-              style={{ width: `${capPercentage}%` }}
-            />
+            <div className={cn(
+              'h-full transition-all',
+              capPercentage >= 90 ? 'bg-destructive' : capPercentage >= 70 ? 'bg-warning' : 'bg-success'
+            )} style={{ width: `${capPercentage}%` }} />
           </div>
         </div>
       )}
 
-      {/* Blocked Reason Alert */}
       {blockedReason && (
         <Alert variant="destructive">
           <Ban className="h-4 w-4" />
@@ -508,101 +331,61 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </Alert>
       )}
 
-      {/* Compliance Alert - LIMIT_EXCEEDED - Obsidian & Gold Styling */}
       {showComplianceAlert && (
         <div className="relative overflow-hidden rounded-xl border-2 border-amber-500/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-6 shadow-[0_0_30px_-5px_rgba(245,158,11,0.3)]">
-          {/* Ambient glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-amber-500/5 pointer-events-none" />
-          
           <div className="relative space-y-4">
-            {/* Header with shield icon */}
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 shadow-lg shadow-amber-500/30">
                 <Shield className="h-6 w-6 text-slate-950" />
               </div>
               <div>
                 <h3 className="text-lg font-bold bg-gradient-to-r from-amber-400 to-yellow-500 bg-clip-text text-transparent">
-                  Compliance Alert
+                  {er.complianceTitle}
                 </h3>
-                <p className="text-xs text-amber-500/80 font-medium">
-                  Financial Control System
-                </p>
+                <p className="text-xs text-amber-500/80 font-medium">{er.complianceSubtitle}</p>
               </div>
             </div>
-            
-            {/* Message */}
             <div className="space-y-2">
-              <p className="text-white font-semibold text-base">
-                Monthly Spending Limit Reached
-              </p>
-              <p className="text-slate-300 text-sm">
-                CEO Authorization Required to Proceed.
-              </p>
+              <p className="text-white font-semibold text-base">{er.complianceLimitReached}</p>
+              <p className="text-slate-300 text-sm">{er.complianceCeoRequired}</p>
               <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg">
                 <ShieldAlert className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                <span className="text-xs text-amber-400">
-                  Le plafond mensuel de 15,000 MAD a été atteint. Contactez Karim pour autorisation.
-                </span>
+                <span className="text-xs text-amber-400">{er.complianceCapReached}</span>
               </div>
             </div>
-            
-            {/* Dismiss button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowComplianceAlert(false)}
-              className="w-full border-amber-500/40 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400"
-            >
-              Compris
+            <Button variant="outline" size="sm" onClick={() => setShowComplianceAlert(false)}
+              className="w-full border-amber-500/40 text-amber-500 hover:bg-amber-500/10 hover:text-amber-400">
+              {er.understood}
             </Button>
           </div>
         </div>
       )}
 
-      {/* Receipt Upload - MANDATORY - Preuve Obligatoire */}
       <div className="space-y-3">
         <Label className="flex items-center gap-2">
           <Camera className="h-4 w-4 text-primary" />
-          <span className="font-semibold">Preuve Obligatoire</span>
-          <Badge variant="destructive" className="text-[10px] animate-pulse">
-            REQUIS
-          </Badge>
+          <span className="font-semibold">{er.mandatoryProof}</span>
+          <Badge variant="destructive" className="text-[10px] animate-pulse">{er.required}</Badge>
         </Label>
         
         {receiptPreview ? (
           <div className="relative">
-            <img 
-              src={receiptPreview} 
-              alt="Receipt" 
-              className="w-full max-h-48 object-contain rounded-lg border-2 border-success bg-muted"
-            />
+            <img src={receiptPreview} alt="Receipt" className="w-full max-h-48 object-contain rounded-lg border-2 border-success bg-muted" />
             <Badge className="absolute top-2 right-2 bg-success gap-1">
-              <CheckCircle className="h-3 w-3" />
-              Preuve Validée
+              <CheckCircle className="h-3 w-3" />{er.proofValidated}
             </Badge>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              className="absolute bottom-2 right-2"
-              onClick={() => {
-                setReceiptUrl('');
-                setReceiptPreview('');
-              }}
-            >
-              Changer
+            <Button type="button" variant="secondary" size="sm" className="absolute bottom-2 right-2"
+              onClick={() => { setReceiptUrl(''); setReceiptPreview(''); }}>
+              {er.change}
             </Button>
           </div>
         ) : (
           <div className="space-y-2">
-            {/* Golden Audit Requirement Badge */}
             <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-500/40 rounded-full w-fit mx-auto">
               <Shield className="h-3.5 w-3.5 text-amber-500" />
-              <span className="text-xs font-semibold text-amber-500">
-                Audit Requirement: Photo Mandatory
-              </span>
+              <span className="text-xs font-semibold text-amber-500">{er.auditRequirement}</span>
             </div>
-            
             <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-destructive/50 rounded-lg cursor-pointer hover:border-destructive hover:bg-destructive/5 transition-all">
               <div className="flex flex-col items-center justify-center py-4">
                 {uploadingReceipt ? (
@@ -612,37 +395,23 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
                     <div className="p-3 rounded-full bg-destructive/10 mb-2">
                       <Camera className="h-8 w-8 text-destructive" />
                     </div>
-                    <p className="text-sm font-semibold text-foreground">
-                      📸 Photographier le justificatif
-                    </p>
-                    <p className="text-xs text-destructive mt-1 font-bold">
-                      ⚠️ PREUVE OBLIGATOIRE - Soumission bloquée sans photo
-                    </p>
+                    <p className="text-sm font-semibold text-foreground">{er.photographReceipt}</p>
+                    <p className="text-xs text-destructive mt-1 font-bold">{er.proofRequired}</p>
                   </>
                 )}
               </div>
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                className="hidden"
-                onChange={handleReceiptUpload}
-                disabled={uploadingReceipt}
-              />
+              <input type="file" accept="image/*" capture="environment" className="hidden"
+                onChange={handleReceiptUpload} disabled={uploadingReceipt} />
             </label>
           </div>
         )}
       </div>
 
-      {/* AI Verification Panel */}
       {(extractedData || isScanning) && (
-        <AIVerificationPanel
-          isScanning={isScanning}
-          extractedData={extractedData}
+        <AIVerificationPanel isScanning={isScanning} extractedData={extractedData}
           verificationResult={verificationResult}
           onApplySuggestion={(field, value) => {
             if (field === 'amount' && typeof value === 'number') {
-              // Calculate HT from extracted TTC
               const calculatedHT = value / (1 + parseFloat(tvaPct) / 100);
               setMontantHT(calculatedHT.toFixed(2));
             }
@@ -650,40 +419,29 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         />
       )}
 
-      {/* Critical Mismatch Block Alert */}
       {hasCriticalMismatch && (
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>🚫 SOUMISSION BLOQUÉE</strong> - L'AI a détecté un écart critique entre le montant saisi ({montantTTC.toFixed(2)} MAD) 
-            et le document ({extractedData?.amount?.toLocaleString()} MAD). Corrigez le montant ou contactez un superviseur.
+            <strong>{er.blockedCritical}</strong> - {er.blockedDesc}
           </AlertDescription>
         </Alert>
       )}
 
       <Separator />
 
-      {/* Amount and Category */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Montant HT (MAD) *</Label>
-          <Input
-            type="number"
-            step="0.01"
-            placeholder="0.00"
-            value={montantHT}
-            onChange={(e) => setMontantHT(e.target.value)}
-            className="font-mono"
-          />
+          <Label>{er.amountHT}</Label>
+          <Input type="number" step="0.01" placeholder="0.00" value={montantHT}
+            onChange={(e) => setMontantHT(e.target.value)} className="font-mono" />
         </div>
         <div className="space-y-2">
-          <Label>TVA %</Label>
+          <Label>{er.tva}</Label>
           <Select value={tvaPct} onValueChange={setTvaPct}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="0">0% (Exonéré)</SelectItem>
+              <SelectItem value="0">0% ({er.tvaOptions.exempt})</SelectItem>
               <SelectItem value="7">7%</SelectItem>
               <SelectItem value="10">10%</SelectItem>
               <SelectItem value="14">14%</SelectItem>
@@ -693,32 +451,31 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </div>
       </div>
 
-      {/* TTC Display with Approval Level */}
       {montantTTC > 0 && (
         <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
           <div>
-            <span className="text-sm text-muted-foreground">Total TTC:</span>
+            <span className="text-sm text-muted-foreground">{er.totalTTC}</span>
             <span className="ml-2 text-lg font-bold font-mono">{montantTTC.toFixed(2)} MAD</span>
           </div>
-          <Badge className={cn(approvalLabels[approvalLevel].color, 'bg-transparent border')}>
-            {approvalLabels[approvalLevel].label}
+          <Badge className={cn(
+            approvalLevel === 'level_1' ? 'text-success' : approvalLevel === 'level_2' ? 'text-warning' : 'text-destructive',
+            'bg-transparent border'
+          )}>
+            {er.approvalLevels[approvalLevel as keyof typeof er.approvalLevels]}
           </Badge>
         </div>
       )}
 
-      {/* Category */}
       <div className="space-y-2">
-        <Label>Catégorie *</Label>
+        <Label>{er.category}</Label>
         <Select value={categorie} onValueChange={setCategorie}>
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionner une catégorie" />
-          </SelectTrigger>
+          <SelectTrigger><SelectValue placeholder={er.selectCategory} /></SelectTrigger>
           <SelectContent>
-            {EXPENSE_CATEGORIES.map((cat) => (
+            {EXPENSE_CATEGORY_KEYS.map((cat) => (
               <SelectItem key={cat.value} value={cat.value}>
                 <div className="flex items-center gap-2">
                   <cat.icon className="h-4 w-4" />
-                  {cat.label}
+                  {er.categories[cat.value as keyof typeof er.categories]}
                 </div>
               </SelectItem>
             ))}
@@ -726,55 +483,40 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </Select>
       </div>
 
-      {/* Fuel Protocol Fields */}
       {isFuelCategory && (
         <Card className="border-warning/50 bg-warning/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2 text-warning">
-              <Fuel className="h-4 w-4" />
-              Protocole Carburant
+              <Fuel className="h-4 w-4" />{er.fuelProtocol}
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>ID Véhicule *</Label>
-              <Input
-                placeholder="ex: TOUPIE-01"
-                value={vehiculeId}
-                onChange={(e) => setVehiculeId(e.target.value)}
-              />
+              <Label>{er.vehicleId}</Label>
+              <Input placeholder="ex: TOUPIE-01" value={vehiculeId} onChange={(e) => setVehiculeId(e.target.value)} />
             </div>
             <div className="space-y-2">
-              <Label>Kilométrage *</Label>
-              <Input
-                type="number"
-                placeholder="ex: 125430"
-                value={kilometrage}
-                onChange={(e) => setKilometrage(e.target.value)}
-                className="font-mono"
-              />
+              <Label>{er.mileage}</Label>
+              <Input type="number" placeholder="ex: 125430" value={kilometrage}
+                onChange={(e) => setKilometrage(e.target.value)} className="font-mono" />
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Contract Selection for Rental Expenses */}
       {isRentalCategory && (
         <Card className="border-amber-500/50 bg-amber-500/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2 text-amber-500">
-              <Shield className="h-4 w-4" />
-              Contrat de Location Obligatoire
+              <Shield className="h-4 w-4" />{er.rentalContract}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Select value={contractId} onValueChange={setContractId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un contrat" />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue placeholder={er.selectContract} /></SelectTrigger>
               <SelectContent>
                 {availableContracts.length === 0 ? (
-                  <SelectItem value="_none" disabled>Aucun contrat actif</SelectItem>
+                  <SelectItem value="_none" disabled>{er.noActiveContract}</SelectItem>
                 ) : (
                   availableContracts.map((contract) => (
                     <SelectItem key={contract.id} value={contract.id}>
@@ -784,78 +526,52 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
                 )}
               </SelectContent>
             </Select>
-            
-            {/* RAS Display for Terrain Rental */}
             {rasAmount > 0 && (
               <div className="flex items-center justify-between p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm font-medium">Retenue à la Source (15%)</span>
+                  <span className="text-sm font-medium">{er.ras}</span>
                 </div>
-                <span className="font-mono font-bold text-amber-500">
-                  {rasAmount.toFixed(2)} MAD
-                </span>
+                <span className="font-mono font-bold text-amber-500">{rasAmount.toFixed(2)} MAD</span>
               </div>
             )}
-            
             {!contractId && (
-              <p className="text-xs text-destructive">
-                ⚠️ Un contrat doit être sélectionné pour les dépenses de location
-              </p>
+              <p className="text-xs text-destructive">{er.contractRequired}</p>
             )}
           </CardContent>
         </Card>
       )}
 
-      {/* Description */}
       <div className="space-y-2">
-        <Label>Description *</Label>
-        <Textarea
-          placeholder="Décrivez la dépense..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-        />
+        <Label>{er.description}</Label>
+        <Textarea placeholder={er.descPlaceholder} value={description}
+          onChange={(e) => setDescription(e.target.value)} rows={2} />
       </div>
 
-      {/* Off-Hours Justification - MANDATORY during 18h-00h */}
       {isOffHoursMode && (
         <Card className="border-destructive bg-destructive/5">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2 text-destructive">
-              <Moon className="h-4 w-4" />
-              Justification d'Urgence
-              <Badge variant="destructive" className="text-[10px] animate-pulse">
-                OBLIGATOIRE
-              </Badge>
+              <Moon className="h-4 w-4" />{er.urgencyJustification}
+              <Badge variant="destructive" className="text-[10px] animate-pulse">{er.required}</Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-xs text-muted-foreground">
-              Expliquez pourquoi vous travaillez après 18h. Cette information sera visible par le CEO.
-            </p>
-            <Textarea
-              placeholder="Raison de cette transaction nocturne... (minimum 20 caractères)"
-              value={justificationUrgence}
-              onChange={(e) => setJustificationUrgence(e.target.value)}
-              rows={3}
-              className={cn(
-                "border-destructive/50",
+            <p className="text-xs text-muted-foreground">{er.urgencyExplain}</p>
+            <Textarea placeholder={er.urgencyPlaceholder} value={justificationUrgence}
+              onChange={(e) => setJustificationUrgence(e.target.value)} rows={3}
+              className={cn("border-destructive/50",
                 justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && "border-success"
-              )}
-            />
+              )} />
             <div className="flex items-center justify-between text-xs">
               <span className={cn(
-                justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH 
-                  ? "text-success" 
-                  : "text-destructive"
+                justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH ? "text-success" : "text-destructive"
               )}>
-                {justificationUrgence.trim().length}/{MIN_JUSTIFICATION_LENGTH} caractères minimum
+                {justificationUrgence.trim().length}/{MIN_JUSTIFICATION_LENGTH} {er.minChars}
               </span>
               {justificationUrgence.trim().length >= MIN_JUSTIFICATION_LENGTH && (
                 <Badge className="bg-success text-[10px] gap-1">
-                  <CheckCircle className="h-2.5 w-2.5" />
-                  Validé
+                  <CheckCircle className="h-2.5 w-2.5" />{er.validated}
                 </Badge>
               )}
             </div>
@@ -863,59 +579,30 @@ export function ExpenseRequestForm({ onSuccess, onCancel }: ExpenseRequestFormPr
         </Card>
       )}
 
-      {/* Notes */}
       <div className="space-y-2">
-        <Label>Notes (optionnel)</Label>
-        <Textarea
-          placeholder="Informations supplémentaires..."
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={2}
-        />
+        <Label>{er.notesOptional}</Label>
+        <Textarea placeholder={er.notesPlaceholder} value={notes}
+          onChange={(e) => setNotes(e.target.value)} rows={2} />
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t">
-        <Button variant="outline" onClick={onCancel} disabled={submitting}>
-          Annuler
+        <Button variant="outline" onClick={onCancel} disabled={submitting}>{er.cancel}</Button>
+        <Button variant="secondary" onClick={() => handleSubmit(true)} disabled={submitting || !!blockedReason}>
+          {er.saveDraft}
         </Button>
-        <Button 
-          variant="secondary" 
-          onClick={() => handleSubmit(true)} 
-          disabled={submitting || !!blockedReason}
-        >
-          Sauvegarder Brouillon
-        </Button>
-        <Button 
-          onClick={() => handleSubmit(false)} 
-          disabled={
-            submitting || 
-            !receiptUrl || 
-            !!blockedReason || 
-            hasCriticalMismatch ||
-            (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH)
-          }
-          className={cn(
-            "gap-2",
+        <Button onClick={() => handleSubmit(false)}
+          disabled={submitting || !receiptUrl || !!blockedReason || hasCriticalMismatch ||
+            (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH)}
+          className={cn("gap-2",
             (isOffHoursMode && justificationUrgence.trim().length < MIN_JUSTIFICATION_LENGTH) && "opacity-50",
             hasCriticalMismatch && "opacity-50 cursor-not-allowed"
-          )}
-        >
+          )}>
           {submitting ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Envoi...
-            </>
+            <><Loader2 className="h-4 w-4 animate-spin" />{er.sending}</>
           ) : verificationResult?.isVerified ? (
-            <>
-              <Bot className="h-4 w-4" />
-              ✅ Soumettre (AI Vérifié)
-            </>
+            <><Bot className="h-4 w-4" />{er.submitAI}</>
           ) : (
-            <>
-              <CheckCircle className="h-4 w-4" />
-              Soumettre
-            </>
+            <><CheckCircle className="h-4 w-4" />{er.submit}</>
           )}
         </Button>
       </div>
