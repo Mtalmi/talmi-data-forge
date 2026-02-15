@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { 
@@ -34,6 +35,7 @@ export function GlobalSearch() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -143,10 +145,10 @@ export function GlobalSearch() {
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'client': return 'Clients';
-      case 'bl': return 'Bons de Livraison';
-      case 'facture': return 'Factures';
-      default: return 'Résultats';
+      case 'client': return t('search.clients');
+      case 'bl': return t('search.deliveryNotes');
+      case 'facture': return t('search.invoices');
+      default: return t('search.results');
     }
   };
 
@@ -166,8 +168,8 @@ export function GlobalSearch() {
           className="w-full md:w-80 justify-start text-muted-foreground min-h-[44px]"
         >
           <Search className="mr-2 h-4 w-4 shrink-0" />
-          <span className="hidden sm:inline">Recherche rapide...</span>
-          <span className="sm:hidden">Rechercher</span>
+          <span className="hidden sm:inline">{t('search.quickSearch')}</span>
+          <span className="sm:hidden">{t('search.search')}</span>
           <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
             <span className="text-xs">⌘</span>K
           </kbd>
@@ -181,7 +183,7 @@ export function GlobalSearch() {
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Rechercher clients, BLs, factures..."
+              placeholder={t('search.searchPlaceholder')}
               className="flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
             />
             {query && (
@@ -202,11 +204,11 @@ export function GlobalSearch() {
               </div>
             )}
             {!loading && query.length >= 2 && results.length === 0 && (
-              <CommandEmpty>Aucun résultat trouvé.</CommandEmpty>
+              <CommandEmpty>{t('search.noResults')}</CommandEmpty>
             )}
             {!loading && query.length < 2 && (
               <div className="py-6 text-center text-sm text-muted-foreground">
-                Tapez au moins 2 caractères pour rechercher
+                {t('search.minChars')}
               </div>
             )}
             {!loading && Object.entries(groupedResults).map(([type, items], index) => (

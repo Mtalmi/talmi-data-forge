@@ -146,5 +146,40 @@
     "fr": "Français",
     "ar": "العربية",
     "en": "English"
+  },
+  "widgets": {
+    "approvals": "الموافقات",
+    "pending": "قيد الانتظار",
+    "pipelineToday": "خط الإنتاج اليوم",
+    "planned": "مخطط",
+    "inProgress": "قيد التنفيذ",
+    "delivered": "تم التسليم",
+    "clientReceivables": "مستحقات العملاء",
+    "stockLevels": "مستويات المخزون",
+    "noStock": "لا يوجد مخزون مسجل",
+    "salesPipeline": "خط المبيعات",
+    "quotes": "عروض الأسعار",
+    "activeOrders": "طلبات نشطة",
+    "conversion": "التحويل",
+    "pendingQuoteValue": "قيمة العروض المعلقة"
+  },
+  "search": {
+    "quickSearch": "بحث سريع...",
+    "search": "بحث",
+    "searchPlaceholder": "البحث عن عملاء، سندات، فواتير...",
+    "noResults": "لم يتم العثور على نتائج.",
+    "minChars": "اكتب حرفين على الأقل للبحث",
+    "clients": "العملاء",
+    "deliveryNotes": "سندات التسليم",
+    "invoices": "الفواتير",
+    "results": "النتائج",
+    "commandPlaceholder": "ابحث أو اسأل الذكاء الاصطناعي...",
+    "noCommandResults": "لا نتائج لـ \"{{query}}\"",
+    "openAI": "فتح مساعد AI",
+    "aiChat": "محادثة مع TBOS AI",
+    "attendance": "الحضور",
+    "attendanceDesc": "إدارة حضور الموظفين",
+    "bankReconciliation": "المطابقة البنكية",
+    "bankReconciliationDesc": "التسوية المالية"
   }
 }

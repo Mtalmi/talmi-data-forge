@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, ShoppingCart, CalendarClock, Factory, Warehouse,
@@ -28,6 +29,7 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const goTo = useCallback((path: string) => {
     setOpen(false);
@@ -36,31 +38,31 @@ export function CommandPalette() {
   }, [navigate]);
 
   const items: CommandItem[] = [
-    // Navigation
-    { id: 'nav-dashboard', label: 'Sanctum (Dashboard)', icon: LayoutDashboard, action: () => goTo('/'), category: 'navigation', keywords: ['accueil', 'home', 'tableau de bord'] },
-    { id: 'nav-ventes', label: 'Ventes', icon: ShoppingCart, action: () => goTo('/ventes'), category: 'navigation', keywords: ['sales', 'chiffre'] },
-    { id: 'nav-planning', label: 'Planning', icon: CalendarClock, action: () => goTo('/planning'), category: 'navigation', keywords: ['schedule', 'livraison'] },
-    { id: 'nav-production', label: 'Production', icon: Factory, action: () => goTo('/production'), category: 'navigation', keywords: ['béton', 'concrete', 'batch'] },
-    { id: 'nav-stocks', label: 'Stocks', icon: Warehouse, action: () => goTo('/stocks'), category: 'navigation', keywords: ['inventory', 'matériaux'] },
-    { id: 'nav-bons', label: 'Archive BL', icon: Receipt, action: () => goTo('/bons'), category: 'navigation', keywords: ['bon livraison', 'delivery'] },
-    { id: 'nav-clients', label: 'Clients', icon: Users, action: () => goTo('/clients'), category: 'navigation', keywords: ['customer'] },
-    { id: 'nav-formules', label: 'Formules', icon: FlaskConical, action: () => goTo('/formules'), category: 'navigation', keywords: ['recipe', 'mix'] },
-    { id: 'nav-lab', label: 'Laboratoire', icon: FlaskConical, action: () => goTo('/laboratoire'), category: 'navigation', keywords: ['test', 'quality'] },
-    { id: 'nav-logistique', label: 'Logistique', icon: Truck, action: () => goTo('/logistique'), category: 'navigation', keywords: ['fleet', 'camion'] },
-    { id: 'nav-depenses', label: 'Dépenses', icon: Receipt, action: () => goTo('/depenses-v2'), category: 'navigation', keywords: ['expenses'] },
-    { id: 'nav-fournisseurs', label: 'Fournisseurs', icon: Building2, action: () => goTo('/fournisseurs'), category: 'navigation', keywords: ['supplier'] },
-    { id: 'nav-paiements', label: 'Paiements', icon: DollarSign, action: () => goTo('/paiements'), category: 'navigation', keywords: ['payment'] },
-    { id: 'nav-rapports', label: 'Rapports', icon: BarChart3, action: () => goTo('/rapports'), category: 'navigation', keywords: ['report', 'analytics'] },
-    { id: 'nav-maintenance', label: 'Maintenance', icon: Wrench, action: () => goTo('/maintenance'), category: 'navigation', keywords: ['repair'] },
-    { id: 'nav-securite', label: 'Sécurité', icon: Shield, action: () => goTo('/securite'), category: 'navigation', keywords: ['security', 'audit'] },
-    { id: 'nav-surveillance', label: 'Surveillance IA', icon: Video, action: () => goTo('/surveillance'), category: 'navigation', keywords: ['camera', 'video'] },
-    { id: 'nav-contracts', label: 'Contrats', icon: FileText, action: () => goTo('/contracts'), category: 'navigation', keywords: ['contract'] },
-    { id: 'nav-formation', label: 'Mode Formation', icon: GraduationCap, action: () => goTo('/formation'), category: 'navigation', keywords: ['training'] },
-    { id: 'nav-aide', label: 'Manuel Système', icon: HelpCircle, action: () => goTo('/aide'), category: 'navigation', keywords: ['help', 'support'] },
+    // Navigation — use t() for labels
+    { id: 'nav-dashboard', label: t('nav.dashboard') + ' (Dashboard)', icon: LayoutDashboard, action: () => goTo('/'), category: 'navigation', keywords: ['accueil', 'home', 'tableau de bord', 'الرئيسية'] },
+    { id: 'nav-ventes', label: t('nav.sales'), icon: ShoppingCart, action: () => goTo('/ventes'), category: 'navigation', keywords: ['sales', 'chiffre', 'المبيعات'] },
+    { id: 'nav-planning', label: t('nav.planning'), icon: CalendarClock, action: () => goTo('/planning'), category: 'navigation', keywords: ['schedule', 'livraison', 'التخطيط'] },
+    { id: 'nav-production', label: t('nav.production'), icon: Factory, action: () => goTo('/production'), category: 'navigation', keywords: ['béton', 'concrete', 'batch', 'الإنتاج'] },
+    { id: 'nav-stocks', label: t('nav.stocks'), icon: Warehouse, action: () => goTo('/stocks'), category: 'navigation', keywords: ['inventory', 'matériaux', 'المخزون'] },
+    { id: 'nav-bons', label: t('nav.blArchive'), icon: Receipt, action: () => goTo('/bons'), category: 'navigation', keywords: ['bon livraison', 'delivery'] },
+    { id: 'nav-clients', label: t('nav.clients'), icon: Users, action: () => goTo('/clients'), category: 'navigation', keywords: ['customer', 'العملاء'] },
+    { id: 'nav-formules', label: t('nav.formulas'), icon: FlaskConical, action: () => goTo('/formules'), category: 'navigation', keywords: ['recipe', 'mix'] },
+    { id: 'nav-lab', label: t('nav.laboratory'), icon: FlaskConical, action: () => goTo('/laboratoire'), category: 'navigation', keywords: ['test', 'quality'] },
+    { id: 'nav-logistique', label: t('nav.logistics'), icon: Truck, action: () => goTo('/logistique'), category: 'navigation', keywords: ['fleet', 'camion'] },
+    { id: 'nav-depenses', label: t('nav.expenses'), icon: Receipt, action: () => goTo('/depenses-v2'), category: 'navigation', keywords: ['expenses', 'المصروفات'] },
+    { id: 'nav-fournisseurs', label: t('nav.suppliers'), icon: Building2, action: () => goTo('/fournisseurs'), category: 'navigation', keywords: ['supplier'] },
+    { id: 'nav-paiements', label: t('nav.payments'), icon: DollarSign, action: () => goTo('/paiements'), category: 'navigation', keywords: ['payment'] },
+    { id: 'nav-rapports', label: t('nav.reports'), icon: BarChart3, action: () => goTo('/rapports'), category: 'navigation', keywords: ['report', 'analytics'] },
+    { id: 'nav-maintenance', label: t('nav.maintenance'), icon: Wrench, action: () => goTo('/maintenance'), category: 'navigation', keywords: ['repair'] },
+    { id: 'nav-securite', label: t('nav.security'), icon: Shield, action: () => goTo('/securite'), category: 'navigation', keywords: ['security', 'audit'] },
+    { id: 'nav-surveillance', label: t('nav.aiSurveillance'), icon: Video, action: () => goTo('/surveillance'), category: 'navigation', keywords: ['camera', 'video'] },
+    { id: 'nav-contracts', label: t('nav.contracts'), icon: FileText, action: () => goTo('/contracts'), category: 'navigation', keywords: ['contract'] },
+    { id: 'nav-formation', label: t('nav.trainingMode'), icon: GraduationCap, action: () => goTo('/formation'), category: 'navigation', keywords: ['training'] },
+    { id: 'nav-aide', label: t('nav.systemManual'), icon: HelpCircle, action: () => goTo('/aide'), category: 'navigation', keywords: ['help', 'support'] },
     // Quick Actions
-    { id: 'act-ai', label: 'Ouvrir Assistant AI', description: 'Chat avec TBOS AI', icon: Bot, action: () => { setOpen(false); navigate('/ai'); }, category: 'action', keywords: ['intelligence', 'chat'] },
-    { id: 'act-pointage', label: 'Pointage', description: 'Gestion présence employés', icon: Users, action: () => goTo('/pointage'), category: 'action', keywords: ['attendance'] },
-    { id: 'act-rapprochement', label: 'Rapprochement Bancaire', description: 'Réconciliation financière', icon: DollarSign, action: () => goTo('/rapprochement'), category: 'action', keywords: ['bank', 'reconciliation'] },
+    { id: 'act-ai', label: t('search.openAI'), description: t('search.aiChat'), icon: Bot, action: () => { setOpen(false); navigate('/ai'); }, category: 'action', keywords: ['intelligence', 'chat'] },
+    { id: 'act-pointage', label: t('search.attendance'), description: t('search.attendanceDesc'), icon: Users, action: () => goTo('/pointage'), category: 'action', keywords: ['attendance'] },
+    { id: 'act-rapprochement', label: t('search.bankReconciliation'), description: t('search.bankReconciliationDesc'), icon: DollarSign, action: () => goTo('/rapprochement'), category: 'action', keywords: ['bank', 'reconciliation'] },
   ];
 
   // AI-powered query detection
@@ -176,7 +178,7 @@ export function CommandPalette() {
                   value={query}
                   onChange={(e) => { setQuery(e.target.value); setSelectedIndex(0); }}
                   onKeyDown={handleInputKeyDown}
-                  placeholder="Rechercher ou demander à l'IA..."
+                  placeholder={t('search.commandPlaceholder')}
                   className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/50"
                   autoComplete="off"
                   spellCheck={false}
@@ -281,7 +283,7 @@ export function CommandPalette() {
                         <Bot className="h-4 w-4 text-primary-foreground" />
                       </div>
                       <div className="flex-1 text-left">
-                        <span className="font-semibold">Demander à TBOS AI</span>
+                        <span className="font-semibold">{t('search.openAI')}</span>
                         <p className="text-xs text-muted-foreground mt-0.5 truncate">"{query}"</p>
                       </div>
                       <Zap className="h-4 w-4 text-primary" />
@@ -292,7 +294,7 @@ export function CommandPalette() {
                 {filtered.length === 0 && !isAIQuery && (
                   <div className="py-8 text-center text-sm text-muted-foreground">
                     <Search className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                    <p>Aucun résultat pour "{query}"</p>
+                    <p>{t('search.noCommandResults', { query })}</p>
                   </div>
                 )}
               </div>
