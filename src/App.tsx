@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/hooks/useAuth";
-import { DemoModeProvider } from "@/hooks/useDemoMode";
+
 import { PreviewRoleProvider } from "@/hooks/usePreviewRole";
 import { SecurityProvider } from "@/components/security/SecurityProvider";
 import Index from "./pages/Index";
@@ -64,7 +64,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <DemoModeProvider>
           <AuthProvider>
             <PreviewRoleProvider>
               {/* TITANIUM SHIELD: Security wrapper with session timeout & HTTPS enforcement */}
@@ -131,7 +130,6 @@ const App = () => (
               </SecurityProvider>
             </PreviewRoleProvider>
           </AuthProvider>
-          </DemoModeProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

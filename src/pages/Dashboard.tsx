@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useDemoMode } from '@/hooks/useDemoMode';
+
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
@@ -70,13 +70,12 @@ import {
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting, signOut } = useAuth();
-  const { isDemoMode } = useDemoMode();
   const navigate = useNavigate();
-  const { stats, loading: statsLoading, refresh } = useDashboardStats(isDemoMode);
+  const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
   const kpiSectionRef = useRef<HTMLDivElement>(null);
   const kpiGridRef = useRef<HTMLDivElement>(null);
-  const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period, isDemoMode);
+  const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
   const [refreshing, setRefreshing] = useState(false);
   const [productionStats, setProductionStats] = useState({

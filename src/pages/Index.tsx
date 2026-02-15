@@ -3,13 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import { SplashScreen } from '@/components/layout/SplashScreen';
 import { useAuth } from '@/hooks/useAuth';
-import { useDemoMode } from '@/hooks/useDemoMode';
 
 const SPLASH_SHOWN_KEY = 'tbos_splash_shown';
 
 export default function Index() {
   const { user, loading } = useAuth();
-  const { isDemoMode } = useDemoMode();
   const navigate = useNavigate();
 
   const [showSplash, setShowSplash] = useState(() => {
@@ -17,17 +15,17 @@ export default function Index() {
   });
 
   useEffect(() => {
-    if (!loading && !user && !isDemoMode) {
+    if (!loading && !user) {
       navigate('/landing', { replace: true });
     }
-  }, [user, loading, navigate, isDemoMode]);
+  }, [user, loading, navigate]);
 
   const handleSplashComplete = () => {
     sessionStorage.setItem(SPLASH_SHOWN_KEY, 'true');
     setShowSplash(false);
   };
 
-  if (loading && !isDemoMode) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -35,11 +33,11 @@ export default function Index() {
     );
   }
 
-  if (!user && !isDemoMode) return null;
+  if (!user) return null;
 
   return (
     <>
-      {showSplash && !isDemoMode && <SplashScreen onComplete={handleSplashComplete} />}
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Dashboard />
     </>
   );

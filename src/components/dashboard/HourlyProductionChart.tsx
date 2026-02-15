@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { useDemoMode } from '@/hooks/useDemoMode';
 import { Clock } from 'lucide-react';
 
-const DEMO_HOURLY_DATA = [
+const SAMPLE_HOURLY_DATA = [
   { hour: '06h', volume: 12 },
   { hour: '07h', volume: 28 },
   { hour: '08h', volume: 45 },
@@ -20,13 +19,10 @@ const DEMO_HOURLY_DATA = [
 ];
 
 export function HourlyProductionChart() {
-  const { isDemoMode } = useDemoMode();
-
   const data = useMemo(() => {
-    if (isDemoMode) return DEMO_HOURLY_DATA;
     // In production, this would come from a real query
-    return DEMO_HOURLY_DATA;
-  }, [isDemoMode]);
+    return SAMPLE_HOURLY_DATA;
+  }, []);
 
   const currentHour = new Date().getHours();
   const totalToday = data.reduce((sum, d) => sum + d.volume, 0);
