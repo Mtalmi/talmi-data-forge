@@ -23,7 +23,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface EmergencyBcActionItemsPanelProps {
   notificationId: string;
