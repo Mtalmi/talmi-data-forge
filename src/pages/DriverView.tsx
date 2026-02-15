@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 
 interface Camion {
   id_camion: string;
@@ -51,6 +50,8 @@ interface BonLivraison {
 
 export default function DriverView() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const d = t.pages.driverView;
   const [camions, setCamions] = useState<Camion[]>([]);
   const [selectedCamion, setSelectedCamion] = useState<string>('');
   const [bons, setBons] = useState<BonLivraison[]>([]);
@@ -107,12 +108,12 @@ export default function DriverView() {
 
     if (error) {
       console.error('Error fetching deliveries:', error);
-      toast.error('Erreur lors du chargement');
+      toast.error(d.loadError);
     } else {
       setBons(data || []);
     }
     setLoading(false);
-  }, [selectedCamion, today]);
+  }, [selectedCamion, today, d.loadError]);
 
   useEffect(() => {
     fetchCamions();
@@ -166,7 +167,7 @@ export default function DriverView() {
                 <ArrowLeft className="h-5 w-5" />
               </Button>
               <Truck className="h-6 w-6 text-primary" />
-              <h1 className="text-lg font-bold">Vue Chauffeur</h1>
+              <h1 className="text-lg font-bold">{d.title}</h1>
             </div>
             <div className="flex items-center gap-1">
               <Button 
@@ -189,10 +190,10 @@ export default function DriverView() {
             </div>
           </div>
 
-          {/* Driver Selector - Large Touch Target */}
+          {/* Driver Selector */}
           <Select value={selectedCamion} onValueChange={setSelectedCamion}>
             <SelectTrigger className="h-12 text-base">
-              <SelectValue placeholder="Sélectionner mon camion" />
+              <SelectValue placeholder={d.selectTruck} />
             </SelectTrigger>
             <SelectContent>
               {camions.map(camion => (
@@ -219,21 +220,21 @@ export default function DriverView() {
               <Package className="h-4 w-4 text-primary" />
               <div>
                 <p className="text-lg font-bold">{bons.length}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Total</p>
+                <p className="text-[10px] text-muted-foreground uppercase">{d.total}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-lg bg-warning/10">
               <Clock className="h-4 w-4 text-warning" />
               <div>
                 <p className="text-lg font-bold">{pending}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">En cours</p>
+                <p className="text-[10px] text-muted-foreground uppercase">{d.inProgress}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-lg bg-success/10">
               <CheckCircle className="h-4 w-4 text-success" />
               <div>
                 <p className="text-lg font-bold">{delivered}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Livrés</p>
+                <p className="text-[10px] text-muted-foreground uppercase">{d.delivered}</p>
               </div>
             </div>
           </div>
@@ -247,7 +248,7 @@ export default function DriverView() {
             <CardContent className="p-8 text-center">
               <Truck className="h-16 w-16 mx-auto text-muted-foreground/30 mb-4" />
               <p className="text-lg text-muted-foreground">
-                Sélectionnez votre camion pour voir vos livraisons du jour
+                {d.selectTruckPrompt}
               </p>
             </CardContent>
           </Card>
@@ -270,9 +271,9 @@ export default function DriverView() {
           <Card className="mt-8">
             <CardContent className="p-8 text-center">
               <CheckCircle className="h-16 w-16 mx-auto text-success/30 mb-4" />
-              <p className="text-lg font-medium mb-2">Aucune livraison</p>
+              <p className="text-lg font-medium mb-2">{d.noDeliveries}</p>
               <p className="text-muted-foreground">
-                Pas de livraisons prévues pour aujourd'hui
+                {d.noDeliveriesToday}
               </p>
             </CardContent>
           </Card>
@@ -293,19 +294,19 @@ export default function DriverView() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs text-muted-foreground">Volume Total</p>
+                <p className="text-xs text-muted-foreground">{d.totalVolume}</p>
                 <p className="text-xl font-bold">{totalVolume} m³</p>
               </div>
               <div className="h-8 w-px bg-border" />
               <div>
-                <p className="text-xs text-muted-foreground">Progression</p>
+                <p className="text-xs text-muted-foreground">{d.progression}</p>
                 <p className="text-xl font-bold text-success">
                   {delivered}/{bons.length}
                 </p>
               </div>
             </div>
             <Badge variant={pending === 0 ? "default" : "secondary"} className="px-3 py-1">
-              {pending === 0 ? '✓ Journée Complète' : `${pending} restant(s)`}
+              {pending === 0 ? d.dayComplete : `${pending} ${d.remaining}`}
             </Badge>
           </div>
         </div>

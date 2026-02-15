@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { usePaymentTracking, PaymentRecord } from '@/hooks/usePaymentTracking';
 import { useAuth } from '@/hooks/useAuth';
@@ -61,7 +62,6 @@ import { CashFeedingForm } from '@/components/finance/CashFeedingForm';
 import { CashDepositsWidget } from '@/components/finance/CashDepositsWidget';
 import { TaxComplianceDashboard } from '@/components/compliance';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -76,7 +76,8 @@ const STATUS_KEYS: Record<string, { key: 'paid' | 'pending' | 'overdue'; color: 
 
 export default function Paiements() {
   const { isCeo, role } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { payments, stats, loading, refetch, markAsPaid, getAgingReminders, sendPaymentReminders } = usePaymentTracking();
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -540,7 +541,7 @@ export default function Paiements() {
                           <TableCell className="font-mono text-sm">{payment.bl_id}</TableCell>
                           <TableCell className="font-medium">{payment.client_nom}</TableCell>
                           <TableCell className="text-muted-foreground">
-                            {format(new Date(payment.date_livraison), 'dd/MM/yyyy', { locale: fr })}
+                            {format(new Date(payment.date_livraison), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                           </TableCell>
                           <TableCell className="text-right font-semibold">
                             {formatCurrency(payment.total_ht)}
