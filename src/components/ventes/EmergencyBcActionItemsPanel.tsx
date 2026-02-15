@@ -164,7 +164,7 @@ const ActionItemCard = ({
             <div className="mb-3 p-2 rounded bg-green-500/10 border border-green-500/20">
               <p className="text-xs text-green-400">
                 Terminé par {item.completed_by_name} à{' '}
-                {format(new Date(item.completed_at), 'HH:mm', { locale: fr })}
+                {format(new Date(item.completed_at), 'HH:mm')}
               </p>
             </div>
           )}
