@@ -89,14 +89,24 @@ interface Client {
   solde_du: number | null;
 }
 
-const WORKFLOW_STEPS = [
-  { value: 'planification', label: 'Planification', icon: Clock, color: 'text-muted-foreground' },
-  { value: 'production', label: 'Production', icon: Play, color: 'text-warning' },
-  { value: 'validation_technique', label: 'Validation Tech.', icon: CheckCircle, color: 'text-purple-500' },
-  { value: 'en_livraison', label: 'En Livraison', icon: Truck, color: 'text-blue-500' },
-  { value: 'livre', label: 'Livré', icon: Package, color: 'text-success' },
-  { value: 'facture', label: 'Facturé', icon: FileText, color: 'text-primary' },
-  { value: 'annule', label: 'Annulé', icon: XCircle, color: 'text-destructive' },
+const WORKFLOW_STEP_LABELS: Record<string, string> = {
+  planification: 'stepPlanning',
+  production: 'stepProduction',
+  validation_technique: 'stepValidation',
+  en_livraison: 'stepDelivery',
+  livre: 'stepDelivered',
+  facture: 'stepInvoiced',
+  annule: 'stepCancelled',
+};
+
+const WORKFLOW_STEPS_META = [
+  { value: 'planification', icon: Clock, color: 'text-muted-foreground' },
+  { value: 'production', icon: Play, color: 'text-warning' },
+  { value: 'validation_technique', icon: CheckCircle, color: 'text-purple-500' },
+  { value: 'en_livraison', icon: Truck, color: 'text-blue-500' },
+  { value: 'livre', icon: Package, color: 'text-success' },
+  { value: 'facture', icon: FileText, color: 'text-primary' },
+  { value: 'annule', icon: XCircle, color: 'text-destructive' },
 ];
 
 export default function Bons() {
@@ -105,6 +115,11 @@ export default function Bons() {
   const { transitionWorkflow, canTransitionTo } = useBonWorkflow();
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const [searchParams] = useSearchParams();
+
+  const WORKFLOW_STEPS = WORKFLOW_STEPS_META.map(s => ({
+    ...s,
+    label: (t.pages.bons as any)[WORKFLOW_STEP_LABELS[s.value]] || s.value,
+  }));
 
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [formules, setFormules] = useState<Formule[]>([]);
@@ -260,7 +275,7 @@ export default function Bons() {
     try {
       const volumeNum = parseFloat(volume);
       if (volumeNum <= 0 || volumeNum >= 12) {
-        toast.error('Volume doit être entre 0 et 12 m³');
+        toast.error(t.pages.bons.volumeError);
         setSubmitting(false);
         return;
       }
@@ -314,9 +329,9 @@ export default function Bons() {
 
       if (error) {
         if (error.code === '23505') {
-          toast.error('Ce bon de livraison existe déjà');
+          toast.error(t.pages.bons.existsAlready);
         } else if (error.code === '23514') {
-          toast.error('Données hors limites autorisées');
+          toast.error(t.pages.bons.outOfLimits);
         } else {
           throw error;
         }
@@ -335,16 +350,16 @@ export default function Bons() {
           reference_table: 'bons_livraison_reels',
           destinataire_role: 'ceo',
         }]);
-        toast.warning('Bon créé avec alertes de tolérance');
+        toast.warning(t.pages.bons.createdWithAlerts);
       } else {
-        toast.success('Bon de livraison créé');
+        toast.success(t.pages.bons.created);
       }
       
       setDialogOpen(false);
       fetchData();
     } catch (error) {
       console.error('Error creating bon:', error);
-      toast.error('Erreur lors de la création');
+      toast.error(t.pages.bons.createError);
     } finally {
       setSubmitting(false);
     }
@@ -368,11 +383,11 @@ export default function Bons() {
         .eq('bl_id', blId);
 
       if (error) throw error;
-      toast.success('Statut paiement mis à jour');
+      toast.success(t.pages.bons.paymentUpdated);
       fetchData();
     } catch (error) {
       console.error('Error updating status:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t.pages.bons.paymentError);
     }
   };
 
@@ -572,14 +587,14 @@ export default function Bons() {
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">N° Bon</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.bonNumber}</Label>
                       <Input value={blId} onChange={(e) => setBlId(e.target.value)} required />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Client</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.client}</Label>
                       <Select value={clientId} onValueChange={setClientId} required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner..." />
+                          <SelectValue placeholder={t.pages.bons.selectClient} />
                         </SelectTrigger>
                         <SelectContent>
                           {clients.map((c) => (
@@ -591,10 +606,10 @@ export default function Bons() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Formule</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.formula}</Label>
                       <Select value={formuleId} onValueChange={setFormuleId} required>
                         <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner..." />
+                          <SelectValue placeholder={t.pages.bons.selectFormula} />
                         </SelectTrigger>
                         <SelectContent>
                           {formules.map((f) => (
@@ -609,7 +624,7 @@ export default function Bons() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Volume (m³)</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.volume}</Label>
                       <Input
                         type="number"
                         step="0.1"
@@ -622,7 +637,7 @@ export default function Bons() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Toupie Assignée</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.assignedTruck}</Label>
                       <Input
                         placeholder="T-001"
                         value={toupie}
@@ -633,7 +648,7 @@ export default function Bons() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Ciment Réel (kg)</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.cementReal}</Label>
                       <Input
                         type="number"
                         placeholder="2975"
@@ -643,7 +658,7 @@ export default function Bons() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Adjuvant Réel (L)</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.adjuvantReal}</Label>
                       <Input
                         type="number"
                         step="0.1"
@@ -653,7 +668,7 @@ export default function Bons() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Eau Réelle (L)</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.waterReal}</Label>
                       <Input
                         type="number"
                         placeholder="1530"
@@ -668,7 +683,7 @@ export default function Bons() {
                       <div className="flex items-start gap-2">
                         <AlertCircle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-medium text-warning text-sm">Alertes de Tolérance (Fuite)</p>
+                          <p className="font-medium text-warning text-sm">{t.pages.bons.toleranceAlerts}</p>
                           <ul className="mt-1 space-y-0.5">
                             {toleranceErrors.map((err, i) => (
                               <li key={i} className="text-xs text-foreground">{err}</li>
@@ -681,7 +696,7 @@ export default function Bons() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Km Parcourus</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.kmTraveled}</Label>
                       <Input
                         type="number"
                         placeholder="45"
@@ -690,7 +705,7 @@ export default function Bons() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Temps Mission (heures)</Label>
+                      <Label className="form-label-industrial">{t.pages.bons.missionTime}</Label>
                       <Input
                         type="number"
                         step="0.5"
@@ -705,16 +720,16 @@ export default function Bons() {
 
                   <div className="flex justify-end gap-3 pt-4">
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Annuler
+                      {t.pages.bons.cancel}
                     </Button>
                     <Button type="submit" disabled={submitting}>
                       {submitting ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Création...
+                          {t.pages.bons.creating}
                         </>
                       ) : (
-                        'Créer le Bon'
+                        t.pages.bons.createSlip
                       )}
                     </Button>
                   </div>
@@ -732,7 +747,8 @@ export default function Bons() {
               const Icon = step.icon;
               return (
                 <span key={step.value} className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-muted/50', step.color)}>
-                  <Icon className="h-3 w-3" />
+                   <Icon className="h-3 w-3" />
+
                   {step.label}
                 </span>
               );
@@ -750,21 +766,21 @@ export default function Bons() {
         ) : bons.length === 0 ? (
           <div className="p-8 text-center">
             <Truck className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="text-muted-foreground">Aucun bon de livraison</p>
+            <p className="text-muted-foreground">{t.pages.bons.noBons}</p>
           </div>
         ) : (
           <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>N° Bon</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                  <TableHead>Workflow</TableHead>
-                  <TableHead>Paiement</TableHead>
-                  <TableHead className="w-10">Valid.</TableHead>
-                  <TableHead className="w-24">Actions</TableHead>
+                  <TableHead>{t.pages.bons.bonNumber}</TableHead>
+                  <TableHead>{t.pages.bons.date}</TableHead>
+                  <TableHead>{t.pages.bons.client}</TableHead>
+                  <TableHead>{t.pages.bons.formula}</TableHead>
+                  <TableHead className="text-right">{t.pages.bons.volume}</TableHead>
+                  <TableHead>{t.pages.bons.workflow}</TableHead>
+                  <TableHead>{t.pages.bons.payment}</TableHead>
+                  <TableHead className="w-10">{t.pages.bons.validationShort}</TableHead>
+                  <TableHead className="w-24">{t.pages.bons.actions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -818,9 +834,9 @@ export default function Bons() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="En Attente">En Attente</SelectItem>
-                            <SelectItem value="Payé">Payé</SelectItem>
-                            <SelectItem value="Retard">Retard</SelectItem>
+                            <SelectItem value="En Attente">{t.pages.bons.statusPending}</SelectItem>
+                            <SelectItem value="Payé">{t.pages.bons.statusPaid}</SelectItem>
+                            <SelectItem value="Retard">{t.pages.bons.statusLate}</SelectItem>
                           </SelectContent>
                         </Select>
                       ) : (
