@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useDepenses, Depense } from '@/hooks/useDepenses';

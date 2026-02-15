@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -52,6 +53,7 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function Fournisseurs() {
+  const { t } = useI18n();
   const { 
     fournisseurs, 
     achats, 
@@ -135,8 +137,8 @@ export default function Fournisseurs() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-3xl font-bold text-foreground">Gestion Fournisseurs</h1>
-            <p className="text-xs sm:text-base text-muted-foreground">Achats, paiements et réapprovisionnement</p>
+            <h1 className="text-lg sm:text-3xl font-bold text-foreground">{t.pages.fournisseurs.title}</h1>
+            <p className="text-xs sm:text-base text-muted-foreground">{t.pages.fournisseurs.subtitle}</p>
           </div>
           <Button onClick={refresh} variant="outline" size="sm" className="min-h-[40px] self-start sm:self-auto">
             <RefreshCw className="h-4 w-4 sm:mr-2" />

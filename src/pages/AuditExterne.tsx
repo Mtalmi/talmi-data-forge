@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

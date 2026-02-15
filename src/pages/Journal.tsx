@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,6 +52,7 @@ interface JournalEntry {
 }
 
 export default function Journal() {
+  const { t } = useI18n();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -204,10 +206,10 @@ export default function Journal() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <Truck className="h-6 w-6 text-primary" />
-              Journal Quotidien
+              {t.pages.journal.title}
             </h1>
             <p className="text-muted-foreground">
-              Suivi des livraisons terminées et encaissements
+              {t.pages.journal.subtitle || 'Suivi des livraisons terminées et encaissements'}
             </p>
           </div>
           

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,6 +41,7 @@ const TYPE_FILTERS = [
 
 export default function Alertes() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { isCeo, isAccounting } = useAuth();
   const {
     alerts,
@@ -98,10 +100,10 @@ export default function Alertes() {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Bell className="h-8 w-8 text-primary" />
-              Centre de Notifications
+              {t.pages.alertes.title}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Alertes système centralisées en temps réel
+              {t.pages.alertes.subtitle || 'Alertes système centralisées en temps réel'}
             </p>
           </div>
           <div className="flex gap-2">

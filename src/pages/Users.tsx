@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -102,6 +103,7 @@ const ROLE_CONFIG: Record<string, { label: string; description: string; classNam
 
 export default function Users() {
   const { isCeo } = useAuth();
+  const { t } = useI18n();
   const [userRoles, setUserRoles] = useState<(UserRole & { profile?: Profile })[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,9 +215,9 @@ export default function Users() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Matrice de Commandement</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.pages.users.title}</h1>
             <p className="text-muted-foreground mt-1">
-              Attribution des rôles selon la C&C Matrix
+              {t.pages.users.subtitle || 'Attribution des rôles selon la C&C Matrix'}
             </p>
           </div>
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

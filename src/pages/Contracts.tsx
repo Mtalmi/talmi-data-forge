@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,6 +102,7 @@ const CONTRACT_TYPE_CONFIG: Record<ContractType, { label: string; icon: React.Re
 
 export default function Contracts() {
   const { user, canApproveDevis, isCeo } = useAuth();
+  const { t } = useI18n();
   const { stats, expirationAlerts, suppliers } = useContractCompliance();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
@@ -276,10 +278,10 @@ export default function Contracts() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <FileText className="h-6 w-6 text-primary" />
-              Contrats de Location
+              {t.pages.contracts.title}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Gestion des contrats de location (Camion, Trax, Terrain)
+              {t.pages.contracts.subtitle || 'Gestion des contrats de location (Camion, Trax, Terrain)'}
             </p>
           </div>
           
