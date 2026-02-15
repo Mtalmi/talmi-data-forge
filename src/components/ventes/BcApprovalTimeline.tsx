@@ -1,5 +1,6 @@
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { CheckCircle, Clock, User, Shield, Zap, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
@@ -20,39 +21,39 @@ interface TimelineStep {
 }
 
 export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelineProps) {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const a = t.pages.bcApproval;
   const isEmergencyBc = bc.notes?.includes('[URGENCE/EMERGENCY');
   
   const getSteps = (): TimelineStep[] => {
     const steps: TimelineStep[] = [];
     
-    // Step 1: Creation
     steps.push({
-      label: 'Créé',
+      label: a.created,
       timestamp: bc.created_at,
-      actor: bc.created_by ? 'Utilisateur' : null,
+      actor: bc.created_by ? a.user : null,
       role: null,
       icon: <Clock className="h-3 w-3" />,
       status: 'completed',
       isEmergency: isEmergencyBc,
     });
     
-    // Step 2: Validation (if applicable)
     if (bc.statut === 'en_attente_validation') {
       steps.push({
-        label: 'En attente validation',
+        label: a.awaitingValidation,
         timestamp: null,
         actor: null,
-        role: 'Agent Admin',
+        role: a.agentAdmin,
         icon: <Clock className="h-3 w-3" />,
         status: 'current',
       });
     } else if (bc.validated_at || bc.statut !== 'brouillon') {
-      // Access properties safely with type assertion since they may exist in extended types
       const validatedByName = (bc as any).validated_by_name || null;
       const validatedByRole = (bc as any).validated_by_role || null;
       
       steps.push({
-        label: isEmergencyBc ? 'Bypass Urgence' : 'Validé',
+        label: isEmergencyBc ? a.emergencyBypass : a.validated,
         timestamp: bc.validated_at || null,
         actor: validatedByName,
         role: validatedByRole,
@@ -62,19 +63,18 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
       });
     }
     
-    // Step 3: Production Status
     if (bc.statut === 'en_production' || bc.statut === 'en_livraison' || bc.statut === 'termine' || bc.statut === 'livre' || bc.statut === 'facture') {
       steps.push({
-        label: 'Production',
+        label: a.production,
         timestamp: null,
         actor: null,
-        role: 'Centraliste',
+        role: a.centraliste,
         icon: <CheckCircle className="h-3 w-3" />,
         status: 'completed',
       });
     } else if (bc.statut === 'pret_production') {
       steps.push({
-        label: 'Prêt Production',
+        label: a.readyProduction,
         timestamp: null,
         actor: null,
         role: null,
@@ -89,7 +89,6 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
   const steps = getSteps();
   
   if (compact) {
-    // Compact inline view
     return (
       <div className="flex items-center gap-1 text-xs">
         {steps.map((step, idx) => (
@@ -108,7 +107,7 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
               )}
               {step.timestamp && (
                 <span className="text-muted-foreground">
-                  ({format(parseISO(step.timestamp), 'HH:mm', { locale: fr })})
+                  ({format(parseISO(step.timestamp), 'HH:mm', { locale: dateLocale || undefined })})
                 </span>
               )}
             </span>
@@ -118,12 +117,11 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
     );
   }
 
-  // Full vertical timeline
   return (
     <div className="space-y-3">
       <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
         <Shield className="h-3 w-3" />
-        Timeline d'Approbation
+        {a.approvalTimeline}
       </p>
       <div className="relative pl-4 border-l-2 border-muted space-y-3">
         {steps.map((step, idx) => (
@@ -134,7 +132,6 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
               step.isEmergency && "bg-amber-500/5 -ml-4 pl-4 py-1 rounded-r"
             )}
           >
-            {/* Timeline dot */}
             <div className={cn(
               "absolute -left-[21px] p-1 rounded-full border-2 bg-background",
               step.status === 'completed' && "border-success text-success",
@@ -155,7 +152,7 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
                 </span>
                 {step.isEmergency && idx === 0 && (
                   <span className="text-[10px] px-1 py-0.5 rounded bg-amber-500/20 text-amber-600">
-                    URGENCE
+                    {a.emergency}
                   </span>
                 )}
               </div>
@@ -170,14 +167,14 @@ export function BcApprovalTimeline({ bc, compact = false }: BcApprovalTimelinePr
                   )}
                   {step.timestamp && (
                     <span>
-                      {format(parseISO(step.timestamp), 'dd/MM HH:mm', { locale: fr })}
+                      {format(parseISO(step.timestamp), 'dd/MM HH:mm', { locale: dateLocale || undefined })}
                     </span>
                   )}
                 </div>
               )}
               {step.status === 'current' && step.role && (
                 <p className="text-xs text-warning">
-                  En attente: {step.role}
+                  {a.awaiting}: {step.role}
                 </p>
               )}
             </div>
