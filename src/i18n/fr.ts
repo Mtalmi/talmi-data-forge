@@ -1400,6 +1400,15 @@ const fr = {
       requestDate: 'Date demande',
     },
   },
+  landing: {
+    badge: "Système d'exploitation d'entreprise",
+    headline1: "Le Système d'Exploitation",
+    headline2: 'des Titans du Béton',
+    subtitle: 'TBOS unifie',
+    accessPlatform: 'Accéder à la plateforme',
+    exploreModules: 'Explorer les modules',
+    getStarted: 'Commencer',
+  },
   languages: {
     ar: 'العربية',
     fr: 'Français',

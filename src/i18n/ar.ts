@@ -1400,6 +1400,15 @@ const ar = {
       requestDate: 'تاريخ الطلب',
     },
   },
+  landing: {
+    badge: 'نظام تشغيل المؤسسة',
+    headline1: 'نظام التشغيل',
+    headline2: 'لعمالقة الخرسانة',
+    subtitle: 'TBOS يوحّد',
+    accessPlatform: 'الدخول إلى المنصة',
+    exploreModules: 'استكشاف الوحدات',
+    getStarted: 'ابدأ الآن',
+  },
   languages: {
     ar: 'العربية',
     fr: 'Français',
