@@ -61,6 +61,7 @@ const ar = {
   },
   dashboard: {
     title: 'لوحة التحكم',
+    greeting: 'مرحباً',
     todayProduction: 'إنتاج اليوم',
     revenue: 'الإيرادات',
     activeClients: 'العملاء النشطون',
@@ -70,13 +71,51 @@ const ar = {
     lastUpdated: 'آخر تحديث',
     alerts: 'التنبيهات',
     noAlerts: 'لا توجد تنبيهات',
+    myAccount: 'حسابي',
+    profile: 'الملف الشخصي',
     period: {
+      today: 'اليوم',
+      todayShort: 'اليوم',
+      thisWeek: 'هذا الأسبوع',
+      thisWeekShort: 'أسبوع',
+      thisMonth: 'هذا الشهر',
+      thisMonthShort: 'شهر',
       day: 'يوم',
       week: 'أسبوع',
       month: 'شهر',
       quarter: 'ربع سنة',
       year: 'سنة',
     },
+    sections: {
+      performanceKpis: 'الأداء والمؤشرات',
+      productionQuality: 'الإنتاج والجودة',
+      financeTreasury: 'المالية والخزينة',
+      fleetLogistics: 'الأسطول واللوجستيك',
+      securityAudit: 'الأمان والتدقيق',
+      commandCenter: 'مركز القيادة',
+    },
+    kpi: {
+      totalVolume: 'الحجم الإجمالي',
+      turnover: 'رقم المعاملات',
+      avgCur: 'متوسط CUR',
+      grossMargin: 'الهامش الإجمالي',
+      unitCost: 'التكلفة الحقيقية للوحدة',
+      netProfit: 'صافي الربح',
+      revenueMinusCosts: 'الإيرادات - التكاليف - المصاريف',
+      totalExpenses: 'إجمالي المصاريف',
+      marginAlerts: 'تنبيهات الهامش',
+      varianceOver5: 'انحرافات > 5%',
+      invoices: 'فواتير',
+    },
+    productionSummary: 'ملخص الإنتاج',
+    activeFormulas: 'الخلطات النشطة',
+    pricesUpdated: 'تحديث الأسعار',
+    avgEcRatio: 'متوسط نسبة م/س',
+    avgCur7d: 'متوسط CUR (7 أيام)',
+    addProduct: '+ إضافة منتج',
+    securityAlerts: '🛡️ تنبيهات الأمان',
+    auditTrail: '🔍 سجل التدقيق',
+    loading: 'جارٍ التحميل...',
   },
   production: {
     title: 'الإنتاج',
