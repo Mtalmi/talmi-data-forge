@@ -31,6 +31,7 @@ import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerW
 import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
 import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
 import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
+import { DashboardSection } from '@/components/dashboard/DashboardSection';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -43,7 +44,11 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator, Bell, MapPin, ChevronDown, LogOut, User, Settings } from 'lucide-react';
+import { 
+  Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, 
+  Calculator, Bell, MapPin, ChevronDown, LogOut, User, Settings,
+  BarChart3, Factory, Truck, Shield, Wallet
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SkeletonKPI } from '@/components/ui/skeletons';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
@@ -80,35 +85,27 @@ export default function Dashboard() {
   // Auto-refresh every 30 seconds
   useEffect(() => {
     fetchProductionStats();
-    // Check payment delays on load (for CEO/Admin)
     if (isCeo) {
       checkPaymentDelays();
     }
-    
-    // Set up auto-refresh interval
     const autoRefreshInterval = setInterval(() => {
       refresh();
       refreshPeriod();
-    }, 30000); // 30 seconds
-
+    }, 30000);
     return () => clearInterval(autoRefreshInterval);
   }, [isCeo]);
 
   const fetchProductionStats = async () => {
     try {
-      // Fetch active formules count
       const { count: formulesCount } = await supabase
         .from('formules_theoriques')
         .select('*', { count: 'exact', head: true });
-
-      // Fetch latest price update
       const { data: latestPrice } = await supabase
         .from('prix_achat_actuels')
         .select('date_mise_a_jour')
         .order('date_mise_a_jour', { ascending: false })
         .limit(1)
         .maybeSingle();
-
       setProductionStats({
         formulesActives: formulesCount || 0,
         prixUpdatedAt: latestPrice?.date_mise_a_jour 
@@ -123,7 +120,6 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    // Update production stats when dashboard stats change
     if (!statsLoading) {
       setProductionStats(prev => ({
         ...prev,
@@ -158,38 +154,25 @@ export default function Dashboard() {
     setDismissedAlerts(prev => {
       const updated = new Set(prev);
       updated.add(id);
-      // Persist to localStorage
       localStorage.setItem('tbos_dismissed_alerts', JSON.stringify([...updated]));
       return updated;
     });
   };
 
-  // Filter out dismissed alerts
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
-
-  const getTrendDirection = (value: number): 'up' | 'down' | 'neutral' => {
-    if (value > 2) return 'up';
-    if (value < -2) return 'down';
-    return 'neutral';
-  };
-
-  const formatTrend = (value: number): string => {
-    const sign = value >= 0 ? '+' : '';
-    return `${sign}${value.toFixed(0)}%`;
-  };
 
   return (
     <MainLayout>
-      <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         {/* Hawaii Greeting - CEO Only */}
         {isCeo && <HawaiiGreeting />}
-        {/* Premium Dashboard Header */}
+
+        {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
           ref={kpiSectionRef}
           className="dashboard-header sticky top-14 sm:top-16 z-10 p-4 sm:p-5"
         >
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Greeting & Location */}
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
                 Bonjour, Master 👋
@@ -200,9 +183,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Right Controls */}
             <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-              {/* Period Selector */}
               <div className="period-selector-premium">
                 {[
                   { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
@@ -238,7 +219,6 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {/* Action Buttons */}
               {isCeo && <SystemManualPdf />}
               {isCeo && <DailyReportGenerator />}
               {isCeo && <HawaiiReportButton />}
@@ -251,7 +231,6 @@ export default function Dashboard() {
                 <span className="hidden sm:inline">Actualiser</span>
               </button>
 
-              {/* Notification Bell */}
               <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
                 <Bell className="h-4 w-4 text-muted-foreground" />
                 <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
@@ -259,7 +238,6 @@ export default function Dashboard() {
                 </span>
               </button>
 
-              {/* User Avatar Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
@@ -291,128 +269,8 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* CEO Hawaii Command Center - Mobile Bento Grid */}
-        {isCeo && (
-          <div className="bento-grid">
-            {/* Real-Time Profit Ticker - Wide on desktop */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <RealTimeProfitTicker />
-            </ParallaxCard>
-            
-            {/* Audit Health Widget */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <AuditHealthWidget />
-            </ParallaxCard>
-            
-            {/* Database Health Widget - Error Sentry */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <DatabaseHealthWidget />
-            </ParallaxCard>
-            
-            {/* Live Quality Feed - Hawaii Transparency */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <LiveQualityFeed />
-            </ParallaxCard>
-            
-            {/* Live Production Feed - Hawaii Plant Monitoring */}
-            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
-              <LiveProductionWidget />
-            </ParallaxCard>
-            
-            {/* Batch Photo Gallery - Hawaii Visual Proof */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <BatchPhotoGallery />
-            </ParallaxCard>
-            
-            {/* Circular Budget Gauge - Financial Constitution */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <CircularBudgetGauge />
-            </ParallaxCard>
-            
-            {/* Midnight Alert Widget - Off-Hours Transactions */}
-            <ParallaxCard className="bento-standard" glowColor="ruby">
-              <MidnightAlertWidget />
-            </ParallaxCard>
-            
-            {/* Split-View Handshake Center - Double Validation */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <SplitViewHandshake />
-            </ParallaxCard>
-            
-            {/* Unified Forensic Feed - Tabbed: Security Alerts + Audit Trail */}
-            <ParallaxCard className="bento-wide" glowColor="ruby">
-              <Tabs defaultValue="alerts" className="w-full">
-                <TabsList className="w-full grid grid-cols-2 mb-2">
-                  <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
-                  <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
-                </TabsList>
-                <TabsContent value="alerts" className="mt-0">
-                  <ForensicAlertFeed />
-                </TabsContent>
-                <TabsContent value="audit" className="mt-0">
-                  <ForensicAuditFeed />
-                </TabsContent>
-              </Tabs>
-            </ParallaxCard>
-            
-            {/* Treasury & Cash Flow - Financial Constitution */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <TreasuryWidget />
-            </ParallaxCard>
-            
-            {/* Tax & Social Compliance Widget */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <TaxComplianceWidget />
-            </ParallaxCard>
-            
-            {/* Cash-Flow Time Machine - 30-Day Forecast */}
-            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
-              <CashFlowForecast />
-            </ParallaxCard>
-            
-            {/* Fleet Predator - Live GPS & Fuel Theft Detection */}
-            <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
-              <LiveFleetMap />
-            </ParallaxCard>
-            
-            {/* Maintenance Sentinel - Fleet Health Widget */}
-            <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
-              <MaintenanceAlertWidget />
-            </ParallaxCard>
-            
-            {/* Geofence Alert Widget - GPS Predator Alerts */}
-            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="medium">
-              <GeofenceAlertWidget />
-            </ParallaxCard>
-            
-            {/* CEO Emergency Override - Nuclear Key */}
-            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
-              <CeoEmergencyOverride />
-            </ParallaxCard>
-            
-            {/* AI Anomaly Scanner - Forensic AI */}
-            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
-              <AIAnomalyScannerWidget />
-            </ParallaxCard>
-            
-            {/* WS7 Live Production Feed */}
-            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
-              <WS7LiveFeedWidget />
-            </ParallaxCard>
-            
-            {/* Executive Command Center - Full width */}
-            <div className="bento-full">
-              <div className="glass-card p-3 sm:p-6 rounded-xl">
-                <ExecutiveCommandCenter />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Leakage Alert Banner - Critical */}
+        {/* ─── CRITICAL ALERTS ────────────────────────────────── */}
         {(isCeo || isAccounting) && <LeakageAlertBanner />}
-
-        {/* Alerts - uses persisted dismissal */}
         <AlertBanner 
           alerts={visibleAlerts.map(a => ({
             id: a.id,
@@ -423,154 +281,312 @@ export default function Dashboard() {
           onDismiss={dismissAlert} 
         />
 
-        {/* Period-Aware KPI Grid - Mobile optimized */}
-        <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {periodLoading ? (
-            <>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonKPI key={i} />
-              ))}
-            </>
-          ) : (
-            <>
-              <PeriodKPICard
-                title="Volume Total"
-                value={`${periodStats.totalVolume.toFixed(0)} m³`}
-                subtitle={periodStats.periodLabel || 'Chargement...'}
-                icon={Package}
-                trend={periodStats.volumeTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
-                className="animate-fade-in"
-              />
-              <PeriodKPICard
-                title="Chiffre d'Affaires"
-                value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
-                subtitle={`${periodStats.nbFactures} factures`}
-                icon={DollarSign}
-                trend={periodStats.caTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
-                className="animate-fade-in"
-                style={{ animationDelay: '50ms' }}
-              />
-              <PeriodKPICard
-                title="CUR Moyen"
-                value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
-                subtitle="Coût Unitaire Réel"
-                icon={Gauge}
-                trend={periodStats.curTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
-                className="animate-fade-in"
-                style={{ animationDelay: '100ms' }}
-              />
-              <PeriodKPICard
-                title="Marge Brute"
-                value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
-                subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
-                icon={TrendingUp}
-                trend={periodStats.margeTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
-                className="animate-fade-in"
-                style={{ animationDelay: '150ms' }}
-              />
-            </>
-          )}
-        </div>
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 1 — KPIs & PERFORMANCE
+            ═══════════════════════════════════════════════════════ */}
+        <DashboardSection
+          title="Performance & KPIs"
+          icon={BarChart3}
+          storageKey="kpis"
+          defaultOpen={true}
+        >
+          <div className="space-y-4">
+            {/* Period KPI Grid */}
+            <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              {periodLoading ? (
+                Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
+              ) : (
+                <>
+                  <PeriodKPICard
+                    title="Volume Total"
+                    value={`${periodStats.totalVolume.toFixed(0)} m³`}
+                    subtitle={periodStats.periodLabel || 'Chargement...'}
+                    icon={Package}
+                    trend={periodStats.volumeTrend}
+                    trendLabel={periodStats.previousPeriodLabel}
+                    variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
+                    className="animate-fade-in"
+                  />
+                  <PeriodKPICard
+                    title="Chiffre d'Affaires"
+                    value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
+                    subtitle={`${periodStats.nbFactures} factures`}
+                    icon={DollarSign}
+                    trend={periodStats.caTrend}
+                    trendLabel={periodStats.previousPeriodLabel}
+                    variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
+                    className="animate-fade-in"
+                    style={{ animationDelay: '50ms' }}
+                  />
+                  <PeriodKPICard
+                    title="CUR Moyen"
+                    value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
+                    subtitle="Coût Unitaire Réel"
+                    icon={Gauge}
+                    trend={periodStats.curTrend}
+                    trendLabel={periodStats.previousPeriodLabel}
+                    variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
+                    className="animate-fade-in"
+                    style={{ animationDelay: '100ms' }}
+                  />
+                  <PeriodKPICard
+                    title="Marge Brute"
+                    value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
+                    subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
+                    icon={TrendingUp}
+                    trend={periodStats.margeTrend}
+                    trendLabel={periodStats.previousPeriodLabel}
+                    variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
+                    className="animate-fade-in"
+                    style={{ animationDelay: '150ms' }}
+                  />
+                </>
+              )}
+            </div>
 
-        {/* Profit Net & Dépenses - CEO Only */}
-        {(isCeo || isAccounting) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {periodLoading ? (
-              Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
-            ) : (
-              <>
-                <PeriodKPICard
-                  title="Profit Net"
-                  value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
-                  subtitle="CA - Coûts - Dépenses"
-                  icon={Calculator}
-                  variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
-                  className="animate-fade-in"
-                />
-                <PeriodKPICard
-                  title="Total Dépenses"
-                  value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
-                  subtitle={periodStats.periodLabel}
-                  icon={Receipt}
-                  variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
-                  className="animate-fade-in"
-                  style={{ animationDelay: '50ms' }}
-                />
-                <KPICard
-                  title="Alertes Marge"
-                  value={stats.marginAlerts}
-                  subtitle="Écarts > 5%"
-                  icon={AlertTriangle}
-                  variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
-                />
-                <PeriodKPICard
-                  title="Clients Actifs"
-                  value={periodStats.nbClients}
-                  subtitle={periodStats.periodLabel}
-                  icon={Users}
-                  variant="default"
-                  className="animate-fade-in"
-                  style={{ animationDelay: '100ms' }}
-                />
-              </>
+            {/* Profit & Expenses Row — CEO/Accounting */}
+            {(isCeo || isAccounting) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {periodLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
+                ) : (
+                  <>
+                    <PeriodKPICard
+                      title="Profit Net"
+                      value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
+                      subtitle="CA - Coûts - Dépenses"
+                      icon={Calculator}
+                      variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
+                      className="animate-fade-in"
+                    />
+                    <PeriodKPICard
+                      title="Total Dépenses"
+                      value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
+                      subtitle={periodStats.periodLabel}
+                      icon={Receipt}
+                      variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
+                      className="animate-fade-in"
+                      style={{ animationDelay: '50ms' }}
+                    />
+                    <KPICard
+                      title="Alertes Marge"
+                      value={stats.marginAlerts}
+                      subtitle="Écarts > 5%"
+                      icon={AlertTriangle}
+                      variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
+                    />
+                    <PeriodKPICard
+                      title="Clients Actifs"
+                      value={periodStats.nbClients}
+                      subtitle={periodStats.periodLabel}
+                      icon={Users}
+                      variant="default"
+                      className="animate-fade-in"
+                      style={{ animationDelay: '100ms' }}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Quick Access Widgets */}
+            {(isCeo || isAccounting) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <PendingApprovalsWidget />
+                <TodaysPipelineWidget />
+                <ARAgingWidget />
+                <StockLevelsWidget />
+                <SalesFunnelWidget />
+              </div>
+            )}
+
+            {/* Real-Time Profit Ticker */}
+            {isCeo && (
+              <ParallaxCard className="w-full" glowColor="gold">
+                <RealTimeProfitTicker />
+              </ParallaxCard>
             )}
           </div>
-        )}
+        </DashboardSection>
 
-        {/* Quick Access Widgets - CEO Only */}
-        {(isCeo || isAccounting) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <PendingApprovalsWidget />
-            <TodaysPipelineWidget />
-            <ARAgingWidget />
-            <StockLevelsWidget />
-            <SalesFunnelWidget />
-          </div>
-        )}
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 2 — PRODUCTION & QUALITÉ
+            ═══════════════════════════════════════════════════════ */}
+        <DashboardSection
+          title="Production & Qualité"
+          icon={Factory}
+          storageKey="production"
+          defaultOpen={true}
+        >
+          <div className="space-y-4">
+            {isCeo && (
+              <div className="bento-grid">
+                <ParallaxCard className="bento-wide" glowColor="gold">
+                  <LiveQualityFeed />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
+                  <LiveProductionWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="gold">
+                  <BatchPhotoGallery />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
+                  <WS7LiveFeedWidget />
+                </ParallaxCard>
+              </div>
+            )}
 
-        {/* CEO Emergency Codes Manager - CEO Only */}
-        {isCeo && <CeoCodeManager />}
-
-        {/* Audit History Chart - CEO Only */}
-        {isCeo && <AuditHistoryChart />}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentDeliveries />
-          
-          {/* Production Summary Card - visible for all roles */}
-          <div className="card-industrial p-6 animate-fade-in">
-            <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Formules actives</span>
-                <span className="font-semibold">{productionStats.formulesActives}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Prix mis à jour</span>
-                <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
-                <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
-                  {productionStats.tauxECMoyen}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
-                <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
-                  {productionStats.curMoyen}
-                </span>
+            {/* Production Summary + Recent Deliveries */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RecentDeliveries />
+              <div className="card-industrial p-6 animate-fade-in">
+                <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <span className="text-sm text-muted-foreground">Formules actives</span>
+                    <span className="font-semibold">{productionStats.formulesActives}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <span className="text-sm text-muted-foreground">Prix mis à jour</span>
+                    <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
+                    <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
+                      {productionStats.tauxECMoyen}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                    <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
+                    <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
+                      {productionStats.curMoyen}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </DashboardSection>
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 3 — FINANCE & TRÉSORERIE
+            ═══════════════════════════════════════════════════════ */}
+        {isCeo && (
+          <DashboardSection
+            title="Finance & Trésorerie"
+            icon={Wallet}
+            storageKey="finance"
+            defaultOpen={true}
+          >
+            <div className="bento-grid">
+              <ParallaxCard className="bento-wide" glowColor="gold">
+                <CircularBudgetGauge />
+              </ParallaxCard>
+              <ParallaxCard className="bento-wide" glowColor="gold">
+                <TreasuryWidget />
+              </ParallaxCard>
+              <ParallaxCard className="bento-wide" glowColor="emerald">
+                <TaxComplianceWidget />
+              </ParallaxCard>
+              <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+                <CashFlowForecast />
+              </ParallaxCard>
+              <ParallaxCard className="bento-standard" glowColor="ruby">
+                <MidnightAlertWidget />
+              </ParallaxCard>
+              <ParallaxCard className="bento-wide" glowColor="gold">
+                <SplitViewHandshake />
+              </ParallaxCard>
+            </div>
+          </DashboardSection>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 4 — FLOTTE & LOGISTIQUE
+            ═══════════════════════════════════════════════════════ */}
+        {isCeo && (
+          <DashboardSection
+            title="Flotte & Logistique"
+            icon={Truck}
+            storageKey="fleet"
+            defaultOpen={false}
+          >
+            <div className="bento-grid">
+              <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
+                <LiveFleetMap />
+              </ParallaxCard>
+              <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
+                <MaintenanceAlertWidget />
+              </ParallaxCard>
+              <ParallaxCard className="bento-standard" glowColor="ruby" intensity="medium">
+                <GeofenceAlertWidget />
+              </ParallaxCard>
+            </div>
+          </DashboardSection>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 5 — SÉCURITÉ & AUDIT
+            ═══════════════════════════════════════════════════════ */}
+        {isCeo && (
+          <DashboardSection
+            title="Sécurité & Audit"
+            icon={Shield}
+            storageKey="security"
+            defaultOpen={false}
+          >
+            <div className="space-y-4">
+              <div className="bento-grid">
+                <ParallaxCard className="bento-wide" glowColor="emerald">
+                  <AuditHealthWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="emerald">
+                  <DatabaseHealthWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="ruby">
+                  <Tabs defaultValue="alerts" className="w-full">
+                    <TabsList className="w-full grid grid-cols-2 mb-2">
+                      <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
+                      <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="alerts" className="mt-0">
+                      <ForensicAlertFeed />
+                    </TabsContent>
+                    <TabsContent value="audit" className="mt-0">
+                      <ForensicAuditFeed />
+                    </TabsContent>
+                  </Tabs>
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+                  <AIAnomalyScannerWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
+                  <CeoEmergencyOverride />
+                </ParallaxCard>
+              </div>
+
+              {/* CEO Tools */}
+              <CeoCodeManager />
+              <AuditHistoryChart />
+            </div>
+          </DashboardSection>
+        )}
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 6 — EXECUTIVE COMMAND CENTER
+            ═══════════════════════════════════════════════════════ */}
+        {isCeo && (
+          <DashboardSection
+            title="Centre de Commande"
+            icon={Gauge}
+            storageKey="command"
+            defaultOpen={false}
+          >
+            <div className="glass-card p-3 sm:p-6 rounded-xl">
+              <ExecutiveCommandCenter />
+            </div>
+          </DashboardSection>
+        )}
       </div>
     </MainLayout>
   );
