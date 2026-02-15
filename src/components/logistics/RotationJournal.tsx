@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, forwardRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMinutes } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { 
   Table, 
   TableBody, 
@@ -62,6 +63,9 @@ interface FuelEntry {
 }
 
 const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const rj = t.rotationJournal;
   const [rotations, setRotations] = useState<RotationEntry[]>([]);
   const [truckAverages, setTruckAverages] = useState<Map<string, number>>(new Map());
   const [truckDrivers, setTruckDrivers] = useState<Map<string, string>>(new Map());
@@ -228,11 +232,11 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
       setRotations(enrichedRotations);
     } catch (error) {
       console.error('Error fetching rotations:', error);
-      toast.error('Erreur lors du chargement des rotations');
+      toast.error(rj.errorLoading);
     } finally {
       setLoading(false);
     }
-  }, [dateFilter, truckFilter, truckDrivers, fetchFuelForDate]);
+  }, [dateFilter, truckFilter, truckDrivers, fetchFuelForDate, rj.errorLoading]);
 
   // Initial load
   useEffect(() => {
@@ -285,7 +289,8 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return '—';
     try {
-      return format(new Date(timestamp), 'HH:mm', { locale: fr });
+      const fmtOpts = dateLocale ? { locale: dateLocale } : {};
+      return format(new Date(timestamp), 'HH:mm', fmtOpts);
     } catch {
       return '—';
     }
@@ -332,7 +337,7 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
       return (
         <Badge className={cn(config.bgLight, config.textColor, config.borderColor, "gap-1 border")}>
           <CheckCircle2 className="h-3 w-3" />
-          Validé
+          {rj.validated}
         </Badge>
       );
     }
@@ -361,10 +366,10 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
           <Truck className="h-4 w-4 text-muted-foreground" />
           <Select value={truckFilter} onValueChange={setTruckFilter}>
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="Tous les camions" />
+              <SelectValue placeholder={rj.allTrucks} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tous les camions</SelectItem>
+              <SelectItem value="all">{rj.allTrucks}</SelectItem>
               {trucks.map((t) => (
                 <SelectItem key={t.id_camion} value={t.id_camion}>
                   {t.id_camion}
@@ -375,24 +380,24 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
         <Button variant="outline" size="sm" onClick={fetchRotations} className="gap-2">
           <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-          Actualiser
+          {rj.refresh}
         </Button>
       </div>
 
       {/* Stats Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="p-3 bg-muted/50 rounded-lg">
-          <p className="text-xs text-muted-foreground">Total Rotations</p>
+          <p className="text-xs text-muted-foreground">{rj.totalRotations}</p>
           <p className="text-2xl font-bold">{rotations.length}</p>
         </div>
         <div className="p-3 bg-success/10 rounded-lg">
-          <p className="text-xs text-muted-foreground">Complètes</p>
+          <p className="text-xs text-muted-foreground">{rj.complete}</p>
           <p className="text-2xl font-bold text-success">
             {rotations.filter((r) => r.heure_retour_centrale).length}
           </p>
         </div>
         <div className="p-3 bg-warning/10 rounded-lg">
-          <p className="text-xs text-muted-foreground">Attentes &gt; 30min</p>
+          <p className="text-xs text-muted-foreground">{rj.waitingOver30}</p>
           <p className="text-2xl font-bold text-warning">
             {rotations.filter((r) => {
               const wait = calculateWaitingTime(r.heure_arrivee_chantier, r.validated_at);
@@ -401,7 +406,7 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
           </p>
         </div>
         <div className="p-3 bg-destructive/10 rounded-lg">
-          <p className="text-xs text-muted-foreground">Alertes Carburant</p>
+          <p className="text-xs text-muted-foreground">{rj.fuelAlerts}</p>
           <p className="text-2xl font-bold text-destructive">
             {rotations.filter((r) => isFuelVarianceAlert(r.camion_id, r.consommation_l_100km)).length}
           </p>
@@ -417,25 +422,25 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
         ) : rotations.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             <Truck className="h-12 w-12 mx-auto mb-2 opacity-30" />
-            <p>Aucune rotation trouvée pour cette date</p>
+            <p>{rj.noRotationsFound}</p>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-28">BL</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Camion</TableHead>
-                <TableHead>Chauffeur</TableHead>
-                <TableHead className="text-center">Départ</TableHead>
-                <TableHead className="text-center">Arrivée</TableHead>
-                <TableHead className="text-center">Signé</TableHead>
-                <TableHead className="text-center">Retour</TableHead>
-                <TableHead className="text-center">Cycle</TableHead>
-                <TableHead className="text-center">Attente</TableHead>
-                <TableHead className="text-right">KM</TableHead>
-                <TableHead className="text-right">L/100km</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead className="w-28">{rj.bl}</TableHead>
+                <TableHead>{rj.client}</TableHead>
+                <TableHead>{rj.truck}</TableHead>
+                <TableHead>{rj.driver}</TableHead>
+                <TableHead className="text-center">{rj.departure}</TableHead>
+                <TableHead className="text-center">{rj.arrival}</TableHead>
+                <TableHead className="text-center">{rj.signed}</TableHead>
+                <TableHead className="text-center">{rj.returnCol}</TableHead>
+                <TableHead className="text-center">{rj.cycle}</TableHead>
+                <TableHead className="text-center">{rj.waiting}</TableHead>
+                <TableHead className="text-right">{rj.km}</TableHead>
+                <TableHead className="text-right">{rj.lPer100km}</TableHead>
+                <TableHead>{rj.status}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -518,11 +523,11 @@ const RotationJournal = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-warning/20" />
-          <span>Attente &gt; 30min (facturable)</span>
+          <span>{rj.waitingBillable}</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-destructive/20" />
-          <span>Conso carburant &gt; 20% moyenne</span>
+          <span>{rj.fuelAboveAvg}</span>
         </div>
       </div>
     </div>

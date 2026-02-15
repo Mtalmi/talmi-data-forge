@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ActiveDelivery {
   bl_id: string;
@@ -53,15 +54,6 @@ interface TruckRescueModalProps {
   onComplete: () => void;
 }
 
-const INCIDENT_TYPES = [
-  'Panne mécanique',
-  'Accident',
-  'Crevaison',
-  'Problème hydraulique',
-  'Panne électrique',
-  'Autre',
-];
-
 export function TruckRescueModal({
   open,
   onOpenChange,
@@ -69,8 +61,20 @@ export function TruckRescueModal({
   activeDelivery,
   onComplete,
 }: TruckRescueModalProps) {
+  const { t } = useI18n();
+  const tr = t.truckRescue;
+
+  const INCIDENT_TYPES = [
+    tr.mechanicalFailure,
+    tr.accident,
+    tr.flatTire,
+    tr.hydraulicIssue,
+    tr.electricalFailure,
+    tr.other,
+  ];
+
   const [step, setStep] = useState<'incident' | 'rescue' | 'confirm'>('incident');
-  const [incidentType, setIncidentType] = useState('Panne mécanique');
+  const [incidentType, setIncidentType] = useState(tr.mechanicalFailure);
   const [description, setDescription] = useState('');
   const [volumePerdu, setVolumePerdu] = useState<string>('0');
   const [rescueTruckId, setRescueTruckId] = useState<string>('');
@@ -78,7 +82,6 @@ export function TruckRescueModal({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Fetch available trucks for rescue
   useEffect(() => {
     if (open) {
       fetchAvailableTrucks();
@@ -100,7 +103,7 @@ export function TruckRescueModal({
       setAvailableTrucks(data || []);
     } catch (error) {
       console.error('Error fetching available trucks:', error);
-      toast.error('Erreur lors du chargement des camions disponibles');
+      toast.error(tr.errorLoading);
     } finally {
       setLoading(false);
     }
@@ -108,7 +111,7 @@ export function TruckRescueModal({
 
   const handleSubmit = async () => {
     if (!description.trim()) {
-      toast.error('Veuillez décrire l\'incident');
+      toast.error(tr.describeIncident);
       return;
     }
 
@@ -117,7 +120,6 @@ export function TruckRescueModal({
       const volumeLost = parseFloat(volumePerdu) || 0;
       const volumeToRescue = activeDelivery ? activeDelivery.volume_m3 - volumeLost : 0;
 
-      // 1. Create incident record
       const { data: incident, error: incidentError } = await supabase
         .from('incidents_flotte')
         .insert({
@@ -135,7 +137,6 @@ export function TruckRescueModal({
 
       if (incidentError) throw incidentError;
 
-      // 2. Set broken truck to 'Hors Service' and clear mission
       const { error: truckError } = await supabase
         .from('flotte')
         .update({ 
@@ -148,9 +149,7 @@ export function TruckRescueModal({
 
       if (truckError) throw truckError;
 
-      // 3. If rescue truck selected and we have an active delivery, reassign
       if (rescueTruckId && activeDelivery && volumeToRescue > 0) {
-        // Update the BL to assign new truck
         const { error: blError } = await supabase
           .from('bons_livraison_reels')
           .update({
@@ -163,11 +162,8 @@ export function TruckRescueModal({
           .eq('bl_id', activeDelivery.bl_id);
 
         if (blError) throw blError;
-
-        // Rescue truck status will be updated by the sync_truck_status_on_assignment trigger
       }
 
-      // 4. Send CEO notification via edge function
       try {
         const { error: notifyError } = await supabase.functions.invoke('notify-incident', {
           body: {
@@ -185,17 +181,15 @@ export function TruckRescueModal({
 
         if (notifyError) {
           console.error('Error sending CEO notification:', notifyError);
-          // Don't fail the whole operation for notification failure
         }
       } catch (notifyErr) {
         console.error('Failed to notify CEO:', notifyErr);
       }
 
-      toast.success('Incident enregistré et CEO notifié');
+      toast.success(tr.incidentRecorded);
       
-      // Reset form
       setStep('incident');
-      setIncidentType('Panne mécanique');
+      setIncidentType(tr.mechanicalFailure);
       setDescription('');
       setVolumePerdu('0');
       setRescueTruckId('');
@@ -205,7 +199,7 @@ export function TruckRescueModal({
 
     } catch (error) {
       console.error('Error handling incident:', error);
-      toast.error('Erreur lors de l\'enregistrement de l\'incident');
+      toast.error(tr.errorRecording);
     } finally {
       setSubmitting(false);
     }
@@ -220,39 +214,37 @@ export function TruckRescueModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <AlertTriangle className="h-5 w-5" />
-            Incident Camion - {truckId}
+            {tr.title} - {truckId}
           </DialogTitle>
           <DialogDescription>
-            Signaler une panne et organiser un secours si nécessaire
+            {tr.subtitle}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 mt-4">
-          {/* Active Delivery Info */}
           {activeDelivery && (
             <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Mission en cours</span>
+                <span className="text-sm font-medium">{tr.activeMission}</span>
                 <Badge variant="outline" className="font-mono">
                   {activeDelivery.bc_id || activeDelivery.bl_id}
                 </Badge>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">Client:</span>
+                  <span className="text-muted-foreground">{tr.client}:</span>
                   <span className="ml-1 font-medium">{activeDelivery.client_nom || 'N/A'}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Volume:</span>
+                  <span className="text-muted-foreground">{tr.volume}:</span>
                   <span className="ml-1 font-medium font-mono">{activeDelivery.volume_m3} m³</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Incident Type */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Type d'incident</Label>
+            <Label className="text-sm font-medium">{tr.incidentType}</Label>
             <Select value={incidentType} onValueChange={setIncidentType}>
               <SelectTrigger>
                 <SelectValue />
@@ -265,23 +257,21 @@ export function TruckRescueModal({
             </Select>
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">Description de l'incident *</Label>
+            <Label className="text-sm font-medium">{tr.incidentDesc} *</Label>
             <Textarea
-              placeholder="Décrivez l'incident en détail..."
+              placeholder={tr.incidentPlaceholder}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
           </div>
 
-          {/* Volume Perdu */}
           {activeDelivery && (
             <div className="space-y-2">
               <Label className="text-sm font-medium flex items-center gap-2">
                 <XCircle className="h-4 w-4 text-destructive" />
-                Volume Perdu (m³)
+                {tr.volumeLost}
               </Label>
               <Input
                 type="number"
@@ -293,24 +283,23 @@ export function TruckRescueModal({
                 placeholder="0"
               />
               <p className="text-xs text-muted-foreground">
-                Volume qui ne peut pas être récupéré (sera déduit du stock, non facturé)
+                {tr.volumeLostDesc}
               </p>
               {volumeLost > 0 && (
                 <div className="p-2 bg-destructive/10 rounded border border-destructive/20 text-sm">
                   <span className="text-destructive font-medium">
-                    Perte: {volumeLost} m³ → Stock à déduire
+                    {tr.lossDeduction}: {volumeLost} m³ → {tr.stockDeduction}
                   </span>
                 </div>
               )}
             </div>
           )}
 
-          {/* Rescue Truck Selection */}
           {activeDelivery && volumeToRescue > 0 && (
             <div className="space-y-2">
               <Label className="text-sm font-medium flex items-center gap-2">
                 <Truck className="h-4 w-4 text-success" />
-                Camion de Secours (optionnel)
+                {tr.rescueTruck}
               </Label>
               {loading ? (
                 <div className="flex items-center justify-center py-4">
@@ -319,16 +308,16 @@ export function TruckRescueModal({
               ) : availableTrucks.length === 0 ? (
                 <div className="p-3 bg-warning/10 rounded border border-warning/20 text-sm text-warning">
                   <AlertCircle className="h-4 w-4 inline mr-2" />
-                  Aucun camion disponible pour secours
+                  {tr.noTrucksAvailable}
                 </div>
               ) : (
                 <>
                   <Select value={rescueTruckId || 'none'} onValueChange={(v) => setRescueTruckId(v === 'none' ? '' : v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un camion de secours" />
+                      <SelectValue placeholder={tr.selectRescueTruck} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Aucun (ne pas réassigner)</SelectItem>
+                      <SelectItem value="none">{tr.noneNoReassign}</SelectItem>
                       {availableTrucks.map((truck) => (
                         <SelectItem key={truck.id_camion} value={truck.id_camion}>
                           <div className="flex items-center gap-2">
@@ -350,7 +339,7 @@ export function TruckRescueModal({
                       <CheckCircle className="h-4 w-4 text-success" />
                       <span>
                         <span className="font-mono font-medium">{rescueTruckId}</span> 
-                        {' '}prendra en charge{' '}
+                        {' '}{tr.willTakeOver}{' '}
                         <span className="font-mono font-medium">{volumeToRescue} m³</span>
                       </span>
                     </div>
@@ -360,36 +349,34 @@ export function TruckRescueModal({
             </div>
           )}
 
-          {/* Summary */}
           <div className="p-3 bg-muted rounded-lg border space-y-2 text-sm">
-            <h4 className="font-medium">Résumé des actions:</h4>
+            <h4 className="font-medium">{tr.actionSummary}:</h4>
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
                 <XCircle className="h-3.5 w-3.5 text-destructive" />
-                <span><span className="font-mono">{truckId}</span> → Hors Service</span>
+                <span><span className="font-mono">{truckId}</span> → {tr.outOfService}</span>
               </li>
               {volumeLost > 0 && (
                 <li className="flex items-center gap-2">
                   <AlertTriangle className="h-3.5 w-3.5 text-warning" />
-                  <span>Volume perdu: {volumeLost} m³ (déduit du stock)</span>
+                  <span>{tr.lossDeduction}: {volumeLost} m³ ({tr.volumeDeducted})</span>
                 </li>
               )}
               {rescueTruckId && volumeToRescue > 0 && (
                 <li className="flex items-center gap-2">
                   <CheckCircle className="h-3.5 w-3.5 text-success" />
                   <span>
-                    <span className="font-mono">{rescueTruckId}</span> réassigné ({volumeToRescue} m³)
+                    <span className="font-mono">{rescueTruckId}</span> {tr.reassigned} ({volumeToRescue} m³)
                   </span>
                 </li>
               )}
               <li className="flex items-center gap-2">
                 <AlertCircle className="h-3.5 w-3.5 text-primary" />
-                <span>Email envoyé au CEO (max.talmi@gmail.com)</span>
+                <span>{tr.ceoNotified}</span>
               </li>
             </ul>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-2">
             <Button
               variant="outline"
@@ -397,7 +384,7 @@ export function TruckRescueModal({
               onClick={() => onOpenChange(false)}
               disabled={submitting}
             >
-              Annuler
+              {tr.cancel}
             </Button>
             <Button
               variant="destructive"
@@ -410,7 +397,7 @@ export function TruckRescueModal({
               ) : (
                 <AlertTriangle className="h-4 w-4 mr-2" />
               )}
-              Confirmer Incident
+              {tr.confirmIncident}
             </Button>
           </div>
         </div>

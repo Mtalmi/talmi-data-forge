@@ -17,6 +17,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Fuel, Loader2 } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Vehicule {
   id_camion: string;
@@ -36,6 +37,8 @@ interface FuelEntryFormProps {
 }
 
 export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
+  const { t } = useI18n();
+  const f = t.fuelEntry;
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
@@ -80,20 +83,20 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
           <Fuel className="h-4 w-4" />
-          Relevé Carburant
+          {f.fuelReading}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Fuel className="h-5 w-5 text-primary" />
-            Suivi Carburant
+            {f.fuelTracking}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div className="space-y-2">
-            <Label className="form-label-industrial">Véhicule</Label>
+            <Label className="form-label-industrial">{f.vehicle}</Label>
             <Select value={idCamion} onValueChange={(val) => {
               setIdCamion(val);
               const v = vehicules.find(x => x.id_camion === val);
@@ -102,7 +105,7 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
               }
             }} required>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionner le véhicule..." />
+                <SelectValue placeholder={f.selectVehicle} />
               </SelectTrigger>
               <SelectContent>
                 {vehicules.map((v) => (
@@ -116,13 +119,13 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
 
           {selectedVehicule && (
             <div className="text-xs text-muted-foreground">
-              Dernier relevé: {selectedVehicule.km_compteur?.toLocaleString() || 0} km
+              {f.lastReading}: {selectedVehicule.km_compteur?.toLocaleString() || 0} km
             </div>
           )}
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="form-label-industrial">Litres</Label>
+              <Label className="form-label-industrial">{f.liters}</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -134,7 +137,7 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label className="form-label-industrial">Compteur KM</Label>
+              <Label className="form-label-industrial">{f.kmCounter}</Label>
               <Input
                 type="number"
                 min="0"
@@ -148,7 +151,7 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label className="form-label-industrial">Coût Total (DH)</Label>
+              <Label className="form-label-industrial">{f.totalCost}</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -159,9 +162,9 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label className="form-label-industrial">Station</Label>
+              <Label className="form-label-industrial">{f.station}</Label>
               <Input
-                placeholder="Nom station"
+                placeholder={f.stationName}
                 value={station}
                 onChange={(e) => setStation(e.target.value)}
               />
@@ -171,14 +174,14 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
           {selectedVehicule && kmCompteur && litres && selectedVehicule.km_compteur && (
             <div className="p-3 rounded-lg bg-muted/30 border border-border">
               <div className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">Distance parcourue:</span>
+                <span className="text-muted-foreground">{f.distanceTraveled}:</span>
                 <span className="font-mono font-semibold">
                   {(parseFloat(kmCompteur) - (selectedVehicule.km_compteur || 0)).toLocaleString()} km
                 </span>
               </div>
               {(parseFloat(kmCompteur) - (selectedVehicule.km_compteur || 0)) > 0 && (
                 <div className="flex justify-between items-center text-sm mt-1">
-                  <span className="text-muted-foreground">Consommation estimée:</span>
+                  <span className="text-muted-foreground">{f.estimatedConsumption}:</span>
                   <span className="font-mono font-semibold text-primary">
                     {((parseFloat(litres) / (parseFloat(kmCompteur) - (selectedVehicule.km_compteur || 0))) * 100).toFixed(1)} L/100km
                   </span>
@@ -189,16 +192,16 @@ export function FuelEntryForm({ vehicules, onSubmit }: FuelEntryFormProps) {
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Annuler
+              {f.cancel}
             </Button>
             <Button type="submit" disabled={submitting}>
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  {f.saving}
                 </>
               ) : (
-                'Enregistrer'
+                f.save
               )}
             </Button>
           </div>

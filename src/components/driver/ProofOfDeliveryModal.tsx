@@ -25,6 +25,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { DigitalSignaturePad } from './DigitalSignaturePad';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ProofOfDeliveryModalProps {
   open: boolean;
@@ -46,6 +47,8 @@ export function ProofOfDeliveryModal({
   clientName,
   onComplete,
 }: ProofOfDeliveryModalProps) {
+  const { t } = useI18n();
+  const p = t.proofOfDelivery;
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [signatureData, setSignatureData] = useState<{
@@ -61,7 +64,7 @@ export function ProofOfDeliveryModal({
     const file = e.target.files?.[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        toast.error('Veuillez sélectionner une image');
+        toast.error(p.selectImage);
         return;
       }
       setPhotoFile(file);
@@ -81,9 +84,6 @@ export function ProofOfDeliveryModal({
     setSignatureData(data);
     setShowSignaturePad(false);
 
-    // If the driver didn't attach a photo (optional), auto-finalize to avoid
-    // the common confusion: users think “Confirmer” in the signature modal
-    // already marks the BL as delivered.
     if (!photoFile) {
       (async () => {
         setIsSubmitting(true);
@@ -94,14 +94,13 @@ export function ProofOfDeliveryModal({
             signedAt: data.signedAt,
           });
 
-          // Reset state + close
           setPhotoFile(null);
           setPhotoPreview(null);
           setSignatureData(null);
           onOpenChange(false);
         } catch (error) {
           console.error('Auto proof finalize error:', error);
-          toast.error('Erreur lors de la validation');
+          toast.error(p.errorValidation);
         } finally {
           setIsSubmitting(false);
         }
@@ -123,8 +122,8 @@ export function ProofOfDeliveryModal({
 
   const handleSubmit = async () => {
     if (!signatureData) {
-      toast.error('Signature requise', {
-        description: 'Veuillez obtenir la signature du client',
+      toast.error(p.signatureRequiredError, {
+        description: p.getClientSignatureDesc,
       });
       return;
     }
@@ -134,7 +133,6 @@ export function ProofOfDeliveryModal({
     try {
       let photoUrl: string | undefined;
 
-      // Upload photo if provided
       if (photoFile) {
         const fileExt = photoFile.name.split('.').pop();
         const fileName = `${blId}-bl-photo-${Date.now()}.${fileExt}`;
@@ -146,7 +144,6 @@ export function ProofOfDeliveryModal({
 
         if (uploadError) {
           console.error('Photo upload error:', uploadError);
-          // Continue without photo - signature is the primary proof
         } else {
           const { data: urlData } = supabase.storage
             .from('documents')
@@ -162,7 +159,6 @@ export function ProofOfDeliveryModal({
         signedAt: signatureData.signedAt,
       });
 
-      // Reset state
       setPhotoFile(null);
       setPhotoPreview(null);
       setSignatureData(null);
@@ -170,13 +166,13 @@ export function ProofOfDeliveryModal({
 
     } catch (error) {
       console.error('Proof of delivery error:', error);
-      toast.error('Erreur lors de la validation');
+      toast.error(p.errorValidation);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const isValid = !!signatureData; // Signature is required, photo is optional
+  const isValid = !!signatureData;
 
   return (
     <>
@@ -185,7 +181,7 @@ export function ProofOfDeliveryModal({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileCheck className="h-5 w-5 text-primary" />
-              Preuve de Livraison
+              {p.title}
             </DialogTitle>
             <DialogDescription>
               BL {blId} • {clientName}
@@ -198,8 +194,8 @@ export function ProofOfDeliveryModal({
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <Camera className="h-4 w-4 text-muted-foreground" />
-                  Photo du BL Papier
-                  <span className="text-xs text-muted-foreground font-normal">(optionnel)</span>
+                  {p.photoPaperBL}
+                  <span className="text-xs text-muted-foreground font-normal">({p.optional})</span>
                 </Label>
                 {photoPreview && (
                   <Button
@@ -209,7 +205,7 @@ export function ProofOfDeliveryModal({
                     className="h-7 px-2 text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1" />
-                    Supprimer
+                    {p.delete}
                   </Button>
                 )}
               </div>
@@ -224,7 +220,7 @@ export function ProofOfDeliveryModal({
                   <div className="absolute top-2 right-2">
                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-medium">
                       <Check className="h-3 w-3" />
-                      Capturée
+                      {p.captured}
                     </span>
                   </div>
                 </div>
@@ -242,9 +238,9 @@ export function ProofOfDeliveryModal({
                     <Upload className="h-6 w-6 text-muted-foreground" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-medium">Prendre Photo du BL Papier</p>
+                    <p className="text-sm font-medium">{p.takePhoto}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Cliquez ou utilisez l'appareil photo
+                      {p.clickOrCamera}
                     </p>
                   </div>
                 </div>
@@ -267,7 +263,7 @@ export function ProofOfDeliveryModal({
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Signature requise
+                  {p.signatureRequired}
                 </span>
               </div>
             </div>
@@ -277,7 +273,7 @@ export function ProofOfDeliveryModal({
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <PenTool className="h-4 w-4 text-muted-foreground" />
-                  Signature du Client
+                  {p.clientSignature}
                   <span className="text-xs text-destructive font-normal">*</span>
                 </Label>
                 {signatureData && (
@@ -288,7 +284,7 @@ export function ProofOfDeliveryModal({
                     className="h-7 px-2 text-destructive hover:text-destructive"
                   >
                     <Trash2 className="h-3.5 w-3.5 mr-1" />
-                    Refaire
+                    {p.redo}
                   </Button>
                 )}
               </div>
@@ -302,11 +298,11 @@ export function ProofOfDeliveryModal({
                   />
                   <div className="mt-2 pt-2 border-t flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">
-                      Signé par: <span className="font-medium text-foreground">{signatureData.signerName}</span>
+                      {p.signedBy}: <span className="font-medium text-foreground">{signatureData.signerName}</span>
                     </span>
                     <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-500/90 text-white text-xs font-medium">
                       <Check className="h-3 w-3" />
-                      Validée
+                      {p.validated}
                     </span>
                   </div>
                 </div>
@@ -320,22 +316,20 @@ export function ProofOfDeliveryModal({
                   )}
                 >
                   <PenTool className="h-6 w-6 text-muted-foreground" />
-                  <span className="text-sm">Obtenir la signature du client</span>
+                  <span className="text-sm">{p.getClientSignature}</span>
                 </Button>
               )}
 
-              {/* Small UX hint to reduce “why isn't it delivered?” confusion */}
               <p className="text-[11px] text-muted-foreground">
-                Astuce: si vous ne joignez pas de photo, la livraison se valide automatiquement après la signature.
+                {p.hint}
               </p>
             </div>
 
             {/* Summary Info */}
             <div className="p-3 bg-muted/50 rounded-lg border">
               <p className="text-xs text-muted-foreground">
-                En validant, le BL <span className="font-medium text-foreground">{blId}</span> sera 
-                marqué comme <span className="font-medium text-emerald-600">Livré & Signé</span> et 
-                archivé automatiquement dans le module Archive BL.
+                {p.summaryText} <span className="font-medium text-foreground">{blId}</span> {p.willBeMarked}{' '}
+                <span className="font-medium text-emerald-600">{p.deliveredSigned}</span> {p.autoArchived}
               </p>
             </div>
           </div>
@@ -347,7 +341,7 @@ export function ProofOfDeliveryModal({
               disabled={isSubmitting}
             >
               <X className="h-4 w-4 mr-2" />
-              Annuler
+              {p.cancel}
             </Button>
             <Button
               onClick={handleSubmit}
@@ -357,12 +351,12 @@ export function ProofOfDeliveryModal({
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Validation...
+                  {p.validating}
                 </>
               ) : (
                 <>
                   <Check className="h-4 w-4 mr-2" />
-                  Valider Livraison
+                  {p.validateDelivery}
                 </>
               )}
             </Button>
@@ -370,7 +364,6 @@ export function ProofOfDeliveryModal({
         </DialogContent>
       </Dialog>
 
-      {/* Digital Signature Pad - Opens as separate dialog */}
       <DigitalSignaturePad
         open={showSignaturePad}
         onOpenChange={setShowSignaturePad}
