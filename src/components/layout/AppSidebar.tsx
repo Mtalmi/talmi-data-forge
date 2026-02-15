@@ -75,9 +75,15 @@ export function AppSidebar() {
       </SidebarMenuItem>
     ));
 
+  const { isRTL } = useI18n();
+
   return (
     <Sidebar
-      className="border-r border-border bg-background"
+      side={isRTL ? 'right' : 'left'}
+      className={cn(
+        'bg-background',
+        isRTL ? 'border-l border-border' : 'border-r border-border'
+      )}
       collapsible="icon"
     >
       <SidebarContent className="py-4">
