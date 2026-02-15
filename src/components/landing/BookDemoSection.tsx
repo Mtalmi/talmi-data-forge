@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/hooks/use-toast';
-import { CheckCircle2, Send, Clock, Gift, ShieldCheck } from 'lucide-react';
+import { toast } from 'sonner';
+import { CheckCircle2, Send, Clock, Gift, ShieldCheck, Loader2 } from 'lucide-react';
 
 const badges = [
   { icon: ShieldCheck, label: 'Sans engagement' },
@@ -11,9 +11,19 @@ const badges = [
   { icon: Clock, label: 'Réponse 24h' },
 ];
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[\+]?[\d\s\-\(\)]{7,20}$/;
+
+interface FormErrors {
+  nom_complet?: string;
+  email?: string;
+  telephone?: string;
+}
+
 export default function BookDemoSection() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
   const [form, setForm] = useState({
     nom_complet: '',
     email: '',
@@ -23,14 +33,42 @@ export default function BookDemoSection() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    // Clear error on change
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (!form.nom_complet.trim()) {
+      newErrors.nom_complet = 'Le nom complet est requis';
+    }
+
+    if (!form.email.trim()) {
+      newErrors.email = "L'email est requis";
+    } else if (!EMAIL_REGEX.test(form.email.trim())) {
+      newErrors.email = 'Format email invalide';
+    }
+
+    if (form.telephone.trim() && !PHONE_REGEX.test(form.telephone.trim())) {
+      newErrors.telephone = 'Format téléphone invalide';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nom_complet.trim() || !form.email.trim()) return;
+    if (!validate()) return;
 
     setLoading(true);
+    toast.loading('Envoi en cours...', { id: 'demo-submit' });
+
     const { error } = await supabase.from('demo_requests').insert({
       nom_complet: form.nom_complet.trim(),
       email: form.email.trim(),
@@ -41,12 +79,12 @@ export default function BookDemoSection() {
     setLoading(false);
 
     if (error) {
-      toast({ title: 'Erreur', description: "Impossible d'envoyer votre demande. Réessayez.", variant: 'destructive' });
+      toast.error("Erreur lors de l'enregistrement. Réessayez.", { id: 'demo-submit' });
       return;
     }
 
     setSubmitted(true);
-    toast({ title: 'Demande envoyée ✓', description: 'Notre équipe vous contactera sous 24h.' });
+    toast.success('Demande envoyée avec succès ✓', { id: 'demo-submit' });
   };
 
   return (
@@ -87,10 +125,20 @@ export default function BookDemoSection() {
           <form
             onSubmit={handleSubmit}
             className="max-w-2xl mx-auto grid sm:grid-cols-2 gap-4 p-8 rounded-2xl bg-card border border-border"
+            noValidate
           >
-            <Input name="nom_complet" placeholder="Nom complet *" value={form.nom_complet} onChange={handleChange} required maxLength={100} />
-            <Input name="email" type="email" placeholder="Email professionnel *" value={form.email} onChange={handleChange} required maxLength={255} />
-            <Input name="telephone" placeholder="Téléphone" value={form.telephone} onChange={handleChange} maxLength={20} />
+            <div className="space-y-1">
+              <Input name="nom_complet" placeholder="Nom complet *" value={form.nom_complet} onChange={handleChange} required maxLength={100} className={errors.nom_complet ? 'border-destructive' : ''} />
+              {errors.nom_complet && <p className="text-xs text-destructive">{errors.nom_complet}</p>}
+            </div>
+            <div className="space-y-1">
+              <Input name="email" type="email" placeholder="Email professionnel *" value={form.email} onChange={handleChange} required maxLength={255} className={errors.email ? 'border-destructive' : ''} />
+              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+            </div>
+            <div className="space-y-1">
+              <Input name="telephone" placeholder="Téléphone" value={form.telephone} onChange={handleChange} maxLength={20} className={errors.telephone ? 'border-destructive' : ''} />
+              {errors.telephone && <p className="text-xs text-destructive">{errors.telephone}</p>}
+            </div>
             <Input name="entreprise" placeholder="Nom de l'entreprise" value={form.entreprise} onChange={handleChange} maxLength={100} />
             <div className="sm:col-span-2">
               <Input name="nombre_centrales" type="number" min={1} max={100} placeholder="Nombre de centrales" value={form.nombre_centrales} onChange={handleChange} />
@@ -102,8 +150,17 @@ export default function BookDemoSection() {
                 disabled={loading}
                 className="w-full text-base py-6 rounded-2xl shadow-[0_4px_30px_hsl(var(--primary)/0.3)] hover:shadow-[0_8px_50px_hsl(var(--primary)/0.45)] transition-all duration-300"
               >
-                {loading ? 'Envoi…' : 'Réserver ma démo'}
-                <Send className="h-5 w-5 ml-2" />
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Envoi en cours...
+                  </>
+                ) : (
+                  <>
+                    Réserver ma démo
+                    <Send className="h-5 w-5 ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           </form>

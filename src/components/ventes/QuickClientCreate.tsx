@@ -14,15 +14,24 @@ import {
 import { Plus, Loader2, User, Building, Phone, Mail, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[\+]?[\d\s\-\(\)]{7,20}$/;
+
 interface QuickClientCreateProps {
   onClientCreated: (clientId: string, clientName: string) => void;
+}
+
+interface FormErrors {
+  nomClient?: string;
+  email?: string;
+  telephone?: string;
 }
 
 export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
   
-  // Form state
   const [nomClient, setNomClient] = useState('');
   const [contactPersonne, setContactPersonne] = useState('');
   const [telephone, setTelephone] = useState('');
@@ -35,6 +44,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
     setTelephone('');
     setEmail('');
     setAdresse('');
+    setErrors({});
   };
 
   const generateClientId = () => {
@@ -44,15 +54,32 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
     return `${prefix}-${timestamp}-${random}`;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const validate = (): boolean => {
+    const newErrors: FormErrors = {};
+
     if (!nomClient.trim()) {
-      toast.error('Le nom du client est obligatoire');
-      return;
+      newErrors.nomClient = 'Le nom du client est obligatoire';
     }
 
+    if (email.trim() && !EMAIL_REGEX.test(email.trim())) {
+      newErrors.email = 'Format email invalide';
+    }
+
+    if (telephone.trim() && !PHONE_REGEX.test(telephone.trim())) {
+      newErrors.telephone = 'Format téléphone invalide';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validate()) return;
+
     setSaving(true);
+    toast.loading('Création en cours...', { id: 'client-create' });
+
     try {
       const clientId = generateClientId();
       
@@ -67,16 +94,20 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
 
       if (error) throw error;
 
-      toast.success(`Client "${nomClient}" créé avec succès`);
+      toast.success('Client ajouté avec succès', { id: 'client-create' });
       onClientCreated(clientId, nomClient.trim());
       resetForm();
       setOpen(false);
     } catch (error) {
       console.error('Error creating client:', error);
-      toast.error('Erreur lors de la création du client');
+      toast.error("Erreur lors de l'enregistrement", { id: 'client-create' });
     } finally {
       setSaving(false);
     }
+  };
+
+  const clearError = (field: keyof FormErrors) => {
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   return (
@@ -94,8 +125,8 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
           </DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <div className="space-y-1">
             <Label htmlFor="nom_client" className="flex items-center gap-1">
               <Building className="h-3 w-3" />
               Nom / Société *
@@ -103,10 +134,12 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
             <Input
               id="nom_client"
               value={nomClient}
-              onChange={(e) => setNomClient(e.target.value)}
+              onChange={(e) => { setNomClient(e.target.value); clearError('nomClient'); }}
               placeholder="Ex: TGCC Construction"
               autoFocus
+              className={errors.nomClient ? 'border-destructive' : ''}
             />
+            {errors.nomClient && <p className="text-xs text-destructive">{errors.nomClient}</p>}
           </div>
           
           <div className="grid grid-cols-2 gap-3">
@@ -122,7 +155,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
                 placeholder="Nom du contact"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label htmlFor="telephone" className="flex items-center gap-1">
                 <Phone className="h-3 w-3" />
                 Téléphone
@@ -130,13 +163,15 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
               <Input
                 id="telephone"
                 value={telephone}
-                onChange={(e) => setTelephone(e.target.value)}
+                onChange={(e) => { setTelephone(e.target.value); clearError('telephone'); }}
                 placeholder="06 XX XX XX XX"
+                className={errors.telephone ? 'border-destructive' : ''}
               />
+              {errors.telephone && <p className="text-xs text-destructive">{errors.telephone}</p>}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="email" className="flex items-center gap-1">
               <Mail className="h-3 w-3" />
               Email
@@ -145,9 +180,11 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
               id="email"
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
               placeholder="contact@example.com"
+              className={errors.email ? 'border-destructive' : ''}
             />
+            {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
           </div>
 
           <div className="space-y-2">
