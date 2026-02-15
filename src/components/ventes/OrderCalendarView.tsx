@@ -25,8 +25,9 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface OrderCalendarViewProps {
   bcList: BonCommande[];
@@ -42,6 +43,9 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps) {
+  const { t, lang } = useI18n();
+  const oc = t.orderCalendar;
+  const dateLocale = getDateLocale(lang);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -92,17 +96,17 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <CalendarIcon className="h-5 w-5 text-primary" />
-              Calendrier des Livraisons
+              {oc.deliveryCalendar}
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={goToToday}>
-                Aujourd'hui
+                {oc.today}
               </Button>
               <Button variant="ghost" size="icon" onClick={goToPrevMonth}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm font-medium min-w-[140px] text-center">
-                {format(currentMonth, 'MMMM yyyy', { locale: fr })}
+                {format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}
               </span>
               <Button variant="ghost" size="icon" onClick={goToNextMonth}>
                 <ChevronRight className="h-4 w-4" />
@@ -113,7 +117,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
         <CardContent>
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
-            {['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => (
+            {oc.dayNames.map((day: string) => (
               <div key={day} className="text-center text-xs font-medium text-muted-foreground py-2">
                 {day}
               </div>
@@ -163,7 +167,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
                       ))}
                       {dayOrders.length > 3 && (
                         <div className="text-[10px] text-muted-foreground px-1">
-                          +{dayOrders.length - 3} autres
+                          +{dayOrders.length - 3} {oc.others}
                         </div>
                       )}
                     </div>
@@ -177,15 +181,15 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
           <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t">
             <div className="flex items-center gap-1.5 text-xs">
               <div className="w-3 h-3 rounded bg-primary" />
-              <span>Prêt</span>
+              <span>{oc.ready}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
               <div className="w-3 h-3 rounded bg-warning" />
-              <span>En Production</span>
+              <span>{oc.inProduction}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
               <div className="w-3 h-3 rounded bg-success" />
-              <span>Terminé/Livré</span>
+              <span>{oc.completedDelivered}</span>
             </div>
           </div>
         </CardContent>
@@ -196,8 +200,8 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
         <CardHeader className="pb-2">
           <CardTitle className="text-sm">
             {selectedDate
-              ? format(selectedDate, 'EEEE d MMMM', { locale: fr })
-              : 'Sélectionnez une date'
+              ? format(selectedDate, 'EEEE d MMMM', { locale: dateLocale })
+              : oc.selectDate
             }
           </CardTitle>
         </CardHeader>
@@ -205,12 +209,12 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
           {!selectedDate ? (
             <div className="text-center py-8 text-muted-foreground">
               <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Cliquez sur une date pour voir les commandes</p>
+              <p className="text-sm">{oc.clickDateToView}</p>
             </div>
           ) : selectedDateOrders.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">Aucune commande prévue</p>
+              <p className="text-sm">{oc.noOrdersPlanned}</p>
             </div>
           ) : (
             <ScrollArea className="h-[400px]">
@@ -232,9 +236,9 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
                           (bc.statut === 'termine' || bc.statut === 'livre') && "bg-success/10 text-success"
                         )}
                       >
-                        {bc.statut === 'pret_production' && 'Prêt'}
-                        {bc.statut === 'en_production' && 'Production'}
-                        {(bc.statut === 'termine' || bc.statut === 'livre') && 'Livré'}
+                        {bc.statut === 'pret_production' && oc.ready}
+                        {bc.statut === 'en_production' && oc.production}
+                        {(bc.statut === 'termine' || bc.statut === 'livre') && oc.delivered}
                       </Badge>
                     </div>
                     

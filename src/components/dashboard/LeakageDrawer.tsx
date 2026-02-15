@@ -24,7 +24,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface LeakageDelivery {
   bl_id: string;
@@ -45,6 +46,9 @@ interface LeakageDrawerProps {
 
 export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
   function LeakageDrawer({ open, onOpenChange }, ref) {
+  const { t, lang } = useI18n();
+  const ld = t.leakageDrawer;
+  const dateLocale = getDateLocale(lang);
   const navigate = useNavigate();
   const [deliveries, setDeliveries] = useState<LeakageDelivery[]>([]);
   const [loading, setLoading] = useState(true);
@@ -147,10 +151,10 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
         <DrawerHeader className="pb-2">
           <DrawerTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-warning" />
-            Analyse des Fuites
+            {ld.title}
           </DrawerTitle>
           <DrawerDescription>
-            Livraisons avec surcoûts ou marges faibles ce mois
+            {ld.subtitle}
           </DrawerDescription>
         </DrawerHeader>
 
@@ -165,7 +169,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
               <Card className="border-warning/20 bg-gradient-to-br from-warning/5 to-transparent">
                 <CardContent className="pt-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Livraisons à Risque</span>
+                    <span className="text-sm font-medium">{ld.riskyDeliveries}</span>
                     <Badge variant={totalLeakage === 0 ? 'default' : totalLeakage <= 3 ? 'secondary' : 'destructive'}>
                       {totalLeakage} BL
                     </Badge>
@@ -174,15 +178,15 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="p-2 rounded bg-destructive/10 border border-destructive/20">
                       <p className="text-lg font-bold text-destructive">{highRiskCount}</p>
-                      <p className="text-[10px] text-muted-foreground">Critique</p>
+                      <p className="text-[10px] text-muted-foreground">{ld.critical}</p>
                     </div>
                     <div className="p-2 rounded bg-warning/10 border border-warning/20">
                       <p className="text-lg font-bold text-warning">{mediumRiskCount}</p>
-                      <p className="text-[10px] text-muted-foreground">Modéré</p>
+                      <p className="text-[10px] text-muted-foreground">{ld.moderate}</p>
                     </div>
                     <div className="p-2 rounded bg-muted border border-border">
                       <p className="text-lg font-bold text-muted-foreground">{lowRiskCount}</p>
-                      <p className="text-[10px] text-muted-foreground">Faible</p>
+                      <p className="text-[10px] text-muted-foreground">{ld.low}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -193,7 +197,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                 <div className="space-y-2">
                   <h4 className="text-sm font-semibold flex items-center gap-2">
                     <Truck className="h-4 w-4" />
-                    Détail des Livraisons
+                    {ld.deliveryDetails}
                   </h4>
                   <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                     {deliveries.map((delivery) => {
@@ -224,7 +228,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                                   </Badge>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                  {format(new Date(delivery.date_livraison), 'd MMM', { locale: fr })} • {delivery.volume_m3} m³
+                                  {format(new Date(delivery.date_livraison), 'd MMM', { locale: dateLocale })} • {delivery.volume_m3} m³
                                 </p>
                               </div>
                               <div className="text-right">
@@ -250,7 +254,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                                       delivery.marge_brute_pct < 10 ? 'text-destructive font-medium' : 
                                       delivery.marge_brute_pct < 15 ? 'text-warning' : 'text-muted-foreground'
                                     )}>
-                                      Marge: {delivery.marge_brute_pct.toFixed(1)}%
+                                      {ld.margin}: {delivery.marge_brute_pct.toFixed(1)}%
                                     </span>
                                   </div>
                                 )}
@@ -282,8 +286,8 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-success/10 mb-3">
                       <DollarSign className="h-6 w-6 text-success" />
                     </div>
-                    <p className="text-sm font-medium text-success">Aucune fuite détectée</p>
-                    <p className="text-xs text-muted-foreground mt-1">Toutes les livraisons sont dans les normes</p>
+                    <p className="text-sm font-medium text-success">{ld.noLeaks}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{ld.allWithinNorms}</p>
                   </CardContent>
                 </Card>
               )}
@@ -293,7 +297,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
 
         <DrawerFooter className="pt-2">
           <Button onClick={handleGoToProduction} className="w-full">
-            Audit Dosages Complet
+            {ld.fullDosageAudit}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </DrawerFooter>

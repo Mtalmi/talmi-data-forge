@@ -13,9 +13,10 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface GeofenceAlert {
   id: string;
@@ -29,6 +30,9 @@ interface GeofenceAlert {
 }
 
 export function GeofenceAlertWidget() {
+  const { t, lang } = useI18n();
+  const ga = t.geofenceAlert;
+  const dateLocale = getDateLocale(lang);
   const [alerts, setAlerts] = useState<GeofenceAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -99,10 +103,10 @@ export function GeofenceAlertWidget() {
 
   const getEventLabel = (eventType: string) => {
     switch (eventType) {
-      case 'unplanned_stop': return 'Arrêt non planifié';
-      case 'enter': return 'Entrée zone';
-      case 'exit': return 'Sortie zone';
-      case 'speeding': return 'Excès de vitesse';
+      case 'unplanned_stop': return ga.unplannedStop;
+      case 'enter': return ga.enterZone;
+      case 'exit': return ga.exitZone;
+      case 'speeding': return ga.speeding;
       default: return eventType;
     }
   };
@@ -113,7 +117,7 @@ export function GeofenceAlertWidget() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-amber-400 flex items-center gap-2">
             <Crosshair className="h-5 w-5" />
-            Fleet Predator
+            {ga.fleetPredator}
           </CardTitle>
           <Button 
             variant="ghost" 
@@ -122,22 +126,22 @@ export function GeofenceAlertWidget() {
             onClick={() => navigate('/logistique')}
           >
             <Navigation2 className="h-3 w-3 mr-1" />
-            Carte
+            {ga.map}
           </Button>
         </div>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="h-24 flex items-center justify-center">
-            <div className="animate-pulse text-gray-500">Chargement...</div>
+            <div className="animate-pulse text-gray-500">{ga.loading}</div>
           </div>
         ) : alerts.length === 0 ? (
           <div className="h-24 flex flex-col items-center justify-center text-center">
             <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center mb-2">
               <Check className="h-5 w-5 text-emerald-500" />
             </div>
-            <p className="text-emerald-400 font-medium text-sm">Aucune alerte</p>
-            <p className="text-xs text-gray-500">Toutes les zones sont sécurisées</p>
+            <p className="text-emerald-400 font-medium text-sm">{ga.noAlerts}</p>
+            <p className="text-xs text-gray-500">{ga.allZonesSecure}</p>
           </div>
         ) : (
           <ScrollArea className="h-32">
@@ -170,14 +174,14 @@ export function GeofenceAlertWidget() {
                     <span className="text-xs text-gray-500">
                       {formatDistanceToNow(new Date(alert.created_at), { 
                         addSuffix: true, 
-                        locale: fr 
+                        locale: dateLocale 
                       })}
                     </span>
                   </div>
                   {alert.duration_minutes && (
                     <div className="flex items-center gap-1 mt-1 text-xs text-gray-400">
                       <Clock className="h-3 w-3" />
-                      <span>{Math.round(alert.duration_minutes)} min</span>
+                      <span>{Math.round(alert.duration_minutes)} {ga.minLabel}</span>
                     </div>
                   )}
                 </div>
