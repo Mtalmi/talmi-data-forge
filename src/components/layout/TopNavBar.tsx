@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
 import { useAuth } from '@/hooks/useAuth';
 import { usePendingBLCount } from '@/hooks/usePendingBLCount';
 import { GlobalSearch } from '@/components/search/GlobalSearch';
@@ -247,6 +248,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             <GlobalSearch />
           </div>
 
+          <LanguageSwitcher />
           <SoundToggle />
           <ThemeToggle />
           <NotificationCenter />
