@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { useDemoMode, DEMO_USER, DEMO_ROLE } from '@/hooks/useDemoMode';
 
 // Updated role types to match new system
 type AppRole = 
@@ -89,11 +90,16 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { isDemoMode } = useDemoMode();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [permissions, setPermissions] = useState<RolePermissions[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Demo mode overrides
+  const effectiveUser = isDemoMode ? DEMO_USER : user;
+  const effectiveRole = isDemoMode ? DEMO_ROLE : role;
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -112,7 +118,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (isDemoMode) {
+        setLoading(false);
+        return () => subscription.unsubscribe();
+      }
+      supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -243,23 +253,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // New role booleans
-  const isCeo = role === 'ceo';
-  const isSupervisor = role === 'supervisor';
-  const isRespTechnique = role === 'resp_technique';
-  const isFrontDesk = role === 'frontdesk';
-  const isDirecteurOperationnel = role === 'directeur_operationnel';
-  const isCentraliste = role === 'centraliste';
+  // New role booleans (use effectiveRole for demo support)
+  const isCeo = effectiveRole === 'ceo';
+  const isSupervisor = effectiveRole === 'supervisor';
+  const isRespTechnique = effectiveRole === 'resp_technique';
+  const isFrontDesk = effectiveRole === 'frontdesk';
+  const isDirecteurOperationnel = effectiveRole === 'directeur_operationnel';
+  const isCentraliste = effectiveRole === 'centraliste';
 
   // Legacy role booleans for backward compatibility
-  const isOperator = role === 'operator';
-  const isAccounting = role === 'accounting';
-  const isCommercial = role === 'commercial';
-  const isSuperviseur = role === 'superviseur' || isSupervisor;
-  const isResponsableTechnique = role === 'responsable_technique' || isRespTechnique;
-  const isDirecteurOperations = role === 'directeur_operations' || isDirecteurOperationnel;
-  const isAgentAdministratif = role === 'agent_administratif' || isFrontDesk;
-  const isAuditeur = role === 'auditeur';
+  const isOperator = effectiveRole === 'operator';
+  const isAccounting = effectiveRole === 'accounting';
+  const isCommercial = effectiveRole === 'commercial';
+  const isSuperviseur = effectiveRole === 'superviseur' || isSupervisor;
+  const isResponsableTechnique = effectiveRole === 'responsable_technique' || isRespTechnique;
+  const isDirecteurOperations = effectiveRole === 'directeur_operations' || isDirecteurOperationnel;
+  const isAgentAdministratif = effectiveRole === 'agent_administratif' || isFrontDesk;
+  const isAuditeur = effectiveRole === 'auditeur';
 
   // ===================================================================
   // MATRICE DES PERMISSIONS - Granular Role-Based Access Control
@@ -342,9 +352,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const canViewEmergencyBcs = isCeo || isSuperviseur || isResponsableTechnique || isDirecteurOperations || isAgentAdministratif;
 
   const value: AuthContextType = {
-    user,
-    session,
-    role,
+    user: effectiveUser,
+    session: isDemoMode ? ({} as Session) : session,
+    role: effectiveRole,
     permissions,
     loading,
     signIn,

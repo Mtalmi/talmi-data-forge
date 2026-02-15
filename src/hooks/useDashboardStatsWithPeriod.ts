@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { DEMO_PERIOD_STATS } from '@/hooks/useDemoMode';
 import { 
   startOfDay, 
   endOfDay, 
@@ -98,7 +99,7 @@ function getPreviousPeriodLabel(period: Period): string {
   }
 }
 
-export function useDashboardStatsWithPeriod(period: Period) {
+export function useDashboardStatsWithPeriod(period: Period, isDemoMode: boolean = false) {
   const [stats, setStats] = useState<PeriodStats>({
     totalVolume: 0,
     chiffreAffaires: 0,
@@ -121,6 +122,7 @@ export function useDashboardStatsWithPeriod(period: Period) {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
+    if (isDemoMode) return;
     let isMounted = true;
     
     const fetchStats = async () => {
@@ -242,6 +244,10 @@ export function useDashboardStatsWithPeriod(period: Period) {
   const refresh = useCallback(() => {
     setRefreshTrigger(prev => prev + 1);
   }, []);
+
+  if (isDemoMode) {
+    return { stats: { ...DEMO_PERIOD_STATS, nbLivraisons: 47 } as PeriodStats, loading: false, refresh };
+  }
 
   return { stats, loading, refresh };
 }
