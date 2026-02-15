@@ -3,8 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Factory, CheckCircle, Clock, AlertTriangle, Link2 } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr as frLocale } from 'date-fns/locale';
+import { ar as arLocale } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 
 interface WS7Batch {
   id: string;
@@ -19,6 +22,8 @@ interface WS7Batch {
 }
 
 export function WS7LiveFeedWidget() {
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? arLocale : lang === 'fr' ? frLocale : enUS;
   const [batches, setBatches] = useState<WS7Batch[]>([]);
   const [lastImport, setLastImport] = useState<string | null>(null);
   const [todayCount, setTodayCount] = useState(0);
@@ -78,25 +83,25 @@ export function WS7LiveFeedWidget() {
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold flex items-center gap-2">
           <Factory className="h-4 w-4 text-primary" />
-          WS7 Production Feed
+          {t.ws7.title}
         </h3>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Badge variant="outline" className="text-[10px] gap-1">
             <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-            {todayCount} aujourd'hui
+            {todayCount} {t.ws7.today}
           </Badge>
         </div>
       </div>
 
       {lastImport && (
         <p className="text-[10px] text-muted-foreground">
-          Dernier import: {format(new Date(lastImport), 'dd MMM HH:mm', { locale: fr })}
+          {t.ws7.lastImport}: {format(new Date(lastImport), 'dd MMM HH:mm', { locale: dateFnsLocale })}
         </p>
       )}
 
       <div className="space-y-1.5">
         {batches.length === 0 ? (
-          <p className="text-xs text-muted-foreground text-center py-4">Aucun batch WS7</p>
+          <p className="text-xs text-muted-foreground text-center py-4">{t.ws7.noBatches}</p>
         ) : (
           batches.map(b => (
             <div key={b.id} className="flex items-center gap-2 bg-muted/20 rounded-lg px-3 py-2 text-xs">

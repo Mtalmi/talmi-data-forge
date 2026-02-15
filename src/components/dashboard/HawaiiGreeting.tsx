@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Sun, Cloud, CloudRain, Snowflake, Factory, Shield } from 'lucide-react';
 
@@ -15,53 +16,40 @@ interface EfficiencyData {
   status: 'optimal' | 'good' | 'attention';
 }
 
-/**
- * Hawaii Greeting - Premium personalized greeting with weather and efficiency
- * "Bonjour Master. Casablanca est à 18°C. L'usine tourne à 85% d'efficacité. Tout est sous contrôle."
- */
 export function HawaiiGreeting() {
   const { user, isCeo } = useAuth();
+  const { t } = useI18n();
   const [weather, setWeather] = useState<WeatherData>({ temp: 18, condition: 'sunny', city: 'Casablanca' });
   const [efficiency, setEfficiency] = useState<EfficiencyData>({ percentage: 85, status: 'optimal' });
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Animate in on mount
     const timer = setTimeout(() => setIsVisible(true), 100);
-    
-    // Update time every minute
     const timeInterval = setInterval(() => setCurrentTime(new Date()), 60000);
-
     return () => {
       clearTimeout(timer);
       clearInterval(timeInterval);
     };
   }, []);
 
-  // Fetch real efficiency data from production
   useEffect(() => {
     const fetchEfficiency = async () => {
       try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        // Get today's production stats
         const { count: totalBatches } = await supabase
           .from('production_batches')
           .select('*', { count: 'exact', head: true })
           .gte('entered_at', today.toISOString());
-
         const { count: okBatches } = await supabase
           .from('production_batches')
           .select('*', { count: 'exact', head: true })
           .gte('entered_at', today.toISOString())
           .eq('quality_status', 'ok');
-
         const total = totalBatches || 0;
         const ok = okBatches || 0;
         const pct = total > 0 ? Math.round((ok / total) * 100) : 100;
-
         setEfficiency({
           percentage: pct,
           status: pct >= 95 ? 'optimal' : pct >= 80 ? 'good' : 'attention',
@@ -70,30 +58,26 @@ export function HawaiiGreeting() {
         console.error('Error fetching efficiency:', error);
       }
     };
-
     fetchEfficiency();
   }, []);
 
-  // Simulate weather based on time (in production, use a real weather API)
   useEffect(() => {
     const hour = currentTime.getHours();
     const temps = [14, 13, 13, 12, 12, 13, 15, 17, 19, 21, 23, 25, 26, 27, 27, 26, 24, 22, 20, 18, 17, 16, 15, 14];
     const temp = temps[hour] || 18;
-    
     let condition: WeatherData['condition'] = 'sunny';
     if (temp < 15) condition = 'cold';
     else if (hour >= 6 && hour <= 10) condition = 'cloudy';
     else if (hour >= 18) condition = 'cloudy';
-    
     setWeather({ temp, condition, city: 'Casablanca' });
   }, [currentTime]);
 
   const getGreeting = () => {
     const hour = currentTime.getHours();
-    if (hour >= 5 && hour < 12) return 'Bonjour';
-    if (hour >= 12 && hour < 18) return 'Bon après-midi';
-    if (hour >= 18 && hour < 22) return 'Bonsoir';
-    return 'Bonne nuit';
+    if (hour >= 5 && hour < 12) return t.greeting.morning;
+    if (hour >= 12 && hour < 18) return t.greeting.afternoon;
+    if (hour >= 18 && hour < 22) return t.greeting.evening;
+    return t.greeting.night;
   };
 
   const getWeatherIcon = () => {
@@ -106,9 +90,9 @@ export function HawaiiGreeting() {
   };
 
   const getStatusMessage = () => {
-    if (efficiency.status === 'optimal') return 'Tout est sous contrôle.';
-    if (efficiency.status === 'good') return 'Performance stable.';
-    return 'Attention requise.';
+    if (efficiency.status === 'optimal') return t.greeting.allUnderControl;
+    if (efficiency.status === 'good') return t.greeting.stablePerformance;
+    return t.greeting.attentionRequired;
   };
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Master';
@@ -121,14 +105,12 @@ export function HawaiiGreeting() {
       'border border-primary/10 backdrop-blur-sm',
       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
     )}>
-      {/* Animated gold line */}
       <div className="absolute top-0 left-0 right-0 h-px">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-shimmer" />
       </div>
 
       <div className="px-4 py-3 sm:px-6 sm:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-          {/* Main Greeting */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex h-10 w-10 rounded-xl bg-primary/10 border border-primary/20 items-center justify-center">
               <Shield className="h-5 w-5 text-primary animate-pulse-slow" />
@@ -152,7 +134,7 @@ export function HawaiiGreeting() {
                     efficiency.status === 'good' ? 'text-warning' : 'text-destructive'
                   )} />
                   <span>
-                    L'usine tourne à{' '}
+                    {t.greeting.plantRunning}{' '}
                     <span className={cn(
                       'font-mono font-bold',
                       efficiency.status === 'optimal' ? 'text-success' :
@@ -160,14 +142,13 @@ export function HawaiiGreeting() {
                     )}>
                       {efficiency.percentage}%
                     </span>
-                    {' '}d'efficacité.
+                    {' '}{t.greeting.efficiency}.
                   </span>
                 </span>
               </p>
             </div>
           </div>
 
-          {/* Status Badge */}
           <div className={cn(
             'flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all',
             efficiency.status === 'optimal' 
@@ -186,7 +167,6 @@ export function HawaiiGreeting() {
         </div>
       </div>
 
-      {/* Bottom glow line */}
       <div className="absolute bottom-0 left-0 right-0 h-px">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       </div>

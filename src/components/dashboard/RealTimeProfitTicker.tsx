@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 import { TrendingUp, TrendingDown, Minus, RefreshCw, DollarSign, Fuel, Truck } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -16,6 +17,7 @@ interface ProfitData {
 }
 
 export function RealTimeProfitTicker() {
+  const { t } = useI18n();
   const [data, setData] = useState<ProfitData>({
     totalRevenue: 0,
     materialCost: 0,
@@ -152,7 +154,7 @@ export function RealTimeProfitTicker() {
             <div className="flex items-center gap-2 mb-1">
               <DollarSign className="h-4 w-4 text-primary" />
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Profit Net Live
+                {t.profitTicker.netProfitLive}
               </span>
               <RefreshCw className={cn(
                 "h-3 w-3 text-muted-foreground/50",
@@ -181,7 +183,7 @@ export function RealTimeProfitTicker() {
             <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <DollarSign className="h-3 w-3 text-success" />
-                <span className="text-[10px] text-muted-foreground">CA</span>
+                <span className="text-[10px] text-muted-foreground">{t.profitTicker.revenue}</span>
               </div>
               <span className="text-[11px] sm:text-xs font-semibold text-success">
                 {formatCurrency(data.totalRevenue)}
@@ -190,7 +192,7 @@ export function RealTimeProfitTicker() {
             <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <Fuel className="h-3 w-3 text-warning" />
-                <span className="text-[10px] text-muted-foreground">Fuel</span>
+                <span className="text-[10px] text-muted-foreground">{t.profitTicker.fuel}</span>
               </div>
               <span className="text-[11px] sm:text-xs font-semibold text-warning">
                 -{formatCurrency(data.fuelCost)}
@@ -199,7 +201,7 @@ export function RealTimeProfitTicker() {
             <div className="p-2 rounded-lg bg-muted/30 border border-border/30 min-w-[70px] sm:min-w-[80px] flex-shrink-0">
               <div className="flex items-center gap-1 mb-1">
                 <Truck className="h-3 w-3 text-orange-500" />
-                <span className="text-[10px] text-muted-foreground">Pompe</span>
+                <span className="text-[10px] text-muted-foreground">{t.profitTicker.expenses}</span>
               </div>
               <span className="text-[11px] sm:text-xs font-semibold text-orange-500">
                 -{formatCurrency(data.pumpFees)}

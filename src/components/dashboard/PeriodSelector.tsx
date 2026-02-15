@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Calendar, CalendarDays, CalendarRange } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 export type Period = 'today' | 'week' | 'month';
 
@@ -9,13 +10,15 @@ interface PeriodSelectorProps {
   onChange: (period: Period) => void;
 }
 
-const PERIODS: { value: Period; label: string; icon: React.ReactNode }[] = [
-  { value: 'today', label: "Aujourd'hui", icon: <Calendar className="h-4 w-4" /> },
-  { value: 'week', label: 'Cette Semaine', icon: <CalendarDays className="h-4 w-4" /> },
-  { value: 'month', label: 'Ce Mois', icon: <CalendarRange className="h-4 w-4" /> },
-];
-
 export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
+  const { t } = useI18n();
+
+  const PERIODS: { value: Period; label: string; icon: React.ReactNode }[] = [
+    { value: 'today', label: t.dashboard.period.today, icon: <Calendar className="h-4 w-4" /> },
+    { value: 'week', label: t.dashboard.period.thisWeek, icon: <CalendarDays className="h-4 w-4" /> },
+    { value: 'month', label: t.dashboard.period.thisMonth, icon: <CalendarRange className="h-4 w-4" /> },
+  ];
+
   return (
     <div className="flex items-center gap-0.5 sm:gap-1 p-0.5 sm:p-1 bg-muted/50 rounded-lg">
       {PERIODS.map((period) => (
