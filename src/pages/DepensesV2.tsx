@@ -55,40 +55,44 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
-const STATUS_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  brouillon: { label: 'Brouillon', icon: <Clock className="h-3 w-3" />, color: 'bg-muted text-muted-foreground' },
-  en_attente: { label: 'En attente', icon: <Clock className="h-3 w-3" />, color: 'bg-warning/20 text-warning' },
-  approuve: { label: 'Approuvé', icon: <CheckCircle className="h-3 w-3" />, color: 'bg-success/20 text-success' },
-  rejete: { label: 'Rejeté', icon: <XCircle className="h-3 w-3" />, color: 'bg-destructive/20 text-destructive' },
-  paye: { label: 'Payé', icon: <Banknote className="h-3 w-3" />, color: 'bg-primary/20 text-primary' },
-  bloque_plafond: { label: 'Bloqué (Plafond)', icon: <AlertTriangle className="h-3 w-3" />, color: 'bg-destructive/20 text-destructive' },
-};
+const getStatusConfig = (t: any) => ({
+  brouillon: { label: t.pages.depenses.draft, icon: <Clock className="h-3 w-3" />, color: 'bg-muted text-muted-foreground' },
+  en_attente: { label: t.pages.depenses.pending, icon: <Clock className="h-3 w-3" />, color: 'bg-warning/20 text-warning' },
+  approuve: { label: t.pages.depenses.approved, icon: <CheckCircle className="h-3 w-3" />, color: 'bg-success/20 text-success' },
+  rejete: { label: t.pages.depenses.rejected, icon: <XCircle className="h-3 w-3" />, color: 'bg-destructive/20 text-destructive' },
+  paye: { label: t.pages.depenses.paid, icon: <Banknote className="h-3 w-3" />, color: 'bg-primary/20 text-primary' },
+  bloque_plafond: { label: t.pages.depenses.blockedCap, icon: <AlertTriangle className="h-3 w-3" />, color: 'bg-destructive/20 text-destructive' },
+} as Record<string, { label: string; icon: React.ReactNode; color: string }>);
 
-const LEVEL_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  level_1: { label: 'Niveau 1', icon: <ShieldCheck className="h-3 w-3" />, color: 'text-success' },
-  level_2: { label: 'Niveau 2', icon: <ShieldAlert className="h-3 w-3" />, color: 'text-warning' },
-  level_3: { label: 'Niveau 3', icon: <ShieldX className="h-3 w-3" />, color: 'text-destructive' },
-};
+const getLevelConfig = (t: any) => ({
+  level_1: { label: t.pages.depenses.level1, icon: <ShieldCheck className="h-3 w-3" />, color: 'text-success' },
+  level_2: { label: t.pages.depenses.level2, icon: <ShieldAlert className="h-3 w-3" />, color: 'text-warning' },
+  level_3: { label: t.pages.depenses.level3, icon: <ShieldX className="h-3 w-3" />, color: 'text-destructive' },
+} as Record<string, { label: string; icon: React.ReactNode; color: string }>);
 
-const CATEGORY_LABELS: Record<string, string> = {
-  carburant: 'Carburant',
-  maintenance: 'Maintenance',
-  fournitures: 'Fournitures',
-  transport: 'Transport',
-  reparation: 'Réparation',
-  nettoyage: 'Nettoyage',
-  petit_equipement: 'Petit Équipement',
-  services_externes: 'Services Externes',
-  frais_administratifs: 'Frais Administratifs',
-  autre: 'Autre',
-};
+const getCategoryLabels = (t: any) => ({
+  carburant: t.pages.depenses.fuel,
+  maintenance: t.pages.depenses.maintenance,
+  fournitures: t.pages.depenses.supplies,
+  transport: t.pages.depenses.transport,
+  reparation: t.pages.depenses.repair,
+  nettoyage: t.pages.depenses.cleaning,
+  petit_equipement: t.pages.depenses.smallEquipment,
+  services_externes: t.pages.depenses.externalServices,
+  frais_administratifs: t.pages.depenses.adminFees,
+  autre: t.pages.depenses.other,
+} as Record<string, string>);
 
 export default function DepensesV2() {
   const { isCeo, isSuperviseur, isAgentAdministratif, isDirecteurOperations } = useAuth();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const numberLocale = getNumberLocale(lang);
+  const d = t.pages.depenses;
   const [filters, setFilters] = useState<ExpenseFilters>({});
   const [showFilters, setShowFilters] = useState(false);
   const [showNewForm, setShowNewForm] = useState(false);
@@ -109,6 +113,10 @@ export default function DepensesV2() {
 
   const canApprove = isCeo || isSuperviseur;
   const canCreate = isCeo || isSuperviseur || isAgentAdministratif || isDirecteurOperations;
+
+  const STATUS_CONFIG = getStatusConfig(t);
+  const LEVEL_CONFIG = getLevelConfig(t);
+  const CATEGORY_LABELS = getCategoryLabels(t);
 
   const getStatusBadge = (status: string) => {
     const config = STATUS_CONFIG[status] || STATUS_CONFIG['en_attente'];
@@ -134,21 +142,21 @@ export default function DepensesV2() {
     const level = expense.approval_level.replace('_', '') as 'level1' | 'level2' | 'level3';
     const success = await approveExpense(expense.id, level);
     if (success) {
-      toast.success('Dépense approuvée');
+      toast.success(d.expenseApproved);
     } else {
-      toast.error('Erreur lors de l\'approbation');
+      toast.error(d.approveError);
     }
   };
 
   const handleReject = async (expense: ExpenseControlled) => {
-    const reason = prompt('Raison du rejet:');
+    const reason = prompt(d.rejectReason);
     if (!reason) return;
     
     const success = await rejectExpense(expense.id, reason);
     if (success) {
-      toast.success('Dépense rejetée');
+      toast.success(d.expenseRejected);
     } else {
-      toast.error('Erreur lors du rejet');
+      toast.error(d.rejectError);
     }
   };
 
@@ -163,43 +171,42 @@ export default function DepensesV2() {
     
     const success = await markAsPaid(paymentDialogExpense.id, method);
     if (success) {
-      toast.success('Marqué comme payé');
+      toast.success(d.markedPaid);
     } else {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(d.markPaidError);
     }
     setPaymentDialogExpense(null);
   };
 
   const handleOverrideCap = async (expense: ExpenseControlled) => {
-    const reason = prompt('Raison du dépassement de plafond:');
+    const reason = prompt(d.capOverrideReason);
     if (!reason) return;
     
     const success = await overrideCap(expense.id, reason);
     if (success) {
-      toast.success('Plafond débloqué');
+      toast.success(d.capUnblockedSuccess);
     } else {
-      toast.error('Erreur lors du déblocage');
+      toast.error(d.capUnblockError);
     }
   };
 
   const handleDelete = async (expense: ExpenseControlled) => {
-    if (!confirm('Supprimer cette dépense ?')) return;
+    if (!confirm(d.deleteConfirm)) return;
     
     const result = await deleteExpense(expense.id);
     if (result.success) {
-      toast.success('Dépense supprimée');
+      toast.success(d.expenseDeleted);
     } else {
-      // Handle specific error types with professional messages
       if (result.error?.includes('DELETION_BLOCKED')) {
         toast.error(
           <div className="space-y-1">
-            <p className="font-semibold">🔒 Suppression refusée</p>
-            <p className="text-sm">Seul le CEO peut supprimer des dépenses approuvées.</p>
+            <p className="font-semibold">{d.deletionBlocked}</p>
+            <p className="text-sm">{d.deletionBlockedDesc}</p>
           </div>,
           { duration: 6000 }
         );
       } else {
-        toast.error(result.error || 'Erreur lors de la suppression');
+        toast.error(result.error || d.deleteError);
       }
     }
   };
@@ -223,9 +230,9 @@ export default function DepensesV2() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">Gestion des Dépenses Contrôlées</h1>
+            <h1 className="text-lg sm:text-2xl font-bold tracking-tight">{d.controlledExpenses}</h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Workflow multi-niveau avec budgets départementaux
+              {d.controlledSubtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -233,16 +240,16 @@ export default function DepensesV2() {
             <ExportButton
               data={exportData}
               columns={[
-                { key: 'reference', label: 'Référence' },
-                { key: 'date', label: 'Date' },
-                { key: 'demandeur', label: 'Demandeur' },
-                { key: 'categorie', label: 'Catégorie' },
-                { key: 'description', label: 'Description' },
-                { key: 'montant_ht', label: 'Montant HT' },
-                { key: 'tva', label: 'TVA %' },
-                { key: 'montant_ttc', label: 'Montant TTC' },
-                { key: 'niveau', label: 'Niveau' },
-                { key: 'statut', label: 'Statut' },
+                { key: 'reference', label: d.exportReference },
+                { key: 'date', label: d.exportDate },
+                { key: 'demandeur', label: d.exportRequester },
+                { key: 'categorie', label: d.exportCategory },
+                { key: 'description', label: d.exportDescription },
+                { key: 'montant_ht', label: d.exportAmountHT },
+                { key: 'tva', label: d.exportVAT },
+                { key: 'montant_ttc', label: d.exportAmountTTC },
+                { key: 'niveau', label: d.exportLevel },
+                { key: 'statut', label: d.exportStatus },
               ]}
               filename="depenses-controlees"
             />
@@ -253,16 +260,16 @@ export default function DepensesV2() {
               className={cn('min-h-[40px]', showFilters && 'bg-muted')}
             >
               <Filter className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Filtres</span>
+              <span className="hidden sm:inline">{d.filters}</span>
             </Button>
             <Button variant="outline" size="sm" onClick={refresh} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{d.refresh}</span>
             </Button>
             {canCreate && (
               <Button size="sm" onClick={() => setShowNewForm(true)} className="min-h-[40px]">
                 <Plus className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Nouvelle Dépense</span>
+                <span className="hidden sm:inline">{d.newRequest}</span>
               </Button>
             )}
           </div>
@@ -273,11 +280,11 @@ export default function DepensesV2() {
           <TabsList className="grid w-full max-w-md grid-cols-2">
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <List className="h-4 w-4" />
-              Dépenses
+              {d.expensesTab}
             </TabsTrigger>
             <TabsTrigger value="budgets" className="flex items-center gap-2">
               <Wallet className="h-4 w-4" />
-              Budgets
+              {d.budgetsTab}
             </TabsTrigger>
           </TabsList>
 
@@ -288,13 +295,13 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-muted-foreground flex items-center gap-2">
                     <Receipt className="h-4 w-4" />
-                    Total
+                    {d.total}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xl font-bold">{stats.total}</p>
                   <p className="text-xs text-muted-foreground font-mono">
-                    {stats.totalAmount.toLocaleString('fr-FR')} MAD
+                    {stats.totalAmount.toLocaleString(numberLocale)} MAD
                   </p>
                 </CardContent>
               </Card>
@@ -303,13 +310,13 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-warning flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    En attente
+                    {d.waitingLabel}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xl font-bold text-warning">{stats.pending}</p>
                   <p className="text-xs text-muted-foreground font-mono">
-                    {stats.pendingAmount.toLocaleString('fr-FR')} MAD
+                    {stats.pendingAmount.toLocaleString(numberLocale)} MAD
                   </p>
                 </CardContent>
               </Card>
@@ -318,7 +325,7 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-success flex items-center gap-2">
                     <CheckCircle className="h-4 w-4" />
-                    Approuvées
+                    {d.approvedLabel}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -330,7 +337,7 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-primary flex items-center gap-2">
                     <Banknote className="h-4 w-4" />
-                    Payées
+                    {d.paidLabel}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -342,7 +349,7 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
                     <XCircle className="h-4 w-4" />
-                    Rejetées
+                    {d.rejectedLabel}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -354,7 +361,7 @@ export default function DepensesV2() {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-medium text-destructive flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4" />
-                    Bloquées
+                    {d.blocked}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -377,10 +384,10 @@ export default function DepensesV2() {
               ) : expenses.length === 0 ? (
                 <div className="p-8 text-center">
                   <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                  <p className="text-muted-foreground">Aucune dépense trouvée</p>
+                  <p className="text-muted-foreground">{d.noExpensesFound}</p>
                   {Object.keys(filters).length > 0 && (
                     <Button variant="link" onClick={() => setFilters({})}>
-                      Effacer les filtres
+                      {d.clearFilters}
                     </Button>
                   )}
                 </div>
@@ -388,13 +395,13 @@ export default function DepensesV2() {
                 <Table className="data-table-industrial">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Référence</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Demandeur</TableHead>
-                      <TableHead>Description</TableHead>
-                      <TableHead className="text-right">Montant TTC</TableHead>
-                      <TableHead>Niveau</TableHead>
-                      <TableHead>Statut</TableHead>
+                      <TableHead>{d.reference}</TableHead>
+                      <TableHead>{d.date}</TableHead>
+                      <TableHead>{d.requester}</TableHead>
+                      <TableHead>{d.description}</TableHead>
+                      <TableHead className="text-right">{d.amountTTC}</TableHead>
+                      <TableHead>{d.level}</TableHead>
+                      <TableHead>{d.status}</TableHead>
                       <TableHead className="w-10"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -406,7 +413,7 @@ export default function DepensesV2() {
                         </TableCell>
                         <TableCell className="text-sm">
                           {expense.requested_at 
-                            ? format(new Date(expense.requested_at), 'dd/MM/yyyy', { locale: fr })
+                            ? format(new Date(expense.requested_at), 'dd/MM/yyyy', { locale: dateLocale || undefined })
                             : '—'}
                         </TableCell>
                         <TableCell className="text-sm">
@@ -421,7 +428,7 @@ export default function DepensesV2() {
                           </div>
                         </TableCell>
                         <TableCell className="text-right font-mono font-medium">
-                          {expense.montant_ttc.toLocaleString('fr-FR')} MAD
+                          {expense.montant_ttc.toLocaleString(numberLocale)} MAD
                         </TableCell>
                         <TableCell>{getLevelBadge(expense.approval_level)}</TableCell>
                         <TableCell>{getStatusBadge(expense.statut)}</TableCell>
@@ -435,18 +442,18 @@ export default function DepensesV2() {
                             <DropdownMenuContent align="end">
                               <DropdownMenuItem onClick={() => setSelectedExpense(expense)}>
                                 <Eye className="h-4 w-4 mr-2" />
-                                Voir détails
+                                {d.viewDetails}
                               </DropdownMenuItem>
                               
                               {canApprove && expense.statut === 'en_attente' && (
                                 <>
                                   <DropdownMenuItem onClick={() => handleApprove(expense)}>
                                     <CheckCircle className="h-4 w-4 mr-2 text-success" />
-                                    Approuver
+                                    {d.approve}
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleReject(expense)}>
                                     <XCircle className="h-4 w-4 mr-2 text-destructive" />
-                                    Rejeter
+                                    {d.reject}
                                   </DropdownMenuItem>
                                 </>
                               )}
@@ -454,14 +461,14 @@ export default function DepensesV2() {
                               {canApprove && expense.statut === 'bloque_plafond' && (isCeo || isSuperviseur) && (
                                 <DropdownMenuItem onClick={() => handleOverrideCap(expense)}>
                                   <TrendingUp className="h-4 w-4 mr-2 text-warning" />
-                                  Débloquer plafond
+                                  {d.unblockCap}
                                 </DropdownMenuItem>
                               )}
                               
                               {canApprove && expense.statut === 'approuve' && (
                                 <DropdownMenuItem onClick={() => handleMarkPaid(expense)}>
                                   <Banknote className="h-4 w-4 mr-2 text-primary" />
-                                  Marquer payé
+                                  {d.markPaid}
                                 </DropdownMenuItem>
                               )}
                               
@@ -471,7 +478,7 @@ export default function DepensesV2() {
                                   className="text-destructive"
                                 >
                                   <XCircle className="h-4 w-4 mr-2" />
-                                  Supprimer
+                                  {d.deleteLabel}
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -496,7 +503,7 @@ export default function DepensesV2() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Plus className="h-5 w-5" />
-                Nouvelle Demande de Dépense
+                {d.newExpenseRequest}
               </DialogTitle>
             </DialogHeader>
             <ExpenseRequestForm 

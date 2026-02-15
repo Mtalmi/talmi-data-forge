@@ -110,10 +110,10 @@ export default function Depenses() {
                 montant: d.montant,
               }))}
               columns={[
-                { key: 'date', label: 'Date' },
-                { key: 'categorie', label: 'Catégorie' },
-                { key: 'description', label: 'Description' },
-                { key: 'montant', label: 'Montant (DH)' },
+                { key: 'date', label: t.pages.depenses.exportDate },
+                { key: 'categorie', label: t.pages.depenses.exportCategory },
+                { key: 'description', label: t.pages.depenses.exportDescription },
+                { key: 'montant', label: t.pages.depenses.exportAmount },
               ]}
               filename="depenses"
             />
@@ -135,7 +135,7 @@ export default function Depenses() {
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold font-mono">
-                {stats.totalDepenses.toLocaleString('fr-FR')}
+                {stats.totalDepenses.toLocaleString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR')}
                 <span className="text-sm font-normal text-muted-foreground ml-1">DH</span>
               </p>
             </CardContent>
@@ -151,7 +151,7 @@ export default function Depenses() {
               </CardHeader>
               <CardContent>
                 <p className="text-xl font-bold font-mono">
-                  {(stats.byCategorie[cat] || 0).toLocaleString('fr-FR')}
+                  {(stats.byCategorie[cat] || 0).toLocaleString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR')}
                   <span className="text-xs font-normal text-muted-foreground ml-1">DH</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -196,7 +196,7 @@ export default function Depenses() {
                       {dep.description || '—'}
                     </TableCell>
                     <TableCell className="text-right font-mono font-medium">
-                      {dep.montant.toLocaleString('fr-FR')} DH
+                      {dep.montant.toLocaleString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR')} DH
                     </TableCell>
                     <TableCell>
                       <Button
@@ -254,7 +254,7 @@ export default function Depenses() {
                     <div>
                       <p className="text-muted-foreground">{t.pages.depenses.amount}</p>
                       <p className="font-bold font-mono text-lg">
-                        {selectedDepense.montant.toLocaleString('fr-FR')} DH
+                        {selectedDepense.montant.toLocaleString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR')} DH
                       </p>
                     </div>
                     <div>
