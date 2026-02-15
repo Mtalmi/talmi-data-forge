@@ -1673,6 +1673,7 @@ const fr = {
       subtitle: 'Suivi des prêts et emprunts',
     },
   },
+  landing: {
     badge: "Système d'exploitation d'entreprise",
     headline1: "Le Système d'Exploitation",
     headline2: 'des Titans du Béton',
