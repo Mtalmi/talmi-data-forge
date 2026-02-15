@@ -35,6 +35,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { triggerHaptic } from '@/lib/haptics';
 import { format } from 'date-fns';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface PendingBc {
   id: string;
@@ -65,6 +66,9 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
   const [processing, setProcessing] = useState(false);
+  const { t } = useI18n();
+  const pbv = t.pendingBcValidation;
+  const pv = t.pendingValidation;
 
   const fetchPendingBcs = async () => {
     try {
@@ -91,7 +95,6 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
   useEffect(() => {
     fetchPendingBcs();
     
-    // Subscribe to realtime updates
     const channel = supabase
       .channel('pending-bc-changes')
       .on('postgres_changes', {
@@ -121,7 +124,6 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
         .eq('user_id', userData.user?.id)
         .single();
 
-      // Get user name from profiles or email
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
@@ -142,7 +144,6 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
 
       if (error) throw error;
 
-      // Notify the creator
       await supabase.from('alertes_systeme').insert({
         type_alerte: 'bc_valide',
         niveau: 'info',
@@ -154,7 +155,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
       });
 
       triggerHaptic('success');
-      toast.success(`BC ${selectedBc.bc_id} approuvé - Production autorisée`);
+      toast.success(`BC ${selectedBc.bc_id} — ${pv.approveAndLock}`);
       setApprovalDialogOpen(false);
       setSelectedBc(null);
       fetchPendingBcs();
@@ -162,7 +163,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
     } catch (error) {
       console.error('Error approving BC:', error);
       triggerHaptic('error');
-      toast.error('Erreur lors de l\'approbation');
+      toast.error(t.common.error);
     } finally {
       setProcessing(false);
     }
@@ -183,7 +184,6 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
 
       if (error) throw error;
 
-      // Notify the creator
       await supabase.from('alertes_systeme').insert({
         type_alerte: 'bc_refuse',
         niveau: 'warning',
@@ -195,7 +195,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
       });
 
       triggerHaptic('success');
-      toast.info(`BC ${selectedBc.bc_id} refusé`);
+      toast.info(`BC ${selectedBc.bc_id} — ${pv.rejectBc}`);
       setRejectDialogOpen(false);
       setRejectionReason('');
       setSelectedBc(null);
@@ -204,7 +204,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
     } catch (error) {
       console.error('Error rejecting BC:', error);
       triggerHaptic('error');
-      toast.error('Erreur lors du refus');
+      toast.error(t.common.error);
     } finally {
       setProcessing(false);
     }
@@ -224,7 +224,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Clock className="h-5 w-5 text-amber-500" />
-            BC en Attente de Validation Prix
+            {pbv.title}
             <Badge variant="secondary" className="ml-auto">
               {pendingBcs.length}
             </Badge>
@@ -239,13 +239,13 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>BC</TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                  <TableHead className="text-right">Prix/m³</TableHead>
-                  <TableHead className="text-right">Total HT</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{pbv.bc}</TableHead>
+                  <TableHead>{pbv.client}</TableHead>
+                  <TableHead>{pbv.formula}</TableHead>
+                  <TableHead className="text-right">{pbv.volume}</TableHead>
+                  <TableHead className="text-right">{pbv.pricePerM3}</TableHead>
+                  <TableHead className="text-right">{pbv.totalHt}</TableHead>
+                  <TableHead>{pbv.actions}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -257,7 +257,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                         {isEmergencyBc(bc.notes) && (
                           <Badge variant="destructive" className="gap-1 text-xs">
                             <Zap className="h-3 w-3" />
-                            URGENCE
+                            {pbv.emergency}
                           </Badge>
                         )}
                       </div>
@@ -283,7 +283,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                           }}
                         >
                           <CheckCircle className="h-4 w-4" />
-                          Approuver
+                          {pbv.approve}
                         </Button>
                         <Button
                           size="sm"
@@ -295,7 +295,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
                           }}
                         >
                           <XCircle className="h-4 w-4" />
-                          Refuser
+                          {pbv.reject}
                         </Button>
                       </div>
                     </TableCell>
@@ -313,10 +313,10 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              Confirmer l'Approbation
+              {pv.confirmApproval}
             </DialogTitle>
             <DialogDescription>
-              Vous allez approuver ce BC et verrouiller le prix de vente.
+              {pv.approvalDescription}
             </DialogDescription>
           </DialogHeader>
           
@@ -324,29 +324,29 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 p-4 rounded-lg bg-muted">
                 <div>
-                  <p className="text-xs text-muted-foreground">BC</p>
+                  <p className="text-xs text-muted-foreground">{pv.bc}</p>
                   <p className="font-mono font-semibold">{selectedBc.bc_id}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Client</p>
+                  <p className="text-xs text-muted-foreground">{pv.client}</p>
                   <p className="font-semibold">{selectedBc.client?.nom_client}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Volume</p>
+                  <p className="text-xs text-muted-foreground">{pv.volume}</p>
                   <p>{selectedBc.volume_m3} m³</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Prix/m³</p>
+                  <p className="text-xs text-muted-foreground">{pv.pricePerM3}</p>
                   <p className="font-mono">{selectedBc.prix_vente_m3.toLocaleString()} DH</p>
                 </div>
               </div>
 
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30">
                 <p className="text-sm text-green-700">
-                  ✓ Le prix sera verrouillé à {selectedBc.prix_vente_m3.toLocaleString()} DH/m³
+                  ✓ {pv.priceLocked.replace('{price}', selectedBc.prix_vente_m3.toLocaleString())}
                 </p>
                 <p className="text-sm text-green-700">
-                  ✓ La production pourra démarrer immédiatement
+                  ✓ {pv.productionCanStart}
                 </p>
               </div>
             </div>
@@ -354,7 +354,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setApprovalDialogOpen(false)}>
-              Annuler
+              {pv.cancel}
             </Button>
             <Button 
               onClick={handleApprove} 
@@ -366,7 +366,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
               ) : (
                 <CheckCircle className="h-4 w-4" />
               )}
-              Approuver & Verrouiller Prix
+              {pv.approveAndLock}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -378,10 +378,10 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-destructive">
               <XCircle className="h-5 w-5" />
-              Refuser le BC
+              {pv.rejectBc}
             </DialogTitle>
             <DialogDescription>
-              Veuillez indiquer la raison du refus.
+              {pv.rejectDescription}
             </DialogDescription>
           </DialogHeader>
           
@@ -395,9 +395,9 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium">Raison du Refus *</label>
+                <label className="text-sm font-medium">{pv.rejectionReason}</label>
                 <Textarea
-                  placeholder="Ex: Prix trop bas pour cette formule, marge insuffisante..."
+                  placeholder={pv.rejectionPlaceholder}
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   rows={3}
@@ -408,7 +408,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => { setRejectDialogOpen(false); setRejectionReason(''); }}>
-              Annuler
+              {pv.cancel}
             </Button>
             <Button 
               variant="destructive"
@@ -421,7 +421,7 @@ export function PendingBcValidation({ onRefresh }: PendingBcValidationProps) {
               ) : (
                 <XCircle className="h-4 w-4" />
               )}
-              Refuser le BC
+              {pv.rejectBc}
             </Button>
           </DialogFooter>
         </DialogContent>

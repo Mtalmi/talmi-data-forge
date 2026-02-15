@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Phone, MessageCircle, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 export interface DriverQuickContactProps {
   driverName: string | null;
@@ -17,20 +18,23 @@ export interface DriverQuickContactProps {
 
 export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactProps>(
   function DriverQuickContact({ driverName, phoneNumber, blId, compact = false }, ref) {
+    const { t } = useI18n();
+    const dc = t.driverContact;
+
     const handleCall = () => {
       if (!phoneNumber) {
-        toast.error('Numéro de téléphone non disponible');
+        toast.error(dc.phoneUnavailable);
         return;
       }
       
       const cleanPhone = phoneNumber.replace(/[\s\-\(\)\.]/g, '');
       window.open(`tel:${cleanPhone}`, '_self');
-      toast.success(`Appel vers ${driverName || 'chauffeur'}`);
+      toast.success(dc.callTo.replace('{name}', driverName || ''));
     };
 
     const handleWhatsApp = () => {
       if (!phoneNumber) {
-        toast.error('Numéro de téléphone non disponible');
+        toast.error(dc.phoneUnavailable);
         return;
       }
 
@@ -42,21 +46,20 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
       }
 
       const message = encodeURIComponent(
-        `🚚 *Livraison ${blId}*\n\n` +
-        `Bonjour ${driverName || ''},\n\n` +
-        `Merci de confirmer votre statut pour cette livraison.\n\n` +
-        `_TALMI Béton - Dispatch_`
+        dc.deliveryMessage
+          .replace('{blId}', blId)
+          .replace('{name}', driverName || '')
       );
 
       window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
-      toast.success('WhatsApp ouvert');
+      toast.success(dc.whatsappOpened);
     };
 
     if (!driverName && !phoneNumber) {
       return (
         <div ref={ref} className="flex items-center gap-1 text-xs text-muted-foreground">
           <User className="h-3 w-3" />
-          <span>Non assigné</span>
+          <span>{dc.notAssigned}</span>
         </div>
       );
     }
@@ -76,7 +79,7 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
                 <Phone className="h-3.5 w-3.5 text-primary" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Appeler {driverName}</TooltipContent>
+            <TooltipContent>{dc.callDriver.replace('{name}', driverName || '')}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -90,7 +93,7 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
                 <MessageCircle className="h-3.5 w-3.5 text-green-600" />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>WhatsApp {driverName}</TooltipContent>
+            <TooltipContent>{dc.whatsappDriver.replace('{name}', driverName || '')}</TooltipContent>
           </Tooltip>
         </div>
       );
@@ -100,7 +103,7 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
       <div ref={ref} className="flex items-center gap-2">
         <div className="flex items-center gap-1.5 text-sm">
           <User className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-medium">{driverName || 'Non assigné'}</span>
+          <span className="font-medium">{driverName || dc.notAssigned}</span>
         </div>
         {phoneNumber && (
           <div className="flex items-center gap-1">
@@ -115,7 +118,7 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
                   <Phone className="h-4 w-4 text-primary" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Appeler</TooltipContent>
+              <TooltipContent>{dc.call}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -128,7 +131,7 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
                   <MessageCircle className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>WhatsApp</TooltipContent>
+              <TooltipContent>{dc.whatsapp}</TooltipContent>
             </Tooltip>
           </div>
         )}
@@ -137,5 +140,4 @@ export const DriverQuickContact = forwardRef<HTMLDivElement, DriverQuickContactP
   }
 );
 
-// Default export for HMR stability
 export default DriverQuickContact;

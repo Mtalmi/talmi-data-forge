@@ -20,6 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { compressImage } from '@/lib/imageCompression';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface FormuleData {
   ciment_kg_m3: number;
@@ -45,11 +46,13 @@ interface VarianceInfo {
   status: 'ok' | 'warning' | 'critical';
 }
 
-const SABLE_DENSITY = 1600; // kg/m³
-const GRAVETTE_DENSITY = 1500; // kg/m³
+const SABLE_DENSITY = 1600;
+const GRAVETTE_DENSITY = 1500;
 
 export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntryFormProps) {
   const { user } = useAuth();
+  const { t } = useI18n();
+  const be = t.batchEntry;
   
   const [formule, setFormule] = useState<FormuleData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +60,6 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [batchNumber, setBatchNumber] = useState(1);
   
-  // Actual values
   const [cimentReel, setCimentReel] = useState<string>('');
   const [sableReel, setSableReel] = useState<string>('');
   const [gravetteReel, setGravetteReel] = useState<string>('');
@@ -65,11 +67,9 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
   const [adjuvantReel, setAdjuvantReel] = useState<string>('');
   const [notes, setNotes] = useState('');
   
-  // Photo
   const [photoUrl, setPhotoUrl] = useState<string>('');
   const [photoPreview, setPhotoPreview] = useState<string>('');
   
-  // Variances (calculated live)
   const [variances, setVariances] = useState<VarianceInfo[]>([]);
 
   useEffect(() => {
@@ -78,7 +78,6 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
   const fetchFormuleAndBatchCount = async () => {
     try {
-      // Get BL with formule
       const { data: bl, error: blError } = await supabase
         .from('bons_livraison_reels')
         .select('formule_id')
@@ -87,7 +86,6 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
       if (blError) throw blError;
 
-      // Get formule
       const { data: formuleData, error: formuleError } = await supabase
         .from('formules_theoriques')
         .select('ciment_kg_m3, sable_m3, gravette_m3, eau_l_m3, adjuvant_l_m3')
@@ -97,7 +95,6 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       if (formuleError) throw formuleError;
       setFormule(formuleData);
 
-      // Get existing batch count
       const { count } = await supabase
         .from('production_batches')
         .select('*', { count: 'exact', head: true })
@@ -106,19 +103,17 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       setBatchNumber((count || 0) + 1);
     } catch (error) {
       console.error('Error fetching formule:', error);
-      toast.error('Erreur lors du chargement de la formule');
+      toast.error(be.loadingError);
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate variances in real-time
   useEffect(() => {
     if (!formule) return;
 
     const newVariances: VarianceInfo[] = [];
     
-    // Calculate theoretical values for this volume
     const theoValues = {
       ciment: formule.ciment_kg_m3 * volume,
       sable: formule.sable_m3 ? formule.sable_m3 * volume * SABLE_DENSITY : null,
@@ -146,11 +141,11 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       newVariances.push({ field, label, theo, reel, percent, status });
     };
 
-    addVariance('ciment', 'Ciment', theoValues.ciment, cimentReel);
-    addVariance('sable', 'Sable', theoValues.sable, sableReel);
-    addVariance('gravette', 'Gravette', theoValues.gravette, gravetteReel);
-    addVariance('eau', 'Eau', theoValues.eau, eauReel);
-    addVariance('adjuvant', 'Adjuvant', theoValues.adjuvant, adjuvantReel);
+    addVariance('ciment', be.cement, theoValues.ciment, cimentReel);
+    addVariance('sable', be.sand, theoValues.sable, sableReel);
+    addVariance('gravette', be.gravel, theoValues.gravette, gravetteReel);
+    addVariance('eau', be.water, theoValues.eau, eauReel);
+    addVariance('adjuvant', be.adjuvant, theoValues.adjuvant, adjuvantReel);
 
     setVariances(newVariances);
   }, [formule, volume, cimentReel, sableReel, gravetteReel, eauReel, adjuvantReel]);
@@ -161,15 +156,12 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
     setUploadingPhoto(true);
     try {
-      // Compress image
       const compressedFile = await compressImage(file, { maxWidth: 1920, quality: 0.8 });
       
-      // Create preview
       const reader = new FileReader();
       reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
       reader.readAsDataURL(compressedFile);
 
-      // Upload to storage
       const fileName = `${blId}-batch${batchNumber}-${Date.now()}.jpg`;
       const { data, error } = await supabase.storage
         .from('plant-photos')
@@ -177,16 +169,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
       if (error) throw error;
 
-      // Get public URL
       const { data: urlData } = supabase.storage
         .from('plant-photos')
         .getPublicUrl(data.path);
 
       setPhotoUrl(urlData.publicUrl);
-      toast.success('Photo téléchargée');
+      toast.success(be.photoUploaded);
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Erreur lors du téléchargement');
+      toast.error(be.uploadError);
     } finally {
       setUploadingPhoto(false);
     }
@@ -195,27 +186,24 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
   const handleSubmit = async () => {
     if (!formule) return;
 
-    // Validate required fields
     if (!cimentReel || !eauReel) {
-      toast.error('Ciment et Eau sont obligatoires');
+      toast.error(be.cementWaterRequired);
       return;
     }
 
     if (!photoUrl) {
-      toast.error('Photo du pupitre obligatoire!');
+      toast.error(be.photoRequired);
       return;
     }
 
     setSubmitting(true);
     try {
-      // Get user profile
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('user_id', user?.id)
         .single();
 
-      // Calculate theoretical values
       const theoValues = {
         ciment: formule.ciment_kg_m3 * volume,
         sable: formule.sable_m3 ? formule.sable_m3 * volume * SABLE_DENSITY : null,
@@ -247,11 +235,11 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
       if (error) throw error;
 
-      toast.success('Batch enregistré avec succès');
+      toast.success(be.batchSaved);
       onSuccess();
     } catch (error) {
       console.error('Submit error:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(be.saveError);
     } finally {
       setSubmitting(false);
     }
@@ -271,12 +259,11 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
   if (!formule) {
     return (
       <Alert variant="destructive">
-        <AlertDescription>Formule non trouvée pour ce BL</AlertDescription>
+        <AlertDescription>{be.formulaNotFound}</AlertDescription>
       </Alert>
     );
   }
 
-  // Calculate theoretical values for display
   const theoDisplay = {
     ciment: (formule.ciment_kg_m3 * volume).toFixed(1),
     sable: formule.sable_m3 ? (formule.sable_m3 * volume * SABLE_DENSITY).toFixed(1) : null,
@@ -290,12 +277,12 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       {/* Header Info */}
       <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
         <div>
-          <span className="text-sm text-muted-foreground">Volume:</span>
+          <span className="text-sm text-muted-foreground">{be.volume}:</span>
           <span className="ml-2 font-mono font-bold">{volume} m³</span>
         </div>
         <Separator orientation="vertical" className="h-6" />
         <div>
-          <span className="text-sm text-muted-foreground">Batch:</span>
+          <span className="text-sm text-muted-foreground">{be.batch}:</span>
           <Badge variant="outline" className="ml-2">#{batchNumber}</Badge>
         </div>
       </div>
@@ -304,20 +291,20 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       <div className="space-y-3">
         <Label className="flex items-center gap-2">
           <Camera className="h-4 w-4" />
-          Photo du Pupitre <span className="text-destructive">*</span>
+          {be.controlPhoto} <span className="text-destructive">*</span>
         </Label>
         
         {photoPreview ? (
           <div className="relative">
             <img 
               src={photoPreview} 
-              alt="Pupitre" 
+              alt={be.controlPhoto} 
               className="w-full h-48 object-cover rounded-lg border"
             />
             <div className="absolute top-2 right-2 flex items-center gap-2">
               <Badge className="bg-success text-white">
                 <CheckCircle className="h-3 w-3 mr-1" />
-                Téléchargé
+                {be.uploaded}
               </Badge>
             </div>
             <Button
@@ -330,7 +317,7 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
                 setPhotoPreview('');
               }}
             >
-              Changer
+              {be.change}
             </Button>
           </div>
         ) : (
@@ -342,10 +329,10 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
                 <>
                   <ImagePlus className="h-10 w-10 text-muted-foreground mb-3" />
                   <p className="text-sm text-muted-foreground">
-                    Cliquez pour prendre une photo du pupitre
+                    {be.clickToTakePhoto}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Cette photo est <strong>obligatoire</strong>
+                    {be.photoMandatory} <strong>{be.mandatory}</strong>
                   </p>
                 </>
               )}
@@ -369,15 +356,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         {/* Ciment */}
         <div className="space-y-2">
           <Label className="flex items-center justify-between">
-            <span>Ciment (kg) <span className="text-destructive">*</span></span>
+            <span>{be.cement} (kg) <span className="text-destructive">*</span></span>
             <span className="text-xs text-muted-foreground font-mono">
-              Théo: {theoDisplay.ciment}
+              {be.theoretical}: {theoDisplay.ciment}
             </span>
           </Label>
           <Input
             type="number"
             step="0.1"
-            placeholder="Poids réel"
+            placeholder={be.realWeight}
             value={cimentReel}
             onChange={(e) => setCimentReel(e.target.value)}
             className={cn(
@@ -391,15 +378,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         {/* Eau */}
         <div className="space-y-2">
           <Label className="flex items-center justify-between">
-            <span>Eau (L) <span className="text-destructive">*</span></span>
+            <span>{be.water} (L) <span className="text-destructive">*</span></span>
             <span className="text-xs text-muted-foreground font-mono">
-              Théo: {theoDisplay.eau}
+              {be.theoretical}: {theoDisplay.eau}
             </span>
           </Label>
           <Input
             type="number"
             step="0.1"
-            placeholder="Volume réel"
+            placeholder={be.realVolume}
             value={eauReel}
             onChange={(e) => setEauReel(e.target.value)}
             className={cn(
@@ -414,15 +401,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         {theoDisplay.sable && (
           <div className="space-y-2">
             <Label className="flex items-center justify-between">
-              <span>Sable (kg)</span>
+              <span>{be.sand} (kg)</span>
               <span className="text-xs text-muted-foreground font-mono">
-                Théo: {theoDisplay.sable}
+                {be.theoretical}: {theoDisplay.sable}
               </span>
             </Label>
             <Input
               type="number"
               step="0.1"
-              placeholder="Poids réel"
+              placeholder={be.realWeight}
               value={sableReel}
               onChange={(e) => setSableReel(e.target.value)}
               className={cn(
@@ -438,15 +425,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         {theoDisplay.gravette && (
           <div className="space-y-2">
             <Label className="flex items-center justify-between">
-              <span>Gravette (kg)</span>
+              <span>{be.gravel} (kg)</span>
               <span className="text-xs text-muted-foreground font-mono">
-                Théo: {theoDisplay.gravette}
+                {be.theoretical}: {theoDisplay.gravette}
               </span>
             </Label>
             <Input
               type="number"
               step="0.1"
-              placeholder="Poids réel"
+              placeholder={be.realWeight}
               value={gravetteReel}
               onChange={(e) => setGravetteReel(e.target.value)}
               className={cn(
@@ -462,15 +449,15 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
         {theoDisplay.adjuvant && (
           <div className="space-y-2 col-span-2">
             <Label className="flex items-center justify-between">
-              <span>Adjuvant (L)</span>
+              <span>{be.adjuvant} (L)</span>
               <span className="text-xs text-muted-foreground font-mono">
-                Théo: {theoDisplay.adjuvant}
+                {be.theoretical}: {theoDisplay.adjuvant}
               </span>
             </Label>
             <Input
               type="number"
               step="0.01"
-              placeholder="Volume réel"
+              placeholder={be.realVolume}
               value={adjuvantReel}
               onChange={(e) => setAdjuvantReel(e.target.value)}
               className={cn(
@@ -494,7 +481,7 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
             )}
             <div className="space-y-1">
               <AlertDescription className="font-medium">
-                {hasCriticalVariance ? 'Écarts critiques détectés (>5%)' : 'Écarts détectés (>2%)'}
+                {hasCriticalVariance ? be.criticalVariances : be.warningVariances}
               </AlertDescription>
               <div className="flex flex-wrap gap-2 mt-2">
                 {variances.filter(v => v.status !== 'ok').map((v) => (
@@ -516,9 +503,9 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
 
       {/* Notes */}
       <div className="space-y-2">
-        <Label>Notes (optionnel)</Label>
+        <Label>{be.notesOptional}</Label>
         <Textarea
-          placeholder="Observations, conditions particulières..."
+          placeholder={be.observations}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
@@ -528,7 +515,7 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t">
         <Button variant="outline" onClick={onCancel} disabled={submitting}>
-          Annuler
+          {be.cancel}
         </Button>
         <Button 
           onClick={handleSubmit} 
@@ -538,12 +525,12 @@ export function BatchEntryForm({ blId, volume, onSuccess, onCancel }: BatchEntry
           {submitting ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Enregistrement...
+              {be.saving}
             </>
           ) : (
             <>
               <CheckCircle className="h-4 w-4" />
-              Enregistrer Batch
+              {be.saveBatch}
             </>
           )}
         </Button>

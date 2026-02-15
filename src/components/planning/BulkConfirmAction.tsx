@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { CheckCircle, Loader2, ClipboardCheck, Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface BonLivraison {
   bl_id: string;
@@ -35,6 +36,8 @@ export function BulkConfirmAction({
   loading = false,
 }: BulkConfirmActionProps) {
   const [isConfirming, setIsConfirming] = useState(false);
+  const { t } = useI18n();
+  const bc = t.bulkConfirm;
 
   const handleConfirmAll = async () => {
     if (pendingBLs.length === 0) return;
@@ -43,10 +46,10 @@ export function BulkConfirmAction({
     try {
       const blIds = pendingBLs.map(bl => bl.bl_id);
       await onConfirmAll(blIds);
-      toast.success(`${pendingBLs.length} livraisons confirmées`);
+      toast.success(bc.success.replace('{count}', String(pendingBLs.length)));
     } catch (error) {
       console.error('Error confirming all:', error);
-      toast.error('Erreur lors de la confirmation');
+      toast.error(bc.error);
     } finally {
       setIsConfirming(false);
     }
@@ -72,20 +75,21 @@ export function BulkConfirmAction({
           ) : (
             <Zap className="h-4 w-4" />
           )}
-          Confirmer Tout ({pendingBLs.length})
+          {bc.confirmAll} ({pendingBLs.length})
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <ClipboardCheck className="h-5 w-5 text-success" />
-            Confirmer toutes les livraisons
+            {bc.confirmAllTitle}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3">
               <p>
-                Vous allez confirmer <strong>{pendingBLs.length} livraison(s)</strong> en attente 
-                pour un volume total de <strong>{totalVolume} m³</strong>.
+                {bc.confirmDescription
+                  .replace('{count}', String(pendingBLs.length))
+                  .replace('{volume}', String(totalVolume))}
               </p>
               
               <div className="max-h-[200px] overflow-y-auto space-y-1">
@@ -103,14 +107,13 @@ export function BulkConfirmAction({
               </div>
               
               <p className="text-sm text-muted-foreground">
-                Cette action passera toutes les livraisons en statut "planification" 
-                prêtes pour production.
+                {bc.confirmAction}
               </p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>{bc.cancel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirmAll}
             className="bg-success hover:bg-success/90 gap-2"
@@ -121,7 +124,7 @@ export function BulkConfirmAction({
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            Confirmer {pendingBLs.length} livraison(s)
+            {bc.confirm.replace('{count}', String(pendingBLs.length))}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
