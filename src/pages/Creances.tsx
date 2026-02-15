@@ -61,7 +61,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -80,6 +80,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
 
 export default function Creances() {
   const { isCeo, role } = useAuth();
+  const { t, lang } = useI18n();
   const { 
     receivables, 
     collectionLogs, 
@@ -134,7 +135,7 @@ export default function Creances() {
           break;
         case 'writeoff':
           if (!isCeo) {
-            toast.error('Seul le CEO peut passer une créance en perte');
+            toast.error(t.pages.creances.ceoOnlyWriteOff);
             return;
           }
           await writeOff(selectedReceivable, actionNotes, 'CEO');
@@ -178,17 +179,17 @@ export default function Creances() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <Wallet className="h-6 w-6 text-primary" />
-              Créances Clients
+              {t.pages.creances.title}
             </h1>
             <p className="text-muted-foreground">
-              Suivi automatique des créances depuis le {format(startDate, 'dd MMM yyyy', { locale: fr })}
+              {t.pages.creances.subtitle} {format(startDate, 'dd MMM yyyy', { locale: getDateLocale(lang) })}
               {hasData && ` • DSO: ${stats.dsoAverage} jours`}
             </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={refetch}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              Actualiser
+              {t.pages.creances.refresh}
             </Button>
           </div>
         </div>
@@ -202,23 +203,22 @@ export default function Creances() {
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg mb-1">Système de Recouvrement Activé</h3>
-                  <p className="text-muted-foreground mb-3">
-                    Le suivi automatique des créances est maintenant actif. Toutes les nouvelles livraisons 
-                    seront automatiquement suivies pour le recouvrement.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                   <h3 className="font-semibold text-lg mb-1">{t.pages.creances.recoverySystem}</h3>
+                   <p className="text-muted-foreground mb-3">
+                     {t.pages.creances.recoveryActive}
+                   </p>
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4 text-warning" />
-                      <span>Rappel automatique à 7 jours</span>
+                      <span>{t.pages.creances.autoReminder}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Send className="h-4 w-4 text-accent-foreground" />
-                      <span>Escalade à 15-30 jours</span>
+                      <span>{t.pages.creances.escalation}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Target className="h-4 w-4 text-success" />
-                      <span>Objectif: 95% recouvrement</span>
+                      <span>{t.pages.creances.target}</span>
                     </div>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function Creances() {
                 </div>
                 <div>
                   <p className="text-xl font-bold">{formatCurrency(stats.totalOutstanding)}</p>
-                  <p className="text-xs text-muted-foreground">Créances totales</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.creances.totalOutstanding}</p>
                 </div>
               </div>
             </CardContent>
@@ -251,7 +251,7 @@ export default function Creances() {
                 </div>
                 <div>
                   <p className="text-xl font-bold">{formatCurrency(stats.totalOverdue)}</p>
-                  <p className="text-xs text-muted-foreground">En retard</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.creances.overdue}</p>
                 </div>
               </div>
             </CardContent>
@@ -265,7 +265,7 @@ export default function Creances() {
                 </div>
                 <div>
                   <p className="text-xl font-bold">{formatCurrency(stats.atRiskAmount)}</p>
-                  <p className="text-xs text-muted-foreground">À risque (60j+)</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.creances.atRisk}</p>
                 </div>
               </div>
             </CardContent>
@@ -279,7 +279,7 @@ export default function Creances() {
                 </div>
                 <div>
                   <p className="text-xl font-bold">{stats.collectionRate.toFixed(1)}%</p>
-                  <p className="text-xs text-muted-foreground">Taux recouvrement</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.creances.collectionRate}</p>
                 </div>
               </div>
             </CardContent>
@@ -293,7 +293,7 @@ export default function Creances() {
                 </div>
                 <div>
                   <p className="text-xl font-bold">{stats.clientsWithOverdue}</p>
-                  <p className="text-xs text-muted-foreground">Clients en retard</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.creances.clientsOverdue}</p>
                 </div>
               </div>
             </CardContent>
@@ -306,7 +306,7 @@ export default function Creances() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              Antériorité des Créances
+              {t.pages.creances.aging}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -316,7 +316,7 @@ export default function Creances() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">{bucket.bucket}</span>
                     <span className="text-muted-foreground">
-                      {bucket.invoice_count} factures • {formatCurrency(bucket.total_amount)}
+                      {bucket.invoice_count} {t.pages.creances.invoices} • {formatCurrency(bucket.total_amount)}
                     </span>
                   </div>
                   <Progress 
@@ -335,15 +335,15 @@ export default function Creances() {
           <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
             <TabsTrigger value="receivables" className="gap-2">
               <FileText className="h-4 w-4" />
-              Toutes les Créances
+              {t.pages.creances.allReceivables}
             </TabsTrigger>
             <TabsTrigger value="by-client" className="gap-2">
               <Users className="h-4 w-4" />
-              Par Client
+              {t.pages.creances.byClient}
             </TabsTrigger>
             <TabsTrigger value="logs" className="gap-2">
               <Clock className="h-4 w-4" />
-              Historique
+               {t.pages.creances.history}
             </TabsTrigger>
           </TabsList>
 
@@ -356,7 +356,7 @@ export default function Creances() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                      placeholder="Rechercher client ou facture..."
+                      placeholder={t.pages.creances.searchPlaceholder}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
@@ -367,14 +367,14 @@ export default function Creances() {
                       <SelectValue placeholder="Statut" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Tous les statuts</SelectItem>
-                      <SelectItem value="current">Courant</SelectItem>
-                      <SelectItem value="overdue_7">+7 jours</SelectItem>
-                      <SelectItem value="overdue_15">+15 jours</SelectItem>
-                      <SelectItem value="overdue_30">+30 jours</SelectItem>
-                      <SelectItem value="overdue_60">+60 jours</SelectItem>
-                      <SelectItem value="at_risk">À risque</SelectItem>
-                      <SelectItem value="paid">Payé</SelectItem>
+                       <SelectItem value="all">{t.pages.creances.allStatuses}</SelectItem>
+                       <SelectItem value="current">{t.pages.creances.current}</SelectItem>
+                       <SelectItem value="overdue_7">{t.pages.creances.overdue7}</SelectItem>
+                       <SelectItem value="overdue_15">{t.pages.creances.overdue15}</SelectItem>
+                       <SelectItem value="overdue_30">{t.pages.creances.overdue30}</SelectItem>
+                       <SelectItem value="overdue_60">{t.pages.creances.overdue60}</SelectItem>
+                       <SelectItem value="at_risk">{t.pages.creances.atRiskLabel}</SelectItem>
+                       <SelectItem value="paid">{t.pages.creances.paid}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -387,13 +387,13 @@ export default function Creances() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Facture</TableHead>
-                      <TableHead>Échéance</TableHead>
-                      <TableHead className="text-right">Montant</TableHead>
-                      <TableHead>Retard</TableHead>
-                      <TableHead>Statut</TableHead>
-                      {canManageReceivables && <TableHead>Actions</TableHead>}
+                       <TableHead>{t.pages.creances.client}</TableHead>
+                       <TableHead>{t.pages.creances.invoice}</TableHead>
+                       <TableHead>{t.pages.creances.dueDate}</TableHead>
+                       <TableHead className="text-right">{t.pages.creances.amount}</TableHead>
+                       <TableHead>{t.pages.creances.delay}</TableHead>
+                       <TableHead>{t.pages.creances.status}</TableHead>
+                       {canManageReceivables && <TableHead>{t.pages.creances.actions}</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -402,11 +402,11 @@ export default function Creances() {
                         <TableCell colSpan={canManageReceivables ? 7 : 6} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
                             <FileText className="h-8 w-8" />
-                            <p className="font-medium">Aucune créance</p>
-                            <p className="text-sm">
-                              {!hasData 
-                                ? "Les créances apparaîtront automatiquement à la création de nouvelles livraisons"
-                                : "Aucune créance ne correspond à vos critères de recherche"}
+                             <p className="font-medium">{t.pages.creances.noReceivables}</p>
+                             <p className="text-sm">
+                               {!hasData 
+                                 ? t.pages.creances.noReceivablesNew
+                                 : t.pages.creances.noReceivablesFilter}
                             </p>
                           </div>
                         </TableCell>
@@ -427,7 +427,7 @@ export default function Creances() {
                             {receivable.invoice_number}
                           </TableCell>
                           <TableCell>
-                            {format(parseISO(receivable.due_date), 'dd MMM yyyy', { locale: fr })}
+                            {format(parseISO(receivable.due_date), 'dd MMM yyyy', { locale: getDateLocale(lang) })}
                           </TableCell>
                           <TableCell className="text-right font-medium">
                             {formatCurrency(receivable.amount_due)}
@@ -438,7 +438,7 @@ export default function Creances() {
                                 +{receivable.days_overdue}j
                               </span>
                             ) : (
-                              <span className="text-success">À jour</span>
+                              <span className="text-success">{t.pages.creances.upToDate}</span>
                             )}
                           </TableCell>
                           <TableCell>
@@ -499,11 +499,11 @@ export default function Creances() {
                 <CardContent className="py-12">
                   <div className="flex flex-col items-center gap-2 text-muted-foreground">
                     <Users className="h-12 w-12" />
-                    <p className="font-medium text-lg">Aucun client en retard</p>
-                    <p className="text-sm text-center max-w-md">
-                      {!hasData 
-                        ? "Les retards de paiement apparaîtront ici automatiquement lorsque des créances dépasseront leur date d'échéance."
-                        : "Félicitations ! Tous vos clients sont à jour dans leurs paiements."}
+                     <p className="font-medium text-lg">{t.pages.creances.noOverdueClients}</p>
+                     <p className="text-sm text-center max-w-md">
+                       {!hasData 
+                         ? t.pages.creances.noOverdueClientsNew
+                         : t.pages.creances.allPaidCongrats}
                     </p>
                   </div>
                 </CardContent>
@@ -515,13 +515,13 @@ export default function Creances() {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center justify-between">
                       <span className="truncate">{client.client_name}</span>
-                      <Badge variant="destructive">{client.count} factures</Badge>
+                      <Badge variant="destructive">{client.count} {t.pages.creances.invoices}</Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">Total dû</span>
+                        <span className="text-sm text-muted-foreground">{t.pages.creances.totalDue}</span>
                         <span className="font-bold text-destructive">{formatCurrency(client.total)}</span>
                       </div>
                       <div className="space-y-1">
@@ -533,7 +533,7 @@ export default function Creances() {
                         ))}
                         {client.receivables.length > 3 && (
                           <p className="text-xs text-muted-foreground">
-                            +{client.receivables.length - 3} autres factures
+                            +{client.receivables.length - 3} {t.pages.creances.otherInvoices}
                           </p>
                         )}
                       </div>
@@ -549,16 +549,16 @@ export default function Creances() {
           <TabsContent value="logs" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Historique des Actions</CardTitle>
-                <CardDescription>Dernières actions de recouvrement</CardDescription>
+                 <CardTitle className="text-lg">{t.pages.creances.actionHistory}</CardTitle>
+                 <CardDescription>{t.pages.creances.lastRecoveryActions}</CardDescription>
               </CardHeader>
               <CardContent>
                 {collectionLogs.length === 0 ? (
                   <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
                     <Clock className="h-10 w-10" />
-                    <p className="font-medium">Aucune action enregistrée</p>
-                    <p className="text-sm text-center max-w-md">
-                      L'historique des rappels et actions de recouvrement apparaîtra ici automatiquement.
+                     <p className="font-medium">{t.pages.creances.noActionsRecorded}</p>
+                     <p className="text-sm text-center max-w-md">
+                       {t.pages.creances.actionsWillAppear}
                     </p>
                   </div>
                 ) : (
@@ -580,11 +580,11 @@ export default function Creances() {
                         <div className="flex items-center justify-between">
                           <p className="font-medium">{ACTION_TYPE_LABELS[log.action_type] || log.action_type}</p>
                           <span className="text-xs text-muted-foreground">
-                            {format(parseISO(log.action_date), 'dd MMM yyyy HH:mm', { locale: fr })}
+                            {format(parseISO(log.action_date), 'dd MMM yyyy HH:mm', { locale: getDateLocale(lang) })}
                           </span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {log.client_name} • {log.performed_by_name || 'Système'}
+                          {log.client_name} • {log.performed_by_name || t.pages.creances.system}
                         </p>
                         {log.notes && (
                           <p className="text-sm mt-1">{log.notes}</p>
@@ -604,10 +604,10 @@ export default function Creances() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {actionType === 'paid' && 'Marquer comme payé'}
-                {actionType === 'reminder' && 'Envoyer un rappel'}
-                {actionType === 'dispute' && 'Ouvrir un litige'}
-                {actionType === 'writeoff' && 'Passer en perte'}
+                 {actionType === 'paid' && t.pages.creances.markPaid}
+                 {actionType === 'reminder' && t.pages.creances.sendReminder}
+                 {actionType === 'dispute' && t.pages.creances.dispute}
+                 {actionType === 'writeoff' && t.pages.creances.writeOff}
               </DialogTitle>
             </DialogHeader>
             {selectedReceivable && (
@@ -615,7 +615,7 @@ export default function Creances() {
                 <div className="p-4 rounded-lg bg-muted/50">
                   <p className="font-medium">{selectedReceivable.client_name}</p>
                   <p className="text-sm text-muted-foreground">
-                    Facture: {selectedReceivable.invoice_number}
+                    {t.pages.creances.invoice}: {selectedReceivable.invoice_number}
                   </p>
                   <p className="text-lg font-bold mt-2">
                     {formatCurrency(selectedReceivable.amount_due)}
@@ -624,11 +624,11 @@ export default function Creances() {
 
                 {(actionType === 'dispute' || actionType === 'writeoff') && (
                   <div>
-                    <Label>Raison</Label>
+                    <Label>{t.pages.creances.reason}</Label>
                     <Textarea
                       value={actionNotes}
                       onChange={(e) => setActionNotes(e.target.value)}
-                      placeholder="Décrivez la raison..."
+                      placeholder={t.pages.creances.describeReason}
                       className="mt-1"
                     />
                   </div>
@@ -636,7 +636,7 @@ export default function Creances() {
 
                 {actionType === 'writeoff' && !isCeo && (
                   <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                    ⚠️ Seul le CEO peut approuver le passage en perte
+                    {t.pages.creances.ceoOnlyWriteOff}
                   </div>
                 )}
               </div>
@@ -652,7 +652,7 @@ export default function Creances() {
                 {processingAction ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : null}
-                Confirmer
+                {t.pages.creances.confirm}
               </Button>
             </DialogFooter>
           </DialogContent>

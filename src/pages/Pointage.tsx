@@ -48,12 +48,12 @@ import {
   FileText,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 export default function Pointage() {
   const { isCeo, isDirecteurOperations, isSuperviseur, user } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const {
     employes,
     pointages,
@@ -144,7 +144,7 @@ export default function Pointage() {
 
   const formatTime = (dateStr: string | null) => {
     if (!dateStr) return '—';
-    return format(new Date(dateStr), 'HH:mm', { locale: fr });
+    return format(new Date(dateStr), 'HH:mm', { locale: getDateLocale(lang) });
   };
 
   const calculateHours = (entree: string | null, sortie: string | null) => {
@@ -163,14 +163,14 @@ export default function Pointage() {
             <div className="mx-auto mb-4 p-4 rounded-full bg-primary/10">
               <Building2 className="h-12 w-12 text-primary" />
             </div>
-            <CardTitle className="text-2xl">Pointage Bureau</CardTitle>
-            <p className="text-muted-foreground">Sélectionnez votre nom pour pointer</p>
+             <CardTitle className="text-2xl">{t.pages.pointage.officeClockIn}</CardTitle>
+             <p className="text-muted-foreground">{t.pages.pointage.selectName}</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <Select value={selectedEmploye} onValueChange={setSelectedEmploye}>
               <SelectTrigger className="h-14 text-lg">
-                <SelectValue placeholder="Choisir un employé..." />
-              </SelectTrigger>
+               <SelectValue placeholder={t.pages.pointage.selectEmployee} />
+               </SelectTrigger>
               <SelectContent>
                 {employes.map((emp) => {
                   const todayPointage = getTodayPointage(emp.id);
@@ -179,7 +179,7 @@ export default function Pointage() {
                       <div className="flex items-center gap-2">
                         <span>{emp.prenom} {emp.nom}</span>
                         {todayPointage?.heure_entree && !todayPointage.heure_sortie && (
-                          <Badge variant="outline" className="bg-success/10 text-success">Présent</Badge>
+                          <Badge variant="outline" className="bg-success/10 text-success">{t.pages.pointage.present}</Badge>
                         )}
                       </div>
                     </SelectItem>
@@ -201,7 +201,7 @@ export default function Pointage() {
                   ) : (
                     <LogIn className="h-6 w-6" />
                   )}
-                  Entrée
+                   {t.pages.pointage.clockIn}
                 </Button>
                 <Button
                   size="lg"
@@ -219,13 +219,13 @@ export default function Pointage() {
                   ) : (
                     <LogOut className="h-6 w-6" />
                   )}
-                  Sortie
+                   {t.pages.pointage.clockOut}
                 </Button>
               </div>
             )}
 
             <div className="text-center text-4xl font-mono font-bold text-primary">
-              {format(new Date(), 'HH:mm:ss', { locale: fr })}
+              {format(new Date(), 'HH:mm:ss', { locale: getDateLocale(lang) })}
             </div>
 
             <Button
@@ -233,7 +233,7 @@ export default function Pointage() {
               className="w-full"
               onClick={() => setKioskMode(false)}
             >
-              ← Retour à l'administration
+              ← {t.pages.pointage.backToAdmin}
             </Button>
           </CardContent>
         </Card>
@@ -264,28 +264,28 @@ export default function Pointage() {
               }}
             >
               <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+              {t.pages.pointage.refresh}
             </Button>
             <Button onClick={() => setKioskMode(true)} className="gap-2">
               <Building2 className="h-4 w-4" />
-              Mode Kiosque
+              {t.pages.pointage.kioskMode}
             </Button>
             {canManage && (
               <Dialog open={addEmployeOpen} onOpenChange={setAddEmployeOpen}>
                 <DialogTrigger asChild>
                   <Button variant="secondary" className="gap-2">
                     <UserPlus className="h-4 w-4" />
-                    Ajouter Employé
+                    {t.pages.pointage.addEmployee}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Nouvel Employé</DialogTitle>
+                    <DialogTitle>{t.pages.pointage.newEmployee}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Nom</Label>
+                        <Label>{t.pages.pointage.lastName}</Label>
                         <Input
                           value={newNom}
                           onChange={(e) => setNewNom(e.target.value)}
@@ -293,7 +293,7 @@ export default function Pointage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Prénom</Label>
+                        <Label>{t.pages.pointage.firstName}</Label>
                         <Input
                           value={newPrenom}
                           onChange={(e) => setNewPrenom(e.target.value)}
@@ -302,21 +302,21 @@ export default function Pointage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Rôle</Label>
+                      <Label>{t.pages.pointage.role}</Label>
                       <Select value={newRole} onValueChange={setNewRole}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="ouvrier">Ouvrier</SelectItem>
-                          <SelectItem value="chauffeur">Chauffeur</SelectItem>
-                          <SelectItem value="technicien">Technicien</SelectItem>
-                          <SelectItem value="magasinier">Magasinier</SelectItem>
+                           <SelectItem value="ouvrier">{t.pages.pointage.worker}</SelectItem>
+                           <SelectItem value="chauffeur">{t.pages.pointage.driver}</SelectItem>
+                           <SelectItem value="technicien">{t.pages.pointage.technician}</SelectItem>
+                           <SelectItem value="magasinier">{t.pages.pointage.storekeeper}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Téléphone</Label>
+                      <Label>{t.pages.pointage.phone}</Label>
                       <Input
                         value={newTelephone}
                         onChange={(e) => setNewTelephone(e.target.value)}
@@ -327,7 +327,7 @@ export default function Pointage() {
                   <DialogFooter>
                     <Button onClick={handleAddEmploye} disabled={adding || !newNom || !newPrenom}>
                       {adding ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      Ajouter
+                      {t.pages.pointage.add}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -346,7 +346,7 @@ export default function Pointage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{employes.length}</p>
-                  <p className="text-xs text-muted-foreground">Employés</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.pointage.employees}</p>
                 </div>
               </div>
             </CardContent>
@@ -361,7 +361,7 @@ export default function Pointage() {
                   <p className="text-2xl font-bold">
                     {pointages.filter(p => p.heure_entree && !p.heure_sortie).length}
                   </p>
-                  <p className="text-xs text-muted-foreground">Présents</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.pointage.present}</p>
                 </div>
               </div>
             </CardContent>
@@ -376,7 +376,7 @@ export default function Pointage() {
                   <p className="text-2xl font-bold">
                     {pointages.filter(p => p.heure_sortie).length}
                   </p>
-                  <p className="text-xs text-muted-foreground">Terminés</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.pointage.completed}</p>
                 </div>
               </div>
             </CardContent>
@@ -389,7 +389,7 @@ export default function Pointage() {
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{rapports.length}</p>
-                  <p className="text-xs text-muted-foreground">Rapports</p>
+                  <p className="text-xs text-muted-foreground">{t.pages.pointage.reports}</p>
                 </div>
               </div>
             </CardContent>
@@ -400,15 +400,15 @@ export default function Pointage() {
           <TabsList>
             <TabsTrigger value="pointages" className="gap-2">
               <Clock className="h-4 w-4" />
-              Pointages ({pointages.length})
-            </TabsTrigger>
-            <TabsTrigger value="rapports" className="gap-2">
-              <FileText className="h-4 w-4" />
-              Rapports ({rapports.length})
-            </TabsTrigger>
-            <TabsTrigger value="saisie" className="gap-2">
-              <ClipboardList className="h-4 w-4" />
-              Saisie Rapport
+               {t.pages.pointage.pointagesTab} ({pointages.length})
+             </TabsTrigger>
+             <TabsTrigger value="rapports" className="gap-2">
+               <FileText className="h-4 w-4" />
+               {t.pages.pointage.reportsTab} ({rapports.length})
+             </TabsTrigger>
+             <TabsTrigger value="saisie" className="gap-2">
+               <ClipboardList className="h-4 w-4" />
+               {t.pages.pointage.reportEntry}
             </TabsTrigger>
           </TabsList>
 
@@ -416,7 +416,7 @@ export default function Pointage() {
           <TabsContent value="pointages">
             <Card>
               <CardHeader>
-                <CardTitle>Pointages du {format(new Date(), 'EEEE d MMMM yyyy', { locale: fr })}</CardTitle>
+                <CardTitle>{t.pages.pointage.todayPointages} {format(new Date(), 'EEEE d MMMM yyyy', { locale: getDateLocale(lang) })}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -425,19 +425,19 @@ export default function Pointage() {
                   </div>
                 ) : pointages.length === 0 ? (
                   <div className="py-12 text-center text-muted-foreground">
-                    Aucun pointage aujourd'hui
+                    {t.pages.pointage.noPointagesToday}
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Employé</TableHead>
-                        <TableHead>Rôle</TableHead>
-                        <TableHead>Entrée</TableHead>
-                        <TableHead>Sortie</TableHead>
-                        <TableHead>Durée</TableHead>
-                        <TableHead>Source</TableHead>
-                        <TableHead>Statut</TableHead>
+                         <TableHead>{t.pages.pointage.employee}</TableHead>
+                         <TableHead>{t.pages.pointage.role}</TableHead>
+                         <TableHead>{t.pages.pointage.entry}</TableHead>
+                         <TableHead>{t.pages.pointage.exit}</TableHead>
+                         <TableHead>{t.pages.pointage.duration}</TableHead>
+                         <TableHead>{t.pages.pointage.source}</TableHead>
+                         <TableHead>{t.pages.pointage.status}</TableHead>
                         {canManage && <TableHead>Actions</TableHead>}
                       </TableRow>
                     </TableHeader>
@@ -475,10 +475,10 @@ export default function Pointage() {
                               {p.valide ? (
                                 <Badge className="bg-success/10 text-success border-success/30">
                                   <CheckCircle2 className="h-3 w-3 mr-1" />
-                                  Validé
+                                   {t.pages.pointage.valid}
                                 </Badge>
                               ) : (
-                                <Badge variant="outline">En attente</Badge>
+                                 <Badge variant="outline">{t.pages.pointage.pending}</Badge>
                               )}
                             </TableCell>
                             {canManage && (
@@ -508,12 +508,12 @@ export default function Pointage() {
           <TabsContent value="rapports">
             <Card>
               <CardHeader>
-                <CardTitle>Rapports du {format(new Date(), 'EEEE d MMMM yyyy', { locale: fr })}</CardTitle>
+                <CardTitle>{t.pages.pointage.todayReports} {format(new Date(), 'EEEE d MMMM yyyy', { locale: getDateLocale(lang) })}</CardTitle>
               </CardHeader>
               <CardContent>
                 {rapports.length === 0 ? (
                   <div className="py-12 text-center text-muted-foreground">
-                    Aucun rapport soumis aujourd'hui
+                    {t.pages.pointage.noReportToday}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -526,29 +526,29 @@ export default function Pointage() {
                                 {r.employe?.prenom} {r.employe?.nom}
                               </p>
                               <p className="text-sm text-muted-foreground capitalize">
-                                {r.employe?.role} • {format(new Date(r.soumis_at), 'HH:mm', { locale: fr })}
+                                {r.employe?.role} • {format(new Date(r.soumis_at), 'HH:mm', { locale: getDateLocale(lang) })}
                               </p>
                             </div>
                             {r.valide ? (
-                              <Badge className="bg-success/10 text-success">Validé</Badge>
+                              <Badge className="bg-success/10 text-success">{t.pages.pointage.valid}</Badge>
                             ) : (
-                              <Badge variant="outline">En attente</Badge>
+                              <Badge variant="outline">{t.pages.pointage.pending}</Badge>
                             )}
                           </div>
                           <div className="space-y-2 text-sm">
                             <div>
-                              <p className="font-medium text-muted-foreground">Tâches complétées:</p>
+                              <p className="font-medium text-muted-foreground">{t.pages.pointage.completedTasks}</p>
                               <p>{r.taches_completees}</p>
                             </div>
                             {r.taches_en_cours && (
                               <div>
-                                <p className="font-medium text-muted-foreground">En cours:</p>
+                                <p className="font-medium text-muted-foreground">{t.pages.pointage.inProgressTasks}</p>
                                 <p>{r.taches_en_cours}</p>
                               </div>
                             )}
                             {r.problemes_rencontres && (
                               <div>
-                                <p className="font-medium text-destructive">Problèmes:</p>
+                                <p className="font-medium text-destructive">{t.pages.pointage.problems}</p>
                                 <p>{r.problemes_rencontres}</p>
                               </div>
                             )}
@@ -566,14 +566,14 @@ export default function Pointage() {
           <TabsContent value="saisie">
             <Card>
               <CardHeader>
-                <CardTitle>Soumettre un Rapport Journalier</CardTitle>
+                <CardTitle>{t.pages.pointage.submitDailyReport}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Employé</Label>
+                  <Label>{t.pages.pointage.employee}</Label>
                   <Select value={reportEmployeId} onValueChange={setReportEmployeId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un employé..." />
+                      <SelectValue placeholder={t.pages.pointage.selectEmployeePlaceholder} />
                     </SelectTrigger>
                     <SelectContent>
                       {employes.map((emp) => (
@@ -586,41 +586,41 @@ export default function Pointage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Tâches complétées *</Label>
+                  <Label>{t.pages.pointage.tasksCompleted} *</Label>
                   <Textarea
                     value={tachesCompletees}
                     onChange={(e) => setTachesCompletees(e.target.value)}
-                    placeholder="Décrivez les tâches terminées aujourd'hui..."
+                    placeholder={t.pages.pointage.tasksCompletedPlaceholder}
                     rows={3}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Tâches en cours</Label>
+                  <Label>{t.pages.pointage.tasksInProgress}</Label>
                   <Textarea
                     value={tachesEnCours}
                     onChange={(e) => setTachesEnCours(e.target.value)}
-                    placeholder="Tâches non terminées à continuer..."
+                    placeholder={t.pages.pointage.tasksInProgressPlaceholder}
                     rows={2}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Problèmes rencontrés</Label>
+                  <Label>{t.pages.pointage.issues}</Label>
                   <Textarea
                     value={problemes}
                     onChange={(e) => setProblemes(e.target.value)}
-                    placeholder="Pannes, retards, difficultés..."
+                    placeholder={t.pages.pointage.issuesPlaceholder}
                     rows={2}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Observations</Label>
+                  <Label>{t.pages.pointage.observations}</Label>
                   <Textarea
                     value={observations}
                     onChange={(e) => setObservations(e.target.value)}
-                    placeholder="Autres remarques..."
+                    placeholder={t.pages.pointage.observationsPlaceholder}
                     rows={2}
                   />
                 </div>
@@ -635,7 +635,7 @@ export default function Pointage() {
                   ) : (
                     <ClipboardList className="h-4 w-4 mr-2" />
                   )}
-                  Soumettre le Rapport
+                  {t.pages.pointage.submitReport}
                 </Button>
               </CardContent>
             </Card>
