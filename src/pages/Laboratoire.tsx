@@ -44,7 +44,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { SlumpEntry } from '@/components/lab/SlumpEntry';
@@ -68,7 +68,7 @@ interface BonLivraison {
 
 export default function Laboratoire() {
   const { isCeo, isResponsableTechnique, isCentraliste } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { tests, loading, calendar, createTest, updateResistance, getPendingTests, refresh } = useLabTests();
   
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -396,7 +396,7 @@ export default function Laboratoire() {
                       >
                         <TableCell className="font-mono">{test.bl_id}</TableCell>
                         <TableCell>
-                          {format(new Date(test.date_prelevement), 'dd/MM/yyyy', { locale: fr })}
+                          {format(new Date(test.date_prelevement), 'dd/MM/yyyy', { locale: getDateLocale(lang) })}
                         </TableCell>
                         <TableCell className="font-mono text-sm">{test.formule_id}</TableCell>
                         <TableCell className="text-center">
@@ -433,10 +433,10 @@ export default function Laboratoire() {
                           ) : test.resistance_conforme === true ? (
                             <Badge variant="default" className="bg-success">
                               <CheckCircle className="h-3 w-3 mr-1" />
-                              Conforme
+                              {t.pages.laboratoire.compliant}
                             </Badge>
                           ) : (
-                            <Badge variant="secondary">En Attente</Badge>
+                            <Badge variant="secondary">{t.pages.laboratoire.waitingStatus}</Badge>
                           )}
                         </TableCell>
                       </TableRow>

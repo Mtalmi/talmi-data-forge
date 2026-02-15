@@ -59,13 +59,13 @@ import {
   Globe,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Logistique() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { isCeo, isDirecteurOperations, isSuperviseur } = useAuth();
   const {
     vehicules,
@@ -141,11 +141,11 @@ export default function Logistique() {
   };
 
   const getStatusBadge = (statut: string, bcMissionId?: string | null, activeDelivery?: { bl_id: string; bc_id: string | null } | null) => {
-    const config: Record<string, { icon: typeof CheckCircle; color: string; bg: string }> = {
-      'Disponible': { icon: CheckCircle, color: 'text-success', bg: 'bg-success/10' },
-      'En Livraison': { icon: Truck, color: 'text-primary', bg: 'bg-primary/10' },
-      'Maintenance': { icon: Wrench, color: 'text-warning', bg: 'bg-warning/10' },
-      'Hors Service': { icon: XCircle, color: 'text-destructive', bg: 'bg-destructive/10' },
+    const config: Record<string, { icon: typeof CheckCircle; color: string; bg: string; label: string }> = {
+      'Disponible': { icon: CheckCircle, color: 'text-success', bg: 'bg-success/10', label: t.pages.logistique.statusAvailable },
+      'En Livraison': { icon: Truck, color: 'text-primary', bg: 'bg-primary/10', label: t.pages.logistique.statusDelivery },
+      'Maintenance': { icon: Wrench, color: 'text-warning', bg: 'bg-warning/10', label: t.pages.logistique.statusMaintenance },
+      'Hors Service': { icon: XCircle, color: 'text-destructive', bg: 'bg-destructive/10', label: t.pages.logistique.statusOutOfService },
     };
     const c = config[statut] || config['Disponible'];
     const Icon = c.icon;
@@ -156,7 +156,7 @@ export default function Logistique() {
     return (
       <span className={cn('inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium', c.bg, c.color)}>
         <Icon className="h-3 w-3" />
-        {statut}
+        {c.label}
         {missionId && statut === 'En Livraison' && (
           <span className="ml-1 font-mono opacity-90">• {missionId}</span>
         )}
@@ -167,10 +167,10 @@ export default function Logistique() {
   // Helper to get workflow status label
   const getDeliveryStatusLabel = (status: string): string => {
     const labels: Record<string, string> = {
-      'planification': 'Planifié',
-      'production': 'En Production',
-      'validation_technique': 'Validation Tech.',
-      'en_livraison': 'En Route',
+      'planification': t.pages.logistique.statusPlanned,
+      'production': t.pages.logistique.statusInProduction,
+      'validation_technique': t.pages.logistique.statusTechValidation,
+      'en_livraison': t.pages.logistique.statusEnRoute,
     };
     return labels[status] || status;
   };
@@ -254,8 +254,8 @@ export default function Logistique() {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Toupie">Toupie</SelectItem>
-                            <SelectItem value="Pompe">Pompe</SelectItem>
+                            <SelectItem value="Toupie">{t.pages.logistique.typeToupie}</SelectItem>
+                            <SelectItem value="Pompe">{t.pages.logistique.typePompe}</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -264,7 +264,7 @@ export default function Logistique() {
                       <div className="space-y-2">
                         <Label className="form-label-industrial">{t.pages.logistique.owner}</Label>
                         <Input
-                          placeholder="Interne ou nom prestataire"
+                          placeholder={t.pages.logistique.ownerPlaceholder}
                           value={newProprietaire}
                           onChange={(e) => setNewProprietaire(e.target.value)}
                           required
@@ -577,7 +577,7 @@ export default function Logistique() {
                     {carburant.map((c) => (
                       <TableRow key={c.id}>
                         <TableCell className="text-muted-foreground">
-                          {format(new Date(c.date_releve), 'dd/MM/yyyy', { locale: fr })}
+                          {format(new Date(c.date_releve), 'dd/MM/yyyy', { locale: getDateLocale(lang) })}
                         </TableCell>
                         <TableCell className="font-mono font-medium">{c.id_camion}</TableCell>
                         <TableCell className="text-right font-mono">{c.litres} L</TableCell>

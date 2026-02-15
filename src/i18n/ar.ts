@@ -1558,6 +1558,7 @@ const ar = {
       certificate: 'شهادة',
       passed: 'ناجح',
       failed: 'راسب',
+      waitingStatus: 'في الانتظار',
     },
     logistique: {
       title: 'اللوجستيك والأسطول',
@@ -1613,6 +1614,13 @@ const ar = {
       statusDelivery: 'في التسليم',
       statusMaintenance: 'صيانة',
       statusOutOfService: 'خارج الخدمة',
+      typeToupie: 'خلاطة',
+      typePompe: 'مضخة',
+      ownerPlaceholder: 'داخلي أو اسم المقاول',
+      statusPlanned: 'مخطط',
+      statusInProduction: 'قيد الإنتاج',
+      statusTechValidation: 'تحقق تقني',
+      statusEnRoute: 'في الطريق',
     },
     formulas: {
       title: 'الخلطات النظرية',
