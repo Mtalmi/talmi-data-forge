@@ -170,7 +170,7 @@ export default function Dashboard() {
         {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
           ref={kpiSectionRef}
-          className="dashboard-header sticky top-14 sm:top-16 z-10 p-4 sm:p-5"
+          className="dashboard-header sticky top-0 z-10 p-4 sm:p-5"
         >
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-w-0">
@@ -391,7 +391,7 @@ export default function Dashboard() {
 
             {/* Quick Access Widgets */}
             {(isCeo || isAccounting) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <PendingApprovalsWidget />
                 <TodaysPipelineWidget />
                 <ARAgingWidget />
