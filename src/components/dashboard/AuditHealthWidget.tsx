@@ -13,6 +13,7 @@ import {
   TrendingUp,
   TrendingDown
 } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface HealthMetric {
   label: string;
@@ -24,6 +25,8 @@ interface HealthMetric {
 }
 
 export function AuditHealthWidget() {
+  const { t } = useI18n();
+  const ah = t.auditHealth;
   const [metrics, setMetrics] = useState<HealthMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [overallScore, setOverallScore] = useState<number>(100);
@@ -43,10 +46,10 @@ export function AuditHealthWidget() {
 
       if (!audits || audits.length === 0) {
         setMetrics([
-          { label: 'Stock Variance', value: 0, status: 'green', icon: Cylinder, detail: 'Aucun audit' },
-          { label: 'Cash Gap', value: 0, status: 'green', icon: Coins, detail: 'Aucun audit' },
-          { label: 'BL Compliance', value: 100, status: 'green', icon: FileCheck, detail: 'Aucun audit' },
-          { label: 'KM Drift', value: 0, status: 'green', icon: Truck, detail: 'Aucun audit' },
+          { label: 'Stock Variance', value: 0, status: 'green', icon: Cylinder, detail: ah.noAudit },
+          { label: 'Cash Gap', value: 0, status: 'green', icon: Coins, detail: ah.noAudit },
+          { label: 'BL Compliance', value: 100, status: 'green', icon: FileCheck, detail: ah.noAudit },
+          { label: 'KM Drift', value: 0, status: 'green', icon: Truck, detail: ah.noAudit },
         ]);
         setLoading(false);
         return;
@@ -97,28 +100,28 @@ export function AuditHealthWidget() {
           status: getStockStatus(maxSiloVariance),
           icon: Cylinder,
           trend: getTrend(maxSiloVariance, prevSiloVariance),
-          detail: `${maxSiloVariance.toFixed(1)}% écart max`,
+          detail: `${maxSiloVariance.toFixed(1)}% ${ah.maxVariance}`,
         },
         {
           label: 'Cash Gap',
           value: cashVariance,
           status: getCashStatus(cashVariance),
           icon: Coins,
-          detail: `${cashVariance.toFixed(1)}% écart`,
+          detail: `${cashVariance.toFixed(1)}% ${ah.variance}`,
         },
         {
           label: 'BL Compliance',
           value: blCompliance,
           status: getBlStatus(blCompliance),
           icon: FileCheck,
-          detail: `${verifiedCount}/${totalDocs} docs`,
+          detail: `${verifiedCount}/${totalDocs} ${ah.docs}`,
         },
         {
           label: 'KM Drift',
           value: hasKmAnomaly ? 1 : 0,
           status: getKmStatus(hasKmAnomaly),
           icon: Truck,
-          detail: hasKmAnomaly ? 'Anomalie détectée' : 'Conforme',
+          detail: hasKmAnomaly ? ah.anomalyDetected : ah.compliant,
         },
       ];
 
@@ -173,7 +176,7 @@ export function AuditHealthWidget() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
-            <CardTitle className="text-sm font-semibold">Audit Health</CardTitle>
+            <CardTitle className="text-sm font-semibold">{ah.title}</CardTitle>
           </div>
           <div className="flex items-center gap-2">
             <span className={cn("text-2xl font-bold tabular-nums", gradeInfo.color)}>

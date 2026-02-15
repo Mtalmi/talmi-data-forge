@@ -14,6 +14,7 @@ import {
   Droplets,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 import { CashCreditDrawer } from './CashCreditDrawer';
 import { LeakageDrawer } from './LeakageDrawer';
 import { QualityDrawer } from './QualityDrawer';
@@ -139,6 +140,8 @@ ExecutiveGauge.displayName = 'ExecutiveGauge';
 
 export function ExecutiveCommandCenter() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const cc = t.commandCenter;
   const { metrics, loading, refresh } = useExecutiveMetrics();
   const [cashCreditOpen, setCashCreditOpen] = useState(false);
   const [leakageOpen, setLeakageOpen] = useState(false);
@@ -335,12 +338,12 @@ export function ExecutiveCommandCenter() {
             metrics.nonConformTests > 0 && 'text-destructive animate-pulse'
           )} />
           <div className="text-center">
-            <p className="font-semibold text-[11px] sm:text-sm leading-tight">Non-Conformités</p>
+            <p className="font-semibold text-[11px] sm:text-sm leading-tight">{cc.nonConformities}</p>
             <p className={cn(
               'text-[9px] sm:text-xs',
               metrics.nonConformTests > 0 ? 'text-destructive font-medium' : 'text-muted-foreground'
             )}>
-              {metrics.nonConformTests > 0 ? `${metrics.nonConformTests} alertes` : 'Aucune'}
+              {metrics.nonConformTests > 0 ? `${metrics.nonConformTests} ${cc.alerts}` : cc.none}
             </p>
           </div>
           <ArrowRight className="h-3 w-3" />
