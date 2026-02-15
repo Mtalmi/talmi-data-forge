@@ -1,536 +1,240 @@
-import { useEffect, useState, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import MainLayout from '@/components/layout/MainLayout';
-import KPICard from '@/components/dashboard/KPICard';
-import AlertBanner from '@/components/dashboard/AlertBanner';
-import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
-import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
-import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
-import { type Period } from '@/components/dashboard/PeriodSelector';
-import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
-import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
-import { DatabaseHealthWidget } from '@/components/dashboard/DatabaseHealthWidget';
-import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
-import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
-import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
-import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
-import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
-import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
-import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
-import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
-import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
-import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
-import { CeoEmergencyOverride } from '@/components/dashboard/CeoEmergencyOverride';
-import { HawaiiGreeting } from '@/components/dashboard/HawaiiGreeting';
-import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
-import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
-import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
-import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
-import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerWidget';
-import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
-import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
-import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
-import {
-  PendingApprovalsWidget, 
-  TodaysPipelineWidget, 
-  ARAgingWidget, 
-  StockLevelsWidget, 
-  SalesFunnelWidget 
-} from '@/components/dashboard/DashboardWidgets';
-import { TaxComplianceWidget } from '@/components/compliance';
-import { useDashboardStats } from '@/hooks/useDashboardStats';
-import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
-import { usePaymentDelays } from '@/hooks/usePaymentDelays';
-import { useAuth } from '@/hooks/useAuth';
-import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator } from 'lucide-react';
+import { useState } from 'react';
+import { LayoutDashboard, TrendingUp, Truck, DollarSign, Settings, Bell, Search, Sun, MapPin, ArrowUpRight, ArrowDownRight, AlertTriangle, CheckCircle, Clock, LogOut, Menu, BarChart3, Users, Package, Activity } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SkeletonKPI } from '@/components/ui/skeletons';
-import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
-import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
-import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
-import { SystemManualPdf } from '@/components/documents/SystemManualPdf';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
 
-export default function Dashboard() {
-  const { role, isCeo, isAccounting } = useAuth();
-  const { stats, loading: statsLoading, refresh } = useDashboardStats();
-  const [period, setPeriod] = useState<Period>('month');
-  const kpiSectionRef = useRef<HTMLDivElement>(null);
-  const kpiGridRef = useRef<HTMLDivElement>(null);
-  const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
-  const { checkPaymentDelays } = usePaymentDelays();
-  const [refreshing, setRefreshing] = useState(false);
-  const [productionStats, setProductionStats] = useState({
-    formulesActives: 0,
-    prixUpdatedAt: '—',
-    tauxECMoyen: '—',
-    curMoyen: '—',
-  });
+const productionData = [{ day: 'Lun', value: 85 }, { day: 'Mar', value: 92 }, { day: 'Mer', value: 78 }, { day: 'Jeu', value: 95 }, { day: 'Ven', value: 88 }, { day: 'Sam', value: 65 }, { day: 'Dim', value: 45 }];
+const recentActivity = [{ id: 1, action: 'Livraison complétée', details: 'Camion #124 - Client: BTP Maroc', time: 'Il y a 5 min', status: 'success' }, { id: 2, action: 'Nouvelle commande', details: '120m³ - Formule C25/30', time: 'Il y a 12 min', status: 'info' }, { id: 3, action: 'Alerte qualité', details: 'Test de consistance - Lot #4582', time: 'Il y a 28 min', status: 'warning' }, { id: 4, action: 'Maintenance planifiée', details: 'Malaxeur #3 - Demain 06:00', time: 'Il y a 1h', status: 'info' }];
+const alerts = [{ id: 1, type: 'warning', message: 'Stock de ciment faible', detail: 'Restant: 45 tonnes' }, { id: 2, type: 'success', message: 'Objectif journalier atteint', detail: 'Production: 120m³/120m³' }, { id: 3, type: 'info', message: '3 livraisons en cours', detail: 'Dernière ETA: 14:30' }];
 
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    fetchProductionStats();
-    // Check payment delays on load (for CEO/Admin)
-    if (isCeo) {
-      checkPaymentDelays();
-    }
-    
-    // Set up auto-refresh interval
-    const autoRefreshInterval = setInterval(() => {
-      refresh();
-      refreshPeriod();
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(autoRefreshInterval);
-  }, [isCeo]);
-
-  const fetchProductionStats = async () => {
-    try {
-      // Fetch active formules count
-      const { count: formulesCount } = await supabase
-        .from('formules_theoriques')
-        .select('*', { count: 'exact', head: true });
-
-      // Fetch latest price update
-      const { data: latestPrice } = await supabase
-        .from('prix_achat_actuels')
-        .select('date_mise_a_jour')
-        .order('date_mise_a_jour', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      setProductionStats({
-        formulesActives: formulesCount || 0,
-        prixUpdatedAt: latestPrice?.date_mise_a_jour 
-          ? new Date(latestPrice.date_mise_a_jour).toLocaleDateString('fr-FR') 
-          : '—',
-        tauxECMoyen: stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—',
-        curMoyen: stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)} DH` : '—',
-      });
-    } catch (error) {
-      console.error('Error fetching production stats:', error);
-    }
-  };
-
-  useEffect(() => {
-    // Update production stats when dashboard stats change
-    if (!statsLoading) {
-      setProductionStats(prev => ({
-        ...prev,
-        tauxECMoyen: stats.tauxECMoyen > 0 ? stats.tauxECMoyen.toFixed(3) : '—',
-        curMoyen: stats.curMoyen7j > 0 ? `${stats.curMoyen7j.toFixed(2)} DH` : '—',
-      }));
-    }
-  }, [stats, statsLoading]);
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([
-      refresh(),
-      refreshPeriod(),
-      fetchProductionStats(),
-      isCeo ? checkPaymentDelays() : Promise.resolve(),
-    ]);
-    setRefreshing(false);
-  };
-
-  // Persist dismissed alerts to localStorage
-  const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(() => {
-    try {
-      const stored = localStorage.getItem('tbos_dismissed_alerts');
-      return stored ? new Set(JSON.parse(stored)) : new Set();
-    } catch {
-      return new Set();
-    }
-  });
-
-  const dismissAlert = (id: string) => {
-    setDismissedAlerts(prev => {
-      const updated = new Set(prev);
-      updated.add(id);
-      // Persist to localStorage
-      localStorage.setItem('tbos_dismissed_alerts', JSON.stringify([...updated]));
-      return updated;
-    });
-  };
-
-  // Filter out dismissed alerts
-  const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
-
-  const getTrendDirection = (value: number): 'up' | 'down' | 'neutral' => {
-    if (value > 2) return 'up';
-    if (value < -2) return 'down';
-    return 'neutral';
-  };
-
-  const formatTrend = (value: number): string => {
-    const sign = value >= 0 ? '+' : '';
-    return `${sign}${value.toFixed(0)}%`;
-  };
-
+function StatCard({ title, value, change, changeType, icon: Icon, subtitle }: any) {
   return (
-    <MainLayout>
-      <div className="space-y-4 sm:space-y-6">
-        {/* Hawaii Greeting - CEO Only */}
-        {isCeo && <HawaiiGreeting />}
-        {/* Premium Dashboard Header */}
-        <div
-          ref={kpiSectionRef}
-          className="dashboard-header sticky top-14 sm:top-16 z-10 p-4 sm:p-5"
-        >
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Title Section */}
-            <div className="min-w-0">
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-                  <Package className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text">
-                    Tableau de Bord
-                  </h1>
-                  <p className="text-sm text-muted-foreground truncate">
-                    Vue d'ensemble • Talmi Beton
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Controls Section */}
-            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-              {/* Premium Period Selector */}
-              <div className="period-selector-premium">
-                {[
-                  { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
-                  { value: 'week' as Period, label: 'Cette Semaine', shortLabel: 'Sem.' },
-                  { value: 'month' as Period, label: 'Ce Mois', shortLabel: 'Mois' },
-                ].map((p) => (
-                  <button
-                    key={p.value}
-                    onClick={() => {
-                      setPeriod(p.value);
-                      requestAnimationFrame(() => {
-                        const grid = kpiGridRef.current;
-                        if (!grid) return;
-                        const scrollContainer = grid.closest('main') as HTMLElement | null;
-                        if (!scrollContainer) {
-                          grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          return;
-                        }
-                        const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
-                        const headerHeight = kpiSectionRef.current?.offsetHeight ?? 0;
-                        const containerRect = scrollContainer.getBoundingClientRect();
-                        const gridRect = grid.getBoundingClientRect();
-                        const relativeTop = gridRect.top - containerRect.top + scrollContainer.scrollTop;
-                        const targetTop = Math.max(0, relativeTop - topBarHeight - headerHeight - 12);
-                        scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
-                      });
-                    }}
-                    className={`period-btn ${period === p.value ? 'active' : ''}`}
-                  >
-                    <span className="hidden sm:inline">{p.label}</span>
-                    <span className="sm:hidden">{p.shortLabel}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Action Buttons */}
-              {isCeo && <SystemManualPdf />}
-              {isCeo && <DailyReportGenerator />}
-              {isCeo && <HawaiiReportButton />}
-              <button 
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="btn-premium min-h-[40px]"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">Actualiser</span>
-              </button>
-            </div>
-          </div>
+    <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-5 hover:border-primary/30 transition-all duration-300 hover:shadow-glow">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider">{title}</p>
+          <h3 className="text-2xl font-black text-foreground mt-1">{value}</h3>
+          <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
         </div>
-
-        {/* CEO Hawaii Command Center - Mobile Bento Grid */}
-        {isCeo && (
-          <div className="bento-grid">
-            {/* Real-Time Profit Ticker - Wide on desktop */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <RealTimeProfitTicker />
-            </ParallaxCard>
-            
-            {/* Audit Health Widget */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <AuditHealthWidget />
-            </ParallaxCard>
-            
-            {/* Database Health Widget - Error Sentry */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <DatabaseHealthWidget />
-            </ParallaxCard>
-            
-            {/* Live Quality Feed - Hawaii Transparency */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <LiveQualityFeed />
-            </ParallaxCard>
-            
-            {/* Live Production Feed - Hawaii Plant Monitoring */}
-            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
-              <LiveProductionWidget />
-            </ParallaxCard>
-            
-            {/* Batch Photo Gallery - Hawaii Visual Proof */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <BatchPhotoGallery />
-            </ParallaxCard>
-            
-            {/* Circular Budget Gauge - Financial Constitution */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <CircularBudgetGauge />
-            </ParallaxCard>
-            
-            {/* Midnight Alert Widget - Off-Hours Transactions */}
-            <ParallaxCard className="bento-standard" glowColor="ruby">
-              <MidnightAlertWidget />
-            </ParallaxCard>
-            
-            {/* Split-View Handshake Center - Double Validation */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <SplitViewHandshake />
-            </ParallaxCard>
-            
-            {/* Unified Forensic Feed - Tabbed: Security Alerts + Audit Trail */}
-            <ParallaxCard className="bento-wide" glowColor="ruby">
-              <Tabs defaultValue="alerts" className="w-full">
-                <TabsList className="w-full grid grid-cols-2 mb-2">
-                  <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
-                  <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
-                </TabsList>
-                <TabsContent value="alerts" className="mt-0">
-                  <ForensicAlertFeed />
-                </TabsContent>
-                <TabsContent value="audit" className="mt-0">
-                  <ForensicAuditFeed />
-                </TabsContent>
-              </Tabs>
-            </ParallaxCard>
-            
-            {/* Treasury & Cash Flow - Financial Constitution */}
-            <ParallaxCard className="bento-wide" glowColor="gold">
-              <TreasuryWidget />
-            </ParallaxCard>
-            
-            {/* Tax & Social Compliance Widget */}
-            <ParallaxCard className="bento-wide" glowColor="emerald">
-              <TaxComplianceWidget />
-            </ParallaxCard>
-            
-            {/* Cash-Flow Time Machine - 30-Day Forecast */}
-            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
-              <CashFlowForecast />
-            </ParallaxCard>
-            
-            {/* Fleet Predator - Live GPS & Fuel Theft Detection */}
-            <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
-              <LiveFleetMap />
-            </ParallaxCard>
-            
-            {/* Maintenance Sentinel - Fleet Health Widget */}
-            <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
-              <MaintenanceAlertWidget />
-            </ParallaxCard>
-            
-            {/* Geofence Alert Widget - GPS Predator Alerts */}
-            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="medium">
-              <GeofenceAlertWidget />
-            </ParallaxCard>
-            
-            {/* CEO Emergency Override - Nuclear Key */}
-            <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
-              <CeoEmergencyOverride />
-            </ParallaxCard>
-            
-            {/* AI Anomaly Scanner - Forensic AI */}
-            <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
-              <AIAnomalyScannerWidget />
-            </ParallaxCard>
-            
-            {/* WS7 Live Production Feed */}
-            <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
-              <WS7LiveFeedWidget />
-            </ParallaxCard>
-            
-            {/* Executive Command Center - Full width */}
-            <div className="bento-full">
-              <div className="glass-card p-3 sm:p-6 rounded-xl">
-                <ExecutiveCommandCenter />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Leakage Alert Banner - Critical */}
-        {(isCeo || isAccounting) && <LeakageAlertBanner />}
-
-        {/* Alerts - uses persisted dismissal */}
-        <AlertBanner 
-          alerts={visibleAlerts.map(a => ({
-            id: a.id,
-            type: a.type,
-            message: `${a.title}: ${a.message}`,
-            timestamp: a.timestamp,
-          }))} 
-          onDismiss={dismissAlert} 
-        />
-
-        {/* Period-Aware KPI Grid - Mobile optimized */}
-        <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          {periodLoading ? (
-            <>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <SkeletonKPI key={i} />
-              ))}
-            </>
-          ) : (
-            <>
-              <PeriodKPICard
-                title="Volume Total"
-                value={`${periodStats.totalVolume.toFixed(0)} m³`}
-                subtitle={periodStats.periodLabel || 'Chargement...'}
-                icon={Package}
-                trend={periodStats.volumeTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.volumeTrend > 0 ? 'positive' : periodStats.volumeTrend < -15 ? 'negative' : 'default'}
-                className="animate-fade-in"
-              />
-              <PeriodKPICard
-                title="Chiffre d'Affaires"
-                value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
-                subtitle={`${periodStats.nbFactures} factures`}
-                icon={DollarSign}
-                trend={periodStats.caTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.caTrend > 0 ? 'positive' : 'default'}
-                className="animate-fade-in"
-                style={{ animationDelay: '50ms' }}
-              />
-              <PeriodKPICard
-                title="CUR Moyen"
-                value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
-                subtitle="Coût Unitaire Réel"
-                icon={Gauge}
-                trend={periodStats.curTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.curTrend > 5 ? 'negative' : periodStats.curTrend < 0 ? 'positive' : 'default'}
-                className="animate-fade-in"
-                style={{ animationDelay: '100ms' }}
-              />
-              <PeriodKPICard
-                title="Marge Brute"
-                value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
-                subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
-                icon={TrendingUp}
-                trend={periodStats.margeTrend}
-                trendLabel={periodStats.previousPeriodLabel}
-                variant={periodStats.margeBrutePct >= 20 ? 'positive' : periodStats.margeBrutePct < 15 ? 'negative' : 'warning'}
-                className="animate-fade-in"
-                style={{ animationDelay: '150ms' }}
-              />
-            </>
-          )}
-        </div>
-
-        {/* Profit Net & Dépenses - CEO Only */}
-        {(isCeo || isAccounting) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {periodLoading ? (
-              Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
-            ) : (
-              <>
-                <PeriodKPICard
-                  title="Profit Net"
-                  value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
-                  subtitle="CA - Coûts - Dépenses"
-                  icon={Calculator}
-                  variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
-                  className="animate-fade-in"
-                />
-                <PeriodKPICard
-                  title="Total Dépenses"
-                  value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
-                  subtitle={periodStats.periodLabel}
-                  icon={Receipt}
-                  variant={periodStats.totalDepenses > periodStats.margeBrute * 0.3 ? 'warning' : 'default'}
-                  className="animate-fade-in"
-                  style={{ animationDelay: '50ms' }}
-                />
-                <KPICard
-                  title="Alertes Marge"
-                  value={stats.marginAlerts}
-                  subtitle="Écarts > 5%"
-                  icon={AlertTriangle}
-                  variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
-                />
-                <PeriodKPICard
-                  title="Clients Actifs"
-                  value={periodStats.nbClients}
-                  subtitle={periodStats.periodLabel}
-                  icon={Users}
-                  variant="default"
-                  className="animate-fade-in"
-                  style={{ animationDelay: '100ms' }}
-                />
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Quick Access Widgets - CEO Only */}
-        {(isCeo || isAccounting) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <PendingApprovalsWidget />
-            <TodaysPipelineWidget />
-            <ARAgingWidget />
-            <StockLevelsWidget />
-            <SalesFunnelWidget />
-          </div>
-        )}
-
-        {/* CEO Emergency Codes Manager - CEO Only */}
-        {isCeo && <CeoCodeManager />}
-
-        {/* Audit History Chart - CEO Only */}
-        {isCeo && <AuditHistoryChart />}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <RecentDeliveries />
-          
-          {/* Production Summary Card - visible for all roles */}
-          <div className="card-industrial p-6 animate-fade-in">
-            <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Formules actives</span>
-                <span className="font-semibold">{productionStats.formulesActives}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Prix mis à jour</span>
-                <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
-                <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
-                  {productionStats.tauxECMoyen}
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
-                <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
-                  {productionStats.curMoyen}
-                </span>
-              </div>
-            </div>
-          </div>
+        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+          <Icon className="w-5 h-5 text-primary" />
         </div>
       </div>
-    </MainLayout>
+      <div className="flex items-center gap-1 mt-3">
+        {changeType === 'up' && <ArrowUpRight className="w-4 h-4 text-emerald-400" />}
+        {changeType === 'down' && <ArrowDownRight className="w-4 h-4 text-red-400" />}
+        {changeType === 'neutral' && <Activity className="w-4 h-4 text-muted-foreground" />}
+        <span className={`text-xs font-medium ${changeType === 'up' ? 'text-emerald-400' : changeType === 'down' ? 'text-red-400' : 'text-muted-foreground'}`}>{change}</span>
+        <span className="text-xs text-muted-foreground ml-1">vs hier</span>
+      </div>
+    </div>
+  );
+}
+
+function SidebarItem({ icon: Icon, label, active, onClick }: any) {
+  return (
+    <button onClick={onClick} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${active ? 'bg-primary/10 text-primary border border-primary/20' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}`}>
+      <Icon className="w-5 h-5" />
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+}
+
+export default function Dashboard() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('accueil');
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {sidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+
+      {/* Sidebar */}
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-card/80 backdrop-blur-xl border-r border-border transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <span className="font-bold text-primary-foreground text-lg">TB</span>
+            </div>
+            <div>
+              <span className="font-semibold text-foreground">TBOS</span>
+              <span className="block text-[10px] font-mono text-muted-foreground tracking-widest">ENTERPRISE SUITE</span>
+            </div>
+          </div>
+        </div>
+        <nav className="p-4 space-y-1">
+          <SidebarItem icon={LayoutDashboard} label="Accueil" active={activeTab === 'accueil'} onClick={() => setActiveTab('accueil')} />
+          <SidebarItem icon={TrendingUp} label="Production" active={activeTab === 'production'} onClick={() => setActiveTab('production')} />
+          <SidebarItem icon={Truck} label="Livraisons" active={activeTab === 'livraisons'} onClick={() => setActiveTab('livraisons')} />
+          <SidebarItem icon={DollarSign} label="Finance" active={activeTab === 'finance'} onClick={() => setActiveTab('finance')} />
+          <SidebarItem icon={Package} label="Stocks" active={activeTab === 'stocks'} onClick={() => setActiveTab('stocks')} />
+          <SidebarItem icon={Users} label="Clients" active={activeTab === 'clients'} onClick={() => setActiveTab('clients')} />
+          <SidebarItem icon={BarChart3} label="Rapports" active={activeTab === 'rapports'} onClick={() => setActiveTab('rapports')} />
+        </nav>
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
+          <SidebarItem icon={Settings} label="Paramètres" onClick={() => toast.info('Paramètres - à venir')} />
+          <button onClick={() => toast.info('Déconnexion...')} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 mt-1">
+            <LogOut className="w-5 h-5" />
+            <span className="font-medium">Déconnexion</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0">
+        {/* Header */}
+        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border">
+          <div className="flex items-center justify-between px-4 lg:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-white/5 text-foreground">
+                <Menu className="w-5 h-5" />
+              </button>
+              <div>
+                <h1 className="text-xl font-bold text-foreground">Bonjour, Master 👋</h1>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-0.5">
+                  <MapPin className="w-3.5 h-3.5" />
+                  <span>Casablanca</span>
+                  <span className="text-border">•</span>
+                  <Sun className="w-3.5 h-3.5" />
+                  <span>24°C</span>
+                  <span className="text-border">•</span>
+                  <span className="text-primary">L'usine tourne à 100% d'efficacité</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-card/60 border border-border rounded-lg">
+                <Search className="w-4 h-4 text-muted-foreground" />
+                <input type="text" placeholder="Recherche rapide..." className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-48" />
+              </div>
+              <button onClick={() => toast.info('3 notifications non lues')} className="relative p-2.5 rounded-lg hover:bg-white/5 text-foreground transition-colors">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
+              </button>
+              <div className="flex items-center gap-3 pl-3 border-l border-border">
+                <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center">
+                  <span className="font-bold text-primary-foreground text-sm">M</span>
+                </div>
+                <div className="hidden sm:block">
+                  <p className="text-sm font-medium text-foreground">Master</p>
+                  <p className="text-xs text-muted-foreground">Admin</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="p-4 lg:p-8 space-y-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard title="Production" value="120 m³/h" change="+12%" changeType="up" icon={TrendingUp} subtitle="Objectif: 115 m³/h" />
+            <StatCard title="Livraisons" value="24" change="+3" changeType="up" icon={Truck} subtitle="Camions en route" />
+            <StatCard title="Qualité" value="98%" change="+2%" changeType="up" icon={CheckCircle} subtitle="Tests conformes" />
+            <StatCard title="Profit Net" value="45,230 DH" change="-5%" changeType="down" icon={DollarSign} subtitle="Ce mois-ci" />
+          </div>
+
+          {/* Charts + Alerts Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Production Chart */}
+            <div className="lg:col-span-2 bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="font-semibold text-foreground">Production Hebdomadaire</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">Volume produit par jour (m³)</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10">Semaine</Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground">Mois</Button>
+                </div>
+              </div>
+              <div className="h-48 flex items-end justify-between gap-3">
+                {productionData.map((item, index) => (
+                  <div key={index} className="flex-1 flex flex-col items-center gap-2">
+                    <div className="w-full bg-primary/20 rounded-t-lg relative group cursor-pointer hover:bg-primary/30 transition-colors" style={{ height: `${(item.value / 100) * 160}px` }}>
+                      <div className="absolute bottom-0 left-0 right-0 bg-primary rounded-t-lg transition-all duration-500" style={{ height: `${(item.value / 100) * 100}%` }} />
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-card border border-border px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{item.value}m³</div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{item.day}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Alerts */}
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-foreground">Alertes</h3>
+                <span className="text-xs text-muted-foreground">{alerts.length} actives</span>
+              </div>
+              <div className="space-y-3">
+                {alerts.map((alert) => (
+                  <div key={alert.id} className={`p-3 rounded-lg border ${alert.type === 'warning' ? 'bg-amber-500/10 border-amber-500/30' : alert.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-blue-500/10 border-blue-500/30'}`}>
+                    <div className="flex items-start gap-2">
+                      {alert.type === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5" />}
+                      {alert.type === 'success' && <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5" />}
+                      {alert.type === 'info' && <Clock className="w-4 h-4 text-blue-500 mt-0.5" />}
+                      <div>
+                        <p className={`text-sm font-medium ${alert.type === 'warning' ? 'text-amber-500' : alert.type === 'success' ? 'text-emerald-500' : 'text-blue-500'}`}>{alert.message}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{alert.detail}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Activity + Quick Actions Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Activity */}
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-foreground">Activité Récente</h3>
+                <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">Voir tout</Button>
+              </div>
+              <div className="space-y-4">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${activity.status === 'success' ? 'bg-emerald-500/10' : activity.status === 'warning' ? 'bg-amber-500/10' : 'bg-blue-500/10'}`}>
+                      {activity.status === 'success' && <CheckCircle className="w-4 h-4 text-emerald-500" />}
+                      {activity.status === 'warning' && <AlertTriangle className="w-4 h-4 text-amber-500" />}
+                      {activity.status === 'info' && <Clock className="w-4 h-4 text-blue-500" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">{activity.action}</p>
+                      <p className="text-xs text-muted-foreground truncate">{activity.details}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{activity.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-card/60 backdrop-blur-sm border border-border rounded-xl p-6">
+              <h3 className="font-semibold text-foreground mb-4">Actions Rapides</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 border-border hover:border-primary/30 hover:bg-primary/5" onClick={() => toast.info('Nouvelle commande - à venir')}>
+                  <Package className="w-6 h-6 text-primary" />
+                  <span className="text-sm">Nouvelle Commande</span>
+                </Button>
+                <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 border-border hover:border-primary/30 hover:bg-primary/5" onClick={() => toast.info('Planifier livraison - à venir')}>
+                  <Truck className="w-6 h-6 text-primary" />
+                  <span className="text-sm">Planifier Livraison</span>
+                </Button>
+                <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 border-border hover:border-primary/30 hover:bg-primary/5" onClick={() => toast.info('Ajouter client - à venir')}>
+                  <Users className="w-6 h-6 text-primary" />
+                  <span className="text-sm">Ajouter Client</span>
+                </Button>
+                <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 border-border hover:border-primary/30 hover:bg-primary/5" onClick={() => toast.info('Générer rapport - à venir')}>
+                  <BarChart3 className="w-6 h-6 text-primary" />
+                  <span className="text-sm">Rapport PDF</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
