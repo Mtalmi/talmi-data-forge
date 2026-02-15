@@ -18,34 +18,29 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useState } from 'react';
-
-interface NavItem {
-  path: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  roles?: string[];
-}
-
-const PRIMARY_NAV_ITEMS: NavItem[] = [
-  { path: '/', label: 'Accueil', icon: LayoutDashboard },
-  { path: '/planning', label: 'Planning', icon: CalendarClock },
-  { path: '/logistique', label: 'Logistique', icon: Truck },
-];
-
-const MORE_NAV_ITEMS: NavItem[] = [
-  { path: '/ventes', label: 'Ventes', icon: Receipt },
-  { path: '/production', label: 'Production', icon: Factory },
-  { path: '/stocks', label: 'Stocks', icon: Package },
-  { path: '/clients', label: 'Clients', icon: Users },
-  { path: '/bons', label: 'Bons', icon: FileText },
-];
+import { useI18n } from '@/i18n/I18nContext';
 
 export function MobileBottomNav() {
   const location = useLocation();
   const { role } = useAuth();
+  const { t } = useI18n();
+  const mn = t.mobileNav;
   const [moreOpen, setMoreOpen] = useState(false);
 
-  // Check if current path is in "more" items
+  const PRIMARY_NAV_ITEMS = [
+    { path: '/', label: mn.home, icon: LayoutDashboard },
+    { path: '/planning', label: mn.planning, icon: CalendarClock },
+    { path: '/logistique', label: mn.logistics, icon: Truck },
+  ];
+
+  const MORE_NAV_ITEMS = [
+    { path: '/ventes', label: mn.sales, icon: Receipt },
+    { path: '/production', label: mn.production, icon: Factory },
+    { path: '/stocks', label: mn.stocks, icon: Package },
+    { path: '/clients', label: mn.clients, icon: Users },
+    { path: '/bons', label: mn.bons, icon: FileText },
+  ];
+
   const isMoreActive = MORE_NAV_ITEMS.some(item => location.pathname === item.path);
 
   return (
@@ -72,7 +67,6 @@ export function MobileBottomNav() {
           );
         })}
 
-        {/* More Menu */}
         <Popover open={moreOpen} onOpenChange={setMoreOpen}>
           <PopoverTrigger asChild>
             <button
@@ -82,7 +76,7 @@ export function MobileBottomNav() {
               )}
             >
               <MoreHorizontal className="mobile-nav-icon" />
-              <span className="mobile-nav-label">Plus</span>
+              <span className="mobile-nav-label">{mn.more}</span>
               {isMoreActive && <div className="mobile-nav-indicator" />}
             </button>
           </PopoverTrigger>
@@ -104,7 +98,7 @@ export function MobileBottomNav() {
                     onClick={() => setMoreOpen(false)}
                     className={cn(
                       "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
-                      "min-h-[48px]", // Touch target
+                      "min-h-[48px]",
                       isActive 
                         ? "bg-primary/20 text-primary" 
                         : "text-foreground hover:bg-muted/50"
