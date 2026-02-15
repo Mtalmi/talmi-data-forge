@@ -8,6 +8,7 @@ import {
   Building2, Users, TrendingUp, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import heroPlantNight from '@/assets/hero_plant_night.jpg';
 import statsTexture from '@/assets/stats-texture.jpg';
 import modulesBg from '@/assets/modules-bg.jpg';
@@ -140,6 +141,11 @@ export default function Landing() {
 
   return (
     <div ref={containerRef} className="bg-background text-foreground">
+      {/* FLOATING THEME TOGGLE */}
+      <div className="fixed top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* HERO */}
       <section className="landing-hero relative overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -212,14 +218,14 @@ export default function Landing() {
       </section>
 
       {/* STATS BAR */}
-      <section className="relative border-y border-primary/10 overflow-hidden">
+      <section className="relative border-y border-border overflow-hidden bg-background">
         <div className="absolute inset-0 z-0">
-          <img src={statsTexture} alt="" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+          <img src={statsTexture} alt="" className="w-full h-full object-cover opacity-20 dark:opacity-30" />
+          <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <div key={stat.label} className="stat-card landing-stat-card text-center">
+            <div key={stat.label} className="stat-card rounded-2xl p-6 sm:p-8 bg-card border border-border text-center transition-all duration-300 hover:border-primary/30 hover:shadow-glow-sm">
               <stat.icon className="h-6 w-6 text-primary/60 mx-auto mb-3" />
               <p
                 className="stat-num text-3xl sm:text-4xl font-black text-gradient-gold"
@@ -237,10 +243,10 @@ export default function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="py-24 sm:py-32 relative overflow-hidden">
+      <section id="features" className="py-24 sm:py-32 relative overflow-hidden bg-background">
         <div className="absolute inset-0 z-0">
-          <img src={modulesBg} alt="" className="w-full h-full object-cover opacity-15" />
-          <div className="absolute inset-0 bg-background/90" />
+          <img src={modulesBg} alt="" className="w-full h-full object-cover opacity-10 dark:opacity-15" />
+          <div className="absolute inset-0 bg-background/95 dark:bg-background/90" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="features-heading text-center mb-16">
@@ -256,7 +262,7 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f) => (
-              <div key={f.title} className="feature-card landing-feature-card group">
+              <div key={f.title} className="feature-card rounded-2xl p-8 bg-card border border-border group transition-all duration-300 hover:border-primary/25 hover:shadow-glow-sm">
                 <div className="p-3 rounded-xl bg-primary/8 border border-primary/15 w-fit mb-5 group-hover:shadow-[0_0_20px_hsl(var(--primary)/0.15)] transition-all duration-300">
                   <f.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -269,12 +275,12 @@ export default function Landing() {
       </section>
 
       {/* TRUST BAR */}
-      <section className="border-t border-primary/10 py-16 bg-muted/20">
+      <section className="border-t border-border py-16 bg-background">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <p className="trust-heading text-xs font-bold uppercase tracking-widest text-muted-foreground mb-8">Enterprise Standards</p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {trusted.map((item) => (
-              <div key={item} className="trust-item flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10">
+              <div key={item} className="trust-item flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border">
                 <CheckCircle2 className="h-4 w-4 text-primary/70" />
                 <span className="text-sm font-medium text-foreground/80">{item}</span>
               </div>
@@ -284,7 +290,7 @@ export default function Landing() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-24 sm:py-32 text-center">
+      <section className="py-24 sm:py-32 text-center bg-background">
         <div className="max-w-3xl mx-auto px-6">
           <div className="final-cta">
             <Building2 className="h-12 w-12 text-primary/40 mx-auto mb-6" />
@@ -308,7 +314,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="landing-footer border-t border-border/30 py-8">
+      <footer className="landing-footer border-t border-border py-8 bg-background">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-primary/50" />
