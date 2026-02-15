@@ -12,7 +12,8 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface RotationTrackerProps {
   blId: string;
@@ -38,6 +39,9 @@ export function RotationTracker({
   onUpdate,
 }: RotationTrackerProps) {
   const [updating, setUpdating] = useState<string | null>(null);
+  const { t, lang } = useI18n();
+  const r = t.driverRotation;
+  const dateLocale = getDateLocale(lang);
 
   const recordTimestamp = async (field: 'heure_depart_centrale' | 'heure_arrivee_chantier' | 'heure_retour_centrale') => {
     setUpdating(field);
@@ -51,15 +55,15 @@ export function RotationTracker({
       if (error) throw error;
       
       const labels: Record<string, string> = {
-        heure_depart_centrale: 'Départ',
-        heure_arrivee_chantier: 'Arrivée',
-        heure_retour_centrale: 'Retour',
+        heure_depart_centrale: r.departRecordedShort,
+        heure_arrivee_chantier: r.arrivalRecordedShort,
+        heure_retour_centrale: r.returnRecordedShort,
       };
-      toast.success(`${labels[field]} enregistré`);
+      toast.success(`${labels[field]} ${r.recorded}`);
       onUpdate();
     } catch (error) {
       console.error('Error recording timestamp:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(r.errorRecording);
     } finally {
       setUpdating(null);
     }
@@ -67,7 +71,8 @@ export function RotationTracker({
 
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return null;
-    return format(new Date(timestamp), 'HH:mm', { locale: fr });
+    const fmtOpts = dateLocale ? { locale: dateLocale } : {};
+    return format(new Date(timestamp), 'HH:mm', fmtOpts);
   };
 
   const formatMinutes = (minutes: number | null) => {
@@ -83,7 +88,7 @@ export function RotationTracker({
   const steps = [
     {
       key: 'heure_depart_centrale',
-      label: 'Départ Centrale',
+      label: r.departPlant,
       icon: Play,
       timestamp: heureDepart,
       color: 'text-primary',
@@ -91,7 +96,7 @@ export function RotationTracker({
     },
     {
       key: 'heure_arrivee_chantier',
-      label: 'Arrivée Chantier',
+      label: r.arrivalSite,
       icon: MapPin,
       timestamp: heureArrivee,
       color: 'text-warning',
@@ -99,7 +104,7 @@ export function RotationTracker({
     },
     {
       key: 'heure_retour_centrale',
-      label: 'Retour Centrale',
+      label: r.returnPlantLabel,
       icon: Home,
       timestamp: heureRetour,
       color: 'text-success',
@@ -147,7 +152,7 @@ export function RotationTracker({
                   ) : (
                     <>
                       <Icon className="h-4 w-4 mr-2" />
-                      Enregistrer
+                      {r.record}
                     </>
                   )}
                 </Button>
@@ -171,7 +176,7 @@ export function RotationTracker({
           <div className="p-3 rounded-lg bg-muted/30">
             <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
               <Clock className="h-3 w-3" />
-              Temps de Rotation Total
+              {r.totalRotationTime}
             </div>
             <span className="font-mono font-bold text-xl">
               {formatMinutes(tempsRotation)}
@@ -184,7 +189,7 @@ export function RotationTracker({
           )}>
             <div className="flex items-center gap-2 text-muted-foreground text-xs mb-1">
               <Clock className="h-3 w-3" />
-              Temps d'Attente Chantier
+              {r.siteWaitingTime}
             </div>
             <div className="flex items-center gap-2">
               <span className={cn(
@@ -196,7 +201,7 @@ export function RotationTracker({
               {facturerAttente && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-warning/20 text-warning">
                   <AlertTriangle className="h-3 w-3" />
-                  Facturer Attente
+                  {r.billWaiting}
                 </span>
               )}
             </div>
