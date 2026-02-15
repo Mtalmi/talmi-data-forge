@@ -8,7 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import {
   Truck,
   Gauge,
@@ -28,6 +29,8 @@ import { ServiceEntryForm } from './ServiceEntryForm';
 
 export function FleetHealthDashboard() {
   const { vehicles, loading, getFleetHealthStats, fetchVehicles } = useFleetMaintenance();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleHealth | null>(null);
   const [showServiceForm, setShowServiceForm] = useState(false);
   const [serviceVehicle, setServiceVehicle] = useState<string | null>(null);
@@ -418,7 +421,7 @@ function VehicleHealthDetails({ health }: { health: VehicleHealth }) {
             <p className="text-muted-foreground text-xs">Dernière visite</p>
             <p className="font-medium">
               {health.vehicle.date_last_visite_technique 
-                ? format(new Date(health.vehicle.date_last_visite_technique), 'dd/MM/yyyy', { locale: fr })
+                ? format(new Date(health.vehicle.date_last_visite_technique), 'dd/MM/yyyy')
                 : 'Non enregistré'}
             </p>
           </div>
@@ -426,7 +429,7 @@ function VehicleHealthDetails({ health }: { health: VehicleHealth }) {
             <p className="text-muted-foreground text-xs">Prochaine visite</p>
             <p className="font-medium">
               {health.visite_technique.next_date 
-                ? format(new Date(health.visite_technique.next_date), 'dd/MM/yyyy', { locale: fr })
+                ? format(new Date(health.visite_technique.next_date), 'dd/MM/yyyy')
                 : 'Non programmé'}
             </p>
           </div>

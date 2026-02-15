@@ -23,7 +23,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useCashPaymentControls, SupplierCashTracking } from '@/hooks/useCashPaymentControls';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 export function CashPaymentControlsWidget() {
   const { stats, loading, refresh, CASH_LIMIT } = useCashPaymentControls();
@@ -36,7 +37,9 @@ export function CashPaymentControlsWidget() {
     setRefreshing(false);
   };
 
-  const currentMonth = format(new Date(), 'MMMM yyyy', { locale: fr });
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const currentMonth = format(new Date(), 'MMMM yyyy', { locale: dateLocale });
 
   return (
     <>

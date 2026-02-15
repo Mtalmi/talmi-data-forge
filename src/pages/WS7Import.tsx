@@ -11,7 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ImportSummary {
   total_rows: number;
@@ -23,6 +24,8 @@ interface ImportSummary {
 
 export default function WS7Import() {
   const { toast } = useToast();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [importing, setImporting] = useState(false);
@@ -237,7 +240,7 @@ export default function WS7Import() {
                       <TableRow key={imp.id}>
                         <TableCell className="whitespace-nowrap text-sm">
                           <Clock className="h-3 w-3 inline mr-1 text-muted-foreground" />
-                          {format(new Date(imp.import_datetime), 'dd MMM HH:mm', { locale: fr })}
+                          {format(new Date(imp.import_datetime), 'dd MMM HH:mm', { locale: dateLocale })}
                         </TableCell>
                         <TableCell className="font-mono text-xs">{imp.filename}</TableCell>
                         <TableCell className="text-right">

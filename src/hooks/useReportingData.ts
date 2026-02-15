@@ -8,7 +8,8 @@ import {
   eachMonthOfInterval,
   startOfYear,
 } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
+import { useI18n } from '@/i18n/I18nContext';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -79,6 +80,8 @@ export interface ReportingData {
 }
 
 export function useReportingData(monthsBack: number = 12) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [data, setData] = useState<ReportingData | null>(null);
   const [previousPeriodData, setPreviousPeriodData] = useState<PeriodSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -261,7 +264,7 @@ export function useReportingData(monthsBack: number = 12) {
       const monthlyTrends: MonthlyTrend[] = monthIntervals.map(monthStart => {
         const monthEnd = endOfMonth(monthStart);
         const monthStr = format(monthStart, 'yyyy-MM');
-        const monthLabel = format(monthStart, 'MMM yy', { locale: fr });
+        const monthLabel = format(monthStart, 'MMM yy', { locale: dateLocale });
 
         const monthFactures = factures?.filter(f => {
           const d = new Date(f.date_facture);
@@ -306,7 +309,7 @@ export function useReportingData(monthsBack: number = 12) {
         : 'stable';
 
       const forecast: ForecastData[] = [1, 2, 3].map(i => ({
-        month: format(subMonths(now, -i), 'MMM yy', { locale: fr }),
+        month: format(subMonths(now, -i), 'MMM yy', { locale: dateLocale }),
         predicted_volume: Math.round(avgVolume * (trend === 'up' ? 1.05 ** i : trend === 'down' ? 0.95 ** i : 1) * 10) / 10,
         predicted_ca: Math.round(avgCA * (trend === 'up' ? 1.05 ** i : trend === 'down' ? 0.95 ** i : 1)),
         confidence: Math.max(50, 90 - i * 15),
