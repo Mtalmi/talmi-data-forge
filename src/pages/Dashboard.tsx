@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
 import { motion } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -69,6 +70,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function Dashboard() {
+  const { t } = useI18n();
   const { role, isCeo, isAccounting, signOut } = useAuth();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
@@ -178,7 +180,7 @@ export default function Dashboard() {
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
-                Bonjour, Master 👋
+                {t.dashboard.greeting}, Master 👋
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <MapPin className="h-3.5 w-3.5 text-primary" />
@@ -189,9 +191,9 @@ export default function Dashboard() {
             <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
               <div className="period-selector-premium">
                 {[
-                  { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
-                  { value: 'week' as Period, label: 'Cette Semaine', shortLabel: 'Sem.' },
-                  { value: 'month' as Period, label: 'Ce Mois', shortLabel: 'Mois' },
+                  { value: 'today' as Period, label: t.dashboard.period.today, shortLabel: t.dashboard.period.todayShort },
+                  { value: 'week' as Period, label: t.dashboard.period.thisWeek, shortLabel: t.dashboard.period.thisWeekShort },
+                  { value: 'month' as Period, label: t.dashboard.period.thisMonth, shortLabel: t.dashboard.period.thisMonthShort },
                 ].map((p) => (
                   <button
                     key={p.value}
@@ -231,7 +233,7 @@ export default function Dashboard() {
                 className="btn-premium min-h-[40px]"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">Actualiser</span>
+                <span className="hidden sm:inline">{t.dashboard.refresh}</span>
               </button>
 
               <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
@@ -251,20 +253,20 @@ export default function Dashboard() {
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">Mon Compte</DropdownMenuLabel>
+                  <DropdownMenuLabel className="text-xs text-muted-foreground">{t.dashboard.myAccount}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                   <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
                     <User className="h-4 w-4 mr-2" />
-                    Profil
+                    {t.dashboard.profile}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                   <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
                     <Settings className="h-4 w-4 mr-2" />
-                    Paramètres
+                    {t.nav.settings}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                   <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
                     <LogOut className="h-4 w-4 mr-2" />
-                    Déconnexion
+                    {t.nav.logout}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -288,7 +290,7 @@ export default function Dashboard() {
             SECTION 1 — KPIs & PERFORMANCE
             ═══════════════════════════════════════════════════════ */}
         <DashboardSection
-          title="Performance & KPIs"
+          title={t.dashboard.sections.performanceKpis}
           icon={BarChart3}
           storageKey="kpis"
           defaultOpen={true}
@@ -310,9 +312,9 @@ export default function Dashboard() {
               ) : (
                 <>
                   <PeriodKPICard
-                    title="Volume Total"
+                    title={t.dashboard.kpi.totalVolume}
                     value={`${periodStats.totalVolume.toFixed(0)} m³`}
-                    subtitle={periodStats.periodLabel || 'Chargement...'}
+                    subtitle={periodStats.periodLabel || t.dashboard.loading}
                     icon={Package}
                     trend={periodStats.volumeTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -320,9 +322,9 @@ export default function Dashboard() {
                     className="animate-fade-in"
                   />
                   <PeriodKPICard
-                    title="Chiffre d'Affaires"
+                    title={t.dashboard.kpi.turnover}
                     value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
-                    subtitle={`${periodStats.nbFactures} factures`}
+                    subtitle={`${periodStats.nbFactures} ${t.dashboard.kpi.invoices}`}
                     icon={DollarSign}
                     trend={periodStats.caTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -331,9 +333,9 @@ export default function Dashboard() {
                     style={{ animationDelay: '50ms' }}
                   />
                   <PeriodKPICard
-                    title="CUR Moyen"
+                    title={t.dashboard.kpi.avgCur}
                     value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
-                    subtitle="Coût Unitaire Réel"
+                    subtitle={t.dashboard.kpi.unitCost}
                     icon={Gauge}
                     trend={periodStats.curTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -342,7 +344,7 @@ export default function Dashboard() {
                     style={{ animationDelay: '100ms' }}
                   />
                   <PeriodKPICard
-                    title="Marge Brute"
+                    title={t.dashboard.kpi.grossMargin}
                     value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
                     subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
                     icon={TrendingUp}
@@ -364,15 +366,15 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <PeriodKPICard
-                      title="Profit Net"
+                      title={t.dashboard.kpi.netProfit}
                       value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
-                      subtitle="CA - Coûts - Dépenses"
+                      subtitle={t.dashboard.kpi.revenueMinusCosts}
                       icon={Calculator}
                       variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
                       className="animate-fade-in"
                     />
                     <PeriodKPICard
-                      title="Total Dépenses"
+                      title={t.dashboard.kpi.totalExpenses}
                       value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
                       subtitle={periodStats.periodLabel}
                       icon={Receipt}
@@ -381,14 +383,14 @@ export default function Dashboard() {
                       style={{ animationDelay: '50ms' }}
                     />
                     <KPICard
-                      title="Alertes Marge"
+                      title={t.dashboard.kpi.marginAlerts}
                       value={stats.marginAlerts}
-                      subtitle="Écarts > 5%"
+                      subtitle={t.dashboard.kpi.varianceOver5}
                       icon={AlertTriangle}
                       variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
                     />
                     <PeriodKPICard
-                      title="Clients Actifs"
+                      title={t.dashboard.activeClients}
                       value={periodStats.nbClients}
                       subtitle={periodStats.periodLabel}
                       icon={Users}
@@ -425,7 +427,7 @@ export default function Dashboard() {
             SECTION 2 — PRODUCTION & QUALITÉ
             ═══════════════════════════════════════════════════════ */}
         <DashboardSection
-          title="Production & Qualité"
+          title={t.dashboard.sections.productionQuality}
           icon={Factory}
           storageKey="production"
           defaultOpen={true}
@@ -457,24 +459,24 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentDeliveries />
               <div className="card-industrial p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
+                <h3 className="text-lg font-semibold mb-4">{t.dashboard.productionSummary}</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">Formules actives</span>
+                    <span className="text-sm text-muted-foreground">{t.dashboard.activeFormulas}</span>
                     <span className="font-semibold">{productionStats.formulesActives}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">Prix mis à jour</span>
+                    <span className="text-sm text-muted-foreground">{t.dashboard.pricesUpdated}</span>
                     <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
+                    <span className="text-sm text-muted-foreground">{t.dashboard.avgEcRatio}</span>
                     <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
                       {productionStats.tauxECMoyen}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
+                    <span className="text-sm text-muted-foreground">{t.dashboard.avgCur7d}</span>
                     <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
                       {productionStats.curMoyen}
                     </span>
@@ -484,7 +486,7 @@ export default function Dashboard() {
                       onClick={() => navigate('/formules')}
                       className="w-full mt-2 py-2.5 rounded-lg border border-dashed border-primary/40 text-sm text-primary hover:bg-primary/5 transition-colors"
                     >
-                      + Ajouter un produit
+                      {t.dashboard.addProduct}
                     </button>
                   )}
                 </div>
@@ -498,7 +500,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title="Finance & Trésorerie"
+            title={t.dashboard.sections.financeTreasury}
             icon={Wallet}
             storageKey="finance"
             defaultOpen={true}
@@ -531,7 +533,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title="Flotte & Logistique"
+            title={t.dashboard.sections.fleetLogistics}
             icon={Truck}
             storageKey="fleet"
             defaultOpen={false}
@@ -555,7 +557,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title="Sécurité & Audit"
+            title={t.dashboard.sections.securityAudit}
             icon={Shield}
             storageKey="security"
             defaultOpen={false}
@@ -571,8 +573,8 @@ export default function Dashboard() {
                 <ParallaxCard className="bento-wide" glowColor="ruby">
                   <Tabs defaultValue="alerts" className="w-full">
                     <TabsList className="w-full grid grid-cols-2 mb-2">
-                      <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
-                      <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
+                      <TabsTrigger value="alerts" className="text-xs">{t.dashboard.securityAlerts}</TabsTrigger>
+                      <TabsTrigger value="audit" className="text-xs">{t.dashboard.auditTrail}</TabsTrigger>
                     </TabsList>
                     <TabsContent value="alerts" className="mt-0">
                       <ForensicAlertFeed />
@@ -602,7 +604,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title="Centre de Commande"
+            title={t.dashboard.sections.commandCenter}
             icon={Gauge}
             storageKey="command"
             defaultOpen={false}
