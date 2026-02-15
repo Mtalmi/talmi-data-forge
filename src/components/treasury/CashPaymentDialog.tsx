@@ -34,6 +34,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useCashPaymentControls, CashPaymentValidation } from '@/hooks/useCashPaymentControls';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface CashPaymentDialogProps {
   open: boolean;
@@ -54,6 +55,9 @@ export function CashPaymentDialog({
   description,
   onConfirm,
 }: CashPaymentDialogProps) {
+  const { t } = useI18n();
+  const cp = t.cashPayment;
+  const c = t.common;
   const { suppliers, canOverride, validateCashPayment, CASH_LIMIT } = useCashPaymentControls();
   const [paymentMethod, setPaymentMethod] = useState<'especes' | 'virement' | 'cheque'>('virement');
   const [selectedSupplier, setSelectedSupplier] = useState<string>('');
@@ -81,16 +85,14 @@ export function CashPaymentDialog({
     const supplier = suppliers.find(s => s.id === selectedSupplier);
     
     if (paymentMethod === 'especes' && validation?.penaltyApplicable && showOverrideForm) {
-      // Override scenario
       if (!overrideReason || overrideReason.length < 10) {
-        toast.error('Raison obligatoire (minimum 10 caractères)');
+        toast.error(cp.reasonRequired);
         setLoading(false);
         return;
       }
       onConfirm('Espèces', selectedSupplier, supplier?.nom_fournisseur, overrideReason);
     } else {
-      // Normal payment
-      const methodLabel = paymentMethod === 'especes' ? 'Espèces' : paymentMethod === 'virement' ? 'Virement' : 'Chèque';
+      const methodLabel = paymentMethod === 'especes' ? cp.cash : paymentMethod === 'virement' ? cp.transfer : cp.check;
       onConfirm(methodLabel, selectedSupplier, supplier?.nom_fournisseur);
     }
     
@@ -115,7 +117,7 @@ export function CashPaymentDialog({
             <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
               <Banknote className="h-5 w-5 text-primary" />
             </div>
-            Méthode de Paiement
+            {cp.title}
           </DialogTitle>
         </DialogHeader>
 
@@ -123,11 +125,11 @@ export function CashPaymentDialog({
           {/* Expense Info */}
           <div className="p-3 bg-muted/30 rounded-lg">
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Référence:</span>
+              <span className="text-muted-foreground">{cp.reference}:</span>
               <span className="font-mono">{expenseReference}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Montant:</span>
+              <span className="text-muted-foreground">{cp.amount}:</span>
               <span className="font-mono font-bold text-lg">
                 {amount.toLocaleString('fr-FR')} DH
               </span>
@@ -137,10 +139,10 @@ export function CashPaymentDialog({
 
           {/* Supplier Selection */}
           <div className="space-y-2">
-            <Label>Fournisseur (optionnel mais recommandé)</Label>
+            <Label>{cp.supplierLabel}</Label>
             <Select value={selectedSupplier} onValueChange={setSelectedSupplier}>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionner le fournisseur..." />
+                <SelectValue placeholder={cp.selectSupplier} />
               </SelectTrigger>
               <SelectContent>
                 {suppliers.map((supplier) => (
@@ -154,9 +156,8 @@ export function CashPaymentDialog({
 
           {/* Payment Method Selection */}
           <div className="space-y-3">
-            <Label>Méthode de Paiement</Label>
+            <Label>{cp.paymentMethod}</Label>
             <div className="grid grid-cols-3 gap-3">
-              {/* Bank Transfer - Recommended */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod('virement')}
@@ -167,17 +168,13 @@ export function CashPaymentDialog({
                     : "border-border hover:border-success/50 hover:bg-success/5"
                 )}
               >
-                <Building2 className={cn(
-                  "h-6 w-6",
-                  paymentMethod === 'virement' ? "text-success" : "text-muted-foreground"
-                )} />
-                <span className="text-sm font-medium">Virement</span>
+                <Building2 className={cn("h-6 w-6", paymentMethod === 'virement' ? "text-success" : "text-muted-foreground")} />
+                <span className="text-sm font-medium">{cp.transfer}</span>
                 <Badge variant="outline" className="text-[10px] bg-success/10 text-success border-success/30">
-                  Recommandé
+                  {cp.recommended}
                 </Badge>
               </button>
 
-              {/* Check */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod('cheque')}
@@ -188,14 +185,10 @@ export function CashPaymentDialog({
                     : "border-border hover:border-primary/50 hover:bg-primary/5"
                 )}
               >
-                <TrendingUp className={cn(
-                  "h-6 w-6",
-                  paymentMethod === 'cheque' ? "text-primary" : "text-muted-foreground"
-                )} />
-                <span className="text-sm font-medium">Chèque</span>
+                <TrendingUp className={cn("h-6 w-6", paymentMethod === 'cheque' ? "text-primary" : "text-muted-foreground")} />
+                <span className="text-sm font-medium">{cp.check}</span>
               </button>
 
-              {/* Cash */}
               <button
                 type="button"
                 onClick={() => setPaymentMethod('especes')}
@@ -206,14 +199,11 @@ export function CashPaymentDialog({
                     : "border-border hover:border-warning/50 hover:bg-warning/5"
                 )}
               >
-                <Banknote className={cn(
-                  "h-6 w-6",
-                  paymentMethod === 'especes' ? "text-warning" : "text-muted-foreground"
-                )} />
-                <span className="text-sm font-medium">Espèces</span>
+                <Banknote className={cn("h-6 w-6", paymentMethod === 'especes' ? "text-warning" : "text-muted-foreground")} />
+                <span className="text-sm font-medium">{cp.cash}</span>
                 {amount > 50000 && (
                   <Badge variant="destructive" className="text-[10px]">
-                    Interdit
+                    {cp.forbidden}
                   </Badge>
                 )}
               </button>
@@ -223,13 +213,10 @@ export function CashPaymentDialog({
           {/* Cash Payment Validation */}
           {paymentMethod === 'especes' && validation && (
             <div className="space-y-4">
-              {/* Current Supplier Monthly Usage */}
               {selectedSupplier && (
                 <div className="p-4 rounded-lg border border-border/50 bg-muted/20">
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">
-                      Cumul mensuel fournisseur:
-                    </span>
+                    <span className="text-muted-foreground">{cp.monthlySupplierTotal}</span>
                     <span className={cn(
                       "font-mono font-semibold",
                       limitUsagePercent >= 80 ? "text-destructive" : 
@@ -247,12 +234,11 @@ export function CashPaymentDialog({
                     )}
                   />
                   <p className="text-xs text-muted-foreground mt-1 text-right">
-                    Restant: {(CASH_LIMIT - validation.currentMonthlyTotal).toLocaleString('fr-FR')} DH
+                    {cp.remaining}: {(CASH_LIMIT - validation.currentMonthlyTotal).toLocaleString('fr-FR')} DH
                   </p>
                 </div>
               )}
 
-              {/* Warning Message */}
               {validation.warningMessage && !validation.penaltyApplicable && (
                 <Alert className="border-warning/50 bg-warning/10">
                   <AlertTriangle className="h-4 w-4 text-warning" />
@@ -262,7 +248,6 @@ export function CashPaymentDialog({
                 </Alert>
               )}
 
-              {/* Blocking Message */}
               {validation.blockingReason && (
                 <Alert className="border-destructive/50 bg-destructive/10">
                   <XCircle className="h-4 w-4 text-destructive" />
@@ -272,56 +257,44 @@ export function CashPaymentDialog({
                 </Alert>
               )}
 
-              {/* Penalty Calculation */}
               {validation.penaltyApplicable && (
                 <div className="p-4 rounded-xl border-2 border-destructive/50 bg-destructive/5">
                   <div className="flex items-center gap-2 mb-3">
                     <Calculator className="h-5 w-5 text-destructive" />
-                    <span className="font-semibold text-destructive">
-                      ⚠️ PÉNALITÉ APPLICABLE
-                    </span>
+                    <span className="font-semibold text-destructive">{cp.penaltyApplicable}</span>
                   </div>
 
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Montant mensuel cumulé:</span>
+                      <span className="text-muted-foreground">{cp.monthlyAccumulated}</span>
                       <span className="font-mono">{validation.newMonthlyTotal.toLocaleString('fr-FR')} DH</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Dépassement:</span>
+                      <span className="text-muted-foreground">{cp.excess}</span>
                       <span className="font-mono text-destructive font-medium">
                         {validation.excessAmount.toLocaleString('fr-FR')} DH
                       </span>
                     </div>
                     <hr className="border-border/50" />
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Pénalité 6%:</span>
-                      <span className="font-mono text-destructive">
-                        {validation.penaltyAmount.toFixed(2)} DH
-                      </span>
+                      <span className="text-muted-foreground">{cp.penalty6pct}</span>
+                      <span className="font-mono text-destructive">{validation.penaltyAmount.toFixed(2)} DH</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Droit de timbre 0.25%:</span>
-                      <span className="font-mono text-destructive">
-                        {validation.stampDutyAmount.toFixed(2)} DH
-                      </span>
+                      <span className="text-muted-foreground">{cp.stampDuty}</span>
+                      <span className="font-mono text-destructive">{validation.stampDutyAmount.toFixed(2)} DH</span>
                     </div>
                     <hr className="border-destructive/30" />
                     <div className="flex justify-between font-semibold">
-                      <span>COÛT TOTAL DE LA PÉNALITÉ:</span>
-                      <span className="font-mono text-destructive text-lg">
-                        {validation.totalPenaltyCost.toFixed(2)} DH
-                      </span>
+                      <span>{cp.totalPenaltyCost}</span>
+                      <span className="font-mono text-destructive text-lg">{validation.totalPenaltyCost.toFixed(2)} DH</span>
                     </div>
                   </div>
 
-                  {/* Recommendation */}
                   <div className="mt-4 p-3 rounded-lg bg-success/10 border border-success/30">
                     <p className="text-sm text-success flex items-center gap-2">
                       <CheckCircle className="h-4 w-4" />
-                      <span>
-                        💡 Utilisez un virement bancaire pour éviter cette pénalité
-                      </span>
+                      <span>{cp.useTransferTip}</span>
                     </p>
                     <Button
                       variant="outline"
@@ -330,11 +303,10 @@ export function CashPaymentDialog({
                       onClick={() => setPaymentMethod('virement')}
                     >
                       <ArrowRight className="h-4 w-4 mr-2" />
-                      Changer pour Virement
+                      {cp.switchToTransfer}
                     </Button>
                   </div>
 
-                  {/* Override Option (CEO/Karim only) */}
                   {canOverride && !showOverrideForm && (
                     <div className="mt-4 pt-4 border-t border-destructive/30">
                       <Button
@@ -344,35 +316,31 @@ export function CashPaymentDialog({
                         onClick={() => setShowOverrideForm(true)}
                       >
                         <Lock className="h-4 w-4 mr-2" />
-                        Procéder malgré la pénalité (Override CEO)
+                        {cp.overrideCeo}
                       </Button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Override Form */}
               {showOverrideForm && canOverride && (
                 <div className="p-4 rounded-xl border-2 border-warning/50 bg-warning/5">
                   <div className="flex items-center gap-2 mb-3">
                     <Shield className="h-5 w-5 text-warning" />
-                    <span className="font-semibold text-warning">
-                      Approbation CEO - Dépassement Autorisé
-                    </span>
+                    <span className="font-semibold text-warning">{cp.ceoApproval}</span>
                   </div>
-                  
                   <div className="space-y-3">
                     <div>
-                      <Label className="text-sm">Raison de l'approbation (obligatoire)</Label>
+                      <Label className="text-sm">{cp.approvalReason}</Label>
                       <Textarea
                         value={overrideReason}
                         onChange={(e) => setOverrideReason(e.target.value)}
-                        placeholder="Ex: Fournisseur exige paiement en espèces, différence acceptable..."
+                        placeholder={cp.approvalPlaceholder}
                         className="mt-1"
                         rows={3}
                       />
                       <p className="text-xs text-muted-foreground mt-1">
-                        Minimum 10 caractères ({overrideReason.length}/10)
+                        {cp.minChars} ({overrideReason.length}/10)
                       </p>
                     </div>
                   </div>
@@ -386,50 +354,43 @@ export function CashPaymentDialog({
             <div className="p-4 rounded-xl border border-success/30 bg-success/5">
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle className="h-5 w-5 text-success" />
-                <span className="font-medium text-success">Virement Bancaire - Recommandé</span>
+                <span className="font-medium text-success">{cp.transferRecommended}</span>
               </div>
               <ul className="text-sm text-muted-foreground space-y-1 ml-7">
-                <li>✓ Aucune pénalité</li>
-                <li>✓ Aucun droit de timbre</li>
-                <li>✓ Transaction traçable</li>
-                <li>✓ Documentation audit-ready</li>
+                <li>✓ {cp.noPenalty}</li>
+                <li>✓ {cp.noStampDuty}</li>
+                <li>✓ {cp.traceable}</li>
+                <li>✓ {cp.auditReady}</li>
               </ul>
             </div>
           )}
 
           {/* Actions */}
           <div className="flex gap-3 pt-4 border-t border-border/50">
-            <Button
-              variant="outline"
-              className="flex-1"
-              onClick={() => onOpenChange(false)}
-            >
-              Annuler
+            <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+              {c.cancel}
             </Button>
             <Button
-              className={cn(
-                "flex-1",
-                !canProceed && "opacity-50 cursor-not-allowed"
-              )}
+              className={cn("flex-1", !canProceed && "opacity-50 cursor-not-allowed")}
               disabled={!canProceed || loading}
               onClick={handleConfirm}
             >
               {loading ? (
-                "Traitement..."
+                cp.processing
               ) : paymentMethod === 'virement' ? (
                 <>
                   <Building2 className="h-4 w-4 mr-2" />
-                  Confirmer Virement
+                  {cp.confirmTransfer}
                 </>
               ) : showOverrideForm ? (
                 <>
                   <Shield className="h-4 w-4 mr-2" />
-                  Approuver et Continuer
+                  {cp.approveAndContinue}
                 </>
               ) : (
                 <>
                   <Banknote className="h-4 w-4 mr-2" />
-                  Confirmer Paiement
+                  {cp.confirmPayment}
                 </>
               )}
             </Button>

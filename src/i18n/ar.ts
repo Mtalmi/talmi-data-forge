@@ -4207,6 +4207,159 @@ const ar = {
     potentialQuotes: 'محتمل (عروض أسعار)',
     today: 'اليوم',
   },
+  cashPayment: {
+    title: 'طريقة الدفع',
+    reference: 'المرجع',
+    amount: 'المبلغ',
+    supplierLabel: 'المورد (اختياري لكن مُستحسن)',
+    selectSupplier: 'اختر المورد...',
+    paymentMethod: 'طريقة الدفع',
+    transfer: 'تحويل بنكي',
+    recommended: 'مُستحسن',
+    check: 'شيك',
+    cash: 'نقداً',
+    forbidden: 'ممنوع',
+    monthlySupplierTotal: 'إجمالي المورد الشهري:',
+    remaining: 'المتبقي',
+    penaltyApplicable: '⚠️ غرامة مطبقة',
+    monthlyAccumulated: 'المبلغ الشهري المتراكم:',
+    excess: 'التجاوز:',
+    penalty6pct: 'غرامة 6%:',
+    stampDuty: 'رسم طابع 0.25%:',
+    totalPenaltyCost: 'التكلفة الإجمالية للغرامة:',
+    useTransferTip: '💡 استخدم التحويل البنكي لتجنب هذه الغرامة',
+    switchToTransfer: 'التبديل إلى تحويل',
+    overrideCeo: 'المتابعة رغم الغرامة (تجاوز المدير)',
+    ceoApproval: 'موافقة المدير - تجاوز مرخص',
+    approvalReason: 'سبب الموافقة (مطلوب)',
+    approvalPlaceholder: 'مثال: المورد يطلب الدفع نقداً، الفرق مقبول...',
+    minChars: '10 أحرف كحد أدنى',
+    transferRecommended: 'تحويل بنكي - مُستحسن',
+    noPenalty: 'بدون غرامة',
+    noStampDuty: 'بدون رسم طابع',
+    traceable: 'معاملة قابلة للتتبع',
+    auditReady: 'وثائق جاهزة للتدقيق',
+    confirmTransfer: 'تأكيد التحويل',
+    approveAndContinue: 'الموافقة والمتابعة',
+    confirmPayment: 'تأكيد الدفع',
+    processing: 'جارٍ المعالجة...',
+    reasonRequired: 'السبب مطلوب (10 أحرف كحد أدنى)',
+  },
+  humidityTest: {
+    title: 'اختبار رطوبة سريع',
+    processingPhoto: 'جارٍ معالجة الصورة...',
+    takePhotoPrompt: 'التقط صورة لاختبار الرطوبة',
+    photoHint: '(ميزان، مقياس رطوبة، إلخ)',
+    takePhoto: 'التقاط صورة',
+    photoVerified: 'تم التحقق من الصورة',
+    sandHumidity: 'نسبة رطوبة الرمل (%)',
+    waterCorrection: 'تصحيح الماء:',
+    reduceWater: 'تقليل الماء بـ {correction} لتر/م³',
+    photoCaptured: 'تم التقاط الصورة!',
+    captureError: 'خطأ في الالتقاط',
+    photoRequired: 'الصورة مطلوبة!',
+    invalidHumidity: 'نسبة رطوبة غير صالحة (0-100%)',
+    humiditySaved: 'رطوبة {value}% مسجلة • تصحيح: {correction} لتر/م³',
+    saveError: 'خطأ في الحفظ',
+  },
+  fleetGPS: {
+    fleetGps: 'أسطول GPS',
+    active: 'نشط',
+    weakSignal: 'إشارة ضعيفة',
+    signalLost: 'فقدان الإشارة',
+    activeCount: 'نشط',
+    weakCount: 'ضعيف',
+    lostCount: 'مفقود',
+    totalTracked: 'مركبة(ات) متتبعة',
+    noDriver: 'بدون سائق',
+    lastUpdate: 'آخر تحديث',
+    never: 'أبداً',
+    justNow: 'الآن',
+    loadingMap: 'جارٍ تحميل خريطة GPS...',
+  },
+  fixedAssets: {
+    title: 'الأصول الثابتة',
+    subtitle: 'سجل الأصول والإهلاك',
+    newAsset: 'أصل جديد',
+    totalGross: 'الإجمالي الخام',
+    depreciation: 'الإهلاك',
+    monthly: 'شهري',
+    netBookValue: 'صافي القيمة الدفترية',
+    ofGrossValue: 'من القيمة الخام',
+    warrantyExpiring: 'ضمانات تنتهي',
+    inNext30Days: 'خلال 30 يوم القادمة',
+    assetList: 'قائمة الأصول',
+    categorySummary: 'ملخص الفئات',
+    visualization: 'تصور بياني',
+    searchPlaceholder: 'بحث بالمعرف، الوصف، الرقم التسلسلي...',
+    allCategories: 'جميع الفئات',
+    allStatuses: 'جميع الحالات',
+    loadingText: 'جارٍ التحميل...',
+    noAssetFound: 'لا يوجد أصل',
+    createFirst: 'إنشاء أول أصل',
+    grossValue: 'القيمة الخام',
+    location: 'الموقع',
+    viewDetails: 'عرض التفاصيل',
+    markActive: 'تعيين كنشط',
+    inMaintenance: 'في الصيانة',
+    noDataAvailable: 'لا تتوفر بيانات',
+    vncByCategory: 'توزيع القيمة الدفترية حسب الفئة',
+    grossVsDepreciation: 'القيمة الخام مقابل الإهلاك',
+    noChartData: 'لا توجد بيانات',
+    gross: 'خام',
+    depreciationShort: 'إهلاك',
+    vnc: 'صافي',
+    count: 'العدد',
+    category: 'الفئة',
+  },
+  bonDetail: {
+    deliveryNote: 'وصل التسليم',
+    deliveryDate: 'تاريخ التسليم',
+    client: 'العميل',
+    formula: 'الخلطة',
+    volume: 'الحجم',
+    actualConsumption: 'الاستهلاك الفعلي',
+    cement: 'أسمنت',
+    adjuvant: 'إضافة',
+    water: 'ماء',
+    logisticsPayment: 'اللوجستيك والدفع',
+    deliveryZone: 'منطقة التسليم',
+    paymentMode: 'طريقة الدفع',
+    transportProvider: 'مقدم النقل',
+    sellingPrice: 'سعر البيع',
+    locked: 'مقفل',
+    pricePlaceholder: 'السعر درهم/م³',
+    save: 'حفظ',
+    notDefined: 'غير محدد',
+    invoice: 'فاتورة',
+    priceUpdated: 'تم تحديث سعر البيع',
+    priceLocked: 'السعر مقفل بعد الفوترة',
+    updateError: 'خطأ في التحديث',
+    loadError: 'خطأ في التحميل',
+    workflowLabels: {
+      planification: 'تخطيط',
+      production: 'إنتاج',
+      validation_technique: 'تحقق تقني',
+      en_livraison: 'في التسليم',
+      livre: 'تم التسليم',
+      facture: 'مفوتر',
+      annule: 'ملغى',
+    },
+  },
+  driverDelivery: {
+    hour: 'الساعة',
+    volume: 'الحجم',
+    zone: 'المنطقة',
+    loadingInProgress: 'جارٍ التحميل...',
+    technicalValidation: 'في التحقق التقني...',
+    statusLabels: {
+      planification: 'للتخطيط',
+      production: 'في الإنتاج',
+      validation_technique: 'التحقق',
+      en_livraison: 'في الطريق',
+      livre: 'تم التسليم ✓',
+    },
+  },
 };
 
 export default ar;
