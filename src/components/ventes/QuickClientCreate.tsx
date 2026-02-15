@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Plus, Loader2, User, Building, Phone, Mail, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[\+]?[\d\s\-\(\)]{7,20}$/;
@@ -28,6 +29,8 @@ interface FormErrors {
 }
 
 export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
+  const { t } = useI18n();
+  const qc = t.quickClientCreate;
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -56,19 +59,15 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
-
     if (!nomClient.trim()) {
-      newErrors.nomClient = 'Le nom du client est obligatoire';
+      newErrors.nomClient = qc.nameRequired;
     }
-
     if (email.trim() && !EMAIL_REGEX.test(email.trim())) {
-      newErrors.email = 'Format email invalide';
+      newErrors.email = qc.invalidEmail;
     }
-
     if (telephone.trim() && !PHONE_REGEX.test(telephone.trim())) {
-      newErrors.telephone = 'Format téléphone invalide';
+      newErrors.telephone = qc.invalidPhone;
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -78,11 +77,10 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
     if (!validate()) return;
 
     setSaving(true);
-    toast.loading('Création en cours...', { id: 'client-create' });
+    toast.loading(qc.creatingProgress, { id: 'client-create' });
 
     try {
       const clientId = generateClientId();
-      
       const { error } = await supabase.from('clients').insert({
         client_id: clientId,
         nom_client: nomClient.trim(),
@@ -94,13 +92,13 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
 
       if (error) throw error;
 
-      toast.success('Client ajouté avec succès', { id: 'client-create' });
+      toast.success(qc.clientAdded, { id: 'client-create' });
       onClientCreated(clientId, nomClient.trim());
       resetForm();
       setOpen(false);
     } catch (error) {
       console.error('Error creating client:', error);
-      toast.error("Erreur lors de l'enregistrement", { id: 'client-create' });
+      toast.error(qc.saveError, { id: 'client-create' });
     } finally {
       setSaving(false);
     }
@@ -113,7 +111,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { setOpen(isOpen); if (!isOpen) resetForm(); }}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" title="Nouveau client">
+        <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" title={qc.newClient}>
           <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
@@ -121,7 +119,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <User className="h-5 w-5 text-primary" />
-            Nouveau Client
+            {qc.newClient}
           </DialogTitle>
         </DialogHeader>
         
@@ -129,7 +127,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
           <div className="space-y-1">
             <Label htmlFor="nom_client" className="flex items-center gap-1">
               <Building className="h-3 w-3" />
-              Nom / Société *
+              {qc.nameSociety}
             </Label>
             <Input
               id="nom_client"
@@ -146,19 +144,19 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
             <div className="space-y-2">
               <Label htmlFor="contact" className="flex items-center gap-1">
                 <User className="h-3 w-3" />
-                Contact
+                {qc.contact}
               </Label>
               <Input
                 id="contact"
                 value={contactPersonne}
                 onChange={(e) => setContactPersonne(e.target.value)}
-                placeholder="Nom du contact"
+                placeholder={qc.contactPlaceholder}
               />
             </div>
             <div className="space-y-1">
               <Label htmlFor="telephone" className="flex items-center gap-1">
                 <Phone className="h-3 w-3" />
-                Téléphone
+                {qc.phone}
               </Label>
               <Input
                 id="telephone"
@@ -174,7 +172,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
           <div className="space-y-1">
             <Label htmlFor="email" className="flex items-center gap-1">
               <Mail className="h-3 w-3" />
-              Email
+              {qc.email}
             </Label>
             <Input
               id="email"
@@ -190,30 +188,30 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
           <div className="space-y-2">
             <Label htmlFor="adresse" className="flex items-center gap-1">
               <MapPin className="h-3 w-3" />
-              Adresse
+              {qc.address}
             </Label>
             <Input
               id="adresse"
               value={adresse}
               onChange={(e) => setAdresse(e.target.value)}
-              placeholder="Adresse du client"
+              placeholder={qc.addressPlaceholder}
             />
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Annuler
+              {qc.cancel}
             </Button>
             <Button type="submit" disabled={saving || !nomClient.trim()}>
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Création...
+                  {qc.creating}
                 </>
               ) : (
                 <>
                   <Plus className="h-4 w-4 mr-2" />
-                  Créer Client
+                  {qc.createClient}
                 </>
               )}
             </Button>

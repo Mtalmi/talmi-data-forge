@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   Camera,
   CameraOff,
@@ -38,6 +39,8 @@ export function PhotoWaiverOption({
   onWaiverComplete,
   disabled = false,
 }: PhotoWaiverOptionProps) {
+  const { t } = useI18n();
+  const pw = t.photoWaiver;
   const [open, setOpen] = useState(false);
   const [manualTime, setManualTime] = useState(
     new Date().toTimeString().slice(0, 5)
@@ -47,21 +50,21 @@ export function PhotoWaiverOption({
   const [submitting, setSubmitting] = useState(false);
 
   const reasons = [
-    { value: 'camera_defect', label: 'Caméra défectueuse' },
-    { value: 'no_smartphone', label: 'Pas de smartphone' },
-    { value: 'poor_lighting', label: 'Éclairage insuffisant' },
-    { value: 'client_refuse', label: 'Client refuse photo' },
-    { value: 'urgent_departure', label: 'Départ urgent' },
-    { value: 'other', label: 'Autre raison' },
+    { value: 'camera_defect', label: pw.cameraDefect },
+    { value: 'no_smartphone', label: pw.noSmartphone },
+    { value: 'poor_lighting', label: pw.poorLighting },
+    { value: 'client_refuse', label: pw.clientRefuse },
+    { value: 'urgent_departure', label: pw.urgentDeparture },
+    { value: 'other', label: pw.otherReason },
   ];
 
   const handleSubmit = async () => {
     if (!manualTime) {
-      toast.error('Veuillez entrer l\'heure');
+      toast.error(pw.enterTime);
       return;
     }
     if (!waiverReason) {
-      toast.error('Veuillez sélectionner une raison');
+      toast.error(pw.selectReason);
       return;
     }
 
@@ -74,7 +77,7 @@ export function PhotoWaiverOption({
         waivedAt: new Date().toISOString(),
       });
 
-      toast.success('Photo ignorée - Horodatage manuel enregistré', {
+      toast.success(pw.waiverSuccess, {
         description: `Heure: ${manualTime}`,
       });
 
@@ -82,7 +85,7 @@ export function PhotoWaiverOption({
       setWaiverReason('');
       setWaiverNotes('');
     } catch (error) {
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(pw.saveError);
     } finally {
       setSubmitting(false);
     }
@@ -98,26 +101,25 @@ export function PhotoWaiverOption({
           disabled={disabled}
         >
           <CameraOff className="h-4 w-4" />
-          <span className="text-xs">Pas de photo?</span>
+          <span className="text-xs">{pw.noPhoto}</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CameraOff className="h-5 w-5 text-warning" />
-            Ignorer Photo - BL {blId}
+            {pw.title.replace('{blId}', blId)}
           </DialogTitle>
           <DialogDescription>
-            Si la caméra n'est pas disponible, entrez l'heure manuellement.
+            {pw.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Manual Time Entry */}
           <div className="space-y-2">
             <Label htmlFor="waiver-time" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Heure de livraison (obligatoire)
+              {pw.deliveryTime}
             </Label>
             <Input
               id="waiver-time"
@@ -128,11 +130,10 @@ export function PhotoWaiverOption({
             />
           </div>
 
-          {/* Reason Selection */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Raison (obligatoire)
+              {pw.reason}
             </Label>
             <div className="grid grid-cols-2 gap-2">
               {reasons.map(reason => (
@@ -153,13 +154,12 @@ export function PhotoWaiverOption({
             </div>
           </div>
 
-          {/* Optional Notes - Always shown for 'other', but captured for all reasons */}
           {waiverReason === 'other' && (
             <div className="space-y-2">
-              <Label htmlFor="waiver-notes">Précisez</Label>
+              <Label htmlFor="waiver-notes">{pw.specify}</Label>
               <Textarea
                 id="waiver-notes"
-                placeholder="Détails supplémentaires..."
+                placeholder={pw.detailsPlaceholder}
                 className="h-20"
                 value={waiverNotes}
                 onChange={(e) => setWaiverNotes(e.target.value)}
@@ -167,24 +167,22 @@ export function PhotoWaiverOption({
             </div>
           )}
 
-          {/* Warning Notice */}
           <div className="flex items-start gap-2 p-3 bg-warning/10 rounded-lg border border-warning/20">
             <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
             <div className="text-xs text-warning-foreground">
-              <p className="font-medium">Attention</p>
-              <p>L'absence de photo sera consignée dans le journal d'audit. Utilisez cette option uniquement en cas de nécessité.</p>
+              <p className="font-medium">{pw.warning}</p>
+              <p>{pw.warningText}</p>
             </div>
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-3">
           <Button
             variant="outline"
             className="flex-1"
             onClick={() => setOpen(false)}
           >
-            Annuler
+            {t.common?.cancel || 'Annuler'}
           </Button>
           <Button
             className="flex-1 gap-2 bg-warning hover:bg-warning/90 text-warning-foreground"
@@ -196,7 +194,7 @@ export function PhotoWaiverOption({
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            Confirmer sans photo
+            {pw.confirmNoPhoto}
           </Button>
         </div>
       </DialogContent>

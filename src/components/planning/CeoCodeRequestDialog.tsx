@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { Shield, Send, KeyRound, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 
 interface CeoCodeRequestDialogProps {
@@ -36,6 +37,7 @@ export function CeoCodeRequestDialog({
   onCodeVerified,
 }: CeoCodeRequestDialogProps) {
   const { user, isAgentAdministratif } = useAuth();
+  const { t } = useI18n();
   const [status, setStatus] = useState<RequestStatus>('idle');
   const [reason, setReason] = useState('');
   const [code, setCode] = useState('');
@@ -78,10 +80,10 @@ export function CeoCodeRequestDialog({
 
       setRequestId(data.id);
       setStatus('pending');
-      toast.success('Demande envoyée au CEO!');
+      toast.success(t.ceoCode?.requestSent || 'Demande envoyée au CEO!');
     } catch (err) {
       console.error('Error requesting code:', err);
-      setError('Erreur lors de la demande');
+      setError(t.ceoCode?.requestError || 'Erreur lors de la demande');
       setStatus('idle');
     }
   };
@@ -300,11 +302,11 @@ export function CeoCodeRequestDialog({
           {status === 'idle' && (
             <>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Annuler
+                {t.ceoCode?.cancel || 'Annuler'}
               </Button>
               <Button onClick={handleRequestCode} className="gap-2">
                 <Send className="h-4 w-4" />
-                Demander Code CEO
+                {t.ceoCode?.requestCode || 'Demander Code CEO'}
               </Button>
             </>
           )}
