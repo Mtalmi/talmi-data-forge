@@ -1,4 +1,5 @@
 import { useI18n, Language } from '@/i18n/I18nContext';
+import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,10 +8,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const LANGUAGES: { code: Language; flag: string; nativeLabel: string }[] = [
-  { code: 'ar', flag: '🇲🇦', nativeLabel: 'العربية' },
-  { code: 'fr', flag: '🇫🇷', nativeLabel: 'Français' },
-  { code: 'en', flag: '🇬🇧', nativeLabel: 'English' },
+const LANGUAGES: { code: Language; flag: string; nativeLabel: string; shortLabel: string }[] = [
+  { code: 'ar', flag: '🇲🇦', nativeLabel: 'العربية', shortLabel: 'AR' },
+  { code: 'fr', flag: '🇫🇷', nativeLabel: 'Français', shortLabel: 'FR' },
+  { code: 'en', flag: '🇬🇧', nativeLabel: 'English', shortLabel: 'EN' },
 ];
 
 interface LanguageSwitcherProps {
@@ -26,28 +27,30 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
-          size={variant === 'compact' ? 'icon' : 'sm'}
-          className={className}
+          variant="outline"
+          size="sm"
+          className={`gap-1.5 border-primary/30 hover:border-primary/60 hover:bg-primary/10 ${className ?? ''}`}
           aria-label="Switch language"
         >
-          <span className="text-base leading-none">{current.flag}</span>
+          <span className="text-lg leading-none">{current.flag}</span>
+          <span className="text-xs font-bold tracking-wide">{current.shortLabel}</span>
           {variant === 'full' && (
-            <span className="ml-2 text-sm font-medium">{current.nativeLabel}</span>
+            <span className="ml-1 text-xs font-medium hidden sm:inline">{current.nativeLabel}</span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="min-w-[180px]">
         {LANGUAGES.map((language) => (
           <DropdownMenuItem
             key={language.code}
             onClick={() => setLang(language.code)}
-            className={lang === language.code ? 'bg-primary/10 text-primary font-semibold' : ''}
+            className={`gap-3 py-2.5 ${lang === language.code ? 'bg-primary/10 text-primary font-semibold' : ''}`}
           >
-            <span className="mr-2">{language.flag}</span>
-            {language.nativeLabel}
+            <span className="text-lg">{language.flag}</span>
+            <span className="flex-1">{language.nativeLabel}</span>
+            <span className="text-[10px] font-bold tracking-widest text-muted-foreground">{language.shortLabel}</span>
             {lang === language.code && (
-              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary" />
+              <span className="h-2 w-2 rounded-full bg-primary" />
             )}
           </DropdownMenuItem>
         ))}
