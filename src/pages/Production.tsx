@@ -759,7 +759,7 @@ export default function Production() {
     
     setBatchValidating(false);
     setSelectedBls(new Set());
-    toast.success(`${successCount} bon(s) validé(s) et envoyé(s) en livraison`);
+    toast.success(`${successCount} ${t.pages.production.batchValidatedSent}`);
     fetchData();
   };
 
@@ -784,14 +784,14 @@ export default function Production() {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-success/20 text-success">
           <Wifi className="h-3 w-3" />
-          Machine
+          {t.production.machine}
         </span>
       );
     }
     return (
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
         <WifiOff className="h-3 w-3" />
-        Manuel
+        {t.production.manual}
       </span>
     );
   };
@@ -993,7 +993,7 @@ export default function Production() {
         <Collapsible open={kpiExpanded} onOpenChange={setKpiExpanded}>
           <CollapsibleTrigger asChild>
             <Button variant="ghost" size="sm" className="w-full justify-between mb-2">
-              <span className="text-sm font-medium">Tableau de Bord</span>
+              <span className="text-sm font-medium">{t.pages.production.boardDisplay}</span>
               {kpiExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </Button>
           </CollapsibleTrigger>
@@ -1032,7 +1032,7 @@ export default function Production() {
         {selectedBls.size > 0 && (
           <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
             <span className="text-sm font-medium">
-              {selectedBls.size} sélectionné(s)
+              {selectedBls.size} {t.pages.production.selected}
             </span>
             <Button
               size="sm"
@@ -1045,14 +1045,14 @@ export default function Production() {
               ) : (
                 <CheckCircle className="h-4 w-4" />
               )}
-              Valider & Envoyer en Livraison
+              {t.pages.production.validateAndSend}
             </Button>
             <Button
               size="sm"
               variant="ghost"
               onClick={() => setSelectedBls(new Set())}
             >
-              Annuler
+              {t.pages.production.cancel}
             </Button>
           </div>
         )}
@@ -1070,7 +1070,7 @@ export default function Production() {
             )}
           >
             <Clock className="h-3 w-3" />
-            Planifiés
+            {t.pages.production.filterPlanned}
             {activeFilter !== 'planification' && (
               <span className="ml-1 bg-blue-500/30 px-1.5 rounded-full text-[10px]">
                 {kpiData.planificationCount}
@@ -1087,7 +1087,7 @@ export default function Production() {
             )}
           >
             <Play className="h-3 w-3" />
-            Production
+            {t.pages.production.filterProduction}
             {activeFilter !== 'production' && (
               <span className="ml-1 bg-warning/30 px-1.5 rounded-full text-[10px]">
                 {kpiData.productionCount}
@@ -1104,7 +1104,7 @@ export default function Production() {
             )}
           >
             <CheckCircle className="h-3 w-3" />
-            Validation
+            {t.pages.production.filterValidation}
             {activeFilter !== 'validation' && (
               <span className="ml-1 bg-purple-500/30 px-1.5 rounded-full text-[10px]">
                 {kpiData.validatedCount}
@@ -1121,7 +1121,7 @@ export default function Production() {
             )}
           >
             <Wifi className="h-3 w-3" />
-            Machine
+            {t.pages.production.filterMachine}
             {activeFilter !== 'machine' && (
               <span className="ml-1 bg-success/30 px-1.5 rounded-full text-[10px]">
                 {kpiData.machineSyncCount}
@@ -1138,7 +1138,7 @@ export default function Production() {
             )}
           >
             <AlertTriangle className="h-3 w-3" />
-            Écart &gt; 5%
+            {t.pages.production.filterDeviation}
             {activeFilter !== 'ecart' && (
               <span className="ml-1 bg-destructive/30 px-1.5 rounded-full text-[10px]">
                 {kpiData.deviationCount}
@@ -1158,8 +1158,8 @@ export default function Production() {
               <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
               <p className="text-muted-foreground">
                 {activeFilter !== 'all' || searchQuery || dateRange.from
-                  ? 'Aucun bon correspondant aux filtres'
-                  : 'Aucun bon en production'}
+                  ? t.pages.production.noCorrespondingFilter
+                  : t.pages.production.noProductionBons}
               </p>
               {(activeFilter !== 'all' || searchQuery || dateRange.from) && (
                 <Button 
@@ -1172,7 +1172,7 @@ export default function Production() {
                   }}
                   className="mt-2"
                 >
-                  Effacer les filtres
+                  {t.pages.production.clearFilters}
                 </Button>
               )}
             </div>
@@ -1186,14 +1186,14 @@ export default function Production() {
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>N° Bon</TableHead>
-                  <TableHead>Commande</TableHead>
+                  <TableHead>{t.pages.production.slipNumber}</TableHead>
+                  <TableHead>{t.pages.production.order}</TableHead>
                   <TableHead 
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => handleSort('date')}
                   >
                     <div className="flex items-center gap-1">
-                      Date
+                      {t.pages.production.date}
                       <ArrowUpDown className="h-3 w-3" />
                     </div>
                   </TableHead>
@@ -1202,7 +1202,7 @@ export default function Production() {
                     onClick={() => handleSort('client')}
                   >
                     <div className="flex items-center gap-1">
-                      Client
+                      {t.pages.production.client}
                       <ArrowUpDown className="h-3 w-3" />
                     </div>
                   </TableHead>
@@ -1211,7 +1211,7 @@ export default function Production() {
                     onClick={() => handleSort('formule')}
                   >
                     <div className="flex items-center gap-1">
-                      Formule
+                      {t.pages.production.formula}
                       <ArrowUpDown className="h-3 w-3" />
                     </div>
                   </TableHead>
@@ -1220,13 +1220,13 @@ export default function Production() {
                     onClick={() => handleSort('volume')}
                   >
                     <div className="flex items-center gap-1 justify-end">
-                      Volume
+                      {t.pages.production.volume}
                       <ArrowUpDown className="h-3 w-3" />
                     </div>
                   </TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="w-20">Lien</TableHead>
+                  <TableHead>{t.pages.production.source}</TableHead>
+                  <TableHead>{t.pages.production.status}</TableHead>
+                  <TableHead className="w-20">{t.pages.production.link}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -1264,7 +1264,7 @@ export default function Production() {
                       )}
                     </TableCell>
                     <TableCell onClick={() => canEdit && handleSelectBon(bon)}>
-                      {format(new Date(bon.date_livraison), 'dd/MM', { locale: fr })}
+                      {format(new Date(bon.date_livraison), 'dd/MM', { locale: dateLocale || undefined })}
                     </TableCell>
                     <TableCell onClick={() => canEdit && handleSelectBon(bon)}>
                       <span className="text-sm truncate max-w-[120px] block">
@@ -1285,8 +1285,8 @@ export default function Production() {
                         bon.workflow_status === 'production' && 'bg-warning/20 text-warning',
                         bon.workflow_status === 'validation_technique' && 'bg-purple-500/20 text-purple-500'
                       )}>
-                        {bon.workflow_status === 'planification' ? 'Planifié' : 
-                         bon.workflow_status === 'production' ? 'Prod' : 'Valid'}
+                        {bon.workflow_status === 'planification' ? t.pages.production.statusPlanned : 
+                         bon.workflow_status === 'production' ? t.pages.production.statusProd : t.pages.production.statusValid}
                       </span>
                     </TableCell>
                     <TableCell>
@@ -1305,7 +1305,7 @@ export default function Production() {
                             }}
                           >
                             <Play className="h-3 w-3" />
-                            Démarrer
+                            {t.pages.production.start}
                           </Button>
                         )}
                         {bon.workflow_status === 'production' && canEdit && (
@@ -1319,7 +1319,7 @@ export default function Production() {
                             }}
                           >
                             <CheckCircle className="h-3 w-3" />
-                            Valider
+                            {t.pages.production.validate}
                           </Button>
                         )}
                         {bon.workflow_status === 'validation_technique' && canValidate && (
@@ -1334,7 +1334,7 @@ export default function Production() {
                             disabled={saving}
                           >
                             <ArrowRight className="h-3 w-3" />
-                            Livraison
+                            {t.pages.production.delivery}
                           </Button>
                         )}
                         <Button 
@@ -1342,7 +1342,7 @@ export default function Production() {
                           size="sm"
                           className="h-7 w-7 p-0"
                           onClick={() => navigate(`/planning?date=${bon.date_livraison}`)}
-                          title="Voir dans Planning"
+                          title={t.pages.production.viewInPlanning}
                         >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
@@ -1373,7 +1373,7 @@ export default function Production() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <Factory className="h-5 w-5 text-primary" />
-              Production: {selectedBon?.bl_id}
+              {t.pages.production.productionLabel}: {selectedBon?.bl_id}
             </DialogTitle>
           </DialogHeader>
 
@@ -1383,15 +1383,15 @@ export default function Production() {
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                 <div className="flex items-center gap-4">
                   <div>
-                    <span className="text-xs text-muted-foreground">Client:</span>
+                    <span className="text-xs text-muted-foreground">{t.pages.production.clientLabel}:</span>
                     <p className="font-medium">{selectedBon.client_id}</p>
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground">Formule:</span>
+                    <span className="text-xs text-muted-foreground">{t.pages.production.formulaLabel}:</span>
                     <p className="font-mono font-medium">{selectedBon.formule_id}</p>
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground">Volume:</span>
+                    <span className="text-xs text-muted-foreground">{t.pages.production.volumeLabel}:</span>
                     <p className="font-semibold">{selectedBon.volume_m3} m³</p>
                   </div>
                 </div>
@@ -1404,12 +1404,12 @@ export default function Production() {
                   {syncing ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      Synchronisation...
+                      {t.pages.production.syncing}
                     </>
                   ) : (
                     <>
                       <RefreshCw className="h-4 w-4" />
-                      Synchroniser avec la Centrale
+                      {t.pages.production.syncWithPlant}
                     </>
                   )}
                 </Button>
@@ -1430,8 +1430,7 @@ export default function Production() {
               {!canManuallyEditConsumption && (
                 <div className="p-3 rounded-lg bg-muted/50 border text-sm text-muted-foreground flex items-center gap-2">
                   <AlertTriangle className="h-4 w-4" />
-                  Les données de consommation sont synchronisées automatiquement avec la centrale. 
-                  Cliquez sur "Synchroniser" pour récupérer les valeurs réelles.
+                  {t.pages.production.consumptionReadOnly}
                 </div>
               )}
 
@@ -1441,18 +1440,18 @@ export default function Production() {
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-destructive" />
                     <span className="font-semibold text-destructive">
-                      Justification Requise
+                      {t.pages.production.justificationRequired2}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Un ou plusieurs écarts dépassent 5%. Veuillez fournir une justification pour continuer.
+                    {t.pages.production.deviationOver5Explain}
                   </p>
                   <div className="space-y-2">
-                    <Label className="form-label-industrial">Justification de l'écart</Label>
+                    <Label className="form-label-industrial">{t.pages.production.justificationLabel}</Label>
                     <Textarea
                       value={justification}
                       onChange={(e) => setJustification(e.target.value)}
-                      placeholder="Expliquez la raison de l'écart de consommation..."
+                      placeholder={t.pages.production.justificationPlaceholder}
                       rows={3}
                       className={cn(
                         !justification.trim() && 'border-destructive'
@@ -1466,14 +1465,14 @@ export default function Production() {
               {selectedBon.machine_id && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Wifi className="h-4 w-4 text-success" />
-                  <span>Machine ID: {selectedBon.machine_id}</span>
+                  <span>{t.pages.production.machineId}: {selectedBon.machine_id}</span>
                 </div>
               )}
 
               {/* Actions */}
               <div className="flex justify-end gap-3 pt-4 border-t border-border">
                 <Button variant="outline" onClick={closeAllDialogs}>
-                  Annuler
+                  {t.pages.production.cancel}
                 </Button>
                 <Button
                   variant="secondary"
@@ -1481,7 +1480,7 @@ export default function Production() {
                   disabled={saving}
                 >
                   {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
-                  Enregistrer
+                  {t.pages.production.save}
                 </Button>
                 {selectedBon.workflow_status === 'production' && canValidate && (
                   <div className="flex flex-col items-end gap-1">
@@ -1491,11 +1490,11 @@ export default function Production() {
                       className="gap-2"
                     >
                       {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                      Valider Production
+                      {t.pages.production.validateProduction}
                     </Button>
                     {deviations.length > 0 && !justification.trim() && (
                       <span className="text-xs text-muted-foreground">
-                        Justification obligatoire (écart &gt; 5%)
+                        {t.pages.production.justificationMandatory}
                       </span>
                     )}
                   </div>
@@ -1520,12 +1519,12 @@ export default function Production() {
               {selectedBon?.workflow_status === 'planification' ? (
                 <>
                   <Play className="h-5 w-5 text-primary" />
-                  Démarrer Production
+                  {t.pages.production.startProduction}
                 </>
               ) : (
                 <>
                   <CheckCircle className="h-5 w-5 text-success" />
-                  Valider Production
+                  {t.pages.production.validateProduction}
                 </>
               )}
             </DialogTitle>
@@ -1537,26 +1536,26 @@ export default function Production() {
               <div className="p-4 rounded-lg bg-muted/30 space-y-3">
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <span className="text-muted-foreground">N° Bon:</span>
+                    <span className="text-muted-foreground">{t.pages.production.slipNumber}:</span>
                     <p className="font-mono font-medium">{selectedBon.bl_id}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Client:</span>
+                    <span className="text-muted-foreground">{t.pages.production.clientLabel}:</span>
                     <p className="font-medium">{selectedBon.client?.nom_client || selectedBon.client_id}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Formule:</span>
+                    <span className="text-muted-foreground">{t.pages.production.formulaLabel}:</span>
                     <p className="font-mono">{selectedBon.formule_id}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Volume:</span>
+                    <span className="text-muted-foreground">{t.pages.production.volumeLabel}:</span>
                     <p className="font-semibold">{selectedBon.volume_m3} m³</p>
                   </div>
                 </div>
                 
                 {selectedBon.bc_id && (
                   <div className="pt-2 border-t border-border">
-                    <span className="text-xs text-muted-foreground">Commande liée:</span>
+                    <span className="text-xs text-muted-foreground">{t.pages.production.linkedOrder}:</span>
                     <p className="font-mono text-xs text-primary">{selectedBon.bc_id}</p>
                   </div>
                 )}
@@ -1567,11 +1566,10 @@ export default function Production() {
                 <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 space-y-2">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-600">Commande Planifiée</span>
+                    <span className="text-sm font-medium text-blue-600">{t.pages.production.plannedOrder}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Cette commande est en attente de démarrage. Cliquez sur "Démarrer Production" 
-                    pour commencer le malaxage.
+                    {t.pages.production.plannedOrderDescription}
                   </p>
                 </div>
               )}
@@ -1580,25 +1578,25 @@ export default function Production() {
               {selectedBon.workflow_status === 'production' && (
                 <>
                   <div className="p-3 rounded-lg border space-y-2">
-                    <h4 className="text-sm font-medium">Consommation Théorique</h4>
+                    <h4 className="text-sm font-medium">{t.pages.production.theoreticalConsumption}</h4>
                     <div className="grid grid-cols-3 gap-2 text-xs">
                       <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                        <span className="text-muted-foreground">Ciment</span>
+                        <span className="text-muted-foreground">{t.pages.production.cement}</span>
                         <span className="font-mono font-medium">{editValues.ciment_reel_kg.toFixed(0)} kg</span>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                        <span className="text-muted-foreground">Adjuvant</span>
+                        <span className="text-muted-foreground">{t.pages.production.adjuvant}</span>
                         <span className="font-mono font-medium">{editValues.adjuvant_reel_l.toFixed(1)} L</span>
                       </div>
                       <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
-                        <span className="text-muted-foreground">Eau</span>
+                        <span className="text-muted-foreground">{t.pages.production.water}</span>
                         <span className="font-mono font-medium">{editValues.eau_reel_l.toFixed(0)} L</span>
                       </div>
                     </div>
                     {selectedBon.source_donnees === 'machine_sync' && (
                       <div className="flex items-center gap-1 text-xs text-success mt-1">
                         <Wifi className="h-3 w-3" />
-                        Données synchronisées depuis la centrale
+                        {t.pages.production.dataSyncedFromPlant}
                       </div>
                     )}
                   </div>
@@ -1608,18 +1606,18 @@ export default function Production() {
                     <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 space-y-2">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-destructive" />
-                        <span className="text-sm font-medium text-destructive">Écarts détectés</span>
+                        <span className="text-sm font-medium text-destructive">{t.pages.production.deviationsDetected}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {deviations.map(d => `${d.field}: +${d.percent.toFixed(1)}%`).join(', ')}
                       </p>
                       {!justification.trim() && (
                         <div className="space-y-1">
-                          <Label className="text-xs">Justification requise</Label>
+                          <Label className="text-xs">{t.pages.production.justificationRequiredLabel}</Label>
                           <Textarea
                             value={justification}
                             onChange={(e) => setJustification(e.target.value)}
-                            placeholder="Expliquez l'écart..."
+                            placeholder={t.pages.production.explainDeviation}
                             rows={2}
                             className="text-sm"
                           />
@@ -1633,7 +1631,7 @@ export default function Production() {
               {/* Actions */}
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => setValidationDialogOpen(false)}>
-                  Annuler
+                  {t.pages.production.cancel}
                 </Button>
                 
                 {selectedBon.workflow_status === 'planification' ? (
@@ -1644,7 +1642,7 @@ export default function Production() {
                     data-testid="dialog-start-production"
                   >
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                    Démarrer Production
+                    {t.pages.production.startProduction}
                   </Button>
                 ) : (
                   <Button
@@ -1657,7 +1655,7 @@ export default function Production() {
                     data-testid="dialog-validate-production"
                   >
                     {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
-                    Valider Production
+                    {t.pages.production.validateProduction}
                   </Button>
                 )}
               </div>
