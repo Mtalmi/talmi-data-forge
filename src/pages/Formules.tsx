@@ -120,7 +120,7 @@ export default function Formules() {
       }
     } catch (error) {
       console.error('Error fetching formules:', error);
-      toast.error('Erreur lors du chargement des formules');
+      toast.error(t.pages.formulas.loadError);
     } finally {
       setLoading(false);
     }
@@ -189,7 +189,7 @@ export default function Formules() {
       // Check E/C ratio
       const ratio = calculateRatioEC();
       if (ratio >= 0.65) {
-        setErrors({ eau_l_m3: 'Ratio E/C doit être < 0.65' });
+        setErrors({ eau_l_m3: t.pages.formulas.ratioError });
         setSubmitting(false);
         return;
       }
@@ -209,7 +209,7 @@ export default function Formules() {
           .eq('formule_id', editingFormule.formule_id);
 
         if (error) throw error;
-        toast.success('Formule mise à jour');
+        toast.success(t.pages.formulas.successUpdate);
       } else {
         // Insert new formule
         const { error } = await supabase.from('formules_theoriques').insert([{
@@ -224,28 +224,28 @@ export default function Formules() {
 
         if (error) {
           if (error.code === '23505') {
-            setErrors({ formule_id: 'Cette formule existe déjà' });
+            setErrors({ formule_id: t.pages.formulas.duplicateId });
           } else {
             throw error;
           }
           setSubmitting(false);
           return;
         }
-        toast.success('Formule créée avec succès');
+        toast.success(t.pages.formulas.successCreate);
       }
       resetForm();
       setDialogOpen(false);
       fetchFormules();
     } catch (error) {
       console.error('Error creating formule:', error);
-      toast.error('Erreur lors de la création');
+      toast.error(t.pages.formulas.creationError);
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer cette formule ?')) return;
+    if (!confirm(t.pages.formulas.confirmDelete)) return;
 
     try {
       const { error } = await supabase
@@ -254,11 +254,11 @@ export default function Formules() {
         .eq('formule_id', id);
 
       if (error) throw error;
-      toast.success('Formule supprimée');
+      toast.success(t.pages.formulas.successDelete);
       fetchFormules();
     } catch (error) {
       console.error('Error deleting formule:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t.pages.formulas.deletionError);
     }
   };
 
@@ -399,7 +399,7 @@ export default function Formules() {
                       {submitting ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Création...
+                          {t.pages.formulas.creating}
                         </>
                       ) : (
                         editingFormule ? t.pages.formulas.update : t.pages.formulas.create

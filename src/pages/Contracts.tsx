@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
-import { getDateLocale } from '@/i18n/dateLocale';
+import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -86,6 +86,7 @@ export default function Contracts() {
   const { user, canApproveDevis, isCeo } = useAuth();
   const { t, lang } = useI18n();
   const dateLocale = getDateLocale(lang);
+  const numberLocale = getNumberLocale(lang);
   const c = t.pages.contracts;
   const { stats, expirationAlerts, suppliers } = useContractCompliance();
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -451,7 +452,7 @@ export default function Contracts() {
                   ⚠️ {stats.missingContracts} {c.missingContracts}
                 </span>
                 <span className="text-muted-foreground ml-2">
-                  {c.taxRisk}: {stats.potentialNonDeductible.toLocaleString('fr-FR')} DH/{lang === 'en' ? 'yr' : 'an'}
+                  {c.taxRisk}: {stats.potentialNonDeductible.toLocaleString(numberLocale)} DH/{lang === 'en' ? 'yr' : lang === 'ar' ? 'سنة' : 'an'}
                 </span>
               </div>
               <Button
@@ -530,11 +531,11 @@ export default function Contracts() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold font-mono">
-                {stats.monthlyTotal.toLocaleString('fr-FR')}
+                {stats.monthlyTotal.toLocaleString(numberLocale)}
                 <span className="text-sm font-normal text-muted-foreground ml-1">DH</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                {(stats.monthlyTotal * 12).toLocaleString('fr-FR')} DH{c.perYear}
+                {(stats.monthlyTotal * 12).toLocaleString(numberLocale)} DH{c.perYear}
               </p>
             </CardContent>
           </Card>
