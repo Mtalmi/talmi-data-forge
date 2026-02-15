@@ -1771,41 +1771,197 @@
   }
 }
 
-/* ═══════════════════════════════════════════════════════
-   RTL Layout Polish
-   ═══════════════════════════════════════════════════════ */
+/* ========================================
+   RTL LAYOUT POLISH - ARABIC OPTIMIZATION
+   ======================================== */
+
+/* Base RTL Typography */
 [dir="rtl"] {
   letter-spacing: 0;
+  font-feature-settings: 'liga' off;
 }
 
-/* RTL Card Labels - prevent overflow */
-[dir="rtl"] .stat-card h3,
-[dir="rtl"] .kpi-label {
-  font-size: 0.7rem;
-  line-height: 1.2;
+[dir="rtl"] * {
+  font-family: 'Cairo', 'Inter', system-ui, sans-serif !important;
+}
+
+/* ========================================
+   DASHBOARD SPECIFIC
+   ======================================== */
+
+/* Greeting Section */
+[dir="rtl"] .greeting-text {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .plant-status {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+}
+
+/* Period Selector Buttons */
+[dir="rtl"] .period-button {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+}
+
+/* ========================================
+   KPI CARDS - COMPACT LABELS
+   ======================================== */
+
+/* KPI Card Titles */
+[dir="rtl"] .kpi-card h3,
+[dir="rtl"] .kpi-label,
+[dir="rtl"] [class*="label"],
+[dir="rtl"] [class*="title"] {
+  font-size: 0.65rem !important;
+  line-height: 1.1 !important;
+  font-weight: 600 !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-/* RTL Number Alignment */
-[dir="rtl"] .stat-value,
-[dir="rtl"] .kpi-value {
+/* KPI Values - Keep LTR for numbers */
+[dir="rtl"] .kpi-value,
+[dir="rtl"] [class*="value"],
+[dir="rtl"] .stat-value {
+  direction: ltr !important;
+  text-align: right !important;
+  font-size: 1.75rem !important;
+}
+
+/* KPI Subtitles */
+[dir="rtl"] .kpi-subtitle,
+[dir="rtl"] [class*="subtitle"],
+[dir="rtl"] .text-muted-foreground {
+  font-size: 0.625rem !important;
+  line-height: 1.2 !important;
+  opacity: 0.7;
+}
+
+/* ========================================
+   WIDGET HEADERS
+   ======================================== */
+
+[dir="rtl"] .widget-title,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* Widget Section Headers */
+[dir="rtl"] .section-header {
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ========================================
+   SIDEBAR - FIX TRUNCATION
+   ======================================== */
+
+[dir="rtl"] .sidebar-label,
+[dir="rtl"] .sidebar-menu span {
+  font-size: 0.7rem !important;
+  white-space: nowrap;
+  overflow: visible !important;
+}
+
+[dir="rtl"] .sidebar-group-label {
+  font-size: 0.65rem !important;
+  font-weight: 700;
+}
+
+/* ========================================
+   STOCK WIDGET
+   ======================================== */
+
+[dir="rtl"] .stock-label {
+  font-size: 0.7rem !important;
+  white-space: nowrap;
+}
+
+[dir="rtl"] .stock-value {
   direction: ltr;
   text-align: right;
 }
 
-/* RTL Sidebar - prevent label cutoff */
-[dir="rtl"] .sidebar-label {
-  font-size: 0.75rem;
+/* ========================================
+   GRID SPACING - TIGHTER IN RTL
+   ======================================== */
+
+[dir="rtl"] .dashboard-grid,
+[dir="rtl"] [class*="grid"] {
+  gap: 0.75rem !important;
 }
 
-/* RTL Compact Spacing */
-[dir="rtl"] .dashboard-grid {
-  gap: 0.75rem;
+[dir="rtl"] .card,
+[dir="rtl"] [class*="card"] {
+  padding: 0.875rem !important;
 }
 
-/* RTL Button Text */
-[dir="rtl"] button {
+/* ========================================
+   BUTTONS & BADGES
+   ======================================== */
+
+[dir="rtl"] button,
+[dir="rtl"] .badge {
+  font-size: 0.75rem !important;
+  padding: 0.4rem 0.75rem !important;
   white-space: nowrap;
+}
+
+/* ========================================
+   NUMBERS & METRICS
+   ======================================== */
+
+/* Force all numbers to stay LTR */
+[dir="rtl"] .number,
+[dir="rtl"] [class*="amount"],
+[dir="rtl"] [class*="count"],
+[dir="rtl"] [class*="total"] {
+  direction: ltr !important;
+  text-align: right !important;
+  display: inline-block;
+}
+
+/* ========================================
+   WIDGET SPECIFIC FIXES
+   ======================================== */
+
+/* Handshake Center */
+[dir="rtl"] .handshake-widget h3 {
+  font-size: 0.7rem !important;
+}
+
+/* Night Alerts */
+[dir="rtl"] .alert-widget-title {
+  font-size: 0.75rem !important;
+}
+
+/* Fiscal Compliance */
+[dir="rtl"] .compliance-title {
+  font-size: 0.7rem !important;
+  line-height: 1.1 !important;
+}
+
+/* ========================================
+   PERFORMANCE SECTION HEADER
+   ======================================== */
+
+[dir="rtl"] .performance-header {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem;
 }
