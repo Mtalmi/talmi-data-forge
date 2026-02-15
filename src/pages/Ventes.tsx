@@ -438,7 +438,7 @@ export default function Ventes() {
                 className="gap-2"
               >
                 <Mail className="h-4 w-4" />
-                Relances
+                {t.pages.ventes.reminders}
               </Button>
               {/* Strategic BC Creation - Role-Based */}
               {(canCreateBcDirect || isDirecteurOperations) && (
@@ -452,7 +452,7 @@ export default function Ventes() {
                   ) : (
                     <ShoppingCart className="h-4 w-4" />
                   )}
-                  {isDirecteurOperations && !canCreateBcDirect ? 'Nouvelle Commande' : 'Commande Directe'}
+                   {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
                 </Button>
               )}
               <CommunicationLogDrawer />
@@ -513,25 +513,25 @@ export default function Ventes() {
           {/* Active Status Filter Indicator */}
           {filters.status !== 'all' && (
             <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
-              <span className="text-sm text-muted-foreground">Filtre actif:</span>
-              <Badge variant="secondary" className="gap-1">
-                {filters.status === 'en_attente' && 'En Attente'}
-                {filters.status === 'accepte' && 'Accepté'}
-                {filters.status === 'converti' && 'Converti'}
-                {filters.status === 'refuse' && 'Refusé'}
-                {filters.status === 'pret_production' && 'Prêt Production'}
-                {filters.status === 'en_production' && 'En Production'}
-                {filters.status === 'termine' && 'Terminé'}
-                {filters.status === 'livre' && 'Livré'}
-              </Badge>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setFilters({ ...filters, status: 'all' })}
-                className="ml-auto gap-1 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-3 w-3" />
-                Voir tout
+               <span className="text-sm text-muted-foreground">{t.pages.ventes.activeFilter}:</span>
+               <Badge variant="secondary" className="gap-1">
+                 {filters.status === 'en_attente' && t.pages.ventes.statusEnAttente}
+                 {filters.status === 'accepte' && t.pages.ventes.statusAccepte}
+                 {filters.status === 'converti' && t.pages.ventes.statusConverti}
+                 {filters.status === 'refuse' && t.pages.ventes.statusRefuse}
+                 {filters.status === 'pret_production' && t.pages.ventes.statusPretProd}
+                 {filters.status === 'en_production' && t.pages.ventes.statusEnProd}
+                 {filters.status === 'termine' && t.pages.ventes.statusTermine}
+                 {filters.status === 'livre' && t.pages.ventes.statusLivre}
+               </Badge>
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={() => setFilters({ ...filters, status: 'all' })}
+                 className="ml-auto gap-1 text-muted-foreground hover:text-foreground"
+               >
+                 <X className="h-3 w-3" />
+                 {t.pages.ventes.viewAll}
               </Button>
             </div>
           )}
@@ -540,32 +540,32 @@ export default function Ventes() {
           <div id="ventes-tabs-section" className="scroll-mt-36">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
-              <TabsTrigger value="devis" className="gap-2">
-                <FileText className="h-4 w-4" />
-                Devis ({filteredDevis.length})
-                {expiringDevisCount > 0 && (
-                  <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
-                    <AlertTriangle className="h-3 w-3" />
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="bc" className="gap-2">
-                <ShoppingCart className="h-4 w-4" />
-                Bons de Commande ({filteredBc.length})
-                {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
-                  <Badge variant="outline" className="ml-1 h-5 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse">
-                    {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="factures" className="gap-2">
-                <Receipt className="h-4 w-4" />
-                Factures
-              </TabsTrigger>
-              <TabsTrigger value="calendar" className="gap-2">
-                <Calendar className="h-4 w-4" />
-                Calendrier
-              </TabsTrigger>
+               <TabsTrigger value="devis" className="gap-2">
+                 <FileText className="h-4 w-4" />
+                 {t.pages.ventes.devisTab} ({filteredDevis.length})
+                 {expiringDevisCount > 0 && (
+                   <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
+                     <AlertTriangle className="h-3 w-3" />
+                   </Badge>
+                 )}
+               </TabsTrigger>
+               <TabsTrigger value="bc" className="gap-2">
+                 <ShoppingCart className="h-4 w-4" />
+                 {t.pages.ventes.bcTab} ({filteredBc.length})
+                 {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
+                   <Badge variant="outline" className="ml-1 h-5 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse">
+                     {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
+                   </Badge>
+                 )}
+               </TabsTrigger>
+               <TabsTrigger value="factures" className="gap-2">
+                 <Receipt className="h-4 w-4" />
+                 {t.pages.ventes.invoicesTab}
+               </TabsTrigger>
+               <TabsTrigger value="calendar" className="gap-2">
+                 <Calendar className="h-4 w-4" />
+                 {t.pages.ventes.calendarTab}
+               </TabsTrigger>
             </TabsList>
 
             {/* Devis Tab */}
