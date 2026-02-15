@@ -10,17 +10,18 @@ createRoot(document.getElementById("root")!).render(
   </React.StrictMode>
 );
 
-// Register Service Worker for PWA support
+// PWA Service Worker is auto-registered by vite-plugin-pwa (registerType: "autoUpdate")
+// Force unregister any stale manual SW on first load
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((registration) => {
-        console.log('TBOS: Service Worker registered:', registration.scope);
-      })
-      .catch((error) => {
-        console.log('TBOS: Service Worker registration failed:', error);
-      });
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    registrations.forEach((reg) => {
+      // If the SW isn't from vite-plugin-pwa, unregister it
+      if (reg.active?.scriptURL?.endsWith('/sw.js')) {
+        reg.unregister().then(() => {
+          console.log('TBOS: Stale SW unregistered, reloading...');
+          window.location.reload();
+        });
+      }
+    });
   });
 }
-// Trigger rebuild - Thu Jan 29 10:25:01 EST 2026
