@@ -32,8 +32,9 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { toast } from 'sonner';
 
 interface AuditLogEntry {
@@ -282,6 +283,8 @@ function CompareDialog({
   open: boolean; 
   onClose: () => void;
 }) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   if (!alert) return null;
 
   const oldData = alert.old_data || {};
@@ -323,7 +326,7 @@ function CompareDialog({
               <span className="font-mono text-muted-foreground">{alert.table_name}</span>
             </div>
             <p className="text-muted-foreground">
-              Par {alert.user_name || 'Inconnu'} • {format(parseISO(alert.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })}
+              Par {alert.user_name || 'Inconnu'} • {format(parseISO(alert.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale })}
             </p>
           </div>
 
@@ -368,6 +371,8 @@ function CompareDialog({
 }
 
 export function ForensicAuditFeed() {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur, loading: authLoading, user } = useAuth();
   const [alerts, setAlerts] = useState<ForensicAlert[]>([]);
   const [loading, setLoading] = useState(true);
@@ -505,7 +510,7 @@ export function ForensicAuditFeed() {
 
       if (error) throw error;
 
-      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
+      const reportDate = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: dateLocale });
       const criticalCount = allLogs?.filter((l: any) => l.action_type === 'DELETE').length || 0;
       const warningCount = allLogs?.filter((l: any) => l.action_type === 'UPDATE').length || 0;
       const infoCount = allLogs?.filter((l: any) => l.action_type === 'INSERT').length || 0;
@@ -741,7 +746,7 @@ export function ForensicAuditFeed() {
                       <span class="log-action ${log.action_type}">${log.action_type}</span>
                       <span class="log-table">${log.table_name}</span>
                     </div>
-                    <span class="log-time">${format(parseISO(log.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: fr })}</span>
+                    <span class="log-time">${format(parseISO(log.created_at), 'dd/MM/yyyy HH:mm:ss')}</span>
                   </div>
                   <div class="log-message">${message}</div>
                   <div class="log-user">👤 ${log.user_name || 'Système'} ${log.record_id ? `• ID: ${log.record_id}` : ''}</div>
@@ -942,7 +947,7 @@ export function ForensicAuditFeed() {
                               {alert.table_name} • {alert.action_type}
                             </p>
                             <p className="text-[10px] text-muted-foreground font-mono">
-                              {format(parseISO(alert.created_at), 'dd/MM HH:mm', { locale: fr })}
+                              {format(parseISO(alert.created_at), 'dd/MM HH:mm')}
                             </p>
                           </div>
                         </div>
@@ -986,7 +991,7 @@ export function ForensicAuditFeed() {
                       <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1.5">
                         <span className="flex items-center gap-1">
                           <Clock className="h-2.5 w-2.5" />
-                          {formatDistanceToNow(parseISO(alert.created_at), { locale: fr, addSuffix: true })}
+                          {formatDistanceToNow(parseISO(alert.created_at), { locale: dateLocale, addSuffix: true })}
                         </span>
                         {alert.user_name && (
                           <span className="flex items-center gap-1">

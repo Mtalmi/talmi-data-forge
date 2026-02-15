@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -54,6 +55,8 @@ interface LabTest {
 }
 
 export function QualityCertificate({ client }: QualityCertificateProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { getClientTests } = useLabTests();
   const [open, setOpen] = useState(false);
   const [tests, setTests] = useState<LabTest[]>([]);
@@ -125,7 +128,7 @@ export function QualityCertificate({ client }: QualityCertificateProps) {
                 <div className="text-right">
                   <p className="text-sm text-muted-foreground">Date d'émission</p>
                   <p className="font-semibold">
-                    {format(new Date(), 'dd MMMM yyyy', { locale: fr })}
+                    {format(new Date(), 'dd MMMM yyyy', { locale: dateLocale })}
                   </p>
                 </div>
               </div>
@@ -217,7 +220,7 @@ export function QualityCertificate({ client }: QualityCertificateProps) {
                       <TableRow key={test.id}>
                         <TableCell className="font-mono">{test.bl_id}</TableCell>
                         <TableCell>
-                          {format(new Date(test.date_prelevement), 'dd/MM/yy', { locale: fr })}
+                          {format(new Date(test.date_prelevement), 'dd/MM/yy')}
                         </TableCell>
                         <TableCell className="font-mono text-sm">{test.formule_id}</TableCell>
                         <TableCell className="text-center">

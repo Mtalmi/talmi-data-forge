@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
-import { fr, ar, enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { toast } from 'sonner';
 import { 
   isOffHoursCasablanca, 
@@ -44,7 +44,7 @@ interface MidnightTransaction {
 
 export function MidnightAlertWidget() {
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
+  const dateFnsLocale = getDateLocale(lang);
   const [transactions, setTransactions] = useState<MidnightTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
