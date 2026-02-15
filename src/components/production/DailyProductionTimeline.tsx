@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Factory, CheckCircle, Play, AlertTriangle, User, Truck, ExternalLink, Send, Lock, Unlock } from 'lucide-react';
 import { format, isToday } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -68,6 +69,8 @@ export function DailyProductionTimeline({
   onSendToDelivery,
   className,
 }: DailyProductionTimelineProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const navigate = useNavigate();
   const currentHour = new Date().getHours();
   const isViewingToday = isToday(selectedDate);
@@ -118,7 +121,7 @@ export function DailyProductionTimeline({
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono">
-              {format(selectedDate, 'EEEE d MMM', { locale: fr })}
+              {format(selectedDate, 'EEEE d MMM', { locale: dateLocale })}
             </Badge>
             {/* Quick link to Planning page */}
             <Button

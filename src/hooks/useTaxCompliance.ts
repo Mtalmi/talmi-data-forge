@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { addDays, differenceInDays, format, startOfMonth, endOfMonth } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { toast } from 'sonner';
 
 export type ObligationType = 'cnss' | 'mutuelle' | 'ir' | 'tva' | 'timbre' | 'patente' | 'taxe_professionnelle' | 'other';

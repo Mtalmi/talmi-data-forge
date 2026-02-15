@@ -19,7 +19,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { cn } from '@/lib/utils';
 
 interface Batch {
@@ -131,7 +131,7 @@ export function ProductionBatchListResponsive({
                     </div>
                   </TableCell>
                   <TableCell>
-                    {format(new Date(batch.date_livraison), 'dd/MM/yyyy', { locale: fr })}
+                    {format(new Date(batch.date_livraison), 'dd/MM/yyyy')}
                   </TableCell>
                   <TableCell>{batch.client_nom || '-'}</TableCell>
                   <TableCell>{batch.formule_nom || '-'}</TableCell>

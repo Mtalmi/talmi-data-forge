@@ -32,7 +32,7 @@ import {
 import { Plus, DollarSign, Loader2, Edit, Trash2, TrendingUp, TrendingDown, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 interface Prix {
@@ -49,6 +49,7 @@ const UNITES = ['Tonne', 'Litre', 'm³', 'Kg'];
 
 export default function Prix() {
   const { isCeo, canReadPrix, loading: authLoading, user } = useAuth();
+  const { lang } = useI18n();
   const navigate = useNavigate();
   const [prix, setPrix] = useState<Prix[]>([]);
   const [loading, setLoading] = useState(true);
@@ -332,7 +333,7 @@ export default function Prix() {
                         ) : '—'}
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {format(new Date(p.date_mise_a_jour), 'dd MMM yyyy', { locale: fr })}
+                        {format(new Date(p.date_mise_a_jour), 'dd MMM yyyy', { locale: getDateLocale(lang) })}
                       </TableCell>
                       {isCeo && (
                         <TableCell>
