@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useI18n } from '@/i18n/I18nContext';
+import { getNumberLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { useAuth } from '@/hooks/useAuth';
@@ -84,7 +85,8 @@ interface Client {
 
 export default function Clients() {
   const { isCeo, isCommercial, isAgentAdministratif, canEditClients, isDirecteurOperations } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const numberLocale = getNumberLocale(lang);
   const { previewRole } = usePreviewRole();
   const { blockClient, unblockClient, generateMiseEnDemeure, checkPaymentDelays } = usePaymentDelays();
   
@@ -201,12 +203,12 @@ export default function Clients() {
       // Validate file type
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
       if (!allowedTypes.includes(file.type)) {
-        toast.error('Format non supporté. Utilisez JPG, PNG, WebP ou PDF.');
+        toast.error(t.pages.clients.unsupportedFormat);
         return;
       }
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Fichier trop volumineux. Maximum 5 Mo.');
+        toast.error(t.pages.clients.fileTooLarge);
         return;
       }
       setRcDocument(file);
@@ -245,7 +247,7 @@ export default function Clients() {
       return publicUrl;
     } catch (error) {
       console.error('Error uploading RC document:', error);
-      toast.error('Erreur lors de l\'upload du document RC');
+      toast.error(t.pages.clients.uploadError);
       return null;
     } finally {
       setUploadingDocument(false);
@@ -330,7 +332,7 @@ export default function Clients() {
       fetchClients();
     } catch (error) {
       console.error('Error saving client:', error);
-      toast.error(isEditMode ? 'Erreur lors de la mise à jour' : 'Erreur lors de la création');
+      toast.error(isEditMode ? t.pages.clients.updateError : t.pages.clients.createError);
     } finally {
       setSubmitting(false);
     }
@@ -350,7 +352,7 @@ export default function Clients() {
       fetchClients();
     } catch (error) {
       console.error('Error deleting client:', error);
-      toast.error('Erreur lors de la suppression');
+      toast.error(t.pages.clients.deleteError);
     }
   };
 
@@ -374,12 +376,12 @@ export default function Clients() {
 
   const copyNotice = () => {
     navigator.clipboard.writeText(noticeContent);
-    toast.success('Copié dans le presse-papiers');
+    toast.success(t.pages.clients.copied);
   };
 
   const getDelaiLabel = (jours: number | null) => {
-    if (jours === 0) return 'Comptant';
-    return `${jours} jours`;
+    if (jours === 0) return t.pages.clients.cashLabel;
+    return `${jours} ${t.pages.clients.days}`;
   };
 
   const getClientStatus = (client: Client) => {
@@ -697,16 +699,15 @@ export default function Clients() {
             <TabsList className="w-full sm:w-auto inline-flex">
               <TabsTrigger value="list" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden xs:inline">Liste</span> Clients
+                {t.pages.clients.listTab}
               </TabsTrigger>
               <TabsTrigger value="credit-scores" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Scores de</span> Crédit
+                {t.pages.clients.creditTab}
               </TabsTrigger>
               <TabsTrigger value="credit-history" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 min-h-[40px]">
                 <History className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Historique</span>
-                <span className="sm:hidden">Hist.</span>
+                {t.pages.clients.historyTab}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -830,7 +831,7 @@ export default function Clients() {
                         <TableCell className="text-right">
                           {c.solde_du && c.solde_du > 0 ? (
                             <span className={cn('font-mono font-medium', c.solde_du > (c.limite_credit_dh || 50000) ? 'text-destructive' : 'text-warning')}>
-                              {c.solde_du.toLocaleString()} DH
+                              {c.solde_du.toLocaleString(numberLocale)} DH
                             </span>
                           ) : (
                             <span className="text-muted-foreground">—</span>
@@ -848,7 +849,7 @@ export default function Clients() {
                               variant="ghost" 
                               size="sm" 
                               className="h-8 w-8 p-0"
-                              title="Modifier le client"
+                              title={t.pages.clients.editTooltip}
                               onClick={() => openEditDialog(c)}
                             >
                               <Edit className="h-4 w-4" />
@@ -861,7 +862,7 @@ export default function Clients() {
                                 size="sm"
                                 className={cn('h-8 w-8 p-0', c.credit_bloque ? 'text-success hover:text-success' : 'text-destructive hover:text-destructive')}
                                 onClick={() => handleBlock(c.client_id, c.credit_bloque)}
-                                title={c.credit_bloque ? 'Débloquer le client' : 'Bloquer le client'}
+                                title={c.credit_bloque ? t.pages.clients.unblockTooltip : t.pages.clients.blockTooltip}
                               >
                                 {c.credit_bloque ? <Unlock className="h-4 w-4" /> : <Ban className="h-4 w-4" />}
                               </Button>
@@ -874,7 +875,7 @@ export default function Clients() {
                                 size="sm"
                                 className="h-8 w-8 p-0 text-warning hover:text-warning"
                                 onClick={() => handleSendNotice(c.client_id)}
-                                title="Envoyer une Mise en Demeure"
+                                title={t.pages.clients.sendNotice}
                               >
                                 <FileWarning className="h-4 w-4" />
                               </Button>
@@ -886,7 +887,7 @@ export default function Clients() {
                                 size="sm"
                                 className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                                 onClick={() => handleDelete(c.client_id)}
-                                title="Supprimer le client"
+                                title={t.pages.clients.deleteTooltip}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -926,7 +927,7 @@ export default function Clients() {
         <Dialog open={noticeDialogOpen} onOpenChange={setNoticeDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Mise en Demeure Générée</DialogTitle>
+              <DialogTitle>{t.pages.clients.noticeGenerated}</DialogTitle>
             </DialogHeader>
             <div className="mt-4">
               <pre className="bg-muted p-4 rounded-lg text-sm whitespace-pre-wrap font-mono">
@@ -934,11 +935,11 @@ export default function Clients() {
               </pre>
               <div className="flex justify-end gap-3 mt-4">
                 <Button variant="outline" onClick={() => setNoticeDialogOpen(false)}>
-                  Fermer
-                </Button>
+                   {t.common.close}
+                 </Button>
                 <Button onClick={copyNotice}>
                   <Copy className="h-4 w-4 mr-2" />
-                  Copier
+                  {t.pages.clients.copyLabel}
                 </Button>
               </div>
             </div>

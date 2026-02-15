@@ -299,7 +299,7 @@ export default function Ventes() {
     // This is informational - the BC was already created in pending status
     // Just show a toast confirmation
     const { toast } = await import('sonner');
-    toast.info(`BC ${bc.bc_id} est en attente de validation par l'Agent Administratif`);
+    toast.info(`BC ${bc.bc_id} ${t.pages.bons.statusPending}`);
   };
 
   // Handle opening BC detail dialog
