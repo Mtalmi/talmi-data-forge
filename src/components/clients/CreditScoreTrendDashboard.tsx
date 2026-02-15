@@ -11,17 +11,12 @@ import {
 import { useCreditScoreHistory, ClientTrend } from '@/hooks/useCreditScoreHistory';
 import CreditScoreHistoryChart from './CreditScoreHistoryChart';
 import { useToast } from '@/hooks/use-toast';
-
-const TREND_FILTERS = [
-  { value: 'all', label: 'Tous' },
-  { value: 'critical', label: 'Critiques' },
-  { value: 'declining', label: 'En Déclin' },
-  { value: 'stable', label: 'Stables' },
-  { value: 'improving', label: 'En Amélioration' },
-];
+import { useI18n } from '@/i18n/I18nContext';
 
 export default function CreditScoreTrendDashboard() {
   const { toast } = useToast();
+  const { t } = useI18n();
+  const ct = t.creditTrend;
   const { 
     clientTrends, stats, loading, 
     refetch, takeSnapshot, getDecliningClients 
@@ -31,6 +26,14 @@ export default function CreditScoreTrendDashboard() {
   const [trendFilter, setTrendFilter] = useState('all');
   const [selectedClient, setSelectedClient] = useState<ClientTrend | null>(null);
   const [snapshotting, setSnapshotting] = useState(false);
+
+  const TREND_FILTERS = [
+    { value: 'all', label: ct.all },
+    { value: 'critical', label: ct.criticalFilter },
+    { value: 'declining', label: ct.decliningFilter },
+    { value: 'stable', label: ct.stableFilter },
+    { value: 'improving', label: ct.improvingFilter },
+  ];
 
   const filteredTrends = clientTrends.filter(trend => {
     const matchesSearch = searchTerm === '' || 
@@ -48,13 +51,13 @@ export default function CreditScoreTrendDashboard() {
 
     if (result.success) {
       toast({
-        title: 'Snapshot enregistré',
-        description: `${result.count} score(s) client enregistré(s)`,
+        title: ct.snapshotSaved,
+        description: ct.snapshotSavedDesc.replace('{count}', String(result.count)),
       });
     } else {
       toast({
-        title: 'Erreur',
-        description: 'Échec de la prise de snapshot',
+        title: ct.snapshotError,
+        description: ct.snapshotErrorDesc,
         variant: 'destructive',
       });
     }
@@ -75,24 +78,18 @@ export default function CreditScoreTrendDashboard() {
         <div>
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <TrendingUp className="h-6 w-6 text-primary" />
-            Évolution des Scores de Crédit
+            {ct.title}
           </h2>
-          <p className="text-muted-foreground">
-            Suivi des tendances pour détecter les payeurs à risque
-          </p>
+          <p className="text-muted-foreground">{ct.subtitle}</p>
         </div>
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleTakeSnapshot}
-            disabled={snapshotting}
-          >
+          <Button variant="outline" onClick={handleTakeSnapshot} disabled={snapshotting}>
             {snapshotting ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Camera className="h-4 w-4 mr-2" />
             )}
-            Prendre Snapshot
+            {ct.takeSnapshot}
           </Button>
           <Button variant="outline" size="icon" onClick={refetch}>
             <RefreshCw className="h-4 w-4" />
@@ -100,7 +97,7 @@ export default function CreditScoreTrendDashboard() {
         </div>
       </div>
 
-      {/* Alert Banner for Declining Clients */}
+      {/* Alert Banner */}
       {decliningClients.length > 0 && (
         <Card className="border-amber-500 bg-amber-50/50 dark:bg-amber-950/20">
           <CardContent className="py-4">
@@ -108,20 +105,19 @@ export default function CreditScoreTrendDashboard() {
               <AlertTriangle className="h-6 w-6 text-amber-600" />
               <div className="flex-1">
                 <p className="font-medium text-amber-800 dark:text-amber-200">
-                  {decliningClients.length} client(s) avec score en déclin
+                  {decliningClients.length} {ct.clientsDeclining}
                 </p>
                 <p className="text-sm text-amber-700 dark:text-amber-300">
                   {decliningClients.slice(0, 3).map(c => c.client_nom).join(', ')}
-                  {decliningClients.length > 3 && ` et ${decliningClients.length - 3} autre(s)`}
+                  {decliningClients.length > 3 && ` ${ct.andOthers.replace('{count}', String(decliningClients.length - 3))}`}
                 </p>
               </div>
               <Button 
-                variant="outline" 
-                size="sm"
+                variant="outline" size="sm"
                 className="border-amber-500 text-amber-700 hover:bg-amber-100"
                 onClick={() => setTrendFilter('declining')}
               >
-                Voir détails
+                {ct.viewDetails}
               </Button>
             </div>
           </CardContent>
@@ -134,55 +130,51 @@ export default function CreditScoreTrendDashboard() {
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Total Clients</p>
+                <p className="text-sm text-muted-foreground">{ct.totalClients}</p>
                 <p className="text-2xl font-bold">{stats.totalClients}</p>
               </div>
               <Users className="h-8 w-8 text-muted-foreground/50" />
             </div>
           </CardContent>
         </Card>
-
         <Card className="border-green-200 bg-green-50/50 dark:bg-green-950/20">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-green-700 dark:text-green-300">En Amélioration</p>
+                <p className="text-sm text-green-700 dark:text-green-300">{ct.improving}</p>
                 <p className="text-2xl font-bold text-green-600">{stats.improving}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-500/50" />
             </div>
           </CardContent>
         </Card>
-
         <Card>
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Stables</p>
+                <p className="text-sm text-muted-foreground">{ct.stable}</p>
                 <p className="text-2xl font-bold text-blue-600">{stats.stable}</p>
               </div>
               <Minus className="h-8 w-8 text-blue-500/50" />
             </div>
           </CardContent>
         </Card>
-
         <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/20">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-amber-700 dark:text-amber-300">En Déclin</p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">{ct.declining}</p>
                 <p className="text-2xl font-bold text-amber-600">{stats.declining}</p>
               </div>
               <TrendingDown className="h-8 w-8 text-amber-500/50" />
             </div>
           </CardContent>
         </Card>
-
         <Card className="border-red-200 bg-red-50/50 dark:bg-red-950/20">
           <CardContent className="pt-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-red-700 dark:text-red-300">Critiques</p>
+                <p className="text-sm text-red-700 dark:text-red-300">{ct.critical}</p>
                 <p className="text-2xl font-bold text-red-600">{stats.critical}</p>
               </div>
               <AlertTriangle className="h-8 w-8 text-red-500/50" />
@@ -196,7 +188,7 @@ export default function CreditScoreTrendDashboard() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un client..."
+            placeholder={ct.searchClient}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -204,7 +196,7 @@ export default function CreditScoreTrendDashboard() {
         </div>
         <Select value={trendFilter} onValueChange={setTrendFilter}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filtrer par tendance" />
+            <SelectValue placeholder={ct.filterByTrend} />
           </SelectTrigger>
           <SelectContent>
             {TREND_FILTERS.map(filter => (
@@ -218,19 +210,18 @@ export default function CreditScoreTrendDashboard() {
 
       {/* Client List and Detail View */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Client List */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              Clients ({filteredTrends.length})
+              {ct.clients} ({filteredTrends.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 max-h-[500px] overflow-y-auto">
             {filteredTrends.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <Users className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                <p>Aucun historique de score</p>
-                <p className="text-sm">Prenez un snapshot pour commencer le suivi</p>
+                <p>{ct.noHistory}</p>
+                <p className="text-sm">{ct.takeSnapshotToStart}</p>
               </div>
             ) : (
               filteredTrends.map(trend => (
@@ -250,7 +241,6 @@ export default function CreditScoreTrendDashboard() {
           </CardContent>
         </Card>
 
-        {/* Detail View */}
         <div>
           {selectedClient ? (
             <CreditScoreHistoryChart clientTrend={selectedClient} />
@@ -258,9 +248,7 @@ export default function CreditScoreTrendDashboard() {
             <Card className="h-full flex items-center justify-center">
               <CardContent className="text-center py-12">
                 <TrendingUp className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                <p className="text-muted-foreground">
-                  Sélectionnez un client pour voir l'historique détaillé
-                </p>
+                <p className="text-muted-foreground">{ct.selectClientDetail}</p>
               </CardContent>
             </Card>
           )}

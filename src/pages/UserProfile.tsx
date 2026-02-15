@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,26 +13,29 @@ import { toast } from 'sonner';
 import { User, Shield, Mail, Calendar, Save, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const ROLE_LABELS: Record<string, string> = {
-  ceo: 'CEO / Directeur Général',
-  supervisor: 'Superviseur',
-  resp_technique: 'Responsable Technique',
-  frontdesk: 'Front Desk / Admin',
-  directeur_operationnel: 'Directeur Opérationnel',
-  centraliste: 'Centraliste',
-  operator: 'Opérateur',
-  accounting: 'Comptabilité',
-  commercial: 'Commercial',
-  auditeur: 'Auditeur',
-};
-
 export default function UserProfile() {
   const { user, role, loading: authLoading } = useAuth();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const p = t.userProfile;
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [saving, setSaving] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
+
+  const ROLE_LABELS: Record<string, string> = {
+    ceo: p.ceo,
+    supervisor: p.supervisor,
+    resp_technique: p.resp_technique,
+    frontdesk: p.frontdesk,
+    directeur_operationnel: p.directeur_operationnel,
+    centraliste: p.centraliste,
+    operator: p.operator,
+    accounting: p.accounting,
+    commercial: p.commercial,
+    auditeur: p.auditeur,
+  };
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -77,9 +82,9 @@ export default function UserProfile() {
         .eq('id', user.id);
 
       if (error) throw error;
-      toast.success('Profil mis à jour avec succès');
+      toast.success(p.profileUpdated);
     } catch (err: any) {
-      toast.error('Erreur lors de la mise à jour: ' + err.message);
+      toast.error(p.updateError + err.message);
     } finally {
       setSaving(false);
     }
@@ -98,7 +103,7 @@ export default function UserProfile() {
   if (!user) return null;
 
   const createdAt = user.created_at
-    ? new Date(user.created_at).toLocaleDateString('fr-FR', {
+    ? new Date(user.created_at).toLocaleDateString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-US' : 'fr-FR', {
         year: 'numeric', month: 'long', day: 'numeric',
       })
     : '—';
@@ -111,8 +116,8 @@ export default function UserProfile() {
             <User className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Mon Profil</h1>
-            <p className="text-muted-foreground text-sm">Gérer vos informations personnelles</p>
+            <h1 className="text-2xl font-bold">{p.title}</h1>
+            <p className="text-muted-foreground text-sm">{p.subtitle}</p>
           </div>
         </div>
 
@@ -120,18 +125,18 @@ export default function UserProfile() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
-              Rôle & Accès
+              {p.roleAccess}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Rôle attribué</span>
+              <span className="text-sm text-muted-foreground">{p.assignedRole}</span>
               <Badge variant="secondary" className="text-sm">
-                {role ? (ROLE_LABELS[role] || role) : 'Non défini'}
+                {role ? (ROLE_LABELS[role] || role) : p.undefined}
               </Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Membre depuis</span>
+              <span className="text-sm text-muted-foreground">{p.memberSince}</span>
               <span className="text-sm flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
                 {createdAt}
@@ -142,20 +147,20 @@ export default function UserProfile() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Informations personnelles</CardTitle>
+            <CardTitle className="text-lg">{p.personalInfo}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nom complet</Label>
+              <Label htmlFor="fullName">{p.fullName}</Label>
               <Input
                 id="fullName"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                placeholder="Votre nom complet"
+                placeholder={p.fullNamePlaceholder}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{p.email}</Label>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-muted-foreground" />
                 <Input
@@ -166,7 +171,7 @@ export default function UserProfile() {
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                L'email ne peut pas être modifié ici.
+                {p.emailReadonly}
               </p>
             </div>
 
@@ -176,7 +181,7 @@ export default function UserProfile() {
               ) : (
                 <Save className="h-4 w-4 mr-2" />
               )}
-              Enregistrer
+              {p.save}
             </Button>
           </CardContent>
         </Card>
