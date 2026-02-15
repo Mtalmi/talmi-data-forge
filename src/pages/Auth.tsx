@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe } from 'lucide-react';
+import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe, Eye } from 'lucide-react';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 const loginSchema = z.object({
   email: z.string().email('Adresse email invalide'),
@@ -58,6 +59,7 @@ function AnimatedStat({ value, label, suffix = '' }: { value: number; label: str
 export default function Auth() {
   const navigate = useNavigate();
   const { user, signIn, signUp, loading: authLoading } = useAuth();
+  const { enterDemoMode } = useDemoMode();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -360,6 +362,22 @@ export default function Auth() {
                 </form>
               </TabsContent>
             </Tabs>
+          </div>
+
+          {/* Demo Mode Button */}
+          <div className="text-center">
+            <button
+              onClick={() => {
+                enterDemoMode();
+                navigate('/');
+              }}
+              className="group flex items-center justify-center gap-2 mx-auto px-6 py-3 rounded-xl border border-border/50 bg-card/20 backdrop-blur-sm text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-all duration-300"
+            >
+              <Eye className="h-4 w-4 text-primary/70 group-hover:text-primary transition-colors" />
+              Explorer en mode démo
+              <ArrowRight className="h-3.5 w-3.5 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+            </button>
+            <p className="text-[11px] text-muted-foreground/50 mt-2">Données fictives • Aucun compte requis</p>
           </div>
 
           {/* Footer */}

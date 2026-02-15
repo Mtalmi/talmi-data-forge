@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { startOfMonth, endOfMonth, subMonths, subDays, format } from 'date-fns';
+import { DEMO_DASHBOARD_STATS } from '@/hooks/useDemoMode';
 
 export interface DashboardStats {
   // Main KPIs
@@ -33,7 +34,7 @@ export interface DashboardAlert {
   timestamp: string;
 }
 
-export function useDashboardStats() {
+export function useDashboardStats(isDemoMode: boolean = false) {
   const [stats, setStats] = useState<DashboardStats>({
     totalDeliveries: 0,
     totalVolume: 0,
@@ -52,6 +53,7 @@ export function useDashboardStats() {
   const [loading, setLoading] = useState(true);
 
   const fetchStats = useCallback(async () => {
+    if (isDemoMode) return;
     try {
       const now = new Date();
       const currentMonthStart = startOfMonth(now);
@@ -283,6 +285,11 @@ export function useDashboardStats() {
       supabase.removeChannel(channel);
     };
   }, [fetchStats]);
+
+  // Return demo data when in demo mode
+  if (isDemoMode) {
+    return { stats: DEMO_DASHBOARD_STATS, loading: false, refresh: fetchStats };
+  }
 
   return { stats, loading, refresh: fetchStats };
 }
