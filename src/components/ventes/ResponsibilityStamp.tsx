@@ -1,8 +1,9 @@
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { User, CheckCircle, Shield, Clock, CreditCard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 interface ResponsibilityStampProps {
@@ -14,45 +15,6 @@ interface ResponsibilityStampProps {
   compact?: boolean;
 }
 
-const ROLE_LABELS: Record<string, string> = {
-  ceo: 'CEO',
-  superviseur: 'Superviseur',
-  agent_administratif: 'Agent Admin',
-  directeur_operations: 'Dir. Opérations',
-  responsable_technique: 'Resp. Technique',
-  centraliste: 'Centraliste',
-  commercial: 'Commercial',
-  accounting: 'Comptabilité',
-  auditeur: 'Auditeur',
-};
-
-const ACTION_CONFIG = {
-  validated: {
-    label: 'Validé par',
-    icon: CheckCircle,
-    color: 'text-success',
-    bgColor: 'bg-success/10',
-  },
-  technical_approved: {
-    label: 'Approuvé techniquement par',
-    icon: Shield,
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500/10',
-  },
-  payment_recorded: {
-    label: 'Paiement enregistré par',
-    icon: CreditCard,
-    color: 'text-primary',
-    bgColor: 'bg-primary/10',
-  },
-  created: {
-    label: 'Créé par',
-    icon: User,
-    color: 'text-muted-foreground',
-    bgColor: 'bg-muted/50',
-  },
-};
-
 export function ResponsibilityStamp({
   actionType,
   userName,
@@ -61,13 +23,56 @@ export function ResponsibilityStamp({
   className,
   compact = false,
 }: ResponsibilityStampProps) {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const s = t.pages.responsibilityStamp;
+
+  const ROLE_LABELS: Record<string, string> = {
+    ceo: s.ceo,
+    superviseur: s.supervisor,
+    agent_administratif: s.adminAgent,
+    directeur_operations: s.opsDirector,
+    responsable_technique: s.techManager,
+    centraliste: s.centralist,
+    commercial: s.sales,
+    accounting: s.accounting,
+    auditeur: s.auditor,
+  };
+
+  const ACTION_CONFIG = {
+    validated: {
+      label: s.validatedBy,
+      icon: CheckCircle,
+      color: 'text-success',
+      bgColor: 'bg-success/10',
+    },
+    technical_approved: {
+      label: s.technicallyApprovedBy,
+      icon: Shield,
+      color: 'text-purple-500',
+      bgColor: 'bg-purple-500/10',
+    },
+    payment_recorded: {
+      label: s.paymentRecordedBy,
+      icon: CreditCard,
+      color: 'text-primary',
+      bgColor: 'bg-primary/10',
+    },
+    created: {
+      label: s.createdBy,
+      icon: User,
+      color: 'text-muted-foreground',
+      bgColor: 'bg-muted/50',
+    },
+  };
+
   if (!userName) return null;
 
   const config = ACTION_CONFIG[actionType];
   const Icon = config.icon;
   const roleLabel = userRole ? ROLE_LABELS[userRole] || userRole : '';
   const formattedDate = timestamp
-    ? format(new Date(timestamp), "d MMM yyyy 'à' HH:mm", { locale: fr })
+    ? format(new Date(timestamp), "d MMM yyyy HH:mm", { locale: dateLocale || undefined })
     : '';
 
   if (compact) {
