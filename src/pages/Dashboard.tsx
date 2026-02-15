@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
@@ -42,7 +43,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator } from 'lucide-react';
+import { Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, Calculator, Bell, MapPin, ChevronDown, LogOut, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SkeletonKPI } from '@/components/ui/skeletons';
 import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
@@ -50,9 +51,18 @@ import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
 import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
 import { SystemManualPdf } from '@/components/documents/SystemManualPdf';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function Dashboard() {
-  const { role, isCeo, isAccounting } = useAuth();
+  const { role, isCeo, isAccounting, signOut } = useAuth();
+  const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
   const kpiSectionRef = useRef<HTMLDivElement>(null);
@@ -179,26 +189,20 @@ export default function Dashboard() {
           className="dashboard-header sticky top-14 sm:top-16 z-10 p-4 sm:p-5"
         >
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Title Section */}
+            {/* Greeting & Location */}
             <div className="min-w-0">
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-                  <Package className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-bold tracking-tight bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text">
-                    Tableau de Bord
-                  </h1>
-                  <p className="text-sm text-muted-foreground truncate">
-                    Vue d'ensemble • Talmi Beton
-                  </p>
-                </div>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+                Bonjour, Master 👋
+              </h1>
+              <div className="flex items-center gap-2 mt-1">
+                <MapPin className="h-3.5 w-3.5 text-primary" />
+                <span className="text-sm text-muted-foreground">Casablanca • 24°C ☀️</span>
               </div>
             </div>
 
-            {/* Controls Section */}
+            {/* Right Controls */}
             <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
-              {/* Premium Period Selector */}
+              {/* Period Selector */}
               <div className="period-selector-premium">
                 {[
                   { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
@@ -246,6 +250,43 @@ export default function Dashboard() {
                 <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Actualiser</span>
               </button>
+
+              {/* Notification Bell */}
+              <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                <Bell className="h-4 w-4 text-muted-foreground" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                  3
+                </span>
+              </button>
+
+              {/* User Avatar Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                    <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                      <span className="text-xs font-bold text-primary">MT</span>
+                    </div>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
+                  <DropdownMenuLabel className="text-xs text-muted-foreground">Mon Compte</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                    <User className="h-4 w-4 mr-2" />
+                    Profil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Paramètres
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
