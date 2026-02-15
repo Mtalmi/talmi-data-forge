@@ -23,12 +23,15 @@ import {
   CreateQuoteSim,
   ValidateDeliverySim,
   BudgetManagementSim,
+  QualityControlSim,
   FleetPredatorSim,
   ProductionManagementSim,
+  AuditComplianceSim,
+  AIReceiptVerificationSim,
+  CeoOverrideSim,
   ForensicAnalysisSim,
   FinancialReportingSim,
   ClientManagementSim,
-  AIReceiptVerificationSim,
   CertificationBadge,
   useFormationProgress,
   SimulationType,
@@ -104,6 +107,14 @@ const SIMULATIONS: SimulationConfig[] = [
   },
   // Tier 2 - Advanced
   {
+    type: 'quality_control',
+    title: 'Contrôle Qualité',
+    description: 'Tests d\'humidité, granulométrie et validation Two-Step Handshake.',
+    duration: '~6 min',
+    tier: 'advanced',
+    difficulty: 'medium',
+  },
+  {
     type: 'fleet_predator',
     title: 'Fleet Predator GPS',
     description: 'Surveillance véhicules, carburant, maintenance et geofencing.',
@@ -120,14 +131,30 @@ const SIMULATIONS: SimulationConfig[] = [
     difficulty: 'medium',
   },
   {
+    type: 'audit_compliance',
+    title: 'Audit & Conformité',
+    description: 'Vérification de conformité, rapports d\'audit et contrôle des processus.',
+    duration: '~6 min',
+    tier: 'advanced',
+    difficulty: 'hard',
+  },
+  // Tier 3 - Executive
+  {
     type: 'ai_receipt_verification',
     title: 'Vérification AI Factures',
     description: 'Testez le système OCR/AI qui vérifie automatiquement les factures avec contrôle de fraude.',
     duration: '~5 min',
-    tier: 'advanced',
+    tier: 'executive',
     difficulty: 'medium',
   },
-  // Tier 3 - Executive
+  {
+    type: 'ceo_override',
+    title: 'CEO Override (God Mode)',
+    description: 'Bypass d\'urgence PDG: tokens de validation, dérogations et contrôle total.',
+    duration: '~5 min',
+    tier: 'executive',
+    difficulty: 'hard',
+  },
   {
     type: 'forensic_analysis',
     title: 'Analyse Forensique',
@@ -263,12 +290,18 @@ export default function ModeFormation() {
         return <ValidateDeliverySim {...simProps} />;
       case 'budget_management':
         return <BudgetManagementSim {...simProps} />;
+      case 'quality_control':
+        return <QualityControlSim {...simProps} />;
       case 'fleet_predator':
         return <FleetPredatorSim {...simProps} />;
       case 'production_management':
         return <ProductionManagementSim {...simProps} />;
+      case 'audit_compliance':
+        return <AuditComplianceSim {...simProps} />;
       case 'ai_receipt_verification':
         return <AIReceiptVerificationSim {...simProps} />;
+      case 'ceo_override':
+        return <CeoOverrideSim {...simProps} />;
       case 'forensic_analysis':
         return <ForensicAnalysisSim {...simProps} />;
       case 'financial_reporting':

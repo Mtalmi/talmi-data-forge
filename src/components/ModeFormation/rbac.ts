@@ -122,7 +122,7 @@ export const MANDATORY_CERTIFICATIONS: Record<AppRole, number[]> = {
 export const TIER_SIMULATIONS: Record<SimulationTier, number[]> = {
   core: [1, 2, 3, 4, 5, 6],
   advanced: [7, 8, 9, 10],
-  executive: [11, 12, 13, 14],
+  executive: [11, 12, 13, 14, 15],
 };
 
 export const TIER_PREREQUISITES: Record<SimulationTier, SimulationTier[]> = {
