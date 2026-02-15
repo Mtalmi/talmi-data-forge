@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Space Grotesk', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['DM Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        display: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Syne', 'DM Sans', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -80,6 +80,8 @@ export default {
           negative: "hsl(var(--kpi-negative))",
           neutral: "hsl(var(--kpi-neutral))",
         },
+        "accent-teal": "hsl(var(--accent-teal))",
+        "accent-amber": "hsl(var(--accent-amber))",
       },
       borderRadius: {
         lg: "var(--radius)",

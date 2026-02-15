@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import KPICard from '@/components/dashboard/KPICard';
@@ -174,12 +175,12 @@ export default function Dashboard() {
         >
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
                 Bonjour, Master 👋
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <MapPin className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm text-muted-foreground">Casablanca • 24°C ☀️</span>
+                <span className="text-sm text-muted-foreground font-mono">Casablanca • 24°C ☀️</span>
               </div>
             </div>
 
@@ -292,7 +293,16 @@ export default function Dashboard() {
         >
           <div className="space-y-4">
             {/* Period KPI Grid */}
-            <div ref={kpiGridRef} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <motion.div
+              ref={kpiGridRef}
+              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+              initial="initial"
+              animate="enter"
+              variants={{
+                initial: {},
+                enter: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+              }}
+            >
               {periodLoading ? (
                 Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
               ) : (
@@ -342,7 +352,7 @@ export default function Dashboard() {
                   />
                 </>
               )}
-            </div>
+            </motion.div>
 
             {/* Profit & Expenses Row — CEO/Accounting */}
             {(isCeo || isAccounting) && (

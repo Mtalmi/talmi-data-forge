@@ -5,6 +5,7 @@ import { QuickActionFAB } from './QuickActionFAB';
 import { RolePreviewBanner } from './RolePreviewSwitcher';
 import { MobileBottomNav } from './MobileBottomNav';
 import { AppSidebar } from './AppSidebar';
+import { PageTransition } from './PageTransition';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
@@ -51,10 +52,12 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
             </div>
           </div>
           
-          {/* Main Content Area */}
+          {/* Main Content Area with Page Transitions */}
           <main className={`flex-1 overflow-y-auto scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-            <div className="p-3 sm:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom page-enter">
-              {children}
+            <div className="p-3 sm:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom">
+              <PageTransition>
+                {children}
+              </PageTransition>
             </div>
           </main>
 

@@ -190,8 +190,8 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             <Building2 className="h-5 w-5 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]" />
           </div>
           <div className="hidden sm:block">
-            <h1 className="text-lg font-bold tracking-tight">TBOS</h1>
-            <p className="text-[10px] text-muted-foreground -mt-0.5">Enterprise Suite</p>
+            <h1 className="text-lg font-extrabold tracking-tighter font-display">TBOS</h1>
+            <p className="text-[10px] text-muted-foreground -mt-0.5 font-mono tracking-wider uppercase">Enterprise Suite</p>
           </div>
         </div>
 
