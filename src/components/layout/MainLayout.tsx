@@ -3,7 +3,6 @@ import { TopNavBar } from './TopNavBar';
 import { AmbientGlow } from './AmbientGlow';
 import { QuickActionFAB } from './QuickActionFAB';
 import { RolePreviewBanner } from './RolePreviewSwitcher';
-import { DemoModeBanner } from './DemoModeBanner';
 import { MobileBottomNav } from './MobileBottomNav';
 import { AppSidebar } from './AppSidebar';
 import { PageTransition } from './PageTransition';
@@ -32,9 +31,6 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
         {/* Content Layer */}
         <div className="relative z-10 flex flex-col min-h-[100dvh] flex-1">
-          {/* Demo Mode Banner */}
-          <DemoModeBanner />
-
           {/* Preview Mode Banner */}
           {previewRole && (
             <RolePreviewBanner 
