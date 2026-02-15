@@ -1770,3 +1770,42 @@
     transform: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   RTL Layout Polish
+   ═══════════════════════════════════════════════════════ */
+[dir="rtl"] {
+  letter-spacing: 0;
+}
+
+/* RTL Card Labels - prevent overflow */
+[dir="rtl"] .stat-card h3,
+[dir="rtl"] .kpi-label {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* RTL Number Alignment */
+[dir="rtl"] .stat-value,
+[dir="rtl"] .kpi-value {
+  direction: ltr;
+  text-align: right;
+}
+
+/* RTL Sidebar - prevent label cutoff */
+[dir="rtl"] .sidebar-label {
+  font-size: 0.75rem;
+}
+
+/* RTL Compact Spacing */
+[dir="rtl"] .dashboard-grid {
+  gap: 0.75rem;
+}
+
+/* RTL Button Text */
+[dir="rtl"] button {
+  white-space: nowrap;
+}
