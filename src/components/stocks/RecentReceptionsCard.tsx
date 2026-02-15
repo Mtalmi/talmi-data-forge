@@ -1,6 +1,7 @@
 import { Package, Truck, Clock, CheckCircle2 } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { formatDistanceToNow } from 'date-fns';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 interface MouvementStock {
@@ -22,7 +23,9 @@ interface RecentReceptionsCardProps {
 }
 
 export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) {
-  // Filter only receptions from the last 7 days
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -36,10 +39,9 @@ export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) 
     return null;
   }
 
-  // Group by fournisseur for summary
   const byFournisseur: Record<string, { count: number; materials: string[] }> = {};
   recentReceptions.forEach((r) => {
-    const key = r.fournisseur || 'Manuel';
+    const key = r.fournisseur || t.pages.stocks.manualReception;
     if (!byFournisseur[key]) {
       byFournisseur[key] = { count: 0, materials: [] };
     }
@@ -58,32 +60,25 @@ export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) 
         <div className="flex items-center justify-between">
           <h2 className="font-semibold flex items-center gap-2">
             <Truck className="h-5 w-5 text-success" />
-            Réceptions Récentes
+            {t.pages.stocks.recentReceptions}
             <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-bold bg-success/20 text-success">
               {recentReceptions.length}
             </span>
           </h2>
-          <span className="text-xs text-muted-foreground">7 derniers jours</span>
+          <span className="text-xs text-muted-foreground">{t.pages.stocks.last7Days}</span>
         </div>
       </div>
 
-      {/* Summary Cards */}
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3 bg-muted/20">
         {Object.entries(byFournisseur).slice(0, 4).map(([fournisseur, data]) => (
-          <div
-            key={fournisseur}
-            className="p-3 rounded-lg bg-background border border-border"
-          >
+          <div key={fournisseur} className="p-3 rounded-lg bg-background border border-border">
             <p className="text-xs text-muted-foreground truncate">{fournisseur}</p>
             <p className="font-bold text-lg">{data.count}</p>
-            <p className="text-xs text-muted-foreground truncate">
-              {data.materials.join(', ')}
-            </p>
+            <p className="text-xs text-muted-foreground truncate">{data.materials.join(', ')}</p>
           </div>
         ))}
       </div>
 
-      {/* Reception List */}
       <div className="divide-y divide-border max-h-64 overflow-y-auto">
         {recentReceptions.slice(0, 5).map((reception) => (
           <div
@@ -113,12 +108,12 @@ export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) 
                 <span className="font-medium">{reception.materiau}</span>
                 {isFromPurchase(reception) && (
                   <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-success/20 text-success uppercase">
-                    Commande
+                    {t.pages.stocks.order}
                   </span>
                 )}
               </div>
               <p className="text-sm text-muted-foreground truncate">
-                {reception.fournisseur || 'Réception manuelle'}
+                {reception.fournisseur || t.pages.stocks.manualReception}
                 {reception.numero_bl_fournisseur &&
                   ` • BL: ${reception.numero_bl_fournisseur}`}
               </p>
@@ -132,7 +127,7 @@ export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) 
                 <Clock className="h-3 w-3" />
                 {formatDistanceToNow(new Date(reception.created_at), {
                   addSuffix: true,
-                  locale: fr,
+                  locale: dateLocale || undefined,
                 })}
               </p>
             </div>
@@ -143,7 +138,7 @@ export function RecentReceptionsCard({ mouvements }: RecentReceptionsCardProps) 
       {recentReceptions.length > 5 && (
         <div className="p-2 text-center border-t border-border bg-muted/10">
           <span className="text-xs text-muted-foreground">
-            +{recentReceptions.length - 5} autres réceptions
+            +{recentReceptions.length - 5} {t.pages.stocks.otherReceptions}
           </span>
         </div>
       )}
