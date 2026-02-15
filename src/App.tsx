@@ -48,6 +48,7 @@ import UserProfile from "./pages/UserProfile";
 import NotFound from "./pages/NotFound";
 import AIAssistant from "./pages/AIAssistant";
 import Landing from "./pages/Landing";
+import DashboardShowcase from "./pages/DashboardShowcase";
 import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 import WS7Import from "./pages/WS7Import";
 import WS7Batches from "./pages/WS7Batches";
@@ -117,6 +118,7 @@ const App = () => (
                 {/* AI Assistant */}
                 <Route path="/ai" element={<AIAssistant />} />
                 <Route path="/landing" element={<Landing />} />
+                <Route path="/dashboard-showcase" element={<DashboardShowcase />} />
                 {/* WS7 Integration */}
                 <Route path="/ws7-import" element={<WS7Import />} />
                 <Route path="/ws7-batches" element={<WS7Batches />} />
