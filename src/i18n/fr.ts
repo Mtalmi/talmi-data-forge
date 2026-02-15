@@ -3287,6 +3287,10 @@ const fr = {
     socialName2: 'Fatima Zahra El Idrissi',
     socialRole2: 'Directrice Financière',
     socialCompany2: 'BTP Maroc Group',
+    socialQuote3: 'TBOS nous a donné une visibilité totale sur 6 centrales aux EAU. Le tableau de bord CEO a justifié l\'investissement dès la première semaine.',
+    socialName3: 'Khalid Al Mansouri',
+    socialRole3: 'Directeur Général',
+    socialCompany3: 'Gulf Concrete Group',
     // Book demo
     demoLabel: 'Démo',
     demoTitle1: 'Prêt à transformer',

@@ -16,6 +16,7 @@ import modulesBg from '@/assets/modules-bg.jpg';
 import PricingSection from '@/components/landing/PricingSection';
 import BookDemoSection from '@/components/landing/BookDemoSection';
 import SocialProofSection from '@/components/landing/SocialProofSection';
+import GulfTrustBar from '@/components/landing/GulfTrustBar';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -299,6 +300,9 @@ export default function Landing() {
 
       {/* SOCIAL PROOF */}
       <SocialProofSection />
+
+      {/* GULF TRUST METRICS */}
+      <GulfTrustBar />
 
       {/* BOOK DEMO */}
       <BookDemoSection />
