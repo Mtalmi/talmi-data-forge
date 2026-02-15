@@ -25,6 +25,7 @@ interface ContractComplianceWidgetProps {
 
 export function ContractComplianceWidget({ onAddContract }: ContractComplianceWidgetProps) {
   const { stats, expirationAlerts, loading, refresh } = useContractCompliance();
+  const { t } = useI18n();
 
   const complianceColor = stats.complianceRate >= 90 
     ? 'text-success' 
@@ -185,10 +186,10 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
               <div className="p-4 rounded-lg bg-success/10 border border-success/30 text-center">
                 <CheckCircle className="h-8 w-8 text-success mx-auto mb-2" />
                 <p className="text-sm text-success font-medium">
-                  Aucune expiration imminente
+                  {t.contractCompliance?.noExpiration || 'Aucune expiration imminente'}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Tous les contrats actifs sont à jour
+                  {t.contractCompliance?.allUpToDate || 'Tous les contrats actifs sont à jour'}
                 </p>
               </div>
             )}

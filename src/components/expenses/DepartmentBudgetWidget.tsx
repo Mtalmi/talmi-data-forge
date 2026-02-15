@@ -62,7 +62,7 @@ interface DepartmentBudgetWidgetProps {
 }
 
 export function DepartmentBudgetWidget({ compact = false }: DepartmentBudgetWidgetProps) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur } = useAuth();
   const { budgetStatus, totals, loading, refresh, updateBudget, copyBudgetsToNextMonth } = useDepartmentBudgets();
@@ -342,18 +342,18 @@ export function DepartmentBudgetWidget({ compact = false }: DepartmentBudgetWidg
                 className="font-mono"
               />
               <p className="text-xs text-muted-foreground">
-                Déclenche une alerte quand les dépenses atteignent ce pourcentage du plafond
+                {t.departmentBudget?.thresholdHint || 'Déclenche une alerte quand les dépenses atteignent ce pourcentage du plafond'}
               </p>
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingBudget(null)}>
-              Annuler
+              {t.departmentBudget?.cancel || 'Annuler'}
             </Button>
             <Button onClick={handleSave} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-              Enregistrer
+              {t.departmentBudget?.save || 'Enregistrer'}
             </Button>
           </DialogFooter>
         </DialogContent>

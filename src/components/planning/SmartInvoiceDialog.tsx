@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface DeliveryData {
   bl_id: string;
@@ -70,6 +71,7 @@ export function SmartInvoiceDialog({
   onInvoiceGenerated,
 }: SmartInvoiceDialogProps) {
   const { user, isCeo, isAgentAdministratif } = useAuth();
+  const { t } = useI18n();
   const [generating, setGenerating] = useState(false);
   
   // Editable invoice fields
@@ -473,7 +475,7 @@ export function SmartInvoiceDialog({
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {t.smartInvoice?.cancel || 'Annuler'}
           </Button>
           <Button
             onClick={handleValidateInvoice}

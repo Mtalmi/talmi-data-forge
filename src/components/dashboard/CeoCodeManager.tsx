@@ -26,7 +26,7 @@ interface CodeRequest {
 
 export function CeoCodeManager() {
   const { user, isCeo } = useAuth();
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const dateLocale = getDateLocale(lang);
   const [requests, setRequests] = useState<CodeRequest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +109,7 @@ export function CeoCodeManager() {
       fetchRequests();
     } catch (err) {
       console.error('Error approving:', err);
-      toast.error('Erreur lors de l\'approbation');
+      toast.error(t.ceoCode?.approvalError || "Erreur lors de l'approbation");
     } finally {
       setGeneratingFor(null);
     }
@@ -141,13 +141,13 @@ export function CeoCodeManager() {
       fetchRequests();
     } catch (err) {
       console.error('Error rejecting:', err);
-      toast.error('Erreur lors du rejet');
+      toast.error(t.ceoCode?.rejectionError || 'Erreur lors du rejet');
     }
   };
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    toast.success('Code copié!');
+    toast.success(t.ceoCode?.codeCopied || 'Code copié!');
   };
 
   const getStatusBadge = (status: string) => {
@@ -196,10 +196,10 @@ export function CeoCodeManager() {
       </CardHeader>
       <CardContent className="space-y-3">
         {loading ? (
-          <div className="text-center py-4 text-muted-foreground">Chargement...</div>
+          <div className="text-center py-4 text-muted-foreground">{t.ceoCode?.loading || 'Chargement...'}</div>
         ) : requests.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground">
-            Aucune demande de code
+            {t.ceoCode?.noRequests || 'Aucune demande de code'}
           </div>
         ) : (
           <div className="space-y-2 max-h-[400px] overflow-y-auto">
