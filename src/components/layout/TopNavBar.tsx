@@ -248,7 +248,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             <GlobalSearch />
           </div>
 
-          <LanguageSwitcher />
+          <LanguageSwitcher variant="compact" />
           <SoundToggle />
           <ThemeToggle />
           <NotificationCenter />
