@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, addHours, parseISO, isWithinInterval, differenceInMinutes, startOfMonth, endOfMonth } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { } from 'date-fns/locale';
 import { 
   Clock, 
   Truck, 
@@ -460,7 +460,7 @@ export default function Planning() {
   const updateBonTime = async (blId: string, time: string) => {
     // Block if read-only
     if (isReadOnly) {
-      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour modifier.');
+      toast.error(t.pages.planning.readOnlyError);
       return;
     }
     
@@ -468,7 +468,7 @@ export default function Planning() {
       const trimmed = (time || '').trim();
       const normalized = trimmed ? normalizeTimeHHmm(trimmed) : null;
       if (trimmed && !normalized) {
-        toast.error('Heure invalide. Format attendu: HH:mm');
+        toast.error(t.pages.planning.invalidTime);
         return;
       }
       const { error } = await supabase
@@ -486,18 +486,18 @@ export default function Planning() {
         timestamp: new Date().toISOString(),
       });
       
-      toast.success('Heure mise à jour');
+      toast.success(t.pages.planning.timeUpdated);
       fetchData();
     } catch (error) {
       console.error('Error updating time:', error);
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t.pages.planning.updateError);
     }
   };
 
   const assignTruck = async (blId: string, camionId: string) => {
     // Block if read-only
     if (isReadOnly) {
-      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour assigner.');
+      toast.error(t.pages.planning.readOnlyAssign);
       return;
     }
     
@@ -520,11 +520,11 @@ export default function Planning() {
         timestamp: new Date().toISOString(),
       });
       
-      toast.success('Camion assigné');
+      toast.success(t.pages.planning.truckAssigned);
       fetchData();
     } catch (error) {
       console.error('Error assigning truck:', error);
-      toast.error('Erreur lors de l\'assignation');
+      toast.error(t.pages.planning.assignError);
     }
   };
 
@@ -560,25 +560,25 @@ export default function Planning() {
         await supabase.from('alertes_systeme').insert({
           type_alerte: 'midnight_production',
           niveau: 'critical',
-          titre: '🚨 Production Nocturne Lancée',
+          titre: t.pages.planning.nightProductionAlert,
           message: `BL ${bon.bl_id} lancé en production hors horaires par ${user?.email}. Justification: ${nightJustification}`,
           reference_id: bon.bl_id,
           reference_table: 'bons_livraison_reels',
         });
       }
       
-      toast.success('Production lancée! Redirection vers le Centre Production...');
+      toast.success(t.pages.planning.productionLaunched);
       navigate(buildProductionUrl(bon.bl_id, parseISO(selectedDate)));
     } catch (error) {
       console.error('Error starting production:', error);
-      toast.error('Erreur lors du lancement');
+      toast.error(t.pages.planning.launchError);
     }
   };
 
   const startProduction = async (bon: BonLivraison) => {
     // Block if read-only
     if (isReadOnly) {
-      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour lancer.');
+      toast.error(t.pages.planning.readOnlyLaunch);
       return;
     }
     
@@ -660,7 +660,7 @@ export default function Planning() {
   const confirmBl = async (bon: BonLivraison) => {
     // Block if read-only
     if (isReadOnly) {
-      toast.error('Accès en lecture seule. Contactez l\'Agent Administratif pour planifier.');
+      toast.error(t.pages.planning.readOnlyPlan);
       return;
     }
 
@@ -703,11 +703,11 @@ export default function Planning() {
         timestamp: new Date().toISOString(),
       });
       
-      toast.success(`${bon.bl_id} confirmé et ajouté au dispatch!`);
+      toast.success(`${bon.bl_id} ${t.pages.planning.confirmed}`);
       fetchData();
     } catch (error) {
       console.error('Error confirming BL:', error);
-      toast.error('Erreur lors de la confirmation');
+      toast.error(t.pages.planning.confirmError);
     }
   };
 
@@ -762,11 +762,11 @@ export default function Planning() {
         }
       }
 
-      toast.success(`${bon.bl_id} rejeté`);
+      toast.success(`${bon.bl_id} ${t.pages.planning.rejected}`);
       fetchData();
     } catch (error) {
       console.error('Error rejecting BL:', error);
-      toast.error('Erreur lors du rejet');
+      toast.error(t.pages.planning.rejectError);
     }
   };
 
@@ -845,7 +845,7 @@ export default function Planning() {
       }
       const normalized = normalizeTimeHHmm(trimmed);
       if (!normalized) {
-        toast.error('Heure invalide. Format attendu: HH:mm');
+        toast.error(t.pages.planning.invalidTime);
         setTimeDraft(formatTimeHHmm(bon.heure_prevue) || '');
         return;
       }
@@ -958,22 +958,22 @@ export default function Planning() {
                   onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
                 >
                   <SelectTrigger className={cn("text-sm", isTouchDevice ? "h-11 text-base" : "h-8")}>
-                    <SelectValue placeholder="Assigner camion" />
+                    <SelectValue placeholder={t.pages.planning.assignTruckPlaceholder} />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
-                    <SelectItem value="none">Non assigné</SelectItem>
+                    <SelectItem value="none">{t.pages.planning.notAssigned}</SelectItem>
                     {camions.map(c => {
                       const isCurrentlyAssigned = c.id_camion === (bon.camion_assigne || bon.toupie_assignee);
                       const isAvailable = c.statut === 'Disponible';
                       const isBlocked = !isAvailable && !isCurrentlyAssigned;
                       
                       // Determine reason for blocking
-                      const blockReason = c.statut === 'En Livraison' 
-                        ? '🚛 En Mission' 
+                       const blockReason = c.statut === 'En Livraison' 
+                        ? t.pages.planning.onMission 
                         : c.statut === 'Maintenance' 
-                          ? '🔧 Maintenance'
+                          ? t.pages.planning.maintenanceLabel
                           : c.statut === 'Hors Service'
-                            ? '⛔ Hors Service'
+                            ? t.pages.planning.outOfService
                             : c.statut;
 
                       return (
@@ -987,14 +987,14 @@ export default function Planning() {
                           )}
                         >
                           <div className="flex items-center justify-between w-full gap-2">
-                            <span>{c.id_camion} - {c.chauffeur || 'Sans chauffeur'}</span>
+                            <span>{c.id_camion} - {c.chauffeur || t.pages.planning.noDriver}</span>
                             {isBlocked && (
                               <span className="text-xs text-muted-foreground ml-2">
                                 {blockReason}
                               </span>
                             )}
                             {isAvailable && !isCurrentlyAssigned && (
-                              <span className="text-xs text-emerald-600 ml-2">✓ Dispo</span>
+                              <span className="text-xs text-emerald-600 ml-2">{t.pages.planning.availableShort}</span>
                             )}
                           </div>
                         </SelectItem>
@@ -1008,7 +1008,7 @@ export default function Planning() {
                 <CollapsibleTrigger asChild>
                   <Button variant="ghost" size="sm" className="w-full h-7 text-xs gap-1 text-muted-foreground hover:text-foreground">
                     <Sparkles className="h-3 w-3" />
-                    Suggestion intelligente
+                    {t.pages.planning.smartSuggestion}
                     <ChevronDown className="h-3 w-3" />
                   </Button>
                 </CollapsibleTrigger>
@@ -1035,10 +1035,10 @@ export default function Planning() {
                       : "bg-amber-500/10 border border-amber-500/30 text-amber-600"
                   )}>
                     <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>
+                     <span>
                       {creditStatus === 'blocked' 
-                        ? 'Client bloqué - Crédit suspendu' 
-                        : 'Factures impayées > 30j ou dépassement crédit'}
+                        ? t.pages.planning.clientBlocked 
+                        : t.pages.planning.unpaidInvoices}
                     </span>
                   </div>
                 )}
@@ -1067,7 +1067,7 @@ export default function Planning() {
                     }}
                   >
                     <Factory className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
-                    {creditStatus !== 'green' ? 'Override & Lancer' : 'Lancer Production'}
+                    {creditStatus !== 'green' ? t.pages.planning.overrideAndLaunch : t.pages.planning.launchProduction}
                     <ArrowRight className={cn(isTouchDevice ? "h-5 w-5" : "h-4 w-4")} />
                   </Button>
                 ) : (
@@ -1082,7 +1082,7 @@ export default function Planning() {
                       )}
                     >
                       <Lock className="h-4 w-4 text-red-500" />
-                      Production Bloquée
+                      {t.pages.planning.productionBlocked}
                     </Button>
                     {/* Request CEO Code Button - For non-override users */}
                     {isAgentAdministratif && (
@@ -1103,7 +1103,7 @@ export default function Planning() {
                         }}
                       >
                         <Shield className="h-4 w-4" />
-                        Demander Code CEO
+                        {t.pages.planning.requestCeoCode}
                       </Button>
                     )}
                   </div>
@@ -1119,7 +1119,7 @@ export default function Planning() {
             isTouchDevice ? "text-sm" : "text-xs"
           )}>
             <Timer className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
-            <span>Prévu: {formatTimeHHmm(bon.heure_prevue) || bon.heure_prevue}</span>
+            <span>{t.pages.planning.scheduled}: {formatTimeHHmm(bon.heure_prevue) || bon.heure_prevue}</span>
             {(bon.camion_assigne || bon.toupie_assignee) && (
               <>
                 <span className="text-muted-foreground">•</span>
@@ -1140,7 +1140,7 @@ export default function Planning() {
             onClick={() => viewInProduction(bon)}
           >
             <Eye className="h-4 w-4" />
-            Voir en Production
+            {t.pages.planning.viewInProduction}
             <ExternalLink className="h-3 w-3" />
           </Button>
         )}
@@ -1151,7 +1151,7 @@ export default function Planning() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                 <Phone className="h-3 w-3" />
-                Contrôle Manuel (Radio/Tél)
+                {t.pages.planning.manualControl}
               </span>
               <DispatcherProxyControls
                 blId={bon.bl_id}
@@ -1226,11 +1226,11 @@ export default function Planning() {
         .eq('bl_id', bon.bl_id);
 
       if (error) throw error;
-      toast.success('Livraison confirmée!');
+      toast.success(t.pages.planning.deliveryConfirmed);
       fetchData();
     } catch (error) {
       console.error('Error marking delivered:', error);
-      toast.error('Erreur lors de la confirmation');
+      toast.error(t.pages.planning.confirmDeliveryError);
     }
   };
 
@@ -1273,10 +1273,10 @@ export default function Planning() {
             <Eye className="h-5 w-5 text-amber-500" />
             <div>
               <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                Mode Lecture Seule
+                {t.pages.planning.readOnlyMode}
               </p>
               <p className="text-xs text-muted-foreground">
-                Vous pouvez consulter le planning mais pas le modifier. Contactez l'Agent Administratif pour planifier les livraisons.
+                {t.pages.planning.readOnlyDescription}
               </p>
             </div>
           </div>
@@ -1285,8 +1285,8 @@ export default function Planning() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Planning & Dispatch</h1>
-            <p className="text-muted-foreground">Ordonnancement des livraisons</p>
+            <h1 className="text-2xl font-bold">{t.pages.planning.title}</h1>
+            <p className="text-muted-foreground">{t.pages.planning.subtitle}</p>
           </div>
           <div className="flex items-center gap-3">
             {/* GPS Tracking Link */}
@@ -1297,7 +1297,7 @@ export default function Planning() {
               onClick={() => navigate('/logistique')}
             >
               <Crosshair className="h-4 w-4" />
-              GPS Tracking
+              {t.pages.planning.gpsTracking}
               {enLivraison.length > 0 && (
                 <Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>
               )}
@@ -1313,7 +1313,7 @@ export default function Planning() {
                 }}
               >
                 <BellRing className="h-4 w-4" />
-                À Confirmer
+                {t.pages.planning.toConfirm}
                 <Badge className="bg-amber-500 text-white ml-1">{pendingBLCount}</Badge>
               </Button>
             )}
@@ -1340,7 +1340,7 @@ export default function Planning() {
             />
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              Actualiser
+              {t.pages.planning.refresh}
             </Button>
           </div>
         </div>
@@ -1367,7 +1367,7 @@ export default function Planning() {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span>À Confirmer</span>
+                        <span>{t.pages.planning.toConfirm}</span>
                         <Badge className="bg-amber-500 text-white animate-bounce">{pendingValidation.length}</Badge>
                         <Sparkles className="h-4 w-4 text-amber-500" />
                         <div className="ml-auto" onClick={(e) => e.stopPropagation()}>
@@ -1378,7 +1378,7 @@ export default function Planning() {
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground font-normal mt-0.5">
-                        Nouvelles livraisons en attente de validation dispatcher
+                        {t.pages.planning.pendingDispatcherValidation}
                       </p>
                     </div>
                     {pendingValidationOpen ? (
@@ -1403,7 +1403,7 @@ export default function Planning() {
                               </p>
                             </div>
                             <Badge variant="outline" className="border-amber-500 text-amber-600 text-xs">
-                              Nouveau
+                              {t.pages.planning.newLabel}
                             </Badge>
                           </div>
                           
@@ -1431,7 +1431,7 @@ export default function Planning() {
                               onClick={() => confirmBl(bon)}
                             >
                               <CheckCircle className="h-4 w-4" />
-                              Confirmer
+                               {t.pages.planning.confirm}
                             </Button>
                             <Button 
                               size="sm" 
@@ -1459,9 +1459,9 @@ export default function Planning() {
             <CardContent className="p-4 flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-destructive">⚠️ Conflit de Planning Détecté!</p>
+                <p className="font-semibold text-destructive">{t.pages.planning.conflictDetected}</p>
                 <p className="text-sm text-muted-foreground">
-                  {conflicts.length} conflit(s) - Plusieurs livraisons planifiées dans un intervalle de 15 minutes.
+                  {conflicts.length} {t.pages.planning.conflictDescription}
                 </p>
                 <div className="mt-2 space-y-1">
                   {conflicts.map((c, i) => (
@@ -1484,7 +1484,7 @@ export default function Planning() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalBonsToday}</p>
-                <p className="text-xs text-muted-foreground">Livraisons aujourd'hui</p>
+                <p className="text-xs text-muted-foreground">{t.pages.planning.deliveriesToday}</p>
               </div>
             </CardContent>
           </Card>
@@ -1495,7 +1495,7 @@ export default function Planning() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{pendingBons}</p>
-                <p className="text-xs text-muted-foreground">En attente</p>
+                <p className="text-xs text-muted-foreground">{t.pages.planning.waitingLabel}</p>
               </div>
             </CardContent>
           </Card>
@@ -1506,7 +1506,7 @@ export default function Planning() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{availableCamions}/{camions.length}</p>
-                <p className="text-xs text-muted-foreground">Camions dispo</p>
+                <p className="text-xs text-muted-foreground">{t.pages.planning.trucksAvailable}</p>
               </div>
             </CardContent>
           </Card>
@@ -1517,7 +1517,7 @@ export default function Planning() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{enLivraison.length}</p>
-                <p className="text-xs text-muted-foreground">En route</p>
+                <p className="text-xs text-muted-foreground">{t.pages.planning.onRoute}</p>
               </div>
             </CardContent>
           </Card>
@@ -1539,13 +1539,13 @@ export default function Planning() {
                   <Factory className="h-4 w-4 text-white" />
                 </div>
                 <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent dark:from-amber-400 dark:to-orange-400">
-                  À Produire
+                  {t.pages.planning.toProduce}
                 </span>
                 <Badge className="ml-auto bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-md shadow-amber-500/20">
                   {aProduire.length}
                 </Badge>
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Prochaines 2 heures</p>
+              <p className="text-xs text-muted-foreground">{t.pages.planning.next2Hours}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {aProduire.length === 0 ? (
@@ -1553,7 +1553,7 @@ export default function Planning() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
                     <Factory className="h-8 w-8 text-amber-300 dark:text-amber-700" />
                   </div>
-                  <p className="text-sm text-muted-foreground">Aucune livraison planifiée</p>
+                  <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
                 </div>
               ) : (
                 aProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
@@ -1569,7 +1569,7 @@ export default function Planning() {
                   <Package className="h-4 w-4 text-white" />
                 </div>
                 <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400">
-                  En Chargement
+                  {t.pages.planning.enChargement}
                 </span>
                 <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 shadow-md shadow-violet-500/20">
                   {enChargement.length}
@@ -1583,12 +1583,12 @@ export default function Planning() {
                     onClick={() => navigate(`/production?date=${selectedDate}`)}
                   >
                     <Eye className="h-3 w-3" />
-                    Centre Production
+                    {t.pages.planning.productionCenter}
                     <ExternalLink className="h-3 w-3" />
                   </Button>
                 )}
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Production & Validation Technique • Sync en temps réel</p>
+              <p className="text-xs text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enChargement.length === 0 ? (
@@ -1596,7 +1596,7 @@ export default function Planning() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
                     <Package className="h-8 w-8 text-violet-300 dark:text-violet-700" />
                   </div>
-                  <p className="text-sm text-muted-foreground">Aucun chargement en cours</p>
+                  <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
                 </div>
               ) : (
                 enChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
@@ -1612,13 +1612,13 @@ export default function Planning() {
                   <Navigation className="h-4 w-4 text-white" />
                 </div>
                 <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent dark:from-rose-400 dark:to-pink-400">
-                  En Livraison
+                  {t.pages.planning.enLivraison}
                 </span>
                 <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0 shadow-md shadow-rose-500/20">
                   {enLivraison.length}
                 </Badge>
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Camions en route</p>
+              <p className="text-xs text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enLivraison.length === 0 ? (
@@ -1626,7 +1626,7 @@ export default function Planning() {
                   <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
                     <Navigation className="h-8 w-8 text-rose-300 dark:text-rose-700" />
                   </div>
-                  <p className="text-sm text-muted-foreground">Aucun camion en livraison</p>
+                  <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
                 </div>
               ) : (
                 enLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
@@ -1642,10 +1642,10 @@ export default function Planning() {
                   <div className="p-1.5 rounded bg-warning/20 animate-pulse">
                     <Receipt className="h-4 w-4 text-warning" />
                   </div>
-                  À Facturer
+                  {t.pages.planning.toInvoice}
                   <Badge className="ml-auto bg-warning text-white">{aFacturer.length}</Badge>
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">Livrées - En attente de facturation</p>
+                <p className="text-xs text-muted-foreground">{t.pages.planning.deliveredAwaitingInvoice}</p>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -1667,12 +1667,12 @@ export default function Planning() {
                         {bon.facturer_attente && (
                           <Badge variant="outline" className="border-warning text-warning text-xs gap-1">
                             <Clock className="h-3 w-3" />
-                            Attente
+                            {t.pages.planning.waiting}
                           </Badge>
                         )}
                         <Button size="sm" className="gap-1 bg-success hover:bg-success/90">
                           <Receipt className="h-4 w-4" />
-                          Facturer
+                          {t.pages.planning.invoice}
                         </Button>
                       </div>
                     </div>
@@ -1690,7 +1690,7 @@ export default function Planning() {
                   <div className="p-1.5 rounded bg-success/10">
                     <CheckCircle className="h-4 w-4 text-success" />
                   </div>
-                  Facturées
+                  {t.pages.planning.invoiced}
                   <Badge variant="outline" className="ml-auto border-success/30 text-success">{facturesAujourdhui.length}</Badge>
                 </CardTitle>
               </CardHeader>
@@ -1708,7 +1708,7 @@ export default function Planning() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{bon.volume_m3} m³</span>
                         <Badge variant="outline" className="text-success border-success/30 text-xs">
-                          Facturé ✓
+                          {t.pages.planning.invoicedCheck}
                         </Badge>
                       </div>
                     </div>
@@ -1724,13 +1724,13 @@ export default function Planning() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Planning Chronologique - {format(parseISO(selectedDate), 'EEEE d MMMM yyyy', { locale: fr })}
+              {t.pages.planning.chronologicalPlanning} - {format(parseISO(selectedDate), 'EEEE d MMMM yyyy', { locale: dateLocale })}
             </CardTitle>
           </CardHeader>
           <CardContent>
             {bons.filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status)).length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                Aucune livraison planifiée pour cette date
+                {t.pages.planning.noScheduledDelivery}
               </p>
             ) : (
               <div className="space-y-2">
@@ -1760,7 +1760,7 @@ export default function Planning() {
                         <p className="text-sm">{bon.formule_id} - {bon.volume_m3}m³</p>
                         <div className="flex items-center gap-2">
                           <Truck className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{bon.camion_assigne || bon.toupie_assignee || 'Non assigné'}</span>
+                          <span className="text-sm">{bon.camion_assigne || bon.toupie_assignee || t.pages.planning.notAssigned}</span>
                         </div>
                         {getStatusBadge(bon.workflow_status)}
                       </div>
@@ -1832,7 +1832,7 @@ export default function Planning() {
             setMidnightDialogOpen(open);
             if (!open) setPendingNightBon(null);
           }}
-          actionLabel="Lancer Production (Urgence)"
+          actionLabel={t.pages.planning.launchProductionUrgency}
           loading={midnightLoading}
           onConfirm={async (justification) => {
             if (!pendingNightBon) return;
