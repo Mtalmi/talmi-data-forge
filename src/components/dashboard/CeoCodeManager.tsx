@@ -8,7 +8,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { Shield, KeyRound, Check, X, Clock, RefreshCw, Copy } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 interface CodeRequest {
@@ -25,6 +26,8 @@ interface CodeRequest {
 
 export function CeoCodeManager() {
   const { user, isCeo } = useAuth();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [requests, setRequests] = useState<CodeRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [generatingFor, setGeneratingFor] = useState<string | null>(null);
@@ -222,7 +225,7 @@ export function CeoCodeManager() {
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
                       <Clock className="h-3 w-3 inline mr-1" />
-                      {format(new Date(request.requested_at), 'dd MMM HH:mm', { locale: fr })}
+                      {format(new Date(request.requested_at), 'dd MMM HH:mm', { locale: dateLocale || undefined })}
                     </p>
                   </div>
 

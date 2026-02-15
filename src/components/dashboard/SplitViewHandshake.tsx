@@ -30,7 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr, ar, enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { compressImage } from '@/lib/imageCompression';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { useI18n } from '@/i18n/I18nContext';
@@ -57,7 +57,7 @@ interface PendingHandshake {
 export function SplitViewHandshake() {
   const { user, isResponsableTechnique, isAgentAdministratif, isCeo, isSuperviseur } = useAuth();
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
+  const dateFnsLocale = getDateLocale(lang);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [pendingItems, setPendingItems] = useState<PendingHandshake[]>([]);

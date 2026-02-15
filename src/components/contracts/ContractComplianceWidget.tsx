@@ -16,7 +16,8 @@ import {
 import { cn } from '@/lib/utils';
 import { useContractCompliance } from '@/hooks/useContractCompliance';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ContractComplianceWidgetProps {
   onAddContract?: () => void;
@@ -245,7 +246,7 @@ function ExpirationAlertCard({ alert }: { alert: {
       </div>
       <p className="text-xs text-muted-foreground mt-1">
         {isExpired ? 'Expiré le' : 'Expire le'}{' '}
-        {format(new Date(alert.endDate), 'dd/MM/yyyy', { locale: fr })}
+        {format(new Date(alert.endDate), 'dd/MM/yyyy')}
       </p>
     </div>
   );

@@ -41,7 +41,8 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 const DEPARTMENT_ICONS: Record<string, React.ReactNode> = {
   carburant: <Fuel className="h-4 w-4" />,
@@ -61,6 +62,8 @@ interface DepartmentBudgetWidgetProps {
 }
 
 export function DepartmentBudgetWidget({ compact = false }: DepartmentBudgetWidgetProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur } = useAuth();
   const { budgetStatus, totals, loading, refresh, updateBudget, copyBudgetsToNextMonth } = useDepartmentBudgets();
   const [editingBudget, setEditingBudget] = useState<DepartmentBudgetStatus | null>(null);
@@ -181,7 +184,7 @@ export function DepartmentBudgetWidget({ compact = false }: DepartmentBudgetWidg
             <Wallet className="h-5 w-5" />
             Budgets par Département
             <Badge variant="outline" className="ml-2 font-mono">
-              {format(new Date(), 'MMMM yyyy', { locale: fr })}
+              {format(new Date(), 'MMMM yyyy', { locale: dateLocale || undefined })}
             </Badge>
           </CardTitle>
           <div className="flex items-center gap-2">
