@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,17 +23,13 @@ import { useBankReconciliation, BankTransaction, MatchSuggestion } from '@/hooks
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import BankCSVImport from '@/components/banking/BankCSVImport';
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  non_rapproche: { label: 'En attente', color: 'bg-amber-100 text-amber-800', icon: AlertCircle },
-  rapproche: { label: 'Rapproché', color: 'bg-green-100 text-green-800', icon: Check },
-  ignore: { label: 'Ignoré', color: 'bg-gray-100 text-gray-600', icon: Ban },
-};
 
 export default function Rapprochement() {
   const { user, isCeo, isAccounting } = useAuth();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const r = t.pages.rapprochement;
   const { toast } = useToast();
   const { 
     transactions, stats, loading, clients, refetch,
@@ -60,6 +57,12 @@ export default function Rapprochement() {
   });
 
   const canManage = isCeo || isAccounting;
+
+  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+    non_rapproche: { label: r.statusLabelPending, color: 'bg-amber-100 text-amber-800', icon: AlertCircle },
+    rapproche: { label: r.statusLabelReconciled, color: 'bg-green-100 text-green-800', icon: Check },
+    ignore: { label: r.statusLabelIgnored, color: 'bg-gray-100 text-gray-600', icon: Ban },
+  };
 
   const filteredTransactions = useMemo(() => {
     return transactions.filter(t => {
@@ -90,15 +93,15 @@ export default function Rapprochement() {
 
     if (result.success) {
       toast({
-        title: 'Rapprochement confirmé',
-        description: `Transaction rapprochée avec ${match.facture_id || match.bl_id}`,
+        title: r.reconciliationConfirmed,
+        description: `${r.transactionReconciledWith} ${match.facture_id || match.bl_id}`,
       });
       setShowMatchDialog(false);
       setSelectedTransaction(null);
     } else {
       toast({
-        title: 'Erreur',
-        description: 'Échec du rapprochement',
+        title: r.error,
+        description: r.reconciliationError,
         variant: 'destructive',
       });
     }
@@ -108,8 +111,8 @@ export default function Rapprochement() {
     const result = await ignoreTransaction(transactionId, 'Ignoré manuellement');
     if (result.success) {
       toast({
-        title: 'Transaction ignorée',
-        description: 'La transaction ne sera plus proposée pour rapprochement',
+        title: r.transactionIgnored,
+        description: r.transactionIgnoredDesc,
       });
     }
   };
@@ -120,16 +123,16 @@ export default function Rapprochement() {
     setAutoReconciling(false);
 
     toast({
-      title: 'Rapprochement automatique terminé',
-      description: `${result.reconciled} transaction(s) rapprochée(s) automatiquement`,
+      title: r.autoReconcileComplete,
+      description: `${result.reconciled} ${r.transactionsAutoReconciled}`,
     });
   };
 
   const handleImport = async () => {
     if (!importForm.libelle || !importForm.montant) {
       toast({
-        title: 'Champs requis',
-        description: 'Le libellé et le montant sont obligatoires',
+        title: r.fieldsRequired,
+        description: r.fieldsRequiredDesc,
         variant: 'destructive',
       });
       return;
@@ -150,8 +153,8 @@ export default function Rapprochement() {
 
     if (result.success) {
       toast({
-        title: 'Transaction importée',
-        description: 'La transaction a été ajoutée avec succès',
+        title: r.transactionImported,
+        description: r.transactionImportedDesc,
       });
       setShowImportDialog(false);
       setImportForm({
@@ -163,8 +166,8 @@ export default function Rapprochement() {
       });
     } else {
       toast({
-        title: 'Erreur',
-        description: "Échec de l'import",
+        title: r.error,
+        description: r.importError,
         variant: 'destructive',
       });
     }
@@ -196,10 +199,10 @@ export default function Rapprochement() {
           <div>
             <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
               <Building2 className="h-8 w-8 text-primary" />
-              Rapprochement Bancaire
+              {r.title}
             </h1>
             <p className="text-muted-foreground mt-1">
-              Correspondance automatique virements ↔ factures
+              {r.subtitle}
             </p>
           </div>
           
@@ -215,7 +218,7 @@ export default function Rapprochement() {
                 ) : (
                   <Zap className="h-4 w-4 mr-2" />
                 )}
-                Auto-rapprocher
+                {r.autoReconcile}
               </Button>
               <BankCSVImport onImport={importTransactions} />
               <Button
@@ -223,7 +226,7 @@ export default function Rapprochement() {
                 onClick={() => setShowImportDialog(true)}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Manuel
+                {r.manual}
               </Button>
               <Button variant="outline" size="icon" onClick={refetch}>
                 <RefreshCw className="h-4 w-4" />
@@ -238,7 +241,7 @@ export default function Rapprochement() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Transactions</p>
+                  <p className="text-sm font-medium text-muted-foreground">{r.totalTransactions}</p>
                   <p className="text-2xl font-bold">{stats.totalTransactions}</p>
                 </div>
                 <FileText className="h-8 w-8 text-muted-foreground/50" />
@@ -250,7 +253,7 @@ export default function Rapprochement() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Rapprochées</p>
+                  <p className="text-sm font-medium text-muted-foreground">{r.reconciled}</p>
                   <p className="text-2xl font-bold text-green-600">{stats.rapprochees}</p>
                 </div>
                 <Check className="h-8 w-8 text-green-500/50" />
@@ -262,7 +265,7 @@ export default function Rapprochement() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-amber-700">En Attente</p>
+                  <p className="text-sm font-medium text-amber-700">{r.pending}</p>
                   <p className="text-2xl font-bold text-amber-600">{stats.nonRapprochees}</p>
                 </div>
                 <AlertCircle className="h-8 w-8 text-amber-500/50" />
@@ -274,7 +277,7 @@ export default function Rapprochement() {
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Montant en Attente</p>
+                  <p className="text-sm font-medium text-muted-foreground">{r.pendingAmount}</p>
                   <p className="text-xl font-bold">{formatCurrency(stats.montantEnAttente)}</p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-muted-foreground/50" />
@@ -287,12 +290,12 @@ export default function Rapprochement() {
         <Card>
           <CardHeader>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <CardTitle>Transactions Bancaires</CardTitle>
+              <CardTitle>{r.bankTransactions}</CardTitle>
               <div className="flex gap-2 w-full sm:w-auto">
                 <div className="relative flex-1 sm:w-64">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher..."
+                    placeholder={r.search}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -300,13 +303,13 @@ export default function Rapprochement() {
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-[140px]">
-                    <SelectValue placeholder="Statut" />
+                    <SelectValue placeholder={r.status} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous</SelectItem>
-                    <SelectItem value="non_rapproche">En attente</SelectItem>
-                    <SelectItem value="rapproche">Rapprochées</SelectItem>
-                    <SelectItem value="ignore">Ignorées</SelectItem>
+                    <SelectItem value="all">{r.statusAll}</SelectItem>
+                    <SelectItem value="non_rapproche">{r.statusPending}</SelectItem>
+                    <SelectItem value="rapproche">{r.statusReconciled}</SelectItem>
+                    <SelectItem value="ignore">{r.statusIgnored}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -316,21 +319,21 @@ export default function Rapprochement() {
             {filteredTransactions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Aucune transaction bancaire</p>
-                <p className="text-sm mt-1">Importez des virements pour commencer le rapprochement</p>
+                <p>{r.noTransactions}</p>
+                <p className="text-sm mt-1">{r.importToStart}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Libellé</TableHead>
-                      <TableHead>Référence</TableHead>
-                      <TableHead className="text-right">Montant</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{r.date}</TableHead>
+                      <TableHead>{r.label}</TableHead>
+                      <TableHead>{r.reference}</TableHead>
+                      <TableHead className="text-right">{r.amount}</TableHead>
+                      <TableHead>{r.status}</TableHead>
+                      <TableHead>{r.score}</TableHead>
+                      <TableHead className="text-right">{r.actions}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -341,7 +344,7 @@ export default function Rapprochement() {
                       return (
                         <TableRow key={transaction.id}>
                           <TableCell className="whitespace-nowrap">
-                            {format(new Date(transaction.date_transaction), 'dd/MM/yyyy', { locale: fr })}
+                            {format(new Date(transaction.date_transaction), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                           </TableCell>
                           <TableCell className="max-w-[300px] truncate" title={transaction.libelle}>
                             {transaction.libelle}
@@ -390,7 +393,7 @@ export default function Rapprochement() {
                                   onClick={() => handleOpenMatch(transaction)}
                                 >
                                   <Link2 className="h-4 w-4 mr-1" />
-                                  Rapprocher
+                                  {r.reconcile}
                                 </Button>
                                 <Button
                                   variant="ghost"
@@ -421,7 +424,7 @@ export default function Rapprochement() {
         <Dialog open={showMatchDialog} onOpenChange={setShowMatchDialog}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Rapprocher la Transaction</DialogTitle>
+              <DialogTitle>{r.reconcileTransaction}</DialogTitle>
             </DialogHeader>
             
             {selectedTransaction && (
@@ -431,19 +434,19 @@ export default function Rapprochement() {
                   <CardContent className="pt-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Date</p>
+                        <p className="text-sm text-muted-foreground">{r.date}</p>
                         <p className="font-medium">
-                          {format(new Date(selectedTransaction.date_transaction), 'dd MMMM yyyy', { locale: fr })}
+                          {format(new Date(selectedTransaction.date_transaction), 'dd MMMM yyyy', { locale: dateLocale || undefined })}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-muted-foreground">Montant</p>
+                        <p className="text-sm text-muted-foreground">{r.amount}</p>
                         <p className="text-xl font-bold text-green-600">
                           {formatCurrency(Number(selectedTransaction.montant))}
                         </p>
                       </div>
                       <div className="col-span-2">
-                        <p className="text-sm text-muted-foreground">Libellé</p>
+                        <p className="text-sm text-muted-foreground">{r.label}</p>
                         <p className="font-medium">{selectedTransaction.libelle}</p>
                       </div>
                     </div>
@@ -452,12 +455,12 @@ export default function Rapprochement() {
 
                 {/* Match Suggestions */}
                 <div>
-                  <h4 className="font-medium mb-3">Correspondances suggérées</h4>
+                  <h4 className="font-medium mb-3">{r.suggestedMatches}</h4>
                   {matchSuggestions.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground">
                       <AlertCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p>Aucune correspondance trouvée</p>
-                      <p className="text-sm">Vérifiez les factures en attente ou créez un rapprochement manuel</p>
+                      <p>{r.noMatchFound}</p>
+                      <p className="text-sm">{r.checkPendingInvoices}</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -478,7 +481,7 @@ export default function Rapprochement() {
                                   </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-1">
-                                  {format(new Date(match.date_facture), 'dd/MM/yyyy')} • {formatCurrency(match.montant_facture)}
+                                  {format(new Date(match.date_facture), 'dd/MM/yyyy', { locale: dateLocale || undefined })} • {formatCurrency(match.montant_facture)}
                                 </p>
                                 <div className="flex flex-wrap gap-1 mt-2">
                                   {match.motifs.map((motif, i) => (
@@ -490,7 +493,7 @@ export default function Rapprochement() {
                               </div>
                               <div className="flex items-center gap-3">
                                 <div className="text-right">
-                                  <p className="text-sm text-muted-foreground">Score</p>
+                                  <p className="text-sm text-muted-foreground">{r.score}</p>
                                   <p className={`font-bold ${
                                     match.score >= 0.8 ? 'text-green-600' :
                                     match.score >= 0.5 ? 'text-amber-600' : 'text-red-600'
@@ -508,7 +511,7 @@ export default function Rapprochement() {
                                   ) : (
                                     <>
                                       <Check className="h-4 w-4 mr-1" />
-                                      Confirmer
+                                      {r.confirm}
                                     </>
                                   )}
                                 </Button>
@@ -529,13 +532,13 @@ export default function Rapprochement() {
         <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Importer une Transaction</DialogTitle>
+              <DialogTitle>{r.importTransaction}</DialogTitle>
             </DialogHeader>
             
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Date</Label>
+                  <Label>{r.date}</Label>
                   <Input
                     type="date"
                     value={importForm.date_transaction}
@@ -543,7 +546,7 @@ export default function Rapprochement() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Type</Label>
+                  <Label>{r.type}</Label>
                   <Select 
                     value={importForm.type_transaction} 
                     onValueChange={(v) => setImportForm({ ...importForm, type_transaction: v })}
@@ -552,15 +555,15 @@ export default function Rapprochement() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="credit">Crédit (Encaissement)</SelectItem>
-                      <SelectItem value="debit">Débit (Paiement)</SelectItem>
+                      <SelectItem value="credit">{r.credit}</SelectItem>
+                      <SelectItem value="debit">{r.debit}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Montant (MAD) *</Label>
+                <Label>{r.amountMAD}</Label>
                 <Input
                   type="number"
                   step="0.01"
@@ -571,16 +574,16 @@ export default function Rapprochement() {
               </div>
 
               <div className="space-y-2">
-                <Label>Libellé *</Label>
+                <Label>{r.labelRequired}</Label>
                 <Textarea
-                  placeholder="Description du virement bancaire..."
+                  placeholder={r.bankDescPlaceholder}
                   value={importForm.libelle}
                   onChange={(e) => setImportForm({ ...importForm, libelle: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Référence bancaire</Label>
+                <Label>{r.bankReference}</Label>
                 <Input
                   placeholder="ex: VIR-2025-001234"
                   value={importForm.reference_bancaire}
@@ -591,7 +594,7 @@ export default function Rapprochement() {
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowImportDialog(false)}>
-                Annuler
+                {r.cancel}
               </Button>
               <Button onClick={handleImport} disabled={importing}>
                 {importing ? (
@@ -599,7 +602,7 @@ export default function Rapprochement() {
                 ) : (
                   <Upload className="h-4 w-4 mr-2" />
                 )}
-                Importer
+                {r.import}
               </Button>
             </DialogFooter>
           </DialogContent>

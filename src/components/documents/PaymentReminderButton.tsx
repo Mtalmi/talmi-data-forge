@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import { Button } from '@/components/ui/button';
 import { Mail, Loader2, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,10 +23,12 @@ export function PaymentReminderButton({
   joursRetard,
 }: PaymentReminderButtonProps) {
   const [sending, setSending] = useState(false);
+  const { t } = useI18n();
+  const pr = t.pages.paymentReminder;
 
   const sendReminder = async () => {
     if (!clientEmail) {
-      toast.error('Email du client non disponible');
+      toast.error(pr.emailUnavailable);
       return;
     }
 
@@ -45,10 +48,10 @@ export function PaymentReminderButton({
 
       if (error) throw error;
 
-      toast.success(`Rappel envoyé à ${clientEmail}`);
+      toast.success(`${pr.reminderSent} ${clientEmail}`);
     } catch (error) {
       console.error('Error sending reminder:', error);
-      toast.error('Erreur lors de l\'envoi du rappel');
+      toast.error(pr.sendError);
     } finally {
       setSending(false);
     }
@@ -70,7 +73,7 @@ export function PaymentReminderButton({
           <Mail className="h-4 w-4" />
         </>
       )}
-      Relancer
+      {pr.remind}
     </Button>
   );
 }
