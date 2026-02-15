@@ -31,7 +31,8 @@ import {
   XCircle,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 const SOURCE_LABELS: Record<string, string> = {
@@ -84,6 +85,8 @@ export function CashDepositsWidget() {
     approveDeposit,
   } = useCashDeposits();
   
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [showReport, setShowReport] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [approvingId, setApprovingId] = useState<string | null>(null);
@@ -245,7 +248,7 @@ export function CashDepositsWidget() {
                   <div>
                     <p className="text-sm font-medium">{formatCurrency(deposit.amount)}</p>
                     <p className="text-xs text-muted-foreground">
-                      {format(new Date(deposit.deposit_date), 'd MMM yyyy', { locale: fr })}
+                      {format(new Date(deposit.deposit_date), 'd MMM yyyy', { locale: dateLocale })}
                     </p>
                   </div>
                   {canApprove && (
@@ -319,7 +322,7 @@ export function CashDepositsWidget() {
                     {monthlySummary.slice(0, 6).map((month) => (
                       <TableRow key={month.month}>
                         <TableCell className="font-medium">
-                          {format(new Date(month.month), 'MMMM yyyy', { locale: fr })}
+                          {format(new Date(month.month), 'MMMM yyyy', { locale: dateLocale })}
                         </TableCell>
                         <TableCell className="text-right">{month.total_deposits}</TableCell>
                         <TableCell className="text-right">{formatCurrency(month.total_amount)}</TableCell>
@@ -370,7 +373,7 @@ export function CashDepositsWidget() {
                       return (
                         <TableRow key={deposit.id}>
                           <TableCell>
-                            {format(new Date(deposit.deposit_date), 'd MMM', { locale: fr })}
+                            {format(new Date(deposit.deposit_date), 'd MMM', { locale: dateLocale })}
                           </TableCell>
                           <TableCell className="font-mono text-xs">
                             {deposit.reference}

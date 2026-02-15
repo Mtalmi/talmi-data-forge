@@ -1,7 +1,7 @@
 import { Package, CheckCircle, Truck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 
 interface DeliveryData {
   bl_id: string;

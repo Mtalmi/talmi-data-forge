@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -69,10 +69,10 @@ export function ProductionSearchBar({
             {dateRange.from ? (
               dateRange.to && dateRange.from !== dateRange.to ? (
                 <span className="text-xs">
-                  {format(dateRange.from, 'dd/MM', { locale: fr })} - {format(dateRange.to, 'dd/MM', { locale: fr })}
+                  {format(dateRange.from, 'dd/MM')} - {format(dateRange.to, 'dd/MM')}
                 </span>
               ) : (
-                <span className="text-xs">{format(dateRange.from, 'dd/MM/yyyy', { locale: fr })}</span>
+                <span className="text-xs">{format(dateRange.from, 'dd/MM/yyyy')}</span>
               )
             ) : (
               <span className="text-xs hidden sm:inline">Période</span>
@@ -103,7 +103,7 @@ export function ProductionSearchBar({
               onDateRangeChange({ from: range?.from || null, to: range?.to || null });
               if (range?.to) setCalendarOpen(false);
             }}
-            locale={fr}
+            locale={undefined}
             numberOfMonths={1}
           />
         </PopoverContent>

@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { useFournisseurs, Fournisseur, Achat, FactureFournisseur } from '@/hooks/useFournisseurs';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import PurchaseOrderForm from '@/components/suppliers/PurchaseOrderForm';
 
 const statusColors: Record<string, string> = {
@@ -619,7 +619,7 @@ export default function Fournisseurs() {
                         <TableCell>{a.delai_commande_jours} {t.pages.fournisseurs.days}</TableCell>
                         <TableCell>
                           {a.derniere_alerte 
-                            ? format(new Date(a.derniere_alerte), 'dd/MM/yyyy HH:mm', { locale: fr })
+                            ? format(new Date(a.derniere_alerte), 'dd/MM/yyyy HH:mm')
                             : '-'
                           }
                         </TableCell>

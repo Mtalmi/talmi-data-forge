@@ -3,7 +3,7 @@ import { FileDown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr } from 'date-fns/locale'; // PDF always in French
 import { ReportingData } from '@/hooks/useReportingData';
 
 interface MonthlyReportPdfGeneratorProps {

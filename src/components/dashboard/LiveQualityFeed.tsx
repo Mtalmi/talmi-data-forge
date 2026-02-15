@@ -31,7 +31,7 @@ import {
   Shield
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr, ar, enUS } from 'date-fns/locale';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 
@@ -55,7 +55,7 @@ interface QualityFeedItem {
 export function LiveQualityFeed() {
   const { isCeo, isSuperviseur } = useAuth();
   const { t, lang } = useI18n();
-  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
+  const dateFnsLocale = getDateLocale(lang);
   const [items, setItems] = useState<QualityFeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPhoto, setSelectedPhoto] = useState<QualityFeedItem | null>(null);

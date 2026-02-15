@@ -23,7 +23,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { 
   Calendar, 
   DollarSign, 
@@ -49,6 +50,8 @@ export function LoanPaymentDialog({
 }: LoanPaymentDialogProps) {
   const { recordPayment } = useLoans();
   const { user } = useAuth();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState(payment.scheduled_amount.toString());
@@ -115,7 +118,7 @@ export function LoanPaymentDialog({
                 <span className="text-sm text-muted-foreground">Date d'Échéance</span>
                 <span className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  {format(dueDate, 'dd MMM yyyy', { locale: fr })}
+                  {format(dueDate, 'dd MMM yyyy', { locale: dateLocale })}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -138,7 +141,7 @@ export function LoanPaymentDialog({
             <Alert>
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription>
-                Paiement effectué le {format(new Date(payment.paid_date!), 'dd MMM yyyy', { locale: fr })}
+                Paiement effectué le {format(new Date(payment.paid_date!), 'dd MMM yyyy', { locale: dateLocale })}
                 {payment.payment_method && ` par ${payment.payment_method}`}
                 {payment.days_late > 0 && ` (${payment.days_late} jours de retard)`}
               </AlertDescription>
