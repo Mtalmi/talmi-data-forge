@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { OrderFormFields } from './OrderFormFields';
 import { QuickClientCreate } from './QuickClientCreate';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Client {
   client_id: string;
@@ -159,6 +160,9 @@ export function DirectOrderDialog({
   zones,
   prestataires,
 }: DirectOrderDialogProps) {
+  const { t } = useI18n();
+  const d = t.directOrder;
+  const c = t.common;
   const isFormValid = orderClientId && orderFormuleId && orderVolume && orderPrix && deliveryDate;
 
   return (
@@ -167,7 +171,7 @@ export function DirectOrderDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <ShoppingCart className="h-6 w-6 text-primary" />
-            Nouvelle Commande Directe
+            {d.newDirectOrder}
           </DialogTitle>
         </DialogHeader>
         
@@ -177,12 +181,12 @@ export function DirectOrderDialog({
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
-                Client *
+                {c.client} *
               </Label>
               <div className="flex gap-2">
                 <Select value={orderClientId} onValueChange={onClientSelect}>
                   <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Sélectionner un client" />
+                    <SelectValue placeholder={d.selectClient} />
                   </SelectTrigger>
                   <SelectContent>
                     {clients.map((client) => (
@@ -204,11 +208,11 @@ export function DirectOrderDialog({
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-muted-foreground" />
-                Formule Béton *
+                {d.concreteFormula} *
               </Label>
               <Select value={orderFormuleId} onValueChange={setOrderFormuleId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une formule" />
+                  <SelectValue placeholder={d.selectFormula} />
                 </SelectTrigger>
                 <SelectContent>
                   {formules.map((formule) => (
@@ -224,7 +228,7 @@ export function DirectOrderDialog({
           {/* Volume & Price */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Volume (m³) *</Label>
+              <Label>{d.volumeM3} *</Label>
               <Input
                 type="number"
                 step="0.5"
@@ -236,7 +240,7 @@ export function DirectOrderDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label>Prix de Vente (DH/m³) *</Label>
+              <Label>{d.sellingPrice} *</Label>
               <Input
                 type="number"
                 step="0.01"
@@ -252,7 +256,7 @@ export function DirectOrderDialog({
           {orderVolume && orderPrix && (
             <div className="p-4 rounded-lg bg-primary/10 border border-primary/30">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total HT</span>
+                <span className="text-sm text-muted-foreground">{c.totalHT}</span>
                 <span className="text-2xl font-bold text-primary font-mono">
                   {(parseFloat(orderVolume) * parseFloat(orderPrix)).toLocaleString()} DH
                 </span>
@@ -297,10 +301,10 @@ export function DirectOrderDialog({
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <Factory className="h-4 w-4 text-primary" />
-                <Label className="font-medium text-primary">Lancer Production Automatiquement</Label>
+                <Label className="font-medium text-primary">{d.autoLaunchProduction}</Label>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Créer le BL et afficher dans le Planning immédiatement
+                {d.autoLaunchDesc}
               </p>
             </div>
             <Switch
@@ -313,17 +317,17 @@ export function DirectOrderDialog({
           <div className="p-4 rounded-lg bg-warning/10 border border-warning/30">
             <p className="text-sm text-warning flex items-center gap-2 font-medium">
               <Lock className="h-4 w-4" />
-              Prix verrouillé après création
+              {d.priceLocked}
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Le prix de vente sera verrouillé. Seul le CEO pourra le modifier.
+              {d.priceLockedDesc}
             </p>
           </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={onCancel}>
-            Annuler
+            {c.cancel}
           </Button>
           <Button 
             onClick={onCreateOrder} 
@@ -338,7 +342,7 @@ export function DirectOrderDialog({
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            {autoLaunchProduction ? 'Créer & Lancer Production' : 'Créer la Commande'}
+            {autoLaunchProduction ? d.createAndLaunch : d.createOrder}
           </Button>
         </DialogFooter>
       </DialogContent>

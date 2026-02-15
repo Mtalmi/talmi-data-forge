@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Devis } from '@/hooks/useSalesWorkflow';
 import { OrderFormFields } from './OrderFormFields';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Zone {
   id: string;
@@ -36,8 +37,6 @@ interface ConvertToBcDialogProps {
   selectedDevis: Devis | null;
   converting: boolean;
   onConvert: () => void;
-  
-  // Form state
   deliveryDate: Date | undefined;
   setDeliveryDate: (date: Date | undefined) => void;
   deliveryTime: string;
@@ -64,8 +63,6 @@ interface ConvertToBcDialogProps {
   setModePaiement: (mode: string) => void;
   selectedPrestataireId: string;
   setSelectedPrestataireId: (id: string) => void;
-  
-  // Data
   zones: Zone[];
   prestataires: Prestataire[];
 }
@@ -105,50 +102,53 @@ export function ConvertToBcDialog({
   zones,
   prestataires,
 }: ConvertToBcDialogProps) {
+  const { t } = useI18n();
+  const cb = t.convertBc;
+  const c = t.common;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <FileCheck className="h-6 w-6 text-primary" />
-            Création Bon de Commande Officiel
+            {cb.createOfficialBc}
           </DialogTitle>
         </DialogHeader>
         
         {selectedDevis && (
           <div className="space-y-6">
-            {/* Quote Summary Card */}
             <Card className="border-primary/30 bg-primary/5">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Récapitulatif du Devis Source
+                  {cb.quoteSourceSummary}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                   <div>
-                    <p className="text-muted-foreground text-xs">N° Devis</p>
+                    <p className="text-muted-foreground text-xs">{cb.quoteNumber}</p>
                     <p className="font-mono font-semibold">{selectedDevis.devis_id}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Client</p>
+                    <p className="text-muted-foreground text-xs">{c.client}</p>
                     <p className="font-semibold">{selectedDevis.client?.nom_client}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Formule</p>
+                    <p className="text-muted-foreground text-xs">{c.formula}</p>
                     <p className="font-mono text-sm">{selectedDevis.formule_id}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Volume</p>
+                    <p className="text-muted-foreground text-xs">{c.volume}</p>
                     <p className="font-semibold">{selectedDevis.volume_m3} m³</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Prix/m³</p>
+                    <p className="text-muted-foreground text-xs">{c.price}/m³</p>
                     <p className="font-mono">{selectedDevis.prix_vente_m3.toLocaleString()} DH</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Total HT</p>
+                    <p className="text-muted-foreground text-xs">{c.totalHT}</p>
                     <p className="font-mono font-bold text-primary text-lg">
                       {selectedDevis.total_ht.toLocaleString()} DH
                     </p>
@@ -157,7 +157,6 @@ export function ConvertToBcDialog({
               </CardContent>
             </Card>
 
-            {/* Order Form Fields */}
             <OrderFormFields
               deliveryDate={deliveryDate}
               setDeliveryDate={setDeliveryDate}
@@ -190,14 +189,13 @@ export function ConvertToBcDialog({
               addressAsTextarea
             />
 
-            {/* Price Lock Warning */}
             <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
               <p className="text-sm text-destructive flex items-center gap-2 font-medium">
                 <Lock className="h-4 w-4" />
-                ATTENTION: Prix de vente verrouillé après validation
+                {cb.priceLockWarning}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Le prix convenu de {selectedDevis.prix_vente_m3.toLocaleString()} DH/m³ sera verrouillé. Seul le CEO pourra modifier ce prix une fois le BC validé.
+                {cb.priceLockDesc.replace('{price}', selectedDevis.prix_vente_m3.toLocaleString())}
               </p>
             </div>
           </div>
@@ -205,7 +203,7 @@ export function ConvertToBcDialog({
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {c.cancel}
           </Button>
           <Button 
             onClick={onConvert} 
@@ -218,7 +216,7 @@ export function ConvertToBcDialog({
             ) : (
               <CheckCircle className="h-4 w-4" />
             )}
-            Valider le Bon de Commande
+            {cb.validateBc}
           </Button>
         </DialogFooter>
       </DialogContent>

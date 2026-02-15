@@ -6,6 +6,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ValiderButtonProps {
   devisId: string;
@@ -25,27 +26,20 @@ export function ValiderButton({
   className,
 }: ValiderButtonProps) {
   const [loading, setLoading] = useState(false);
+  const { t } = useI18n();
+  const v = t.valider;
 
-  // GOD-TIER enforcement: Can only validate if technical approval is complete
   const canValidate = techApprovalStatus === 'APPROVED';
   const isBlocked = techApprovalStatus?.startsWith('BLOCKED');
   const isPending = techApprovalStatus === 'PENDING';
   const isRejected = techApprovalStatus === 'REJECTED';
 
   const getTooltipMessage = () => {
-    if (canValidate) {
-      return 'Valider ce devis (Étape 2)';
-    }
-    if (isPending) {
-      return 'En attente d\'approbation technique - Veuillez contacter le Responsable Technique';
-    }
-    if (isRejected) {
-      return 'L\'approbation technique a été rejetée - Révision requise';
-    }
-    if (isBlocked) {
-      return blockingReason || 'Approbation bloquée - Résoudre les problèmes avant validation';
-    }
-    return 'Approbation technique requise';
+    if (canValidate) return v.validateStep2;
+    if (isPending) return v.awaitingTech;
+    if (isRejected) return v.techRejected;
+    if (isBlocked) return blockingReason || v.approvalBlocked;
+    return v.techRequired;
   };
 
   const handleValidate = async () => {
@@ -63,19 +57,18 @@ export function ValiderButton({
       const result = data as { success: boolean; error?: string; approved_by?: string; approved_role?: string };
 
       if (result.success) {
-        toast.success(`Devis validé par ${result.approved_by} (${result.approved_role})`);
+        toast.success(v.quoteValidated.replace('{user}', result.approved_by || '').replace('{role}', result.approved_role || ''));
         onValidated?.(result);
       } else {
-        toast.error(result.error || 'Erreur lors de la validation');
+        toast.error(result.error || v.validationError);
       }
     } catch (err: any) {
-      toast.error(err.message || 'Erreur lors de la validation');
+      toast.error(err.message || v.validationError);
     } finally {
       setLoading(false);
     }
   };
 
-  // Show blocked state
   if (!canValidate) {
     return (
       <Tooltip>
@@ -93,7 +86,7 @@ export function ValiderButton({
               {isBlocked && <AlertTriangle className="h-3 w-3" />}
               {isPending && <Lock className="h-3 w-3" />}
               {isRejected && <AlertTriangle className="h-3 w-3" />}
-              Validation Bloquée
+              {v.validationBlocked}
             </Badge>
           </div>
         </TooltipTrigger>
@@ -117,7 +110,7 @@ export function ValiderButton({
           ) : (
             <CheckCircle className="h-4 w-4" />
           )}
-          Valider le Devis
+          {v.validateQuote}
         </Button>
       </TooltipTrigger>
       <TooltipContent>

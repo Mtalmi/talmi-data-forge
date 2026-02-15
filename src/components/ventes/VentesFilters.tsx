@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +17,9 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Search, Filter, X, Calendar as CalendarIcon, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 export interface VentesFilterState {
   search: string;
@@ -67,6 +68,10 @@ export function VentesFilters({
   onAutoRefreshToggle,
   searchInputRef,
 }: VentesFiltersProps) {
+  const { t, lang } = useI18n();
+  const c = t.common;
+  const vf = t.ventesFilters;
+  const dateLocale = getDateLocale(lang);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const activeFilterCount = [
@@ -92,14 +97,12 @@ export function VentesFilters({
 
   return (
     <div className="space-y-3">
-      {/* Main Search Bar */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* Search Input */}
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             ref={searchInputRef}
-            placeholder="Rechercher par n° devis, BC, client..."
+            placeholder={vf.searchPlaceholder}
             value={filters.search}
             onChange={(e) => updateFilter('search', e.target.value)}
             className="pl-10 pr-8"
@@ -114,28 +117,26 @@ export function VentesFilters({
           )}
         </div>
 
-        {/* Quick Status Filter */}
         <Select
           value={filters.status}
           onValueChange={(value) => updateFilter('status', value)}
         >
           <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Tous statuts" />
+            <SelectValue placeholder={c.allStatuses} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous statuts</SelectItem>
-            <SelectItem value="en_attente">En Attente</SelectItem>
-            <SelectItem value="accepte">Accepté</SelectItem>
-            <SelectItem value="converti">Converti</SelectItem>
-            <SelectItem value="refuse">Refusé</SelectItem>
-            <SelectItem value="annule">Annulé</SelectItem>
-            <SelectItem value="pret_production">Prêt Production</SelectItem>
-            <SelectItem value="en_production">En Production</SelectItem>
-            <SelectItem value="termine">Terminé</SelectItem>
+            <SelectItem value="all">{c.allStatuses}</SelectItem>
+            <SelectItem value="en_attente">{vf.pending}</SelectItem>
+            <SelectItem value="accepte">{vf.accepted}</SelectItem>
+            <SelectItem value="converti">{vf.converted}</SelectItem>
+            <SelectItem value="refuse">{vf.refused}</SelectItem>
+            <SelectItem value="annule">{vf.cancelled}</SelectItem>
+            <SelectItem value="pret_production">{vf.readyProduction}</SelectItem>
+            <SelectItem value="en_production">{vf.inProduction}</SelectItem>
+            <SelectItem value="termine">{vf.completed}</SelectItem>
           </SelectContent>
         </Select>
 
-        {/* Advanced Filters Toggle */}
         <Button
           variant={showAdvanced ? 'secondary' : 'outline'}
           size="sm"
@@ -143,7 +144,7 @@ export function VentesFilters({
           className="gap-2"
         >
           <Filter className="h-4 w-4" />
-          Filtres
+          {c.filters}
           {activeFilterCount > 0 && (
             <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
               {activeFilterCount}
@@ -151,15 +152,13 @@ export function VentesFilters({
           )}
         </Button>
 
-        {/* Clear All Filters */}
         {(activeFilterCount > 0 || filters.search) && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
             <X className="h-4 w-4 mr-1" />
-            Effacer
+            {c.clear}
           </Button>
         )}
 
-        {/* Auto-Refresh Indicator */}
         <div className="flex items-center gap-2 ml-auto">
           <Button
             variant={autoRefreshEnabled ? 'secondary' : 'ghost'}
@@ -174,7 +173,7 @@ export function VentesFilters({
               "h-2 w-2 rounded-full",
               autoRefreshEnabled ? "bg-success animate-pulse" : "bg-muted-foreground"
             )} />
-            Auto
+            {c.auto}
           </Button>
           
           <Button
@@ -194,21 +193,19 @@ export function VentesFilters({
         </div>
       </div>
 
-      {/* Advanced Filters Panel */}
       {showAdvanced && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-lg bg-muted/30 border">
-          {/* Client Filter */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Client</label>
+            <label className="text-xs font-medium text-muted-foreground">{c.client}</label>
             <Select
               value={filters.clientId}
               onValueChange={(value) => updateFilter('clientId', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Tous clients" />
+                <SelectValue placeholder={c.allClients} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous clients</SelectItem>
+                <SelectItem value="all">{c.allClients}</SelectItem>
                 {clients.map((client) => (
                   <SelectItem key={client.client_id} value={client.client_id}>
                     {client.nom_client}
@@ -218,18 +215,17 @@ export function VentesFilters({
             </Select>
           </div>
 
-          {/* Formule Filter */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Formule</label>
+            <label className="text-xs font-medium text-muted-foreground">{c.formula}</label>
             <Select
               value={filters.formuleId}
               onValueChange={(value) => updateFilter('formuleId', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Toutes formules" />
+                <SelectValue placeholder={c.allFormulas} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes formules</SelectItem>
+                <SelectItem value="all">{c.allFormulas}</SelectItem>
                 {formules.map((formule) => (
                   <SelectItem key={formule.formule_id} value={formule.formule_id}>
                     {formule.formule_id} - {formule.designation}
@@ -239,9 +235,8 @@ export function VentesFilters({
             </Select>
           </div>
 
-          {/* Date From */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Date début</label>
+            <label className="text-xs font-medium text-muted-foreground">{c.dateFrom}</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -252,7 +247,7 @@ export function VentesFilters({
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : 'Sélectionner'}
+                  {filters.dateFrom ? format(filters.dateFrom, 'dd/MM/yyyy') : c.select}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -260,15 +255,14 @@ export function VentesFilters({
                   mode="single"
                   selected={filters.dateFrom}
                   onSelect={(date) => updateFilter('dateFrom', date)}
-                  locale={fr}
+                  locale={dateLocale || undefined}
                 />
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Date To */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Date fin</label>
+            <label className="text-xs font-medium text-muted-foreground">{c.dateTo}</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -279,7 +273,7 @@ export function VentesFilters({
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.dateTo ? format(filters.dateTo, 'dd/MM/yyyy') : 'Sélectionner'}
+                  {filters.dateTo ? format(filters.dateTo, 'dd/MM/yyyy') : c.select}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -287,15 +281,14 @@ export function VentesFilters({
                   mode="single"
                   selected={filters.dateTo}
                   onSelect={(date) => updateFilter('dateTo', date)}
-                  locale={fr}
+                  locale={dateLocale || undefined}
                 />
               </PopoverContent>
             </Popover>
           </div>
 
-          {/* Volume Range */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Volume min (m³)</label>
+            <label className="text-xs font-medium text-muted-foreground">{vf.volumeMin}</label>
             <Input
               type="number"
               placeholder="0"
@@ -305,7 +298,7 @@ export function VentesFilters({
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground">Volume max (m³)</label>
+            <label className="text-xs font-medium text-muted-foreground">{vf.volumeMax}</label>
             <Input
               type="number"
               placeholder="∞"

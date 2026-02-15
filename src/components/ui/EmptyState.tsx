@@ -31,7 +31,6 @@ export function EmptyState({
         className
       )}
     >
-      {/* Branded icon with subtle glow */}
       <div
         className={cn(
           'rounded-2xl flex items-center justify-center mb-5 transition-all duration-500',
@@ -80,7 +79,8 @@ export function EmptyState({
   );
 }
 
-// Pre-configured empty states for common scenarios
+// These configs are now deprecated in favor of t.emptyStates from i18n
+// Kept for backward compatibility - consumers should migrate to useI18n()
 export const emptyStateConfigs = {
   noDeliveries: {
     title: 'Aucune livraison',

@@ -18,6 +18,7 @@ import {
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ProductionFiltersMobileProps {
   activeFilters: string[];
@@ -25,58 +26,31 @@ interface ProductionFiltersMobileProps {
   onClearFilters: () => void;
 }
 
-const FILTER_OPTIONS = [
-  { 
-    value: 'pret_production', 
-    label: 'Prêts', 
-    icon: Clock,
-    color: 'bg-blue-500'
-  },
-  { 
-    value: 'production', 
-    label: 'En Production', 
-    icon: Factory,
-    color: 'bg-orange-500'
-  },
-  { 
-    value: 'validation_technique', 
-    label: 'Validation', 
-    icon: CheckCircle,
-    color: 'bg-purple-500'
-  },
-  { 
-    value: 'en_livraison', 
-    label: 'En Livraison', 
-    icon: Truck,
-    color: 'bg-yellow-500'
-  },
-  { 
-    value: 'livre', 
-    label: 'Livrés', 
-    icon: CheckCircle,
-    color: 'bg-green-500'
-  },
-  { 
-    value: 'alerte_ecart', 
-    label: 'Alertes Écart', 
-    icon: AlertTriangle,
-    color: 'bg-red-500'
-  },
-];
-
 export function ProductionFiltersMobile({
   activeFilters,
   onFilterChange,
   onClearFilters
 }: ProductionFiltersMobileProps) {
+  const { t } = useI18n();
+  const pf = t.productionFilters;
+  const c = t.common;
   const activeCount = activeFilters.length;
+
+  const FILTER_OPTIONS = [
+    { value: 'pret_production', label: pf.ready, icon: Clock, color: 'bg-blue-500' },
+    { value: 'production', label: pf.inProduction, icon: Factory, color: 'bg-orange-500' },
+    { value: 'validation_technique', label: pf.validation, icon: CheckCircle, color: 'bg-purple-500' },
+    { value: 'en_livraison', label: pf.inDelivery, icon: Truck, color: 'bg-yellow-500' },
+    { value: 'livre', label: pf.delivered, icon: CheckCircle, color: 'bg-green-500' },
+    { value: 'alerte_ecart', label: pf.deviationAlerts, icon: AlertTriangle, color: 'bg-red-500' },
+  ];
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" className="relative h-12 w-full md:w-auto">
           <Filter className="h-4 w-4 mr-2" />
-          <span>Filtres</span>
+          <span>{c.filters}</span>
           {activeCount > 0 && (
             <Badge 
               variant="destructive" 
@@ -90,10 +64,8 @@ export function ProductionFiltersMobile({
       
       <SheetContent side="bottom" className="h-[80vh]">
         <SheetHeader>
-          <SheetTitle>Filtrer les Lots</SheetTitle>
-          <SheetDescription>
-            Sélectionnez les statuts à afficher
-          </SheetDescription>
+          <SheetTitle>{pf.filterLots}</SheetTitle>
+          <SheetDescription>{pf.selectStatuses}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 space-y-3">
@@ -127,7 +99,7 @@ export function ProductionFiltersMobile({
               className="w-full h-12 text-destructive"
             >
               <X className="h-4 w-4 mr-2" />
-              Effacer tous les filtres
+              {pf.clearAllFilters}
             </Button>
           </div>
         )}

@@ -30,13 +30,16 @@ import {
 } from 'lucide-react';
 import { useTightTimes } from '@/hooks/useTightTimes';
 import { useAuth } from '@/hooks/useAuth';
-import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { format } from 'date-fns';
 import { triggerHaptic } from '@/lib/haptics';
+import { useI18n } from '@/i18n/I18nContext';
 
 export function EmergencyBcApprovalWidget() {
   const { isCeo, isSuperviseur } = useAuth();
   const { pendingApprovals, processApproval, loading } = useTightTimes();
+  const { t } = useI18n();
+  const e = t.emergencyBc;
+  const c = t.common;
   
   const [selectedApproval, setSelectedApproval] = useState<any>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -81,9 +84,9 @@ export function EmergencyBcApprovalWidget() {
   const getConditionLabel = (condition: string) => {
     switch (condition) {
       case 'AFTER_18H_SAME_DAY':
-        return 'Après 18h (Même Jour)';
+        return e.afterSameDay;
       case 'TIGHT_TIMES':
-        return 'Mode TIGHT TIMES';
+        return e.tightTimesMode;
       default:
         return condition;
     }
@@ -102,14 +105,14 @@ export function EmergencyBcApprovalWidget() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-red-500 animate-pulse" />
-              <CardTitle className="text-base">BC Urgence en Attente</CardTitle>
+              <CardTitle className="text-base">{e.urgentBcPending}</CardTitle>
             </div>
             <Badge variant="destructive" className="animate-pulse">
-              {pendingApprovals.length} en attente
+              {pendingApprovals.length} {e.pendingCount}
             </Badge>
           </div>
           <CardDescription>
-            Approbation requise dans les 30 minutes
+            {e.approvalRequired}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -129,7 +132,7 @@ export function EmergencyBcApprovalWidget() {
                   <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                     <span className="flex items-center gap-1">
                       <User className="h-3 w-3" />
-                      {approval.requested_by_name || 'Inconnu'}
+                      {approval.requested_by_name || c.unknown}
                     </span>
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
@@ -142,7 +145,7 @@ export function EmergencyBcApprovalWidget() {
                   className={`${approval.remaining_minutes <= 10 ? 'text-red-600 border-red-500 animate-pulse' : ''}`}
                 >
                   <Clock className="h-3 w-3 mr-1" />
-                  {approval.remaining_minutes} min
+                  {approval.remaining_minutes} {e.min}
                 </Badge>
               </div>
               
@@ -155,7 +158,7 @@ export function EmergencyBcApprovalWidget() {
                   className="flex-1 gap-1 bg-green-600 hover:bg-green-700"
                 >
                   <CheckCircle2 className="h-3 w-3" />
-                  Approuver
+                  {c.approve}
                 </Button>
                 <Button
                   size="sm"
@@ -164,7 +167,7 @@ export function EmergencyBcApprovalWidget() {
                   className="flex-1 gap-1 border-red-500/50 text-red-600 hover:bg-red-500/10"
                 >
                   <XCircle className="h-3 w-3" />
-                  Refuser
+                  {c.reject}
                 </Button>
               </div>
             </div>
@@ -180,19 +183,17 @@ export function EmergencyBcApprovalWidget() {
               {actionType === 'APPROVE' ? (
                 <>
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  Approuver BC Urgence
+                  {e.approveUrgentBc}
                 </>
               ) : (
                 <>
                   <XCircle className="h-5 w-5 text-red-500" />
-                  Refuser BC Urgence
+                  {e.rejectUrgentBc}
                 </>
               )}
             </DialogTitle>
             <DialogDescription>
-              {actionType === 'APPROVE' 
-                ? 'Le BC sera validé et les équipes seront notifiées immédiatement.'
-                : 'Le BC sera refusé et le demandeur sera notifié.'}
+              {actionType === 'APPROVE' ? e.bcApprovedDesc : e.bcRejectedDesc}
             </DialogDescription>
           </DialogHeader>
 
@@ -205,32 +206,32 @@ export function EmergencyBcApprovalWidget() {
                 </div>
                 <p className="text-sm text-muted-foreground">{selectedApproval.emergency_reason}</p>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-2">
-                  <span>Par: {selectedApproval.requested_by_name}</span>
-                  <span>Livraison: {format(new Date(selectedApproval.delivery_date), 'dd/MM/yyyy')}</span>
+                  <span>{c.by}: {selectedApproval.requested_by_name}</span>
+                  <span>{c.delivery}: {format(new Date(selectedApproval.delivery_date), 'dd/MM/yyyy')}</span>
                 </div>
               </div>
 
               {actionType === 'APPROVE' && (
                 <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/30">
-                  <p className="text-sm text-green-700 font-medium">Notifications envoyées à:</p>
+                  <p className="text-sm text-green-700 font-medium">{e.notificationsSent}</p>
                   <ul className="text-xs text-muted-foreground mt-1 space-y-1">
-                    <li>• Équipe Production (préparation réception)</li>
-                    <li>• Resp. Technique (contrôle qualité)</li>
-                    <li>• Demandeur (confirmation)</li>
+                    <li>• {e.productionTeam}</li>
+                    <li>• {e.techManager}</li>
+                    <li>• {e.requester}</li>
                   </ul>
                 </div>
               )}
 
               <div className="space-y-2">
                 <Label>
-                  {actionType === 'APPROVE' ? 'Notes (optionnel)' : 'Raison du Refus'}
+                  {actionType === 'APPROVE' ? e.approveNotes : e.rejectReason}
                 </Label>
                 <Textarea
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(e_) => setNotes(e_.target.value)}
                   placeholder={actionType === 'APPROVE' 
-                    ? 'Ajouter des notes...' 
-                    : 'Expliquez la raison du refus...'}
+                    ? e.addNotesPlaceholder 
+                    : e.explainRejectPlaceholder}
                   rows={3}
                 />
               </div>
@@ -239,7 +240,7 @@ export function EmergencyBcApprovalWidget() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Annuler
+              {c.cancel}
             </Button>
             <Button 
               onClick={confirmAction}
@@ -253,7 +254,7 @@ export function EmergencyBcApprovalWidget() {
               ) : (
                 <XCircle className="h-4 w-4" />
               )}
-              {actionType === 'APPROVE' ? 'Confirmer Approbation' : 'Confirmer Refus'}
+              {actionType === 'APPROVE' ? e.confirmApproval : e.confirmReject}
             </Button>
           </DialogFooter>
         </DialogContent>
