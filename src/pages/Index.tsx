@@ -16,7 +16,7 @@ export default function Index() {
 
   useEffect(() => {
     if (!loading && !user) {
-      navigate('/auth', { replace: true });
+      navigate('/landing', { replace: true });
     }
   }, [user, loading, navigate]);
 
