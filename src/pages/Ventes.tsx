@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useSalesWorkflow, Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { useZonesLivraison } from '@/hooks/useZonesLivraison';
@@ -54,6 +55,7 @@ import { Lock, Shield } from 'lucide-react';
 
 export default function Ventes() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { 
     isCentraliste, isCeo, isSuperviseur, isAgentAdministratif, isCommercial, 
     isDirecteurOperations, isResponsableTechnique,
@@ -71,13 +73,13 @@ export default function Ventes() {
           <div className="p-6 rounded-full bg-destructive/10">
             <Lock className="h-12 w-12 text-destructive" />
           </div>
-          <h1 className="text-2xl font-bold text-destructive">Accès Refusé</h1>
+          <h1 className="text-2xl font-bold text-destructive">{t.pages.accessDenied}</h1>
           <p className="text-muted-foreground text-center max-w-md">
-            Le module Ventes n'est pas accessible pour votre rôle.<br />
-            Veuillez contacter l'administrateur si vous pensez qu'il s'agit d'une erreur.
+             {t.pages.moduleNotAccessible}<br />
+             {t.pages.contactAdmin}
           </p>
           <Button variant="outline" onClick={() => navigate('/production')}>
-            Retour à Production
+            {t.pages.backToProduction}
           </Button>
         </div>
       </MainLayout>
@@ -415,9 +417,9 @@ export default function Ventes() {
           {/* Header */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Pipeline Commercial</h1>
+              <h1 className="text-2xl font-bold tracking-tight">{t.pages.ventes.title}</h1>
               <p className="text-muted-foreground">
-                Gestion des devis et bons de commande
+                {t.pages.ventes.subtitle}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-2">

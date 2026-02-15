@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -106,6 +108,8 @@ interface Camion {
 export default function Planning() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const { isDirecteurOperations, isCeo, isAgentAdministratif, isSuperviseur, user, canEditPlanning, canOverrideCreditBlock, role } = useAuth();
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
@@ -262,7 +266,7 @@ export default function Planning() {
 
     } catch (error) {
       console.error('Error fetching planning data:', error);
-      toast.error('Erreur lors du chargement des données');
+      toast.error(t.pages.production.loadingError);
     } finally {
       setLoading(false);
     }

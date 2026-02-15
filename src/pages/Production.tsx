@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState, useMemo, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { useAuth } from '@/hooks/useAuth';
 import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useMachineSync } from '@/hooks/useMachineSync';
@@ -113,6 +115,8 @@ interface Formule {
 }
 
 export default function Production() {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const blFromUrl = searchParams.get('bl');
@@ -285,7 +289,7 @@ export default function Production() {
       setFormules(formulesRes.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Erreur lors du chargement');
+      toast.error(t.pages.production.loadingError);
     } finally {
       setLoading(false);
     }
@@ -450,7 +454,7 @@ export default function Production() {
 
     // Check if justification is required but not provided
     if (deviations.length > 0 && !justification.trim()) {
-      toast.error('Une justification est requise pour les écarts > 5%');
+      toast.error(t.pages.production.justificationRequired);
       return;
     }
 
@@ -489,11 +493,11 @@ export default function Production() {
 
       // Close dialog first to ensure UI updates immediately
       closeAllDialogs();
-      toast.success('Données de production enregistrées');
+      toast.success(t.pages.production.dataSaved);
       fetchData();
     } catch (error) {
       console.error('Error saving:', error);
-      toast.error('Erreur lors de l\'enregistrement');
+      toast.error(t.pages.production.saveError);
     } finally {
       setSaving(false);
     }
@@ -512,13 +516,13 @@ export default function Production() {
       );
 
       if (success) {
-        toast.success('Production démarrée');
+        toast.success(t.pages.production.productionStarted);
         closeAllDialogs();
         fetchData();
       }
     } catch (error) {
       console.error('Error starting production:', error);
-      toast.error('Erreur lors du démarrage de la production');
+      toast.error(t.pages.production.startError);
     } finally {
       setSaving(false);
     }
@@ -529,7 +533,7 @@ export default function Production() {
 
     // Check if justification is required
     if (deviations.length > 0 && !justification.trim()) {
-      toast.error('Une justification est requise avant de passer en validation');
+      toast.error(t.pages.production.justificationRequiredValidation);
       return;
     }
 
@@ -581,14 +585,14 @@ export default function Production() {
       );
 
       if (success) {
-        toast.success('Production enregistrée & stocks mis à jour');
+        toast.success(t.pages.production.productionRecorded);
         closeAllDialogs();
         fetchData();
         fetchStocks();
       }
     } catch (error) {
       console.error('Error advancing to validation:', error);
-      toast.error('Erreur lors de la validation');
+      toast.error(t.pages.production.validationError);
     } finally {
       setSaving(false);
     }
@@ -600,12 +604,12 @@ export default function Production() {
     try {
       const success = await transitionWorkflow(blId, 'validation_technique', 'en_livraison');
       if (success) {
-        toast.success('Envoyé en livraison! Le dispatcher est notifié.');
+        toast.success(t.pages.production.sentToDelivery);
         fetchData();
       }
     } catch (error) {
       console.error('Error sending to delivery:', error);
-      toast.error('Erreur lors de l\'envoi en livraison');
+      toast.error(t.pages.production.deliveryError);
     } finally {
       setSaving(false);
     }
@@ -800,10 +804,10 @@ export default function Production() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
               <Factory className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">Centre Production</span>
+              <span className="truncate">{t.pages.production.centerTitle}</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Interface Centraliste - Comparaison Théorique vs Réel
+              {t.pages.production.centerSubtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -816,17 +820,17 @@ export default function Production() {
               onClick={() => navigate(buildPlanningUrl(selectedDate))}
             >
               <Clock className="h-4 w-4" />
-              <span className="hidden sm:inline">Planning</span>
+              <span className="hidden sm:inline">{t.pages.production.planning}</span>
               <ExternalLink className="h-3 w-3 hidden sm:inline" />
             </Button>
             {lastSync && (
               <span className="text-[10px] sm:text-xs text-muted-foreground hidden sm:inline">
-                Sync: {format(lastSync, 'HH:mm:ss', { locale: fr })}
+                {t.pages.production.sync}: {format(lastSync, 'HH:mm:ss', { locale: dateLocale || undefined })}
               </span>
             )}
             <Button variant="outline" size="sm" onClick={fetchData} className="min-h-[40px]">
               <RefreshCw className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
+              <span className="hidden sm:inline">{t.pages.production.refresh}</span>
             </Button>
           </div>
         </div>
@@ -854,8 +858,8 @@ export default function Production() {
                   <CalendarIcon className="h-4 w-4 text-primary" />
                   <span className="font-medium">
                     {isSameDay(selectedDate, new Date()) 
-                      ? "Aujourd'hui" 
-                      : format(selectedDate, 'EEEE d MMMM', { locale: fr })}
+                      ? t.pages.production.today 
+                      : format(selectedDate, 'EEEE d MMMM', { locale: dateLocale || undefined })}
                   </span>
                 </Button>
               </PopoverTrigger>
@@ -869,7 +873,7 @@ export default function Production() {
                       setDateRange({ from: startOfDay(date), to: endOfDay(date) });
                     }
                   }}
-                  locale={fr}
+                  locale={dateLocale || undefined}
                   className="pointer-events-auto"
                 />
               </PopoverContent>
@@ -903,11 +907,11 @@ export default function Production() {
                 className="gap-1.5"
               >
                 <CalendarIcon className="h-3.5 w-3.5" />
-                Aujourd'hui
+                {t.pages.production.today}
               </Button>
             )}
             <span className="text-sm text-muted-foreground">
-              {format(selectedDate, 'dd/MM/yyyy', { locale: fr })}
+              {format(selectedDate, 'dd/MM/yyyy', { locale: dateLocale || undefined })}
             </span>
           </div>
         </div>

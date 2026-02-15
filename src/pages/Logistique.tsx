@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useFlotte } from '@/hooks/useFlotte';
@@ -64,6 +65,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Logistique() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { isCeo, isDirecteurOperations, isSuperviseur } = useAuth();
   const {
     vehicules,
@@ -193,10 +195,10 @@ export default function Logistique() {
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
               <Truck className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">Logistique & Flotte</span>
+              <span className="truncate">{t.pages.logistique.title}</span>
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              Gestion des véhicules, rotations et performance prestataires
+              {t.pages.logistique.subtitle}
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">

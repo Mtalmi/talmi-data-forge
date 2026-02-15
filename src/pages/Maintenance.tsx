@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -80,6 +81,7 @@ interface IncidentCentrale {
 
 export default function Maintenance() {
   const { user, isCeo, isResponsableTechnique } = useAuth();
+  const { t } = useI18n();
   const canManageCalibration = isCeo || isResponsableTechnique;
   const queryClient = useQueryClient();
   const [showCleaningForm, setShowCleaningForm] = useState(false);
@@ -246,22 +248,22 @@ export default function Maintenance() {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <Wrench className="h-6 w-6 text-primary" />
-              Maintenance & Centrale
+              {t.pages.maintenance.title}
             </h1>
             <p className="text-muted-foreground">
-              Équipements, nettoyage quotidien, étalonnage et incidents
+              {t.pages.maintenance.subtitle}
             </p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => queryClient.invalidateQueries()}>
               <RefreshCw className="h-4 w-4 mr-2" />
-              Actualiser
+              {t.pages.maintenance.refresh}
             </Button>
             <Dialog open={showCleaningForm} onOpenChange={setShowCleaningForm}>
               <DialogTrigger asChild>
                 <Button>
                   <ClipboardCheck className="h-4 w-4 mr-2" />
-                  Checklist Nettoyage
+                  {t.pages.maintenance.cleaningChecklist}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
