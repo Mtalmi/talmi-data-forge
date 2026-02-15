@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Clock, ChevronDown } from "lucide-react";
+import { useI18n } from '@/i18n/I18nContext';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,6 +50,7 @@ interface TimePickerProps {
 }
 
 export function TimePicker({ value, onChange, placeholder = "HH:MM", className }: TimePickerProps) {
+  const { t } = useI18n();
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState(value);
   const scrollRef = React.useRef<HTMLDivElement>(null);
@@ -134,7 +136,7 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
             value={inputValue}
             onChange={handleInputChange}
             onBlur={handleInputBlur}
-            placeholder="Saisir l'heure..."
+            placeholder={t.timePicker.placeholder}
             className={cn(
               "h-9",
               !isValid && "border-destructive focus-visible:ring-destructive"

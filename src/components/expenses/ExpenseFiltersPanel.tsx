@@ -5,44 +5,48 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Search } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ExpenseFiltersPanelProps {
   filters: ExpenseFilters;
   onChange: (filters: ExpenseFilters) => void;
 }
 
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'Tous les statuts' },
-  { value: 'brouillon', label: 'Brouillon' },
-  { value: 'en_attente', label: 'En attente' },
-  { value: 'approuve', label: 'Approuvé' },
-  { value: 'rejete', label: 'Rejeté' },
-  { value: 'paye', label: 'Payé' },
-  { value: 'bloque_plafond', label: 'Bloqué (Plafond)' },
-];
-
-const LEVEL_OPTIONS = [
-  { value: 'all', label: 'Tous les niveaux' },
-  { value: 'level_1', label: 'Niveau 1 (≤ 2,000 MAD)' },
-  { value: 'level_2', label: 'Niveau 2 (2,001-20,000 MAD)' },
-  { value: 'level_3', label: 'Niveau 3 (> 20,000 MAD)' },
-];
-
-const CATEGORY_OPTIONS = [
-  { value: 'all', label: 'Toutes les catégories' },
-  { value: 'carburant', label: 'Carburant' },
-  { value: 'maintenance', label: 'Maintenance' },
-  { value: 'fournitures', label: 'Fournitures' },
-  { value: 'transport', label: 'Transport' },
-  { value: 'reparation', label: 'Réparation' },
-  { value: 'nettoyage', label: 'Nettoyage' },
-  { value: 'petit_equipement', label: 'Petit Équipement' },
-  { value: 'services_externes', label: 'Services Externes' },
-  { value: 'frais_administratifs', label: 'Frais Administratifs' },
-  { value: 'autre', label: 'Autre' },
-];
-
 export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelProps) {
+  const { t } = useI18n();
+  const ef = t.expenseFilters;
+
+  const STATUS_OPTIONS = [
+    { value: 'all', label: ef.statuses.all },
+    { value: 'brouillon', label: ef.statuses.brouillon },
+    { value: 'en_attente', label: ef.statuses.en_attente },
+    { value: 'approuve', label: ef.statuses.approuve },
+    { value: 'rejete', label: ef.statuses.rejete },
+    { value: 'paye', label: ef.statuses.paye },
+    { value: 'bloque_plafond', label: ef.statuses.bloque_plafond },
+  ];
+
+  const LEVEL_OPTIONS = [
+    { value: 'all', label: ef.levels.all },
+    { value: 'level_1', label: ef.levels.level_1 },
+    { value: 'level_2', label: ef.levels.level_2 },
+    { value: 'level_3', label: ef.levels.level_3 },
+  ];
+
+  const CATEGORY_OPTIONS = [
+    { value: 'all', label: ef.categories.all },
+    { value: 'carburant', label: ef.categories.carburant },
+    { value: 'maintenance', label: ef.categories.maintenance },
+    { value: 'fournitures', label: ef.categories.fournitures },
+    { value: 'transport', label: ef.categories.transport },
+    { value: 'reparation', label: ef.categories.reparation },
+    { value: 'nettoyage', label: ef.categories.nettoyage },
+    { value: 'petit_equipement', label: ef.categories.petit_equipement },
+    { value: 'services_externes', label: ef.categories.services_externes },
+    { value: 'frais_administratifs', label: ef.categories.frais_administratifs },
+    { value: 'autre', label: ef.categories.autre },
+  ];
+
   const hasFilters = Object.values(filters).some(v => v && v !== 'all');
 
   const updateFilter = (key: keyof ExpenseFilters, value: string) => {
@@ -66,11 +70,11 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {/* Search */}
           <div className="space-y-2 lg:col-span-2">
-            <Label className="text-xs">Rechercher</Label>
+            <Label className="text-xs">{ef.search}</Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Référence, description, demandeur..."
+                placeholder={ef.searchPlaceholder}
                 value={filters.search || ''}
                 onChange={(e) => updateFilter('search', e.target.value)}
                 className="pl-9"
@@ -80,7 +84,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
 
           {/* Status */}
           <div className="space-y-2">
-            <Label className="text-xs">Statut</Label>
+            <Label className="text-xs">{ef.status}</Label>
             <Select 
               value={filters.status || 'all'} 
               onValueChange={(v) => updateFilter('status', v)}
@@ -100,7 +104,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
 
           {/* Level */}
           <div className="space-y-2">
-            <Label className="text-xs">Niveau d'approbation</Label>
+            <Label className="text-xs">{ef.approvalLevel}</Label>
             <Select 
               value={filters.level || 'all'} 
               onValueChange={(v) => updateFilter('level', v)}
@@ -120,7 +124,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-xs">Catégorie</Label>
+            <Label className="text-xs">{ef.category}</Label>
             <Select 
               value={filters.category || 'all'} 
               onValueChange={(v) => updateFilter('category', v)}
@@ -143,7 +147,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
             {hasFilters && (
               <Button variant="ghost" size="sm" onClick={clearFilters} className="w-full">
                 <X className="h-4 w-4 mr-2" />
-                Effacer
+                {ef.clear}
               </Button>
             )}
           </div>
@@ -152,7 +156,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
         {/* Date Range */}
         <div className="grid grid-cols-2 gap-4 mt-4">
           <div className="space-y-2">
-            <Label className="text-xs">Date début</Label>
+            <Label className="text-xs">{ef.dateFrom}</Label>
             <Input
               type="date"
               value={filters.dateFrom || ''}
@@ -160,7 +164,7 @@ export function ExpenseFiltersPanel({ filters, onChange }: ExpenseFiltersPanelPr
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-xs">Date fin</Label>
+            <Label className="text-xs">{ef.dateTo}</Label>
             <Input
               type="date"
               value={filters.dateTo || ''}

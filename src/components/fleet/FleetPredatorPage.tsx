@@ -37,8 +37,11 @@ import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 export function FleetPredatorPage() {
+  const { t } = useI18n();
+  const fp = t.fleetPredator;
   const { geofences, alerts, addGeofence, fetchGeofences, trucks, fetchTrucks } = useGPSTracking();
   const { 
     demoEnabled, 
@@ -357,7 +360,7 @@ export function FleetPredatorPage() {
                   ))}
                   {activeTrucks.length === 0 && (
                     <div className="text-center py-8 text-xs text-muted-foreground">
-                      Aucun véhicule avec position GPS
+                      {fp.noGpsVehicles}
                     </div>
                   )}
                 </div>
@@ -375,43 +378,43 @@ export function FleetPredatorPage() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Shield className="h-5 w-5 text-primary" />
-                    Zones de Sécurité Actives
+                    {fp.activeSecurityZones}
                   </CardTitle>
                   <Dialog open={addingZone} onOpenChange={setAddingZone}>
                     <DialogTrigger asChild>
                       <Button size="sm" className="bg-primary hover:bg-primary/90">
                         <Plus className="h-4 w-4 mr-1" />
-                        Ajouter
+                        {fp.add}
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Nouvelle Zone de Sécurité</DialogTitle>
+                        <DialogTitle>{fp.newSecurityZone}</DialogTitle>
                       </DialogHeader>
                       <div className="space-y-4 pt-4">
                         <div>
-                          <Label>Nom de la zone</Label>
+                          <Label>{fp.zoneName}</Label>
                           <Input
                             value={newZoneName}
                             onChange={(e) => setNewZoneName(e.target.value)}
-                            placeholder="Ex: Chantier Client ABC"
+                            placeholder={fp.zoneNamePlaceholder}
                           />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <Label>Latitude</Label>
+                            <Label>{fp.latitude}</Label>
                             <Input value={newZoneLat} onChange={(e) => setNewZoneLat(e.target.value)} placeholder="33.5731" />
                           </div>
                           <div>
-                            <Label>Longitude</Label>
+                            <Label>{fp.longitude}</Label>
                             <Input value={newZoneLng} onChange={(e) => setNewZoneLng(e.target.value)} placeholder="-7.5898" />
                           </div>
                         </div>
                         <div>
-                          <Label>Rayon (mètres)</Label>
+                          <Label>{fp.radiusMeters}</Label>
                           <Input type="number" value={newZoneRadius} onChange={(e) => setNewZoneRadius(e.target.value)} placeholder="500" />
                         </div>
-                        <Button onClick={handleAddZone} className="w-full">Créer la Zone</Button>
+                        <Button onClick={handleAddZone} className="w-full">{fp.createZone}</Button>
                       </div>
                     </DialogContent>
                   </Dialog>
@@ -433,7 +436,7 @@ export function FleetPredatorPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge variant={zone.type === 'plant' ? 'default' : zone.type === 'client_site' ? 'secondary' : 'outline'}>
-                            {zone.type === 'plant' ? 'Centrale' : zone.type === 'client_site' ? 'Client' : 'Custom'}
+                            {zone.type === 'plant' ? fp.plant : zone.type === 'client_site' ? fp.clientSite : fp.custom}
                           </Badge>
                           {zone.type !== 'plant' && (
                             <Button
@@ -449,7 +452,7 @@ export function FleetPredatorPage() {
                       </div>
                     ))}
                     {geofences.length === 0 && (
-                      <p className="text-center text-muted-foreground py-8">Aucune zone configurée</p>
+                      <p className="text-center text-muted-foreground py-8">{fp.noZoneConfigured}</p>
                     )}
                   </div>
                 </ScrollArea>
@@ -461,7 +464,7 @@ export function FleetPredatorPage() {
               <CardHeader>
                 <CardTitle className="text-lg text-destructive flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
-                  Alertes Géofencing
+                  {fp.geofenceAlerts}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -472,22 +475,22 @@ export function FleetPredatorPage() {
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-bold text-destructive">🚨 {alert.id_camion}</span>
                           <Badge variant="destructive" className="text-[10px]">
-                            {alert.event_type === 'unplanned_stop' ? 'Arrêt' : alert.event_type}
+                            {alert.event_type === 'unplanned_stop' ? fp.stop : alert.event_type}
                           </Badge>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          Durée: {Math.round(alert.duration_minutes || 0)} min
+                          {fp.duration}: {Math.round(alert.duration_minutes || 0)} min
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Position: {alert.latitude.toFixed(4)}, {alert.longitude.toFixed(4)}
+                          {fp.position}: {alert.latitude.toFixed(4)}, {alert.longitude.toFixed(4)}
                         </p>
                       </div>
                     ))}
                     {activeAlerts.length === 0 && (
                       <div className="text-center py-8">
                         <Shield className="h-12 w-12 text-emerald-500 mx-auto mb-2" />
-                        <p className="text-emerald-500 font-medium">Aucune alerte</p>
-                        <p className="text-muted-foreground text-sm">Toutes les zones sont sécurisées</p>
+                        <p className="text-emerald-500 font-medium">{fp.noAlert}</p>
+                        <p className="text-muted-foreground text-sm">{fp.allZonesSecure}</p>
                       </div>
                     )}
                   </div>

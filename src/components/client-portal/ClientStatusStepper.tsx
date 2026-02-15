@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { ClipboardList, Factory, Truck, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ClientStatusStepperProps {
   status: string;
@@ -8,13 +9,6 @@ interface ClientStatusStepperProps {
   arrivalTime: string | null;
   confirmedAt: string | null;
 }
-
-const STEPS = [
-  { key: 'planification', label: 'En Préparation', icon: ClipboardList },
-  { key: 'production', label: 'En Production', icon: Factory },
-  { key: 'en_livraison', label: 'En Route', icon: Truck },
-  { key: 'livre', label: 'Livré', icon: CheckCircle },
-];
 
 const STATUS_ORDER = ['planification', 'production', 'validation_technique', 'en_livraison', 'livre'];
 
@@ -24,8 +18,17 @@ export function ClientStatusStepper({
   arrivalTime,
   confirmedAt,
 }: ClientStatusStepperProps) {
+  const { t } = useI18n();
+  const cp = t.clientPortal;
+
+  const STEPS = [
+    { key: 'planification', label: cp.steps.preparing, icon: ClipboardList },
+    { key: 'production', label: cp.steps.production, icon: Factory },
+    { key: 'en_livraison', label: cp.steps.enRoute, icon: Truck },
+    { key: 'livre', label: cp.steps.delivered, icon: CheckCircle },
+  ];
+
   const normalizedStatus = status === 'validation_technique' ? 'production' : status;
-  const currentIndex = STATUS_ORDER.indexOf(status);
 
   const getStepState = (stepKey: string): 'completed' | 'current' | 'upcoming' => {
     const stepIndex = STEPS.findIndex(s => s.key === stepKey);
@@ -50,10 +53,10 @@ export function ClientStatusStepper({
   return (
     <div className="p-4 bg-gradient-to-br from-gray-900/80 to-gray-900/40 border border-amber-500/20 rounded-2xl">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-amber-400/80">Statut de la Livraison</h3>
+        <h3 className="text-sm font-medium text-amber-400/80">{cp.deliveryStatus}</h3>
         <div className="flex items-center gap-1.5 text-xs text-gray-400">
           <Clock className="h-3 w-3" />
-          <span>Temps réel</span>
+          <span>{cp.realTime}</span>
         </div>
       </div>
 
