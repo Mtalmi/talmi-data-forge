@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['DM Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Cairo', 'DM Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
         display: ['Syne', 'DM Sans', 'system-ui', 'sans-serif'],
       },
