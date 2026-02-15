@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/layout/ThemeToggle';
 import heroPlantNight from '@/assets/hero_plant_night.jpg';
 import statsTexture from '@/assets/stats-texture.jpg';
 import modulesBg from '@/assets/modules-bg.jpg';
+import PricingSection from '@/components/landing/PricingSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -273,6 +274,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* PRICING */}
+      <PricingSection />
 
       {/* TRUST BAR */}
       <section className="border-t border-border py-16 bg-background">
