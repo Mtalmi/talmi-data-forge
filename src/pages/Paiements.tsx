@@ -68,10 +68,10 @@ import { toast } from 'sonner';
 const AGING_COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--accent))', 'hsl(var(--destructive))'];
 const MODE_COLORS = ['hsl(var(--primary))', 'hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--accent))'];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  'Payé': { label: 'Payé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  'En Attente': { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
-  'Retard': { label: 'En Retard', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertTriangle className="h-3 w-3" /> },
+const STATUS_KEYS: Record<string, { key: 'paid' | 'pending' | 'overdue'; color: string; icon: React.ReactNode }> = {
+  'Payé': { key: 'paid', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  'En Attente': { key: 'pending', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
+  'Retard': { key: 'overdue', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertTriangle className="h-3 w-3" /> },
 };
 
 export default function Paiements() {
@@ -108,15 +108,15 @@ export default function Paiements() {
     const success = await markAsPaid(blId);
     setMarkingPaid(null);
     if (success) {
-      toast.success('Paiement marqué comme payé');
+      toast.success(t.pages.paiements.markedPaid);
     } else {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t.pages.paiements.markError);
     }
   };
 
   const handleSendReminders = async () => {
     if (reminderEligible.length === 0) {
-      toast.info('Aucune facture éligible aux rappels (31-60 jours)');
+      toast.info(t.pages.paiements.noEligible);
       return;
     }
 
@@ -125,10 +125,10 @@ export default function Paiements() {
     setSendingReminders(false);
 
     if (result.sent > 0) {
-      toast.success(`${result.sent} rappel(s) envoyé(s) avec succès`);
+      toast.success(`${result.sent} ${t.pages.paiements.remindersSent}`);
     }
     if (result.failed > 0) {
-      toast.error(`${result.failed} échec(s) d'envoi`, {
+      toast.error(`${result.failed} ${t.pages.paiements.remindersFailed}`, {
         description: result.errors.slice(0, 3).join(', '),
       });
     }
@@ -190,12 +190,12 @@ export default function Paiements() {
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                Envoyer Rappels ({reminderEligible.length})
+                {t.pages.paiements.sendReminders} ({reminderEligible.length})
               </Button>
             )}
             <Button variant="outline" size="sm" onClick={refetch}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              Actualiser
+              {t.pages.paiements.refresh}
             </Button>
           </div>
         </div>
@@ -205,11 +205,11 @@ export default function Paiements() {
           <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
             <TabsTrigger value="payments" className="gap-2">
               <Wallet className="h-4 w-4" />
-              Créances Clients
+              {t.pages.paiements.receivables}
             </TabsTrigger>
             <TabsTrigger value="compliance" className="gap-2">
               <Building2 className="h-4 w-4" />
-              Conformité Fiscale
+              {t.pages.paiements.taxCompliance}
             </TabsTrigger>
           </TabsList>
 
@@ -224,10 +224,10 @@ export default function Paiements() {
                   <Mail className="h-5 w-5 text-warning" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-warning">Rappels de Paiement Automatiques</p>
-                  <p className="text-sm text-muted-foreground">
-                    {reminderEligible.length} facture(s) dans la tranche 31-60 jours éligible(s) aux rappels • 
-                    Total: {formatCurrency(reminderEligible.reduce((sum, p) => sum + p.total_ht, 0))}
+                   <p className="font-medium text-warning">{t.pages.paiements.paymentReminders}</p>
+                   <p className="text-sm text-muted-foreground">
+                     {reminderEligible.length} {t.pages.paiements.reminderEligible} • 
+                     {t.pages.paiements.total}: {formatCurrency(reminderEligible.reduce((sum, p) => sum + p.total_ht, 0))}
                   </p>
                 </div>
                 <Button 
@@ -242,7 +242,7 @@ export default function Paiements() {
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  Envoyer les rappels
+                  {t.pages.paiements.sendTheReminders}
                 </Button>
               </div>
             </CardContent>
@@ -263,8 +263,8 @@ export default function Paiements() {
                   <Wallet className="h-5 w-5 text-warning" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{formatCurrency(stats.totalOutstanding)}</p>
-                  <p className="text-xs text-muted-foreground">Créances en cours</p>
+                   <p className="text-2xl font-bold">{formatCurrency(stats.totalOutstanding)}</p>
+                   <p className="text-xs text-muted-foreground">{t.pages.paiements.outstandingReceivables}</p>
                 </div>
               </div>
             </CardContent>
@@ -277,8 +277,8 @@ export default function Paiements() {
                   <AlertTriangle className="h-5 w-5 text-destructive" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{formatCurrency(stats.totalOverdue)}</p>
-                  <p className="text-xs text-muted-foreground">Impayés en retard</p>
+                   <p className="text-2xl font-bold">{formatCurrency(stats.totalOverdue)}</p>
+                   <p className="text-xs text-muted-foreground">{t.pages.paiements.overduePayments}</p>
                 </div>
               </div>
             </CardContent>
@@ -291,8 +291,8 @@ export default function Paiements() {
                   <CheckCircle className="h-5 w-5 text-success" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{formatCurrency(stats.totalPaid)}</p>
-                  <p className="text-xs text-muted-foreground">Total encaissé</p>
+                   <p className="text-2xl font-bold">{formatCurrency(stats.totalPaid)}</p>
+                   <p className="text-xs text-muted-foreground">{t.pages.paiements.totalCollected}</p>
                 </div>
               </div>
             </CardContent>
@@ -305,8 +305,8 @@ export default function Paiements() {
                   <Users className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{stats.clientsWithOverdue}</p>
-                  <p className="text-xs text-muted-foreground">Clients en retard</p>
+                   <p className="text-2xl font-bold">{stats.clientsWithOverdue}</p>
+                   <p className="text-xs text-muted-foreground">{t.pages.paiements.overdueClients}</p>
                 </div>
               </div>
             </CardContent>
@@ -318,7 +318,7 @@ export default function Paiements() {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
               <Calendar className="h-5 w-5 text-primary" />
-              Répartition par Antériorité
+              {t.pages.paiements.agingBreakdown}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -328,7 +328,7 @@ export default function Paiements() {
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium">{bucket.label}</span>
                     <span className="text-muted-foreground">
-                      {bucket.count} factures • {formatCurrency(bucket.total)}
+                      {bucket.count} {t.pages.paiements.invoices} • {formatCurrency(bucket.total)}
                     </span>
                   </div>
                   <Progress 
@@ -349,8 +349,8 @@ export default function Paiements() {
           {/* Aging Bar Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Montants par Antériorité</CardTitle>
-              <CardDescription>Répartition des créances par tranche de jours</CardDescription>
+              <CardTitle className="text-lg">{t.pages.paiements.amountsByAging}</CardTitle>
+              <CardDescription>{t.pages.paiements.receivablesByRange}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
@@ -377,8 +377,8 @@ export default function Paiements() {
           {/* Payment Mode Pie Chart */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Répartition par Mode de Paiement</CardTitle>
-              <CardDescription>Distribution des paiements par méthode</CardDescription>
+              <CardTitle className="text-lg">{t.pages.paiements.paymentModeBreakdown}</CardTitle>
+              <CardDescription>{t.pages.paiements.paymentDistribution}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
@@ -411,7 +411,7 @@ export default function Paiements() {
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-primary" />
-              Détail par Mode de Paiement
+              {t.pages.paiements.paymentModeDetail}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -433,19 +433,19 @@ export default function Paiements() {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Total</span>
+                      <span className="text-muted-foreground">{t.pages.paiements.total}</span>
                       <span className="font-medium">{formatCurrency(mode.total)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-success">Payé</span>
+                      <span className="text-success">{t.pages.paiements.paid}</span>
                       <span>{formatCurrency(mode.paid)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-warning">En attente</span>
+                      <span className="text-warning">{t.pages.paiements.pending}</span>
                       <span>{formatCurrency(mode.pending)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-destructive">En retard</span>
+                      <span className="text-destructive">{t.pages.paiements.overdue}</span>
                       <span>{formatCurrency(mode.overdue)}</span>
                     </div>
                   </div>
@@ -459,9 +459,9 @@ export default function Paiements() {
         <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <CardTitle className="text-lg flex items-center gap-2">
+               <CardTitle className="text-lg flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-primary" />
-                Détail des Créances
+                {t.pages.paiements.receivablesDetail}
               </CardTitle>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="relative">
@@ -478,10 +478,10 @@ export default function Paiements() {
                     <SelectValue placeholder="Statut" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous statuts</SelectItem>
-                    <SelectItem value="Payé">Payé</SelectItem>
-                    <SelectItem value="En Attente">En Attente</SelectItem>
-                    <SelectItem value="Retard">En Retard</SelectItem>
+                     <SelectItem value="all">{t.pages.paiements.allStatuses}</SelectItem>
+                    <SelectItem value="Payé">{t.pages.paiements.paid}</SelectItem>
+                    <SelectItem value="En Attente">{t.pages.paiements.pending}</SelectItem>
+                    <SelectItem value="Retard">{t.pages.paiements.overdue}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={modeFilter} onValueChange={setModeFilter}>
@@ -489,10 +489,10 @@ export default function Paiements() {
                     <SelectValue placeholder="Mode" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Tous modes</SelectItem>
-                    <SelectItem value="virement">Virement</SelectItem>
-                    <SelectItem value="cheque">Chèque</SelectItem>
-                    <SelectItem value="especes">Espèces</SelectItem>
+                    <SelectItem value="all">{t.pages.paiements.allModes}</SelectItem>
+                    <SelectItem value="virement">{t.pages.paiements.transfer}</SelectItem>
+                    <SelectItem value="cheque">{t.pages.paiements.check}</SelectItem>
+                    <SelectItem value="especes">{t.pages.paiements.cash}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={agingFilter} onValueChange={setAgingFilter}>
@@ -500,11 +500,11 @@ export default function Paiements() {
                     <SelectValue placeholder="Antériorité" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes</SelectItem>
-                    <SelectItem value="0-30">0-30 jours</SelectItem>
-                    <SelectItem value="31-60">31-60 jours</SelectItem>
-                    <SelectItem value="61-90">61-90 jours</SelectItem>
-                    <SelectItem value="90+">90+ jours</SelectItem>
+                    <SelectItem value="all">{t.pages.paiements.allAging}</SelectItem>
+                    <SelectItem value="0-30">{t.pages.paiements.aging0_30}</SelectItem>
+                    <SelectItem value="31-60">{t.pages.paiements.aging31_60}</SelectItem>
+                    <SelectItem value="61-90">{t.pages.paiements.aging61_90}</SelectItem>
+                    <SelectItem value="90+">{t.pages.paiements.aging90plus}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -515,26 +515,26 @@ export default function Paiements() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>BL</TableHead>
-                    <TableHead>Client</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Montant HT</TableHead>
-                    <TableHead>Mode</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead className="text-right">Jours Retard</TableHead>
-                    {canManagePayments && <TableHead className="text-right">Actions</TableHead>}
+                     <TableHead>{t.pages.paiements.bl}</TableHead>
+                    <TableHead>{t.pages.paiements.client}</TableHead>
+                    <TableHead>{t.pages.paiements.date}</TableHead>
+                    <TableHead className="text-right">{t.pages.paiements.amountHT}</TableHead>
+                    <TableHead>{t.pages.paiements.mode}</TableHead>
+                    <TableHead>{t.pages.paiements.status}</TableHead>
+                    <TableHead className="text-right">{t.pages.paiements.daysOverdue}</TableHead>
+                    {canManagePayments && <TableHead className="text-right">{t.pages.paiements.actions}</TableHead>}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPayments.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={canManagePayments ? 8 : 7} className="text-center py-8 text-muted-foreground">
-                        Aucun paiement trouvé
+                        {t.pages.paiements.noPayments}
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredPayments.map((payment) => {
-                      const statusConfig = STATUS_CONFIG[payment.statut_paiement] || STATUS_CONFIG['En Attente'];
+                      const statusMeta = STATUS_KEYS[payment.statut_paiement] || STATUS_KEYS['En Attente'];
                       return (
                         <TableRow key={payment.bl_id}>
                           <TableCell className="font-mono text-sm">{payment.bl_id}</TableCell>
@@ -551,9 +551,9 @@ export default function Paiements() {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className={cn('gap-1', statusConfig.color)}>
-                              {statusConfig.icon}
-                              {statusConfig.label}
+                             <Badge variant="outline" className={cn('gap-1', statusMeta.color)}>
+                              {statusMeta.icon}
+                              {t.pages.paiements[statusMeta.key]}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
@@ -579,9 +579,9 @@ export default function Paiements() {
                                     onClick={async () => {
                                       const result = await sendPaymentReminders([payment.bl_id]);
                                       if (result.sent > 0) {
-                                        toast.success(`Rappel envoyé à ${payment.client_nom}`);
+                                       toast.success(`${t.pages.paiements.reminderSentTo} ${payment.client_nom}`);
                                       } else {
-                                        toast.error('Échec de l\'envoi');
+                                        toast.error(t.pages.paiements.sendError);
                                       }
                                     }}
                                     className="gap-1 text-warning hover:text-warning hover:bg-warning/10"
@@ -603,7 +603,7 @@ export default function Paiements() {
                                     ) : (
                                       <CheckCircle className="h-3 w-3" />
                                     )}
-                                    Encaisser
+                                    {t.pages.paiements.collect}
                                   </Button>
                                 )}
                               </div>
@@ -617,8 +617,8 @@ export default function Paiements() {
               </Table>
             </div>
             <div className="mt-4 text-sm text-muted-foreground">
-              {filteredPayments.length} paiement(s) affiché(s) • 
-              Total: {formatCurrency(filteredPayments.reduce((sum, p) => sum + p.total_ht, 0))}
+               {filteredPayments.length} {t.pages.paiements.displayed} • 
+               {t.pages.paiements.total}: {formatCurrency(filteredPayments.reduce((sum, p) => sum + p.total_ht, 0))}
             </div>
           </CardContent>
         </Card>
