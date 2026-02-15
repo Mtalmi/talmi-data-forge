@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   QualityCheckData,
   QualityStatus,
@@ -47,18 +48,15 @@ const GRAVEL_GRADES = [
 ];
 
 export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityCheckProps) {
+  const { t } = useI18n();
+  const tq = t.technicalQuality;
   const [step, setStep] = useState(1);
   const [selectedTechnician, setSelectedTechnician] = useState<'ABDEL_SADEK' | 'KARIM'>('ABDEL_SADEK');
   
-  // Humidity test
   const [humidityPhotoUploaded, setHumidityPhotoUploaded] = useState(false);
   const [humidityReading, setHumidityReading] = useState('8.5');
-  
-  // Gravel inspection
   const [gravelPhotoUploaded, setGravelPhotoUploaded] = useState(false);
   const [gravelGrade, setGravelGrade] = useState('G1');
-  
-  // Quality assessment
   const [qualityStatus, setQualityStatus] = useState<QualityStatus>('conforme');
   const [notes, setNotes] = useState('');
 
@@ -69,14 +67,14 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
   const handleHumidityPhotoUpload = () => {
     setTimeout(() => {
       setHumidityPhotoUploaded(true);
-      toast.success('[SIMULATION] Photo humidité capturée');
+      toast.success(tq.simHumidityPhoto);
     }, 500);
   };
 
   const handleGravelPhotoUpload = () => {
     setTimeout(() => {
       setGravelPhotoUploaded(true);
-      toast.success('[SIMULATION] Photo gravier capturée');
+      toast.success(tq.simGravelPhoto);
     }, 500);
   };
 
@@ -99,8 +97,9 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
 
     console.log('[QUALITY_CHECK]:', qualityCheckData);
     
-    toast.success('✅ Évaluation qualité soumise avec succès!', {
-      description: `Status: ${qualityStatus === 'conforme' ? 'Conforme' : qualityStatus === 'a_verifier' ? 'À vérifier' : 'Non-conforme'}`,
+    const statusLabel = qualityStatus === 'conforme' ? tq.statusConforme : qualityStatus === 'a_verifier' ? tq.statusAVerifier : tq.statusNonConforme;
+    toast.success(tq.assessmentSubmitted, {
+      description: `Status: ${statusLabel}`,
     });
 
     onComplete(qualityCheckData);
@@ -117,10 +116,10 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
             </div>
             <div>
               <h3 className="font-bold text-blue-900 dark:text-blue-100">
-                Phase 1: Contrôle Qualité Technique
+                {tq.phase1Title}
               </h3>
               <p className="text-xs text-blue-600 dark:text-blue-300">
-                Responsabilité Technique - Accès exclusif
+                {tq.phase1Subtitle}
               </p>
             </div>
           </div>
@@ -137,13 +136,11 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <ClipboardCheck className="h-5 w-5 text-blue-600" />
-              Étape 1/4: Sélection Technicien
+              {tq.step1Title}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Sélectionnez le technicien effectuant le contrôle qualité:
-            </p>
+            <p className="text-sm text-muted-foreground">{tq.selectTechnician}</p>
 
             <RadioGroup
               value={selectedTechnician}
@@ -161,10 +158,10 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Abdel Sadek</p>
-                      <p className="text-xs text-muted-foreground">Resp. Technique (Primaire)</p>
+                      <p className="text-xs text-muted-foreground">{tq.primaryTech}</p>
                     </div>
                     <Badge variant="outline" className="bg-emerald-100 text-emerald-700 border-emerald-300">
-                      Primaire
+                      {tq.primary}
                     </Badge>
                   </div>
                 </Label>
@@ -181,32 +178,31 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Karim</p>
-                      <p className="text-xs text-muted-foreground">Superviseur (Backup)</p>
+                      <p className="text-xs text-muted-foreground">{tq.backupTech}</p>
                     </div>
-                    <Badge variant="outline">Backup</Badge>
+                    <Badge variant="outline">{tq.backup}</Badge>
                   </div>
                 </Label>
               </div>
             </RadioGroup>
 
-            {/* Order info */}
             <div className="p-4 rounded-lg bg-muted/50 border mt-4">
-              <h4 className="font-medium mb-2 text-sm">Commande à inspecter:</h4>
+              <h4 className="font-medium mb-2 text-sm">{tq.orderToInspect}</h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-muted-foreground">N° Commande:</span>
+                  <span className="text-muted-foreground">{tq.orderNumber}</span>
                   <p className="font-mono font-bold text-amber-600">{order.id}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Fournisseur:</span>
+                  <span className="text-muted-foreground">{tq.supplier}</span>
                   <p className="font-medium">{order.supplier}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Matériau:</span>
+                  <span className="text-muted-foreground">{tq.material}</span>
                   <p className="font-medium">{order.material}</p>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Quantité:</span>
+                  <span className="text-muted-foreground">{tq.quantity}</span>
                   <p className="font-bold">{order.quantity} {order.unit}</p>
                 </div>
               </div>
@@ -216,7 +212,7 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               className="w-full gap-2 bg-blue-500 hover:bg-blue-600"
               onClick={() => setStep(2)}
             >
-              Commencer Inspection
+              {tq.startInspection}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -229,14 +225,13 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <Droplets className="h-5 w-5 text-blue-600" />
-              Étape 2/4: Test Humidité Sable
+              {tq.step2Title}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-3 rounded-lg bg-amber-100 dark:bg-amber-900/30 border border-amber-200">
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                📸 <strong>Prenez une photo</strong> du sable en cours de test avec le 
-                dispositif d'humidité. Assurez-vous que le taux d'humidité est visible.
+                📸 <strong>{tq.humidityPhotoInstruction}</strong>
               </p>
             </div>
 
@@ -252,20 +247,20 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               >
                 <Upload className="h-10 w-10 text-blue-500" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                  Télécharger Photo Humidité
+                  {tq.uploadHumidityPhoto}
                 </span>
               </button>
             ) : (
               <div className="w-full h-36 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-300 flex flex-col items-center justify-center gap-2">
                 <CheckCircle2 className="h-10 w-10 text-emerald-500" />
                 <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                  Photo humidité capturée ✓
+                  {tq.humidityPhotoCaptured}
                 </span>
               </div>
             )}
 
             <div className="space-y-2">
-              <Label>Taux d'humidité mesuré (%)</Label>
+              <Label>{tq.humidityRate}</Label>
               <Input
                 type="number"
                 step="0.1"
@@ -277,14 +272,14 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                 placeholder="Ex: 8.5"
                 disabled={!humidityPhotoUploaded}
               />
-              <p className="text-xs text-muted-foreground">Plage valide: 0-30%</p>
+              <p className="text-xs text-muted-foreground">{tq.validRange}</p>
             </div>
 
             {isHighHumidity && (
               <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
                 <p className="text-sm text-destructive">
-                  ⚠️ Humidité élevée ({humidity}%) - Marquer comme "À vérifier"
+                  ⚠️ {tq.highHumidity.replace('{value}', String(humidity))}
                 </p>
               </div>
             )}
@@ -292,7 +287,7 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
             {humidityPhotoUploaded && humidity > 0 && humidity <= 15 && (
               <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200">
                 <p className="text-sm text-emerald-700 dark:text-emerald-300">
-                  ✅ Humidité acceptable: {humidity}%
+                  {tq.acceptableHumidity.replace('{value}', String(humidity))}
                 </p>
               </div>
             )}
@@ -302,7 +297,7 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               onClick={() => setStep(3)}
               disabled={!humidityPhotoUploaded || humidity <= 0}
             >
-              Valider Humidité
+              {tq.validateHumidity}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -315,14 +310,13 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <FlaskConical className="h-5 w-5 text-blue-600" />
-              Étape 3/4: Inspection Gravier
+              {tq.step3Title}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-3 rounded-lg bg-amber-100 dark:bg-amber-900/30 border border-amber-200">
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                📸 <strong>Prenez une photo</strong> d'une poignée de gravier. 
-                Vérifiez que la granulométrie est conforme.
+                📸 <strong>{tq.gravelPhotoInstruction}</strong>
               </p>
             </div>
 
@@ -338,23 +332,23 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               >
                 <Camera className="h-10 w-10 text-blue-500" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                  Télécharger Photo Gravier
+                  {tq.uploadGravelPhoto}
                 </span>
               </button>
             ) : (
               <div className="w-full h-36 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 border-2 border-emerald-300 flex flex-col items-center justify-center gap-2">
                 <CheckCircle2 className="h-10 w-10 text-emerald-500" />
                 <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                  Photo gravier capturée ✓
+                  {tq.gravelPhotoCaptured}
                 </span>
               </div>
             )}
 
             <div className="space-y-2">
-              <Label>Grade du gravier</Label>
+              <Label>{tq.gravelGrade}</Label>
               <Select value={gravelGrade} onValueChange={setGravelGrade} disabled={!gravelPhotoUploaded}>
                 <SelectTrigger className="bg-background">
-                  <SelectValue placeholder="Sélectionner le grade" />
+                  <SelectValue placeholder={tq.selectGrade} />
                 </SelectTrigger>
                 <SelectContent>
                   {GRAVEL_GRADES.map((grade) => (
@@ -371,7 +365,7 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               onClick={() => setStep(4)}
               disabled={!gravelPhotoUploaded}
             >
-              Valider Inspection
+              {tq.validateInspection}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </CardContent>
@@ -384,25 +378,24 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
               <ClipboardCheck className="h-5 w-5 text-blue-600" />
-              Étape 4/4: Évaluation Qualité Globale
+              {tq.step4Title}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Summary */}
             <div className="p-4 rounded-lg bg-muted/50 border space-y-2">
-              <h4 className="font-medium text-sm">Résumé des tests:</h4>
+              <h4 className="font-medium text-sm">{tq.testSummary}</h4>
               <div className="flex items-center gap-2 text-sm">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span>Humidité: {humidityReading}% {isHighHumidity ? '(Élevée ⚠️)' : '(OK)'}</span>
+                <span>{tq.humidityLabel} {humidityReading}% {isHighHumidity ? tq.highLabel : tq.okLabel}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span>Gravier: {gravelGrade}</span>
+                <span>{tq.gravelLabel} {gravelGrade}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              <Label className="font-medium">Évaluation Qualité:</Label>
+              <Label className="font-medium">{tq.qualityAssessment}</Label>
               <RadioGroup
                 value={qualityStatus}
                 onValueChange={(v) => setQualityStatus(v as QualityStatus)}
@@ -417,11 +410,9 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                   <RadioGroupItem value="conforme" id="conforme" />
                   <Label htmlFor="conforme" className="flex-1 cursor-pointer">
                     <p className="font-medium text-emerald-700 dark:text-emerald-300">
-                      ✅ Conforme (Compliant)
+                      {tq.compliant}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      Tous les tests passés - Prêt pour validation
-                    </p>
+                    <p className="text-xs text-muted-foreground">{tq.compliantDesc}</p>
                   </Label>
                 </div>
 
@@ -434,11 +425,9 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                   <RadioGroupItem value="a_verifier" id="a_verifier" />
                   <Label htmlFor="a_verifier" className="flex-1 cursor-pointer">
                     <p className="font-medium text-yellow-700 dark:text-yellow-300">
-                      ⚠️ À vérifier (Needs Verification)
+                      {tq.needsVerification}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      Préoccupations identifiées - Formulaire requis à l'accueil
-                    </p>
+                    <p className="text-xs text-muted-foreground">{tq.needsVerificationDesc}</p>
                   </Label>
                 </div>
 
@@ -451,22 +440,20 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
                   <RadioGroupItem value="non_conforme" id="non_conforme" />
                   <Label htmlFor="non_conforme" className="flex-1 cursor-pointer">
                     <p className="font-medium text-red-700 dark:text-red-300">
-                      ❌ Non-conforme (Non-compliant)
+                      {tq.nonCompliant}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      Inspection échouée - Formulaire de rejet requis
-                    </p>
+                    <p className="text-xs text-muted-foreground">{tq.nonCompliantDesc}</p>
                   </Label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="space-y-2">
-              <Label>Notes (optionnel)</Label>
+              <Label>{tq.notesOptional}</Label>
               <Textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Observations supplémentaires..."
+                placeholder={tq.notesPlaceholder}
                 className="bg-background resize-none"
                 rows={3}
               />
@@ -477,11 +464,11 @@ export function TechnicalQualityCheck({ order, onComplete }: TechnicalQualityChe
               onClick={handleSubmit}
             >
               <CheckCircle2 className="h-4 w-4" />
-              Soumettre Évaluation
+              {tq.submitAssessment}
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              Transmission automatique à l'accueil pour validation
+              {tq.autoTransmit}
             </p>
           </CardContent>
         </Card>

@@ -310,6 +310,7 @@ function ThreatLevelGauge({ level, score }: { level: SecurityStats['threatLevel'
 
 // Main Component
 export function RealTimeSecurityPanel() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isLive, setIsLive] = useState(false);
@@ -578,7 +579,7 @@ export function RealTimeSecurityPanel() {
           ) : (
             <RefreshCw className="h-4 w-4" />
           )}
-          Actualiser
+          {t.securityPanel?.refresh || 'Actualiser'}
         </Button>
       </div>
 

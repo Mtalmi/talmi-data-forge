@@ -29,7 +29,7 @@ import { ServiceEntryForm } from './ServiceEntryForm';
 
 export function FleetHealthDashboard() {
   const { vehicles, loading, getFleetHealthStats, fetchVehicles } = useFleetMaintenance();
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const dateLocale = getDateLocale(lang);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleHealth | null>(null);
   const [showServiceForm, setShowServiceForm] = useState(false);
@@ -160,7 +160,7 @@ export function FleetHealthDashboard() {
       <div className="flex justify-end">
         <Button variant="outline" size="sm" onClick={() => fetchVehicles()}>
           <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
+          {t.fleetHealth?.refresh || 'Actualiser'}
         </Button>
       </div>
 

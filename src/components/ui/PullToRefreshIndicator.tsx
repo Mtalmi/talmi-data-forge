@@ -1,5 +1,6 @@
 import { Loader2, ArrowDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface PullToRefreshIndicatorProps {
   pullDistance: number;
@@ -14,6 +15,9 @@ export function PullToRefreshIndicator({
   progress,
   threshold = 80,
 }: PullToRefreshIndicatorProps) {
+  const { t } = useI18n();
+  const ptr = t.pullToRefresh;
+
   if (pullDistance === 0 && !isRefreshing) return null;
 
   const isReady = progress >= 100;
@@ -33,7 +37,7 @@ export function PullToRefreshIndicator({
         {isRefreshing ? (
           <>
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm font-medium">Actualisation...</span>
+            <span className="text-sm font-medium">{ptr.refreshing}</span>
           </>
         ) : (
           <>
@@ -47,7 +51,7 @@ export function PullToRefreshIndicator({
               }}
             />
             <span className="text-sm font-medium">
-              {isReady ? 'Relâchez pour actualiser' : 'Tirez pour actualiser'}
+              {isReady ? ptr.releaseToRefresh : ptr.pullToRefresh}
             </span>
           </>
         )}

@@ -35,6 +35,7 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 const CATEGORIES = [
   { value: 'Pièces Rechange', label: 'Pièces Rechange', icon: '🔧' },
@@ -49,6 +50,7 @@ interface ExpenseFormProps {
 
 export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
   const { isCeo, isAgentAdministratif, isDirecteurOperations } = useAuth();
+  const { t } = useI18n();
   const { uploadReceipt, addDepense } = useDepenses();
   
   const { validate: aiValidate, isValidating: aiValidating, lastResult: aiResult } = useAIDataGuard();
@@ -83,13 +85,13 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      toast.error('Veuillez sélectionner une image');
+      toast.error(t.expenseForm?.selectImage || 'Veuillez sélectionner une image');
       return;
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image trop volumineuse (max 5MB)');
+      toast.error(t.expenseForm?.imageTooLarge || 'Image trop volumineuse (max 5MB)');
       return;
     }
 
@@ -107,9 +109,9 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
 
     if (url) {
       setPhotoUrl(url);
-      toast.success('Photo téléchargée');
+      toast.success(t.expenseForm?.photoUploaded || 'Photo téléchargée');
     } else {
-      toast.error('Erreur lors du téléchargement');
+      toast.error(t.expenseForm?.uploadError || 'Erreur lors du téléchargement');
       setPhotoPreview(null);
     }
   };
@@ -126,18 +128,18 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
     e.preventDefault();
 
     if (!photoUrl) {
-      toast.error('Photo du reçu obligatoire');
+      toast.error(t.expenseForm?.receiptRequired || 'Photo du reçu obligatoire');
       return;
     }
 
     if (!categorie) {
-      toast.error('Veuillez sélectionner une catégorie');
+      toast.error(t.expenseForm?.selectCategory || 'Veuillez sélectionner une catégorie');
       return;
     }
 
     const montantNum = parseFloat(montant);
     if (isNaN(montantNum) || montantNum <= 0) {
-      toast.error('Montant invalide');
+      toast.error(t.expenseForm?.invalidAmount || 'Montant invalide');
       return;
     }
 
@@ -163,7 +165,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
     setSubmitting(false);
 
     if (success) {
-      toast.success('Dépense enregistrée');
+      toast.success(t.expenseForm?.expenseRecorded || 'Dépense enregistrée');
       setDialogOpen(false);
       resetForm();
       onSuccess?.();
@@ -225,7 +227,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
                 {photoUrl && !uploading && (
                   <div className="absolute bottom-2 left-2 bg-success/90 text-success-foreground px-2 py-1 rounded text-xs flex items-center gap-1">
                     <CheckCircle className="h-3 w-3" />
-                    Téléchargée
+                    {t.expenseForm?.uploaded || 'Téléchargée'}
                   </div>
                 )}
               </div>
@@ -249,7 +251,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
                 >
                   <Camera className="h-10 w-10 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    Cliquez pour prendre ou importer une photo
+                    {t.expenseForm?.clickToUpload || 'Cliquez pour prendre ou importer une photo'}
                   </p>
                   <p className="text-xs text-muted-foreground">
                     JPG, PNG (max 5MB)
@@ -270,7 +272,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
             {!photoUrl && (
               <div className="flex items-center gap-2 text-xs text-warning">
                 <AlertCircle className="h-4 w-4" />
-                Photo obligatoire pour valider la dépense
+                {t.expenseForm?.photoMandatory || 'Photo obligatoire pour valider la dépense'}
               </div>
             )}
           </div>
@@ -292,7 +294,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
             <Label>Catégorie</Label>
             <Select value={categorie} onValueChange={setCategorie} required>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionner..." />
+                <SelectValue placeholder={t.expenseForm?.select || 'Sélectionner...'} />
               </SelectTrigger>
               <SelectContent>
                 {CATEGORIES.map((cat) => (
@@ -323,9 +325,9 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
 
           {/* Description */}
           <div className="space-y-2">
-            <Label>Description (optionnel)</Label>
+            <Label>{t.expenseForm?.descriptionOptional || 'Description (optionnel)'}</Label>
             <Textarea
-              placeholder="Détails de la dépense..."
+              placeholder={t.expenseForm?.descriptionPlaceholder || 'Détails de la dépense...'}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
@@ -338,7 +340,7 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
           {/* Submit */}
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-              Annuler
+              {t.expenseForm?.cancel || 'Annuler'}
             </Button>
             <Button 
               type="submit" 
@@ -351,12 +353,12 @@ export function ExpenseForm({ onSuccess }: ExpenseFormProps) {
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  {t.expenseForm?.saving || 'Enregistrement...'}
                 </>
               ) : (
                 <>
                   <Upload className="h-4 w-4 mr-2" />
-                  Enregistrer
+                  {t.expenseForm?.save || 'Enregistrer'}
                 </>
               )}
             </Button>
