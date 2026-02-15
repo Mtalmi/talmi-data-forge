@@ -1,16 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {
-  Zap, Shield, Brain, Globe, Lock, Server, Cloud, Award,
-  ChevronRight, ArrowRight, BarChart3, Truck, MapPin,
-  CheckCircle, Route, Camera, MessageSquare, Phone, Wrench,
-  Plus, Send, Menu, X
-} from 'lucide-react';
+import { Zap, Shield, Brain, Globe, Lock, Server, Cloud, Award, ChevronRight, ArrowRight, BarChart3, Truck, MapPin, CheckCircle, Route, Camera, MessageSquare, Phone, Wrench, Plus, Send, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -19,269 +12,32 @@ gsap.registerPlugin(ScrollTrigger);
 function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 100);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setMobileMenuOpen(false);
-    }
-  };
-
-  return (
-    <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-background/90 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}>
-        <div className="flex items-center justify-between px-6 lg:px-10 py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="font-display font-bold text-primary-foreground text-lg">TB</span>
-            </div>
-            <div className="hidden sm:block">
-              <span className="font-display font-semibold text-foreground">TBOS</span>
-              <span className="block text-[10px] font-mono text-muted-foreground tracking-widest">ENTERPRISE SUITE</span>
-            </div>
-          </div>
-          <div className="hidden lg:flex items-center gap-8">
-            {['Produit', 'Modules', 'Tarifs', 'Contact'].map((item) => (
-              <button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item}</button>
-            ))}
-          </div>
-          <div className="flex items-center gap-4">
-            <Button className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={() => scrollToSection('contact')}>Demander une démo</Button>
-            <button className="lg:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}</button>
-          </div>
-        </div>
-      </nav>
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg lg:hidden">
-          <div className="flex flex-col items-center justify-center h-full gap-8">
-            {['Produit', 'Modules', 'Tarifs', 'Contact'].map((item) => (
-              <button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="text-2xl font-display text-foreground hover:text-primary transition-colors">{item}</button>
-            ))}
-            <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6" onClick={() => scrollToSection('contact')}>Demander une démo</Button>
-          </div>
-        </div>
-      )}
-    </>
-  );
+  useEffect(() => { const handleScroll = () => setIsScrolled(window.scrollY > 100); window.addEventListener('scroll', handleScroll, { passive: true }); return () => window.removeEventListener('scroll', handleScroll); }, []);
+  const scrollToSection = (id: string) => { const element = document.getElementById(id); if (element) { element.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); } };
+  return (<><nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled ? 'bg-background/90 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}><div className="flex items-center justify-between px-6 lg:px-10 py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"><span className="font-bold text-primary-foreground text-lg">TB</span></div><div className="hidden sm:block"><span className="font-semibold text-foreground">TBOS</span><span className="block text-[10px] font-mono text-muted-foreground tracking-widest">ENTERPRISE SUITE</span></div></div><div className="hidden lg:flex items-center gap-8">{['Produit', 'Modules', 'Tarifs', 'Contact'].map((item) => (<button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="text-sm text-muted-foreground hover:text-foreground transition-colors">{item}</button>))}</div><div className="flex items-center gap-4"><Button className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={() => scrollToSection('contact')}>Demander une démo</Button><button className="lg:hidden text-foreground" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>{mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}</button></div></div></nav>{mobileMenuOpen && (<div className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg lg:hidden"><div className="flex flex-col items-center justify-center h-full gap-8">{['Produit', 'Modules', 'Tarifs', 'Contact'].map((item) => (<button key={item} onClick={() => scrollToSection(item.toLowerCase())} className="text-2xl font-display text-foreground hover:text-primary transition-colors">{item}</button>))}<Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6" onClick={() => scrollToSection('contact')}>Demander une démo</Button></div></div>)}</>);
 }
 
 
 function FeatureSection({ id, image, headline, headlineAccent, body, children, zIndex }: any) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const scrollTl = gsap.timeline({
-        scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: '+=125%', pin: true, scrub: 0.6 }
-      });
-      scrollTl
-        .fromTo('.feature-bg', { x: '12vw', scale: 1.10, opacity: 0.6 }, { x: 0, scale: 1.00, opacity: 1, ease: 'none' }, 0)
-        .fromTo('.feature-headline', { x: '-40vw', opacity: 0 }, { x: 0, opacity: 1, ease: 'none' }, 0)
-        .fromTo('.feature-body', { y: '10vh', opacity: 0 }, { y: 0, opacity: 1, ease: 'none' }, 0.05)
-        .fromTo('.feature-bottom', { y: '18vh', opacity: 0, rotateZ: -2 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'none' }, 0.1)
-        .fromTo('.feature-headline', { x: 0, opacity: 1 }, { x: '-14vw', opacity: 0.25, ease: 'power2.in' }, 0.7)
-        .fromTo('.feature-body', { y: 0, opacity: 1 }, { y: '-8vh', opacity: 0.25, ease: 'power2.in' }, 0.7)
-        .fromTo('.feature-bottom', { y: 0, opacity: 1 }, { y: '10vh', opacity: 0.25, ease: 'power2.in' }, 0.7)
-        .fromTo('.feature-bg', { scale: 1, x: 0 }, { scale: 1.06, x: '-3vw', ease: 'power2.in' }, 0.7);
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-  return (
-    <section ref={sectionRef} id={id} className="relative w-screen h-screen overflow-hidden" style={{ zIndex }}>
-      <div className="feature-bg absolute inset-0">
-        <img src={image} alt={headline} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-      </div>
-      <div className="relative z-10 h-full flex items-center">
-        <div className="w-full px-6 lg:px-10 py-20">
-          <div className="max-w-2xl">
-            <div className="feature-headline">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[0.95]">
-                <span className="block text-foreground">{headline}</span>
-                <span className="block text-primary mt-2">{headlineAccent}</span>
-              </h2>
-            </div>
-            <p className="feature-body text-muted-foreground text-base lg:text-lg mt-6 max-w-xl">{body}</p>
-            <div className="feature-bottom mt-12">{children}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  useEffect(() => { const ctx = gsap.context(() => { const scrollTl = gsap.timeline({ scrollTrigger: { trigger: sectionRef.current, start: 'top top', end: '+=125%', pin: true, scrub: 0.6 } }); scrollTl.fromTo('.feature-bg', { x: '12vw', scale: 1.10, opacity: 0.6 }, { x: 0, scale: 1.00, opacity: 1, ease: 'none' }, 0).fromTo('.feature-headline', { x: '-40vw', opacity: 0 }, { x: 0, opacity: 1, ease: 'none' }, 0).fromTo('.feature-body', { y: '10vh', opacity: 0 }, { y: 0, opacity: 1, ease: 'none' }, 0.05).fromTo('.feature-bottom', { y: '18vh', opacity: 0, rotateZ: -2 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'none' }, 0.1).fromTo('.feature-headline', { x: 0, opacity: 1 }, { x: '-14vw', opacity: 0.25, ease: 'power2.in' }, 0.7).fromTo('.feature-body', { y: 0, opacity: 1 }, { y: '-8vh', opacity: 0.25, ease: 'power2.in' }, 0.7).fromTo('.feature-bottom', { y: 0, opacity: 1 }, { y: '10vh', opacity: 0.25, ease: 'power2.in' }, 0.7).fromTo('.feature-bg', { scale: 1, x: 0 }, { scale: 1.06, x: '-3vw', ease: 'power2.in' }, 0.7); }, sectionRef); return () => ctx.revert(); }, []);
+  return (<section ref={sectionRef} id={id} className="relative w-screen h-screen overflow-hidden" style={{ zIndex }}><div className="feature-bg absolute inset-0"><img src={image} alt={headline} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" /></div><div className="relative z-10 h-full flex items-center"><div className="w-full px-6 lg:px-10 py-20"><div className="max-w-2xl"><div className="feature-headline"><h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[0.95]"><span className="block text-foreground">{headline}</span><span className="block text-primary mt-2">{headlineAccent}</span></h2></div><p className="feature-body text-muted-foreground text-base lg:text-lg mt-6 max-w-xl">{body}</p><div className="feature-bottom mt-12">{children}</div></div></div></div></section>);
 }
 
 
 function HeroSection() {
   const handleDemoRequest = () => toast.success('Demande envoyée ! Nous vous contacterons sous 24h.');
-  return (
-    <section className="relative w-screen h-screen overflow-hidden">
-      <div className="absolute inset-0">
-        <img src="/hero_plant_night.jpg" alt="Concrete plant" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
-      </div>
-      <div className="relative z-10 h-full flex items-center">
-        <div className="w-full px-6 lg:px-10 py-20 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          <div className="space-y-6">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95]">
-              <span className="block text-foreground">La centrale à béton.</span>
-              <span className="block text-primary mt-2">Réinventée.</span>
-            </h1>
-            <p className="text-muted-foreground text-base lg:text-lg max-w-xl">Contrôle total de vos opérations, finances et logistique en temps réel. Sécurité de niveau bancaire. Intelligence artificielle intégrée.</p>
-            <div className="flex flex-wrap gap-3">
-              {[{icon: Zap, text: 'Temps Réel'}, {icon: Shield, text: 'Sécurité Bancaire'}, {icon: Brain, text: 'IA Intégrée'}, {icon: Globe, text: 'Multi-Sites'}].map(({icon: Icon, text}) => (
-                <div key={text} className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-full"><Icon size={14} className="text-primary" /><span className="text-xs font-mono text-muted-foreground">{text}</span></div>
-              ))}
-            </div>
-            <div className="flex gap-8 lg:gap-12 pt-4">
-              {[{value: '99%', label: 'Uptime SLA'}, {value: '50+', label: 'Modules'}, {value: '24/7', label: 'Monitoring'}].map(({value, label}) => (
-                <div key={label}><div className="text-2xl lg:text-3xl font-black text-foreground">{value}</div><div className="text-[10px] font-mono text-muted-foreground mt-1 uppercase tracking-wider">{label}</div></div>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-4 pt-2">
-              {[{icon: Lock, text: 'Chiffrement AES-256'}, {icon: Server, text: 'RLS Enterprise'}, {icon: Cloud, text: 'Cloud Souverain'}].map(({icon: Icon, text}) => (
-                <div key={text} className="flex items-center gap-2 text-muted-foreground/70"><Icon size={14} /><span className="text-xs">{text}</span></div>
-              ))}
-            </div>
-          </div>
-          <div className="flex justify-center lg:justify-end">
-            <div className="w-full max-w-md bg-card/80 backdrop-blur-xl border border-border rounded-xl p-6 lg:p-8 shadow-glow">
-              <div className="space-y-6">
-                <div><h2 className="text-xl font-bold text-foreground">Prêt à moderniser ?</h2><p className="text-sm text-muted-foreground mt-1">Demandez une démo personnalisée</p></div>
-                <div className="space-y-3">
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6" onClick={() => toast.info('Redirection vers l\'authentification...')}>Essayer gratuitement <ArrowRight className="ml-2 h-4 w-4" /></Button>
-                  <Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10" onClick={handleDemoRequest}>Demander une démo</Button>
-                </div>
-                <div className="pt-4 border-t border-border text-center"><p className="text-xs text-muted-foreground/60">Système sécurisé • Talmi Beton © 2026</p></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+  return (<section className="relative w-screen h-screen overflow-hidden"><div className="absolute inset-0"><img src="https://pmqtk4tii26o4.ok.kimi.link/hero_plant_night.jpg" alt="Concrete plant" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" /></div><div className="relative z-10 h-full flex items-center"><div className="w-full px-6 lg:px-10 py-20 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"><div className="space-y-6"><h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95]"><span className="block text-foreground">La centrale à béton.</span><span className="block text-primary mt-2">Réinventée.</span></h1><p className="text-muted-foreground text-base lg:text-lg max-w-xl">Contrôle total de vos opérations, finances et logistique en temps réel. Sécurité de niveau bancaire. Intelligence artificielle intégrée.</p><div className="flex flex-wrap gap-3">{[{icon: Zap, text: 'Temps Réel'}, {icon: Shield, text: 'Sécurité Bancaire'}, {icon: Brain, text: 'IA Intégrée'}, {icon: Globe, text: 'Multi-Sites'}].map(({icon: Icon, text}) => (<div key={text} className="flex items-center gap-2 px-3 py-1.5 bg-primary/5 border border-primary/20 rounded-full"><Icon size={14} className="text-primary" /><span className="text-xs font-mono text-muted-foreground">{text}</span></div>))}</div><div className="flex gap-8 lg:gap-12 pt-4">{[{value: '99%', label: 'Uptime SLA'}, {value: '50+', label: 'Modules'}, {value: '24/7', label: 'Monitoring'}].map(({value, label}) => (<div key={label}><div className="text-2xl lg:text-3xl font-black text-foreground">{value}</div><div className="text-[10px] font-mono text-muted-foreground mt-1 uppercase tracking-wider">{label}</div></div>))}</div><div className="flex flex-wrap gap-4 pt-2">{[{icon: Lock, text: 'Chiffrement AES-256'}, {icon: Server, text: 'RLS Enterprise'}, {icon: Cloud, text: 'Cloud Souverain'}].map(({icon: Icon, text}) => (<div key={text} className="flex items-center gap-2 text-muted-foreground/70"><Icon size={14} /><span className="text-xs">{text}</span></div>))}</div></div><div className="flex justify-center lg:justify-end"><div className="w-full max-w-md bg-card/80 backdrop-blur-xl border border-border rounded-xl p-6 lg:p-8 shadow-glow"><div className="space-y-6"><div><h2 className="text-xl font-bold text-foreground">Prêt à moderniser ?</h2><p className="text-sm text-muted-foreground mt-1">Demandez une démo personnalisée</p></div><div className="space-y-3"><Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6" onClick={() => toast.info('Redirection vers l\'authentification...')}>Essayer gratuitement <ArrowRight className="ml-2 h-4 w-4" /></Button><Button variant="outline" className="w-full border-primary/30 text-primary hover:bg-primary/10" onClick={handleDemoRequest}>Demander une démo</Button></div><div className="pt-4 border-t border-border text-center"><p className="text-xs text-muted-foreground/60">Système sécurisé • Talmi Beton © 2026</p></div></div></div></div></div></div></section>);
 }
 
 
 function ContactSection() {
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); toast.success('Message envoyé ! Nous vous répondrons sous 24h.'); };
-  return (
-    <section id="contact" className="relative bg-background py-20 lg:py-32">
-      <div className="px-6 lg:px-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-          <div>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground">Prêt à moderniser<br />votre centrale ?</h2>
-            <p className="text-muted-foreground text-lg mt-6 max-w-md">Demandez une démo personnalisée. Réponse sous 24h.</p>
-            <div className="mt-8 space-y-4">
-              <div className="flex items-center gap-3 text-muted-foreground"><MessageSquare className="h-5 w-5 text-primary" /><span>contact@talmi.fr</span></div>
-              <div className="flex items-center gap-3 text-muted-foreground"><Phone className="h-5 w-5 text-primary" /><span>+33 1 23 45 67 89</span></div>
-            </div>
-            <Button className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6" onClick={() => toast.info('Demande de démo envoyée !')}>Demander une démo <ArrowRight className="ml-2 h-4 w-4" /></Button>
-          </div>
-          <div>
-            <div className="bg-card/80 backdrop-blur-xl border border-border rounded-xl p-6 lg:p-8 shadow-glow">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Nom</label><input type="text" placeholder="Jean Dupont" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Email</label><input type="email" placeholder="vous@exemple.com" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Téléphone</label><input type="tel" placeholder="+33 6 12 34 56 78" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div>
-                <div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Message</label><textarea rows={4} placeholder="Parlez-nous de votre centrale..." className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" /></div>
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6">Envoyer <Send className="ml-2 h-4 w-4" /></Button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <footer className="mt-20 pt-8 border-t border-border px-6 lg:px-10">
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-6 text-sm text-muted-foreground/60">
-            <a href="#" className="hover:text-muted-foreground transition-colors">Mentions légales</a>
-            <a href="#" className="hover:text-muted-foreground transition-colors">Confidentialité</a>
-            <a href="#" className="hover:text-muted-foreground transition-colors">CGU</a>
-          </div>
-          <p className="text-sm text-muted-foreground/60">© 2026 Talmi Beton. Tous droits réservés.</p>
-        </div>
-      </footer>
-    </section>
-  );
+  return (<section id="contact" className="relative bg-background py-20 lg:py-32"><div className="px-6 lg:px-10"><div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start"><div><h2 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-foreground">Prêt à moderniser<br />votre centrale ?</h2><p className="text-muted-foreground text-lg mt-6 max-w-md">Demandez une démo personnalisée. Réponse sous 24h.</p><div className="mt-8 space-y-4"><div className="flex items-center gap-3 text-muted-foreground"><MessageSquare className="h-5 w-5 text-primary" /><span>contact@talmi.fr</span></div><div className="flex items-center gap-3 text-muted-foreground"><Phone className="h-5 w-5 text-primary" /><span>+33 1 23 45 67 89</span></div></div><Button className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6" onClick={() => toast.info('Demande de démo envoyée !')}>Demander une démo <ArrowRight className="ml-2 h-4 w-4" /></Button></div><div><div className="bg-card/80 backdrop-blur-xl border border-border rounded-xl p-6 lg:p-8 shadow-glow"><form onSubmit={handleSubmit} className="space-y-5"><div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Nom</label><input type="text" placeholder="Jean Dupont" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div><div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Email</label><input type="email" placeholder="vous@exemple.com" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div><div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Téléphone</label><input type="tel" placeholder="+33 6 12 34 56 78" className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50" /></div><div className="space-y-2"><label className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Message</label><textarea rows={4} placeholder="Parlez-nous de votre centrale..." className="w-full px-3 py-2 bg-background border border-border rounded-md text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none" /></div><Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6">Envoyer <Send className="ml-2 h-4 w-4" /></Button></form></div></div></div></div><footer className="mt-20 pt-8 border-t border-border px-6 lg:px-10"><div className="flex flex-col sm:flex-row justify-between items-center gap-4"><div className="flex items-center gap-6 text-sm text-muted-foreground/60"><a href="#" className="hover:text-muted-foreground transition-colors">Mentions légales</a><a href="#" className="hover:text-muted-foreground transition-colors">Confidentialité</a><a href="#" className="hover:text-muted-foreground transition-colors">CGU</a></div><p className="text-sm text-muted-foreground/60">© 2026 Talmi Beton. Tous droits réservés.</p></div></footer></section>);
 }
 
 
 export default function Landing() {
-  useEffect(() => {
-    const setupSnap = () => {
-      const pinned = ScrollTrigger.getAll().filter(st => st.vars.pin).sort((a, b) => a.start - b.start);
-      const maxScroll = ScrollTrigger.maxScroll(window);
-      if (!maxScroll || pinned.length === 0) return;
-      const pinnedRanges = pinned.map(st => ({ start: st.start / maxScroll, end: (st.end ?? st.start) / maxScroll, center: (st.start + ((st.end ?? st.start) - st.start) * 0.5) / maxScroll }));
-      ScrollTrigger.create({ snap: { snapTo: (value: number) => { const inPinned = pinnedRanges.some(r => value >= r.start - 0.02 && value <= r.end + 0.02); if (!inPinned) return value; return pinnedRanges.reduce((closest, r) => Math.abs(r.center - value) < Math.abs(closest - value) ? r.center : closest, pinnedRanges[0]?.center ?? 0); }, duration: { min: 0.15, max: 0.35 }, delay: 0, ease: 'power2.out' } });
-    };
-    const timer = setTimeout(setupSnap, 500);
-    return () => clearTimeout(timer);
-  }, []);
-  return (
-    <div className="relative">
-      <Navigation />
-      <main className="relative">
-        <HeroSection />
-        <FeatureSection id="produit" image="/feature_truck.jpg" headline="Une plateforme." headlineAccent="Tout votre business." body="TBOS centralise la production, la maintenance, les stocks, la facturation et la conformité. Moins d'outils. Plus de contrôle." zIndex={20}>
-          <div className="flex flex-wrap gap-4">
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">Découvrir les modules <ChevronRight className="ml-2 h-4 w-4" /></Button>
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">Voir la documentation</Button>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-4 mt-8">
-            {[{icon: BarChart3, title: 'Opérations', subtitle: 'Planning, lots, qualité'}, {icon: Shield, title: 'Finance', subtitle: 'Devis, factures, rapports'}, {icon: Truck, title: 'Logistique', subtitle: 'Livraisons, tournées, GPS'}].map(({icon: Icon, title, subtitle}) => (
-              <div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <FeatureSection image="/feature_tower.jpg" headline="Pilotage" headlineAccent="en temps réel." body="Tableaux de bord actualisés à la seconde. Alertes intelligentes. Décisions basées sur des données fiables, pas sur des estimations." zIndex={30}>
-          <div className="flex flex-wrap gap-8">
-            {[{value: '120', label: 'm³/heure'}, {value: '24', label: 'camions en route'}, {value: '98%', label: 'tests conformes'}].map(({value, label}) => (
-              <div key={label}><div className="text-3xl font-black text-foreground">{value}</div><div className="text-[10px] font-mono text-muted-foreground mt-1 uppercase tracking-wider">{label}</div></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <FeatureSection image="/feature_silos_plant.jpg" headline="Sécurité" headlineAccent="de niveau bancaire." body="Authentification multi-facteur, isolation des données par site, conformité réglementaire et sauvegardes automatiques. Vos données restent vos données." zIndex={40}>
-          <div className="flex flex-wrap gap-3">
-            {[{icon: Lock, text: 'Chiffrement AES-256'}, {icon: Server, text: 'RLS Enterprise'}, {icon: Cloud, text: 'Cloud Souverain'}, {icon: Award, text: 'ISO 27001'}].map(({icon: Icon, text}) => (
-              <div key={text} className="flex items-center gap-2 px-3 py-2 bg-card/60 backdrop-blur-sm border border-border rounded-lg"><Icon size={16} className="text-primary" /><span className="text-xs font-mono text-muted-foreground">{text}</span></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <FeatureSection image="/feature_silos_wide.jpg" headline="Multi-sites." headlineAccent="Unifié." body="Gérez plusieurs centrales depuis un seul tableau de bord. Comparez les performances, standardisez les processus et déployez rapidement." zIndex={50}>
-          <div className="flex flex-wrap gap-3">
-            {['Paris-Nord', 'Lyon-Est', 'Bordeaux'].map((site) => <div key={site} className="px-4 py-2 bg-primary/5 border border-primary/20 rounded-full text-sm text-foreground">{site}</div>)}
-            <Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10"><Plus className="mr-1 h-3 w-3" /> Ajouter un site</Button>
-          </div>
-        </FeatureSection>
-        <FeatureSection id="modules" image="/feature_conveyor.jpg" headline="Logistique" headlineAccent="optimisée." body="Planifiez les tournées en quelques clics. Suivez les camions en temps réel. Réduisez les temps d'attente et les erreurs de livraison." zIndex={60}>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[{icon: Route, title: 'Tournées auto', subtitle: 'Optimisation en 1 clic'}, {icon: MapPin, title: 'GPS temps réel', subtitle: 'Suivi précis'}, {icon: Camera, title: 'Preuves de livraison', subtitle: 'Photos + signatures'}].map(({icon: Icon, title, subtitle}) => (
-              <div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <FeatureSection image="/feature_mixer_drums.jpg" headline="Qualité." headlineAccent="À chaque mètre cube." body="Enregistrez les formules, les essais et les corrections. TBOS garantit la traçabilité et la conformité à chaque étape." zIndex={70}>
-          <div className="flex flex-wrap gap-3">
-            {['Formules validées', 'Traçabilité complète', 'Alertes non-conformité', 'Rapports automatiques'].map((item) => (
-              <div key={item} className="flex items-center gap-2 px-3 py-2 bg-card/60 backdrop-blur-sm border border-border rounded-lg"><CheckCircle size={14} className="text-primary" /><span className="text-xs text-muted-foreground">{item}</span></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <FeatureSection image="/feature_night_lights.jpg" headline="Support humain." headlineAccent="24/7." body="Une équipe d'experts disponible à toute heure. Onboarding, formation et maintenance inclus pour garantir votre autonomie." zIndex={80}>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[{icon: MessageSquare, title: 'Chat', subtitle: 'Réponse < 2 min'}, {icon: Phone, title: 'Téléphone', subtitle: 'Ligne dédiée'}, {icon: Wrench, title: 'Intervention', subtitle: 'Délai < 4h'}].map(({icon: Icon, title, subtitle}) => (
-              <div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>
-            ))}
-          </div>
-        </FeatureSection>
-        <ContactSection />
-      </main>
-    </div>
-  );
+  useEffect(() => { const setupSnap = () => { const pinned = ScrollTrigger.getAll().filter(st => st.vars.pin).sort((a, b) => a.start - b.start); const maxScroll = ScrollTrigger.maxScroll(window); if (!maxScroll || pinned.length === 0) return; const pinnedRanges = pinned.map(st => ({ start: st.start / maxScroll, end: (st.end ?? st.start) / maxScroll, center: (st.start + ((st.end ?? st.start) - st.start) * 0.5) / maxScroll })); ScrollTrigger.create({ snap: { snapTo: (value: number) => { const inPinned = pinnedRanges.some(r => value >= r.start - 0.02 && value <= r.end + 0.02); if (!inPinned) return value; return pinnedRanges.reduce((closest, r) => Math.abs(r.center - value) < Math.abs(closest - value) ? r.center : closest, pinnedRanges[0]?.center ?? 0); }, duration: { min: 0.15, max: 0.35 }, delay: 0, ease: 'power2.out' } }); }; const timer = setTimeout(setupSnap, 500); return () => clearTimeout(timer); }, []);
+  return (<div className="relative"><Navigation /><main className="relative"><HeroSection /><FeatureSection id="produit" image="https://pmqtk4tii26o4.ok.kimi.link/feature_truck.jpg" headline="Une plateforme." headlineAccent="Tout votre business." body="TBOS centralise la production, la maintenance, les stocks, la facturation et la conformité. Moins d'outils. Plus de contrôle." zIndex={20}><div className="flex flex-wrap gap-4"><Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">Découvrir les modules <ChevronRight className="ml-2 h-4 w-4" /></Button><Button variant="ghost" className="text-muted-foreground hover:text-foreground">Voir la documentation</Button></div><div className="grid sm:grid-cols-3 gap-4 mt-8">{[{icon: BarChart3, title: 'Opérations', subtitle: 'Planning, lots, qualité'}, {icon: Shield, title: 'Finance', subtitle: 'Devis, factures, rapports'}, {icon: Truck, title: 'Logistique', subtitle: 'Livraisons, tournées, GPS'}].map(({icon: Icon, title, subtitle}) => (<div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>))}</div></FeatureSection><FeatureSection image="https://pmqtk4tii26o4.ok.kimi.link/feature_tower.jpg" headline="Pilotage" headlineAccent="en temps réel." body="Tableaux de bord actualisés à la seconde. Alertes intelligentes. Décisions basées sur des données fiables, pas sur des estimations." zIndex={30}><div className="flex flex-wrap gap-8">{[{value: '120', label: 'm³/heure'}, {value: '24', label: 'camions en route'}, {value: '98%', label: 'tests conformes'}].map(({value, label}) => (<div key={label}><div className="text-3xl font-black text-foreground">{value}</div><div className="text-[10px] font-mono text-muted-foreground mt-1 uppercase tracking-wider">{label}</div></div>))}</div></FeatureSection><FeatureSection image="https://pmqtk4tii26o4.ok.kimi.link/feature_silos_plant.jpg" headline="Sécurité" headlineAccent="de niveau bancaire." body="Authentification multi-facteur, isolation des données par site, conformité réglementaire et sauvegardes automatiques. Vos données restent vos données." zIndex={40}><div className="flex flex-wrap gap-3">{[{icon: Lock, text: 'Chiffrement AES-256'}, {icon: Server, text: 'RLS Enterprise'}, {icon: Cloud, text: 'Cloud Souverain'}, {icon: Award, text: 'ISO 27001'}].map(({icon: Icon, text}) => (<div key={text} className="flex items-center gap-2 px-3 py-2 bg-card/60 backdrop-blur-sm border border-border rounded-lg"><Icon size={16} className="text-primary" /><span className="text-xs font-mono text-muted-foreground">{text}</span></div>))}</div></FeatureSection><FeatureSection image="https://pmqtk4tii26o4.ok.kimi.link/feature_silos_wide.jpg" headline="Multi-sites." headlineAccent="Unifié." body="Gérez plusieurs centrales depuis un seul tableau de bord. Comparez les performances, standardisez les processus et déployez rapidement." zIndex={50}><div className="flex flex-wrap gap-3">{['Paris-Nord', 'Lyon-Est', 'Bordeaux'].map((site) => <div key={site} className="px-4 py-2 bg-primary/5 border border-primary/20 rounded-full text-sm text-foreground">{site}</div>)}<Button variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10"><Plus className="mr-1 h-3 w-3" /> Ajouter un site</Button></div></FeatureSection><FeatureSection id="modules" image="https://pmqtk4tii26o4.ok.kimi.link/feature_conveyor.jpg" headline="Logistique" headlineAccent="optimisée." body="Planifiez les tournées en quelques clics. Suivez les camions en temps réel. Réduisez les temps d'attente et les erreurs de livraison." zIndex={60}><div className="grid sm:grid-cols-3 gap-4">{[{icon: Route, title: 'Tournées auto', subtitle: 'Optimisation en 1 clic'}, {icon: MapPin, title: 'GPS temps réel', subtitle: 'Suivi précis'}, {icon: Camera, title: 'Preuves de livraison', subtitle: 'Photos + signatures'}].map(({icon: Icon, title, subtitle}) => (<div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>))}</div></FeatureSection><FeatureSection image="https://pmqtk4tii26o4.ok.kimi.link/feature_mixer_drums.jpg" headline="Qualité." headlineAccent="À chaque mètre cube." body="Enregistrez les formules, les essais et les corrections. TBOS garantit la traçabilité et la conformité à chaque étape." zIndex={70}><div className="flex flex-wrap gap-3">{['Formules validées', 'Traçabilité complète', 'Alertes non-conformité', 'Rapports automatiques'].map((item) => (<div key={item} className="flex items-center gap-2 px-3 py-2 bg-card/60 backdrop-blur-sm border border-border rounded-lg"><CheckCircle size={14} className="text-primary" /><span className="text-xs text-muted-foreground">{item}</span></div>))}</div></FeatureSection><FeatureSection image="https://pmqtk4tii26o4.ok.kimi.link/feature_night_lights.jpg" headline="Support humain." headlineAccent="24/7." body="Une équipe d'experts disponible à toute heure. Onboarding, formation et maintenance inclus pour garantir votre autonomie." zIndex={80}><div className="grid sm:grid-cols-3 gap-4">{[{icon: MessageSquare, title: 'Chat', subtitle: 'Réponse < 2 min'}, {icon: Phone, title: 'Téléphone', subtitle: 'Ligne dédiée'}, {icon: Wrench, title: 'Intervention', subtitle: 'Délai < 4h'}].map(({icon: Icon, title, subtitle}) => (<div key={title} className="p-4 bg-card/60 backdrop-blur-sm border border-border rounded-lg hover:border-primary/30 transition-colors"><Icon className="h-6 w-6 text-primary mb-3" /><div className="font-semibold text-foreground text-sm">{title}</div><div className="text-xs text-muted-foreground mt-1">{subtitle}</div></div>))}</div></FeatureSection><ContactSection /></main></div>);
 }
