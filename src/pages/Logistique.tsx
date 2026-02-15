@@ -102,10 +102,10 @@ export default function Logistique() {
       .update(updates)
       .eq('id_camion', gpsDialogVehicle.id_camion);
     if (error) {
-      toast.error('Erreur mise à jour GPS');
+      toast.error(t.pages.logistique.gpsError);
       throw error;
     }
-    toast.success('Configuration GPS mise à jour');
+    toast.success(t.pages.logistique.gpsUpdated);
     setGpsDialogVehicle(prev => prev ? { ...prev, ...updates } as Vehicle : null);
     await fetchVehicules();
   }, [gpsDialogVehicle, fetchVehicules]);
@@ -290,10 +290,10 @@ export default function Logistique() {
                     </div>
                     <div className="flex justify-end gap-3 pt-4">
                       <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                        Annuler
+                        {t.pages.logistique.cancel}
                       </Button>
                       <Button type="submit" disabled={submitting}>
-                        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Ajouter'}
+                        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : t.pages.logistique.add}
                       </Button>
                     </div>
                   </form>
@@ -471,12 +471,12 @@ export default function Logistique() {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Disponible">Disponible</SelectItem>
+                                    <SelectItem value="Disponible">{t.pages.logistique.statusAvailable}</SelectItem>
                                     <SelectItem value="En Livraison" disabled={isOnActiveDelivery}>
-                                      En Livraison
+                                      {t.pages.logistique.statusDelivery}
                                     </SelectItem>
-                                    <SelectItem value="Maintenance">Maintenance</SelectItem>
-                                    <SelectItem value="Hors Service">Hors Service</SelectItem>
+                                    <SelectItem value="Maintenance">{t.pages.logistique.statusMaintenance}</SelectItem>
+                                    <SelectItem value="Hors Service">{t.pages.logistique.statusOutOfService}</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 
@@ -530,9 +530,9 @@ export default function Logistique() {
           {/* Provider Performance Tab */}
           <TabsContent value="performance">
             <div className="card-industrial p-6">
-              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-yellow-500" />
-                Classement des Prestataires
+                {t.pages.logistique.providerRanking}
               </h2>
               <ProviderLeaderboard stats={providerStats} />
             </div>
@@ -543,7 +543,7 @@ export default function Logistique() {
             <div className="card-industrial p-4 sm:p-6">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                 <RotateCcw className="h-5 w-5 text-primary" />
-                Journal des Rotations
+                {t.pages.logistique.rotationJournal}
               </h2>
               <RotationJournal />
             </div>
@@ -553,24 +553,24 @@ export default function Logistique() {
           <TabsContent value="carburant">
             <div className="card-industrial overflow-x-auto">
               <div className="p-4 border-b border-border">
-                <h2 className="font-semibold">Historique Carburant</h2>
+                <h2 className="font-semibold">{t.pages.logistique.fuelHistory}</h2>
               </div>
               {carburant.length === 0 ? (
                 <div className="p-8 text-center text-muted-foreground">
-                  Aucun relevé carburant enregistré
+                  {t.pages.logistique.noFuelRecords}
                 </div>
               ) : (
                 <Table className="data-table-industrial">
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Véhicule</TableHead>
-                      <TableHead className="text-right">Litres</TableHead>
-                      <TableHead className="text-right">Compteur</TableHead>
-                      <TableHead className="text-right">Distance</TableHead>
-                      <TableHead className="text-right">Conso. L/100</TableHead>
-                      <TableHead className="text-right">Coût</TableHead>
-                      <TableHead>Station</TableHead>
+                      <TableHead>{t.pages.logistique.date}</TableHead>
+                      <TableHead>{t.pages.logistique.vehicle}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.liters}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.counter}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.distance}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.consumption}</TableHead>
+                      <TableHead className="text-right">{t.pages.logistique.cost}</TableHead>
+                      <TableHead>{t.pages.logistique.station}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

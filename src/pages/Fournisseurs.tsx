@@ -142,7 +142,7 @@ export default function Fournisseurs() {
           </div>
           <Button onClick={refresh} variant="outline" size="sm" className="min-h-[40px] self-start sm:self-auto">
             <RefreshCw className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Actualiser</span>
+            <span className="hidden sm:inline">{t.pages.fournisseurs.refresh}</span>
           </Button>
         </div>
 
@@ -152,7 +152,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-blue-600" />
-                <span className="text-sm text-muted-foreground">Fournisseurs</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.suppliers}</span>
               </div>
               <p className="text-2xl font-bold mt-1">{stats.totalFournisseurs}</p>
             </CardContent>
@@ -162,7 +162,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5 text-purple-600" />
-                <span className="text-sm text-muted-foreground">Cmd. en cours</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.ordersInProgress}</span>
               </div>
               <p className="text-2xl font-bold mt-1">{stats.commandesEnCours}</p>
             </CardContent>
@@ -172,7 +172,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-indigo-600" />
-                <span className="text-sm text-muted-foreground">Montant Cmd.</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.orderAmount}</span>
               </div>
               <p className="text-xl font-bold mt-1">{formatCurrency(stats.montantCommandesEnCours)}</p>
             </CardContent>
@@ -182,7 +182,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <FileText className="h-5 w-5 text-orange-600" />
-                <span className="text-sm text-muted-foreground">Factures dues</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.dueInvoices}</span>
               </div>
               <p className="text-2xl font-bold mt-1">{stats.facturesEnAttente}</p>
             </CardContent>
@@ -192,7 +192,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-5 w-5 text-green-600" />
-                <span className="text-sm text-muted-foreground">Montant dû</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.amountDue}</span>
               </div>
               <p className="text-xl font-bold mt-1">{formatCurrency(stats.montantDu)}</p>
             </CardContent>
@@ -202,7 +202,7 @@ export default function Fournisseurs() {
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className={`h-5 w-5 ${stats.facturesEnRetard > 0 ? 'text-red-600' : 'text-gray-400'}`} />
-                <span className="text-sm text-muted-foreground">En retard</span>
+                <span className="text-sm text-muted-foreground">{t.pages.fournisseurs.overdue}</span>
               </div>
               <p className={`text-2xl font-bold mt-1 ${stats.facturesEnRetard > 0 ? 'text-red-600' : ''}`}>
                 {stats.facturesEnRetard}
@@ -217,7 +217,7 @@ export default function Fournisseurs() {
             <CardHeader className="pb-2">
               <CardTitle className="text-amber-800 flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
-                Alertes de Réapprovisionnement
+                {t.pages.fournisseurs.reorderAlertsTitle}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -228,7 +228,7 @@ export default function Fournisseurs() {
                       <div>
                         <p className="font-medium">{alerte.materiau}</p>
                         <p className="text-xs text-muted-foreground">
-                          Seuil: {alerte.seuil_alerte} | Commander: {alerte.quantite_reorder}
+                          {t.pages.fournisseurs.threshold}: {alerte.seuil_alerte} | {t.pages.fournisseurs.reorderQty}: {alerte.quantite_reorder}
                         </p>
                       </div>
                       {alerte.fournisseur && (
@@ -247,21 +247,21 @@ export default function Fournisseurs() {
         {/* Main Tabs */}
         <Tabs defaultValue="fournisseurs">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="fournisseurs" className="flex items-center gap-2">
+             <TabsTrigger value="fournisseurs" className="flex items-center gap-2">
               <Building2 className="h-4 w-4" />
-              Fournisseurs
+              {t.pages.fournisseurs.suppliers}
             </TabsTrigger>
             <TabsTrigger value="achats" className="flex items-center gap-2">
               <Package className="h-4 w-4" />
-              Commandes
+              {t.pages.fournisseurs.ordersTab}
             </TabsTrigger>
             <TabsTrigger value="factures" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
-              Factures
+              {t.pages.fournisseurs.invoicesTab}
             </TabsTrigger>
             <TabsTrigger value="alertes" className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Alertes Stock
+              {t.pages.fournisseurs.stockAlertsTab}
             </TabsTrigger>
           </TabsList>
 
@@ -281,18 +281,18 @@ export default function Fournisseurs() {
               <Dialog open={showNewFournisseur} onOpenChange={setShowNewFournisseur}>
                 <DialogTrigger asChild>
                   <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau Fournisseur
+                     <Plus className="h-4 w-4 mr-2" />
+                    {t.pages.fournisseurs.newSupplier}
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Nouveau Fournisseur</DialogTitle>
+                    <DialogTitle>{t.pages.fournisseurs.newSupplier}</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Code</Label>
+                        <Label>{t.pages.fournisseurs.code}</Label>
                         <Input
                           value={newFournisseur.code_fournisseur}
                           onChange={(e) => setNewFournisseur({ ...newFournisseur, code_fournisseur: e.target.value })}
@@ -300,7 +300,7 @@ export default function Fournisseurs() {
                         />
                       </div>
                       <div>
-                        <Label>Nom</Label>
+                        <Label>{t.pages.fournisseurs.name}</Label>
                         <Input
                           value={newFournisseur.nom_fournisseur}
                           onChange={(e) => setNewFournisseur({ ...newFournisseur, nom_fournisseur: e.target.value })}
@@ -310,7 +310,7 @@ export default function Fournisseurs() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Contact</Label>
+                        <Label>{t.pages.fournisseurs.contact}</Label>
                         <Input
                           value={newFournisseur.contact_nom}
                           onChange={(e) => setNewFournisseur({ ...newFournisseur, contact_nom: e.target.value })}
@@ -327,7 +327,7 @@ export default function Fournisseurs() {
                       </div>
                     </div>
                     <div>
-                      <Label>Email</Label>
+                      <Label>{t.pages.fournisseurs.email}</Label>
                       <Input
                         type="email"
                         value={newFournisseur.contact_email}
@@ -337,7 +337,7 @@ export default function Fournisseurs() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Ville</Label>
+                        <Label>{t.pages.fournisseurs.city}</Label>
                         <Input
                           value={newFournisseur.ville}
                           onChange={(e) => setNewFournisseur({ ...newFournisseur, ville: e.target.value })}
@@ -345,7 +345,7 @@ export default function Fournisseurs() {
                         />
                       </div>
                       <div>
-                        <Label>Conditions paiement</Label>
+                        <Label>{t.pages.fournisseurs.paymentTerms}</Label>
                         <Select
                           value={newFournisseur.conditions_paiement}
                           onValueChange={(v) => setNewFournisseur({ ...newFournisseur, conditions_paiement: v })}
@@ -363,7 +363,7 @@ export default function Fournisseurs() {
                       </div>
                     </div>
                     <Button onClick={handleCreateFournisseur} className="w-full">
-                      Créer le fournisseur
+                      {t.pages.fournisseurs.createSupplierBtn}
                     </Button>
                   </div>
                 </DialogContent>
@@ -374,13 +374,13 @@ export default function Fournisseurs() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Code</TableHead>
-                    <TableHead>Fournisseur</TableHead>
-                    <TableHead>Contact</TableHead>
-                    <TableHead>Ville</TableHead>
-                    <TableHead>Conditions</TableHead>
-                    <TableHead>Note</TableHead>
-                    <TableHead>Statut</TableHead>
+                     <TableHead>{t.pages.fournisseurs.code}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.supplier}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.contact}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.city}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.terms}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.rating}</TableHead>
+                    <TableHead>{t.pages.fournisseurs.status}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -407,7 +407,7 @@ export default function Fournisseurs() {
                       </TableCell>
                       <TableCell>
                         <Badge variant={f.actif ? 'default' : 'secondary'}>
-                          {f.actif ? 'Actif' : 'Inactif'}
+                          {f.actif ? t.pages.fournisseurs.active : t.pages.fournisseurs.inactive}
                         </Badge>
                       </TableCell>
                     </TableRow>
@@ -421,7 +421,7 @@ export default function Fournisseurs() {
             <div className="flex justify-end">
               <Button onClick={() => setShowNewAchat(true)}>
                 <ShoppingCart className="h-4 w-4 mr-2" />
-                Nouvelle Commande
+                {t.pages.fournisseurs.newOrderBtn}
               </Button>
             </div>
             
@@ -429,26 +429,26 @@ export default function Fournisseurs() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Truck className="h-5 w-5" />
-                  Commandes d'Achat
+                  {t.pages.fournisseurs.orders}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {achats.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Aucune commande enregistrée</p>
+                    <p>{t.pages.fournisseurs.noOrders2}</p>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>N° Commande</TableHead>
-                        <TableHead>Fournisseur</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Livraison prévue</TableHead>
-                        <TableHead>Montant TTC</TableHead>
-                        <TableHead>Statut</TableHead>
-                        <TableHead>Actions</TableHead>
+                         <TableHead>{t.pages.fournisseurs.orderNumber}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.supplier}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.invoiceDate}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.expectedDelivery}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.amountTTC}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.status}</TableHead>
+                        <TableHead>{t.pages.formulas.actions}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -476,7 +476,7 @@ export default function Fournisseurs() {
                                 variant="outline"
                                 onClick={() => updateAchatStatus(a.id, 'confirmee')}
                               >
-                                Confirmer
+                                {t.pages.fournisseurs.confirm}
                               </Button>
                             )}
                             {a.statut === 'confirmee' && (
@@ -485,7 +485,7 @@ export default function Fournisseurs() {
                                 variant="outline"
                                 onClick={() => updateAchatStatus(a.id, 'en_transit')}
                               >
-                                En transit
+                                 {t.pages.fournisseurs.inTransit}
                               </Button>
                             )}
                             {a.statut === 'en_transit' && (
@@ -494,7 +494,7 @@ export default function Fournisseurs() {
                                 variant="default"
                                 onClick={() => updateAchatStatus(a.id, 'livree', new Date().toISOString().split('T')[0])}
                               >
-                                Réceptionner
+                                {t.pages.fournisseurs.receive}
                               </Button>
                             )}
                           </TableCell>
@@ -513,28 +513,28 @@ export default function Fournisseurs() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Factures Fournisseurs
+                  {t.pages.fournisseurs.supplierInvoices}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {facturesFournisseur.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Aucune facture enregistrée</p>
+                    <p>{t.pages.fournisseurs.noInvoices}</p>
                   </div>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>N° Facture</TableHead>
-                        <TableHead>Fournisseur</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead>Échéance</TableHead>
-                        <TableHead>Montant TTC</TableHead>
-                        <TableHead>Payé</TableHead>
-                        <TableHead>Reste</TableHead>
-                        <TableHead>Statut</TableHead>
-                        <TableHead>Actions</TableHead>
+                         <TableHead>{t.pages.fournisseurs.invoiceNumber}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.supplier}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.invoiceDate}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.dueDate}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.amountTTC}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.paid}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.remaining}</TableHead>
+                        <TableHead>{t.pages.fournisseurs.status}</TableHead>
+                        <TableHead>{t.pages.formulas.actions}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -573,7 +573,7 @@ export default function Fournisseurs() {
                                   }}
                                 >
                                   <CreditCard className="h-3 w-3 mr-1" />
-                                  Payer
+                                  {t.pages.fournisseurs.payBtn}
                                 </Button>
                               )}
                             </TableCell>
@@ -593,20 +593,20 @@ export default function Fournisseurs() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
-                  Configuration des Alertes de Stock
+                  {t.pages.fournisseurs.stockAlertConfig}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Matériau</TableHead>
-                      <TableHead>Seuil d'alerte</TableHead>
-                      <TableHead>Quantité à commander</TableHead>
-                      <TableHead>Fournisseur préféré</TableHead>
-                      <TableHead>Délai</TableHead>
-                      <TableHead>Dernière alerte</TableHead>
-                      <TableHead>Statut</TableHead>
+                       <TableHead>{t.pages.fournisseurs.material}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.alertThreshold}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.orderQty}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.preferredSupplier}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.leadTime}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.lastAlert}</TableHead>
+                      <TableHead>{t.pages.fournisseurs.status}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -616,7 +616,7 @@ export default function Fournisseurs() {
                         <TableCell>{a.seuil_alerte.toLocaleString()}</TableCell>
                         <TableCell>{a.quantite_reorder.toLocaleString()}</TableCell>
                         <TableCell>{a.fournisseur?.nom_fournisseur || '-'}</TableCell>
-                        <TableCell>{a.delai_commande_jours} jours</TableCell>
+                        <TableCell>{a.delai_commande_jours} {t.pages.fournisseurs.days}</TableCell>
                         <TableCell>
                           {a.derniere_alerte 
                             ? format(new Date(a.derniere_alerte), 'dd/MM/yyyy HH:mm', { locale: fr })
@@ -625,7 +625,7 @@ export default function Fournisseurs() {
                         </TableCell>
                         <TableCell>
                           <Badge variant={a.actif ? 'default' : 'secondary'}>
-                            {a.actif ? 'Actif' : 'Inactif'}
+                            {a.actif ? t.pages.fournisseurs.active : t.pages.fournisseurs.inactive}
                           </Badge>
                         </TableCell>
                       </TableRow>
@@ -641,22 +641,22 @@ export default function Fournisseurs() {
         <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Enregistrer un paiement</DialogTitle>
+              <DialogTitle>{t.pages.fournisseurs.recordPayment}</DialogTitle>
             </DialogHeader>
             {selectedFacture && (
               <div className="space-y-4">
                 <div className="bg-muted p-3 rounded-lg">
-                  <p className="text-sm">Facture: <span className="font-mono">{selectedFacture.numero_facture}</span></p>
-                  <p className="text-sm">Fournisseur: {selectedFacture.fournisseur?.nom_fournisseur}</p>
-                  <p className="text-sm">
-                    Reste à payer: <span className="font-bold text-orange-600">
-                      {formatCurrency(selectedFacture.montant_ttc - (selectedFacture.montant_paye || 0))}
+                   <p className="text-sm">{t.pages.fournisseurs.invoice}: <span className="font-mono">{selectedFacture.numero_facture}</span></p>
+                   <p className="text-sm">{t.pages.fournisseurs.supplier}: {selectedFacture.fournisseur?.nom_fournisseur}</p>
+                   <p className="text-sm">
+                     {t.pages.fournisseurs.remainingToPay}: <span className="font-bold text-orange-600">
+                       {formatCurrency(selectedFacture.montant_ttc - (selectedFacture.montant_paye || 0))}
                     </span>
                   </p>
                 </div>
                 
                 <div>
-                  <Label>Montant</Label>
+                  <Label>{t.pages.fournisseurs.paymentAmount}</Label>
                   <Input
                     type="number"
                     value={paymentForm.montant}
@@ -665,7 +665,7 @@ export default function Fournisseurs() {
                 </div>
                 
                 <div>
-                  <Label>Mode de paiement</Label>
+                  <Label>{t.pages.fournisseurs.paymentMode}</Label>
                   <Select
                     value={paymentForm.mode_paiement}
                     onValueChange={(v) => setPaymentForm({ ...paymentForm, mode_paiement: v })}
@@ -674,15 +674,15 @@ export default function Fournisseurs() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="virement">Virement</SelectItem>
-                      <SelectItem value="cheque">Chèque</SelectItem>
-                      <SelectItem value="especes">Espèces</SelectItem>
+                       <SelectItem value="virement">{t.pages.fournisseurs.transfer}</SelectItem>
+                      <SelectItem value="cheque">{t.pages.fournisseurs.check}</SelectItem>
+                      <SelectItem value="especes">{t.pages.fournisseurs.cash}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
-                  <Label>Référence</Label>
+                  <Label>{t.pages.fournisseurs.reference}</Label>
                   <Input
                     value={paymentForm.reference}
                     onChange={(e) => setPaymentForm({ ...paymentForm, reference: e.target.value })}
@@ -691,7 +691,7 @@ export default function Fournisseurs() {
                 </div>
                 
                 <Button onClick={handleRecordPayment} className="w-full">
-                  Enregistrer le paiement
+                  {t.pages.fournisseurs.recordPaymentBtn}
                 </Button>
               </div>
             )}
