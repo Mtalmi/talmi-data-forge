@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { DeliveryRotationProgress } from './DeliveryRotationProgress';
 import { ETATracker } from './ETATracker';
 import { DispatcherProxyControls } from './DispatcherProxyControls';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface DriverDispatchCardProps {
   bon: {
@@ -52,6 +53,10 @@ export function DriverDispatchCard({
   showActions = true,
   showProxyControls = true,
 }: DriverDispatchCardProps) {
+  const { t } = useI18n();
+  const d = t.driverDispatch;
+  const c = t.common;
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'planification': return 'border-l-muted-foreground';
@@ -66,12 +71,12 @@ export function DriverDispatchCard({
 
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      planification: 'À Planifier',
-      production: 'Production',
-      validation_technique: 'Validation',
-      en_livraison: 'En Route',
-      livre: 'Livré',
-      facture: 'Facturé',
+      planification: d.toSchedule,
+      production: d.production,
+      validation_technique: d.validationTech,
+      en_livraison: d.enRoute,
+      livre: d.delivered,
+      facture: d.invoiced,
     };
     return labels[status] || status;
   };
@@ -95,7 +100,6 @@ export function DriverDispatchCard({
       onClick={onOpenDetails}
     >
       <CardContent className="p-4 sm:p-5">
-        {/* Header Row */}
         <div className="flex justify-between items-start gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <p className="font-bold text-lg truncate">{bon.bl_id}</p>
@@ -111,58 +115,54 @@ export function DriverDispatchCard({
           </Badge>
         </div>
 
-        {/* Key Info Grid - Large Touch Targets */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg min-h-[56px]">
             <Package className="h-5 w-5 text-primary shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">Formule</p>
+              <p className="text-xs text-muted-foreground">{d.formula}</p>
               <p className="font-semibold text-sm">{bon.formule_id}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg min-h-[56px]">
             <Factory className="h-5 w-5 text-primary shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">Volume</p>
+              <p className="text-xs text-muted-foreground">{d.volume}</p>
               <p className="font-bold text-lg">{bon.volume_m3} m³</p>
             </div>
           </div>
         </div>
 
-        {/* Time & Truck Row */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg min-h-[56px]">
             <Clock className="h-5 w-5 text-primary shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">Heure Prévue</p>
+              <p className="text-xs text-muted-foreground">{d.scheduledTime}</p>
               <p className="font-bold text-xl">{bon.heure_prevue || '--:--'}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg min-h-[56px]">
             <Truck className="h-5 w-5 text-primary shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">Camion</p>
+              <p className="text-xs text-muted-foreground">{d.truck}</p>
               <p className="font-semibold text-sm truncate">
-                {bon.camion_assigne || bon.toupie_assignee || 'Non assigné'}
+                {bon.camion_assigne || bon.toupie_assignee || c.notAssigned}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Zone Info */}
         {bon.zones_livraison && (
           <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg mb-4 min-h-[48px]">
             <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm truncate">
-                <span className="font-semibold">Zone {bon.zones_livraison.code_zone}:</span>{' '}
+                <span className="font-semibold">{d.zone} {bon.zones_livraison.code_zone}:</span>{' '}
                 {bon.zones_livraison.nom_zone}
               </p>
             </div>
           </div>
         )}
 
-        {/* Payment Mode */}
         {bon.mode_paiement && (
           <div className="mb-4">
             <Badge variant="outline" className="text-xs">
@@ -171,13 +171,11 @@ export function DriverDispatchCard({
           </div>
         )}
 
-        {/* 🆕 Rotation Progress for en_livraison status */}
         {bon.workflow_status === 'en_livraison' && (
           <div className="mb-4 p-3 bg-muted/30 rounded-lg space-y-3">
-            {/* Proxy Controls Header */}
             {showProxyControls && (
               <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                <span className="text-xs font-medium text-muted-foreground">Suivi Rotation</span>
+                <span className="text-xs font-medium text-muted-foreground">{d.rotationTracking}</span>
                 <DispatcherProxyControls
                   blId={bon.bl_id}
                   heureDepart={bon.heure_depart_centrale ?? null}
@@ -207,7 +205,6 @@ export function DriverDispatchCard({
           </div>
         )}
 
-        {/* Action Buttons - Large Touch Targets (44px+) */}
         {showActions && (
           <div className="flex gap-3 pt-2">
             {bon.workflow_status === 'planification' && onStartProduction && (
@@ -220,7 +217,7 @@ export function DriverDispatchCard({
                 }}
               >
                 <Play className="h-5 w-5" />
-                Lancer Production
+                {d.launchProduction}
               </Button>
             )}
             {bon.workflow_status === 'en_livraison' && onMarkDelivered && (
@@ -234,7 +231,7 @@ export function DriverDispatchCard({
                 }}
               >
                 <CheckCircle className="h-5 w-5" />
-                Confirmer Livraison
+                {d.confirmDelivery}
               </Button>
             )}
             {onOpenDetails && (

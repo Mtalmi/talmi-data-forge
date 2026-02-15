@@ -23,9 +23,10 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { MODES_PAIEMENT } from '@/hooks/useZonesLivraison';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface Zone {
   id: string;
@@ -41,59 +42,37 @@ interface Prestataire {
 }
 
 interface OrderFormFieldsProps {
-  // Delivery Date/Time
   deliveryDate: Date | undefined;
   setDeliveryDate: (date: Date | undefined) => void;
   deliveryTime: string;
   setDeliveryTime: (time: string) => void;
-  
-  // Address & Contact
   deliveryAddress: string;
   setDeliveryAddress: (address: string) => void;
   contactChantier: string;
   setContactChantier: (contact: string) => void;
   telephoneChantier: string;
   setTelephoneChantier: (phone: string) => void;
-  
-  // Reference & Conditions
   referenceClient: string;
   setReferenceClient: (ref: string) => void;
   conditionsAcces: string;
   setConditionsAcces: (conditions: string) => void;
-  
-  // Pump Options
   pompeRequise: boolean;
   setPompeRequise: (required: boolean) => void;
   typePompe: string;
   setTypePompe: (type: string) => void;
-  
-  // Notes
   notes: string;
   setNotes: (notes: string) => void;
-  
-  // Zone & Payment
   selectedZoneId: string;
   setSelectedZoneId: (zoneId: string) => void;
   modePaiement: string;
   setModePaiement: (mode: string) => void;
   selectedPrestataireId: string;
   setSelectedPrestataireId: (id: string) => void;
-  
-  // Data
   zones: Zone[];
   prestataires: Prestataire[];
-  
-  // Display options
   showZoneSection?: boolean;
   addressAsTextarea?: boolean;
 }
-
-const PUMP_TYPES = [
-  { value: 'pompe_automotrice', label: 'Pompe automotrice' },
-  { value: 'pompe_stationnaire', label: 'Pompe stationnaire' },
-  { value: 'pompe_bras', label: 'Pompe à bras (36m)' },
-  { value: 'pompe_bras_xl', label: 'Pompe à bras (42m+)' },
-];
 
 export function OrderFormFields({
   deliveryDate,
@@ -127,24 +106,32 @@ export function OrderFormFields({
   showZoneSection = true,
   addressAsTextarea = false,
 }: OrderFormFieldsProps) {
+  const { t, lang } = useI18n();
+  const o = t.orderForm;
+  const dateLocale = getDateLocale(lang);
   const selectedZone = zones.find(z => z.id === selectedZoneId);
   const prixLivraison = selectedZone?.prix_livraison_m3 || 0;
 
+  const PUMP_TYPES = [
+    { value: 'pompe_automotrice', label: o.pumpAutomotrice },
+    { value: 'pompe_stationnaire', label: o.pumpStationnaire },
+    { value: 'pompe_bras', label: o.pumpBras36 },
+    { value: 'pompe_bras_xl', label: o.pumpBrasXL },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Delivery Section */}
       <div className="space-y-4">
         <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
           <Truck className="h-4 w-4" />
-          Informations de Livraison
+          {o.deliveryInfo}
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Date Picker */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-              Date de livraison *
+              {o.deliveryDate} *
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -156,7 +143,7 @@ export function OrderFormFields({
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {deliveryDate ? format(deliveryDate, "PPP", { locale: fr }) : "Sélectionner une date"}
+                  {deliveryDate ? format(deliveryDate, "PPP", { locale: dateLocale || undefined }) : o.selectDate}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -172,58 +159,55 @@ export function OrderFormFields({
             </Popover>
           </div>
 
-          {/* Time Picker - Modern combobox style */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground" />
-              Heure souhaitée
+              {o.preferredTime}
             </Label>
             <TimePicker
               value={deliveryTime}
               onChange={setDeliveryTime}
-              placeholder="Sélectionner l'heure"
+              placeholder={o.selectTime}
             />
           </div>
 
-          {/* Address */}
           <div className={cn("space-y-2", !addressAsTextarea && "md:col-span-2")}>
             <Label className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-muted-foreground" />
-              Adresse {addressAsTextarea ? 'du chantier *' : 'de livraison'}
+              {addressAsTextarea ? `${o.siteAddress} *` : o.deliveryAddress}
             </Label>
             {addressAsTextarea ? (
               <Textarea
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Adresse complète du chantier..."
+                placeholder={`${o.fullSiteAddress}...`}
                 rows={2}
               />
             ) : (
               <Input
                 value={deliveryAddress}
                 onChange={(e) => setDeliveryAddress(e.target.value)}
-                placeholder="Adresse complète du chantier"
+                placeholder={o.fullSiteAddress}
               />
             )}
           </div>
 
-          {/* Contact */}
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <User className="h-4 w-4 text-muted-foreground" />
-              Contact chantier
+              {o.siteContact}
             </Label>
             <Input
               value={contactChantier}
               onChange={(e) => setContactChantier(e.target.value)}
-              placeholder="Nom du responsable"
+              placeholder={o.managerName}
             />
           </div>
 
           <div className="space-y-2">
             <Label className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-muted-foreground" />
-              Téléphone
+              {o.phone}
             </Label>
             <Input
               value={telephoneChantier}
@@ -234,28 +218,27 @@ export function OrderFormFields({
         </div>
       </div>
 
-      {/* Zone & Payment Section */}
       {showZoneSection && (
         <div className="space-y-4">
           <h3 className="font-semibold flex items-center gap-2 text-sm uppercase tracking-wide text-muted-foreground">
             <MapPin className="h-4 w-4" />
-            Zone & Paiement
+            {o.zonePayment}
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                Zone de Livraison *
+                {o.deliveryZone} *
               </Label>
               <Select value={selectedZoneId} onValueChange={setSelectedZoneId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner une zone" />
+                  <SelectValue placeholder={o.selectZone} />
                 </SelectTrigger>
                 <SelectContent>
                   {zones.map((zone) => (
                     <SelectItem key={zone.id} value={zone.id}>
-                      Zone {zone.code_zone} - {zone.nom_zone} ({zone.prix_livraison_m3} DH/m³)
+                      {o.deliveryZone.split(' ')[0]} {zone.code_zone} - {zone.nom_zone} ({zone.prix_livraison_m3} DH/m³)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -265,7 +248,7 @@ export function OrderFormFields({
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
-                Mode de Paiement
+                {o.paymentMode}
               </Label>
               <Select value={modePaiement} onValueChange={setModePaiement}>
                 <SelectTrigger>
@@ -284,11 +267,11 @@ export function OrderFormFields({
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <Truck className="h-4 w-4 text-muted-foreground" />
-                Prestataire Transport
+                {o.transportContractor}
               </Label>
               <Select value={selectedPrestataireId} onValueChange={setSelectedPrestataireId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un prestataire" />
+                  <SelectValue placeholder={o.selectContractor} />
                 </SelectTrigger>
                 <SelectContent>
                   {prestataires.map((prest) => (
@@ -302,7 +285,7 @@ export function OrderFormFields({
 
             {selectedZone && (
               <div className="p-3 rounded-lg bg-primary/10 border border-primary/30">
-                <div className="text-xs text-muted-foreground">Coût Livraison</div>
+                <div className="text-xs text-muted-foreground">{o.deliveryCost}</div>
                 <div className="text-lg font-bold font-mono text-primary">
                   +{prixLivraison} DH/m³
                 </div>
@@ -312,31 +295,30 @@ export function OrderFormFields({
         </div>
       )}
 
-      {/* Additional Options */}
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Référence client</Label>
+            <Label>{o.clientReference}</Label>
             <Input
               value={referenceClient}
               onChange={(e) => setReferenceClient(e.target.value)}
-              placeholder="N° commande client"
+              placeholder={o.clientOrderNum}
             />
           </div>
           <div className="space-y-2">
-            <Label>Conditions d'accès</Label>
+            <Label>{o.accessConditions}</Label>
             <Input
               value={conditionsAcces}
               onChange={(e) => setConditionsAcces(e.target.value)}
-              placeholder="Étroit, pente, etc."
+              placeholder={o.narrowSlopePlaceholder}
             />
           </div>
         </div>
 
         <div className="flex items-center justify-between p-3 rounded-lg border">
           <div>
-            <Label>Pompe requise</Label>
-            <p className="text-xs text-muted-foreground">Service de pompage béton</p>
+            <Label>{o.pumpRequired}</Label>
+            <p className="text-xs text-muted-foreground">{o.pumpService}</p>
           </div>
           <Switch
             checked={pompeRequise}
@@ -347,7 +329,7 @@ export function OrderFormFields({
         {pompeRequise && (
           <Select value={typePompe} onValueChange={setTypePompe}>
             <SelectTrigger>
-              <SelectValue placeholder="Type de pompe" />
+              <SelectValue placeholder={o.pumpType} />
             </SelectTrigger>
             <SelectContent>
               {PUMP_TYPES.map((pump) => (
@@ -360,11 +342,11 @@ export function OrderFormFields({
         )}
 
         <div className="space-y-2">
-          <Label>Notes / Instructions</Label>
+          <Label>{o.notesInstructions}</Label>
           <Textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Instructions particulières..."
+            placeholder={o.specialInstructions}
             rows={2}
           />
         </div>

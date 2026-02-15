@@ -1,5 +1,6 @@
 import { FileText, ShoppingCart, Truck, Receipt, CheckCircle, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 export type WorkflowStage = 'devis' | 'bc' | 'bl' | 'facture';
 
@@ -9,14 +10,17 @@ interface WorkflowStepperProps {
   compact?: boolean;
 }
 
-const WORKFLOW_STAGES: { id: WorkflowStage; label: string; icon: React.ReactNode; description: string; isExternal?: boolean }[] = [
-  { id: 'devis', label: 'Devis', icon: <FileText className="h-5 w-5" />, description: 'Proposition commerciale' },
-  { id: 'bc', label: 'Bon de Commande', icon: <ShoppingCart className="h-5 w-5" />, description: 'Commande validée' },
-  { id: 'bl', label: 'Bon de Livraison', icon: <Truck className="h-5 w-5" />, description: 'Planning & Dispatch', isExternal: true },
-  { id: 'facture', label: 'Facture', icon: <Receipt className="h-5 w-5" />, description: 'Facturation' },
-];
-
 export function WorkflowStepper({ currentStage, onStageClick, compact = false }: WorkflowStepperProps) {
+  const { t } = useI18n();
+  const w = t.workflow;
+
+  const WORKFLOW_STAGES: { id: WorkflowStage; label: string; icon: React.ReactNode; description: string; isExternal?: boolean }[] = [
+    { id: 'devis', label: w.devis, icon: <FileText className="h-5 w-5" />, description: w.devisDesc },
+    { id: 'bc', label: w.bc, icon: <ShoppingCart className="h-5 w-5" />, description: w.bcDesc },
+    { id: 'bl', label: w.bl, icon: <Truck className="h-5 w-5" />, description: w.blDesc, isExternal: true },
+    { id: 'facture', label: w.facture, icon: <Receipt className="h-5 w-5" />, description: w.factureDesc },
+  ];
+
   const currentIndex = currentStage ? WORKFLOW_STAGES.findIndex(s => s.id === currentStage) : -1;
 
   return (
@@ -31,7 +35,6 @@ export function WorkflowStepper({ currentStage, onStageClick, compact = false }:
 
         return (
           <div key={stage.id} className="flex items-center flex-1">
-            {/* Step Circle */}
             <button
               onClick={() => onStageClick?.(stage.id)}
               disabled={!isClickable}
@@ -71,7 +74,6 @@ export function WorkflowStepper({ currentStage, onStageClick, compact = false }:
               )}
             </button>
 
-            {/* Connector Line */}
             {index < WORKFLOW_STAGES.length - 1 && (
               <div
                 className={cn(
