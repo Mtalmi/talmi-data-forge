@@ -18,15 +18,14 @@ import {
   Download,
   FileSpreadsheet,
   FileText,
-  Calendar,
-  Filter,
   CheckSquare,
   Loader2,
 } from 'lucide-react';
 import { Devis, BonCommande } from '@/hooks/useSalesWorkflow';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ExportReportsDialogProps {
   devisList: Devis[];
@@ -51,74 +50,67 @@ export function ExportReportsDialog({
   const [includeBc, setIncludeBc] = useState(true);
   const [includeSummary, setIncludeSummary] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const s = t.exportDialog;
 
   const hasSelectedItems = selectedDevisIds.length > 0 || selectedBcIds.length > 0;
 
   const getExportData = () => {
     let exportDevis = devisList;
     let exportBc = bcList;
-
     if (exportScope === 'selected') {
       exportDevis = devisList.filter(d => selectedDevisIds.includes(d.id));
       exportBc = bcList.filter(bc => selectedBcIds.includes(bc.id));
     }
-
     return { exportDevis, exportBc };
   };
 
   const generateCSV = () => {
     const { exportDevis, exportBc } = getExportData();
     const lines: string[] = [];
-    const dateStr = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: fr });
+    const dateStr = format(new Date(), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined });
 
-    // Summary section
     if (includeSummary) {
-      lines.push('=== RAPPORT COMMERCIAL ===');
-      lines.push(`Date d'export: ${dateStr}`);
+      lines.push(`=== ${s.commercialReport} ===`);
+      lines.push(`${s.exportDate}: ${dateStr}`);
       lines.push('');
       
       if (includeDevis) {
         const totalDevisHT = exportDevis.reduce((sum, d) => sum + d.total_ht, 0);
         const totalDevisVolume = exportDevis.reduce((sum, d) => sum + d.volume_m3, 0);
-        lines.push('--- Résumé Devis ---');
-        lines.push(`Total Devis: ${exportDevis.length}`);
-        lines.push(`En Attente: ${exportDevis.filter(d => d.statut === 'en_attente').length}`);
-        lines.push(`Convertis: ${exportDevis.filter(d => d.statut === 'converti').length}`);
-        lines.push(`Refusés: ${exportDevis.filter(d => d.statut === 'refuse').length}`);
+        lines.push(`--- ${s.quoteSummary} ---`);
+        lines.push(`${s.totalQuotes}: ${exportDevis.length}`);
+        lines.push(`${s.pending}: ${exportDevis.filter(d => d.statut === 'en_attente').length}`);
+        lines.push(`${s.converted}: ${exportDevis.filter(d => d.statut === 'converti').length}`);
+        lines.push(`${s.refused}: ${exportDevis.filter(d => d.statut === 'refuse').length}`);
         lines.push(`Total HT: ${totalDevisHT.toLocaleString()} DH`);
-        lines.push(`Volume Total: ${totalDevisVolume.toFixed(2)} m³`);
+        lines.push(`Volume: ${totalDevisVolume.toFixed(2)} m³`);
         lines.push('');
       }
 
       if (includeBc) {
         const totalBcHT = exportBc.reduce((sum, bc) => sum + bc.total_ht, 0);
         const totalBcVolume = exportBc.reduce((sum, bc) => sum + bc.volume_m3, 0);
-        lines.push('--- Résumé Bons de Commande ---');
-        lines.push(`Total BC: ${exportBc.length}`);
-        lines.push(`Prêt Production: ${exportBc.filter(bc => bc.statut === 'pret_production').length}`);
-        lines.push(`En Production: ${exportBc.filter(bc => bc.statut === 'en_production').length}`);
-        lines.push(`Livrés: ${exportBc.filter(bc => bc.statut === 'livre' || bc.statut === 'termine').length}`);
+        lines.push(`--- ${s.bcSummary} ---`);
+        lines.push(`${s.totalBC}: ${exportBc.length}`);
+        lines.push(`${s.readyProduction}: ${exportBc.filter(bc => bc.statut === 'pret_production').length}`);
+        lines.push(`${s.inProduction}: ${exportBc.filter(bc => bc.statut === 'en_production').length}`);
+        lines.push(`${s.deliveredLabel}: ${exportBc.filter(bc => bc.statut === 'livre' || bc.statut === 'termine').length}`);
         lines.push(`Total HT: ${totalBcHT.toLocaleString()} DH`);
-        lines.push(`Volume Total: ${totalBcVolume.toFixed(2)} m³`);
+        lines.push(`Volume: ${totalBcVolume.toFixed(2)} m³`);
         lines.push('');
       }
     }
 
-    // Devis data
     if (includeDevis && exportDevis.length > 0) {
-      lines.push('=== DEVIS ===');
-      lines.push(['N° Devis', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³ (DH)', 'Total HT (DH)', 'Marge (%)', 'Statut', 'Date Création', 'Date Expiration'].join(';'));
-      
+      lines.push(`=== ${s.quotes.toUpperCase()} ===`);
+      lines.push(['N°', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³ (DH)', 'Total HT (DH)', 'Marge (%)', 'Statut', 'Date', 'Expiration'].join(';'));
       exportDevis.forEach(d => {
         lines.push([
-          d.devis_id,
-          d.client?.nom_client || '',
-          d.formule_id,
-          d.volume_m3.toString(),
-          d.prix_vente_m3.toString(),
-          d.total_ht.toString(),
-          d.margin_pct.toString(),
-          d.statut,
+          d.devis_id, d.client?.nom_client || '', d.formule_id,
+          d.volume_m3.toString(), d.prix_vente_m3.toString(), d.total_ht.toString(),
+          d.margin_pct.toString(), d.statut,
           format(new Date(d.created_at), 'dd/MM/yyyy'),
           d.date_expiration ? format(new Date(d.date_expiration), 'dd/MM/yyyy') : '',
         ].join(';'));
@@ -126,22 +118,15 @@ export function ExportReportsDialog({
       lines.push('');
     }
 
-    // BC data
     if (includeBc && exportBc.length > 0) {
-      lines.push('=== BONS DE COMMANDE ===');
-      lines.push(['N° BC', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³ (DH)', 'Total HT (DH)', 'Date Livraison', 'Statut', 'Mode Paiement', 'Date Création'].join(';'));
-      
+      lines.push(`=== ${s.purchaseOrders.toUpperCase()} ===`);
+      lines.push(['N°', 'Client', 'Formule', 'Volume (m³)', 'Prix/m³ (DH)', 'Total HT (DH)', 'Date Livraison', 'Statut', 'Paiement', 'Date'].join(';'));
       exportBc.forEach(bc => {
         lines.push([
-          bc.bc_id,
-          bc.client?.nom_client || '',
-          bc.formule_id,
-          bc.volume_m3.toString(),
-          bc.prix_vente_m3.toString(),
-          bc.total_ht.toString(),
+          bc.bc_id, bc.client?.nom_client || '', bc.formule_id,
+          bc.volume_m3.toString(), bc.prix_vente_m3.toString(), bc.total_ht.toString(),
           bc.date_livraison_souhaitee ? format(new Date(bc.date_livraison_souhaitee), 'dd/MM/yyyy') : '',
-          bc.statut,
-          bc.mode_paiement || '',
+          bc.statut, bc.mode_paiement || '',
           format(new Date(bc.created_at), 'dd/MM/yyyy'),
         ].join(';'));
       });
@@ -152,11 +137,7 @@ export function ExportReportsDialog({
 
   const generateJSON = () => {
     const { exportDevis, exportBc } = getExportData();
-    
-    const data: Record<string, unknown> = {
-      exportDate: new Date().toISOString(),
-      exportedBy: 'Ventes Module',
-    };
+    const data: Record<string, unknown> = { exportDate: new Date().toISOString(), exportedBy: 'Ventes Module' };
 
     if (includeSummary) {
       data.summary = {
@@ -181,31 +162,19 @@ export function ExportReportsDialog({
 
     if (includeDevis) {
       data.devis = exportDevis.map(d => ({
-        id: d.devis_id,
-        client: d.client?.nom_client || null,
-        formule: d.formule_id,
-        volume: d.volume_m3,
-        prixM3: d.prix_vente_m3,
-        totalHT: d.total_ht,
-        marge: d.margin_pct,
-        statut: d.statut,
-        dateCreation: d.created_at,
+        id: d.devis_id, client: d.client?.nom_client || null, formule: d.formule_id,
+        volume: d.volume_m3, prixM3: d.prix_vente_m3, totalHT: d.total_ht,
+        marge: d.margin_pct, statut: d.statut, dateCreation: d.created_at,
         dateExpiration: d.date_expiration,
       }));
     }
 
     if (includeBc) {
       data.bonsCommande = exportBc.map(bc => ({
-        id: bc.bc_id,
-        client: bc.client?.nom_client || null,
-        formule: bc.formule_id,
-        volume: bc.volume_m3,
-        prixM3: bc.prix_vente_m3,
-        totalHT: bc.total_ht,
-        dateLivraison: bc.date_livraison_souhaitee,
-        statut: bc.statut,
-        modePaiement: bc.mode_paiement,
-        dateCreation: bc.created_at,
+        id: bc.bc_id, client: bc.client?.nom_client || null, formule: bc.formule_id,
+        volume: bc.volume_m3, prixM3: bc.prix_vente_m3, totalHT: bc.total_ht,
+        dateLivraison: bc.date_livraison_souhaitee, statut: bc.statut,
+        modePaiement: bc.mode_paiement, dateCreation: bc.created_at,
       }));
     }
 
@@ -214,12 +183,10 @@ export function ExportReportsDialog({
 
   const handleExport = () => {
     setIsExporting(true);
-
     try {
       let content: string;
       let filename: string;
       let mimeType: string;
-
       const dateStr = format(new Date(), 'yyyyMMdd_HHmm');
 
       if (exportFormat === 'csv') {
@@ -232,7 +199,6 @@ export function ExportReportsDialog({
         mimeType = 'application/json;charset=utf-8;';
       }
 
-      // Download file
       const blob = new Blob(['\ufeff' + content], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -243,11 +209,11 @@ export function ExportReportsDialog({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success(`Rapport exporté: ${filename}`);
+      toast.success(`${s.exported}: ${filename}`);
       setOpen(false);
     } catch (error) {
       console.error('Export error:', error);
-      toast.error("Erreur lors de l'export");
+      toast.error(s.exportError);
     } finally {
       setIsExporting(false);
     }
@@ -257,42 +223,31 @@ export function ExportReportsDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
-          <Download className="h-4 w-4" />
-          Exporter
+          <Download className="h-4 w-4" />{s.export}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
-            Export des Données
+            <Download className="h-5 w-5" />{s.title}
           </DialogTitle>
-          <DialogDescription>
-            Exportez vos devis et bons de commande avec statistiques
-          </DialogDescription>
+          <DialogDescription>{s.description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Format Selection */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Format</Label>
-            <RadioGroup
-              value={exportFormat}
-              onValueChange={(v) => setExportFormat(v as ExportFormat)}
-              className="flex gap-4"
-            >
+            <Label className="text-sm font-medium">{s.format}</Label>
+            <RadioGroup value={exportFormat} onValueChange={(v) => setExportFormat(v as ExportFormat)} className="flex gap-4">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="csv" id="csv" />
                 <Label htmlFor="csv" className="flex items-center gap-1 cursor-pointer">
-                  <FileSpreadsheet className="h-4 w-4" />
-                  CSV (Excel)
+                  <FileSpreadsheet className="h-4 w-4" />CSV (Excel)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="json" id="json" />
                 <Label htmlFor="json" className="flex items-center gap-1 cursor-pointer">
-                  <FileText className="h-4 w-4" />
-                  JSON
+                  <FileText className="h-4 w-4" />JSON
                 </Label>
               </div>
             </RadioGroup>
@@ -300,29 +255,21 @@ export function ExportReportsDialog({
 
           <Separator />
 
-          {/* Scope Selection */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Périmètre</Label>
-            <RadioGroup
-              value={exportScope}
-              onValueChange={(v) => setExportScope(v as ExportScope)}
-              className="space-y-2"
-            >
+            <Label className="text-sm font-medium">{s.scope}</Label>
+            <RadioGroup value={exportScope} onValueChange={(v) => setExportScope(v as ExportScope)} className="space-y-2">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="all" id="all" />
                 <Label htmlFor="all" className="cursor-pointer">
-                  Toutes les données ({devisList.length} devis, {bcList.length} BC)
+                  {s.allData} ({devisList.length} {s.quotes.toLowerCase()}, {bcList.length} BC)
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="selected" id="selected" disabled={!hasSelectedItems} />
                 <Label htmlFor="selected" className="cursor-pointer flex items-center gap-2">
-                  <CheckSquare className="h-4 w-4" />
-                  Sélection uniquement
+                  <CheckSquare className="h-4 w-4" />{s.selectionOnly}
                   {hasSelectedItems && (
-                    <Badge variant="secondary">
-                      {selectedDevisIds.length + selectedBcIds.length} éléments
-                    </Badge>
+                    <Badge variant="secondary">{selectedDevisIds.length + selectedBcIds.length} {s.elements}</Badge>
                   )}
                 </Label>
               </div>
@@ -331,59 +278,30 @@ export function ExportReportsDialog({
 
           <Separator />
 
-          {/* Content Options */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">Contenu</Label>
+            <Label className="text-sm font-medium">{s.content}</Label>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="includeDevis"
-                  checked={includeDevis}
-                  onCheckedChange={(c) => setIncludeDevis(!!c)}
-                />
-                <Label htmlFor="includeDevis" className="cursor-pointer">
-                  Devis
-                </Label>
+                <Checkbox id="includeDevis" checked={includeDevis} onCheckedChange={(c) => setIncludeDevis(!!c)} />
+                <Label htmlFor="includeDevis" className="cursor-pointer">{s.quotes}</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="includeBc"
-                  checked={includeBc}
-                  onCheckedChange={(c) => setIncludeBc(!!c)}
-                />
-                <Label htmlFor="includeBc" className="cursor-pointer">
-                  Bons de Commande
-                </Label>
+                <Checkbox id="includeBc" checked={includeBc} onCheckedChange={(c) => setIncludeBc(!!c)} />
+                <Label htmlFor="includeBc" className="cursor-pointer">{s.purchaseOrders}</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="includeSummary"
-                  checked={includeSummary}
-                  onCheckedChange={(c) => setIncludeSummary(!!c)}
-                />
-                <Label htmlFor="includeSummary" className="cursor-pointer">
-                  Inclure les statistiques
-                </Label>
+                <Checkbox id="includeSummary" checked={includeSummary} onCheckedChange={(c) => setIncludeSummary(!!c)} />
+                <Label htmlFor="includeSummary" className="cursor-pointer">{s.includeStats}</Label>
               </div>
             </div>
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Annuler
-          </Button>
-          <Button
-            onClick={handleExport}
-            disabled={isExporting || (!includeDevis && !includeBc)}
-            className="gap-2"
-          >
-            {isExporting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="h-4 w-4" />
-            )}
-            Exporter
+          <Button variant="outline" onClick={() => setOpen(false)}>{s.cancel}</Button>
+          <Button onClick={handleExport} disabled={isExporting || (!includeDevis && !includeBc)} className="gap-2">
+            {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+            {s.export}
           </Button>
         </DialogFooter>
       </DialogContent>

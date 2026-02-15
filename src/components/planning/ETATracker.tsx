@@ -6,24 +6,24 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Clock, Navigation, MapPin, AlertTriangle } from 'lucide-react';
-import { format, addMinutes, parseISO, differenceInMinutes, isAfter, isBefore } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { format, addMinutes, parseISO, differenceInMinutes } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ETATrackerProps {
-  departureTime: string | null; // heure_depart_centrale (timestamp)
-  scheduledTime: string | null; // heure_prevue (time)
+  departureTime: string | null;
+  scheduledTime: string | null;
   zoneCode?: string | null;
   status: string;
   deliveryDate: string;
 }
 
-// Estimated travel times by zone (in minutes) - could be from DB later
 const ZONE_TRAVEL_TIMES: Record<string, number> = {
-  'Z1': 15,   // Zone proche
-  'Z2': 25,   // Zone moyenne
-  'Z3': 40,   // Zone éloignée
-  'Z4': 60,   // Zone très éloignée
+  'Z1': 15,
+  'Z2': 25,
+  'Z3': 40,
+  'Z4': 60,
   'default': 30,
 };
 
@@ -34,10 +34,13 @@ export function ETATracker({
   status,
   deliveryDate,
 }: ETATrackerProps) {
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const s = t.etaTracker;
+
   const eta = useMemo(() => {
     const travelTime = zoneCode ? (ZONE_TRAVEL_TIMES[zoneCode] || ZONE_TRAVEL_TIMES.default) : ZONE_TRAVEL_TIMES.default;
 
-    // If already departed, calculate ETA from departure
     if (departureTime && (status === 'en_livraison' || status === 'en_chargement')) {
       const departure = parseISO(departureTime);
       const estimatedArrival = addMinutes(departure, travelTime);
@@ -54,7 +57,6 @@ export function ETATracker({
       };
     }
 
-    // If not departed yet, calculate expected ETA from scheduled time
     if (scheduledTime) {
       try {
         const [hours, minutes] = scheduledTime.split(':').map(Number);
@@ -82,17 +84,16 @@ export function ETATracker({
     return (
       <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <Clock className="h-3 w-3" />
-        <span>Heure non définie</span>
+        <span>{s.timeNotSet}</span>
       </div>
     );
   }
 
-  // Status-based display
   if (status === 'livre') {
     return (
       <Badge variant="outline" className="border-success/50 text-success gap-1">
         <MapPin className="h-3 w-3" />
-        Livré
+        {s.delivered}
       </Badge>
     );
   }
@@ -113,7 +114,7 @@ export function ETATracker({
             {eta.isLate ? (
               <span className="flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" />
-                Retard
+                {s.late}
               </span>
             ) : (
               <span>
@@ -124,29 +125,28 @@ export function ETATracker({
         </TooltipTrigger>
         <TooltipContent>
           <div className="space-y-1 text-xs">
-            <p>Arrivée estimée: {format(eta.arrivalTime, 'HH:mm', { locale: fr })}</p>
-            <p>Temps de trajet: ~{eta.travelTime} min</p>
-            {zoneCode && <p>Zone: {zoneCode}</p>}
+            <p>{s.estimatedArrival}: {format(eta.arrivalTime, 'HH:mm', { locale: dateLocale || undefined })}</p>
+            <p>{s.travelTime}: ~{eta.travelTime} min</p>
+            {zoneCode && <p>{s.zone}: {zoneCode}</p>}
           </div>
         </TooltipContent>
       </Tooltip>
     );
   }
 
-  // Not started yet
   return (
     <Tooltip>
       <TooltipTrigger>
         <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-muted text-xs">
           <Clock className="h-3 w-3 text-muted-foreground" />
-          <span>Prévu {format(eta.arrivalTime, 'HH:mm')}</span>
+          <span>{s.scheduledAt} {format(eta.arrivalTime, 'HH:mm')}</span>
         </div>
       </TooltipTrigger>
       <TooltipContent>
         <div className="space-y-1 text-xs">
-          <p>Départ prévu: {scheduledTime}</p>
-          <p>Trajet estimé: ~{eta.travelTime} min</p>
-          {zoneCode && <p>Zone: {zoneCode}</p>}
+          <p>{s.scheduledDeparture}: {scheduledTime}</p>
+          <p>{s.estimatedTravel}: ~{eta.travelTime} min</p>
+          {zoneCode && <p>{s.zone}: {zoneCode}</p>}
         </div>
       </TooltipContent>
     </Tooltip>

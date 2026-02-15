@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,6 +26,8 @@ import {
   Loader2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface TestCalendarItem {
   id: string;
@@ -52,19 +53,19 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
   const [selectedTest, setSelectedTest] = useState<TestCalendarItem | null>(null);
   const [resultValue, setResultValue] = useState('');
   const [saving, setSaving] = useState(false);
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const s = t.testCalendar;
 
   const overdueTests = items.filter(i => i.is_overdue);
   const todayTests = items.filter(i => i.is_today && !i.is_completed);
-  const upcomingTests = items.filter(i => i.is_upcoming && !i.is_completed);
 
   const handleRecordResult = async () => {
     if (!selectedTest || !resultValue) return;
-    
     setSaving(true);
     const testId = selectedTest.id.replace(/-7j$|-28j$/, '');
     const success = await onRecordResult(testId, selectedTest.test_type, parseFloat(resultValue));
     setSaving(false);
-    
     if (success) {
       setSelectedTest(null);
       setResultValue('');
@@ -83,23 +84,20 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
     if (item.is_overdue) {
       return (
         <Badge variant="destructive" className="animate-pulse">
-          <AlertTriangle className="h-3 w-3 mr-1" />
-          En Retard
+          <AlertTriangle className="h-3 w-3 mr-1" />{s.overdue}
         </Badge>
       );
     }
     if (item.is_today) {
       return (
         <Badge variant="default" className="bg-warning text-warning-foreground">
-          <Clock className="h-3 w-3 mr-1" />
-          Aujourd'hui
+          <Clock className="h-3 w-3 mr-1" />{s.today}
         </Badge>
       );
     }
     return (
       <Badge variant="secondary">
-        <Calendar className="h-3 w-3 mr-1" />
-        Planifié
+        <Calendar className="h-3 w-3 mr-1" />{s.planned}
       </Badge>
     );
   };
@@ -114,41 +112,35 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
 
   return (
     <div className="space-y-6">
-      {/* Overdue Alert Banner */}
       {overdueTests.length > 0 && (
         <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 animate-pulse">
           <div className="flex items-center gap-3">
             <AlertTriangle className="h-6 w-6 text-destructive" />
             <div>
               <p className="font-semibold text-destructive">
-                {overdueTests.length} Test(s) en Retard!
+                {overdueTests.length} {s.overdueTests}
               </p>
-              <p className="text-sm text-muted-foreground">
-                Ces tests d'écrasement doivent être effectués immédiatement.
-              </p>
+              <p className="text-sm text-muted-foreground">{s.overdueMessage}</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Today's Tests */}
       {todayTests.length > 0 && (
         <div className="card-industrial">
           <div className="flex items-center gap-2 mb-4">
             <FlaskConical className="h-5 w-5 text-warning" />
-            <h3 className="font-semibold">Tests à Effectuer Aujourd'hui</h3>
-            <Badge variant="default" className="bg-warning text-warning-foreground">
-              {todayTests.length}
-            </Badge>
+            <h3 className="font-semibold">{s.todayTests}</h3>
+            <Badge variant="default" className="bg-warning text-warning-foreground">{todayTests.length}</Badge>
           </div>
           <Table className="data-table-industrial">
             <TableHeader>
               <TableRow>
-                <TableHead>N° BL</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Formule</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead>{s.blNumber}</TableHead>
+                <TableHead>{s.client}</TableHead>
+                <TableHead>{s.formula}</TableHead>
+                <TableHead>{s.type}</TableHead>
+                <TableHead>{s.action}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,17 +150,11 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
                   <TableCell>{item.client_id}</TableCell>
                   <TableCell className="font-mono text-sm">{item.formule_id}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">
-                      Résistance {item.test_type}
-                    </Badge>
+                    <Badge variant="outline">{s.resistance} {item.test_type}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      onClick={() => setSelectedTest(item)}
-                    >
-                      <FlaskConical className="h-4 w-4 mr-1" />
-                      Enregistrer
+                    <Button size="sm" onClick={() => setSelectedTest(item)}>
+                      <FlaskConical className="h-4 w-4 mr-1" />{s.record}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -178,27 +164,26 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
         </div>
       )}
 
-      {/* Upcoming Tests */}
       <div className="card-industrial">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">Calendrier des Écrasements</h3>
+          <h3 className="font-semibold">{s.crushCalendar}</h3>
         </div>
         {items.length === 0 ? (
           <div className="text-center p-8 text-muted-foreground">
             <FlaskConical className="h-12 w-12 mx-auto mb-3 opacity-50" />
-            <p>Aucun test planifié</p>
+            <p>{s.noTestsPlanned}</p>
           </div>
         ) : (
           <Table className="data-table-industrial">
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>N° BL</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Formule</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Statut</TableHead>
+                <TableHead>{s.date}</TableHead>
+                <TableHead>{s.blNumber}</TableHead>
+                <TableHead>{s.client}</TableHead>
+                <TableHead>{s.formula}</TableHead>
+                <TableHead>{s.type}</TableHead>
+                <TableHead>{s.status}</TableHead>
                 <TableHead className="w-24"></TableHead>
               </TableRow>
             </TableHeader>
@@ -212,25 +197,17 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
                   )}
                 >
                   <TableCell className="font-medium">
-                    {format(new Date(item.test_date), 'dd/MM/yyyy', { locale: fr })}
+                    {format(new Date(item.test_date), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                   </TableCell>
                   <TableCell className="font-mono">{item.bl_id}</TableCell>
                   <TableCell>{item.client_id}</TableCell>
                   <TableCell className="font-mono text-sm">{item.formule_id}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {item.test_type}
-                    </Badge>
-                  </TableCell>
+                  <TableCell><Badge variant="outline">{item.test_type}</Badge></TableCell>
                   <TableCell>{getStatusBadge(item)}</TableCell>
                   <TableCell>
                     {!item.is_completed && !item.is_upcoming && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setSelectedTest(item)}
-                      >
-                        Saisir
+                      <Button size="sm" variant="ghost" onClick={() => setSelectedTest(item)}>
+                        {s.enter}
                       </Button>
                     )}
                   </TableCell>
@@ -241,39 +218,38 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
         )}
       </div>
 
-      {/* Record Result Dialog */}
       <Dialog open={!!selectedTest} onOpenChange={() => setSelectedTest(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FlaskConical className="h-5 w-5 text-primary" />
-              Enregistrer Résultat - Test {selectedTest?.test_type}
+              {s.recordResult} {selectedTest?.test_type}
             </DialogTitle>
           </DialogHeader>
           {selectedTest && (
             <div className="space-y-4 pt-4">
               <div className="grid grid-cols-2 gap-4 p-3 rounded bg-muted/30">
                 <div>
-                  <span className="text-xs text-muted-foreground">N° BL</span>
+                  <span className="text-xs text-muted-foreground">{s.blNumber}</span>
                   <p className="font-mono font-medium">{selectedTest.bl_id}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground">Client</span>
+                  <span className="text-xs text-muted-foreground">{s.client}</span>
                   <p className="font-medium">{selectedTest.client_id}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground">Formule</span>
+                  <span className="text-xs text-muted-foreground">{s.formula}</span>
                   <p className="font-mono">{selectedTest.formule_id}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground">Date Test</span>
-                  <p>{format(new Date(selectedTest.test_date), 'dd/MM/yyyy', { locale: fr })}</p>
+                  <span className="text-xs text-muted-foreground">{s.testDate}</span>
+                  <p>{format(new Date(selectedTest.test_date), 'dd/MM/yyyy', { locale: dateLocale || undefined })}</p>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <label className="form-label-industrial">
-                  Résistance {selectedTest.test_type} (MPa)
+                  {s.resistanceMPa}
                 </label>
                 <Input
                   type="number"
@@ -286,15 +262,10 @@ export function TestCalendar({ items, onRecordResult, loading = false }: TestCal
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={() => setSelectedTest(null)}>
-                  Annuler
-                </Button>
-                <Button
-                  onClick={handleRecordResult}
-                  disabled={!resultValue || saving}
-                >
+                <Button variant="outline" onClick={() => setSelectedTest(null)}>{s.cancel}</Button>
+                <Button onClick={handleRecordResult} disabled={!resultValue || saving}>
                   {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                  Enregistrer
+                  {s.save}
                 </Button>
               </div>
             </div>
