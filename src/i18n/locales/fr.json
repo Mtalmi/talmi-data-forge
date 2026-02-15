@@ -60,7 +60,10 @@
     "actions": "Actions",
     "noData": "Aucune donnée",
     "error": "Erreur",
-    "success": "Succès"
+    "success": "Succès",
+    "refresh": "Actualiser",
+    "myAccount": "Mon Compte",
+    "profile": "Profil"
   },
   "auth": {
     "login": "Connexion",
@@ -96,6 +99,40 @@
       "weekShort": "Sem.",
       "month": "Ce Mois",
       "monthShort": "Mois"
+    },
+    "sections": {
+      "performanceKpis": "Performance & KPIs",
+      "productionQuality": "Production & Qualité",
+      "financeTreasury": "Finance & Trésorerie",
+      "fleetLogistics": "Flotte & Logistique",
+      "securityAudit": "Sécurité & Audit",
+      "commandCenter": "Centre de Commande"
+    },
+    "kpi": {
+      "totalVolume": "Volume Total",
+      "revenue": "Chiffre d'Affaires",
+      "avgCUR": "CUR Moyen",
+      "unitCost": "Coût Unitaire Réel",
+      "grossMargin": "Marge Brute",
+      "netProfit": "Profit Net",
+      "profitSubtitle": "CA - Coûts - Dépenses",
+      "totalExpenses": "Total Dépenses",
+      "marginAlerts": "Alertes Marge",
+      "marginAlertsSubtitle": "Écarts > 5%",
+      "activeClients": "Clients Actifs",
+      "invoices": "{{count}} factures"
+    },
+    "production": {
+      "summary": "Résumé Production",
+      "activeFormulas": "Formules actives",
+      "pricesUpdated": "Prix mis à jour",
+      "avgECRatio": "Taux E/C moyen",
+      "avgCUR7d": "CUR moyen (7j)",
+      "addProduct": "+ Ajouter un produit"
+    },
+    "security": {
+      "securityAlerts": "🛡️ Alertes Sécurité",
+      "auditTrail": "🔍 Audit Trail"
     }
   },
   "pwa": {
