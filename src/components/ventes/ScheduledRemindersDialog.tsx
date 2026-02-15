@@ -29,7 +29,8 @@ import { Devis } from '@/hooks/useSalesWorkflow';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, addDays, differenceInDays, parseISO, isBefore } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
 
 interface ScheduledReminder {
@@ -47,6 +48,8 @@ interface ScheduledRemindersDialogProps {
 }
 
 export function ScheduledRemindersDialog({ devisList, onRefresh }: ScheduledRemindersDialogProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [open, setOpen] = useState(false);
   const [autoRemindersEnabled, setAutoRemindersEnabled] = useState(true);
   const [daysBeforeExpiry, setDaysBeforeExpiry] = useState(7);
@@ -86,7 +89,7 @@ export function ScheduledRemindersDialog({ devisList, onRefresh }: ScheduledRemi
       // In a real implementation, this would insert into a scheduled_reminders table
       // For now, we'll simulate the scheduling
       toast.success(
-        `Rappel programmé pour ${format(reminderDate, 'dd MMMM yyyy', { locale: fr })}`,
+        `Rappel programmé pour ${format(reminderDate, 'dd MMMM yyyy', { locale: dateLocale })}`,
         { description: `Devis ${devis.devis_id} - ${devis.client?.nom_client}` }
       );
 
@@ -279,7 +282,7 @@ export function ScheduledRemindersDialog({ devisList, onRefresh }: ScheduledRemi
                             >
                               <Clock className="h-3 w-3" />
                               {reminderDate 
-                                ? format(reminderDate, 'dd/MM', { locale: fr })
+                                ? format(reminderDate, 'dd/MM')
                                 : 'Programmer'
                               }
                             </Button>

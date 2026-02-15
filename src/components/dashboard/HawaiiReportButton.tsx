@@ -25,7 +25,8 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { format, startOfDay, endOfDay, subDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import jsPDF from 'jspdf';
@@ -61,6 +62,8 @@ interface HawaiiReportData {
 }
 
 export function HawaiiReportButton() {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur } = useAuth();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -189,7 +192,7 @@ export function HawaiiReportButton() {
         totalNightAmount,
         totalCapBreaches: capBreaches.length,
         successfulOverrides: capBreaches.filter(b => b.was_overridden).length,
-        reportDate: format(today, 'dd MMMM yyyy', { locale: fr })
+        reportDate: format(today, 'dd MMMM yyyy', { locale: dateLocale })
       });
 
     } catch (error) {

@@ -42,7 +42,8 @@ import {
 import { useTightTimes, TightTimesTrigger } from '@/hooks/useTightTimes';
 import { useAuth } from '@/hooks/useAuth';
 import { format, formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 const TRIGGER_OPTIONS: { value: TightTimesTrigger; label: string; icon: React.ReactNode; description: string }[] = [
   { 
@@ -88,6 +89,8 @@ interface TightTimesManagerProps {
 }
 
 export function TightTimesManager({ compact = false }: TightTimesManagerProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur } = useAuth();
   const { 
     tightTimesStatus, 
@@ -367,7 +370,7 @@ export function TightTimesManager({ compact = false }: TightTimesManagerProps) {
               <span>
                 {formatDistanceToNow(new Date(tightTimesStatus.activated_at), { 
                   addSuffix: true,
-                  locale: fr 
+                  locale: dateLocale 
                 })}
               </span>
             </div>
