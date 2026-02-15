@@ -9,7 +9,7 @@
    + SOUL OF THE MACHINE - Premium Animations
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+/* Fonts loaded via index.html for faster rendering */
 
 @layer base {
   :root {
@@ -84,6 +84,10 @@
     --glass-border: 51 100% 50% / 0.1;
     --glass-shadow: 51 100% 50% / 0.05;
     --glass-highlight: 51 100% 50% / 0.02;
+    
+    /* Bloomberg-inspired secondary accents */
+    --accent-teal: 175 70% 50%;
+    --accent-amber: 38 100% 60%;
     
     /* Vault Glow */
     --gold-glow: 0 0 30px hsl(51 100% 50% / 0.15);
@@ -162,6 +166,10 @@
     --glass-border: 45 100% 42% / 0.15;
     --glass-shadow: 30 15% 12% / 0.04;
     --glass-highlight: 45 100% 50% / 0.05;
+
+    /* Bloomberg accents - Light */
+    --accent-teal: 175 60% 40%;
+    --accent-amber: 38 90% 50%;
     
     /* Glow - Softer for light */
     --gold-glow: 0 0 20px hsl(45 100% 50% / 0.12);
@@ -177,14 +185,15 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: -0.01em;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    font-family: 'Syne', 'DM Sans', system-ui, sans-serif;
     @apply font-bold tracking-tight text-foreground;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
   }
 
   code, pre, .mono {
@@ -238,22 +247,22 @@
     box-shadow: 0 0 40px hsl(51 100% 50% / 0.12);
   }
 
-  /* Vault Header */
+  /* Vault Header — Bloomberg command bar */
   .dashboard-header {
     @apply relative overflow-hidden rounded-2xl;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
-    box-shadow: 0 2px 16px hsl(var(--primary) / 0.04);
+    box-shadow: 
+      0 2px 16px hsl(var(--primary) / 0.04),
+      inset 0 1px 0 hsl(var(--primary) / 0.03);
   }
 
   .dashboard-header::before {
     content: '';
-    @apply absolute inset-0 opacity-20 pointer-events-none;
-    background: radial-gradient(
-      ellipse 100% 60% at 50% -30%,
-      hsl(var(--primary) / 0.1),
-      transparent 60%
-    );
+    @apply absolute inset-0 opacity-30 pointer-events-none;
+    background: 
+      radial-gradient(ellipse 80% 50% at 0% 0%, hsl(var(--primary) / 0.06), transparent 50%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, hsl(var(--accent-teal) / 0.03), transparent 50%);
   }
 
   /* Period Selector - Obsidian */
@@ -507,44 +516,57 @@
     animation: fade-in-up 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* ===== OBSIDIAN INDUSTRIAL CARDS ===== */
+  /* ===== BLOOMBERG-GRADE INDUSTRIAL CARDS ===== */
   .card-industrial {
     @apply relative overflow-hidden rounded-xl border border-border;
     background: hsl(var(--card));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   .card-industrial:hover {
-    border-color: hsl(var(--primary) / 0.25);
+    border-color: hsl(var(--primary) / 0.3);
     box-shadow: 
-      0 4px 24px hsl(var(--primary) / 0.08),
-      0 0 0 1px hsl(var(--primary) / 0.06);
-    transform: translateY(-1px);
+      0 8px 32px hsl(var(--primary) / 0.06),
+      0 0 0 1px hsl(var(--primary) / 0.08),
+      inset 0 1px 0 hsl(var(--primary) / 0.04);
+    transform: translateY(-2px);
   }
 
-  /* KPI Card with Gold Accent Bar */
+  /* KPI Card — Bloomberg ticker style */
   .kpi-card {
     @apply card-industrial p-5;
+    position: relative;
   }
 
   .kpi-card::before {
     content: '';
-    @apply absolute top-0 left-0 w-1 h-full rounded-l-xl;
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
+    @apply absolute top-0 left-0 w-0.5 h-full;
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.2));
+  }
+
+  .kpi-card::after {
+    content: '';
+    @apply absolute top-0 right-0 bottom-0 left-0 pointer-events-none opacity-0;
+    background: radial-gradient(ellipse at top right, hsl(var(--primary) / 0.04), transparent 70%);
+    transition: opacity 0.3s ease;
+  }
+
+  .kpi-card:hover::after {
+    opacity: 1;
   }
 
   .kpi-card.positive::before {
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
+    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.2));
   }
 
   .kpi-card.negative::before {
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
+    background: linear-gradient(180deg, hsl(var(--destructive)), hsl(var(--destructive) / 0.2));
   }
 
   .kpi-card.warning::before {
-    background: linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary) / 0.4));
+    background: linear-gradient(180deg, hsl(var(--warning)), hsl(var(--warning) / 0.2));
   }
 
   /* ===== ANIMATED GAUGE ===== */
@@ -713,30 +735,33 @@
     border-color: hsl(var(--destructive) / 0.25);
   }
 
-  /* ===== OBSIDIAN DATA TABLE ===== */
+  /* ===== BLOOMBERG-GRADE DATA TABLE ===== */
   .data-table-industrial {
     @apply w-full;
+    font-variant-numeric: tabular-nums;
   }
 
   .data-table-industrial th {
-    @apply text-left text-[11px] font-bold uppercase tracking-wider;
-    @apply py-3 px-4 border-b;
-    color: hsl(51 100% 50% / 0.7);
-    background: hsl(0 0% 3%);
-    border-color: hsl(51 100% 50% / 0.1);
+    @apply text-left text-[10px] font-bold uppercase tracking-[0.08em];
+    @apply py-2.5 px-3 border-b;
+    color: hsl(var(--primary) / 0.7);
+    background: hsl(var(--card));
+    border-color: hsl(var(--border));
+    font-family: 'JetBrains Mono', monospace;
   }
 
   .data-table-industrial td {
-    @apply py-3.5 px-4 border-b text-sm;
-    border-color: hsl(0 0% 10%);
+    @apply py-3 px-3 border-b text-sm;
+    border-color: hsl(var(--border) / 0.5);
+    font-variant-numeric: tabular-nums;
   }
 
   .data-table-industrial tr {
-    @apply transition-colors duration-200;
+    @apply transition-colors duration-150;
   }
 
   .data-table-industrial tr:hover td {
-    background: hsl(51 100% 50% / 0.03);
+    background: hsl(var(--primary) / 0.03);
   }
 
   /* ===== GOLD & RUBY GLOW EFFECTS ===== */
