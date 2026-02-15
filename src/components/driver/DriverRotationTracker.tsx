@@ -10,8 +10,9 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { RotationStepperModal } from './RotationStepperModal';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface DriverRotationTrackerProps {
   blId: string;
@@ -35,16 +36,18 @@ export function DriverRotationTracker({
   onUpdate,
 }: DriverRotationTrackerProps) {
   const [stepperOpen, setStepperOpen] = useState(false);
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const s = t.driverRotation;
 
   const isDelivered = workflowStatus === 'livre' || workflowStatus === 'facture';
 
-  // Calculate current step (0-indexed for display)
   const getCurrentStep = (): number => {
     if (!heureDepart) return 0;
     if (!heureArrivee) return 1;
     if (!isDelivered) return 2;
     if (!heureRetour) return 3;
-    return 4; // All done
+    return 4;
   };
 
   const currentStep = getCurrentStep();
@@ -53,22 +56,21 @@ export function DriverRotationTracker({
   const formatTime = (timestamp: string | null) => {
     if (!timestamp) return null;
     try {
-      return format(new Date(timestamp), 'HH:mm', { locale: fr });
+      return format(new Date(timestamp), 'HH:mm', { locale: dateLocale || undefined });
     } catch {
       return timestamp.slice(0, 5);
     }
   };
 
   const steps = [
-    { key: 'depart', label: 'Départ', icon: Play, timestamp: heureDepart, color: 'primary' },
-    { key: 'arrivee', label: 'Arrivée', icon: MapPin, timestamp: heureArrivee, color: 'warning' },
-    { key: 'signe', label: 'Signé', icon: FileCheck, timestamp: isDelivered ? 'done' : null, color: 'success' },
-    { key: 'retour', label: 'Retour', icon: Home, timestamp: heureRetour, color: 'primary' },
+    { key: 'depart', label: s.departure, icon: Play, timestamp: heureDepart, color: 'primary' },
+    { key: 'arrivee', label: s.arrival, icon: MapPin, timestamp: heureArrivee, color: 'warning' },
+    { key: 'signe', label: s.signed, icon: FileCheck, timestamp: isDelivered ? 'done' : null, color: 'success' },
+    { key: 'retour', label: s.returnPlant, icon: Home, timestamp: heureRetour, color: 'primary' },
   ];
 
   return (
     <div className="space-y-4">
-      {/* Compact Progress Steps */}
       <div className="flex items-center justify-between gap-1">
         {steps.map((step, index) => {
           const Icon = step.icon;
@@ -78,7 +80,6 @@ export function DriverRotationTracker({
 
           return (
             <div key={step.key} className="flex-1 flex flex-col items-center">
-              {/* Step Circle */}
               <div
                 className={cn(
                   'w-10 h-10 rounded-full flex items-center justify-center transition-all',
@@ -89,36 +90,24 @@ export function DriverRotationTracker({
                   !isCompleted && !isCurrent && 'bg-muted text-muted-foreground'
                 )}
               >
-                {isCompleted ? (
-                  <CheckCircle className="h-5 w-5" />
-                ) : (
-                  <Icon className="h-4 w-4" />
-                )}
+                {isCompleted ? <CheckCircle className="h-5 w-5" /> : <Icon className="h-4 w-4" />}
               </div>
-
-              {/* Step Label */}
               <div className="mt-1.5 text-center">
-                <p className={cn(
-                  'text-xs font-medium',
-                  (isCompleted || isCurrent) ? 'text-foreground' : 'text-muted-foreground'
-                )}>
+                <p className={cn('text-xs font-medium', (isCompleted || isCurrent) ? 'text-foreground' : 'text-muted-foreground')}>
                   {step.label}
                 </p>
-                {time && (
-                  <p className="text-[10px] font-mono text-muted-foreground">{time}</p>
-                )}
+                {time && <p className="text-[10px] font-mono text-muted-foreground">{time}</p>}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Main Action Button */}
       <div className="pt-2">
         {isComplete ? (
           <div className="flex items-center justify-center gap-2 p-4 bg-success/10 rounded-lg border border-success/20">
             <CheckCircle className="h-6 w-6 text-success" />
-            <span className="text-success font-semibold text-lg">Rotation Complète</span>
+            <span className="text-success font-semibold text-lg">{s.rotationComplete}</span>
           </div>
         ) : (
           <Button
@@ -126,13 +115,12 @@ export function DriverRotationTracker({
             className="w-full min-h-[60px] text-lg gap-3 touch-manipulation"
             onClick={() => setStepperOpen(true)}
           >
-            <span>Étape {currentStep + 1}/4</span>
+            <span>{s.step} {currentStep + 1}/4</span>
             <ChevronRight className="h-5 w-5" />
           </Button>
         )}
       </div>
 
-      {/* Rotation Stepper Modal */}
       <RotationStepperModal
         open={stepperOpen}
         onOpenChange={setStepperOpen}

@@ -4,11 +4,15 @@ import { FileText, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { isOffHoursCasablanca } from '@/lib/timezone';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 
 export function DailyReportGenerator() {
   const [generating, setGenerating] = useState(false);
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const numberLocale = getNumberLocale(lang);
 
   const generateReport = async () => {
     setGenerating(true);
