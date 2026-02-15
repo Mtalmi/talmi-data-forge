@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import {
   Dialog,
   DialogContent,
@@ -62,6 +63,9 @@ export function ClientInvoicesDialog({
   clientId, 
   clientName 
 }: ClientInvoicesDialogProps) {
+  const { t, lang } = useI18n();
+  const ci = t.clientInvoices;
+  const dateLocale = getDateLocale(lang);
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -96,7 +100,7 @@ export function ClientInvoicesDialog({
         return (
           <Badge className="bg-success/10 text-success border-success/20">
             <CheckCircle className="h-3 w-3 mr-1" />
-            Payée
+            {ci.paid}
           </Badge>
         );
       case 'en_attente':
@@ -104,14 +108,14 @@ export function ClientInvoicesDialog({
         return (
           <Badge variant="secondary">
             <Clock className="h-3 w-3 mr-1" />
-            En Attente
+            {ci.pending}
           </Badge>
         );
       case 'retard':
         return (
           <Badge variant="destructive">
             <AlertTriangle className="h-3 w-3 mr-1" />
-            En Retard
+            {ci.late}
           </Badge>
         );
       default:
@@ -131,22 +135,22 @@ export function ClientInvoicesDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Receipt className="h-5 w-5 text-primary" />
-            Factures - {clientName}
+            {ci.invoicesFor} - {clientName}
           </DialogTitle>
         </DialogHeader>
 
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="p-3 rounded-lg bg-muted/50">
-            <p className="text-xs text-muted-foreground font-medium">Total Facturé</p>
+            <p className="text-xs text-muted-foreground font-medium">{ci.totalInvoiced}</p>
             <p className="text-lg font-bold">{totalFactures.toLocaleString('fr-FR')} DH</p>
           </div>
           <div className="p-3 rounded-lg bg-success/10">
-            <p className="text-xs text-success font-medium">Payé</p>
+            <p className="text-xs text-success font-medium">{ci.paid}</p>
             <p className="text-lg font-bold text-success">{totalPayees.toLocaleString('fr-FR')} DH</p>
           </div>
           <div className="p-3 rounded-lg bg-warning/10">
-            <p className="text-xs text-warning font-medium">En Attente</p>
+            <p className="text-xs text-warning font-medium">{ci.pending}</p>
             <p className="text-lg font-bold text-warning">{totalEnAttente.toLocaleString('fr-FR')} DH</p>
           </div>
         </div>
@@ -159,22 +163,22 @@ export function ClientInvoicesDialog({
           ) : factures.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <FileText className="h-12 w-12 text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucune facture pour ce client</p>
+              <p className="text-muted-foreground">{ci.noInvoices}</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Les factures seront générées lors de la livraison des commandes
+                {ci.invoicesGeneratedOnDelivery}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>N° Facture</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>BL</TableHead>
-                  <TableHead className="text-right">Volume</TableHead>
-                  <TableHead className="text-right">Total TTC</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{ci.invoiceNumber}</TableHead>
+                  <TableHead>{ci.date}</TableHead>
+                  <TableHead>{ci.bl}</TableHead>
+                  <TableHead className="text-right">{ci.volume}</TableHead>
+                  <TableHead className="text-right">{ci.totalTtc}</TableHead>
+                  <TableHead>{ci.statusLabel}</TableHead>
+                  <TableHead className="text-right">{ci.actionsLabel}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -185,7 +189,7 @@ export function ClientInvoicesDialog({
                     </TableCell>
                     <TableCell>
                       {facture.date_facture 
-                        ? format(new Date(facture.date_facture), 'dd MMM yyyy', { locale: fr })
+                        ? format(new Date(facture.date_facture), 'dd MMM yyyy', { locale: dateLocale })
                         : '—'}
                     </TableCell>
                     <TableCell className="font-mono text-sm text-muted-foreground">
@@ -232,7 +236,7 @@ export function ClientInvoicesDialog({
 
         <div className="flex justify-end pt-4 border-t">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Fermer
+            {ci.close}
           </Button>
         </div>
       </DialogContent>

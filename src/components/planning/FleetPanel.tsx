@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { TruckRescueModal } from '@/components/logistics/TruckRescueModal';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface FleetVehicle {
   id_camion: string;
@@ -43,6 +44,8 @@ interface FleetPanelProps {
 }
 
 export function FleetPanel({ selectedDate }: FleetPanelProps) {
+  const { t } = useI18n();
+  const fp = t.fleetPanel;
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [vehicles, setVehicles] = useState<FleetVehicle[]>([]);
@@ -136,7 +139,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
       await fetchFleetData();
     } catch (error) {
       console.error('Error updating vehicle status:', error);
-      toast.error('Erreur de mise à jour');
+      toast.error(fp.updateError);
     } finally {
       setUpdating(null);
     }
@@ -144,13 +147,13 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
 
   const getStatusConfig = (statut: string, isOnDelivery: boolean) => {
     if (isOnDelivery) {
-      return { color: 'bg-primary text-primary-foreground', icon: Truck, label: 'Mission' };
+      return { color: 'bg-primary text-primary-foreground', icon: Truck, label: fp.mission };
     }
     const configs: Record<string, { color: string; icon: typeof CheckCircle; label: string }> = {
-      'Disponible': { color: 'bg-success/20 text-success border-success/30', icon: CheckCircle, label: 'Dispo' },
-      'En Livraison': { color: 'bg-primary/20 text-primary border-primary/30', icon: Truck, label: 'Mission' },
-      'Maintenance': { color: 'bg-warning/20 text-warning border-warning/30', icon: Wrench, label: 'Maint.' },
-      'Hors Service': { color: 'bg-destructive/20 text-destructive border-destructive/30', icon: XCircle, label: 'HS' },
+      'Disponible': { color: 'bg-success/20 text-success border-success/30', icon: CheckCircle, label: fp.available },
+      'En Livraison': { color: 'bg-primary/20 text-primary border-primary/30', icon: Truck, label: fp.mission },
+      'Maintenance': { color: 'bg-warning/20 text-warning border-warning/30', icon: Wrench, label: fp.maintenance },
+      'Hors Service': { color: 'bg-destructive/20 text-destructive border-destructive/30', icon: XCircle, label: fp.outOfService },
     };
     return configs[statut] || configs['Disponible'];
   };
@@ -187,7 +190,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
       <div className="p-3 border-b border-border bg-muted/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Truck className="h-4 w-4 text-primary" />
-          <span className="font-semibold text-sm">Flotte</span>
+          <span className="font-semibold text-sm">{fp.fleet}</span>
         </div>
         <div className="flex items-center gap-1">
           <Button 
@@ -213,15 +216,15 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
       <div className="p-2 border-b border-border grid grid-cols-3 gap-1 text-center text-xs">
         <div className="p-1.5 rounded bg-success/10">
           <p className="font-bold text-success text-lg">{availableCount}</p>
-          <p className="text-muted-foreground">Dispo</p>
+          <p className="text-muted-foreground">{fp.available}</p>
         </div>
         <div className="p-1.5 rounded bg-primary/10">
           <p className="font-bold text-primary text-lg">{onMissionCount}</p>
-          <p className="text-muted-foreground">Mission</p>
+          <p className="text-muted-foreground">{fp.mission}</p>
         </div>
         <div className="p-1.5 rounded bg-warning/10">
           <p className="font-bold text-warning text-lg">{maintenanceCount}</p>
-          <p className="text-muted-foreground">Arrêt</p>
+          <p className="text-muted-foreground">{fp.stopped}</p>
         </div>
       </div>
 
@@ -292,7 +295,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                             e.stopPropagation();
                             navigate('/logistique');
                           }}
-                          title="Suivre sur GPS"
+                          title={fp.trackGps}
                         >
                           <Crosshair className="h-2.5 w-2.5" />
                         </Button>
@@ -309,7 +312,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                           }}
                         >
                           <AlertTriangle className="h-2.5 w-2.5 mr-0.5" />
-                          Incident
+                          {fp.incident}
                         </Button>
                       </div>
                     </div>
@@ -335,7 +338,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                         disabled={displayStatus === 'Disponible' && !isOnDelivery}
                       >
                         <CheckCircle className="h-3 w-3 mr-0.5" />
-                        Dispo
+                        {fp.available}
                       </Button>
                       <Button
                         variant="ghost"
@@ -347,7 +350,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                         onClick={() => updateVehicleStatus(v.id_camion, 'Maintenance')}
                       >
                         <Wrench className="h-3 w-3 mr-0.5" />
-                        Maint
+                        {fp.maintenance}
                       </Button>
                       <Button
                         variant="ghost"
@@ -359,7 +362,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                         onClick={() => updateVehicleStatus(v.id_camion, 'Hors Service')}
                       >
                         <XCircle className="h-3 w-3 mr-0.5" />
-                        HS
+                        {fp.outOfService}
                       </Button>
                     </>
                   )}

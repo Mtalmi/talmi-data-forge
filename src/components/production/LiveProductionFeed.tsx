@@ -21,8 +21,9 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ProductionBatch {
   id: string;
@@ -64,38 +65,17 @@ interface LiveProductionFeedProps {
   className?: string;
 }
 
-const statusConfig = {
-  ok: { 
-    icon: CheckCircle, 
-    color: 'text-success', 
-    bg: 'bg-success/10', 
-    border: 'border-success/30',
-    label: 'Conforme' 
-  },
-  warning: { 
-    icon: AlertTriangle, 
-    color: 'text-warning', 
-    bg: 'bg-warning/10', 
-    border: 'border-warning/30',
-    label: 'Écart >2%' 
-  },
-  critical: { 
-    icon: XCircle, 
-    color: 'text-destructive', 
-    bg: 'bg-destructive/10', 
-    border: 'border-destructive/30',
-    label: 'Écart Critique' 
-  },
-  pending: { 
-    icon: Clock, 
-    color: 'text-muted-foreground', 
-    bg: 'bg-muted/30', 
-    border: 'border-border',
-    label: 'En attente' 
-  },
-};
-
 export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProductionFeedProps) {
+  const { t, lang } = useI18n();
+  const lp = t.liveProductionFeed;
+  const dateLocale = getDateLocale(lang);
+
+  const statusConfig = {
+    ok: { icon: CheckCircle, color: 'text-success', bg: 'bg-success/10', border: 'border-success/30', label: lp.conforme },
+    warning: { icon: AlertTriangle, color: 'text-warning', bg: 'bg-warning/10', border: 'border-warning/30', label: lp.ecartWarning },
+    critical: { icon: XCircle, color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/30', label: lp.ecartCritical },
+    pending: { icon: Clock, color: 'text-muted-foreground', bg: 'bg-muted/30', border: 'border-border', label: lp.pending },
+  };
   const { isCeo, role } = useAuth();
   const isCentraliste = role === 'centraliste';
   const canAddBatch = isCeo || isCentraliste;
@@ -151,7 +131,7 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
     setRefreshing(true);
     await fetchBatches();
     setRefreshing(false);
-    toast.success('Feed actualisé');
+    toast.success(lp.feedRefreshed);
   };
 
   const handleAddBatch = (bon: BonProduction) => {
@@ -193,9 +173,9 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
               <Activity className="h-5 w-5 text-accent" />
             </div>
             <div>
-              <CardTitle className="text-lg">Live Production Feed</CardTitle>
+              <CardTitle className="text-lg">{lp.title}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                Suivi temps réel des batches
+                {lp.subtitle}
               </p>
             </div>
           </div>
@@ -244,10 +224,10 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
           ) : batches.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Gauge className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">Aucun batch enregistré</p>
+              <p className="text-muted-foreground">{lp.noBatches}</p>
               {canAddBatch && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  Sélectionnez un BL pour commencer
+                  {lp.selectBlToStart}
                 </p>
               )}
             </div>
@@ -284,20 +264,20 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
                           
                           {/* Variance indicators */}
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {getVarianceBadge(batch.variance_ciment_pct, 'Ciment')}
-                            {getVarianceBadge(batch.variance_eau_pct, 'Eau')}
-                            {getVarianceBadge(batch.variance_sable_pct, 'Sable')}
-                            {getVarianceBadge(batch.variance_gravette_pct, 'Gravette')}
-                            {getVarianceBadge(batch.variance_adjuvant_pct, 'Adjuvant')}
+                            {getVarianceBadge(batch.variance_ciment_pct, lp.cement)}
+                            {getVarianceBadge(batch.variance_eau_pct, lp.water)}
+                            {getVarianceBadge(batch.variance_sable_pct, lp.sand)}
+                            {getVarianceBadge(batch.variance_gravette_pct, lp.gravel)}
+                            {getVarianceBadge(batch.variance_adjuvant_pct, lp.adjuvant)}
                           </div>
                           
                           <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
                             <span className="flex items-center gap-1">
                               <Clock className="h-3 w-3" />
-                              {format(new Date(batch.entered_at), 'HH:mm', { locale: fr })}
+                              {format(new Date(batch.entered_at), 'HH:mm', { locale: dateLocale })}
                             </span>
                             {batch.entered_by_name && (
-                              <span>Par {batch.entered_by_name}</span>
+                              <span>{lp.byUser} {batch.entered_by_name}</span>
                             )}
                             {batch.photo_pupitre_url && (
                               <a 
@@ -307,7 +287,7 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
                                 className="flex items-center gap-1 text-primary hover:underline"
                               >
                                 <Camera className="h-3 w-3" />
-                                Photo
+                                {lp.photo}
                               </a>
                             )}
                           </div>
@@ -319,12 +299,12 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
                         <div className={cn(
                           batch.variance_ciment_pct && batch.variance_ciment_pct > 2 ? 'text-destructive' : 'text-muted-foreground'
                         )}>
-                          Cim: {batch.ciment_reel_kg.toFixed(0)}kg
+                          {lp.cementShort}: {batch.ciment_reel_kg.toFixed(0)}kg
                         </div>
                         <div className={cn(
                           batch.variance_eau_pct && batch.variance_eau_pct > 2 ? 'text-destructive' : 'text-muted-foreground'
                         )}>
-                          Eau: {batch.eau_reel_l.toFixed(0)}L
+                          {lp.waterShort}: {batch.eau_reel_l.toFixed(0)}L
                         </div>
                       </div>
                     </div>
@@ -342,7 +322,7 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Gauge className="h-5 w-5 text-primary" />
-              Saisie Batch Production
+              {lp.batchEntry}
               {selectedBl && (
                 <Badge variant="outline" className="ml-2 font-mono">
                   {selectedBl.bl_id}
