@@ -6,6 +6,9 @@ import {
   Building2, Users, TrendingUp, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import heroPlantNight from '@/assets/hero_plant_night.jpg';
+import statsTexture from '@/assets/stats-texture.jpg';
+import modulesBg from '@/assets/modules-bg.jpg';
 
 const stats = [
   { value: '50+', label: 'Modules', icon: Zap },
@@ -57,7 +60,11 @@ export default function Landing() {
   return (
     <div className="bg-background text-foreground">
       {/* HERO */}
-      <section className="landing-hero">
+      <section className="landing-hero relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img src={heroPlantNight} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
+        </div>
         <div className="landing-grid-bg" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">
@@ -143,8 +150,12 @@ export default function Landing() {
       </section>
 
       {/* STATS BAR */}
-      <section className="relative border-y border-primary/10 bg-background/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <section className="relative border-y border-primary/10 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img src={statsTexture} alt="" className="w-full h-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+        </div>
+        <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -163,8 +174,12 @@ export default function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="py-24 sm:py-32">
-        <div className="max-w-6xl mx-auto px-6">
+      <section id="features" className="py-24 sm:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img src={modulesBg} alt="" className="w-full h-full object-cover opacity-15" />
+          <div className="absolute inset-0 bg-background/90" />
+        </div>
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
