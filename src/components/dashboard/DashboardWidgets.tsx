@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -21,7 +20,6 @@ export function PendingApprovalsWidget() {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchPending = async () => {
@@ -46,10 +44,10 @@ export function PendingApprovalsWidget() {
             <CheckCircle2 className={`h-5 w-5 ${count > 0 ? 'text-warning' : 'text-success'}`} />
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t('widgets.approvals')}</p>
+            <p className="text-sm text-muted-foreground">Approbations</p>
             <p className="text-xl font-bold">
               {loading ? '...' : count}
-              <span className="text-sm font-normal text-muted-foreground ml-1">{t('widgets.pending')}</span>
+              <span className="text-sm font-normal text-muted-foreground ml-1">en attente</span>
             </p>
           </div>
         </div>
@@ -68,7 +66,6 @@ export function TodaysPipelineWidget() {
     totalVolume: 0,
   });
   const [loading, setLoading] = useState(true);
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchToday = async () => {
@@ -99,7 +96,7 @@ export function TodaysPipelineWidget() {
     <div className="card-industrial p-4">
       <div className="flex items-center gap-2 mb-3">
         <TruckIcon className="h-4 w-4 text-primary" />
-        <h4 className="font-semibold text-sm">{t('widgets.pipelineToday')}</h4>
+        <h4 className="font-semibold text-sm">Pipeline Aujourd'hui</h4>
       </div>
       
       {loading ? (
@@ -121,15 +118,15 @@ export function TodaysPipelineWidget() {
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="text-center p-2 rounded bg-muted/30">
               <p className="font-semibold">{data.plannedDeliveries}</p>
-              <p className="text-muted-foreground">{t('widgets.planned')}</p>
+              <p className="text-muted-foreground">Planifié</p>
             </div>
             <div className="text-center p-2 rounded bg-warning/10">
               <p className="font-semibold text-warning">{data.inProgress}</p>
-              <p className="text-muted-foreground">{t('widgets.inProgress')}</p>
+              <p className="text-muted-foreground">En cours</p>
             </div>
             <div className="text-center p-2 rounded bg-success/10">
               <p className="font-semibold text-success">{data.delivered}</p>
-              <p className="text-muted-foreground">{t('widgets.delivered')}</p>
+              <p className="text-muted-foreground">Livré</p>
             </div>
           </div>
         </>
@@ -149,7 +146,6 @@ export function ARAgingWidget() {
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchAR = async () => {
@@ -186,7 +182,7 @@ export function ARAgingWidget() {
     >
       <div className="flex items-center gap-2 mb-3">
         <Wallet className="h-4 w-4 text-primary" />
-        <h4 className="font-semibold text-sm">{t('widgets.clientReceivables')}</h4>
+        <h4 className="font-semibold text-sm">Créances Clients</h4>
         <ArrowRight className="h-3 w-3 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
       </div>
 
@@ -233,20 +229,22 @@ export function StockLevelsWidget() {
   const [stocks, setStocks] = useState<{ materiau: string; niveau: number; seuil: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchStocks = async () => {
+      // Get current stock levels
       const { data: mouvements } = await supabase
         .from('mouvements_stock')
         .select('materiau, quantite_apres')
         .order('created_at', { ascending: false });
 
+      // Get alert thresholds
       const { data: alertes } = await supabase
         .from('alertes_reapprovisionnement')
         .select('materiau, seuil_alerte');
 
       if (mouvements && alertes) {
+        // Get latest stock per material
         const latestStocks: Record<string, number> = {};
         const seenMaterials = new Set<string>();
         
@@ -266,7 +264,7 @@ export function StockLevelsWidget() {
           materiau,
           niveau,
           seuil: thresholds[materiau] || 0,
-        })).slice(0, 4);
+        })).slice(0, 4); // Show top 4
 
         setStocks(stockData);
       }
@@ -274,6 +272,7 @@ export function StockLevelsWidget() {
     };
     fetchStocks();
 
+    // Real-time subscription for stock changes
     const channel = supabase
       .channel('dashboard-stocks-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchStocks())
@@ -300,7 +299,7 @@ export function StockLevelsWidget() {
     >
       <div className="flex items-center gap-2 mb-3">
         <Package className="h-4 w-4 text-primary" />
-        <h4 className="font-semibold text-sm">{t('widgets.stockLevels')}</h4>
+        <h4 className="font-semibold text-sm">Niveaux Stock</h4>
         <ArrowRight className="h-3 w-3 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
       </div>
 
@@ -326,7 +325,7 @@ export function StockLevelsWidget() {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-muted-foreground">{t('widgets.noStock')}</p>
+        <p className="text-sm text-muted-foreground">Aucun stock enregistré</p>
       )}
     </button>
   );
@@ -343,14 +342,15 @@ export function SalesFunnelWidget() {
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchFunnel = async () => {
+      // Get quotes
       const { data: devis } = await supabase
         .from('devis')
         .select('statut, total_ht');
 
+      // Get active purchase orders
       const { data: bcs } = await supabase
         .from('bons_commande')
         .select('statut')
@@ -385,7 +385,7 @@ export function SalesFunnelWidget() {
     >
       <div className="flex items-center gap-2 mb-3">
         <ShoppingCart className="h-4 w-4 text-primary" />
-        <h4 className="font-semibold text-sm">{t('widgets.salesPipeline')}</h4>
+        <h4 className="font-semibold text-sm">Pipeline Commercial</h4>
         <ArrowRight className="h-3 w-3 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
       </div>
 
@@ -396,20 +396,20 @@ export function SalesFunnelWidget() {
           <div className="grid grid-cols-3 gap-2 mb-3">
             <div className="text-center p-2 rounded bg-muted/30">
               <p className="text-lg font-bold">{data.devisEnAttente}</p>
-              <p className="text-xs text-muted-foreground">{t('widgets.quotes')}</p>
+              <p className="text-xs text-muted-foreground">Devis</p>
             </div>
             <div className="text-center p-2 rounded bg-primary/10">
               <p className="text-lg font-bold text-primary">{data.bcActifs}</p>
-              <p className="text-xs text-muted-foreground">{t('widgets.activeOrders')}</p>
+              <p className="text-xs text-muted-foreground">BC Actifs</p>
             </div>
             <div className="text-center p-2 rounded bg-success/10">
               <p className="text-lg font-bold text-success">{data.conversionRate.toFixed(0)}%</p>
-              <p className="text-xs text-muted-foreground">{t('widgets.conversion')}</p>
+              <p className="text-xs text-muted-foreground">Conversion</p>
             </div>
           </div>
 
           <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">{t('widgets.pendingQuoteValue')}</span>
+            <span className="text-muted-foreground">Valeur Devis en attente</span>
             <span className="font-semibold">{(data.totalDevisValue / 1000).toFixed(0)}K DH</span>
           </div>
         </>

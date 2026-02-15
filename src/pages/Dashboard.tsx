@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
@@ -71,7 +70,6 @@ import {
 
 export default function Dashboard() {
   const { role, isCeo, isAccounting, signOut } = useAuth();
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { stats, loading: statsLoading, refresh } = useDashboardStats();
   const [period, setPeriod] = useState<Period>('month');
@@ -175,76 +173,25 @@ export default function Dashboard() {
         {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
           ref={kpiSectionRef}
-          className="dashboard-header sticky top-0 z-10 p-3 sm:p-4 md:p-5"
+          className="dashboard-header sticky top-0 z-10 p-4 sm:p-5"
         >
-          <div className="relative z-10 flex flex-col gap-3 md:gap-4">
-            {/* Top row: greeting + user controls */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-extrabold tracking-tighter font-display truncate">
-                  {t('dashboard.greeting.morning')}, Master 👋
-                </h1>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <MapPin className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-                  <span className="text-xs sm:text-sm text-muted-foreground font-mono truncate">Casablanca • 24°C ☀️</span>
-                </div>
-              </div>
-
-              {/* User controls - always visible */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button 
-                  onClick={handleRefresh}
-                  disabled={refreshing}
-                  className="btn-premium min-h-[36px] sm:min-h-[40px] px-3 sm:px-5"
-                >
-                  <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden md:inline">{t('common.refresh')}</span>
-                </button>
-
-                <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                  <Bell className="h-4 w-4 text-muted-foreground" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                      <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                        <span className="text-xs font-bold text-primary">MT</span>
-                      </div>
-                      <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">{t('common.myAccount')}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                      <User className="h-4 w-4 mr-2" />
-                      {t('common.profile')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                      <Settings className="h-4 w-4 mr-2" />
-                      {t('nav.settings')}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      {t('nav.logout')}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
+                Bonjour, Master 👋
+              </h1>
+              <div className="flex items-center gap-2 mt-1">
+                <MapPin className="h-3.5 w-3.5 text-primary" />
+                <span className="text-sm text-muted-foreground font-mono">Casablanca • 24°C ☀️</span>
               </div>
             </div>
 
-            {/* Bottom row: period selector + action buttons */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <div className="period-selector-premium flex-shrink-0">
+            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+              <div className="period-selector-premium">
                 {[
-                  { value: 'today' as Period, label: t('dashboard.periods.today'), shortLabel: t('dashboard.periods.todayShort') },
-                  { value: 'week' as Period, label: t('dashboard.periods.week'), shortLabel: t('dashboard.periods.weekShort') },
-                  { value: 'month' as Period, label: t('dashboard.periods.month'), shortLabel: t('dashboard.periods.monthShort') },
+                  { value: 'today' as Period, label: "Aujourd'hui", shortLabel: 'Auj.' },
+                  { value: 'week' as Period, label: 'Cette Semaine', shortLabel: 'Sem.' },
+                  { value: 'month' as Period, label: 'Ce Mois', shortLabel: 'Mois' },
                 ].map((p) => (
                   <button
                     key={p.value}
@@ -269,15 +216,58 @@ export default function Dashboard() {
                     }}
                     className={`period-btn ${period === p.value ? 'active' : ''}`}
                   >
-                    <span className="hidden md:inline">{p.label}</span>
-                    <span className="md:hidden">{p.shortLabel}</span>
+                    <span className="hidden sm:inline">{p.label}</span>
+                    <span className="sm:hidden">{p.shortLabel}</span>
                   </button>
                 ))}
               </div>
 
-              {isCeo && <div className="hidden lg:block"><SystemManualPdf /></div>}
-              {isCeo && <div className="hidden md:block"><DailyReportGenerator /></div>}
+              {isCeo && <SystemManualPdf />}
+              {isCeo && <DailyReportGenerator />}
               {isCeo && <HawaiiReportButton />}
+              <button 
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="btn-premium min-h-[40px]"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Actualiser</span>
+              </button>
+
+              <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                <Bell className="h-4 w-4 text-muted-foreground" />
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                  3
+                </span>
+              </button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                    <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                      <span className="text-xs font-bold text-primary">MT</span>
+                    </div>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
+                  <DropdownMenuLabel className="text-xs text-muted-foreground">Mon Compte</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                    <User className="h-4 w-4 mr-2" />
+                    Profil
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Paramètres
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
@@ -298,7 +288,7 @@ export default function Dashboard() {
             SECTION 1 — KPIs & PERFORMANCE
             ═══════════════════════════════════════════════════════ */}
         <DashboardSection
-          title={t('dashboard.sections.performanceKpis')}
+          title="Performance & KPIs"
           icon={BarChart3}
           storageKey="kpis"
           defaultOpen={true}
@@ -320,9 +310,9 @@ export default function Dashboard() {
               ) : (
                 <>
                   <PeriodKPICard
-                    title={t('dashboard.kpi.totalVolume')}
+                    title="Volume Total"
                     value={`${periodStats.totalVolume.toFixed(0)} m³`}
-                    subtitle={periodStats.periodLabel || t('common.loading')}
+                    subtitle={periodStats.periodLabel || 'Chargement...'}
                     icon={Package}
                     trend={periodStats.volumeTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -330,9 +320,9 @@ export default function Dashboard() {
                     className="animate-fade-in"
                   />
                   <PeriodKPICard
-                    title={t('dashboard.kpi.revenue')}
+                    title="Chiffre d'Affaires"
                     value={`${(periodStats.chiffreAffaires / 1000).toFixed(1)}K DH`}
-                    subtitle={t('dashboard.kpi.invoices', { count: periodStats.nbFactures })}
+                    subtitle={`${periodStats.nbFactures} factures`}
                     icon={DollarSign}
                     trend={periodStats.caTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -341,9 +331,9 @@ export default function Dashboard() {
                     style={{ animationDelay: '50ms' }}
                   />
                   <PeriodKPICard
-                    title={t('dashboard.kpi.avgCUR')}
+                    title="CUR Moyen"
                     value={periodStats.curMoyen > 0 ? `${periodStats.curMoyen.toFixed(2)} DH` : '—'}
-                    subtitle={t('dashboard.kpi.unitCost')}
+                    subtitle="Coût Unitaire Réel"
                     icon={Gauge}
                     trend={periodStats.curTrend}
                     trendLabel={periodStats.previousPeriodLabel}
@@ -352,7 +342,7 @@ export default function Dashboard() {
                     style={{ animationDelay: '100ms' }}
                   />
                   <PeriodKPICard
-                    title={t('dashboard.kpi.grossMargin')}
+                    title="Marge Brute"
                     value={periodStats.margeBrutePct > 0 ? `${periodStats.margeBrutePct.toFixed(1)}%` : '—'}
                     subtitle={`${(periodStats.margeBrute / 1000).toFixed(1)}K DH`}
                     icon={TrendingUp}
@@ -374,15 +364,15 @@ export default function Dashboard() {
                 ) : (
                   <>
                     <PeriodKPICard
-                      title={t('dashboard.kpi.netProfit')}
+                      title="Profit Net"
                       value={`${(periodStats.profitNet / 1000).toFixed(1)}K DH`}
-                      subtitle={t('dashboard.kpi.profitSubtitle')}
+                      subtitle="CA - Coûts - Dépenses"
                       icon={Calculator}
                       variant={periodStats.profitNet > 0 ? 'positive' : 'negative'}
                       className="animate-fade-in"
                     />
                     <PeriodKPICard
-                      title={t('dashboard.kpi.totalExpenses')}
+                      title="Total Dépenses"
                       value={`${(periodStats.totalDepenses / 1000).toFixed(1)}K DH`}
                       subtitle={periodStats.periodLabel}
                       icon={Receipt}
@@ -391,14 +381,14 @@ export default function Dashboard() {
                       style={{ animationDelay: '50ms' }}
                     />
                     <KPICard
-                      title={t('dashboard.kpi.marginAlerts')}
+                      title="Alertes Marge"
                       value={stats.marginAlerts}
-                      subtitle={t('dashboard.kpi.marginAlertsSubtitle')}
+                      subtitle="Écarts > 5%"
                       icon={AlertTriangle}
                       variant={stats.marginAlerts > 0 ? 'negative' : 'positive'}
                     />
                     <PeriodKPICard
-                      title={t('dashboard.kpi.activeClients')}
+                      title="Clients Actifs"
                       value={periodStats.nbClients}
                       subtitle={periodStats.periodLabel}
                       icon={Users}
@@ -413,7 +403,7 @@ export default function Dashboard() {
 
             {/* Quick Access Widgets */}
             {(isCeo || isAccounting) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <PendingApprovalsWidget />
                 <TodaysPipelineWidget />
                 <ARAgingWidget />
@@ -435,7 +425,7 @@ export default function Dashboard() {
             SECTION 2 — PRODUCTION & QUALITÉ
             ═══════════════════════════════════════════════════════ */}
         <DashboardSection
-          title={t('dashboard.sections.productionQuality')}
+          title="Production & Qualité"
           icon={Factory}
           storageKey="production"
           defaultOpen={true}
@@ -467,24 +457,24 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentDeliveries />
               <div className="card-industrial p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4">{t('dashboard.production.summary')}</h3>
+                <h3 className="text-lg font-semibold mb-4">Résumé Production</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t('dashboard.production.activeFormulas')}</span>
+                    <span className="text-sm text-muted-foreground">Formules actives</span>
                     <span className="font-semibold">{productionStats.formulesActives}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t('dashboard.production.pricesUpdated')}</span>
+                    <span className="text-sm text-muted-foreground">Prix mis à jour</span>
                     <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t('dashboard.production.avgECRatio')}</span>
+                    <span className="text-sm text-muted-foreground">Taux E/C moyen</span>
                     <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
                       {productionStats.tauxECMoyen}
                     </span>
                   </div>
                   <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t('dashboard.production.avgCUR7d')}</span>
+                    <span className="text-sm text-muted-foreground">CUR moyen (7j)</span>
                     <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
                       {productionStats.curMoyen}
                     </span>
@@ -494,7 +484,7 @@ export default function Dashboard() {
                       onClick={() => navigate('/formules')}
                       className="w-full mt-2 py-2.5 rounded-lg border border-dashed border-primary/40 text-sm text-primary hover:bg-primary/5 transition-colors"
                     >
-                      {t('dashboard.production.addProduct')}
+                      + Ajouter un produit
                     </button>
                   )}
                 </div>
@@ -508,7 +498,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title={t('dashboard.sections.financeTreasury')}
+            title="Finance & Trésorerie"
             icon={Wallet}
             storageKey="finance"
             defaultOpen={true}
@@ -541,7 +531,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title={t('dashboard.sections.fleetLogistics')}
+            title="Flotte & Logistique"
             icon={Truck}
             storageKey="fleet"
             defaultOpen={false}
@@ -565,7 +555,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title={t('dashboard.sections.securityAudit')}
+            title="Sécurité & Audit"
             icon={Shield}
             storageKey="security"
             defaultOpen={false}
@@ -581,8 +571,8 @@ export default function Dashboard() {
                 <ParallaxCard className="bento-wide" glowColor="ruby">
                   <Tabs defaultValue="alerts" className="w-full">
                     <TabsList className="w-full grid grid-cols-2 mb-2">
-                      <TabsTrigger value="alerts" className="text-xs">{t('dashboard.security.securityAlerts')}</TabsTrigger>
-                      <TabsTrigger value="audit" className="text-xs">{t('dashboard.security.auditTrail')}</TabsTrigger>
+                      <TabsTrigger value="alerts" className="text-xs">🛡️ Alertes Sécurité</TabsTrigger>
+                      <TabsTrigger value="audit" className="text-xs">🔍 Audit Trail</TabsTrigger>
                     </TabsList>
                     <TabsContent value="alerts" className="mt-0">
                       <ForensicAlertFeed />
@@ -612,7 +602,7 @@ export default function Dashboard() {
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
           <DashboardSection
-            title={t('dashboard.sections.commandCenter')}
+            title="Centre de Commande"
             icon={Gauge}
             storageKey="command"
             defaultOpen={false}

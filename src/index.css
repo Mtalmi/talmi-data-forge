@@ -267,13 +267,13 @@
 
   /* Period Selector - Obsidian */
   .period-selector-premium {
-    @apply flex items-center gap-0.5 sm:gap-1 p-1 sm:p-1.5 rounded-xl;
+    @apply flex items-center gap-1 p-1.5 rounded-xl;
     background: hsl(0 0% 3%);
     border: 1px solid hsl(51 100% 50% / 0.1);
   }
 
   .period-btn {
-    @apply relative flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold;
+    @apply relative flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold;
     @apply transition-all duration-300 ease-out;
     color: hsl(0 0% 55%);
   }
@@ -947,21 +947,6 @@
     }
   }
 
-  /* iPad / Tablet optimization */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .bento-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .bento-grid .bento-wide {
-      grid-column: span 2;
-    }
-    
-    .bento-grid .bento-full {
-      grid-column: span 2;
-    }
-  }
-
   @media (min-width: 1024px) {
     .bento-grid {
       grid-template-columns: repeat(4, 1fr);
@@ -1267,15 +1252,6 @@
     width: 3px;
     height: 3px;
   }
-}
-
-/* Hidden scrollbar utility */
-.scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }
 
 /* ===== GOLD SELECTION ===== */
