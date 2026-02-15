@@ -271,9 +271,9 @@ export default function Formules() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t.formulas.title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.pages.formulas.title}</h1>
             <p className="text-muted-foreground mt-1">
-              {t.formulas.subtitle}
+              {t.pages.formulas.subtitle}
             </p>
           </div>
           {/* =====================================================
@@ -289,17 +289,17 @@ export default function Formules() {
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
-                    {t.formulas.newFormula}
+                    {t.pages.formulas.newFormula}
                   </Button>
                 </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>{editingFormule ? t.formulas.editFormula : t.formulas.createFormula}</DialogTitle>
+                  <DialogTitle>{editingFormule ? t.pages.formulas.editFormula : t.pages.formulas.createFormula}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.id}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.id}</Label>
                       <Input
                         placeholder="C25/30-S4-G8"
                         value={formuleId}
@@ -311,7 +311,7 @@ export default function Formules() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.designation}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.designation}</Label>
                       <Input
                         placeholder="Béton standard"
                         value={designation}
@@ -323,7 +323,7 @@ export default function Formules() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.cement}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.cement}</Label>
                       <Input
                         type="number"
                         placeholder="350"
@@ -334,7 +334,7 @@ export default function Formules() {
                       <p className="text-xs text-muted-foreground">251-599</p>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.water}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.water}</Label>
                       <Input
                         type="number"
                         placeholder="180"
@@ -345,7 +345,7 @@ export default function Formules() {
                       <p className="text-xs text-muted-foreground">121-219</p>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.adjuvant}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.adjuvant}</Label>
                       <Input
                         type="number"
                         placeholder="2"
@@ -361,10 +361,10 @@ export default function Formules() {
                       <div className="flex items-center gap-2">
                         {!ratioValid && <AlertCircle className="h-4 w-4 text-destructive" />}
                         <span className="text-sm font-medium">
-                          {t.formulas.ecRatio}: {ratioEC.toFixed(3)}
+                          {t.pages.formulas.ecRatio}: {ratioEC.toFixed(3)}
                         </span>
                         <span className={`text-xs ${ratioValid ? 'text-success' : 'text-destructive'}`}>
-                          {ratioValid ? `✓ ${t.formulas.compliant}` : `✗ ${t.formulas.invalidRatio}`}
+                          {ratioValid ? `✓ ${t.pages.formulas.compliant}` : `✗ ${t.pages.formulas.invalidRatio}`}
                         </span>
                       </div>
                     </div>
@@ -372,7 +372,7 @@ export default function Formules() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.sand}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.sand}</Label>
                       <Input
                         type="number"
                         placeholder="800"
@@ -381,7 +381,7 @@ export default function Formules() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">{t.formulas.gravel}</Label>
+                      <Label className="form-label-industrial">{t.pages.formulas.gravel}</Label>
                       <Input
                         type="number"
                         placeholder="1000"
@@ -393,7 +393,7 @@ export default function Formules() {
 
                   <div className="flex justify-end gap-3 pt-4">
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      {t.formulas.cancel}
+                      {t.pages.formulas.cancel}
                     </Button>
                     <Button type="submit" disabled={submitting}>
                       {submitting ? (
@@ -402,7 +402,7 @@ export default function Formules() {
                           Création...
                         </>
                       ) : (
-                        editingFormule ? t.formulas.update : t.formulas.create
+                        editingFormule ? t.pages.formulas.update : t.pages.formulas.create
                       )}
                     </Button>
                   </div>
@@ -422,21 +422,21 @@ export default function Formules() {
           ) : formules.length === 0 ? (
             <div className="p-8 text-center">
               <FlaskConical className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">{t.formulas.noFormulas}</p>
+              <p className="text-muted-foreground">{t.pages.formulas.noFormulas}</p>
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t.formulas.id}</TableHead>
-                  <TableHead>{t.formulas.designation}</TableHead>
+                  <TableHead>{t.pages.formulas.id}</TableHead>
+                  <TableHead>{t.pages.formulas.designation}</TableHead>
                   {/* Sensitive columns - only visible to CEO/Superviseur */}
                   {canSeeSensitiveData && (
                     <>
-                      <TableHead className="text-right">{t.formulas.cement.split(' ')[0]}</TableHead>
-                      <TableHead className="text-right">{t.formulas.water.split(' ')[0]}</TableHead>
-                      <TableHead className="text-right">{t.formulas.ecRatio}</TableHead>
-                      <TableHead className="text-right">{t.formulas.adjuvant.split(' ')[0]}</TableHead>
+                      <TableHead className="text-right">{t.pages.formulas.cement.split(' ')[0]}</TableHead>
+                      <TableHead className="text-right">{t.pages.formulas.water.split(' ')[0]}</TableHead>
+                      <TableHead className="text-right">{t.pages.formulas.ecRatio}</TableHead>
+                      <TableHead className="text-right">{t.pages.formulas.adjuvant.split(' ')[0]}</TableHead>
                     </>
                   )}
                   {/* CUT visible to those who can see basic details */}
@@ -448,7 +448,7 @@ export default function Formules() {
                       </span>
                     </TableHead>
                   )}
-                  {canManageFormules && <TableHead className="w-24">{t.formulas.actions}</TableHead>}
+                  {canManageFormules && <TableHead className="w-24">{t.pages.formulas.actions}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
