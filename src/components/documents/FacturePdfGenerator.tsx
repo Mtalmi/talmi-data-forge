@@ -5,6 +5,7 @@ import { FileDown, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { getCGVContent, CGV_STYLES } from '@/lib/cgvContent';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface FacturePdfGeneratorProps {
   facture: {
@@ -28,10 +29,11 @@ interface FacturePdfGeneratorProps {
 export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGeneratorProps) {
   const [generating, setGenerating] = useState(false);
   const [useFullCGV, setUseFullCGV] = useState(facture.volume_m3 >= 500);
+  const { t } = useI18n();
+  const fp = t.facturePdf;
 
   const generatePdf = async () => {
     setGenerating(true);
-
     try {
       const tvaAmount = facture.total_ht * (facture.tva_pct / 100);
       const cgvContent = getCGVContent(facture.volume_m3, useFullCGV);
@@ -82,7 +84,6 @@ export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGene
               <div class="date">Date: ${new Date(facture.date_emission).toLocaleDateString('fr-FR')}</div>
             </div>
           </div>
-
           <div class="section">
             <div class="section-title">Facturé à</div>
             <div class="client-info">
@@ -91,67 +92,31 @@ export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGene
               ${facture.client?.telephone ? `<div>Tél: ${facture.client.telephone}</div>` : ''}
             </div>
           </div>
-
           <div class="section">
             <div class="section-title">Détails de la Facture</div>
             <table class="table">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Quantité</th>
-                  <th>Prix Unitaire</th>
-                  <th class="number">Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <strong>Béton Prêt à l'Emploi</strong><br>
-                    <span style="color: #666; font-size: 12px;">${facture.formule?.designation || facture.formule_id || ''}</span><br>
-                    <span style="color: #666; font-size: 12px;">Réf. BL: ${facture.bl_id}</span>
-                  </td>
-                  <td>${facture.volume_m3} m³</td>
-                  <td class="number">${facture.prix_vente_m3.toLocaleString('fr-FR')} DH/m³</td>
-                  <td class="number">${facture.total_ht.toLocaleString('fr-FR')} DH</td>
-                </tr>
-              </tbody>
+              <thead><tr><th>Description</th><th>Quantité</th><th>Prix Unitaire</th><th class="number">Montant</th></tr></thead>
+              <tbody><tr>
+                <td><strong>Béton Prêt à l'Emploi</strong><br><span style="color: #666; font-size: 12px;">${facture.formule?.designation || facture.formule_id || ''}</span><br><span style="color: #666; font-size: 12px;">Réf. BL: ${facture.bl_id}</span></td>
+                <td>${facture.volume_m3} m³</td>
+                <td class="number">${facture.prix_vente_m3.toLocaleString('fr-FR')} DH/m³</td>
+                <td class="number">${facture.total_ht.toLocaleString('fr-FR')} DH</td>
+              </tr></tbody>
               <tfoot>
-                <tr>
-                  <td colspan="3"><strong>Total HT</strong></td>
-                  <td class="number" style="font-weight: bold;">${facture.total_ht.toLocaleString('fr-FR')} DH</td>
-                </tr>
-                <tr>
-                  <td colspan="3">TVA (${facture.tva_pct}%)</td>
-                  <td class="number">${tvaAmount.toLocaleString('fr-FR')} DH</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="3"><strong>TOTAL TTC À PAYER</strong></td>
-                  <td class="number price-highlight">${facture.total_ttc.toLocaleString('fr-FR')} DH</td>
-                </tr>
+                <tr><td colspan="3"><strong>Total HT</strong></td><td class="number" style="font-weight: bold;">${facture.total_ht.toLocaleString('fr-FR')} DH</td></tr>
+                <tr><td colspan="3">TVA (${facture.tva_pct}%)</td><td class="number">${tvaAmount.toLocaleString('fr-FR')} DH</td></tr>
+                <tr class="total-row"><td colspan="3"><strong>TOTAL TTC À PAYER</strong></td><td class="number price-highlight">${facture.total_ttc.toLocaleString('fr-FR')} DH</td></tr>
               </tfoot>
             </table>
           </div>
-
           <div class="payment-info">
             <div class="payment-title">💳 INFORMATIONS DE PAIEMENT</div>
             <p>Veuillez effectuer le paiement selon les modalités convenues.</p>
-            <div class="bank-details">
-              <strong>Coordonnées bancaires:</strong><br>
-              Banque: XXXXXXXXXX<br>
-              RIB: XXXX XXXX XXXX XXXX XXXX XX<br>
-              IBAN: MAXX XXXX XXXX XXXX XXXX XXXX XXX
-            </div>
+            <div class="bank-details"><strong>Coordonnées bancaires:</strong><br>Banque: XXXXXXXXXX<br>RIB: XXXX XXXX XXXX XXXX XXXX XX<br>IBAN: MAXX XXXX XXXX XXXX XXXX XXXX XXX</div>
           </div>
-
-          <div class="footer">
-            <strong>TALMI BETON SARL</strong><br>
-            Zone Industrielle - Casablanca | Tél: +212 5XX XXX XXX | Email: contact@talmibeton.ma<br>
-            RC: XXXXXX | IF: XXXXXX | ICE: XXXXXXXXXXXXXXX
-          </div>
-
+          <div class="footer"><strong>TALMI BETON SARL</strong><br>Zone Industrielle - Casablanca | Tél: +212 5XX XXX XXX | Email: contact@talmibeton.ma<br>RC: XXXXXX | IF: XXXXXX | ICE: XXXXXXXXXXXXXXX</div>
           ${cgvContent}
-        </body>
-        </html>
+        </body></html>
       `;
 
       const printWindow = window.open('', '_blank');
@@ -160,13 +125,13 @@ export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGene
         printWindow.document.close();
         printWindow.focus();
         setTimeout(() => printWindow.print(), 500);
-        toast.success('Facture PDF prête');
+        toast.success(fp.pdfReady);
       } else {
-        toast.error('Impossible d\'ouvrir la fenêtre d\'impression');
+        toast.error(fp.printError);
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
-      toast.error('Erreur lors de la génération du PDF');
+      toast.error(fp.genError);
     } finally {
       setGenerating(false);
     }
@@ -184,19 +149,12 @@ export function FacturePdfGenerator({ facture, compact = false }: FacturePdfGene
   return (
     <div className="flex items-center gap-3">
       <div className="flex items-center gap-2">
-        <Switch 
-          id="facture-cgv-toggle" 
-          checked={useFullCGV} 
-          onCheckedChange={setUseFullCGV}
-          className="data-[state=checked]:bg-primary"
-        />
-        <Label htmlFor="facture-cgv-toggle" className="text-xs text-muted-foreground cursor-pointer">
-          CGV Complètes
-        </Label>
+        <Switch id="facture-cgv-toggle" checked={useFullCGV} onCheckedChange={setUseFullCGV} className="data-[state=checked]:bg-primary" />
+        <Label htmlFor="facture-cgv-toggle" className="text-xs text-muted-foreground cursor-pointer">{fp.fullCGV}</Label>
       </div>
       <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
         {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-        Télécharger PDF
+        {fp.downloadPdf}
       </Button>
     </div>
   );

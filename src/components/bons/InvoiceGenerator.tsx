@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useI18n } from '@/i18n/I18nContext';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -14,8 +15,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { FileText, Loader2, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-
 import { cn } from '@/lib/utils';
 
 interface InvoiceGeneratorProps {
@@ -33,19 +32,12 @@ interface InvoiceGeneratorProps {
 }
 
 export function InvoiceGenerator({
-  blId,
-  clientId,
-  formuleId,
-  volumeM3,
-  prixVenteM3,
-  curReel,
-  margeBrutePct,
-  workflowStatus,
-  modePaiement,
-  prixLivraisonM3,
-  onInvoiceGenerated,
+  blId, clientId, formuleId, volumeM3, prixVenteM3, curReel, margeBrutePct,
+  workflowStatus, modePaiement, prixLivraisonM3, onInvoiceGenerated,
 }: InvoiceGeneratorProps) {
   const { user, isCeo, isAgentAdministratif } = useAuth();
+  const { t } = useI18n();
+  const ig = t.invoiceGen;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [editingPrix, setEditingPrix] = useState(false);
@@ -54,7 +46,6 @@ export function InvoiceGenerator({
   const canGenerate = (isCeo || isAgentAdministratif) && workflowStatus === 'livre';
   const isFacture = workflowStatus === 'facture';
 
-  // Calculate invoice values
   const prix = parseFloat(prixVente) || prixVenteM3 || 0;
   const totalHT = prix * volumeM3;
   const tva = 20;
@@ -72,66 +63,40 @@ export function InvoiceGenerator({
 
   const handleGenerateInvoice = async () => {
     if (!prix || prix <= 0) {
-      toast.error('Veuillez définir un prix de vente valide');
+      toast.error(ig.invalidPrice);
       return;
     }
-
     setGenerating(true);
-
     try {
       const factureId = generateFactureId();
-
-      // Update BL with prix_vente_m3 if changed
       if (prixVente && parseFloat(prixVente) !== prixVenteM3) {
         const { error: updateError } = await supabase
           .from('bons_livraison_reels')
           .update({ prix_vente_m3: parseFloat(prixVente) })
           .eq('bl_id', blId);
-
         if (updateError) throw updateError;
       }
-
-      // Create facture record - NOW INCLUDES mode_paiement and prix_livraison_m3
       const { error: factureError } = await supabase
         .from('factures')
         .insert([{
-          facture_id: factureId,
-          bl_id: blId,
-          client_id: clientId,
-          formule_id: formuleId,
-          volume_m3: volumeM3,
-          prix_vente_m3: prix,
-          total_ht: totalHT,
-          tva_pct: tva,
-          total_ttc: totalTTC,
-          cur_reel: curReel,
-          marge_brute_dh: margeBruteDH,
-          marge_brute_pct: calculatedMargePct,
-          mode_paiement: modePaiement || 'virement',
-          prix_livraison_m3: prixLivraisonM3 || 0,
-          created_by: user?.id,
+          facture_id: factureId, bl_id: blId, client_id: clientId, formule_id: formuleId,
+          volume_m3: volumeM3, prix_vente_m3: prix, total_ht: totalHT, tva_pct: tva,
+          total_ttc: totalTTC, cur_reel: curReel, marge_brute_dh: margeBruteDH,
+          marge_brute_pct: calculatedMargePct, mode_paiement: modePaiement || 'virement',
+          prix_livraison_m3: prixLivraisonM3 || 0, created_by: user?.id,
         }]);
-
       if (factureError) throw factureError;
-
-      // Update BL workflow status to 'facture'
       const { error: blError } = await supabase
         .from('bons_livraison_reels')
-        .update({
-          workflow_status: 'facture',
-          facture_generee: true,
-          facture_id: factureId,
-        })
+        .update({ workflow_status: 'facture', facture_generee: true, facture_id: factureId })
         .eq('bl_id', blId);
-
       if (blError) throw blError;
-
-      toast.success(`Facture ${factureId} générée avec succès`);
+      toast.success(ig.success.replace('{id}', factureId));
       setDialogOpen(false);
       onInvoiceGenerated();
     } catch (error) {
       console.error('Error generating invoice:', error);
-      toast.error('Erreur lors de la génération de la facture');
+      toast.error(ig.error);
     } finally {
       setGenerating(false);
     }
@@ -141,25 +106,18 @@ export function InvoiceGenerator({
     return (
       <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 text-sm">
         <Lock className="h-4 w-4 text-primary" />
-        <span className="text-primary font-medium">Facturé</span>
-        <span className="text-muted-foreground">- Prix verrouillé</span>
+        <span className="text-primary font-medium">{ig.invoiceLocked}</span>
+        <span className="text-muted-foreground">- {ig.priceLocked}</span>
       </div>
     );
   }
-
-  if (!canGenerate) {
-    return null;
-  }
+  if (!canGenerate) return null;
 
   return (
     <>
-      <Button
-        onClick={() => setDialogOpen(true)}
-        className="w-full"
-        variant="default"
-      >
+      <Button onClick={() => setDialogOpen(true)} className="w-full" variant="default">
         <FileText className="h-4 w-4 mr-2" />
-        Générer Facture
+        {ig.generateInvoice}
       </Button>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -167,137 +125,73 @@ export function InvoiceGenerator({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              Générer Facture
+              {ig.generateInvoice}
             </DialogTitle>
-            <DialogDescription>
-              Cette action va créer une facture et verrouiller le prix de vente.
-            </DialogDescription>
+            <DialogDescription>{ig.createInvoiceDesc}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* BL Info */}
             <div className="p-3 rounded-lg bg-muted/50">
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Bon:</span>
-                  <span className="font-mono ml-2">{blId}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Client:</span>
-                  <span className="ml-2">{clientId}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Formule:</span>
-                  <span className="font-mono ml-2">{formuleId}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Volume:</span>
-                  <span className="ml-2">{volumeM3} m³</span>
-                </div>
+                <div><span className="text-muted-foreground">{ig.bon}:</span><span className="font-mono ml-2">{blId}</span></div>
+                <div><span className="text-muted-foreground">{ig.client}:</span><span className="ml-2">{clientId}</span></div>
+                <div><span className="text-muted-foreground">{ig.formula}:</span><span className="font-mono ml-2">{formuleId}</span></div>
+                <div><span className="text-muted-foreground">{ig.volume}:</span><span className="ml-2">{volumeM3} m³</span></div>
               </div>
             </div>
 
-            {/* Prix de Vente */}
             <div className="space-y-2">
               <Label className="flex items-center justify-between">
-                <span>Prix de Vente (DH/m³)</span>
+                <span>{ig.sellingPrice}</span>
                 {!editingPrix && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setEditingPrix(true)}
-                    className="h-6 text-xs"
-                  >
-                    Modifier
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setEditingPrix(true)} className="h-6 text-xs">
+                    {ig.modify}
                   </Button>
                 )}
               </Label>
               {editingPrix ? (
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={prixVente}
-                  onChange={(e) => setPrixVente(e.target.value)}
-                  placeholder="Ex: 850.00"
-                />
+                <Input type="number" step="0.01" min="0" value={prixVente} onChange={(e) => setPrixVente(e.target.value)} placeholder="Ex: 850.00" />
               ) : (
                 <div className="p-3 rounded-lg bg-muted font-mono text-lg">
-                  {prix > 0 ? `${prix.toFixed(2)} DH/m³` : 'Non défini'}
+                  {prix > 0 ? `${prix.toFixed(2)} DH/m³` : ig.notDefined}
                 </div>
               )}
             </div>
 
-            {/* Invoice Summary */}
             {prix > 0 && (
               <div className="space-y-2 p-3 rounded-lg border border-border">
-                <h4 className="font-semibold text-sm">Récapitulatif Facture</h4>
+                <h4 className="font-semibold text-sm">{ig.invoiceSummary}</h4>
                 <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total HT</span>
-                    <span className="font-mono">{totalHT.toFixed(2)} DH</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">TVA ({tva}%)</span>
-                    <span className="font-mono">{(totalHT * tva / 100).toFixed(2)} DH</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-1 font-bold">
-                    <span>Total TTC</span>
-                    <span className="font-mono">{totalTTC.toFixed(2)} DH</span>
-                  </div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">{ig.totalHT}</span><span className="font-mono">{totalHT.toFixed(2)} DH</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">{ig.tva} ({tva}%)</span><span className="font-mono">{(totalHT * tva / 100).toFixed(2)} DH</span></div>
+                  <div className="flex justify-between border-t pt-1 font-bold"><span>{ig.totalTTC}</span><span className="font-mono">{totalTTC.toFixed(2)} DH</span></div>
                 </div>
               </div>
             )}
 
-            {/* Margin Warning */}
             {calculatedMargePct !== null && calculatedMargePct < 20 && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30">
                 <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="font-semibold text-destructive text-sm">
-                    Attention: Marge faible ({calculatedMargePct.toFixed(1)}%)
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    La marge est inférieure à 20%. Confirmez pour continuer.
-                  </p>
+                  <p className="font-semibold text-destructive text-sm">{ig.lowMarginWarning} ({calculatedMargePct.toFixed(1)}%)</p>
+                  <p className="text-xs text-muted-foreground mt-1">{ig.lowMarginDesc}</p>
                 </div>
               </div>
             )}
 
-            {/* Lock Warning */}
             <div className="flex items-start gap-2 p-3 rounded-lg bg-warning/10 border border-warning/30">
               <Lock className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-semibold text-warning text-sm">
-                  Prix Verrouillé après Facturation
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Une fois la facture générée, le prix de vente ne pourra plus être modifié.
-                </p>
+                <p className="font-semibold text-warning text-sm">{ig.priceLockedAfter}</p>
+                <p className="text-xs text-muted-foreground mt-1">{ig.priceLockedDesc}</p>
               </div>
             </div>
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
-              Annuler
-            </Button>
-            <Button
-              onClick={handleGenerateInvoice}
-              disabled={generating || !prix || prix <= 0}
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Génération...
-                </>
-              ) : (
-                <>
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Confirmer & Générer
-                </>
-              )}
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>{ig.cancel}</Button>
+            <Button onClick={handleGenerateInvoice} disabled={generating || !prix || prix <= 0}>
+              {generating ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />{ig.generating}</>) : (<><CheckCircle className="h-4 w-4 mr-2" />{ig.confirmGenerate}</>)}
             </Button>
           </DialogFooter>
         </DialogContent>
