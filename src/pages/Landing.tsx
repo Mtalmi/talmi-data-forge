@@ -13,6 +13,7 @@ import heroPlantNight from '@/assets/hero_plant_night.jpg';
 import statsTexture from '@/assets/stats-texture.jpg';
 import modulesBg from '@/assets/modules-bg.jpg';
 import PricingSection from '@/components/landing/PricingSection';
+import BookDemoSection from '@/components/landing/BookDemoSection';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -304,6 +305,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* BOOK DEMO */}
+      <BookDemoSection />
 
       {/* FINAL CTA */}
       <section className="py-24 sm:py-32 text-center bg-background">

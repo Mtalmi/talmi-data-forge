@@ -2467,6 +2467,36 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_requests: {
+        Row: {
+          created_at: string
+          email: string
+          entreprise: string | null
+          id: string
+          nom_complet: string
+          nombre_centrales: number | null
+          telephone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          entreprise?: string | null
+          id?: string
+          nom_complet: string
+          nombre_centrales?: number | null
+          telephone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          entreprise?: string | null
+          id?: string
+          nom_complet?: string
+          nombre_centrales?: number | null
+          telephone?: string | null
+        }
+        Relationships: []
+      }
       department_budgets: {
         Row: {
           alert_threshold_pct: number
