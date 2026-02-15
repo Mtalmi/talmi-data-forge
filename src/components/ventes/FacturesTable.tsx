@@ -28,11 +28,12 @@ import {
   FileText,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { FacturePdfGenerator } from '@/components/documents/FacturePdfGenerator';
 import { FactureDetailDialog } from '@/components/ventes/FactureDetailDialog';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface Facture {
   id: string;
@@ -60,13 +61,6 @@ interface Facture {
   formule_designation?: string;
 }
 
-const FACTURE_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  emise: { label: 'Émise', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
-  envoyee: { label: 'Envoyée', color: 'bg-primary/10 text-primary border-primary/30', icon: <FileText className="h-3 w-3" /> },
-  payee: { label: 'Payée', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  retard: { label: 'En Retard', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
-};
-
 interface FacturesTableProps {
   onViewDetail?: (facture: Facture) => void;
   selectedIds?: string[];
@@ -78,6 +72,18 @@ export function FacturesTable({
   selectedIds = [], 
   onSelectionChange 
 }: FacturesTableProps) {
+  const { t, lang } = useI18n();
+  const ft = t.facturesTable;
+  const c = t.common;
+  const dateLocale = getDateLocale(lang);
+
+  const FACTURE_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+    emise: { label: ft.statusEmise, color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" /> },
+    envoyee: { label: ft.statusEnvoyee, color: 'bg-primary/10 text-primary border-primary/30', icon: <FileText className="h-3 w-3" /> },
+    payee: { label: ft.statusPayee, color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+    retard: { label: ft.statusRetard, color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
+  };
+
   const [factures, setFactures] = useState<Facture[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -190,7 +196,7 @@ export function FacturesTable({
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher facture, client, BL..."
+            placeholder={ft.searchPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -199,15 +205,15 @@ export function FacturesTable({
         <div className="flex flex-wrap gap-2 text-sm">
           <Badge variant="outline" className="gap-1">
             <Receipt className="h-3 w-3" />
-            {filteredFactures.length} factures
+            {filteredFactures.length} {ft.invoices}
           </Badge>
           <Badge variant="outline" className="gap-1 bg-success/10 text-success border-success/30">
             <CheckCircle className="h-3 w-3" />
-            {paidCount} payées
+            {paidCount} {ft.paid}
           </Badge>
           <Badge variant="outline" className="gap-1 bg-warning/10 text-warning border-warning/30">
             <Clock className="h-3 w-3" />
-            {pendingCount} en attente
+            {pendingCount} {ft.pending}
           </Badge>
           <Badge variant="secondary" className="font-mono">
             {totalHT.toLocaleString()} DH HT
@@ -218,9 +224,9 @@ export function FacturesTable({
       {filteredFactures.length === 0 ? (
         <div className="text-center py-12">
           <Receipt className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-          <p className="text-muted-foreground">Aucune facture trouvée</p>
+          <p className="text-muted-foreground">{ft.noInvoiceFound}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Les factures apparaissent ici après la livraison des commandes
+            {ft.invoicesAppearAfterDelivery}
           </p>
         </div>
       ) : (
@@ -232,21 +238,21 @@ export function FacturesTable({
                   <Checkbox
                     checked={allSelected}
                     onCheckedChange={handleSelectAll}
-                    aria-label="Tout sélectionner"
+                    aria-label={ft.selectAll}
                     className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
                   />
                 </TableHead>
               )}
-              <TableHead>N° Facture</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>BL / BC</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Volume</TableHead>
-              <TableHead className="text-right">Total HT</TableHead>
+              <TableHead>{ft.invoiceNumber}</TableHead>
+              <TableHead>{c.client}</TableHead>
+              <TableHead>{ft.blBc}</TableHead>
+              <TableHead>{c.date}</TableHead>
+              <TableHead className="text-right">{c.volume}</TableHead>
+              <TableHead className="text-right">{c.totalHT}</TableHead>
               <TableHead className="text-right">Total TTC</TableHead>
-              <TableHead>Marge</TableHead>
-              <TableHead>Statut</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{ft.margin}</TableHead>
+              <TableHead>{c.status}</TableHead>
+              <TableHead>{ft.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -286,7 +292,7 @@ export function FacturesTable({
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={(checked) => handleSelectOne(facture.id, !!checked)}
-                        aria-label={`Sélectionner ${facture.facture_id}`}
+                        aria-label={`${ft.select} ${facture.facture_id}`}
                       />
                     </TableCell>
                   )}
@@ -301,7 +307,7 @@ export function FacturesTable({
                             </Badge>
                           </TooltipTrigger>
                           <TooltipContent>
-                            Facture consolidée regroupant {facture.bls_inclus?.length} livraisons
+                            {ft.consolidatedInvoice} {facture.bls_inclus?.length} {ft.deliveries}
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -323,7 +329,7 @@ export function FacturesTable({
                     </div>
                   </TableCell>
                   <TableCell className="text-sm">
-                    {format(parseISO(facture.date_facture), 'dd/MM/yyyy', { locale: fr })}
+                    {format(parseISO(facture.date_facture), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                   </TableCell>
                   <TableCell className="text-right font-mono">{facture.volume_m3} m³</TableCell>
                   <TableCell className="text-right font-mono font-medium">
@@ -364,7 +370,7 @@ export function FacturesTable({
                             <ExternalLink className="h-4 w-4" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Voir détails</TooltipContent>
+                        <TooltipContent>{ft.viewDetails}</TooltipContent>
                       </Tooltip>
                     </div>
                   </TableCell>

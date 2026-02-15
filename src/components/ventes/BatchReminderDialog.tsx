@@ -19,8 +19,9 @@ import { Devis } from '@/hooks/useSalesWorkflow';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { logCommunication } from '@/lib/communicationLogger';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface BatchReminderDialogProps {
   open: boolean;
@@ -35,12 +36,11 @@ interface DevisWithSelection extends Devis {
   hasEmail: boolean;
 }
 
-export function BatchReminderDialog({ 
-  open, 
-  onOpenChange, 
-  devisList,
-  onSuccess 
-}: BatchReminderDialogProps) {
+export function BatchReminderDialog({ open, onOpenChange, devisList, onSuccess }: BatchReminderDialogProps) {
+  const { t, lang } = useI18n();
+  const br = t.batchReminder;
+  const c = t.common;
+  const dateLocale = getDateLocale(lang);
   const [sending, setSending] = useState(false);
   const [customMessage, setCustomMessage] = useState('');
   const [selectedDevis, setSelectedDevis] = useState<Map<string, boolean>>(new Map());
@@ -87,7 +87,7 @@ export function BatchReminderDialog({
     const toSend = eligibleDevis.filter(d => d.selected);
     
     if (toSend.length === 0) {
-      toast.error('Veuillez sélectionner au moins un devis');
+      toast.error(br.selectAtLeastOne);
       return;
     }
 
@@ -127,7 +127,7 @@ export function BatchReminderDialog({
         // Extract meaningful error message
         const errorMsg = error?.context?.body ? 
           JSON.parse(error.context.body)?.error : 
-          error?.message || 'Erreur inconnue';
+          error?.message || br.unknownError;
         failed.push(`${devis.devis_id} (${errorMsg})`);
       }
     }
@@ -136,12 +136,12 @@ export function BatchReminderDialog({
     setSending(false);
 
     if (success.length > 0) {
-      toast.success(`${success.length} relance(s) envoyée(s) avec succès`);
+      toast.success(`${success.length} ${br.remindersSent}`);
       onSuccess?.();
     }
 
     if (failed.length > 0) {
-      toast.error(`${failed.length} envoi(s) échoué(s)`);
+      toast.error(`${failed.length} ${br.sendsFailed}`);
     }
   };
 
@@ -158,11 +158,9 @@ export function BatchReminderDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
-            Relance Groupée des Devis
+            {br.batchQuoteReminder}
           </DialogTitle>
-          <DialogDescription>
-            Envoyez des rappels par email aux clients avec des devis en attente.
-          </DialogDescription>
+          <DialogDescription>{br.sendReminders}</DialogDescription>
         </DialogHeader>
 
         {results ? (
@@ -172,30 +170,26 @@ export function BatchReminderDialog({
               <div className="p-4 rounded-lg bg-success/10 border border-success/30">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="h-5 w-5 text-success" />
-                  <span className="font-medium text-success">Envoyés</span>
+                  <span className="font-medium text-success">{br.sent}</span>
                 </div>
                 <p className="text-2xl font-bold">{results.success.length}</p>
                 {results.success.length > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {results.success.join(', ')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{results.success.join(', ')}</p>
                 )}
               </div>
               <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
                 <div className="flex items-center gap-2 mb-2">
                   <AlertTriangle className="h-5 w-5 text-destructive" />
-                  <span className="font-medium text-destructive">Échecs</span>
+                  <span className="font-medium text-destructive">{br.failures}</span>
                 </div>
                 <p className="text-2xl font-bold">{results.failed.length}</p>
                 {results.failed.length > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {results.failed.join(', ')}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{results.failed.join(', ')}</p>
                 )}
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleClose}>Fermer</Button>
+              <Button onClick={handleClose}>{c.close}</Button>
             </DialogFooter>
           </div>
         ) : (
@@ -204,10 +198,10 @@ export function BatchReminderDialog({
             <div className="space-y-4">
               {/* Custom message */}
               <div className="space-y-2">
-                <Label htmlFor="custom-message">Message personnalisé (optionnel)</Label>
+                <Label htmlFor="custom-message">{br.customMessage}</Label>
                 <Textarea
                   id="custom-message"
-                  placeholder="Ajoutez un message personnalisé à inclure dans l'email..."
+                  placeholder={br.addCustomMessage}
                   value={customMessage}
                   onChange={(e) => setCustomMessage(e.target.value)}
                   className="h-20"
@@ -219,20 +213,20 @@ export function BatchReminderDialog({
               {/* Devis list */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label>Devis à relancer ({selectedCount} sélectionné{selectedCount > 1 ? 's' : ''})</Label>
+                  <Label>{br.quotesToRemind} ({selectedCount} {br.selected}{selectedCount > 1 ? 's' : ''})</Label>
                   <div className="flex items-center gap-2">
                     <Checkbox
                       checked={selectedCount === eligibleDevis.length}
                       onCheckedChange={handleToggleAll}
                     />
-                    <span className="text-sm text-muted-foreground">Tout sélectionner</span>
+                    <span className="text-sm text-muted-foreground">{br.selectAll}</span>
                   </div>
                 </div>
 
                 <ScrollArea className="h-64 border rounded-lg">
                   {eligibleDevis.length === 0 && noEmailDevis.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground">
-                      Aucun devis en attente avec client assigné
+                      {br.noPendingQuotes}
                     </div>
                   ) : (
                     <div className="divide-y">
@@ -263,9 +257,9 @@ export function BatchReminderDialog({
                                   }
                                 >
                                   {devis.daysUntilExpiration < 0 
-                                    ? 'Expiré'
+                                    ? br.expired
                                     : devis.daysUntilExpiration === 0 
-                                      ? "Expire aujourd'hui"
+                                      ? br.expiresToday
                                       : `${devis.daysUntilExpiration}j`}
                                 </Badge>
                               )}
@@ -275,7 +269,7 @@ export function BatchReminderDialog({
                             </p>
                           </div>
                           <span className="text-sm text-muted-foreground">
-                            {format(new Date(devis.created_at), 'dd/MM', { locale: fr })}
+                            {format(new Date(devis.created_at), 'dd/MM', { locale: dateLocale || undefined })}
                           </span>
                         </div>
                       ))}
@@ -287,7 +281,7 @@ export function BatchReminderDialog({
                             <div className="flex items-center gap-2 text-sm text-warning">
                               <MailX className="h-4 w-4" />
                               <span className="font-medium">
-                                {noEmailDevis.length} client(s) sans email configuré
+                                {noEmailDevis.length} {br.clientsNoEmail}
                               </span>
                             </div>
                           </div>
@@ -304,7 +298,7 @@ export function BatchReminderDialog({
                                   </span>
                                   <Badge variant="outline" className="bg-muted text-muted-foreground">
                                     <MailX className="h-3 w-3 mr-1" />
-                                    Pas d'email
+                                    {br.noEmail}
                                   </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground truncate">
@@ -322,9 +316,7 @@ export function BatchReminderDialog({
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={handleClose}>
-                Annuler
-              </Button>
+              <Button variant="outline" onClick={handleClose}>{c.cancel}</Button>
               <Button 
                 onClick={handleSend} 
                 disabled={sending || selectedCount === 0}
@@ -333,12 +325,12 @@ export function BatchReminderDialog({
                 {sending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Envoi...
+                    {br.sending}
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4" />
-                    Envoyer {selectedCount} relance{selectedCount > 1 ? 's' : ''}
+                    {br.sendReminder} {selectedCount} {selectedCount > 1 ? br.reminders : br.reminder}
                   </>
                 )}
               </Button>

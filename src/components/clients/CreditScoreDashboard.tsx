@@ -7,49 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { 
-  Search, 
-  RefreshCw, 
-  TrendingUp, 
-  Users, 
-  AlertTriangle,
-  Shield,
-  BarChart3,
-  Loader2
-} from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Search, RefreshCw, TrendingUp, Users, AlertTriangle, Shield, BarChart3, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
+import { useI18n } from '@/i18n/I18nContext';
 
 const GRADE_COLORS = {
   A: 'hsl(var(--success))',
@@ -74,19 +43,22 @@ const GRADE_STYLES = {
   F: 'bg-destructive/10 text-destructive',
 };
 
-const RISK_STYLES = {
-  low: { label: 'Faible', color: 'bg-success/10 text-success' },
-  medium: { label: 'Moyen', color: 'bg-warning/10 text-warning' },
-  high: { label: 'Élevé', color: 'bg-orange-500/10 text-orange-500' },
-  critical: { label: 'Critique', color: 'bg-destructive/10 text-destructive' },
-};
-
 export function CreditScoreDashboard() {
   const { scores, stats, loading, refetch } = useClientCreditScore();
+  const { t } = useI18n();
+  const cs = t.creditScore;
+  const c = t.common;
   const [searchTerm, setSearchTerm] = useState('');
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [riskFilter, setRiskFilter] = useState<string>('all');
   const [selectedClient, setSelectedClient] = useState<ClientCreditScore | null>(null);
+
+  const RISK_STYLES_I18N = {
+    low: { label: cs.riskLow, color: 'bg-success/10 text-success' },
+    medium: { label: cs.riskMedium, color: 'bg-warning/10 text-warning' },
+    high: { label: cs.riskHigh, color: 'bg-orange-500/10 text-orange-500' },
+    critical: { label: cs.riskCritical, color: 'bg-destructive/10 text-destructive' },
+  };
 
   const filteredScores = scores.filter(client => {
     const matchesSearch = client.nom_client.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -98,10 +70,7 @@ export function CreditScoreDashboard() {
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('fr-MA', {
-      style: 'currency',
-      currency: 'MAD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      style: 'currency', currency: 'MAD', minimumFractionDigits: 0, maximumFractionDigits: 0,
     }).format(value);
   };
 
@@ -112,7 +81,7 @@ export function CreditScoreDashboard() {
   }));
 
   const riskChartData = stats.riskDistribution.map(r => ({
-    name: RISK_STYLES[r.level as keyof typeof RISK_STYLES]?.label || r.level,
+    name: RISK_STYLES_I18N[r.level as keyof typeof RISK_STYLES_I18N]?.label || r.level,
     value: r.count,
     color: RISK_COLORS[r.level as keyof typeof RISK_COLORS],
   }));
@@ -127,17 +96,14 @@ export function CreditScoreDashboard() {
 
   return (
     <div className="space-y-6">
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <TrendingUp className="h-5 w-5 text-primary" />
-              </div>
+              <div className="p-2 rounded-lg bg-primary/10"><TrendingUp className="h-5 w-5 text-primary" /></div>
               <div>
                 <p className="text-2xl font-bold">{stats.averageScore}</p>
-                <p className="text-xs text-muted-foreground">Score Moyen</p>
+                <p className="text-xs text-muted-foreground">{cs.averageScore}</p>
               </div>
             </div>
           </CardContent>
@@ -146,12 +112,10 @@ export function CreditScoreDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-muted">
-                <Users className="h-5 w-5 text-muted-foreground" />
-              </div>
+              <div className="p-2 rounded-lg bg-muted"><Users className="h-5 w-5 text-muted-foreground" /></div>
               <div>
                 <p className="text-2xl font-bold">{stats.totalClients}</p>
-                <p className="text-xs text-muted-foreground">Clients Analysés</p>
+                <p className="text-xs text-muted-foreground">{cs.analyzedClients}</p>
               </div>
             </div>
           </CardContent>
@@ -160,14 +124,10 @@ export function CreditScoreDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-success/10">
-                <Shield className="h-5 w-5 text-success" />
-              </div>
+              <div className="p-2 rounded-lg bg-success/10"><Shield className="h-5 w-5 text-success" /></div>
               <div>
-                <p className="text-2xl font-bold">
-                  {stats.gradeDistribution.find(g => g.grade === 'A')?.count || 0}
-                </p>
-                <p className="text-xs text-muted-foreground">Clients Grade A</p>
+                <p className="text-2xl font-bold">{stats.gradeDistribution.find(g => g.grade === 'A')?.count || 0}</p>
+                <p className="text-xs text-muted-foreground">{cs.gradeAClients}</p>
               </div>
             </div>
           </CardContent>
@@ -176,26 +136,22 @@ export function CreditScoreDashboard() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-destructive/10">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-              </div>
+              <div className="p-2 rounded-lg bg-destructive/10"><AlertTriangle className="h-5 w-5 text-destructive" /></div>
               <div>
                 <p className="text-2xl font-bold">{stats.highRiskClients}</p>
-                <p className="text-xs text-muted-foreground">Clients à Risque</p>
+                <p className="text-xs text-muted-foreground">{cs.atRiskClients}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Grade Distribution */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              Distribution par Grade
+              {cs.gradeDistribution}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -205,9 +161,7 @@ export function CreditScoreDashboard() {
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="name" width={70} />
-                  <RechartsTooltip 
-                    formatter={(value: number) => [`${value} clients`, 'Nombre']}
-                  />
+                  <RechartsTooltip formatter={(value: number) => [`${value}`, cs.count]} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                     {gradeChartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -219,44 +173,30 @@ export function CreditScoreDashboard() {
           </CardContent>
         </Card>
 
-        {/* Risk Distribution */}
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              Répartition des Risques
+              {cs.riskDistribution}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[200px] flex items-center">
               <ResponsiveContainer width="50%" height="100%">
                 <PieChart>
-                  <Pie
-                    data={riskChartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={40}
-                    outerRadius={70}
-                    paddingAngle={2}
-                    dataKey="value"
-                  >
+                  <Pie data={riskChartData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={2} dataKey="value">
                     {riskChartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <RechartsTooltip 
-                    formatter={(value: number) => [`${value} clients`, 'Nombre']}
-                  />
+                  <RechartsTooltip formatter={(value: number) => [`${value}`, cs.count]} />
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex-1 space-y-2">
                 {riskChartData.map((item, index) => (
                   <div key={index} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: item.color }}
-                      />
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }} />
                       <span>{item.name}</span>
                     </div>
                     <span className="font-medium">{item.value}</span>
@@ -268,16 +208,15 @@ export function CreditScoreDashboard() {
         </Card>
       </div>
 
-      {/* Filters and Table */}
       <Card>
         <CardHeader className="pb-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <CardTitle className="text-sm font-medium">Scores de Crédit Clients</CardTitle>
+            <CardTitle className="text-sm font-medium">{cs.clientCreditScores}</CardTitle>
             <div className="flex items-center gap-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher..."
+                  placeholder={c.search}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9 w-48"
@@ -288,7 +227,7 @@ export function CreditScoreDashboard() {
                   <SelectValue placeholder="Grade" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous Grades</SelectItem>
+                  <SelectItem value="all">{cs.allGrades}</SelectItem>
                   <SelectItem value="A">Grade A</SelectItem>
                   <SelectItem value="B">Grade B</SelectItem>
                   <SelectItem value="C">Grade C</SelectItem>
@@ -298,14 +237,14 @@ export function CreditScoreDashboard() {
               </Select>
               <Select value={riskFilter} onValueChange={setRiskFilter}>
                 <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Risque" />
+                  <SelectValue placeholder={cs.riskDistribution} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tous Risques</SelectItem>
-                  <SelectItem value="low">Faible</SelectItem>
-                  <SelectItem value="medium">Moyen</SelectItem>
-                  <SelectItem value="high">Élevé</SelectItem>
-                  <SelectItem value="critical">Critique</SelectItem>
+                  <SelectItem value="all">{cs.allRisks}</SelectItem>
+                  <SelectItem value="low">{cs.riskLow}</SelectItem>
+                  <SelectItem value="medium">{cs.riskMedium}</SelectItem>
+                  <SelectItem value="high">{cs.riskHigh}</SelectItem>
+                  <SelectItem value="critical">{cs.riskCritical}</SelectItem>
                 </SelectContent>
               </Select>
               <Button variant="outline" size="icon" onClick={refetch}>
@@ -318,13 +257,13 @@ export function CreditScoreDashboard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Client</TableHead>
+                <TableHead>{c.client}</TableHead>
                 <TableHead className="text-center">Score</TableHead>
                 <TableHead className="text-center">Grade</TableHead>
-                <TableHead className="text-center">Risque</TableHead>
-                <TableHead className="text-center">Paiements à Temps</TableHead>
-                <TableHead className="text-center">Utilisation Crédit</TableHead>
-                <TableHead className="text-right">Solde Dû</TableHead>
+                <TableHead className="text-center">{cs.riskDistribution.split(' ')[0]}</TableHead>
+                <TableHead className="text-center">{cs.onTimePayments}</TableHead>
+                <TableHead className="text-center">{cs.creditUsage}</TableHead>
+                <TableHead className="text-right">{cs.outstandingBalance}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -352,8 +291,8 @@ export function CreditScoreDashboard() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className={RISK_STYLES[client.risk_level].color}>
-                      {RISK_STYLES[client.risk_level].label}
+                    <Badge variant="outline" className={RISK_STYLES_I18N[client.risk_level].color}>
+                      {RISK_STYLES_I18N[client.risk_level].label}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
@@ -384,11 +323,10 @@ export function CreditScoreDashboard() {
         </CardContent>
       </Card>
 
-      {/* Client Detail Dialog */}
       <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Détail Score de Crédit</DialogTitle>
+            <DialogTitle>{cs.creditScoreDetail}</DialogTitle>
           </DialogHeader>
           {selectedClient && <CreditScoreCard client={selectedClient} />}
         </DialogContent>
