@@ -70,6 +70,8 @@ const App = () => (
               <SecurityProvider>
                 <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={<Index />} />
+                <Route path="/app" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/formules" element={<Formules />} />
                 <Route path="/clients" element={<Clients />} />
