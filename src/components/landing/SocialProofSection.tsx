@@ -1,4 +1,5 @@
 import { Building2, Quote } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 const clients = [
   { name: 'BTP Maroc', initials: 'BTP' },
@@ -7,31 +8,32 @@ const clients = [
   { name: 'SNCE Group', initials: 'SN' },
 ];
 
-const testimonials = [
-  {
-    quote: 'TBOS a réduit nos coûts de production de 15% en 3 mois. La visibilité en temps réel sur chaque toupie a tout changé.',
-    name: 'Ahmed Benali',
-    title: 'Directeur Production',
-    company: 'Ciments Casablanca',
-  },
-  {
-    quote: 'Avant TBOS, on perdait 2h par jour sur le suivi logistique. Aujourd\'hui tout est automatisé, du bon de commande à la facture.',
-    name: 'Fatima Zahra El Idrissi',
-    title: 'Directrice Financière',
-    company: 'BTP Maroc Group',
-  },
-];
-
 export default function SocialProofSection() {
+  const { t } = useI18n();
+  const l = t.landing;
+
+  const testimonials = [
+    {
+      quote: l.socialQuote1,
+      name: l.socialName1,
+      title: l.socialRole1,
+      company: l.socialCompany1,
+    },
+    {
+      quote: l.socialQuote2,
+      name: l.socialName2,
+      title: l.socialRole2,
+      company: l.socialCompany2,
+    },
+  ];
+
   return (
     <section className="border-t border-border py-20 sm:py-24 bg-card/30">
       <div className="max-w-6xl mx-auto px-6">
-        {/* Heading */}
         <p className="social-heading text-xs font-bold uppercase tracking-widest text-primary/70 text-center mb-12">
-          Ils nous font confiance
+          {l.socialTitle}
         </p>
 
-        {/* Client logos */}
         <div className="social-logos flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-16">
           {clients.map((c) => (
             <div
@@ -46,24 +48,23 @@ export default function SocialProofSection() {
           ))}
         </div>
 
-        {/* Testimonials grid */}
         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {testimonials.map((t, i) => (
+          {testimonials.map((tm, i) => (
             <div
               key={i}
               className="social-testimonial rounded-2xl p-8 bg-card border border-border hover:border-primary/20 transition-all duration-300"
             >
               <Quote className="h-7 w-7 text-primary/50 mb-4 rotate-180" />
               <blockquote className="text-base font-medium text-foreground/85 leading-relaxed mb-6">
-                {t.quote}
+                {tm.quote}
               </blockquote>
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
                   <Building2 className="h-4 w-4 text-primary/60" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground/80">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.title}, {t.company}</p>
+                  <p className="text-sm font-semibold text-foreground/80">{tm.name}</p>
+                  <p className="text-xs text-muted-foreground">{tm.title}, {tm.company}</p>
                 </div>
               </div>
             </div>

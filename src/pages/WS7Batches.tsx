@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,18 +19,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
 type LinkFilter = 'all' | 'auto_linked' | 'pending' | 'no_match' | 'manual_linked';
-
-const FILTER_OPTIONS: { value: LinkFilter; label: string; icon: typeof CheckCircle; color: string }[] = [
-  { value: 'all', label: 'Tous', icon: Factory, color: 'text-foreground' },
-  { value: 'auto_linked', label: 'Liés auto', icon: CheckCircle, color: 'text-success' },
-  { value: 'manual_linked', label: 'Liés manuellement', icon: Link2, color: 'text-primary' },
-  { value: 'pending', label: 'À réviser', icon: AlertTriangle, color: 'text-warning' },
-  { value: 'no_match', label: 'Non liés', icon: Unlink, color: 'text-destructive' },
-];
 
 export default function WS7Batches() {
   const { toast } = useToast();
@@ -36,6 +29,17 @@ export default function WS7Batches() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const initialFilter = (searchParams.get('filter') as LinkFilter) || 'all';
+  const { t, lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
+  const w = t.ws7;
+
+  const FILTER_OPTIONS: { value: LinkFilter; label: string; icon: typeof CheckCircle; color: string }[] = [
+    { value: 'all', label: w.filterAll, icon: Factory, color: 'text-foreground' },
+    { value: 'auto_linked', label: w.filterAutoLinked, icon: CheckCircle, color: 'text-success' },
+    { value: 'manual_linked', label: w.filterManualLinked, icon: Link2, color: 'text-primary' },
+    { value: 'pending', label: w.filterPending, icon: AlertTriangle, color: 'text-warning' },
+    { value: 'no_match', label: w.filterNoMatch, icon: Unlink, color: 'text-destructive' },
+  ];
 
   const [filter, setFilter] = useState<LinkFilter>(initialFilter);
   const [search, setSearch] = useState('');
@@ -78,13 +82,13 @@ export default function WS7Batches() {
   const statusBadge = (status: string, confidence: number) => {
     switch (status) {
       case 'auto_linked':
-        return <Badge className="bg-success/20 text-success border-0 gap-1"><CheckCircle className="h-3 w-3" />Auto-lié ({confidence}%)</Badge>;
+        return <Badge className="bg-success/20 text-success border-0 gap-1"><CheckCircle className="h-3 w-3" />{w.autoLinked} ({confidence}%)</Badge>;
       case 'manual_linked':
-        return <Badge className="bg-primary/20 text-primary border-0 gap-1"><Link2 className="h-3 w-3" />Manuel</Badge>;
+        return <Badge className="bg-primary/20 text-primary border-0 gap-1"><Link2 className="h-3 w-3" />{w.manual}</Badge>;
       case 'pending':
-        return <Badge className="bg-warning/20 text-warning border-0 gap-1"><AlertTriangle className="h-3 w-3" />À réviser ({confidence}%)</Badge>;
+        return <Badge className="bg-warning/20 text-warning border-0 gap-1"><AlertTriangle className="h-3 w-3" />{w.toReview} ({confidence}%)</Badge>;
       default:
-        return <Badge variant="secondary" className="gap-1"><Unlink className="h-3 w-3" />Non lié</Badge>;
+        return <Badge variant="secondary" className="gap-1"><Unlink className="h-3 w-3" />{w.notLinked}</Badge>;
     }
   };
 
@@ -106,12 +110,12 @@ export default function WS7Batches() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
 
-      toast({ title: 'Batch lié', description: `Lié au BL ${linkBlId}` });
+      toast({ title: w.batchLinked, description: `${w.linkedToBl} ${linkBlId}` });
       setDetailOpen(false);
       setLinkBlId('');
       refetch();
     } catch (err: any) {
-      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+      toast({ title: w.error, description: err.message, variant: 'destructive' });
     } finally {
       setLinking(false);
     }
@@ -136,14 +140,14 @@ export default function WS7Batches() {
       if (!response.ok) throw new Error(result.error);
 
       if (result.linked) {
-        toast({ title: 'Auto-lié!', description: `Confiance: ${result.confidence}%` });
+        toast({ title: w.autoLinkedSuccess, description: `${w.confidenceLabel}: ${result.confidence}%` });
       } else {
-        toast({ title: 'Aucun match trouvé', description: `Meilleure confiance: ${result.confidence}%`, variant: 'destructive' });
+        toast({ title: w.noMatchFound, description: `${w.bestConfidence}: ${result.confidence}%`, variant: 'destructive' });
       }
       setDetailOpen(false);
       refetch();
     } catch (err: any) {
-      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+      toast({ title: w.error, description: err.message, variant: 'destructive' });
     } finally {
       setRelinking(false);
     }
@@ -155,7 +159,6 @@ export default function WS7Batches() {
     setDetailOpen(true);
   };
 
-  // Counts per status
   const counts = {
     all: batches?.length || 0,
     auto_linked: batches?.filter(b => b.link_status === 'auto_linked').length || 0,
@@ -163,6 +166,8 @@ export default function WS7Batches() {
     pending: batches?.filter(b => b.link_status === 'pending').length || 0,
     no_match: batches?.filter(b => b.link_status === 'no_match').length || 0,
   };
+
+  const fmtOpts = dateLocale ? { locale: dateLocale } : {};
 
   return (
     <MainLayout>
@@ -176,9 +181,9 @@ export default function WS7Batches() {
             <div>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2">
                 <Factory className="h-6 w-6 text-primary" />
-                Batches WS7
+                {w.title}
               </h1>
-              <p className="text-sm text-muted-foreground">{batches?.length || 0} batch(es) importé(s)</p>
+              <p className="text-sm text-muted-foreground">{batches?.length || 0} {w.batchesImported}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -186,7 +191,7 @@ export default function WS7Batches() {
               <RefreshCw className="h-4 w-4" />
             </Button>
             <Button size="sm" onClick={() => navigate('/ws7-import')}>
-              Import CSV
+              {w.importCsv}
             </Button>
           </div>
         </div>
@@ -194,7 +199,6 @@ export default function WS7Batches() {
         {/* Filter Chips */}
         <div className="flex flex-wrap gap-2">
           {FILTER_OPTIONS.map(opt => {
-            // For 'all', use total from query; others use filtered counts from 'all' query
             const count = filter === 'all' ? counts[opt.value] : (opt.value === filter ? filtered.length : '');
             return (
               <button
@@ -223,7 +227,7 @@ export default function WS7Batches() {
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher batch, client, formule..."
+            placeholder={w.searchPlaceholder}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="pl-9"
@@ -240,21 +244,21 @@ export default function WS7Batches() {
             ) : filtered.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <Factory className="h-10 w-10 mx-auto mb-3 opacity-40" />
-                <p>Aucun batch trouvé</p>
+                <p>{w.noBatchFound}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>N°</TableHead>
-                      <TableHead>Date/Heure</TableHead>
-                      <TableHead>Client</TableHead>
-                      <TableHead>Formule</TableHead>
-                      <TableHead className="text-right">Volume</TableHead>
-                      <TableHead>Opérateur</TableHead>
-                      <TableHead>Statut lien</TableHead>
-                      <TableHead>BL lié</TableHead>
+                      <TableHead>{w.colNumber}</TableHead>
+                      <TableHead>{w.colDateTime}</TableHead>
+                      <TableHead>{w.colClient}</TableHead>
+                      <TableHead>{w.colFormula}</TableHead>
+                      <TableHead className="text-right">{w.colVolume}</TableHead>
+                      <TableHead>{w.colOperator}</TableHead>
+                      <TableHead>{w.colLinkStatus}</TableHead>
+                      <TableHead>{w.colLinkedBl}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -266,7 +270,7 @@ export default function WS7Batches() {
                       >
                         <TableCell className="font-mono font-medium">{batch.batch_number}</TableCell>
                         <TableCell className="whitespace-nowrap text-sm">
-                          {format(new Date(batch.batch_datetime), 'dd/MM HH:mm', { locale: fr })}
+                          {format(new Date(batch.batch_datetime), 'dd/MM HH:mm', fmtOpts)}
                         </TableCell>
                         <TableCell className="max-w-[180px] truncate">{batch.client_name}</TableCell>
                         <TableCell>
@@ -295,90 +299,87 @@ export default function WS7Batches() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Factory className="h-5 w-5 text-primary" />
-                Batch #{selectedBatch?.batch_number}
+                {w.batch} #{selectedBatch?.batch_number}
               </DialogTitle>
             </DialogHeader>
 
             {selectedBatch && (
               <div className="space-y-4">
-                {/* Batch Info */}
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-muted-foreground text-xs">Date/Heure</p>
-                    <p className="font-medium">{format(new Date(selectedBatch.batch_datetime), 'dd MMM yyyy HH:mm', { locale: fr })}</p>
+                    <p className="text-muted-foreground text-xs">{w.dateTime}</p>
+                    <p className="font-medium">{format(new Date(selectedBatch.batch_datetime), 'dd MMM yyyy HH:mm', fmtOpts)}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Client</p>
+                    <p className="text-muted-foreground text-xs">{w.client}</p>
                     <p className="font-medium">{selectedBatch.client_name}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Formule</p>
+                    <p className="text-muted-foreground text-xs">{w.formula}</p>
                     <Badge variant="outline" className="font-mono">{selectedBatch.formula}</Badge>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Volume</p>
+                    <p className="text-muted-foreground text-xs">{w.volume}</p>
                     <p className="font-mono font-medium">{selectedBatch.total_volume_m3} m³</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Opérateur</p>
+                    <p className="text-muted-foreground text-xs">{w.operator}</p>
                     <p className="font-medium">{selectedBatch.operator_name}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Statut</p>
+                    <p className="text-muted-foreground text-xs">{w.status}</p>
                     {statusBadge(selectedBatch.link_status, selectedBatch.link_confidence)}
                   </div>
                 </div>
 
-                {/* Material Breakdown */}
                 <Card className="border-border/50">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Composition</CardTitle>
+                    <CardTitle className="text-sm">{w.composition}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-3 gap-2 text-xs">
                       <div className="bg-muted/30 rounded p-2 text-center">
-                        <p className="text-muted-foreground">Ciment</p>
+                        <p className="text-muted-foreground">{w.cement}</p>
                         <p className="font-mono font-bold">{selectedBatch.cement_kg} kg</p>
                       </div>
                       <div className="bg-muted/30 rounded p-2 text-center">
-                        <p className="text-muted-foreground">Sable</p>
+                        <p className="text-muted-foreground">{w.sand}</p>
                         <p className="font-mono font-bold">{selectedBatch.sand_kg} kg</p>
                       </div>
                       <div className="bg-muted/30 rounded p-2 text-center">
-                        <p className="text-muted-foreground">Gravette</p>
+                        <p className="text-muted-foreground">{w.gravel}</p>
                         <p className="font-mono font-bold">{selectedBatch.gravel_kg} kg</p>
                       </div>
                       <div className="bg-muted/30 rounded p-2 text-center">
-                        <p className="text-muted-foreground">Eau</p>
+                        <p className="text-muted-foreground">{w.water}</p>
                         <p className="font-mono font-bold">{selectedBatch.water_liters} L</p>
                       </div>
                       <div className="bg-muted/30 rounded p-2 text-center">
-                        <p className="text-muted-foreground">Adjuvants</p>
+                        <p className="text-muted-foreground">{w.additives}</p>
                         <p className="font-mono font-bold">{selectedBatch.additives_liters} L</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Linking Section */}
                 <div className="space-y-3 border-t border-border pt-4">
-                  <h3 className="text-sm font-semibold">Liaison BL</h3>
+                  <h3 className="text-sm font-semibold">{w.blLink}</h3>
 
                   {selectedBatch.linked_bl_id && (
                     <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg p-3">
                       <Link2 className="h-4 w-4 text-primary flex-shrink-0" />
                       <div className="text-sm">
                         <p className="font-mono font-medium">{selectedBatch.linked_bl_id}</p>
-                        <p className="text-xs text-muted-foreground">Confiance: {selectedBatch.link_confidence}%</p>
+                        <p className="text-xs text-muted-foreground">{w.confidence}: {selectedBatch.link_confidence}%</p>
                       </div>
                     </div>
                   )}
 
                   <div className="space-y-2">
-                    <Label className="text-xs">Lier manuellement à un BL</Label>
+                    <Label className="text-xs">{w.manualLinkLabel}</Label>
                     <div className="flex gap-2">
                       <Input
-                        placeholder="ID du BL (ex: BL-2026-0001)"
+                        placeholder={w.manualLinkPlaceholder}
                         value={linkBlId}
                         onChange={e => setLinkBlId(e.target.value)}
                         className="flex-1"
@@ -401,7 +402,7 @@ export default function WS7Batches() {
                     ) : (
                       <RefreshCw className="h-4 w-4 mr-2" />
                     )}
-                    Relancer l'auto-liaison
+                    {w.relaunchAutoLink}
                   </Button>
                 </div>
               </div>
