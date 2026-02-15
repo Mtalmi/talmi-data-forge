@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -20,7 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { format, formatDistanceToNow, parseISO } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, ar, enUS } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { 
   isOffHoursCasablanca, 
@@ -29,6 +29,7 @@ import {
   isCurrentlyOffHours 
 } from '@/lib/timezone';
 import { InfoTooltip } from '@/components/ui/info-tooltip';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface MidnightTransaction {
   id: string;
@@ -42,6 +43,8 @@ interface MidnightTransaction {
 }
 
 export function MidnightAlertWidget() {
+  const { t, lang } = useI18n();
+  const dateFnsLocale = lang === 'ar' ? ar : lang === 'en' ? enUS : fr;
   const [transactions, setTransactions] = useState<MidnightTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,21 +56,18 @@ export function MidnightAlertWidget() {
       const now = new Date();
       const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-      // Fetch expenses
       const { data: expenses } = await supabase
         .from('expenses_controlled')
         .select('id, description, montant_ttc, created_at, requested_by_name, notes')
         .gte('created_at', twentyFourHoursAgo.toISOString())
         .order('created_at', { ascending: false });
 
-      // Fetch stock receptions
       const { data: stockReceptions } = await supabase
         .from('stock_receptions_pending')
         .select('id, materiau, quantite, created_at')
         .gte('created_at', twentyFourHoursAgo.toISOString())
         .order('created_at', { ascending: false });
 
-      // Fetch deliveries (BL) - use bons_livraison_reels with client join
       const { data: deliveries } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id, volume_m3, created_at, clients(nom_client)')
@@ -76,10 +76,8 @@ export function MidnightAlertWidget() {
 
       const allTransactions: MidnightTransaction[] = [];
 
-      // Process expenses - using timezone-locked Casablanca time
       expenses?.forEach(exp => {
         if (isOffHoursCasablanca(exp.created_at)) {
-          // Check if notes contain justification (format: [URGENCE: ...])
           const justificationMatch = exp.notes?.match(/\[URGENCE:\s*(.+?)\]/);
           allTransactions.push({
             id: exp.id,
@@ -94,7 +92,6 @@ export function MidnightAlertWidget() {
         }
       });
 
-      // Process stock receptions - using timezone-locked Casablanca time
       stockReceptions?.forEach(stock => {
         if (isOffHoursCasablanca(stock.created_at)) {
           allTransactions.push({
@@ -107,7 +104,6 @@ export function MidnightAlertWidget() {
         }
       });
 
-      // Process deliveries - using timezone-locked Casablanca time
       deliveries?.forEach((del: any) => {
         if (del.created_at && isOffHoursCasablanca(del.created_at)) {
           const clientName = del.clients?.nom_client || 'Client';
@@ -121,7 +117,6 @@ export function MidnightAlertWidget() {
         }
       });
 
-      // Sort by creation time (newest first)
       allTransactions.sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
@@ -137,7 +132,6 @@ export function MidnightAlertWidget() {
   useEffect(() => {
     fetchMidnightTransactions();
 
-    // Realtime subscription
     const channel = supabase
       .channel('midnight_alerts')
       .on(
@@ -173,10 +167,8 @@ export function MidnightAlertWidget() {
     setSendingAlerts(prev => new Set(prev).add(txKey));
     
     try {
-      // Simulate sending alert to CEO (in production, this would call an edge function)
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Log the alert to audit_superviseur for forensic trail
       const { error } = await supabase
         .from('audit_superviseur')
         .insert({
@@ -202,16 +194,16 @@ export function MidnightAlertWidget() {
       
       toast.success(
         <div className="space-y-1">
-          <p className="font-semibold">📱 Alerte CEO Envoyée</p>
+          <p className="font-semibold">{t.widgets.midnightAlerts.ceoAlertSentTitle}</p>
           <p className="text-xs text-muted-foreground">
-            {tx.description} ({tx.hour}h) - Notifié au tableau de bord CEO
+            {tx.description} ({tx.hour}h)
           </p>
         </div>,
         { duration: 5000 }
       );
     } catch (error) {
       console.error('Error sending CEO alert:', error);
-      toast.error('Erreur lors de l\'envoi de l\'alerte');
+      toast.error(t.widgets.midnightAlerts.sendError);
     } finally {
       setSendingAlerts(prev => {
         const next = new Set(prev);
@@ -235,11 +227,11 @@ export function MidnightAlertWidget() {
   const getTypeLabel = (type: MidnightTransaction['type']) => {
     switch (type) {
       case 'expense':
-        return 'Dépense';
+        return t.widgets.midnightAlerts.expense;
       case 'stock':
-        return 'Réception';
+        return t.widgets.midnightAlerts.reception;
       case 'delivery':
-        return 'Livraison';
+        return t.widgets.midnightAlerts.delivery;
     }
   };
 
@@ -262,7 +254,6 @@ export function MidnightAlertWidget() {
     );
   }
 
-  // Check if currently in off-hours window (for status indicator)
   const currentlyOffHours = isCurrentlyOffHours();
 
   return (
@@ -284,30 +275,25 @@ export function MidnightAlertWidget() {
                 transactions.length > 0 ? "text-destructive" : "text-muted-foreground"
               )} />
               <span className={transactions.length > 0 ? "text-destructive" : ""}>
-                Alertes Nocturnes
+                {t.widgets.midnightAlerts.title}
               </span>
               {currentlyOffHours && (
                 <Badge variant="destructive" className="text-[9px] animate-pulse">
-                  MODE NUIT ACTIF
+                  {t.widgets.midnightAlerts.nightModeActive}
                 </Badge>
               )}
               <InfoTooltip
                 id="midnight-alert-help"
-                title="Alertes Nocturnes"
-                content="Ce widget surveille toutes les transactions effectuées entre 18h et minuit (heure de Casablanca). Ces activités hors heures nécessitent une justification d'urgence."
+                title={t.widgets.midnightAlerts.title}
+                content={t.widgets.midnightAlerts.offHourTransactions}
                 videoUrl="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                steps={[
-                  "Vérifiez les transactions nocturnes listées",
-                  "Examinez la justification d'urgence fournie",
-                  "Cliquez 'Alerter CEO' si investigation requise",
-                  "L'alerte est enregistrée pour audit forensique"
-                ]}
+                steps={[]}
                 position="bottom"
               />
             </CardTitle>
             <div className="text-xs text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" />
-              <span>Transactions 18h-00h</span>
+              <span>{t.widgets.midnightAlerts.transactions18to00}</span>
               <Badge variant="outline" className="text-[9px] ml-1">
                 🇲🇦 Casablanca
               </Badge>
@@ -338,9 +324,9 @@ export function MidnightAlertWidget() {
             <div className="w-14 h-14 rounded-full bg-success/10 flex items-center justify-center mb-3">
               <ShieldAlert className="h-7 w-7 text-success" />
             </div>
-            <p className="font-medium text-sm text-success">Aucune activité nocturne</p>
+            <p className="font-medium text-sm text-success">{t.widgets.midnightAlerts.noNightActivity}</p>
             <p className="text-xs text-muted-foreground">
-              Pas de transactions hors heures (18h-00h Casablanca)
+              {t.widgets.midnightAlerts.noOffHourTransactions}
             </p>
           </div>
         ) : (
@@ -359,7 +345,6 @@ export function MidnightAlertWidget() {
                       "transition-all hover:bg-destructive/15"
                     )}
                   >
-                    {/* Header with EMERGENCY Badge */}
                     <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-2">
                         <span className="p-1.5 rounded-md bg-destructive/20 text-destructive">
@@ -374,7 +359,6 @@ export function MidnightAlertWidget() {
                           </p>
                         </div>
                       </div>
-                      {/* EMERGENCY Badge */}
                       <div className="flex flex-col items-end gap-1">
                         <Badge 
                           variant="destructive" 
@@ -392,12 +376,11 @@ export function MidnightAlertWidget() {
                       </div>
                     </div>
 
-                    {/* Description */}
                     <p className="text-xs text-foreground line-clamp-2 mb-1">
                       {tx.description}
                     </p>
 
-                    {/* STICKY NOTE: Always visible justification */}
+                    {/* Justification */}
                     <div className={cn(
                       "mt-2 p-2.5 rounded-lg border-2 shadow-sm",
                       tx.justification_urgence 
@@ -411,7 +394,7 @@ export function MidnightAlertWidget() {
                             "text-[10px] font-bold uppercase tracking-wider mb-1",
                             tx.justification_urgence ? "text-warning" : "text-destructive"
                           )}>
-                            {tx.justification_urgence ? "Justification d'Urgence" : "⚠️ Aucune Justification"}
+                            {tx.justification_urgence ? t.widgets.midnightAlerts.urgencyJustification : t.widgets.midnightAlerts.noJustification}
                           </p>
                           <p className={cn(
                             "text-[11px] leading-relaxed",
@@ -419,7 +402,7 @@ export function MidnightAlertWidget() {
                           )}>
                             {tx.justification_urgence 
                               ? `"${tx.justification_urgence}"` 
-                              : "Travail nocturne sans justification fournie - Investigation CEO recommandée"
+                              : t.widgets.midnightAlerts.noJustificationText
                             }
                           </p>
                         </div>
@@ -430,7 +413,7 @@ export function MidnightAlertWidget() {
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-2">
                       <span className="flex items-center gap-1">
                         <Clock className="h-2.5 w-2.5" />
-                        {formatDistanceToNow(parseISO(tx.created_at), { locale: fr, addSuffix: true })}
+                        {formatDistanceToNow(parseISO(tx.created_at), { locale: dateFnsLocale, addSuffix: true })}
                       </span>
                       {tx.amount && (
                         <span className="font-mono font-semibold text-destructive">
@@ -457,18 +440,18 @@ export function MidnightAlertWidget() {
                         {isSending ? (
                           <>
                             <RefreshCw className="h-3 w-3 animate-spin" />
-                            Envoi en cours...
+                            {t.widgets.midnightAlerts.sending}
                           </>
                         ) : isSent ? (
                           <>
                             <CheckCircle className="h-3 w-3" />
-                            Alerte CEO Envoyée
+                            {t.widgets.midnightAlerts.ceoAlertSent}
                           </>
                         ) : (
                           <>
                             <Bell className="h-3 w-3" />
                             <Send className="h-3 w-3" />
-                            Alerter CEO
+                            {t.widgets.midnightAlerts.alertCeo}
                           </>
                         )}
                       </Button>
@@ -486,7 +469,7 @@ export function MidnightAlertWidget() {
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-destructive shrink-0" />
               <p className="text-[11px] text-destructive">
-                <span className="font-bold">ALERTE SÉCURITÉ:</span> Transactions effectuées hors heures (18h-00h heure Casablanca).
+                <span className="font-bold">{t.widgets.midnightAlerts.securityAlert}:</span> {t.widgets.midnightAlerts.offHourTransactions}
               </p>
             </div>
           </div>

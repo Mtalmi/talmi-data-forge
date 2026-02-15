@@ -10,11 +10,12 @@ import {
   XCircle 
 } from 'lucide-react';
 import { useTaxCompliance } from '@/hooks/useTaxCompliance';
-import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { differenceInDays } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { useI18n } from '@/i18n/I18nContext';
 
 export function TaxComplianceWidget() {
+  const { t } = useI18n();
   const currentYear = new Date().getFullYear();
   const { 
     summary, 
@@ -45,16 +46,16 @@ export function TaxComplianceWidget() {
     <Card className={summary.overdueCount > 0 ? 'border-destructive' : ''}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium flex items-center gap-2">
-          📊 Conformité Fiscale & Sociale
+          {t.widgets.taxCompliance.title}
           {summary.overdueCount > 0 && (
             <Badge variant="destructive" className="text-xs">
-              {summary.overdueCount} en retard
+              {summary.overdueCount} {t.widgets.taxCompliance.overdue}
             </Badge>
           )}
         </CardTitle>
         <Link to="/paiements">
           <Button variant="ghost" size="sm" className="h-8 gap-1">
-            Détails
+            {t.widgets.taxCompliance.details}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </Link>
@@ -63,7 +64,7 @@ export function TaxComplianceWidget() {
         {/* Compliance Rate */}
         <div>
           <div className="flex justify-between text-sm mb-1">
-            <span>Taux de conformité</span>
+            <span>{t.widgets.taxCompliance.complianceRate}</span>
             <span className="font-medium">{summary.complianceRate.toFixed(0)}%</span>
           </div>
           <Progress 
@@ -77,7 +78,7 @@ export function TaxComplianceWidget() {
           <div className="flex items-center gap-2 p-2 rounded-lg bg-destructive/10 text-destructive">
             <AlertTriangle className="h-4 w-4" />
             <span className="text-sm font-medium">
-              Arriérés: {totalArrears.toLocaleString()} DH
+              {t.widgets.taxCompliance.arrears}: {totalArrears.toLocaleString()} DH
             </span>
           </div>
         )}
@@ -87,7 +88,7 @@ export function TaxComplianceWidget() {
           <div className="space-y-2">
             <p className="text-xs font-medium text-destructive flex items-center gap-1">
               <XCircle className="h-3 w-3" />
-              Obligations en retard:
+              {t.widgets.taxCompliance.overdueObligations}:
             </p>
             {overdueObligations.map(ob => (
               <div key={ob.id} className="flex items-center justify-between text-sm p-2 rounded bg-destructive/5">
@@ -105,7 +106,7 @@ export function TaxComplianceWidget() {
           <div className="space-y-2">
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              Prochaines échéances:
+              {t.widgets.taxCompliance.upcomingDeadlines}:
             </p>
             {upcomingObligations.map(ob => {
               const daysUntil = differenceInDays(new Date(ob.due_date), new Date());
@@ -129,7 +130,7 @@ export function TaxComplianceWidget() {
         {/* Penalties */}
         {summary.totalPenalties > 0 && (
           <div className="flex items-center justify-between text-sm pt-2 border-t">
-            <span className="text-muted-foreground">Pénalités estimées:</span>
+            <span className="text-muted-foreground">{t.widgets.taxCompliance.estimatedPenalties}:</span>
             <span className="font-medium text-amber-500">
               {summary.totalPenalties.toLocaleString()} DH
             </span>
@@ -140,7 +141,7 @@ export function TaxComplianceWidget() {
         {summary.overdueCount === 0 && upcomingObligations.length === 0 && (
           <div className="flex items-center gap-2 text-green-600 text-sm">
             <CheckCircle2 className="h-4 w-4" />
-            <span>Toutes les obligations sont à jour</span>
+            <span>{t.widgets.taxCompliance.allUpToDate}</span>
           </div>
         )}
       </CardContent>

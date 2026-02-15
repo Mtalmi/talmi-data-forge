@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface BudgetStats {
   spent: number;
@@ -24,6 +24,7 @@ interface BudgetStats {
 }
 
 export function CircularBudgetGauge() {
+  const { t } = useI18n();
   const [stats, setStats] = useState<BudgetStats>({
     spent: 0,
     cap: 15000,
@@ -138,7 +139,7 @@ export function CircularBudgetGauge() {
       return (
         <Badge variant="destructive" className="animate-pulse gap-1.5 px-3 py-1 text-xs font-bold">
           <Lock className="h-3 w-3" />
-          BLOQUÉ
+          {t.widgets.budgetGauge.blocked}
         </Badge>
       );
     }
@@ -146,7 +147,7 @@ export function CircularBudgetGauge() {
       return (
         <Badge variant="outline" className="border-red-500 text-red-500 gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-destructive">
           <AlertTriangle className="h-3 w-3" />
-          CRITIQUE
+          {t.widgets.budgetGauge.criticalStatus}
         </Badge>
       );
     }
@@ -154,14 +155,14 @@ export function CircularBudgetGauge() {
       return (
         <Badge variant="outline" className="border-orange-500 text-orange-500 gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-warning">
           <TrendingUp className="h-3 w-3" />
-          ÉLEVÉ
+          {t.widgets.budgetGauge.highStatus}
         </Badge>
       );
     }
     return (
       <Badge variant="outline" className="border-success text-success gap-1.5 px-3 py-1 text-xs font-bold shadow-glow-success">
         <Shield className="h-3 w-3" />
-        OK
+        {t.widgets.budgetGauge.okStatus}
       </Badge>
     );
   };
@@ -193,7 +194,7 @@ export function CircularBudgetGauge() {
             <div className="p-2 rounded-lg bg-primary/10">
               <Wallet className="h-4 w-4 text-primary" />
             </div>
-            <span className="text-sm font-bold text-foreground">Budget Niveau 1</span>
+            <span className="text-sm font-bold text-foreground">{t.widgets.budgetGauge.title}</span>
           </div>
           <div className="flex items-center gap-2">
             {getStatusBadge()}
@@ -218,7 +219,6 @@ export function CircularBudgetGauge() {
             height={size} 
             className="transform -rotate-90"
           >
-            {/* Background circle */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -228,8 +228,6 @@ export function CircularBudgetGauge() {
               strokeWidth={strokeWidth}
               className="text-muted/20"
             />
-            
-            {/* Progress arc with animation and glow */}
             <circle
               cx={size / 2}
               cy={size / 2}
@@ -248,8 +246,6 @@ export function CircularBudgetGauge() {
                 '--gauge-circumference': circumference,
               } as React.CSSProperties}
             />
-            
-            {/* Threshold markers */}
             {[50, 75, 90].map((threshold) => {
               const angle = (threshold / 100) * 360 - 90;
               const x1 = size / 2 + (radius - strokeWidth / 2) * Math.cos((angle * Math.PI) / 180);
@@ -271,7 +267,6 @@ export function CircularBudgetGauge() {
             })}
           </svg>
           
-          {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className={cn(
               'text-4xl font-black tabular-nums tracking-tight',
@@ -280,7 +275,7 @@ export function CircularBudgetGauge() {
             )}>
               {stats.percentUsed.toFixed(0)}%
             </span>
-            <span className="text-xs font-medium text-muted-foreground mt-1">utilisé</span>
+            <span className="text-xs font-medium text-muted-foreground mt-1">{t.widgets.budgetGauge.used}</span>
           </div>
         </div>
 
@@ -293,19 +288,19 @@ export function CircularBudgetGauge() {
             )}>
               {stats.remaining.toLocaleString('fr-MA')}
             </p>
-            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">MAD restant</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">{t.widgets.budgetGauge.madRemaining}</p>
           </div>
           <div className="glass-card p-3 rounded-xl text-center">
             <p className="text-sm font-bold text-foreground tabular-nums">
               {stats.spent.toLocaleString('fr-MA')}
             </p>
-            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">dépensé</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">{t.widgets.budgetGauge.spent}</p>
           </div>
           <div className="glass-card p-3 rounded-xl text-center">
             <p className="text-sm font-bold text-foreground tabular-nums">
               {stats.daysRemaining}j
             </p>
-            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">restants</p>
+            <p className="text-[10px] font-medium text-muted-foreground mt-0.5">{t.widgets.budgetGauge.daysRemaining}</p>
           </div>
         </div>
 
@@ -314,8 +309,8 @@ export function CircularBudgetGauge() {
           <div className="mt-4 w-full flex items-center gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/30 animate-fade-in">
             <Lock className="h-5 w-5 text-destructive shrink-0" />
             <div>
-              <p className="text-xs font-bold text-destructive">Plafond atteint</p>
-              <p className="text-[10px] text-destructive/80">Validation CEO requise pour continuer</p>
+              <p className="text-xs font-bold text-destructive">{t.widgets.budgetGauge.capReached}</p>
+              <p className="text-[10px] text-destructive/80">{t.widgets.budgetGauge.ceoValidationRequired}</p>
             </div>
           </div>
         )}
