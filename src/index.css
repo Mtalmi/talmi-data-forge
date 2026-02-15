@@ -1568,3 +1568,29 @@
 [data-radix-select-viewport] {
   pointer-events: auto !important;
 }
+
+/* Global dark theme overrides for any stray utility classes */
+.bg-white, .bg-gray-50, .bg-gray-100 {
+  background-color: hsl(var(--card)) !important;
+}
+
+.text-gray-900, .text-gray-800, .text-black {
+  color: hsl(var(--foreground)) !important;
+}
+
+.text-gray-500, .text-gray-600 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.border-gray-200, .border-gray-300 {
+  border-color: hsl(var(--border)) !important;
+}
+
+.bg-blue-600, .bg-indigo-600 {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.hover\:bg-gray-100:hover {
+  background-color: hsl(var(--secondary)) !important;
+}
