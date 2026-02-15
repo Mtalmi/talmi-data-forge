@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Download, FileText, Loader2, CheckCircle2, AlertTriangle, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface SystemStats {
   totalBL: number;
@@ -26,6 +27,8 @@ interface SystemStats {
 
 export function SystemHealthReport() {
   const { user, isCeo } = useAuth();
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [generating, setGenerating] = useState(false);
   const [stats, setStats] = useState<SystemStats | null>(null);
 
@@ -104,7 +107,7 @@ export function SystemHealthReport() {
       const pdfContent = `
 TBOS - SYSTEM HEALTH REPORT
 Certificate of Readiness
-Generated: ${format(new Date(), 'PPPp', { locale: fr })}
+Generated: ${format(new Date(), 'PPPp', { locale: dateLocale })}
 ================================================================================
 
 EXECUTIVE SUMMARY
@@ -158,7 +161,7 @@ all pre-launch verification checks and is ready for production deployment.
 [ ] Audit Trail: 28+ Triggers OPERATIONAL
 
 Certified By: ${user?.email || 'System Administrator'}
-Date: ${format(new Date(), 'PPP', { locale: fr })}
+Date: ${format(new Date(), 'PPP', { locale: dateLocale })}
 
 ================================================================================
 TBOS v1.0 - Imperial Launch Edition

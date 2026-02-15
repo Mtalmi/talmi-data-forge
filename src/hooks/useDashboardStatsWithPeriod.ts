@@ -13,7 +13,9 @@ import {
   subMonths,
   format 
 } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import type { Locale } from 'date-fns';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { Period } from '@/components/dashboard/PeriodSelector';
 
 export interface PeriodStats {
@@ -71,21 +73,21 @@ function getPeriodDates(period: Period): { start: Date; end: Date; prevStart: Da
   }
 }
 
-function getPeriodLabel(period: Period): string {
+function getPeriodLabel(period: Period, dateLocale?: Locale): string {
   const now = new Date();
   switch (period) {
     case 'today':
-      return format(now, "EEEE d MMMM", { locale: fr });
+      return format(now, "EEEE d MMMM", { locale: dateLocale });
     case 'week':
-      return `Semaine ${format(now, 'w', { locale: fr })}`;
+      return `Semaine ${format(now, 'w', { locale: dateLocale })}`;
     case 'month':
-      return format(now, 'MMMM yyyy', { locale: fr });
+      return format(now, 'MMMM yyyy', { locale: dateLocale });
     default:
       return '';
   }
 }
 
-function getPreviousPeriodLabel(period: Period): string {
+function getPreviousPeriodLabel(period: Period, dateLocale?: Locale): string {
   const now = new Date();
   switch (period) {
     case 'today':
@@ -93,13 +95,15 @@ function getPreviousPeriodLabel(period: Period): string {
     case 'week':
       return 'Semaine précédente';
     case 'month':
-      return format(subMonths(now, 1), 'MMMM', { locale: fr });
+      return format(subMonths(now, 1), 'MMMM', { locale: dateLocale });
     default:
       return '';
   }
 }
 
 export function useDashboardStatsWithPeriod(period: Period) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const [stats, setStats] = useState<PeriodStats>({
     totalVolume: 0,
     chiffreAffaires: 0,
@@ -221,8 +225,8 @@ export function useDashboardStatsWithPeriod(period: Period) {
           caTrend,
           curTrend,
           margeTrend,
-          periodLabel: getPeriodLabel(period),
-          previousPeriodLabel: getPreviousPeriodLabel(period),
+          periodLabel: getPeriodLabel(period, dateLocale),
+          previousPeriodLabel: getPreviousPeriodLabel(period, dateLocale),
         });
       } catch (error) {
         console.error('Error fetching period stats:', error);

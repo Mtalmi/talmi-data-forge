@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { FileText, Loader2, Lock, CheckCircle, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+
 import { cn } from '@/lib/utils';
 
 interface InvoiceGeneratorProps {

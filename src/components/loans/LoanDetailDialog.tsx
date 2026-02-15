@@ -13,7 +13,8 @@ import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 import { 
   ArrowDownLeft, 
   ArrowUpRight, 
@@ -40,6 +41,8 @@ export function LoanDetailDialog({
   onOpenChange,
   onPaymentClick 
 }: LoanDetailDialogProps) {
+  const { lang } = useI18n();
+  const dateLocale = getDateLocale(lang);
   const paidPayments = payments.filter(p => p.status === 'paid').length;
   const progress = (paidPayments / loan.term_months) * 100;
   const totalPaid = payments.reduce((sum, p) => 
@@ -105,7 +108,7 @@ export function LoanDetailDialog({
                 <div>
                   <p className="text-xs text-muted-foreground">Période</p>
                   <p className="text-sm">
-                    {format(new Date(loan.start_date), 'dd MMM yyyy', { locale: fr })} → {format(new Date(loan.end_date), 'dd MMM yyyy', { locale: fr })}
+                    {format(new Date(loan.start_date), 'dd MMM yyyy', { locale: dateLocale })} → {format(new Date(loan.end_date), 'dd MMM yyyy', { locale: dateLocale })}
                   </p>
                 </div>
                 <div>
@@ -165,7 +168,7 @@ export function LoanDetailDialog({
                               Échéance #{payment.payment_number}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              {format(new Date(payment.due_date), 'dd MMM yyyy', { locale: fr })}
+                              {format(new Date(payment.due_date), 'dd MMM yyyy', { locale: dateLocale })}
                               {status === 'overdue' && (
                                 <span className="text-destructive ml-2">
                                   ({daysLate} jours de retard)
