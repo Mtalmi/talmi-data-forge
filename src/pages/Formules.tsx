@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
+import { useI18n } from '@/i18n/I18nContext';
 import { useFinancialCalculations } from '@/hooks/useFinancialCalculations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,6 +54,7 @@ interface Formule {
 }
 
 export default function Formules() {
+  const { t } = useI18n();
   const { isCeo, isSuperviseur, isCentraliste, isAgentAdministratif, isDirecteurOperations, canEditFormules, loading: authLoading } = useAuth();
   const { previewRole } = usePreviewRole();
   const { calculateCUT, fetchPrices } = useFinancialCalculations();
@@ -269,9 +271,9 @@ export default function Formules() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Formules Théoriques</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t.formulas.title}</h1>
             <p className="text-muted-foreground mt-1">
-              Gestion des formules de béton • Référence qualité
+              {t.formulas.subtitle}
             </p>
           </div>
           {/* =====================================================
@@ -287,17 +289,17 @@ export default function Formules() {
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle Formule
+                    {t.formulas.newFormula}
                   </Button>
                 </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>{editingFormule ? 'Modifier la Formule' : 'Créer une Formule'}</DialogTitle>
+                  <DialogTitle>{editingFormule ? t.formulas.editFormula : t.formulas.createFormula}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">ID Formule</Label>
+                      <Label className="form-label-industrial">{t.formulas.id}</Label>
                       <Input
                         placeholder="C25/30-S4-G8"
                         value={formuleId}
@@ -309,7 +311,7 @@ export default function Formules() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Désignation</Label>
+                      <Label className="form-label-industrial">{t.formulas.designation}</Label>
                       <Input
                         placeholder="Béton standard"
                         value={designation}
@@ -321,7 +323,7 @@ export default function Formules() {
 
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Ciment (kg/m³)</Label>
+                      <Label className="form-label-industrial">{t.formulas.cement}</Label>
                       <Input
                         type="number"
                         placeholder="350"
@@ -332,7 +334,7 @@ export default function Formules() {
                       <p className="text-xs text-muted-foreground">251-599</p>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Eau (L/m³)</Label>
+                      <Label className="form-label-industrial">{t.formulas.water}</Label>
                       <Input
                         type="number"
                         placeholder="180"
@@ -343,7 +345,7 @@ export default function Formules() {
                       <p className="text-xs text-muted-foreground">121-219</p>
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Adjuvant (L/m³)</Label>
+                      <Label className="form-label-industrial">{t.formulas.adjuvant}</Label>
                       <Input
                         type="number"
                         placeholder="2"
@@ -359,10 +361,10 @@ export default function Formules() {
                       <div className="flex items-center gap-2">
                         {!ratioValid && <AlertCircle className="h-4 w-4 text-destructive" />}
                         <span className="text-sm font-medium">
-                          Ratio E/C: {ratioEC.toFixed(3)}
+                          {t.formulas.ecRatio}: {ratioEC.toFixed(3)}
                         </span>
                         <span className={`text-xs ${ratioValid ? 'text-success' : 'text-destructive'}`}>
-                          {ratioValid ? '✓ Conforme' : '✗ Doit être < 0.65'}
+                          {ratioValid ? `✓ ${t.formulas.compliant}` : `✗ ${t.formulas.invalidRatio}`}
                         </span>
                       </div>
                     </div>
@@ -370,7 +372,7 @@ export default function Formules() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Sable (kg/m³)</Label>
+                      <Label className="form-label-industrial">{t.formulas.sand}</Label>
                       <Input
                         type="number"
                         placeholder="800"
@@ -379,7 +381,7 @@ export default function Formules() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="form-label-industrial">Gravier (kg/m³)</Label>
+                      <Label className="form-label-industrial">{t.formulas.gravel}</Label>
                       <Input
                         type="number"
                         placeholder="1000"
@@ -391,7 +393,7 @@ export default function Formules() {
 
                   <div className="flex justify-end gap-3 pt-4">
                     <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                      Annuler
+                      {t.formulas.cancel}
                     </Button>
                     <Button type="submit" disabled={submitting}>
                       {submitting ? (
@@ -400,7 +402,7 @@ export default function Formules() {
                           Création...
                         </>
                       ) : (
-                        'Créer'
+                        editingFormule ? t.formulas.update : t.formulas.create
                       )}
                     </Button>
                   </div>
@@ -420,21 +422,21 @@ export default function Formules() {
           ) : formules.length === 0 ? (
             <div className="p-8 text-center">
               <FlaskConical className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">Aucune formule enregistrée</p>
+              <p className="text-muted-foreground">{t.formulas.noFormulas}</p>
             </div>
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID Formule</TableHead>
-                  <TableHead>Désignation</TableHead>
+                  <TableHead>{t.formulas.id}</TableHead>
+                  <TableHead>{t.formulas.designation}</TableHead>
                   {/* Sensitive columns - only visible to CEO/Superviseur */}
                   {canSeeSensitiveData && (
                     <>
-                      <TableHead className="text-right">Ciment</TableHead>
-                      <TableHead className="text-right">Eau</TableHead>
-                      <TableHead className="text-right">Ratio E/C</TableHead>
-                      <TableHead className="text-right">Adjuvant</TableHead>
+                      <TableHead className="text-right">{t.formulas.cement.split(' ')[0]}</TableHead>
+                      <TableHead className="text-right">{t.formulas.water.split(' ')[0]}</TableHead>
+                      <TableHead className="text-right">{t.formulas.ecRatio}</TableHead>
+                      <TableHead className="text-right">{t.formulas.adjuvant.split(' ')[0]}</TableHead>
                     </>
                   )}
                   {/* CUT visible to those who can see basic details */}
@@ -446,7 +448,7 @@ export default function Formules() {
                       </span>
                     </TableHead>
                   )}
-                  {canManageFormules && <TableHead className="w-24">Actions</TableHead>}
+                  {canManageFormules && <TableHead className="w-24">{t.formulas.actions}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
