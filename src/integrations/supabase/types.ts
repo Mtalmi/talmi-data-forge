@@ -139,12 +139,16 @@ export type Database = {
           created_at: string | null
           destinataire_role: string | null
           dismissible: boolean | null
+          escalated_at: string | null
+          escalation_history: Json | null
+          escalation_level: number | null
           id: string
           lu: boolean | null
           lu_at: string | null
           lu_par: string | null
           message: string
           niveau: string
+          original_destinataire_role: string | null
           reference_id: string | null
           reference_table: string | null
           titre: string
@@ -154,12 +158,16 @@ export type Database = {
           created_at?: string | null
           destinataire_role?: string | null
           dismissible?: boolean | null
+          escalated_at?: string | null
+          escalation_history?: Json | null
+          escalation_level?: number | null
           id?: string
           lu?: boolean | null
           lu_at?: string | null
           lu_par?: string | null
           message: string
           niveau: string
+          original_destinataire_role?: string | null
           reference_id?: string | null
           reference_table?: string | null
           titre: string
@@ -169,12 +177,16 @@ export type Database = {
           created_at?: string | null
           destinataire_role?: string | null
           dismissible?: boolean | null
+          escalated_at?: string | null
+          escalation_history?: Json | null
+          escalation_level?: number | null
           id?: string
           lu?: boolean | null
           lu_at?: string | null
           lu_par?: string | null
           message?: string
           niveau?: string
+          original_destinataire_role?: string | null
           reference_id?: string | null
           reference_table?: string | null
           titre?: string
@@ -3299,6 +3311,39 @@ export type Database = {
           statut?: string
           type?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      escalation_config: {
+        Row: {
+          created_at: string | null
+          escalation_delay_minutes: number
+          escalation_targets: Json
+          id: string
+          is_active: boolean | null
+          max_escalation_level: number
+          niveau: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          escalation_delay_minutes?: number
+          escalation_targets?: Json
+          id?: string
+          is_active?: boolean | null
+          max_escalation_level?: number
+          niveau: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          escalation_delay_minutes?: number
+          escalation_targets?: Json
+          id?: string
+          is_active?: boolean | null
+          max_escalation_level?: number
+          niveau?: string
+          updated_at?: string | null
         }
         Relationships: []
       }

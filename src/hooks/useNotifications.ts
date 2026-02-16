@@ -17,6 +17,16 @@ export interface SystemAlert {
   lu_at: string | null;
   dismissible: boolean;
   created_at: string;
+  escalation_level: number;
+  escalated_at: string | null;
+  escalation_history: Array<{
+    level: number;
+    escalated_at: string;
+    from_role: string;
+    to_role: string;
+    delay_minutes: number;
+  }>;
+  original_destinataire_role: string | null;
 }
 
 export interface NotificationStats {
@@ -25,6 +35,7 @@ export interface NotificationStats {
   critical: number;
   warning: number;
   info: number;
+  escalated: number;
 }
 
 // Alert type to route mapping
@@ -40,6 +51,7 @@ const ALERT_ROUTES: Record<string, string> = {
   'logistique_conflit': '/planning',
   'prix_hausse': '/prix',
   'approbation_requise': '/approbations',
+  'escalation': '/alertes',
 };
 
 // Alert type labels
@@ -55,6 +67,7 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
   'logistique_conflit': 'Logistique',
   'prix_hausse': 'Prix',
   'approbation_requise': 'Approbation',
+  'escalation': '🔺 Escalade',
 };
 
 export function useNotifications() {
@@ -66,6 +79,7 @@ export function useNotifications() {
     critical: 0,
     warning: 0,
     info: 0,
+    escalated: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -100,6 +114,7 @@ export function useNotifications() {
         critical: unread.filter(a => a.niveau === 'critical').length,
         warning: unread.filter(a => a.niveau === 'warning').length,
         info: unread.filter(a => a.niveau === 'info').length,
+        escalated: alertData.filter(a => (a.escalation_level || 0) > 0).length,
       });
 
     } catch (err) {
