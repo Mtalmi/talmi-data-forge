@@ -3,12 +3,16 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "./mobile-enhancements.css";
+import { initWebVitals } from "./lib/webVitals";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>
 );
+
+// Initialize Core Web Vitals monitoring
+initWebVitals();
 
 // PWA Service Worker is auto-registered by vite-plugin-pwa (registerType: "autoUpdate")
 // Force unregister any stale manual SW on first load
