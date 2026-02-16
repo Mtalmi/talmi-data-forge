@@ -41,37 +41,37 @@ import { OrderStatusTimeline } from '@/components/ventes/OrderStatusTimeline';
 import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
-const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  en_attente_validation: { label: 'En Attente Admin', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse', icon: <Clock className="h-3 w-3" /> },
-  pret_production: { label: 'Prêt Production', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
-  en_production: { label: 'En Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30', icon: <Factory className="h-3 w-3" /> },
-  en_livraison: { label: 'En Livraison', color: 'bg-rose-500/10 text-rose-600 border-rose-500/30', icon: <Truck className="h-3 w-3" /> },
-  en_retour: { label: 'En Retour', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30', icon: <Truck className="h-3 w-3" /> },
-  termine: { label: 'Terminé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
-  facture: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
+// Status configs use static colors but labels are resolved dynamically via i18n
+const BC_STATUS_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
+  en_attente_validation: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse', icon: <Clock className="h-3 w-3" /> },
+  pret_production: { color: 'bg-blue-500/10 text-blue-600 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
+  en_production: { color: 'bg-orange-500/10 text-orange-600 border-orange-500/30', icon: <Factory className="h-3 w-3" /> },
+  en_livraison: { color: 'bg-rose-500/10 text-rose-600 border-rose-500/30', icon: <Truck className="h-3 w-3" /> },
+  en_retour: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/30', icon: <Truck className="h-3 w-3" /> },
+  termine: { color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  livre: { color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
+  facture: { color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  refuse: { color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
 };
 
-// BL workflow status display for linked BLs - UNIFIED with workflowStatus.ts palette
-const BL_WORKFLOW_STATUS: Record<string, { label: string; color: string }> = {
-  en_attente_validation: { label: 'À Confirmer', color: 'bg-slate-500/10 text-slate-600 border-slate-500/30' },
-  planification: { label: 'Planifié', color: 'bg-blue-500/10 text-blue-600 border-blue-500/30' },
-  production: { label: 'En Production', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
-  en_chargement: { label: 'En Chargement', color: 'bg-orange-500/10 text-orange-600 border-orange-500/30' },
-  validation_technique: { label: 'Prêt Départ', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30' },
-  en_livraison: { label: 'En Livraison', color: 'bg-rose-500/10 text-rose-600 border-rose-500/30' },
-  en_retour: { label: 'En Retour', color: 'bg-amber-500/10 text-amber-600 border-amber-500/30' },
-  livre: { label: 'Livré', color: 'bg-success/10 text-success border-success/30' },
-  facture: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30' },
+const BL_STATUS_COLORS: Record<string, string> = {
+  en_attente_validation: 'bg-slate-500/10 text-slate-600 border-slate-500/30',
+  planification: 'bg-blue-500/10 text-blue-600 border-blue-500/30',
+  production: 'bg-orange-500/10 text-orange-600 border-orange-500/30',
+  en_chargement: 'bg-orange-500/10 text-orange-600 border-orange-500/30',
+  validation_technique: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30',
+  en_livraison: 'bg-rose-500/10 text-rose-600 border-rose-500/30',
+  en_retour: 'bg-amber-500/10 text-amber-600 border-amber-500/30',
+  livre: 'bg-success/10 text-success border-success/30',
+  facture: 'bg-success/10 text-success border-success/30',
 };
 
-// Invoice status for BC
-const BC_INVOICE_STATUS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  pending: { label: 'En attente', color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-3 w-3" /> },
-  partial: { label: 'Partiel', color: 'bg-warning/10 text-warning border-warning/30', icon: <AlertCircle className="h-3 w-3" /> },
-  invoiced: { label: 'Facturé', color: 'bg-success/10 text-success border-success/30', icon: <Receipt className="h-3 w-3" /> },
+const BC_INVOICE_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
+  pending: { color: 'bg-muted text-muted-foreground border-muted', icon: <Clock className="h-3 w-3" /> },
+  partial: { color: 'bg-warning/10 text-warning border-warning/30', icon: <AlertCircle className="h-3 w-3" /> },
+  invoiced: { color: 'bg-success/10 text-success border-success/30', icon: <Receipt className="h-3 w-3" /> },
 };
 
 // Priority thresholds
@@ -135,6 +135,39 @@ export function BcTable({
 }: BcTableProps) {
   const [generatingInvoice, setGeneratingInvoice] = useState<string | null>(null);
   const { isDirecteurOperations, isCeo, isSuperviseur, isAgentAdministratif, canValidateBcPrice, isInEmergencyWindow } = useAuth();
+  const { t } = useI18n();
+  const bt = t.bcTable;
+
+  // Build label maps using i18n keys
+  const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+    en_attente_validation: { label: bt.statusWaitingAdmin, ...BC_STATUS_COLORS.en_attente_validation },
+    pret_production: { label: bt.statusReadyProd, ...BC_STATUS_COLORS.pret_production },
+    en_production: { label: bt.statusInProd, ...BC_STATUS_COLORS.en_production },
+    en_livraison: { label: bt.statusInDelivery, ...BC_STATUS_COLORS.en_livraison },
+    en_retour: { label: bt.statusReturning, ...BC_STATUS_COLORS.en_retour },
+    termine: { label: bt.statusComplete, ...BC_STATUS_COLORS.termine },
+    livre: { label: bt.statusDelivered, ...BC_STATUS_COLORS.livre },
+    facture: { label: bt.statusInvoiced, ...BC_STATUS_COLORS.facture },
+    refuse: { label: bt.statusRefused, ...BC_STATUS_COLORS.refuse },
+  };
+
+  const BL_WORKFLOW_STATUS: Record<string, { label: string; color: string }> = {
+    en_attente_validation: { label: bt.statusToConfirm, color: BL_STATUS_COLORS.en_attente_validation },
+    planification: { label: bt.statusPlanned, color: BL_STATUS_COLORS.planification },
+    production: { label: bt.statusInProd, color: BL_STATUS_COLORS.production },
+    en_chargement: { label: bt.statusLoading, color: BL_STATUS_COLORS.en_chargement },
+    validation_technique: { label: bt.statusReadyDepart, color: BL_STATUS_COLORS.validation_technique },
+    en_livraison: { label: bt.statusInDelivery, color: BL_STATUS_COLORS.en_livraison },
+    en_retour: { label: bt.statusReturning, color: BL_STATUS_COLORS.en_retour },
+    livre: { label: bt.statusDelivered, color: BL_STATUS_COLORS.livre },
+    facture: { label: bt.statusInvoiced, color: BL_STATUS_COLORS.facture },
+  };
+
+  const BC_INVOICE_STATUS: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+    pending: { label: bt.invoicePending, ...BC_INVOICE_COLORS.pending },
+    partial: { label: bt.invoicePartial, ...BC_INVOICE_COLORS.partial },
+    invoiced: { label: bt.statusInvoiced, ...BC_INVOICE_COLORS.invoiced },
+  };
 
   const handleGenerateInvoice = async (bc: BonCommande) => {
     if (!onGenerateInvoice) return;
@@ -275,21 +308,21 @@ export function BcTable({
             <Checkbox 
               checked={allSelected}
               onCheckedChange={handleSelectAll}
-              aria-label="Tout sélectionner"
+              aria-label={bt.selectAll}
               className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
             />
           </TableHead>
-          <TableHead>N° BC</TableHead>
-          <TableHead>Client</TableHead>
-          <TableHead>Formule</TableHead>
-          <TableHead>Date Livraison</TableHead>
-          <TableHead className="text-right">Volume</TableHead>
-          <TableHead className="text-right">Total HT</TableHead>
-          <TableHead>Statut</TableHead>
-          <TableHead>Facture</TableHead>
-          <TableHead>Progression</TableHead>
-          <TableHead>Priorité</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>{bt.bcNumber}</TableHead>
+          <TableHead>{bt.client}</TableHead>
+          <TableHead>{bt.formula}</TableHead>
+          <TableHead>{bt.deliveryDate}</TableHead>
+          <TableHead className="text-right">{bt.volume}</TableHead>
+          <TableHead className="text-right">{bt.totalHt}</TableHead>
+          <TableHead>{bt.status}</TableHead>
+          <TableHead>{bt.invoice}</TableHead>
+          <TableHead>{bt.progress}</TableHead>
+          <TableHead>{bt.priority}</TableHead>
+          <TableHead>{bt.actions}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -409,13 +442,13 @@ export function BcTable({
                       </Badge>
                     </TooltipTrigger>
                     <TooltipContent>
-                      Facture: {bc.facture_consolidee_id}
+                      {bt.invoice}: {bc.facture_consolidee_id}
                     </TooltipContent>
                   </Tooltip>
                 ) : bc.statut === 'livre' || bc.statut === 'termine' ? (
                   <Badge variant="outline" className={cn("gap-1", BC_INVOICE_STATUS.pending.color)}>
                     {BC_INVOICE_STATUS.pending.icon}
-                    À facturer
+                    {bt.toInvoice}
                   </Badge>
                 ) : (
                   <span className="text-muted-foreground text-xs">—</span>

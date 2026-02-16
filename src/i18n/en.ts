@@ -5923,6 +5923,33 @@ const en = {
     enteredValue: 'Entered: {value}',
     empty: 'empty',
   },
+  quickAction: {
+    myTasks: 'My Tasks',
+    productionEntry: 'Production Entry',
+    pendingBons: '{count} pending slip(s)',
+    techValidation: 'Technical Validation',
+    toValidate: '{count} to validate',
+    deliveriesInProgress: 'Deliveries in Progress',
+    enRoute: '{count} en route',
+    toPlan: 'To Plan',
+    deliveries: '{count} delivery(ies)',
+    timeTracking: 'Time Tracking',
+    inProgress: '{count} in progress',
+  },
+  productionSearch: {
+    placeholder: 'Search BL, PO, client, formula...',
+    period: 'Period',
+    today: 'Today',
+    days7: '7 days',
+    days30: '30 days',
+    clear: 'Clear',
+  },
+  systemHealth: {
+    dataUnavailable: 'Data unavailable',
+    downloaded: 'System health report downloaded',
+    generateError: 'Error generating report',
+    buttonLabel: 'Hawaii Handover Report',
+  },
 };
 
 export default en;

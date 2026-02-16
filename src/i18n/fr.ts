@@ -5944,6 +5944,33 @@ const fr = {
     enteredValue: 'Saisi: {value}',
     empty: 'vide',
   },
+  quickAction: {
+    myTasks: 'Mes Tâches',
+    productionEntry: 'Saisie Production',
+    pendingBons: '{count} bon(s) en attente',
+    techValidation: 'Validation Technique',
+    toValidate: '{count} à valider',
+    deliveriesInProgress: 'Livraisons en cours',
+    enRoute: '{count} en route',
+    toPlan: 'À Planifier',
+    deliveries: '{count} livraison(s)',
+    timeTracking: 'Pointage',
+    inProgress: '{count} en cours',
+  },
+  productionSearch: {
+    placeholder: 'Rechercher BL, BC, client, formule...',
+    period: 'Période',
+    today: "Aujourd'hui",
+    days7: '7 jours',
+    days30: '30 jours',
+    clear: 'Effacer',
+  },
+  systemHealth: {
+    dataUnavailable: 'Données non disponibles',
+    downloaded: 'Rapport de santé système téléchargé',
+    generateError: 'Erreur lors de la génération du rapport',
+    buttonLabel: 'Hawaii Handover Report',
+  },
 };
 
 export default fr;

@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
+import { getDateLocale } from '@/i18n/dateLocale';
 
 interface ProductionSearchBarProps {
   searchQuery: string;
@@ -21,12 +22,15 @@ export function ProductionSearchBar({
   dateRange,
   onDateRangeChange,
 }: ProductionSearchBarProps) {
+  const { t, lang } = useI18n();
+  const ps = t.productionSearch;
+  const dateLocale = getDateLocale(lang);
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const quickRanges = [
-    { label: "Aujourd'hui", days: 0 },
-    { label: '7 jours', days: 7 },
-    { label: '30 jours', days: 30 },
+    { label: ps.today, days: 0 },
+    { label: ps.days7, days: 7 },
+    { label: ps.days30, days: 30 },
   ];
 
   const handleQuickRange = (days: number) => {
@@ -50,18 +54,16 @@ export function ProductionSearchBar({
 
   return (
     <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-      {/* Search Input */}
       <div className="relative flex-1 max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher BL, BC, client, formule..."
+          placeholder={ps.placeholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 h-9"
         />
       </div>
 
-      {/* Date Range Picker */}
       <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" size="sm" className="h-9 gap-2">
@@ -75,7 +77,7 @@ export function ProductionSearchBar({
                 <span className="text-xs">{format(dateRange.from, 'dd/MM/yyyy')}</span>
               )
             ) : (
-              <span className="text-xs hidden sm:inline">Période</span>
+              <span className="text-xs hidden sm:inline">{ps.period}</span>
             )}
           </Button>
         </PopoverTrigger>
@@ -103,13 +105,12 @@ export function ProductionSearchBar({
               onDateRangeChange({ from: range?.from || null, to: range?.to || null });
               if (range?.to) setCalendarOpen(false);
             }}
-            locale={undefined}
+            locale={dateLocale}
             numberOfMonths={1}
           />
         </PopoverContent>
       </Popover>
 
-      {/* Clear Filters */}
       {hasFilters && (
         <Button
           variant="ghost"
@@ -118,7 +119,7 @@ export function ProductionSearchBar({
           onClick={clearFilters}
         >
           <X className="h-3 w-3" />
-          <span className="text-xs">Effacer</span>
+          <span className="text-xs">{ps.clear}</span>
         </Button>
       )}
     </div>

@@ -5915,6 +5915,33 @@ const ar = {
     enteredValue: 'المدخل: {value}',
     empty: 'فارغ',
   },
+  quickAction: {
+    myTasks: 'مهامي',
+    productionEntry: 'إدخال الإنتاج',
+    pendingBons: '{count} إيصال(ات) معلقة',
+    techValidation: 'التحقق التقني',
+    toValidate: '{count} للتحقق',
+    deliveriesInProgress: 'عمليات التسليم الجارية',
+    enRoute: '{count} في الطريق',
+    toPlan: 'للتخطيط',
+    deliveries: '{count} تسليم(ات)',
+    timeTracking: 'تسجيل الحضور',
+    inProgress: '{count} جاري',
+  },
+  productionSearch: {
+    placeholder: 'بحث BL، أمر شراء، عميل، وصفة...',
+    period: 'الفترة',
+    today: 'اليوم',
+    days7: '7 أيام',
+    days30: '30 يوم',
+    clear: 'مسح',
+  },
+  systemHealth: {
+    dataUnavailable: 'البيانات غير متوفرة',
+    downloaded: 'تم تنزيل تقرير صحة النظام',
+    generateError: 'خطأ في إنشاء التقرير',
+    buttonLabel: 'Hawaii Handover Report',
+  },
 };
 
 export default ar;
