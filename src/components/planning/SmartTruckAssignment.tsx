@@ -16,6 +16,7 @@ import {
   Check
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Camion {
   id_camion: string;
@@ -36,7 +37,7 @@ interface BonLivraison {
 interface SmartTruckAssignmentProps {
   bon: BonLivraison;
   camions: Camion[];
-  assignedTrucks: string[]; // IDs of trucks already assigned today
+  assignedTrucks: string[];
   onAssign: (camionId: string) => void;
   currentAssignment?: string | null;
 }
@@ -55,48 +56,46 @@ export function SmartTruckAssignment({
   onAssign,
   currentAssignment,
 }: SmartTruckAssignmentProps) {
+  const { t } = useI18n();
+  const st = t.smartTruck;
+
   const scoredTrucks = useMemo<TruckScore[]>(() => {
     return camions
       .filter(c => c.statut === 'Disponible' || c.id_camion === currentAssignment)
       .map(camion => {
-        let score = 50; // Base score
+        let score = 50;
         const reasons: string[] = [];
 
-        // Capacity match (higher score if capacity fits well)
         const capacity = camion.capacite_m3 || 8;
         if (capacity >= bon.volume_m3) {
-          // Perfect fit bonus (within 2m³ of capacity)
           if (capacity - bon.volume_m3 <= 2) {
             score += 30;
-            reasons.push('Capacité optimale');
+            reasons.push(st.optimalCapacity);
           } else {
             score += 15;
-            reasons.push('Capacité suffisante');
+            reasons.push(st.sufficientCapacity);
           }
         } else {
           score -= 20;
-          reasons.push('⚠️ Capacité insuffisante');
+          reasons.push(st.insufficientCapacity);
         }
 
-        // Availability bonus
         if (!assignedTrucks.includes(camion.id_camion)) {
           score += 20;
-          reasons.push('Disponible');
+          reasons.push(st.available);
         } else {
           score -= 10;
-          reasons.push('Déjà assigné aujourd\'hui');
+          reasons.push(st.alreadyAssigned);
         }
 
-        // Has driver assigned
         if (camion.chauffeur) {
           score += 10;
-          reasons.push('Chauffeur assigné');
+          reasons.push(st.driverAssigned);
         }
 
-        // Already assigned to this BL
         if (camion.id_camion === currentAssignment) {
           score += 5;
-          reasons.push('Assignation actuelle');
+          reasons.push(st.currentAssignment);
         }
 
         return {
@@ -107,7 +106,7 @@ export function SmartTruckAssignment({
         };
       })
       .sort((a, b) => b.score - a.score);
-  }, [camions, bon, assignedTrucks, currentAssignment]);
+  }, [camions, bon, assignedTrucks, currentAssignment, st]);
 
   const optimalTruck = scoredTrucks.find(t => t.isOptimal);
 
@@ -115,20 +114,19 @@ export function SmartTruckAssignment({
     return (
       <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-sm">
         <AlertTriangle className="h-4 w-4 inline mr-2 text-destructive" />
-        Aucun camion disponible
+        {st.noTrucks}
       </div>
     );
   }
 
   return (
     <div className="space-y-2">
-      {/* Optimal suggestion */}
       {optimalTruck && optimalTruck.camion.id_camion !== currentAssignment && (
         <div className="p-3 rounded-lg bg-success/10 border border-success/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Star className="h-4 w-4 text-success" />
-              <span className="text-sm font-medium">Recommandé</span>
+              <span className="text-sm font-medium">{st.recommended}</span>
             </div>
             <Button
               size="sm"
@@ -136,7 +134,7 @@ export function SmartTruckAssignment({
               className="h-8 gap-2 bg-success hover:bg-success/90"
             >
               <Zap className="h-3 w-3" />
-              Assigner {optimalTruck.camion.id_camion}
+              {st.assign} {optimalTruck.camion.id_camion}
             </Button>
           </div>
           <div className="mt-2 flex flex-wrap gap-1">
@@ -149,7 +147,6 @@ export function SmartTruckAssignment({
         </div>
       )}
 
-      {/* All available trucks */}
       <div className="space-y-1">
         {scoredTrucks.slice(0, 5).map(({ camion, score, reasons, isOptimal }) => (
           <div
@@ -177,12 +174,12 @@ export function SmartTruckAssignment({
                   {camion.id_camion === currentAssignment && (
                     <Badge variant="outline" className="text-xs border-primary text-primary">
                       <Check className="h-3 w-3 mr-1" />
-                      Actuel
+                      {st.current}
                     </Badge>
                   )}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span>{camion.chauffeur || 'Sans chauffeur'}</span>
+                  <span>{camion.chauffeur || st.noDriver}</span>
                   <span>•</span>
                   <span>{camion.capacite_m3 || 8} m³</span>
                 </div>
@@ -201,7 +198,7 @@ export function SmartTruckAssignment({
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="left" className="max-w-[200px]">
-                  <p className="font-semibold mb-1">Score de compatibilité</p>
+                  <p className="font-semibold mb-1">{st.compatibilityScore}</p>
                   <ul className="text-xs space-y-0.5">
                     {reasons.map((r, i) => (
                       <li key={i}>• {r}</li>
@@ -216,7 +213,7 @@ export function SmartTruckAssignment({
                   onClick={() => onAssign(camion.id_camion)}
                   className="h-7 text-xs"
                 >
-                  Assigner
+                  {st.assign}
                 </Button>
               )}
             </div>

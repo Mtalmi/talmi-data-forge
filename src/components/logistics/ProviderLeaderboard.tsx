@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Trophy, Clock, AlertTriangle, TrendingUp } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ProviderStats {
   proprietaire: string;
@@ -14,6 +15,9 @@ interface ProviderLeaderboardProps {
 }
 
 export function ProviderLeaderboard({ stats }: ProviderLeaderboardProps) {
+  const { t } = useI18n();
+  const pl = t.providerLeaderboard;
+
   const formatMinutes = (minutes: number) => {
     if (!minutes) return '—';
     const hours = Math.floor(minutes / 60);
@@ -56,7 +60,7 @@ export function ProviderLeaderboard({ stats }: ProviderLeaderboardProps) {
   if (stats.length === 0) {
     return (
       <div className="p-8 text-center text-muted-foreground">
-        Aucune donnée de performance disponible
+        {pl.noData}
       </div>
     );
   }
@@ -85,11 +89,11 @@ export function ProviderLeaderboard({ stats }: ProviderLeaderboardProps) {
 
           <div className="grid grid-cols-3 gap-6 text-center">
             <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Rotations</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">{pl.rotations}</p>
               <p className="font-mono font-bold text-lg text-primary">{provider.nombre_rotations}</p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Temps Moyen</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">{pl.avgTime}</p>
               <p className={cn(
                 'font-mono font-bold text-lg',
                 provider.temps_moyen_rotation > 120 ? 'text-warning' : 'text-success'
@@ -98,7 +102,7 @@ export function ProviderLeaderboard({ stats }: ProviderLeaderboardProps) {
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Incidents</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide">{pl.incidents}</p>
               <p className={cn(
                 'font-mono font-bold text-lg',
                 provider.incidents_count > 0 ? 'text-destructive' : 'text-success'

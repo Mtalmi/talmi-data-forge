@@ -221,9 +221,9 @@ export function BcTable({
     return (
       <div className="text-center py-12">
         <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-        <p className="text-muted-foreground">Aucun bon de commande</p>
+        <p className="text-muted-foreground">{bt.noBc}</p>
         <p className="text-sm text-muted-foreground mt-1">
-          Convertissez un devis pour créer un BC
+          {bt.convertQuoteToBc}
         </p>
       </div>
     );
@@ -365,7 +365,7 @@ export function BcTable({
                 <Checkbox 
                   checked={isSelected}
                   onCheckedChange={(checked) => handleSelectOne(bc.id, !!checked)}
-                  aria-label={`Sélectionner ${bc.bc_id}`}
+                  aria-label={`${bt.select} ${bc.bc_id}`}
                 />
               </TableCell>
               <TableCell className="font-mono font-medium">{bc.bc_id}</TableCell>
@@ -546,9 +546,9 @@ export function BcTable({
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p className="font-medium">En attente validation</p>
+                            <p className="font-medium">{bt.waitingValidation}</p>
                             <p className="text-xs text-muted-foreground">
-                              Le BL en cours doit être validé par le centraliste avant d'ajouter une nouvelle livraison
+                              {bt.waitingValidationDesc}
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -569,7 +569,7 @@ export function BcTable({
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          Ajouter une livraison ({(bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1)} m³ restants)
+                          {bt.addDelivery.replace('{remaining}', (bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1))}
                         </TooltipContent>
                       </Tooltip>
                     );
