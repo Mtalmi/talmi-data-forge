@@ -8,7 +8,7 @@ interface DeviceInfo {
   screenWidth: number;
 }
 
-const MOBILE_BREAKPOINT = 640;
+const MOBILE_BREAKPOINT = 768;
 const TABLET_BREAKPOINT = 1024;
 
 export function useDeviceType(): DeviceInfo {

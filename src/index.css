@@ -1127,7 +1127,7 @@
 
   /* ===== MOBILE CONTENT PADDING ===== */
   .mobile-content {
-    @apply pb-24 lg:pb-4;
+    @apply pb-24 md:pb-4;
   }
 
   /* ===== MICRO-INTERACTIONS ===== */
