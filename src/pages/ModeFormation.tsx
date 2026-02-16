@@ -33,6 +33,8 @@ import {
   FinancialReportingSim,
   ClientManagementSim,
   CertificationBadge,
+  GamificationDashboard,
+  SimulationResultsModal,
   useFormationProgress,
   SimulationType,
   SimulationTier,
@@ -213,7 +215,9 @@ const TIER_CONFIG = {
 
 export default function ModeFormation() {
   const [activeSim, setActiveSim] = useState<SimulationType | null>(null);
-  
+  const [showResults, setShowResults] = useState(false);
+  const [lastScore, setLastScore] = useState<any>(null);
+  const [lastSimTitle, setLastSimTitle] = useState('');
   const {
     userRole,
     completedSimulations,
@@ -237,9 +241,26 @@ export default function ModeFormation() {
 
   const handleComplete = async (type: SimulationType) => {
     const result = await completeSimulation(type);
+    const simConfig = SIMULATIONS.find(s => s.type === type);
     if (result.success) {
+      // Generate a mock score for now (will be replaced by real scoring from each sim)
+      const mockScore = {
+        precision: Math.floor(Math.random() * 30) + 70,
+        conformite: Math.floor(Math.random() * 30) + 70,
+        rapidite: Math.floor(Math.random() * 40) + 60,
+        global: 0,
+        xpEarned: 0,
+        timeSpentSeconds: Math.floor(Math.random() * 180) + 60,
+      };
+      mockScore.global = Math.round(mockScore.precision * 0.4 + mockScore.conformite * 0.35 + mockScore.rapidite * 0.25);
+      mockScore.xpEarned = Math.round(mockScore.global * 1.5);
+      
+      setLastScore(mockScore);
+      setLastSimTitle(simConfig?.title || type);
+      setShowResults(true);
+      
       toast.success('🎉 Simulation terminée!', {
-        description: `Module "${SIMULATIONS.find(s => s.type === type)?.title}" complété avec succès.`,
+        description: `Score: ${mockScore.global}% | +${mockScore.xpEarned} XP`,
       });
     }
     setActiveSim(null);
@@ -370,6 +391,9 @@ export default function ModeFormation() {
           showDownload={isFullyCertified}
         />
 
+        {/* Gamification Dashboard */}
+        <GamificationDashboard completedSimulations={completedSimulations} />
+
         {/* Simulation Tiers */}
         {(['core', 'advanced', 'executive'] as SimulationTier[]).map((tier) => {
           const config = TIER_CONFIG[tier];
@@ -495,6 +519,14 @@ export default function ModeFormation() {
 
       {/* Active Simulation Modal */}
       {renderSimModal()}
+
+      {/* Results Modal */}
+      <SimulationResultsModal
+        open={showResults}
+        onClose={() => setShowResults(false)}
+        simulationTitle={lastSimTitle}
+        score={lastScore}
+      />
     </MainLayout>
   );
 }

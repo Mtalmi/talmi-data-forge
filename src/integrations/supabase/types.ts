@@ -6846,21 +6846,81 @@ export type Database = {
       }
       user_training_progress: {
         Row: {
+          attempts: number | null
+          best_score: number | null
           completed_at: string
           id: string
+          score_conformite: number | null
+          score_global: number | null
+          score_precision: number | null
+          score_rapidite: number | null
           step_id: string
+          time_spent_seconds: number | null
+          user_id: string
+          xp_earned: number | null
+        }
+        Insert: {
+          attempts?: number | null
+          best_score?: number | null
+          completed_at?: string
+          id?: string
+          score_conformite?: number | null
+          score_global?: number | null
+          score_precision?: number | null
+          score_rapidite?: number | null
+          step_id: string
+          time_spent_seconds?: number | null
+          user_id: string
+          xp_earned?: number | null
+        }
+        Update: {
+          attempts?: number | null
+          best_score?: number | null
+          completed_at?: string
+          id?: string
+          score_conformite?: number | null
+          score_global?: number | null
+          score_precision?: number | null
+          score_rapidite?: number | null
+          step_id?: string
+          time_spent_seconds?: number | null
+          user_id?: string
+          xp_earned?: number | null
+        }
+        Relationships: []
+      }
+      user_xp_profiles: {
+        Row: {
+          badges: Json | null
+          created_at: string
+          current_level: number | null
+          id: string
+          last_activity_date: string | null
+          streak_days: number | null
+          total_xp: number | null
+          updated_at: string
           user_id: string
         }
         Insert: {
-          completed_at?: string
+          badges?: Json | null
+          created_at?: string
+          current_level?: number | null
           id?: string
-          step_id: string
+          last_activity_date?: string | null
+          streak_days?: number | null
+          total_xp?: number | null
+          updated_at?: string
           user_id: string
         }
         Update: {
-          completed_at?: string
+          badges?: Json | null
+          created_at?: string
+          current_level?: number | null
           id?: string
-          step_id?: string
+          last_activity_date?: string | null
+          streak_days?: number | null
+          total_xp?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
