@@ -21,7 +21,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children, hideBottomNav = false }: MainLayoutProps) {
   const { isMobile, isTablet } = useDeviceType();
-  const showMobileNav = isMobile || isTablet;
+  const showMobileNav = isMobile;
   const { previewRole, setPreviewRole } = usePreviewRole();
 
   return (
@@ -68,7 +68,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           
           {/* Main Content Area with Page Transitions */}
           <main className={`flex-1 overflow-y-auto scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-            <div className="p-3 sm:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom">
+            <div className="p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom">
               <PageTransition>
                 {children}
               </PageTransition>
