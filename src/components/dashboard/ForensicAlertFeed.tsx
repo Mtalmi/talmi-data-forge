@@ -112,8 +112,8 @@ const ACTION_CONFIG: Record<string, {
 type AlertFilter = 'all' | 'critical' | 'blocked' | 'success';
 
 export function ForensicAlertFeed() {
-  const { lang } = useI18n();
-  const dateLocale = getDateLocale(lang);
+  const { t, lang } = useI18n();
+  const fa = t.forensicAlert;
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -154,7 +154,7 @@ export function ForensicAlertFeed() {
           const config = ACTION_CONFIG[newAlert.action] || ACTION_CONFIG.default;
           if (newAlert.action === 'ACCESS_DENIED' || newAlert.action === 'LIMIT_EXCEEDED') {
             toast.error(`🚨 ${config.label}`, {
-              description: newAlert.changes?.reason || newAlert.user_name || 'Alerte de sécurité',
+              description: newAlert.changes?.reason || newAlert.user_name || fa.securityAlert,
             });
           }
         }
@@ -203,10 +203,10 @@ export function ForensicAlertFeed() {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-3">
           <span className="font-bold text-sm text-foreground truncate">
-            {alert.user_name || 'Système'}
+            {alert.user_name || fa.system}
           </span>
           <span className="text-xs text-muted-foreground shrink-0">
-            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: false, locale: dateLocale || undefined })}
+            {formatDistanceToNow(new Date(alert.created_at), { addSuffix: false, locale: getDateLocale(lang) || undefined })}
           </span>
         </div>
 
@@ -306,18 +306,18 @@ export function ForensicAlertFeed() {
           <div>
             <CardTitle className="text-sm sm:text-base flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-              Flux Forensique
+              {fa.title}
             </CardTitle>
             <CardDescription className="text-xs flex items-center gap-2">
               {isConnected ? (
                 <>
                   <Wifi className="h-3 w-3 text-emerald-500" />
-                  Temps réel actif
+                  {fa.realtime}
                 </>
               ) : (
                 <>
                   <WifiOff className="h-3 w-3 text-muted-foreground" />
-                  Connexion...
+                  {fa.connecting}
                 </>
               )}
             </CardDescription>
@@ -336,10 +336,10 @@ export function ForensicAlertFeed() {
         {/* Filter Chips */}
         <div className="flex flex-wrap gap-1.5 pt-2">
           {[
-            { value: 'all' as const, label: 'Tous' },
-            { value: 'critical' as const, label: 'Critiques', color: 'text-red-500' },
-            { value: 'blocked' as const, label: 'Bloqués', color: 'text-amber-500' },
-            { value: 'success' as const, label: 'Succès', color: 'text-emerald-500' },
+            { value: 'all' as const, label: fa.all },
+            { value: 'critical' as const, label: fa.critical, color: 'text-red-500' },
+            { value: 'blocked' as const, label: fa.blocked, color: 'text-amber-500' },
+            { value: 'success' as const, label: fa.success, color: 'text-emerald-500' },
           ].map(({ value, label, color }) => (
             <button
               key={value}
@@ -366,9 +366,9 @@ export function ForensicAlertFeed() {
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-emerald-400 animate-bounce" />
             </div>
-            <h3 className="text-base font-semibold mb-1">Ciel Dégagé ☀️</h3>
+            <h3 className="text-base font-semibold mb-1">{fa.clearSky}</h3>
             <p className="text-xs text-muted-foreground max-w-[200px]">
-              Aucune alerte {filter !== 'all' ? `(${filter})` : ''} récente. Tout est sous contrôle.
+              {filter !== 'all' ? fa.noAlerts.replace('{filter}', filter) : fa.noAlertsAll}
             </p>
           </div>
         ) : (

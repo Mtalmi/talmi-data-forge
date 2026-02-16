@@ -26,6 +26,7 @@ interface ContractComplianceWidgetProps {
 export function ContractComplianceWidget({ onAddContract }: ContractComplianceWidgetProps) {
   const { stats, expirationAlerts, loading, refresh } = useContractCompliance();
   const { t } = useI18n();
+  const cw = t.contractWidget;
 
   const complianceColor = stats.complianceRate >= 90 
     ? 'text-success' 
@@ -57,10 +58,10 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
             </div>
             <div>
               <CardTitle className="text-base">
-                Contrats Fournisseurs
+                {cw.title}
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Conformité & Alertes
+                {cw.subtitle}
               </p>
             </div>
           </div>
@@ -88,7 +89,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
             {/* Compliance Score */}
             <div className="p-4 rounded-lg bg-muted/30 border border-border/50">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Taux de Conformité</span>
+                <span className="text-sm font-medium">{cw.complianceRate}</span>
                 <span className={cn("text-2xl font-bold", complianceColor)}>
                   {stats.complianceRate}%
                 </span>
@@ -98,8 +99,8 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
                 className={cn("h-2", complianceProgressColor)} 
               />
               <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-                <span>{stats.activeContracts} contrats actifs</span>
-                <span>{stats.missingContracts} contrats manquants</span>
+                <span>{stats.activeContracts} {cw.activeContracts}</span>
+                <span>{stats.missingContracts} {cw.missingContracts}</span>
               </div>
             </div>
 
@@ -108,7 +109,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
               <div className="p-3 rounded-lg bg-muted/30 border border-border/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Building2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Total mensuel</span>
+                  <span className="text-xs text-muted-foreground">{cw.monthlyTotal}</span>
                 </div>
                 <p className="text-lg font-bold font-mono">
                   {stats.monthlyTotal.toLocaleString('fr-FR')}
@@ -127,7 +128,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
                     "h-4 w-4",
                     stats.potentialNonDeductible > 0 ? "text-destructive" : "text-success"
                   )} />
-                  <span className="text-xs text-muted-foreground">Risque fiscal</span>
+                  <span className="text-xs text-muted-foreground">{cw.taxRisk}</span>
                 </div>
                 <p className={cn(
                   "text-lg font-bold font-mono",
@@ -145,7 +146,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
                 <div className="flex items-center gap-2 mb-2">
                   <AlertTriangle className="h-4 w-4 text-warning" />
                   <span className="text-sm font-medium text-warning">
-                    ⚠️ Contrats Manquants ({stats.missingContracts})
+                    {cw.missingTitle} ({stats.missingContracts})
                   </span>
                 </div>
                 <ul className="text-xs text-muted-foreground space-y-1 ml-6">
@@ -159,7 +160,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
                     className="w-full mt-3 border-warning text-warning hover:bg-warning/10"
                     onClick={onAddContract}
                   >
-                    Ajouter Contrats Manquants
+                    {cw.addMissing}
                   </Button>
                 )}
               </div>
@@ -171,7 +172,7 @@ export function ContractComplianceWidget({ onAddContract }: ContractComplianceWi
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">
-                    Alertes d'Expiration ({expirationAlerts.length})
+                    {cw.expirationAlerts} ({expirationAlerts.length})
                   </span>
                 </div>
                 <ScrollArea className="h-[100px]">
