@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import { SplashScreen } from '@/components/layout/SplashScreen';
 import { useAuth } from '@/hooks/useAuth';
+import { WelcomeOnboardingModal } from '@/components/onboarding/WelcomeOnboardingModal';
 
 const SPLASH_SHOWN_KEY = 'tbos_splash_shown';
 
@@ -36,6 +37,7 @@ export default function Index() {
     <>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Dashboard />
+      <WelcomeOnboardingModal />
     </>
   );
 }
