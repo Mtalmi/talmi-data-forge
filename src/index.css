@@ -892,6 +892,7 @@
     @apply flex items-center justify-center;
   }
 
+  /* Mobile: 44px buttons, 48px inputs */
   @media (max-width: 768px) {
     button:not(.no-touch-target),
     [role="button"]:not(.no-touch-target) {
@@ -903,6 +904,76 @@
     textarea {
       min-height: 48px;
       font-size: 16px;
+    }
+  }
+
+  /* Tablet/iPad: 48px buttons & inputs, larger tap areas for industrial use */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    button:not(.no-touch-target),
+    [role="button"]:not(.no-touch-target),
+    a[role="menuitem"],
+    [role="tab"],
+    [role="option"] {
+      min-height: 48px;
+      min-width: 48px;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+      min-height: 48px;
+      font-size: 16px;
+      padding-top: 0.625rem;
+      padding-bottom: 0.625rem;
+    }
+
+    /* Checkbox & radio larger on tablet */
+    input[type="checkbox"],
+    input[type="radio"] {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Table rows more spacious for fat-finger tapping */
+    table tbody tr td {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    /* Dropdown/Select items need bigger tap areas */
+    [role="listbox"] [role="option"],
+    [role="menu"] [role="menuitem"],
+    [cmdk-item] {
+      min-height: 48px;
+      padding: 0.75rem 1rem;
+    }
+
+    /* Sidebar links larger on tablet */
+    nav a, nav button {
+      min-height: 48px;
+      padding-top: 0.625rem;
+      padding-bottom: 0.625rem;
+    }
+
+    /* Spacing between action buttons */
+    .flex.gap-2 > button,
+    .flex.gap-1 > button {
+      margin: 2px;
+    }
+  }
+
+  /* Touch device: add padding to small interactive elements */
+  @media (pointer: coarse) {
+    [role="switch"] {
+      min-height: 32px;
+      min-width: 52px;
+    }
+
+    /* Icon-only buttons need visible tap area */
+    button:has(> svg:only-child) {
+      min-height: 44px;
+      min-width: 44px;
+      padding: 0.5rem;
     }
   }
 
