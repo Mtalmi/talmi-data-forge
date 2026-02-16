@@ -27,7 +27,8 @@ interface SystemStats {
 
 export function SystemHealthReport() {
   const { user, isCeo } = useAuth();
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
+  const sh = t.systemHealth;
   const dateLocale = getDateLocale(lang);
   const [generating, setGenerating] = useState(false);
   const [stats, setStats] = useState<SystemStats | null>(null);
@@ -96,14 +97,13 @@ export function SystemHealthReport() {
 
   const generatePDF = async () => {
     if (!stats) {
-      toast.error('Données non disponibles');
+      toast.error(sh.dataUnavailable);
       return;
     }
 
     setGenerating(true);
     
     try {
-      // Create PDF content
       const pdfContent = `
 TBOS - SYSTEM HEALTH REPORT
 Certificate of Readiness
@@ -168,7 +168,6 @@ TBOS v1.0 - Imperial Launch Edition
 Confidential - For Internal Use Only
       `.trim();
 
-      // Create and download the file
       const blob = new Blob([pdfContent], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -179,10 +178,10 @@ Confidential - For Internal Use Only
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      toast.success('Rapport de santé système téléchargé');
+      toast.success(sh.downloaded);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      toast.error('Erreur lors de la génération du rapport');
+      toast.error(sh.generateError);
     } finally {
       setGenerating(false);
     }
@@ -200,7 +199,7 @@ Confidential - For Internal Use Only
       ) : (
         <Download className="h-4 w-4" />
       )}
-      Hawaii Handover Report
+      {sh.buttonLabel}
     </Button>
   );
 }

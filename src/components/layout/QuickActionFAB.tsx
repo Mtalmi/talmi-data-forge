@@ -20,6 +20,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface QuickTask {
   id: string;
@@ -34,10 +35,11 @@ interface QuickTask {
 export function QuickActionFAB() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
+  const qa = t.quickAction;
   const [tasks, setTasks] = useState<QuickTask[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Hide on driver view (already simplified) and auth page
   const hiddenPaths = ['/chauffeur', '/auth'];
   const shouldHide = hiddenPaths.includes(location.pathname);
 
@@ -54,7 +56,6 @@ export function QuickActionFAB() {
       const today = new Date().toISOString().split('T')[0];
       const quickTasks: QuickTask[] = [];
 
-      // Check pending production entries
       const { data: productionData } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id')
@@ -65,8 +66,8 @@ export function QuickActionFAB() {
       if (productionCount > 0) {
         quickTasks.push({
           id: 'production',
-          label: 'Saisie Production',
-          sublabel: `${productionCount} bon(s) en attente`,
+          label: qa.productionEntry,
+          sublabel: qa.pendingBons.replace('{count}', String(productionCount)),
           icon: <Factory className="h-4 w-4" />,
           path: '/production',
           count: productionCount,
@@ -74,7 +75,6 @@ export function QuickActionFAB() {
         });
       }
 
-      // Check pending technical validations
       const { data: validationData } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id')
@@ -85,8 +85,8 @@ export function QuickActionFAB() {
       if (validationCount > 0) {
         quickTasks.push({
           id: 'validation',
-          label: 'Validation Technique',
-          sublabel: `${validationCount} à valider`,
+          label: qa.techValidation,
+          sublabel: qa.toValidate.replace('{count}', String(validationCount)),
           icon: <ClipboardCheck className="h-4 w-4" />,
           path: '/production',
           count: validationCount,
@@ -94,7 +94,6 @@ export function QuickActionFAB() {
         });
       }
 
-      // Check deliveries in progress
       const { data: deliveryData } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id')
@@ -105,8 +104,8 @@ export function QuickActionFAB() {
       if (deliveryCount > 0) {
         quickTasks.push({
           id: 'deliveries',
-          label: 'Livraisons en cours',
-          sublabel: `${deliveryCount} en route`,
+          label: qa.deliveriesInProgress,
+          sublabel: qa.enRoute.replace('{count}', String(deliveryCount)),
           icon: <Truck className="h-4 w-4" />,
           path: '/chauffeur',
           count: deliveryCount,
@@ -114,7 +113,6 @@ export function QuickActionFAB() {
         });
       }
 
-      // Check today's planned deliveries
       const { data: plannedData } = await supabase
         .from('bons_livraison_reels')
         .select('bl_id')
@@ -125,8 +123,8 @@ export function QuickActionFAB() {
       if (plannedCount > 0) {
         quickTasks.push({
           id: 'planning',
-          label: 'À Planifier',
-          sublabel: `${plannedCount} livraison(s)`,
+          label: qa.toPlan,
+          sublabel: qa.deliveries.replace('{count}', String(plannedCount)),
           icon: <Package className="h-4 w-4" />,
           path: '/planning',
           count: plannedCount,
@@ -134,7 +132,6 @@ export function QuickActionFAB() {
         });
       }
 
-      // Check clock-in status
       const { data: pointageData } = await supabase
         .from('pointages')
         .select('id')
@@ -145,8 +142,8 @@ export function QuickActionFAB() {
       if (notClockedOut > 0) {
         quickTasks.push({
           id: 'pointage',
-          label: 'Pointage',
-          sublabel: `${notClockedOut} en cours`,
+          label: qa.timeTracking,
+          sublabel: qa.inProgress.replace('{count}', String(notClockedOut)),
           icon: <Clock className="h-4 w-4" />,
           path: '/pointage',
           count: notClockedOut,
@@ -200,7 +197,7 @@ export function QuickActionFAB() {
         >
           <DropdownMenuLabel className="flex items-center gap-2 text-base">
             <Zap className="h-4 w-4 text-primary" />
-            Mes Tâches
+            {qa.myTasks}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           
