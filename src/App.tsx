@@ -60,6 +60,7 @@ const WS7Batches = lazy(() => import("./pages/WS7Batches"));
 const WS7Discovery = lazy(() => import("./pages/WS7Discovery"));
 const Surveillance = lazy(() => import("./pages/Surveillance"));
 const AnalyticsBI = lazy(() => import("./pages/AnalyticsBI"));
+const InstallApp = lazy(() => import("./pages/InstallApp"));
 
 const queryClient = new QueryClient();
 
@@ -132,6 +133,7 @@ const App = () => (
                     <Route path="/ws7-discovery" element={<WS7Discovery />} />
                     <Route path="/surveillance" element={<Surveillance />} />
                     <Route path="/analytics" element={<AnalyticsBI />} />
+                    <Route path="/install" element={<InstallApp />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

@@ -9,6 +9,7 @@ import { PageTransition } from './PageTransition';
 import { CommandPalette } from '@/components/command/CommandPalette';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt';
+import { NotificationSettings } from '@/components/pwa/NotificationSettings';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
@@ -86,6 +87,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           {/* PWA Components */}
           <OfflineIndicator />
           <PWAInstallPrompt />
+          <NotificationSettings />
 
           {/* Mobile Bottom Navigation */}
           {!hideBottomNav && showMobileNav && <MobileBottomNav />}
