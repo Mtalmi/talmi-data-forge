@@ -10,6 +10,7 @@ import { PreviewRoleProvider } from "@/hooks/usePreviewRole";
 import { SecurityProvider } from "@/components/security/SecurityProvider";
 import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 import { I18nProvider } from "@/i18n/I18nContext";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 
 // Critical path — loaded eagerly
 import Index from "./pages/Index";
@@ -81,6 +82,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <AuthProvider>
             <PreviewRoleProvider>
               <SecurityProvider>

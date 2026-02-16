@@ -190,7 +190,7 @@ export default function Landing() {
       </div>
 
       {/* HERO */}
-      <section className="landing-hero relative overflow-hidden">
+      <section className="landing-hero relative overflow-hidden min-h-[100dvh] flex flex-col justify-center">
         <div className="absolute inset-0 z-0">
           <img src={heroPlantNight} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
