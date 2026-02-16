@@ -1,0 +1,15 @@
+/*
+  Security Headers for TBOS - Applied at hosting level
+  X-Frame-Options prevents clickjacking
+  X-Content-Type-Options prevents MIME sniffing
+  Referrer-Policy limits information sent to external sites
+  Permissions-Policy restricts browser features
+*/
+/*
+  /*
+    X-Frame-Options: DENY
+    X-Content-Type-Options: nosniff
+    Referrer-Policy: strict-origin-when-cross-origin
+    Permissions-Policy: camera=(), microphone=(), geolocation=(self), payment=()
+    X-XSS-Protection: 1; mode=block
+*/

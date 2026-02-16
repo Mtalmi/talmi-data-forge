@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { User, Shield, Mail, Calendar, Save, Loader2 } from 'lucide-react';
+import { User, Shield, Mail, Calendar, Save, Loader2, Download } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserProfile() {
@@ -23,6 +23,39 @@ export default function UserProfile() {
   const [email, setEmail] = useState('');
   const [saving, setSaving] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(true);
+  const [exportingData, setExportingData] = useState(false);
+
+  // GDPR Data Export
+  const handleGdprExport = useCallback(async () => {
+    if (!user) return;
+    setExportingData(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { toast.error('Session expirée'); return; }
+
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/gdpr-export`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
+      });
+
+      if (!res.ok) throw new Error('Export failed');
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `mes-donnees-tbos-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Données exportées avec succès');
+    } catch {
+      toast.error("Erreur lors de l'export des données");
+    } finally {
+      setExportingData(false);
+    }
+  }, [user]);
 
   const ROLE_LABELS: Record<string, string> = {
     ceo: p.ceo,
@@ -182,6 +215,33 @@ export default function UserProfile() {
                 <Save className="h-4 w-4 mr-2" />
               )}
               {p.save}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* GDPR Data Export Card */}
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Download className="h-5 w-5 text-primary" />
+              Mes données (RGPD)
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Téléchargez une copie complète de vos données personnelles stockées dans TBOS, conformément au RGPD.
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={handleGdprExport} 
+              disabled={exportingData}
+              className="w-full"
+            >
+              {exportingData ? (
+                <><Loader2 className="h-4 w-4 mr-2 animate-spin" />Export en cours...</>
+              ) : (
+                <><Download className="h-4 w-4 mr-2" />Télécharger mes données</>
+              )}
             </Button>
           </CardContent>
         </Card>
