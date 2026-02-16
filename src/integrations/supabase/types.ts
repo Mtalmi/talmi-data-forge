@@ -5202,6 +5202,57 @@ export type Database = {
         }
         Relationships: []
       }
+      n8n_workflow_results: {
+        Row: {
+          agent_type: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          request_payload: Json | null
+          result_data: Json | null
+          severity: string | null
+          started_at: string | null
+          status: string
+          summary: string | null
+          triggered_by: string | null
+          triggered_from: string | null
+          updated_at: string
+          workflow_run_id: string
+        }
+        Insert: {
+          agent_type: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          request_payload?: Json | null
+          result_data?: Json | null
+          severity?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          triggered_by?: string | null
+          triggered_from?: string | null
+          updated_at?: string
+          workflow_run_id: string
+        }
+        Update: {
+          agent_type?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          request_payload?: Json | null
+          result_data?: Json | null
+          severity?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: string | null
+          triggered_by?: string | null
+          triggered_from?: string | null
+          updated_at?: string
+          workflow_run_id?: string
+        }
+        Relationships: []
+      }
       nettoyage_quotidien: {
         Row: {
           convoyeurs_nettoyes: boolean
