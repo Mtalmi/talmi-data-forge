@@ -1,0 +1,117 @@
+import { useState, ReactNode, Suspense, lazy, ComponentType } from 'react';
+import { ChevronDown, LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
+interface LazyDashboardSectionProps {
+  title: string;
+  icon: LucideIcon;
+  children: ReactNode;
+  badge?: string | number;
+  badgeVariant?: 'default' | 'warning' | 'destructive';
+  defaultOpen?: boolean;
+  storageKey?: string;
+  className?: string;
+}
+
+function SectionSkeleton() {
+  return (
+    <div className="space-y-3 p-4 animate-pulse">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-40 rounded-xl bg-muted/30 border border-border" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * LazyDashboardSection - Only mounts children when section is opened for the first time.
+ * This prevents heavy widget imports from blocking the initial render.
+ * Once mounted, children stay mounted (no re-mount on toggle).
+ */
+export function LazyDashboardSection({
+  title,
+  icon: Icon,
+  children,
+  badge,
+  badgeVariant = 'default',
+  defaultOpen = false,
+  storageKey,
+  className,
+}: LazyDashboardSectionProps) {
+  const [open, setOpen] = useState(() => {
+    if (storageKey) {
+      const stored = localStorage.getItem(`tbos_section_${storageKey}`);
+      if (stored !== null) return stored === 'true';
+    }
+    return defaultOpen;
+  });
+
+  // Track if section was ever opened (to keep children mounted)
+  const [hasBeenOpened, setHasBeenOpened] = useState(open);
+
+  const handleOpenChange = (value: boolean) => {
+    setOpen(value);
+    if (value && !hasBeenOpened) {
+      setHasBeenOpened(true);
+    }
+    if (storageKey) {
+      localStorage.setItem(`tbos_section_${storageKey}`, String(value));
+    }
+  };
+
+  const badgeColors = {
+    default: 'bg-primary/15 text-primary border-primary/20',
+    warning: 'bg-warning/15 text-warning border-warning/20',
+    destructive: 'bg-destructive/15 text-destructive border-destructive/20',
+  };
+
+  return (
+    <Collapsible open={open} onOpenChange={handleOpenChange} className={className}>
+      <CollapsibleTrigger asChild>
+        <button className="w-full flex items-center gap-3 py-3 px-1 group cursor-pointer select-none">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="p-1.5 rounded-md bg-primary/10 group-hover:bg-primary/15 transition-all duration-300 group-hover:scale-110">
+              <Icon className="h-4 w-4 text-primary transition-transform duration-300 group-hover:rotate-[-6deg]" />
+            </div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
+              {title}
+            </h2>
+          </div>
+
+          {badge !== undefined && (
+            <span className={cn(
+              'text-[10px] font-bold px-2 py-0.5 rounded-full border',
+              badgeColors[badgeVariant]
+            )}>
+              {badge}
+            </span>
+          )}
+
+          <div className="flex-1" />
+
+          <ChevronDown
+            className={cn(
+              'h-4 w-4 text-muted-foreground transition-transform duration-200',
+              open && 'rotate-180'
+            )}
+          />
+        </button>
+      </CollapsibleTrigger>
+
+      <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
+        <div className="pb-2">
+          {hasBeenOpened ? (
+            <Suspense fallback={<SectionSkeleton />}>
+              {children}
+            </Suspense>
+          ) : (
+            <SectionSkeleton />
+          )}
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+}
