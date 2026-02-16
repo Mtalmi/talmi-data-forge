@@ -12,6 +12,7 @@ import { PWAInstallPrompt } from '@/components/pwa/PWAInstallPrompt';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import noiseTexture from '@/assets/noise-texture.png';
 
 interface MainLayoutProps {
@@ -23,6 +24,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { isMobile, isTablet } = useDeviceType();
   const showMobileNav = isMobile;
   const { previewRole, setPreviewRole } = usePreviewRole();
+  usePushNotifications();
 
   return (
     <SidebarProvider defaultOpen={!isMobile}>
