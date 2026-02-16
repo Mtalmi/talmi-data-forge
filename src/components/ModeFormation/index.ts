@@ -24,6 +24,11 @@ export { AICoachPanel } from './AICoachPanel';
 export { AccessBadge, RestrictedAccessCard } from './AccessBadge';
 export { CertificationBadge, CertificationMini } from './CertificationBadge';
 
+// Gamification
+export { GamificationDashboard, XPBar, BadgeGrid, ScoreBreakdown, StreakCounter } from './GamificationDashboard';
+export { SimulationResultsModal } from './SimulationResultsModal';
+export { useSimulationScoring } from './useSimulationScoring';
+
 // Hooks
 export { useFormationProgress } from './useFormationProgress';
 
