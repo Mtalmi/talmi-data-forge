@@ -2,12 +2,11 @@ import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+  Tooltip, TooltipContent, TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Clock, Truck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface BonLivraison {
   bl_id: string;
@@ -50,6 +49,7 @@ export function DailyTimeline({
   endHour = 20,
   onBonClick,
 }: DailyTimelineProps) {
+  const { t } = useI18n();
   const hours = useMemo(() => {
     const hrs = [];
     for (let i = startHour; i <= endHour; i++) {
@@ -102,9 +102,9 @@ export function DailyTimeline({
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-sm">
           <Clock className="h-4 w-4 text-primary" />
-          Timeline Journalière
+          {t.dailyTimeline.title}
           <Badge variant="secondary" className="ml-auto">
-            {bons.length} livraisons
+            {bons.length} {t.dailyTimeline.deliveries}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -120,7 +120,7 @@ export function DailyTimeline({
         <div className="space-y-3">
           {truckLanes.length === 0 ? (
             <div className="h-12 flex items-center justify-center text-sm text-muted-foreground border-2 border-dashed rounded-lg">
-              Aucune livraison programmée
+              {t.dailyTimeline.noDeliveries}
             </div>
           ) : (
             truckLanes.map(([truck, laneBons]) => (

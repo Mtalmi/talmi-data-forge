@@ -69,7 +69,7 @@ export function DailyProductionTimeline({
   onSendToDelivery,
   className,
 }: DailyProductionTimelineProps) {
-  const { lang } = useI18n();
+  const { t, lang } = useI18n();
   const dateLocale = getDateLocale(lang);
   const navigate = useNavigate();
   const currentHour = new Date().getHours();
@@ -116,8 +116,7 @@ export function DailyProductionTimeline({
       <div className="p-4 border-b bg-muted/30">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
-            <h3 className="font-semibold">Planning Horaire</h3>
+            <h3 className="font-semibold">{t.dailyProductionTimeline.hourlyPlanning}</h3>
           </div>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono">
@@ -131,7 +130,7 @@ export function DailyProductionTimeline({
               onClick={() => navigate(buildPlanningUrl(selectedDate))}
             >
               <ExternalLink className="h-3 w-3" />
-              Planning
+              {t.dailyProductionTimeline.planning}
             </Button>
           </div>
         </div>
@@ -140,17 +139,17 @@ export function DailyProductionTimeline({
         <div className="flex gap-4 text-sm">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-blue-500" />
-            <span className="text-muted-foreground">À faire:</span>
+            <span className="text-muted-foreground">{t.dailyProductionTimeline.toDo}:</span>
             <span className="font-semibold">{pendingBons}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-violet-500" />
-            <span className="text-muted-foreground">En chargement:</span>
+            <span className="text-muted-foreground">{t.dailyProductionTimeline.loading}:</span>
             <span className="font-semibold">{inProgressBons}</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-amber-500" />
-            <span className="text-muted-foreground">À valider:</span>
+            <span className="text-muted-foreground">{t.dailyProductionTimeline.toValidate}:</span>
             <span className="font-semibold">{completedBons}</span>
           </div>
         </div>
@@ -163,7 +162,7 @@ export function DailyProductionTimeline({
             <div className="mb-4">
               <div className="flex items-center gap-2 px-2 py-1.5 mb-2">
                 <AlertTriangle className="h-4 w-4 text-warning" />
-                <span className="text-sm font-medium text-warning">Sans heure programmée</span>
+                <span className="text-sm font-medium text-warning">{t.dailyProductionTimeline.unscheduled}</span>
                 <Badge variant="secondary" className="ml-auto text-xs">
                   {bonsByHour.unscheduled.length}
                 </Badge>
@@ -258,7 +257,7 @@ export function DailyProductionTimeline({
                       </div>
                     ) : (
                       <span className="text-xs text-muted-foreground/50">
-                        {isPastHour ? '—' : 'Disponible'}
+                        {isPastHour ? '—' : t.dailyProductionTimeline.available}
                       </span>
                     )}
                   </div>
@@ -274,7 +273,7 @@ export function DailyProductionTimeline({
         <div className="p-6 text-center border-t">
           <Factory className="h-10 w-10 mx-auto text-muted-foreground/30 mb-2" />
           <p className="text-sm text-muted-foreground">
-            Aucune production prévue pour cette journée
+            {t.dailyProductionTimeline.noProduction}
           </p>
         </div>
       )}
@@ -297,6 +296,7 @@ const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
     { bon, statusConfig, onSelect, onStart, onSendToDelivery, isCurrentHour, isLate },
     ref
   ) {
+    const { t } = useI18n();
     const [qcUnlocked, setQcUnlocked] = useState(false);
     
     const StatusIcon = statusConfig.icon;
@@ -340,7 +340,7 @@ const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
                   isLate ? "text-destructive border-destructive/30" : statusConfig.textColor
                 )}
               >
-                {isLate ? "En Retard" : statusConfig.label}
+                {isLate ? t.dailyProductionTimeline.late : statusConfig.label}
               </Badge>
             </div>
 
@@ -371,7 +371,7 @@ const BonTimelineCard = React.forwardRef<HTMLDivElement, BonTimelineCardProps>(
                 <span className="text-lg font-bold">{bon.volume_m3} m³</span>
                 {!hasTruck && bon.workflow_status === "planification" && (
                   <Badge variant="outline" className="text-[10px] text-warning border-warning/30">
-                    Sans toupie
+                    {t.dailyProductionTimeline.noTruck}
                   </Badge>
                 )}
               </div>

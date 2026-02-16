@@ -6,8 +6,11 @@ import { cn } from '@/lib/utils';
 import { useAIAnomalyDetector } from '@/hooks/useAIAnomalyDetector';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 export function AIAnomalyScannerWidget() {
+  const { t } = useI18n();
+  const ai = t.aiAnomaly;
   const { scanTransactions, isScanning, lastScan } = useAIAnomalyDetector();
   const [scanType, setScanType] = useState<string | null>(null);
 
@@ -40,13 +43,13 @@ export function AIAnomalyScannerWidget() {
       });
 
       if (result && result.findings.length === 0) {
-        toast.success('🛡️ Aucune anomalie détectée');
+        toast.success(ai.noAnomalyToast);
       } else if (result) {
-        toast.warning(`🚨 ${result.findings.length} anomalie(s) détectée(s)`);
+        toast.warning(ai.anomaliesFound.replace('{count}', String(result.findings.length)));
       }
     } catch (err) {
       console.error('Scan error:', err);
-      toast.error('Erreur lors du scan AI');
+      toast.error(ai.scanError);
     }
   };
 
@@ -65,8 +68,7 @@ export function AIAnomalyScannerWidget() {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ShieldAlert className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-sm">🤖 AI Anomaly Scanner</h3>
+          <h3 className="font-semibold text-sm">{ai.title}</h3>
         </div>
         <Button
           size="sm"
@@ -80,7 +82,7 @@ export function AIAnomalyScannerWidget() {
           ) : (
             <RefreshCw className="h-3.5 w-3.5" />
           )}
-          {isScanning ? 'Scan en cours...' : 'Lancer Scan'}
+          {isScanning ? ai.scanning : ai.startScan}
         </Button>
       </div>
 
@@ -88,8 +90,8 @@ export function AIAnomalyScannerWidget() {
         <div className="flex items-center justify-center py-6 gap-3">
           <Bot className="h-8 w-8 text-primary animate-pulse" />
           <div>
-            <p className="text-sm font-medium">Analyse AI en cours...</p>
-            <p className="text-[10px] text-muted-foreground">Vérification des 60 dernières transactions</p>
+            <p className="text-sm font-medium">{ai.analyzing}</p>
+            <p className="text-[10px] text-muted-foreground">{ai.checkingTransactions}</p>
           </div>
         </div>
       )}
@@ -100,10 +102,10 @@ export function AIAnomalyScannerWidget() {
             <div className="flex items-center gap-2">
               <span className="text-lg">{riskIcons[lastScan.risk_level]}</span>
               <span className="font-semibold text-sm capitalize">
-                Risque {lastScan.risk_level === 'low' ? 'Faible' : lastScan.risk_level === 'medium' ? 'Moyen' : lastScan.risk_level === 'high' ? 'Élevé' : 'Critique'}
+                {ai.riskLabel} {lastScan.risk_level === 'low' ? ai.riskLow : lastScan.risk_level === 'medium' ? ai.riskMedium : lastScan.risk_level === 'high' ? ai.riskHigh : ai.riskCritical}
               </span>
               <Badge variant="outline" className="ml-auto text-[10px]">
-                {lastScan.findings.length} finding(s)
+                {lastScan.findings.length} {ai.findings}
               </Badge>
             </div>
           </div>
@@ -111,7 +113,7 @@ export function AIAnomalyScannerWidget() {
           {lastScan.findings.length === 0 && (
             <div className="flex items-center gap-2 text-success text-sm py-2">
               <CheckCircle className="h-4 w-4" />
-              Aucune anomalie détectée
+              {ai.noAnomaly}
             </div>
           )}
 
@@ -138,7 +140,7 @@ export function AIAnomalyScannerWidget() {
       {!isScanning && !lastScan && (
         <div className="text-center py-4 text-muted-foreground">
           <Bot className="h-8 w-8 mx-auto mb-2 opacity-30" />
-          <p className="text-xs">Cliquez "Lancer Scan" pour analyser vos transactions récentes</p>
+          <p className="text-xs">{ai.clickToScan}</p>
         </div>
       )}
     </div>

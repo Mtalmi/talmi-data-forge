@@ -1,26 +1,14 @@
 import { useState, useEffect } from 'react';
 import { ProductionBatchCardMobile } from './ProductionBatchCardMobile';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Factory, 
-  Truck, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock,
-  ExternalLink
-} from 'lucide-react';
+import { Factory, Truck, AlertTriangle, CheckCircle, Clock, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
-
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Batch {
   bl_id: string;
@@ -43,27 +31,25 @@ interface ProductionBatchListResponsiveProps {
   onNavigateToBc?: (bcId: string) => void;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  'pret_production': { label: 'Prêt', color: 'bg-blue-500', icon: Clock },
-  'production': { label: 'En Production', color: 'bg-orange-500', icon: Factory },
-  'validation_technique': { label: 'Validation', color: 'bg-purple-500', icon: CheckCircle },
-  'en_livraison': { label: 'En Livraison', color: 'bg-yellow-500', icon: Truck },
-  'livre': { label: 'Livré', color: 'bg-green-500', icon: CheckCircle },
-  'facture': { label: 'Facturé', color: 'bg-gray-500', icon: CheckCircle },
-};
-
 export function ProductionBatchListResponsive({
-  batches,
-  onViewDetails,
-  onNavigateToBc
+  batches, onViewDetails, onNavigateToBc
 }: ProductionBatchListResponsiveProps) {
+  const { t } = useI18n();
+  const pb = t.productionBatchList;
   const [isMobile, setIsMobile] = useState(false);
 
+  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+    'pret_production': { label: pb.ready, color: 'bg-blue-500', icon: Clock },
+    'production': { label: pb.inProduction, color: 'bg-orange-500', icon: Factory },
+    'validation_technique': { label: pb.techValidation, color: 'bg-purple-500', icon: CheckCircle },
+    'en_livraison': { label: pb.inDelivery, color: 'bg-yellow-500', icon: Truck },
+    'livre': { label: pb.delivered, color: 'bg-green-500', icon: CheckCircle },
+    'facture': { label: pb.invoiced, color: 'bg-gray-500', icon: CheckCircle },
+  };
+
+
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -75,7 +61,7 @@ export function ProductionBatchListResponsive({
         {batches.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <Factory className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Aucun lot en production</p>
+            <p>{pb.noBatches}</p>
           </div>
         ) : (
           batches.map((batch) => (
@@ -97,14 +83,14 @@ export function ProductionBatchListResponsive({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>BL ID</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead>Formule</TableHead>
-            <TableHead className="text-right">Volume</TableHead>
-            <TableHead>Statut</TableHead>
-            <TableHead>Validation</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{pb.blId}</TableHead>
+            <TableHead>{pb.date}</TableHead>
+            <TableHead>{pb.client}</TableHead>
+            <TableHead>{pb.formula}</TableHead>
+            <TableHead className="text-right">{pb.volume}</TableHead>
+            <TableHead>{pb.status}</TableHead>
+            <TableHead>{pb.validation}</TableHead>
+            <TableHead className="text-right">{pb.actions}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -112,7 +98,7 @@ export function ProductionBatchListResponsive({
             <TableRow>
               <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
                 <Factory className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Aucun lot en production</p>
+                <p>{pb.noBatches}</p>
               </TableCell>
             </TableRow>
           ) : (
@@ -150,7 +136,7 @@ export function ProductionBatchListResponsive({
                   <TableCell>
                     {batch.validation_technique !== null && (
                       <Badge variant={batch.validation_technique ? "secondary" : "destructive"} className={batch.validation_technique ? "bg-success/10 text-success border-success/30" : ""}>
-                        {batch.validation_technique ? 'Validé' : 'En Attente'}
+                      {batch.validation_technique ? pb.validated : pb.pending}
                       </Badge>
                     )}
                   </TableCell>
@@ -161,7 +147,7 @@ export function ProductionBatchListResponsive({
                         size="sm"
                         variant="default"
                       >
-                        Détails
+                        {pb.details}
                       </Button>
                       {batch.bc_id && onNavigateToBc && (
                         <Button 
