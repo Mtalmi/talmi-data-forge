@@ -77,6 +77,8 @@ const AIAnomalyScannerWidget = lazy(() => import('@/components/dashboard/AIAnoma
 const CeoEmergencyOverride = lazy(() => import('@/components/dashboard/CeoEmergencyOverride').then(m => ({ default: m.CeoEmergencyOverride })));
 const CeoCodeManager = lazy(() => import('@/components/dashboard/CeoCodeManager').then(m => ({ default: m.CeoCodeManager })));
 const AuditHistoryChart = lazy(() => import('@/components/dashboard/AuditHistoryChart').then(m => ({ default: m.AuditHistoryChart })));
+const ComplianceDashboardWidget = lazy(() => import('@/components/dashboard/ComplianceDashboardWidget').then(m => ({ default: m.ComplianceDashboardWidget })));
+const RegulatoryChecklistWidget = lazy(() => import('@/components/dashboard/RegulatoryChecklistWidget').then(m => ({ default: m.RegulatoryChecklistWidget })));
 
 // Section 6 - Command Center
 const ExecutiveCommandCenter = lazy(() => import('@/components/dashboard/ExecutiveCommandCenter').then(m => ({ default: m.ExecutiveCommandCenter })));
@@ -653,6 +655,16 @@ export default function Dashboard() {
               {/* CEO Tools */}
               <CeoCodeManager />
               <AuditHistoryChart />
+
+              {/* Compliance & Regulatory */}
+              <div className="bento-grid">
+                <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+                  <ComplianceDashboardWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="emerald">
+                  <RegulatoryChecklistWidget />
+                </ParallaxCard>
+              </div>
             </div>
           </LazyDashboardSection>
         )}
