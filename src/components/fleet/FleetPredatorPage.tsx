@@ -28,9 +28,13 @@ import {
   Clock,
   X,
   Signal,
-  Fuel
+  Fuel,
+  Route,
+  Navigation2
 } from 'lucide-react';
 import { FleetGPSMap, type GPSVehicle } from './FleetGPSMap';
+import { TripHistoryReplay } from './TripHistoryReplay';
+import { LiveBLTracker } from './LiveBLTracker';
 import { useGPSTracking } from '@/hooks/useGPSTracking';
 import { useGPSDemoMode } from '@/hooks/useGPSDemoMode';
 import { toast } from 'sonner';
@@ -252,11 +256,21 @@ export function FleetPredatorPage() {
 
       {/* Tabs */}
       <Tabs defaultValue="map" className="space-y-4">
-        <TabsList className="bg-card/50 border border-border">
+        <TabsList className="bg-card/50 border border-border flex-wrap">
           <TabsTrigger value="map" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
             <Map className="h-4 w-4" />
             <span className="hidden sm:inline">Carte Tactique</span>
             <span className="sm:hidden">Carte</span>
+          </TabsTrigger>
+          <TabsTrigger value="missions" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
+            <Navigation2 className="h-4 w-4" />
+            <span className="hidden sm:inline">Missions Live</span>
+            <span className="sm:hidden">Missions</span>
+          </TabsTrigger>
+          <TabsTrigger value="history" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
+            <Route className="h-4 w-4" />
+            <span className="hidden sm:inline">Historique Trajets</span>
+            <span className="sm:hidden">Trajets</span>
           </TabsTrigger>
           <TabsTrigger value="zones" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
             <Shield className="h-4 w-4" />
@@ -367,6 +381,16 @@ export function FleetPredatorPage() {
               </ScrollArea>
             </div>
           </div>
+        </TabsContent>
+
+        {/* Missions Live Tab */}
+        <TabsContent value="missions" className="mt-0">
+          <LiveBLTracker />
+        </TabsContent>
+
+        {/* Trip History Tab */}
+        <TabsContent value="history" className="mt-0">
+          <TripHistoryReplay />
         </TabsContent>
 
         {/* Zones Tab */}

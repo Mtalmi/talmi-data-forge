@@ -42,6 +42,7 @@ import { AIInsightsWidget } from '@/components/dashboard/AIInsightsWidget';
 import { SmartAlertsWidget } from '@/components/dashboard/SmartAlertsWidget';
 import { MvsM1Sparkline } from '@/components/dashboard/MvsM1Sparkline';
 import { BillingDashboardWidget } from '@/components/dashboard/BillingDashboardWidget';
+import { FleetDashboardWidget } from '@/components/dashboard/FleetDashboardWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -576,6 +577,9 @@ export default function Dashboard() {
             <div className="bento-grid">
               <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
                 <LiveFleetMap />
+              </ParallaxCard>
+              <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
+                <FleetDashboardWidget />
               </ParallaxCard>
               <ParallaxCard className="bento-standard" glowColor="emerald" intensity="medium">
                 <MaintenanceAlertWidget />
