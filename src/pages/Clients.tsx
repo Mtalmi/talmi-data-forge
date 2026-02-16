@@ -4,6 +4,7 @@ import { useI18n } from '@/i18n/I18nContext';
 import { getNumberLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
+import { ClientPortalDashboard } from '@/components/client-portal/ClientPortalDashboard';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
@@ -109,6 +110,10 @@ export default function Clients() {
   // Invoice dialog state
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<{ id: string; name: string } | null>(null);
+  
+  // Portal dialog state
+  const [portalDialogOpen, setPortalDialogOpen] = useState(false);
+  const [portalClient, setPortalClient] = useState<{ id: string; name: string } | null>(null);
   
   // Edit mode state
   const [editingClient, setEditingClient] = useState<Client | null>(null);
@@ -848,6 +853,18 @@ export default function Clients() {
                             <Button 
                               variant="ghost" 
                               size="sm" 
+                              className="h-8 w-8 p-0 text-primary hover:text-primary"
+                              title="Portail Client"
+                              onClick={() => {
+                                setPortalClient({ id: c.client_id, name: c.nom_client });
+                                setPortalDialogOpen(true);
+                              }}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
                               className="h-8 w-8 p-0"
                               title={t.pages.clients.editTooltip}
                               onClick={() => openEditDialog(c)}
@@ -943,6 +960,24 @@ export default function Clients() {
                 </Button>
               </div>
             </div>
+          </DialogContent>
+        </Dialog>
+        {/* Client Portal Dialog */}
+        <Dialog open={portalDialogOpen} onOpenChange={setPortalDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-primary" />
+                Portail Client
+              </DialogTitle>
+            </DialogHeader>
+            {portalClient && (
+              <ClientPortalDashboard
+                clientId={portalClient.id}
+                clientName={portalClient.name}
+                onClose={() => setPortalDialogOpen(false)}
+              />
+            )}
           </DialogContent>
         </Dialog>
       </div>
