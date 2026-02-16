@@ -73,10 +73,15 @@ function NotificationItem({ alert, onRead, onDismiss, onNavigate, getTypeLabel }
           <Icon className={cn('h-4 w-4', config.color)} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="outline" className="text-xs px-1.5 py-0">
               {getTypeLabel(alert.type_alerte)}
             </Badge>
+            {(alert.escalation_level || 0) > 0 && (
+              <Badge className="text-xs px-1.5 py-0 bg-red-600 text-white border-red-700 animate-pulse">
+                🔺 ESC {alert.escalation_level}
+              </Badge>
+            )}
             {!alert.lu && (
               <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             )}

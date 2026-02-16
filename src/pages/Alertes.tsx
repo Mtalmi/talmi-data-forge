@@ -366,12 +366,33 @@ function AlertCard({ alert, onRead, onDismiss, onNavigate, getTypeLabel, canMana
               <Badge className={cn('text-xs', config.bgColor, config.color)}>
                 {config.label}
               </Badge>
+              {(alert.escalation_level || 0) > 0 && (
+                <Badge className="text-xs bg-destructive text-destructive-foreground animate-pulse">
+                  🔺 Escalade Niv. {alert.escalation_level}
+                </Badge>
+              )}
               {!alert.lu && (
                 <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
               )}
             </div>
             <h4 className="font-semibold mt-2">{alert.titre}</h4>
             <p className="text-sm text-muted-foreground mt-1">{alert.message}</p>
+            
+            {/* Escalation timeline */}
+            {alert.escalation_history && Array.isArray(alert.escalation_history) && alert.escalation_history.length > 0 && (
+              <div className="mt-2 p-2 rounded-md bg-destructive/5 border border-destructive/20">
+                <p className="text-xs font-medium text-destructive mb-1">Historique d'escalade:</p>
+                {(alert.escalation_history as Array<{level: number; escalated_at: string; to_role: string; delay_minutes: number}>).map((h, idx) => (
+                  <div key={idx} className="text-xs text-muted-foreground flex items-center gap-2">
+                    <span className="font-mono">Niv.{h.level}</span>
+                    <span>→ {h.to_role}</span>
+                    <span className="text-muted-foreground/60">
+                      ({formatDistanceToNow(new Date(h.escalated_at), { addSuffix: true, locale: dateLocale || undefined })})
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
             
             <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
               <span>{timeAgo}</span>
