@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,13 +19,37 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
 });
 
-const signupSchema = loginSchema.extend({
+const passwordStrengthSchema = z.string()
+  .min(8, 'Minimum 8 caractères')
+  .regex(/[A-Z]/, 'Au moins une majuscule requise')
+  .regex(/[0-9]/, 'Au moins un chiffre requis')
+  .regex(/[^A-Za-z0-9]/, 'Au moins un caractère spécial requis (!@#$...)');
+
+const signupSchema = z.object({
+  email: z.string().email('Adresse email invalide'),
+  password: passwordStrengthSchema,
   fullName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Les mots de passe ne correspondent pas",
   path: ["confirmPassword"],
 });
+
+// Password strength calculator
+function getPasswordStrength(password: string): { score: number; label: string; color: string } {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+
+  if (score <= 1) return { score, label: 'Faible', color: 'bg-destructive' };
+  if (score <= 2) return { score, label: 'Moyen', color: 'bg-orange-500' };
+  if (score <= 3) return { score, label: 'Bon', color: 'bg-yellow-500' };
+  if (score <= 4) return { score, label: 'Fort', color: 'bg-emerald-500' };
+  return { score, label: 'Excellent', color: 'bg-emerald-400' };
+}
 
 // Animated counter component
 function AnimatedStat({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
@@ -89,6 +114,26 @@ export default function Auth() {
     return () => window.removeEventListener('mousemove', handleMove);
   }, []);
 
+  // Rate limit check before login
+  const checkRateLimit = useCallback(async (email: string): Promise<boolean> => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rate-limit-check`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+        body: JSON.stringify({ email, action: 'login' }),
+      });
+      const data = await res.json();
+      if (!data.allowed) {
+        setError(data.message || 'Trop de tentatives. Veuillez réessayer plus tard.');
+        return false;
+      }
+      return true;
+    } catch {
+      // If rate limit service is down, allow login (fail open)
+      return true;
+    }
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -96,6 +141,11 @@ export default function Auth() {
     try {
       const validation = loginSchema.safeParse({ email: loginEmail, password: loginPassword });
       if (!validation.success) { setError(validation.error.errors[0].message); setLoading(false); return; }
+      
+      // Check rate limit
+      const allowed = await checkRateLimit(loginEmail);
+      if (!allowed) { setLoading(false); return; }
+      
       const { error } = await signIn(loginEmail, loginPassword);
       if (error) {
         setError(error.message.includes('Invalid login credentials') ? 'Email ou mot de passe incorrect' : error.message);
@@ -353,16 +403,17 @@ export default function Auth() {
                     <Label htmlFor="signup-email" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</Label>
                     <Input id="signup-email" type="email" placeholder="vous@exemple.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mot de passe</Label>
-                      <Input id="signup-password" type="password" placeholder="••••••" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-confirm" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Confirmer</Label>
-                      <Input id="signup-confirm" type="password" placeholder="••••••" value={signupConfirmPassword} onChange={(e) => setSignupConfirmPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
-                    </div>
-                  </div>
+                   <div className="grid grid-cols-2 gap-3">
+                     <div className="space-y-2">
+                       <Label htmlFor="signup-password" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Mot de passe</Label>
+                       <Input id="signup-password" type="password" placeholder="••••••" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
+                     </div>
+                     <div className="space-y-2">
+                       <Label htmlFor="signup-confirm" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Confirmer</Label>
+                       <Input id="signup-confirm" type="password" placeholder="••••••" value={signupConfirmPassword} onChange={(e) => setSignupConfirmPassword(e.target.value)} required className="h-12 bg-input/50 border-border/50 rounded-xl" />
+                     </div>
+                   </div>
+                   <PasswordStrengthMeter password={signupPassword} />
                   <Button type="submit" className="w-full h-12 rounded-xl font-bold text-sm tracking-wide bg-gradient-to-r from-primary to-primary/80 hover:shadow-[0_6px_30px_hsl(var(--primary)/0.5)] transition-all duration-300" disabled={loading}>
                     {loading ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Création...</>

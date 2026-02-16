@@ -10,6 +10,7 @@
 import { useEffect, ReactNode } from 'react';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { enforceHttps, logSecurityStatus } from '@/lib/security';
+import { applySecurityHeaders } from '@/lib/securityHeaders';
 import { useAuth } from '@/hooks/useAuth';
 
 interface SecurityProviderProps {
@@ -33,9 +34,10 @@ export function SecurityProvider({ children }: SecurityProviderProps) {
     },
   });
 
-  // HTTPS enforcement on mount
+  // HTTPS enforcement + security headers on mount
   useEffect(() => {
     enforceHttps();
+    applySecurityHeaders();
   }, []);
 
   // Log security status in development
