@@ -53,3 +53,6 @@ verify_jwt = false
 
 [functions.camera-webhook]
 verify_jwt = false
+
+[functions.notify-whatsapp-n8n]
+verify_jwt = false
