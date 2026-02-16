@@ -9,6 +9,7 @@ import {
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { FacturePdfGenerator } from '@/components/documents/FacturePdfGenerator';
+import { FacturePdfProGenerator } from '@/components/documents/FacturePdfProGenerator';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 
@@ -258,6 +259,7 @@ export function FactureDetailDialog({ facture, open, onOpenChange }: FactureDeta
               {c.close}
             </Button>
             <FacturePdfGenerator facture={pdfFacture} />
+            <FacturePdfProGenerator facture={pdfFacture} />
           </div>
         </div>
       </DialogContent>
