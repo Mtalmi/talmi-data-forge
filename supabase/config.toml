@@ -56,3 +56,6 @@ verify_jwt = false
 
 [functions.notify-whatsapp-n8n]
 verify_jwt = false
+
+[functions.n8n-orchestrator]
+verify_jwt = false
