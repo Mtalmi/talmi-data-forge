@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe, Eye } from 'lucide-react';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
+import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
 import authIndustrial from '@/assets/auth-industrial.jpg';
 
 
@@ -132,6 +133,10 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen flex bg-background relative overflow-hidden">
+      {/* Floating Language Switcher */}
+      <div className="fixed top-6 right-6 z-50">
+        <LanguageSwitcher variant="compact" />
+      </div>
       {/* Ambient Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div

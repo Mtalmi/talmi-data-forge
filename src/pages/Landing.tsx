@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
+import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
 import heroPlantNight from '@/assets/hero_plant_night.jpg';
 import statsTexture from '@/assets/stats-texture.jpg';
 import modulesBg from '@/assets/modules-bg.jpg';
@@ -150,8 +151,9 @@ export default function Landing() {
 
   return (
     <div ref={containerRef} className="bg-background text-foreground">
-      {/* FLOATING THEME TOGGLE */}
-      <div className="fixed top-6 right-6 z-50">
+      {/* FLOATING CONTROLS */}
+      <div className="fixed top-6 right-6 z-50 flex items-center gap-2">
+        <LanguageSwitcher variant="compact" />
         <ThemeToggle />
       </div>
 
