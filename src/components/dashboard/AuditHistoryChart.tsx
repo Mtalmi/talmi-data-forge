@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { ClipboardCheck, TrendingUp, TrendingDown, RefreshCw, AlertTriangle, Shield, Award } from 'lucide-react';
-import { format } from 'date-fns';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ClipboardCheck, TrendingUp, TrendingDown, RefreshCw, AlertTriangle, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface AuditRecord {
   id: string;
@@ -24,13 +24,13 @@ interface AuditRecord {
 
 export function AuditHistoryChart() {
   const { isCeo } = useAuth();
+  const { t } = useI18n();
+  const ah = t.auditHistory;
   const [audits, setAudits] = useState<AuditRecord[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (isCeo) {
-      fetchAudits();
-    }
+    if (isCeo) fetchAudits();
   }, [isCeo]);
 
   const fetchAudits = async () => {
@@ -42,7 +42,6 @@ export function AuditHistoryChart() {
         .eq('status', 'submitted')
         .order('submitted_at', { ascending: true })
         .limit(12);
-
       if (error) throw error;
       setAudits((data as AuditRecord[]) || []);
     } catch (error) {
@@ -54,7 +53,6 @@ export function AuditHistoryChart() {
 
   if (!isCeo) return null;
 
-  // Transform data for chart
   const chartData = audits.map(a => ({
     period: a.audit_period,
     score: a.compliance_score || 0,
@@ -62,7 +60,6 @@ export function AuditHistoryChart() {
     cashVariance: Math.abs(a.cash_variance_pct || 0),
   }));
 
-  // Calculate averages from last 3 audits
   const last3Audits = audits.slice(-3);
   const avgScore = last3Audits.length > 0 
     ? (last3Audits.reduce((sum, a) => sum + (a.compliance_score || 0), 0) / last3Audits.length)
@@ -75,9 +72,9 @@ export function AuditHistoryChart() {
     : 0;
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-emerald-600';
-    if (score >= 70) return 'text-amber-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-success';
+    if (score >= 70) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getScoreGrade = (score: number) => {
@@ -97,8 +94,8 @@ export function AuditHistoryChart() {
               <Shield className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg">Score de Conformité</CardTitle>
-              <CardDescription>Moyenne des 3 derniers audits externes</CardDescription>
+              <CardTitle className="text-lg">{ah.title}</CardTitle>
+              <CardDescription>{ah.subtitle}</CardDescription>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={fetchAudits}>
@@ -114,15 +111,14 @@ export function AuditHistoryChart() {
         ) : audits.length === 0 ? (
           <div className="h-[200px] flex flex-col items-center justify-center text-muted-foreground">
             <ClipboardCheck className="h-10 w-10 mb-3 opacity-50" />
-            <p className="font-medium">Aucun audit soumis</p>
-            <p className="text-sm">Les audits bi-mensuels apparaîtront ici</p>
+            <p className="font-medium">{ah.noAudits}</p>
+            <p className="text-sm">{ah.noAuditsDesc}</p>
           </div>
         ) : (
           <>
-            {/* Compliance Score Summary */}
             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl mb-4">
               <div>
-                <p className="text-sm text-slate-300 mb-1">Score Moyen (3 derniers)</p>
+                <p className="text-sm text-slate-300 mb-1">{ah.avgScore}</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold">{avgScore.toFixed(0)}</span>
                   <span className="text-lg text-slate-400">/ 100</span>
@@ -131,79 +127,61 @@ export function AuditHistoryChart() {
               <div className="text-center">
                 <div className={cn(
                   "text-5xl font-black",
-                  avgScore >= 90 ? "text-emerald-400" : avgScore >= 70 ? "text-amber-400" : "text-red-400"
+                  avgScore >= 90 ? "text-success" : avgScore >= 70 ? "text-warning" : "text-destructive"
                 )}>
                   {getScoreGrade(avgScore)}
                 </div>
-                <p className="text-xs text-slate-400 mt-1">Grade</p>
+                <p className="text-xs text-slate-400 mt-1">{ah.grade}</p>
               </div>
               <div className="flex items-center gap-2">
                 {scoreTrend >= 0 ? (
-                  <TrendingUp className="h-5 w-5 text-emerald-400" />
+                  <TrendingUp className="h-5 w-5 text-success" />
                 ) : (
-                  <TrendingDown className="h-5 w-5 text-red-400" />
+                  <TrendingDown className="h-5 w-5 text-destructive" />
                 )}
-                <span className={scoreTrend >= 0 ? "text-emerald-400" : "text-red-400"}>
+                <span className={scoreTrend >= 0 ? "text-success" : "text-destructive"}>
                   {scoreTrend >= 0 ? '+' : ''}{scoreTrend.toFixed(0)} pts
                 </span>
               </div>
             </div>
 
-            {/* Quick Stats */}
             <div className="grid grid-cols-4 gap-2 mb-4">
               <div className="p-2 bg-muted/50 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground">Audits</p>
+                <p className="text-xs text-muted-foreground">{ah.audits}</p>
                 <p className="text-lg font-bold">{audits.length}</p>
               </div>
               <div className="p-2 bg-muted/50 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground">Dernier</p>
+                <p className="text-xs text-muted-foreground">{ah.latest}</p>
                 <p className={cn("text-lg font-bold", getScoreColor(latestAudit?.compliance_score || 0))}>
                   {latestAudit?.compliance_score?.toFixed(0) || '—'}
                 </p>
               </div>
               <div className="p-2 bg-muted/50 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground">Écart Max</p>
+                <p className="text-xs text-muted-foreground">{ah.maxVariance}</p>
                 <p className="text-lg font-bold">{(latestAudit?.silo_variance_max_pct || 0).toFixed(1)}%</p>
               </div>
               <div className="p-2 bg-muted/50 rounded-lg text-center">
-                <p className="text-xs text-muted-foreground">Anomalies</p>
-                <p className="text-lg font-bold">
-                  {audits.filter(a => a.truck_anomaly_detected).length}
-                </p>
+                <p className="text-xs text-muted-foreground">{ah.anomalies}</p>
+                <p className="text-lg font-bold">{audits.filter(a => a.truck_anomaly_detected).length}</p>
               </div>
             </div>
 
-            {/* Trend Chart */}
             <div className="h-[160px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="period" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} domain={[0, 100]} />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'hsl(var(--background))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="score" 
-                    name="Score Compliance" 
-                    stroke="hsl(var(--primary))" 
-                    strokeWidth={3}
-                    dot={{ fill: 'hsl(var(--primary))', r: 4 }}
-                  />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }} />
+                  <Line type="monotone" dataKey="score" name={ah.complianceScore} stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: 'hsl(var(--primary))', r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
 
-            {/* Alert for low score */}
             {latestAudit && latestAudit.compliance_score < 70 && (
-              <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2 text-sm text-red-600">
+              <div className="mt-3 p-3 bg-destructive/10 border border-destructive/30 rounded-lg flex items-center gap-2 text-sm text-destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="font-medium">Score de conformité critique - Action requise</span>
+                <span className="font-medium">{ah.criticalAlert}</span>
               </div>
             )}
           </>

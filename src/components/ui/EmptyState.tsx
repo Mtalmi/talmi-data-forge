@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface EmptyStateProps {
   icon: LucideIcon;
@@ -79,39 +80,30 @@ export function EmptyState({
   );
 }
 
-// These configs are now deprecated in favor of t.emptyStates from i18n
-// Kept for backward compatibility - consumers should migrate to useI18n()
+// Dynamic configs using i18n - use useEmptyStateConfigs() in components
+export function useEmptyStateConfigs() {
+  const { t } = useI18n();
+  const es = t.emptyStates;
+  return {
+    noDeliveries: { title: es.noDeliveries, description: es.noDeliveriesDesc },
+    noProduction: { title: es.noProduction, description: es.noProductionDesc },
+    noClients: { title: es.noClients, description: es.noClientsDesc },
+    noStock: { title: es.noStock, description: es.noStockDesc },
+    noTests: { title: es.noTests, description: es.noTestsDesc },
+    noExpenses: { title: es.noExpenses, description: es.noExpensesDesc },
+    noDriverDeliveries: { title: es.noDriverDeliveries, description: es.noDriverDeliveriesDesc },
+    noPending: { title: es.noPending, description: es.noPendingDesc },
+  };
+}
+
+// Deprecated static configs kept for backward compatibility
 export const emptyStateConfigs = {
-  noDeliveries: {
-    title: 'Aucune livraison',
-    description: 'Les livraisons du jour apparaîtront ici une fois planifiées.',
-  },
-  noProduction: {
-    title: 'Aucun bon en production',
-    description: 'Les bons passent ici après la planification pour saisir les consommations réelles.',
-  },
-  noClients: {
-    title: 'Aucun client enregistré',
-    description: 'Ajoutez votre premier client pour commencer à créer des commandes.',
-  },
-  noStock: {
-    title: 'Stock non configuré',
-    description: 'Configurez les niveaux de stock pour suivre les matières premières.',
-  },
-  noTests: {
-    title: 'Aucun test programmé',
-    description: 'Les tests d\'affaissement apparaîtront ici après les livraisons.',
-  },
-  noExpenses: {
-    title: 'Aucune dépense enregistrée',
-    description: 'Photographiez vos justificatifs pour enregistrer les dépenses.',
-  },
-  noDriverDeliveries: {
-    title: 'Aucune livraison assignée',
-    description: 'Sélectionnez votre camion pour voir vos livraisons du jour.',
-  },
-  noPending: {
-    title: 'Tout est à jour',
-    description: 'Il n\'y a aucune tâche en attente pour le moment.',
-  },
+  noDeliveries: { title: 'Aucune livraison', description: 'Les livraisons du jour apparaîtront ici une fois planifiées.' },
+  noProduction: { title: 'Aucun bon en production', description: 'Les bons passent ici après la planification pour saisir les consommations réelles.' },
+  noClients: { title: 'Aucun client enregistré', description: 'Ajoutez votre premier client pour commencer à créer des commandes.' },
+  noStock: { title: 'Stock non configuré', description: 'Configurez les niveaux de stock pour suivre les matières premières.' },
+  noTests: { title: 'Aucun test programmé', description: 'Les tests d\'affaissement apparaîtront ici après les livraisons.' },
+  noExpenses: { title: 'Aucune dépense enregistrée', description: 'Photographiez vos justificatifs pour enregistrer les dépenses.' },
+  noDriverDeliveries: { title: 'Aucune livraison assignée', description: 'Sélectionnez votre camion pour voir vos livraisons du jour.' },
+  noPending: { title: 'Tout est à jour', description: 'Il n\'y a aucune tâche en attente pour le moment.' },
 };

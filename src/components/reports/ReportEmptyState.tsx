@@ -1,5 +1,6 @@
 import { FileText, BarChart3, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface ReportEmptyStateProps {
   type: 'chart' | 'table' | 'forecast';
@@ -8,21 +9,24 @@ interface ReportEmptyStateProps {
 }
 
 export function ReportEmptyState({ type, message, className }: ReportEmptyStateProps) {
+  const { t } = useI18n();
+  const re = t.reportEmpty;
+
   const config = {
     chart: {
       icon: BarChart3,
-      title: 'Aucune donnée',
-      description: message || 'Pas de données disponibles pour cette période',
+      title: re.chartTitle,
+      description: message || re.chartDesc,
     },
     table: {
       icon: FileText,
-      title: 'Aucun enregistrement',
-      description: message || 'Aucune donnée à afficher pour les critères sélectionnés',
+      title: re.tableTitle,
+      description: message || re.tableDesc,
     },
     forecast: {
       icon: TrendingUp,
-      title: 'Prévisions indisponibles',
-      description: message || 'Pas assez de données historiques pour générer des prévisions',
+      title: re.forecastTitle,
+      description: message || re.forecastDesc,
     },
   };
 

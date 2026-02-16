@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { FileSpreadsheet } from 'lucide-react';
 import { exportToCSV } from '@/lib/exportUtils';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface Column<T> {
   key: keyof T;
@@ -21,14 +22,17 @@ export function ExportButton<T extends Record<string, unknown>>({
   filename,
   disabled = false,
 }: ExportButtonProps<T>) {
+  const { t } = useI18n();
+  const eb = t.exportButton;
+
   const handleExport = () => {
     if (data.length === 0) {
-      toast.error('Aucune donnée à exporter');
+      toast.error(eb.noData);
       return;
     }
 
     exportToCSV(data, columns, filename);
-    toast.success(`${data.length} lignes exportées vers Excel`);
+    toast.success(eb.exported.replace('{count}', String(data.length)));
   };
 
   return (
@@ -40,7 +44,7 @@ export function ExportButton<T extends Record<string, unknown>>({
       className="gap-2"
     >
       <FileSpreadsheet className="h-4 w-4" />
-      Exporter Excel
+      {eb.label}
     </Button>
   );
 }
