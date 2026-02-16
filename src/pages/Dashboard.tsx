@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -10,39 +10,20 @@ import KPICard from '@/components/dashboard/KPICard';
 import AlertBanner from '@/components/dashboard/AlertBanner';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
-import { ExecutiveCommandCenter } from '@/components/dashboard/ExecutiveCommandCenter';
 import { type Period } from '@/components/dashboard/PeriodSelector';
 import { PeriodKPICard } from '@/components/dashboard/PeriodKPICard';
-import { AuditHealthWidget } from '@/components/dashboard/AuditHealthWidget';
-import { DatabaseHealthWidget } from '@/components/dashboard/DatabaseHealthWidget';
 import { RealTimeProfitTicker } from '@/components/dashboard/RealTimeProfitTicker';
 import { LiveQualityFeed } from '@/components/dashboard/LiveQualityFeed';
 import { LiveProductionWidget } from '@/components/dashboard/LiveProductionWidget';
 import { BatchPhotoGallery } from '@/components/dashboard/BatchPhotoGallery';
-import { TreasuryWidget } from '@/components/dashboard/TreasuryWidget';
-import { ForensicAlertFeed } from '@/components/dashboard/ForensicAlertFeed';
-import { MidnightAlertWidget } from '@/components/dashboard/MidnightAlertWidget';
-import { CircularBudgetGauge } from '@/components/dashboard/CircularBudgetGauge';
-import { SplitViewHandshake } from '@/components/dashboard/SplitViewHandshake';
-import { ForensicAuditFeed } from '@/components/dashboard/ForensicAuditFeed';
-import { CeoEmergencyOverride } from '@/components/dashboard/CeoEmergencyOverride';
 import { HawaiiGreeting } from '@/components/dashboard/HawaiiGreeting';
 import { ParallaxCard } from '@/components/dashboard/ParallaxCard';
-import { LiveFleetMap } from '@/components/dashboard/LiveFleetMap';
-import { CashFlowForecast } from '@/components/dashboard/CashFlowForecast';
-import { MaintenanceAlertWidget } from '@/components/dashboard/MaintenanceAlertWidget';
-import { HourlyProductionChart } from '@/components/dashboard/HourlyProductionChart';
-import { AIAnomalyScannerWidget } from '@/components/dashboard/AIAnomalyScannerWidget';
-import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget';
-import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
 import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
 import { DashboardSection } from '@/components/dashboard/DashboardSection';
-import { ExecutiveSummaryView } from '@/components/dashboard/ExecutiveSummaryView';
+import { LazyDashboardSection } from '@/components/dashboard/LazyDashboardSection';
 import { AIInsightsWidget } from '@/components/dashboard/AIInsightsWidget';
 import { SmartAlertsWidget } from '@/components/dashboard/SmartAlertsWidget';
 import { MvsM1Sparkline } from '@/components/dashboard/MvsM1Sparkline';
-import { BillingDashboardWidget } from '@/components/dashboard/BillingDashboardWidget';
-import { FleetDashboardWidget } from '@/components/dashboard/FleetDashboardWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -50,7 +31,6 @@ import {
   StockLevelsWidget, 
   SalesFunnelWidget 
 } from '@/components/dashboard/DashboardWidgets';
-import { TaxComplianceWidget } from '@/components/compliance';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
@@ -62,11 +42,50 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SkeletonKPI } from '@/components/ui/skeletons';
-import { DailyReportGenerator } from '@/components/dashboard/DailyReportGenerator';
-import { CeoCodeManager } from '@/components/dashboard/CeoCodeManager';
-import { AuditHistoryChart } from '@/components/dashboard/AuditHistoryChart';
-import { SystemManualPdf } from '@/components/documents/SystemManualPdf';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+// ═══════════════════════════════════════════════════════
+// LAZY-LOADED WIDGETS (deferred until section opened)
+// Reduces initial bundle by ~400KB
+// ═══════════════════════════════════════════════════════
+
+// Section 2 - Production (heavy charts)
+const HourlyProductionChart = lazy(() => import('@/components/dashboard/HourlyProductionChart').then(m => ({ default: m.HourlyProductionChart })));
+const WS7LiveFeedWidget = lazy(() => import('@/components/dashboard/WS7LiveFeedWidget').then(m => ({ default: m.WS7LiveFeedWidget })));
+
+// Section 3 - Finance
+const CircularBudgetGauge = lazy(() => import('@/components/dashboard/CircularBudgetGauge').then(m => ({ default: m.CircularBudgetGauge })));
+const TreasuryWidget = lazy(() => import('@/components/dashboard/TreasuryWidget').then(m => ({ default: m.TreasuryWidget })));
+const CashFlowForecast = lazy(() => import('@/components/dashboard/CashFlowForecast').then(m => ({ default: m.CashFlowForecast })));
+const BillingDashboardWidget = lazy(() => import('@/components/dashboard/BillingDashboardWidget').then(m => ({ default: m.BillingDashboardWidget })));
+const MidnightAlertWidget = lazy(() => import('@/components/dashboard/MidnightAlertWidget').then(m => ({ default: m.MidnightAlertWidget })));
+const SplitViewHandshake = lazy(() => import('@/components/dashboard/SplitViewHandshake').then(m => ({ default: m.SplitViewHandshake })));
+const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m => ({ default: m.TaxComplianceWidget })));
+
+// Section 4 - Fleet (includes Mapbox ~200KB)
+const LiveFleetMap = lazy(() => import('@/components/dashboard/LiveFleetMap').then(m => ({ default: m.LiveFleetMap })));
+const FleetDashboardWidget = lazy(() => import('@/components/dashboard/FleetDashboardWidget').then(m => ({ default: m.FleetDashboardWidget })));
+const MaintenanceAlertWidget = lazy(() => import('@/components/dashboard/MaintenanceAlertWidget').then(m => ({ default: m.MaintenanceAlertWidget })));
+const GeofenceAlertWidget = lazy(() => import('@/components/dashboard/GeofenceAlertWidget').then(m => ({ default: m.GeofenceAlertWidget })));
+
+// Section 5 - Security & Audit
+const AuditHealthWidget = lazy(() => import('@/components/dashboard/AuditHealthWidget').then(m => ({ default: m.AuditHealthWidget })));
+const DatabaseHealthWidget = lazy(() => import('@/components/dashboard/DatabaseHealthWidget').then(m => ({ default: m.DatabaseHealthWidget })));
+const ForensicAlertFeed = lazy(() => import('@/components/dashboard/ForensicAlertFeed').then(m => ({ default: m.ForensicAlertFeed })));
+const ForensicAuditFeed = lazy(() => import('@/components/dashboard/ForensicAuditFeed').then(m => ({ default: m.ForensicAuditFeed })));
+const AIAnomalyScannerWidget = lazy(() => import('@/components/dashboard/AIAnomalyScannerWidget').then(m => ({ default: m.AIAnomalyScannerWidget })));
+const CeoEmergencyOverride = lazy(() => import('@/components/dashboard/CeoEmergencyOverride').then(m => ({ default: m.CeoEmergencyOverride })));
+const CeoCodeManager = lazy(() => import('@/components/dashboard/CeoCodeManager').then(m => ({ default: m.CeoCodeManager })));
+const AuditHistoryChart = lazy(() => import('@/components/dashboard/AuditHistoryChart').then(m => ({ default: m.AuditHistoryChart })));
+
+// Section 6 - Command Center
+const ExecutiveCommandCenter = lazy(() => import('@/components/dashboard/ExecutiveCommandCenter').then(m => ({ default: m.ExecutiveCommandCenter })));
+const ExecutiveSummaryView = lazy(() => import('@/components/dashboard/ExecutiveSummaryView').then(m => ({ default: m.ExecutiveSummaryView })));
+
+// Eager (used in always-open section 1)
+const DailyReportGenerator = lazy(() => import('@/components/dashboard/DailyReportGenerator').then(m => ({ default: m.DailyReportGenerator })));
+const SystemManualPdf = lazy(() => import('@/components/documents/SystemManualPdf').then(m => ({ default: m.SystemManualPdf })));
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -568,7 +587,7 @@ export default function Dashboard() {
             SECTION 4 — FLOTTE & LOGISTIQUE
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
-          <DashboardSection
+          <LazyDashboardSection
             title={t.dashboard.sections.fleetLogistics}
             icon={Truck}
             storageKey="fleet"
@@ -588,14 +607,14 @@ export default function Dashboard() {
                 <GeofenceAlertWidget />
               </ParallaxCard>
             </div>
-          </DashboardSection>
+          </LazyDashboardSection>
         )}
 
         {/* ═══════════════════════════════════════════════════════
             SECTION 5 — SÉCURITÉ & AUDIT
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
-          <DashboardSection
+          <LazyDashboardSection
             title={t.dashboard.sections.securityAudit}
             icon={Shield}
             storageKey="security"
@@ -635,14 +654,14 @@ export default function Dashboard() {
               <CeoCodeManager />
               <AuditHistoryChart />
             </div>
-          </DashboardSection>
+          </LazyDashboardSection>
         )}
 
         {/* ═══════════════════════════════════════════════════════
             SECTION 6 — EXECUTIVE COMMAND CENTER
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
-          <DashboardSection
+          <LazyDashboardSection
             title={t.dashboard.sections.commandCenter}
             icon={Gauge}
             storageKey="command"
@@ -651,7 +670,7 @@ export default function Dashboard() {
             <div className="glass-card p-3 sm:p-6 rounded-xl">
               <ExecutiveCommandCenter />
             </div>
-          </DashboardSection>
+          </LazyDashboardSection>
         )}
       </div>
 

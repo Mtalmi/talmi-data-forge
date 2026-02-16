@@ -67,10 +67,15 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
+    target: 'es2020',
+    cssCodeSplit: true,
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core framework (always loaded)
           vendor: ["react", "react-dom", "react-router-dom"],
+          
+          // UI primitives (loaded with first component)
           ui: [
             "@radix-ui/react-dialog",
             "@radix-ui/react-popover",
@@ -100,6 +105,8 @@ export default defineConfig(({ mode }) => ({
             "@radix-ui/react-toast",
             "@radix-ui/react-aspect-ratio",
           ],
+          
+          // Heavy libraries — lazy loaded per feature
           charts: ["recharts"],
           motion: ["framer-motion"],
           supabase: ["@supabase/supabase-js"],
@@ -109,9 +116,13 @@ export default defineConfig(({ mode }) => ({
           animation: ["gsap"],
           "date-utils": ["date-fns"],
           themes: ["next-themes", "sonner", "cmdk", "vaul"],
+          
+          // Mapbox — only loaded on Fleet/GPS pages (~200KB)
           map: ["mapbox-gl", "react-map-gl"],
         },
       },
     },
+    // Increase chunk size warning threshold
+    chunkSizeWarningLimit: 800,
   },
 }));
