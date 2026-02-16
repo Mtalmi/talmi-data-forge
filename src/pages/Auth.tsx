@@ -135,7 +135,7 @@ export default function Auth() {
       {/* Ambient Background Effects */}
       <div className="absolute inset-0 pointer-events-none">
         <div
-          className="absolute rounded-full transition-all duration-[3000ms]"
+          className="absolute rounded-full transition-all duration-3000"
           style={{
             width: 800,
             height: 800,
