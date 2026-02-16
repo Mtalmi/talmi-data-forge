@@ -5404,6 +5404,51 @@ export type Database = {
           },
         ]
       }
+      paiements_partiels: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_name: string | null
+          date_paiement: string
+          facture_id: string
+          id: string
+          mode_paiement: string
+          montant_paye: number
+          notes: string | null
+          receipt_url: string | null
+          reference_paiement: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          date_paiement?: string
+          facture_id: string
+          id?: string
+          mode_paiement?: string
+          montant_paye: number
+          notes?: string | null
+          receipt_url?: string | null
+          reference_paiement?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_name?: string | null
+          date_paiement?: string
+          facture_id?: string
+          id?: string
+          mode_paiement?: string
+          montant_paye?: number
+          notes?: string | null
+          receipt_url?: string | null
+          reference_paiement?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payment_schedules: {
         Row: {
           amount: number
@@ -6015,6 +6060,54 @@ export type Database = {
             referencedColumns: ["client_id"]
           },
         ]
+      }
+      relances_factures: {
+        Row: {
+          client_id: string
+          created_at: string
+          date_prochaine_relance: string | null
+          date_relance: string
+          envoyee_par: string | null
+          envoyee_par_name: string | null
+          facture_id: string
+          id: string
+          message: string | null
+          niveau_relance: number
+          reponse_client: string | null
+          statut: string
+          type_relance: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          date_prochaine_relance?: string | null
+          date_relance?: string
+          envoyee_par?: string | null
+          envoyee_par_name?: string | null
+          facture_id: string
+          id?: string
+          message?: string | null
+          niveau_relance?: number
+          reponse_client?: string | null
+          statut?: string
+          type_relance?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          date_prochaine_relance?: string | null
+          date_relance?: string
+          envoyee_par?: string | null
+          envoyee_par_name?: string | null
+          facture_id?: string
+          id?: string
+          message?: string | null
+          niveau_relance?: number
+          reponse_client?: string | null
+          statut?: string
+          type_relance?: string
+        }
+        Relationships: []
       }
       security_digest_recipients: {
         Row: {

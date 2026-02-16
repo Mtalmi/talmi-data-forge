@@ -41,6 +41,7 @@ import { ExecutiveSummaryView } from '@/components/dashboard/ExecutiveSummaryVie
 import { AIInsightsWidget } from '@/components/dashboard/AIInsightsWidget';
 import { SmartAlertsWidget } from '@/components/dashboard/SmartAlertsWidget';
 import { MvsM1Sparkline } from '@/components/dashboard/MvsM1Sparkline';
+import { BillingDashboardWidget } from '@/components/dashboard/BillingDashboardWidget';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -548,6 +549,9 @@ export default function Dashboard() {
               </ParallaxCard>
               <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
                 <CashFlowForecast />
+              </ParallaxCard>
+              <ParallaxCard className="bento-wide" glowColor="gold">
+                <BillingDashboardWidget />
               </ParallaxCard>
               <ParallaxCard className="bento-standard" glowColor="ruby">
                 <MidnightAlertWidget />

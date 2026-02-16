@@ -31,8 +31,11 @@ import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ClientHoverPreview } from '@/components/ventes/ClientHoverPreview';
 import { FacturePdfGenerator } from '@/components/documents/FacturePdfGenerator';
+import { FacturePdfProGenerator } from '@/components/documents/FacturePdfProGenerator';
 import { FactureDetailDialog } from '@/components/ventes/FactureDetailDialog';
+import { PartialPaymentDialog } from '@/components/finance/PartialPaymentDialog';
 import { useI18n } from '@/i18n/I18nContext';
+import { DollarSign } from 'lucide-react';
 import { getDateLocale } from '@/i18n/dateLocale';
 
 interface Facture {
@@ -89,6 +92,25 @@ export function FacturesTable({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFacture, setSelectedFacture] = useState<Facture | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [paymentFacture, setPaymentFacture] = useState<Facture | null>(null);
+  const [partialPayments, setPartialPayments] = useState<Record<string, any[]>>({});
+
+  const fetchPartialPayments = useCallback(async (factureIds: string[]) => {
+    if (factureIds.length === 0) return;
+    const { data } = await supabase
+      .from('paiements_partiels')
+      .select('*')
+      .in('facture_id', factureIds)
+      .order('date_paiement', { ascending: true });
+    
+    const grouped: Record<string, any[]> = {};
+    data?.forEach(p => {
+      if (!grouped[p.facture_id]) grouped[p.facture_id] = [];
+      grouped[p.facture_id].push(p);
+    });
+    setPartialPayments(grouped);
+  }, []);
 
   const handleOpenDetail = (facture: Facture) => {
     setSelectedFacture(facture);
@@ -140,8 +162,16 @@ export function FacturesTable({
   }, []);
 
   useEffect(() => {
-    fetchFactures();
+    fetchFactures().then(() => {
+      // Fetch partial payments after factures are loaded
+    });
   }, [fetchFactures]);
+
+  useEffect(() => {
+    if (factures.length > 0) {
+      fetchPartialPayments(factures.map(f => f.facture_id));
+    }
+  }, [factures, fetchPartialPayments]);
 
   const filteredFactures = factures.filter(f => {
     if (!searchTerm) return true;
@@ -363,7 +393,23 @@ export function FacturesTable({
                   </TableCell>
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-1">
-                      <FacturePdfGenerator facture={pdfFacture} compact />
+                      <FacturePdfProGenerator facture={pdfFacture} compact />
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-8 w-8 p-0"
+                            onClick={() => {
+                              setPaymentFacture(facture);
+                              setPaymentDialogOpen(true);
+                            }}
+                          >
+                            <DollarSign className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Paiement</TooltipContent>
+                      </Tooltip>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
@@ -388,6 +434,21 @@ export function FacturesTable({
         open={detailDialogOpen}
         onOpenChange={setDetailDialogOpen}
       />
+
+      {/* Partial Payment Dialog */}
+      {paymentFacture && (
+        <PartialPaymentDialog
+          open={paymentDialogOpen}
+          onOpenChange={setPaymentDialogOpen}
+          factureId={paymentFacture.facture_id}
+          totalTTC={paymentFacture.total_ttc}
+          existingPayments={partialPayments[paymentFacture.facture_id] || []}
+          onSuccess={() => {
+            fetchFactures();
+            fetchPartialPayments(factures.map(f => f.facture_id));
+          }}
+        />
+      )}
     </>
   );
 }

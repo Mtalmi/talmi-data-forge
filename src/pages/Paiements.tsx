@@ -59,6 +59,7 @@ import {
   Building2,
 } from 'lucide-react';
 import { CashFeedingForm } from '@/components/finance/CashFeedingForm';
+import { InvoiceReminderEscalation } from '@/components/finance/InvoiceReminderEscalation';
 import { CashDepositsWidget } from '@/components/finance/CashDepositsWidget';
 import { TaxComplianceDashboard } from '@/components/compliance';
 import { format } from 'date-fns';
@@ -86,6 +87,7 @@ export default function Paiements() {
   const [agingFilter, setAgingFilter] = useState<string>('all');
   const [markingPaid, setMarkingPaid] = useState<string | null>(null);
   const [sendingReminders, setSendingReminders] = useState(false);
+  const [escalationOpen, setEscalationOpen] = useState(false);
 
   const canManagePayments = isCeo || role === 'agent_administratif' || role === 'accounting';
   
@@ -194,12 +196,30 @@ export default function Paiements() {
                 {t.pages.paiements.sendReminders} ({reminderEligible.length})
               </Button>
             )}
+            {canManagePayments && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setEscalationOpen(true)}
+                className="gap-2 border-warning/50 text-warning hover:bg-warning/10"
+              >
+                <AlertTriangle className="h-4 w-4" />
+                Relances Escalade
+              </Button>
+            )}
             <Button variant="outline" size="sm" onClick={refetch}>
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               {t.pages.paiements.refresh}
             </Button>
           </div>
         </div>
+
+        {/* Escalation Dialog */}
+        <InvoiceReminderEscalation
+          open={escalationOpen}
+          onOpenChange={setEscalationOpen}
+          onSuccess={refetch}
+        />
 
         {/* Main Tabs */}
         <Tabs defaultValue="payments" className="space-y-6">
