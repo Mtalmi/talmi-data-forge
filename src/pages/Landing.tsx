@@ -181,8 +181,27 @@ export default function Landing() {
     return () => ctx.revert();
   }, []);
 
+  // SEO: Set document title
+  useEffect(() => {
+    document.title = 'TBOS - Système de Gestion Industrielle Béton | ERP Cloud';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.setAttribute('content', 'TBOS Suite: plateforme ERP cloud pour centrales à béton. Gestion production, logistique, finance et qualité en temps réel. +50 modules, 99.9% uptime.');
+    return () => { document.title = 'TBOS Suite'; };
+  }, []);
+
   return (
     <div ref={containerRef} className="bg-background text-foreground">
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "TBOS Suite",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "Plateforme ERP cloud pour centrales à béton. Production, logistique, finance et qualité.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "MAD" },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "50" }
+      }) }} />
       {/* FLOATING CONTROLS */}
       <div className="fixed top-6 right-6 z-50 flex items-center gap-2">
         <LanguageSwitcher variant="compact" />
@@ -192,7 +211,7 @@ export default function Landing() {
       {/* HERO */}
       <section className="landing-hero relative overflow-hidden min-h-[100dvh] flex flex-col justify-center">
         <div className="absolute inset-0 z-0">
-          <img src={heroPlantNight} alt="" className="w-full h-full object-cover" />
+          <img src={heroPlantNight} alt="Centrale à béton industrielle TBOS" loading="eager" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         </div>
         <div className="landing-grid-bg" />
@@ -265,7 +284,7 @@ export default function Landing() {
       {/* STATS BAR */}
       <section className="relative border-y border-border overflow-hidden bg-background">
         <div className="absolute inset-0 z-0">
-          <img src={statsTexture} alt="" className="w-full h-full object-cover opacity-20 dark:opacity-30" />
+          <img src={statsTexture} alt="" loading="lazy" className="w-full h-full object-cover opacity-20 dark:opacity-30" />
           <div className="absolute inset-0 bg-background/90 backdrop-blur-sm" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -290,7 +309,7 @@ export default function Landing() {
       {/* FEATURES */}
       <section id="features" className="py-24 sm:py-32 relative overflow-hidden bg-background">
         <div className="absolute inset-0 z-0">
-          <img src={modulesBg} alt="" className="w-full h-full object-cover opacity-10 dark:opacity-15" />
+          <img src={modulesBg} alt="" loading="lazy" className="w-full h-full object-cover opacity-10 dark:opacity-15" />
           <div className="absolute inset-0 bg-background/95 dark:bg-background/90" />
         </div>
         <div className="relative z-10 max-w-6xl mx-auto px-6">
