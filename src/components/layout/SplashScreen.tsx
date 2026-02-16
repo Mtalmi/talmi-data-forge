@@ -40,7 +40,7 @@ export function SplashScreen({ onComplete, duration = 3000 }: SplashScreenProps)
       {/* Radial Glow */}
       <div
         className={cn(
-          'absolute rounded-full transition-all duration-[2000ms]',
+          'absolute rounded-full transition-all duration-2000',
           phase === 'enter' ? 'scale-50 opacity-0' : 'scale-100 opacity-100'
         )}
         style={{

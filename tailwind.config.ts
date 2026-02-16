@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      transitionDuration: {
+        '2000': '2000ms',
+        '3000': '3000ms',
+      },
       fontFamily: {
         sans: ['Cairo', 'DM Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
