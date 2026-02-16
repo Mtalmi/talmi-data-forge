@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   Shield, Factory, Truck, FlaskConical, BarChart3,
   Zap, Lock, Globe, ArrowRight, CheckCircle2,
-  Building2, Users, TrendingUp, Eye
+  Building2, Users, TrendingUp, Eye, Play, Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/layout/ThemeToggle';
@@ -26,6 +28,36 @@ export default function Landing() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useI18n();
   const l = t.landing;
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  const handleDemoLogin = async () => {
+    setDemoLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/demo-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok || !data.access_token) {
+        toast.error('Erreur lors de la connexion démo');
+        return;
+      }
+      // Set the session in supabase client
+      await supabase.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token,
+      });
+      toast.success('Bienvenue en mode démo !');
+      navigate('/');
+    } catch {
+      toast.error('Erreur de connexion au serveur');
+    } finally {
+      setDemoLoading(false);
+    }
+  };
 
   const stats = [
     { value: '50+', label: l.statModules, icon: Zap, num: 50, suffix: '+' },
@@ -199,12 +231,15 @@ export default function Landing() {
             <Button
               variant="outline"
               size="lg"
-              onClick={() => {
-                document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="text-base px-8 py-6 rounded-2xl"
+              onClick={handleDemoLogin}
+              disabled={demoLoading}
+              className="text-base px-8 py-6 rounded-2xl border-primary/30 hover:bg-primary/10 transition-all duration-300"
             >
-              {l.exploreModules}
+              {demoLoading ? (
+                <><Loader2 className="h-5 w-5 mr-2 animate-spin" />Chargement...</>
+              ) : (
+                <><Play className="h-5 w-5 mr-2" />Essayer la démo</>
+              )}
             </Button>
           </div>
         </div>
