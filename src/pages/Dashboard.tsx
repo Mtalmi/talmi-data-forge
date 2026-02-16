@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
@@ -37,6 +37,10 @@ import { GeofenceAlertWidget } from '@/components/dashboard/GeofenceAlertWidget'
 import { WS7LiveFeedWidget } from '@/components/dashboard/WS7LiveFeedWidget';
 import { HawaiiReportButton } from '@/components/dashboard/HawaiiReportButton';
 import { DashboardSection } from '@/components/dashboard/DashboardSection';
+import { ExecutiveSummaryView } from '@/components/dashboard/ExecutiveSummaryView';
+import { AIInsightsWidget } from '@/components/dashboard/AIInsightsWidget';
+import { SmartAlertsWidget } from '@/components/dashboard/SmartAlertsWidget';
+import { MvsM1Sparkline } from '@/components/dashboard/MvsM1Sparkline';
 import {
   PendingApprovalsWidget, 
   TodaysPipelineWidget, 
@@ -52,7 +56,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { 
   Package, Users, DollarSign, AlertTriangle, TrendingUp, Gauge, RefreshCw, Receipt, 
   Calculator, Bell, MapPin, ChevronDown, LogOut, User, Settings,
-  BarChart3, Factory, Truck, Shield, Wallet
+  BarChart3, Factory, Truck, Shield, Wallet, Maximize2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SkeletonKPI } from '@/components/ui/skeletons';
@@ -81,6 +85,7 @@ export default function Dashboard() {
   const { stats: periodStats, loading: periodLoading, refresh: refreshPeriod } = useDashboardStatsWithPeriod(period);
   const { checkPaymentDelays } = usePaymentDelays();
   const [refreshing, setRefreshing] = useState(false);
+  const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [productionStats, setProductionStats] = useState({
     formulesActives: 0,
     prixUpdatedAt: '—',
@@ -228,6 +233,16 @@ export default function Dashboard() {
               {isCeo && <SystemManualPdf />}
               {isCeo && <DailyReportGenerator />}
               {isCeo && <HawaiiReportButton />}
+              {isCeo && (
+                <button
+                  onClick={() => setShowExecutiveSummary(true)}
+                  className="btn-premium min-h-[40px]"
+                  title="Executive Summary"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                  <span className="hidden sm:inline">Summary</span>
+                </button>
+              )}
               <button 
                 onClick={handleRefresh}
                 disabled={refreshing}
@@ -412,6 +427,21 @@ export default function Dashboard() {
                 <ARAgingWidget />
                 <StockLevelsWidget />
                 <SalesFunnelWidget />
+              </div>
+            )}
+
+            {/* AI Insights + M vs M-1 + Smart Alerts */}
+            {isCeo && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <ParallaxCard className="lg:col-span-1" glowColor="gold">
+                  <AIInsightsWidget periodStats={periodStats} dashboardStats={stats} />
+                </ParallaxCard>
+                <ParallaxCard className="lg:col-span-1" glowColor="emerald">
+                  <MvsM1Sparkline />
+                </ParallaxCard>
+                <ParallaxCard className="lg:col-span-1" glowColor="ruby">
+                  <SmartAlertsWidget alerts={visibleAlerts} dashboardStats={stats} />
+                </ParallaxCard>
               </div>
             )}
 
@@ -616,6 +646,17 @@ export default function Dashboard() {
           </DashboardSection>
         )}
       </div>
+
+      {/* Executive Summary Overlay */}
+      <AnimatePresence>
+        {showExecutiveSummary && (
+          <ExecutiveSummaryView
+            periodStats={periodStats}
+            dashboardStats={stats}
+            onClose={() => setShowExecutiveSummary(false)}
+          />
+        )}
+      </AnimatePresence>
     </MainLayout>
   );
 }
