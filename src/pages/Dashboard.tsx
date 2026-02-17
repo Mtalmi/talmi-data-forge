@@ -78,6 +78,11 @@ const CeoEmergencyOverride = lazy(() => import('@/components/dashboard/CeoEmerge
 const CeoCodeManager = lazy(() => import('@/components/dashboard/CeoCodeManager').then(m => ({ default: m.CeoCodeManager })));
 const AuditHistoryChart = lazy(() => import('@/components/dashboard/AuditHistoryChart').then(m => ({ default: m.AuditHistoryChart })));
 const ComplianceDashboardWidget = lazy(() => import('@/components/dashboard/ComplianceDashboardWidget').then(m => ({ default: m.ComplianceDashboardWidget })));
+
+// Section 6 - AI Predictive Intelligence
+const AIDemandForecastWidget = lazy(() => import('@/components/dashboard/AIDemandForecastWidget').then(m => ({ default: m.AIDemandForecastWidget })));
+const AIStockDepletionWidget = lazy(() => import('@/components/dashboard/AIStockDepletionWidget').then(m => ({ default: m.AIStockDepletionWidget })));
+const AIClientRiskWidget = lazy(() => import('@/components/dashboard/AIClientRiskWidget').then(m => ({ default: m.AIClientRiskWidget })));
 const RegulatoryChecklistWidget = lazy(() => import('@/components/dashboard/RegulatoryChecklistWidget').then(m => ({ default: m.RegulatoryChecklistWidget })));
 
 // Section 6 - Command Center
@@ -649,6 +654,19 @@ export default function Dashboard() {
                 </ParallaxCard>
                 <ParallaxCard className="bento-standard" glowColor="ruby" intensity="strong">
                   <CeoEmergencyOverride />
+                </ParallaxCard>
+              </div>
+
+              {/* AI Predictive Intelligence Suite */}
+              <div className="bento-grid">
+                <ParallaxCard className="bento-wide" glowColor="gold" intensity="medium">
+                  <AIDemandForecastWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="emerald" intensity="medium">
+                  <AIStockDepletionWidget />
+                </ParallaxCard>
+                <ParallaxCard className="bento-wide" glowColor="ruby" intensity="medium">
+                  <AIClientRiskWidget />
                 </ParallaxCard>
               </div>
 
