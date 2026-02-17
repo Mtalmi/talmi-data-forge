@@ -1,9 +1,19 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { Bot, X, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { AIChatPanel } from './AIChatPanel';
 import { useAIChat } from '@/hooks/useAIChat';
+
+const MotionBubbleButton = forwardRef<HTMLButtonElement, React.ComponentProps<typeof motion.button>>(
+  (props, ref) => <motion.button ref={ref} {...props} />
+);
+MotionBubbleButton.displayName = 'MotionBubbleButton';
+
+const MotionChatPanel = forwardRef<HTMLDivElement, React.ComponentProps<typeof motion.div>>(
+  (props, ref) => <motion.div ref={ref} {...props} />
+);
+MotionChatPanel.displayName = 'MotionChatPanel';
 
 export function AIFloatingBubble() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +25,7 @@ export function AIFloatingBubble() {
       {/* Floating Button */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.button
+          <MotionBubbleButton
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
@@ -27,14 +37,14 @@ export function AIFloatingBubble() {
           >
             <Bot className="h-6 w-6" />
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-success animate-pulse" />
-          </motion.button>
+          </MotionBubbleButton>
         )}
       </AnimatePresence>
 
       {/* Chat Panel */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <MotionChatPanel
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -70,7 +80,7 @@ export function AIFloatingBubble() {
             </div>
 
             <AIChatPanel chat={chat} compact />
-          </motion.div>
+          </MotionChatPanel>
         )}
       </AnimatePresence>
     </>
