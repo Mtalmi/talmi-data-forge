@@ -48,6 +48,7 @@ const AuditExterne = lazy(() => import("./pages/AuditExterne"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const ClientTracking = lazy(() => import("./pages/ClientTracking"));
 const AideSupport = lazy(() => import("./pages/AideSupport"));
+const Settings = lazy(() => import("./pages/Settings"));
 const Contracts = lazy(() => import("./pages/Contracts"));
 const ModeFormation = lazy(() => import("./pages/ModeFormation"));
 const Creances = lazy(() => import("./pages/Creances"));
@@ -136,6 +137,7 @@ const App = () => (
                     <Route path="/surveillance" element={<Surveillance />} />
                     <Route path="/analytics" element={<AnalyticsBI />} />
                     <Route path="/install" element={<InstallApp />} />
+                    <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
