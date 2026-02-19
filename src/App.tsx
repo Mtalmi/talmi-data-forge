@@ -69,6 +69,7 @@ const WorkflowAutomation = lazy(() => import("./pages/WorkflowAutomation"));
 const PredictiveMaintenance = lazy(() => import("./pages/PredictiveMaintenance"));
 const MobileField = lazy(() => import("./pages/MobileField"));
 const TrainingAcademy = lazy(() => import("./pages/TrainingAcademy"));
+const CommunityForum = lazy(() => import("./pages/CommunityForum"));
 
 const queryClient = new QueryClient();
 
@@ -149,6 +150,7 @@ const App = () => (
                     <Route path="/predictive-maintenance" element={<PredictiveMaintenance />} />
                     <Route path="/mobile" element={<MobileField />} />
                     <Route path="/academy" element={<TrainingAcademy />} />
+                    <Route path="/community" element={<CommunityForum />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
