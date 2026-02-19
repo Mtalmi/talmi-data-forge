@@ -70,6 +70,7 @@ const PredictiveMaintenance = lazy(() => import("./pages/PredictiveMaintenance")
 const MobileField = lazy(() => import("./pages/MobileField"));
 const TrainingAcademy = lazy(() => import("./pages/TrainingAcademy"));
 const CommunityForum = lazy(() => import("./pages/CommunityForum"));
+const OperationsAgent = lazy(() => import("./pages/OperationsAgent"));
 
 const queryClient = new QueryClient();
 
@@ -150,9 +151,10 @@ const App = () => (
                     <Route path="/predictive-maintenance" element={<PredictiveMaintenance />} />
                     <Route path="/mobile" element={<MobileField />} />
                     <Route path="/academy" element={<TrainingAcademy />} />
-                    <Route path="/community" element={<CommunityForum />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="*" element={<NotFound />} />
+                     <Route path="/community" element={<CommunityForum />} />
+                     <Route path="/operations-agent" element={<OperationsAgent />} />
+                     <Route path="/settings" element={<Settings />} />
+                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
                 <AIFloatingBubble />

@@ -80,6 +80,33 @@ export type Database = {
           },
         ]
       }
+      ai_briefings: {
+        Row: {
+          content: string
+          date: string
+          generated_at: string | null
+          id: string
+          plant_name: string | null
+          type: string
+        }
+        Insert: {
+          content: string
+          date: string
+          generated_at?: string | null
+          id?: string
+          plant_name?: string | null
+          type: string
+        }
+        Update: {
+          content?: string
+          date?: string
+          generated_at?: string | null
+          id?: string
+          plant_name?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
       alertes_reapprovisionnement: {
         Row: {
           actif: boolean | null
@@ -4960,6 +4987,66 @@ export type Database = {
           },
         ]
       }
+      maintenance_orders: {
+        Row: {
+          ai_analysis: string | null
+          ai_generated: boolean | null
+          confidence_percent: number | null
+          created_at: string | null
+          equipment_id: string | null
+          equipment_name: string | null
+          estimated_cost: number | null
+          failure_type: string | null
+          id: string
+          parts_needed: Json | null
+          plant_name: string | null
+          predicted_failure_days: number | null
+          recommended_action: string | null
+          risk_level: string | null
+          status: string | null
+          updated_at: string | null
+          warning_signs: Json | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          ai_generated?: boolean | null
+          confidence_percent?: number | null
+          created_at?: string | null
+          equipment_id?: string | null
+          equipment_name?: string | null
+          estimated_cost?: number | null
+          failure_type?: string | null
+          id?: string
+          parts_needed?: Json | null
+          plant_name?: string | null
+          predicted_failure_days?: number | null
+          recommended_action?: string | null
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warning_signs?: Json | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          ai_generated?: boolean | null
+          confidence_percent?: number | null
+          created_at?: string | null
+          equipment_id?: string | null
+          equipment_name?: string | null
+          estimated_cost?: number | null
+          failure_type?: string | null
+          id?: string
+          parts_needed?: Json | null
+          plant_name?: string | null
+          predicted_failure_days?: number | null
+          recommended_action?: string | null
+          risk_level?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warning_signs?: Json | null
+        }
+        Relationships: []
+      }
       maintenance_records: {
         Row: {
           cout_main_oeuvre: number | null
@@ -5926,6 +6013,57 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_orders: {
+        Row: {
+          ai_generated: boolean | null
+          ai_reasoning: string | null
+          created_at: string | null
+          current_stock_tons: number | null
+          daily_consumption_tons: number | null
+          days_remaining: number | null
+          estimated_cost: number | null
+          id: string
+          material_name: string
+          quantity_tons: number | null
+          status: string | null
+          supplier_email: string | null
+          updated_at: string | null
+          urgency: string | null
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          ai_reasoning?: string | null
+          created_at?: string | null
+          current_stock_tons?: number | null
+          daily_consumption_tons?: number | null
+          days_remaining?: number | null
+          estimated_cost?: number | null
+          id?: string
+          material_name: string
+          quantity_tons?: number | null
+          status?: string | null
+          supplier_email?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+        }
+        Update: {
+          ai_generated?: boolean | null
+          ai_reasoning?: string | null
+          created_at?: string | null
+          current_stock_tons?: number | null
+          daily_consumption_tons?: number | null
+          days_remaining?: number | null
+          estimated_cost?: number | null
+          id?: string
+          material_name?: string
+          quantity_tons?: number | null
+          status?: string | null
+          supplier_email?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -5956,6 +6094,54 @@ export type Database = {
           updated_at?: string
           user_agent?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      quality_failure_tickets: {
+        Row: {
+          ai_analysis: string | null
+          air_content: number | null
+          batch_id: string | null
+          created_at: string | null
+          hold_decision: boolean | null
+          id: string
+          mix_type: string | null
+          plant_name: string | null
+          severity: string | null
+          slump_target: number | null
+          slump_value: number | null
+          status: string | null
+          temperature: number | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          air_content?: number | null
+          batch_id?: string | null
+          created_at?: string | null
+          hold_decision?: boolean | null
+          id?: string
+          mix_type?: string | null
+          plant_name?: string | null
+          severity?: string | null
+          slump_target?: number | null
+          slump_value?: number | null
+          status?: string | null
+          temperature?: number | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          air_content?: number | null
+          batch_id?: string | null
+          created_at?: string | null
+          hold_decision?: boolean | null
+          id?: string
+          mix_type?: string | null
+          plant_name?: string | null
+          severity?: string | null
+          slump_target?: number | null
+          slump_value?: number | null
+          status?: string | null
+          temperature?: number | null
         }
         Relationships: []
       }
