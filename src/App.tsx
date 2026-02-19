@@ -67,6 +67,7 @@ const InstallApp = lazy(() => import("./pages/InstallApp"));
 const IndustryBenchmarking = lazy(() => import("./pages/IndustryBenchmarking"));
 const WorkflowAutomation = lazy(() => import("./pages/WorkflowAutomation"));
 const PredictiveMaintenance = lazy(() => import("./pages/PredictiveMaintenance"));
+const MobileField = lazy(() => import("./pages/MobileField"));
 
 const queryClient = new QueryClient();
 
@@ -145,6 +146,7 @@ const App = () => (
                     <Route path="/install" element={<InstallApp />} />
                     <Route path="/automation" element={<WorkflowAutomation />} />
                     <Route path="/predictive-maintenance" element={<PredictiveMaintenance />} />
+                    <Route path="/mobile" element={<MobileField />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
