@@ -64,6 +64,7 @@ const Surveillance = lazy(() => import("./pages/Surveillance"));
 const AnalyticsBI = lazy(() => import("./pages/AnalyticsBI"));
 const AdvancedAnalytics = lazy(() => import("./pages/AdvancedAnalytics"));
 const InstallApp = lazy(() => import("./pages/InstallApp"));
+const IndustryBenchmarking = lazy(() => import("./pages/IndustryBenchmarking"));
 
 const queryClient = new QueryClient();
 
@@ -138,6 +139,7 @@ const App = () => (
                     <Route path="/surveillance" element={<Surveillance />} />
                     <Route path="/analytics" element={<AnalyticsBI />} />
                     <Route path="/analytics-demo" element={<AdvancedAnalytics />} />
+                    <Route path="/benchmarking" element={<IndustryBenchmarking />} />
                     <Route path="/install" element={<InstallApp />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
