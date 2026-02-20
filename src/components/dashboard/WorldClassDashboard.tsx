@@ -9,6 +9,7 @@ import {
   TrendingUp, TrendingDown, Camera, BarChart3, Truck, Shield,
   FlaskConical, Users, Package, Clock, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (exact hex values per spec)
