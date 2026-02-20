@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import WorldClassPlanning from '@/components/planning/WorldClassPlanning';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -1238,6 +1239,7 @@ export default function Planning() {
   if (isMobile || isTablet) {
     return (
       <MainLayout>
+        <WorldClassPlanning />
         <TabletPlanningView
           pendingValidation={pendingValidation}
           aProduire={aProduire}
@@ -1266,8 +1268,8 @@ export default function Planning() {
   // Desktop view
   return (
     <MainLayout>
+      <WorldClassPlanning />
       <div className="space-y-6">
-        {/* Read-Only Banner for Directeur Opérations */}
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
