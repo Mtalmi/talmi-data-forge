@@ -138,24 +138,44 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
                   <button
                     onClick={() => handleStageClick(stage)}
                     className={cn(
-                      "flex-1 flex flex-col items-center gap-2 p-3 md:p-4 rounded-xl border-2 transition-all duration-200",
-                      "hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]",
+                      "flux-stage flex-1 flex flex-col items-center gap-2 p-4 md:p-6 rounded-xl border-2",
+                      "relative overflow-hidden",
+                      "transition-all duration-200",
+                      "hover:-translate-y-1 hover:scale-[1.02] hover:shadow-xl",
+                      "active:scale-[0.98]",
                       "focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2",
                       stage.bgColor
                     )}
                   >
-                    <div className={cn(
-                      "p-2 rounded-lg",
-                      stage.iconColor
-                    )}>
+                    {/* Shimmer overlay */}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
+
+                    <div className={cn("p-2 rounded-lg", stage.iconColor)}>
                       {stage.icon}
                     </div>
-                    <span className="text-xl md:text-2xl font-bold text-foreground">
+
+                    {/* Count — JetBrains Mono gold */}
+                    <span
+                      className="text-3xl md:text-4xl font-bold tabular-nums leading-none"
+                      style={{ fontFamily: 'JetBrains Mono, monospace', color: '#FFD700' }}
+                    >
                       {stage.count}
                     </span>
-                    <span className="text-[10px] md:text-xs text-muted-foreground font-medium leading-tight text-center">
+
+                    <span className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider text-center leading-tight">
                       {stage.label}
                     </span>
+
+                    {/* Status dot */}
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <span className={cn(
+                        "w-1.5 h-1.5 rounded-full",
+                        stage.count > 0 ? "bg-emerald-400 animate-pulse" : "bg-muted-foreground/30"
+                      )} />
+                      <span className="text-[9px] text-muted-foreground">
+                        {stage.count > 0 ? 'Actif' : 'En attente'}
+                      </span>
+                    </div>
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-[200px]">
