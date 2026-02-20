@@ -81,7 +81,7 @@ export function PeriodKPICard({
   return (
     <div 
       className={cn(
-        'kpi-card god-tier-card p-3 sm:p-4 rounded-xl border card-magnetic press-feedback ripple-container',
+        'kpi-card god-tier-card tbos-card p-3 sm:p-4 rounded-xl border card-magnetic press-feedback ripple-container',
         variant === 'positive' && 'positive bg-success/5 border-success/20',
         variant === 'negative' && 'negative bg-destructive/5 border-destructive/20',
         variant === 'warning' && 'warning bg-warning/5 border-warning/20',
