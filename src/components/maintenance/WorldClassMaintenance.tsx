@@ -765,7 +765,8 @@ function MetricsCard({ label, value, valueSuffix = '', color, icon: Icon, desc, 
 }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
-  const count = useAnimatedCounter(Math.round(value * 10), 1200);
+  // MTBF is a whole number (342), MTTR is decimal (3.2 → stored as 32 /10)
+  const countRaw = useAnimatedCounter(label === 'MTTR' ? Math.round(value * 10) : Math.round(value), 1200);
   const progress = useProgressBar(progressVal ?? 0, 1400);
 
   return (
@@ -787,7 +788,7 @@ function MetricsCard({ label, value, valueSuffix = '', color, icon: Icon, desc, 
       </div>
       <div>
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: 800, color }}>
-          {label === 'MTBF' ? count : label === 'MTTR' ? (count / 10).toFixed(1) : '6:2'}{valueSuffix}
+          {label === 'MTBF' ? countRaw : label === 'MTTR' ? (countRaw / 10).toFixed(1) : '6:2'}{valueSuffix}
         </div>
         <div style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginTop: 2 }}>{label}</div>
         <div style={{ fontSize: 12, color: T.textDim, marginTop: 2 }}>{desc}</div>
