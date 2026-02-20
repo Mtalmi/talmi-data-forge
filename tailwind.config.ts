@@ -188,6 +188,10 @@ export default {
           "50%": { transform: "scale(1.2) rotate(0deg)" },
           "100%": { transform: "scale(1) rotate(0deg)", opacity: "1" },
         },
+        "tab-fade-in": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -209,6 +213,7 @@ export default {
         "stagger-in": "stagger-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "reveal-up": "reveal-up 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         "check-pop": "check-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+        "tab-fade-in": "tab-fade-in 0.25s ease-out both",
       },
       backdropBlur: {
         xs: '2px',
