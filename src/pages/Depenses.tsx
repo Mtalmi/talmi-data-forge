@@ -6,6 +6,7 @@ import { useDepenses, Depense } from '@/hooks/useDepenses';
 import { ExpenseForm } from '@/components/expenses/ExpenseForm';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { Button } from '@/components/ui/button';
+import WorldClassExpenses from '@/components/expenses/WorldClassExpenses';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -92,7 +93,8 @@ export default function Depenses() {
 
   return (
     <MainLayout>
-      <div className="space-y-4 sm:space-y-6">
+      <WorldClassExpenses />
+      <div className="space-y-4 sm:space-y-6" style={{ display: 'none' }}>
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
