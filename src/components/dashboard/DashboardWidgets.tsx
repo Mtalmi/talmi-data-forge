@@ -286,11 +286,33 @@ export function StockLevelsWidget() {
 
   const getColor = (niveau: number, seuil: number) => {
     if (seuil === 0) return '#FFD700';
-    const ratio = niveau / seuil;
-    if (ratio < 1) return '#EF4444';
-    if (ratio < 1.5) return '#F59E0B';
+    const max = seuil * 2;
+    const pct = niveau / max;
+    if (pct < 0.2) return '#EF4444';
+    if (pct < 0.4) return '#F59E0B';
     return '#10B981';
   };
+
+  const STOCK_TOOLTIP = ({ active, payload, label }: any) => {
+    if (active && payload?.length) {
+      return (
+        <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: '8px 12px' }}>
+          <p style={{ color: '#94A3B8', fontSize: 12 }}>{label}</p>
+          <p style={{ color: payload[0]?.fill, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+            {Number(payload[0]?.value).toLocaleString('fr-MA')}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const chartData = stocks.map(s => ({
+    name: s.materiau,
+    value: s.niveau,
+    max: s.seuil > 0 ? s.seuil * 2 : s.niveau * 2,
+    color: getColor(s.niveau, s.seuil),
+  }));
 
   return (
     <button
@@ -307,34 +329,27 @@ export function StockLevelsWidget() {
         <div className="space-y-2">
           {[1, 2, 3].map(i => <div key={i} className="skeleton-god h-5 w-full rounded" />)}
         </div>
-      ) : stocks.length > 0 ? (
-        <div className="space-y-2.5">
-          {stocks.map((s) => {
-            const color = getColor(s.niveau, s.seuil);
-            const isLow = s.seuil > 0 && s.niveau < s.seuil;
-            const pct = s.seuil > 0 ? Math.min((s.niveau / (s.seuil * 2)) * 100, 100) : 50;
-            return (
-              <div key={s.materiau}>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5">
-                    {isLow && (
-                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: color }} />
-                    )}
-                    <span className="text-xs text-muted-foreground truncate" style={{ maxWidth: '70px' }}>{s.materiau}</span>
-                  </div>
-                  <span className="text-xs font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
-                    {s.niveau.toFixed(0)}
-                  </span>
-                </div>
-                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'hsl(var(--muted))' }}>
-                  <div
-                    className="h-full rounded-full transition-all duration-1000"
-                    style={{ width: `${pct}%`, background: color, boxShadow: isLow ? `0 0 6px ${color}` : 'none' }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+      ) : chartData.length > 0 ? (
+        <div className="h-[160px]">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} layout="vertical" barSize={12} margin={{ top: 0, right: 8, left: 0, bottom: 0 }}>
+              <XAxis type="number" hide />
+              <YAxis
+                type="category"
+                dataKey="name"
+                tick={{ fill: '#94A3B8', fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+                width={60}
+              />
+              <Tooltip content={<STOCK_TOOLTIP />} cursor={{ fill: 'rgba(255,215,0,0.05)' }} />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]} isAnimationActive animationDuration={1200} animationEasing="ease-out">
+                {chartData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       ) : (
         <p className="text-sm text-muted-foreground">{t.widgets.stockLevels.noStock}</p>
