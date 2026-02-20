@@ -148,14 +148,14 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: 'hsl(var(--card))',
-        border: '1px solid hsl(51 100% 50% / 0.3)',
-        borderRadius: '8px',
+        background: '#1E293B',
+        border: '1px solid #334155',
+        borderRadius: 8,
         padding: '8px 12px',
       }}>
-        <p style={{ fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>{label}</p>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: payload[0]?.fill }}>
-          {(payload[0]?.value / 1000).toFixed(0)}K DH
+        <p style={{ color: '#94A3B8', fontSize: 12 }}>{label}</p>
+        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+          {payload[0].value.toLocaleString('fr-MA')} DH
         </p>
       </div>
     );
@@ -218,16 +218,17 @@ export function ARAgingWidget() {
       ) : (
         <>
           <p className="text-xl font-bold mb-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(51 100% 50%)' }}>
-            {(data.total / 1000).toFixed(0)}K <span className="text-sm font-normal text-muted-foreground">DH</span>
+            {data.total.toLocaleString('fr-MA')} <span className="text-sm font-normal text-muted-foreground">DH</span>
           </p>
-          <div className="h-[70px]">
+          <div className="h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} barCategoryGap="30%" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                <XAxis dataKey="label" tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<AR_TOOLTIP />} cursor={{ fill: 'hsl(var(--muted)/0.3)' }} />
-                <Bar dataKey="value" radius={[3, 3, 0, 0]} isAnimationActive animationDuration={800} animationEasing="ease-out">
+              <BarChart data={chartData} barSize={28} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
+                <XAxis dataKey="label" tick={{ fill: '#94A3B8', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip content={<AR_TOOLTIP />} cursor={{ fill: 'rgba(255,215,0,0.05)' }} />
+                <Bar dataKey="value" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={1000} animationEasing="ease-out">
                   {chartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.fill} fillOpacity={0.85} />
+                    <Cell key={i} fill={entry.fill} />
                   ))}
                 </Bar>
               </BarChart>
