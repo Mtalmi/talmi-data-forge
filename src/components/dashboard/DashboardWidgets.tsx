@@ -358,18 +358,14 @@ export function StockLevelsWidget() {
   );
 }
 
-// ─── Sales Funnel Widget — DonutChart ─────────────────────────────────────────
+// ─── Sales Funnel Widget — Enhanced Donut ────────────────────────────────────
 const DONUT_TOOLTIP = ({ active, payload }: any) => {
   if (active && payload?.length) {
     return (
-      <div style={{
-        background: 'hsl(var(--card))',
-        border: '1px solid hsl(51 100% 50% / 0.3)',
-        borderRadius: '8px',
-        padding: '8px 12px',
-      }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: payload[0]?.fill }}>
-          {payload[0]?.name}: {payload[0]?.value}
+      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: '8px 12px' }}>
+        <p style={{ color: '#94A3B8', fontSize: 12 }}>{payload[0]?.name}</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: payload[0]?.fill }}>
+          {payload[0]?.value}
         </p>
       </div>
     );
@@ -380,7 +376,7 @@ const DONUT_TOOLTIP = ({ active, payload }: any) => {
 export function SalesFunnelWidget() {
   const { t } = useI18n();
   const [data, setData] = useState({
-    devisEnAttente: 0, devisAccepte: 0, bcActifs: 0, conversionRate: 0, totalDevisValue: 0,
+    devisEnAttente: 0, devisAccepte: 0, bcActifs: 0, bcEnProduction: 0, bcTermines: 0, conversionRate: 0, totalDevisValue: 0,
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -389,7 +385,7 @@ export function SalesFunnelWidget() {
     const fetchFunnel = async () => {
       const { data: devis } = await supabase.from('devis').select('statut, total_ht');
       const { data: bcs } = await supabase
-        .from('bons_commande').select('statut').in('statut', ['confirme', 'en_cours', 'planifie']);
+        .from('bons_commande').select('statut');
 
       if (devis) {
         const enAttente = devis.filter(d => d.statut === 'en_attente').length;
@@ -397,7 +393,10 @@ export function SalesFunnelWidget() {
         const total = devis.length;
         const conversionRate = total > 0 ? (accepte / total) * 100 : 0;
         const totalValue = devis.filter(d => d.statut === 'en_attente').reduce((sum, d) => sum + (d.total_ht || 0), 0);
-        setData({ devisEnAttente: enAttente, devisAccepte: accepte, bcActifs: bcs?.length || 0, conversionRate, totalDevisValue: totalValue });
+        const bcActifs = bcs?.filter(b => ['confirme', 'en_cours', 'planifie', 'valide', 'pret_production'].includes(b.statut)).length || 0;
+        const bcEnProduction = bcs?.filter(b => b.statut === 'pret_production').length || 0;
+        const bcTermines = bcs?.filter(b => b.statut === 'termine').length || 0;
+        setData({ devisEnAttente: enAttente, devisAccepte: accepte, bcActifs, bcEnProduction, bcTermines, conversionRate, totalDevisValue: totalValue });
       }
       setLoading(false);
     };
@@ -405,9 +404,13 @@ export function SalesFunnelWidget() {
   }, []);
 
   const pieData = [
-    { name: t.widgets.salesFunnel.quotes, value: Math.max(data.devisEnAttente, 1), fill: '#FFD700' },
-    { name: t.widgets.salesFunnel.activePOs, value: Math.max(data.bcActifs, 1), fill: '#3B82F6' },
-  ];
+    { name: t.widgets.salesFunnel.quotes,      value: data.devisEnAttente, fill: '#FFD700' },
+    { name: t.widgets.salesFunnel.activePOs,   value: data.bcActifs,       fill: '#3B82F6' },
+    { name: 'En Production',                   value: data.bcEnProduction, fill: '#F59E0B' },
+    { name: 'Terminés',                        value: data.bcTermines,     fill: '#10B981' },
+  ].map(d => ({ ...d, value: Math.max(d.value, 0) }));
+
+  const total = pieData.reduce((s, d) => s + d.value, 0);
 
   return (
     <button
@@ -421,51 +424,52 @@ export function SalesFunnelWidget() {
       </div>
 
       {loading ? (
-        <div className="skeleton-god h-24 w-full rounded" />
+        <div className="skeleton-god h-[160px] w-full rounded" />
       ) : (
-        <div className="flex items-center gap-3">
-          {/* Donut */}
-          <div className="relative flex-shrink-0">
-            <PieChart width={72} height={72}>
+        <div className="relative">
+          <ResponsiveContainer width="100%" height={160}>
+            <PieChart>
               <Pie
-                data={pieData}
-                cx={31}
-                cy={31}
-                innerRadius={22}
-                outerRadius={32}
+                data={total > 0 ? pieData : [{ name: 'Vide', value: 1, fill: '#1E293B' }]}
+                cx="50%"
+                cy="50%"
+                innerRadius={45}
+                outerRadius={70}
+                paddingAngle={total > 0 ? 3 : 0}
                 dataKey="value"
-                strokeWidth={0}
                 isAnimationActive
-                animationDuration={800}
+                animationDuration={1000}
+                animationEasing="ease-out"
               >
-                {pieData.map((entry, i) => <Cell key={i} fill={entry.fill} fillOpacity={0.9} />)}
+                {(total > 0 ? pieData : [{ fill: '#1E293B' }]).map((entry, i) => (
+                  <Cell key={i} fill={entry.fill} />
+                ))}
               </Pie>
               <Tooltip content={<DONUT_TOOLTIP />} />
             </PieChart>
-            {/* Center label */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', fontWeight: 700, color: 'hsl(51 100% 50%)' }}>
-                {data.conversionRate.toFixed(0)}%
-              </span>
+          </ResponsiveContainer>
+          {/* Center label */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-center">
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '18px', fontWeight: 700, color: 'hsl(51 100% 50%)' }}>
+                {total}
+              </p>
+              <p style={{ fontSize: '10px', color: '#94A3B8' }}>total</p>
             </div>
           </div>
-          {/* Stats */}
-          <div className="flex-1 space-y-1.5">
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">{t.widgets.salesFunnel.quotes}</span>
-              <span className="font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#FFD700' }}>{data.devisEnAttente}</span>
+        </div>
+      )}
+
+      {/* Legend */}
+      {!loading && (
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-1">
+          {pieData.map(d => (
+            <div key={d.name} className="flex items-center gap-1.5 text-xs">
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: d.fill }} />
+              <span className="text-muted-foreground truncate">{d.name}</span>
+              <span className="ml-auto font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: d.fill }}>{d.value}</span>
             </div>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">{t.widgets.salesFunnel.activePOs}</span>
-              <span className="font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#3B82F6' }}>{data.bcActifs}</span>
-            </div>
-            <div className="flex justify-between items-center text-xs">
-              <span className="text-muted-foreground">{t.widgets.salesFunnel.pendingQuoteValue}</span>
-              <span className="font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--foreground))' }}>
-                {(data.totalDevisValue / 1000).toFixed(0)}K
-              </span>
-            </div>
-          </div>
+          ))}
         </div>
       )}
     </button>
