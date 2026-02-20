@@ -510,40 +510,111 @@ export default function Dashboard() {
             )}
 
             {/* Hourly Production Chart */}
-            <div className="card-industrial p-4 sm:p-6 animate-fade-in">
+            <div className="card-industrial p-4 sm:p-6 animate-fade-in" style={{ borderTop: '2px solid hsl(var(--primary)/0.3)' }}>
               <HourlyProductionChart />
             </div>
 
             {/* Production Summary + Recent Deliveries */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentDeliveries />
-              <div className="card-industrial p-6 animate-fade-in">
-                <h3 className="text-lg font-semibold mb-4">{t.dashboard.productionSummary}</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t.dashboard.activeFormulas}</span>
-                    <span className="font-semibold">{productionStats.formulesActives}</span>
+
+              {/* Production Summary — Premium Version */}
+              <div className="card-industrial rounded-xl overflow-hidden animate-fade-in">
+                {/* Header */}
+                <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40"
+                  style={{ background: 'linear-gradient(90deg, hsl(var(--primary)/0.06) 0%, transparent 70%)' }}>
+                  <span className="w-[3px] h-5 rounded-full" style={{ background: 'hsl(var(--primary))' }} />
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-foreground">
+                    {t.dashboard.productionSummary}
+                  </h3>
+                  {/* Live dot */}
+                  <span className="ml-auto flex items-center gap-1.5 text-[10px] font-bold text-success">
+                    <span className="status-dot status-dot-green" />
+                    LIVE
+                  </span>
+                </div>
+
+                <div className="p-5 space-y-3">
+                  {/* Formulas Actives */}
+                  <div
+                    className="flex items-center justify-between p-3 rounded-xl transition-all duration-150 cursor-default"
+                    style={{ background: 'hsl(var(--muted)/0.4)', borderLeft: '3px solid hsl(var(--primary)/0.6)' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--primary)/0.05)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'hsl(var(--muted)/0.4)')}
+                  >
+                    <span className="text-xs text-muted-foreground font-medium">{t.dashboard.activeFormulas}</span>
+                    <span
+                      className="text-lg font-black tabular-nums"
+                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--primary))' }}
+                    >
+                      {productionStats.formulesActives}
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t.dashboard.pricesUpdated}</span>
-                    <span className="font-semibold">{productionStats.prixUpdatedAt}</span>
+
+                  {/* Prices Updated */}
+                  <div
+                    className="flex items-center justify-between p-3 rounded-xl transition-all duration-150 cursor-default"
+                    style={{ background: 'hsl(var(--muted)/0.4)', borderLeft: '3px solid hsl(var(--accent-teal)/0.6)' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--accent-teal)/0.05)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'hsl(var(--muted)/0.4)')}
+                  >
+                    <span className="text-xs text-muted-foreground font-medium">{t.dashboard.pricesUpdated}</span>
+                    <span
+                      className="text-sm font-bold"
+                      style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--accent-teal))' }}
+                    >
+                      {productionStats.prixUpdatedAt}
+                    </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t.dashboard.avgEcRatio}</span>
-                    <span className={`font-semibold ${stats.tauxECMoyen > 0.55 ? 'text-warning' : ''}`}>
+
+                  {/* Avg E/C Ratio */}
+                  <div
+                    className="flex items-center justify-between p-3 rounded-xl transition-all duration-150 cursor-default"
+                    style={{
+                      background: 'hsl(var(--muted)/0.4)',
+                      borderLeft: `3px solid ${stats.tauxECMoyen > 0.55 ? 'hsl(var(--warning)/0.7)' : 'hsl(var(--success)/0.6)'}`,
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = `hsl(${stats.tauxECMoyen > 0.55 ? 'var(--warning)' : 'var(--success)'}/0.05)`)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'hsl(var(--muted)/0.4)')}
+                  >
+                    <span className="text-xs text-muted-foreground font-medium">{t.dashboard.avgEcRatio}</span>
+                    <span
+                      className="text-sm font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'JetBrains Mono, monospace',
+                        color: stats.tauxECMoyen > 0.55 ? 'hsl(var(--warning))' : 'hsl(var(--success))',
+                      }}
+                    >
                       {productionStats.tauxECMoyen}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
-                    <span className="text-sm text-muted-foreground">{t.dashboard.avgCur7d}</span>
-                    <span className={`font-semibold ${stats.curTrend > 5 ? 'text-warning' : ''}`}>
+
+                  {/* Avg CUR 7d */}
+                  <div
+                    className="flex items-center justify-between p-3 rounded-xl transition-all duration-150 cursor-default"
+                    style={{
+                      background: 'hsl(var(--muted)/0.4)',
+                      borderLeft: `3px solid ${stats.curTrend > 5 ? 'hsl(var(--warning)/0.7)' : 'hsl(var(--primary)/0.5)'}`,
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'hsl(var(--primary)/0.04)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'hsl(var(--muted)/0.4)')}
+                  >
+                    <span className="text-xs text-muted-foreground font-medium">{t.dashboard.avgCur7d}</span>
+                    <span
+                      className="text-sm font-bold tabular-nums"
+                      style={{
+                        fontFamily: 'JetBrains Mono, monospace',
+                        color: stats.curTrend > 5 ? 'hsl(var(--warning))' : 'hsl(var(--primary))',
+                      }}
+                    >
                       {productionStats.curMoyen}
                     </span>
                   </div>
+
                   {productionStats.formulesActives === 0 && (
                     <button
                       onClick={() => navigate('/formules')}
-                      className="w-full mt-2 py-2.5 rounded-lg border border-dashed border-primary/40 text-sm text-primary hover:bg-primary/5 transition-colors"
+                      className="w-full mt-2 py-2.5 rounded-xl border border-dashed border-primary/40 text-sm font-semibold text-primary hover:bg-primary/5 hover:border-primary/60 transition-all duration-200"
                     >
                       {t.dashboard.addProduct}
                     </button>

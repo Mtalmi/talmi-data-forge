@@ -47,39 +47,88 @@ export function DashboardSection({
 
   return (
     <Collapsible open={open} onOpenChange={handleOpenChange} className={cn('dashboard-section', className)}>
+      {/* ── Section header — agency-grade ── */}
       <CollapsibleTrigger asChild>
-        <button className="w-full flex items-center gap-3 py-3 px-1 group cursor-pointer select-none">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="p-1.5 rounded-md bg-primary/10 group-hover:bg-primary/15 transition-all duration-300 group-hover:scale-110">
-              <Icon className="h-4 w-4 text-primary transition-transform duration-300 group-hover:rotate-[-6deg]" />
-            </div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors">
-              {title}
-            </h2>
+        <button
+          className={cn(
+            'w-full flex items-center gap-3 py-3 px-4 rounded-xl group cursor-pointer select-none',
+            'transition-all duration-200',
+            'hover:bg-primary/[0.03]',
+          )}
+          style={{
+            background: open
+              ? 'linear-gradient(90deg, hsl(var(--primary)/0.04) 0%, transparent 60%)'
+              : 'transparent',
+            borderBottom: '1px solid hsl(var(--border)/0.5)',
+          }}
+        >
+          {/* Gold accent bar */}
+          <span
+            className="shrink-0 rounded-full transition-all duration-300"
+            style={{
+              width: 3,
+              height: open ? 28 : 20,
+              background: open
+                ? 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)/0.4))'
+                : 'hsl(var(--border))',
+              boxShadow: open ? '0 0 10px hsl(var(--primary)/0.4)' : 'none',
+            }}
+          />
+
+          {/* Icon */}
+          <div
+            className={cn(
+              'p-1.5 rounded-lg transition-all duration-300',
+              open
+                ? 'bg-primary/10 shadow-[0_0_12px_hsl(var(--primary)/0.2)]'
+                : 'bg-muted/50 group-hover:bg-primary/8',
+            )}
+          >
+            <Icon
+              className={cn(
+                'h-4 w-4 transition-all duration-300',
+                open ? 'text-primary' : 'text-muted-foreground group-hover:text-primary',
+              )}
+            />
           </div>
 
+          {/* Title */}
+          <h2
+            className={cn(
+              'text-sm font-bold uppercase tracking-[0.08em] transition-colors duration-200',
+              open ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground',
+            )}
+          >
+            {title}
+          </h2>
+
+          {/* Badge */}
           {badge !== undefined && (
-            <span className={cn(
-              'text-[10px] font-bold px-2 py-0.5 rounded-full border',
-              badgeColors[badgeVariant]
-            )}>
+            <span
+              className={cn(
+                'text-[10px] font-bold px-2 py-0.5 rounded-full border',
+                badgeColors[badgeVariant],
+              )}
+            >
               {badge}
             </span>
           )}
 
+          {/* Spacer */}
           <div className="flex-1" />
 
+          {/* Chevron */}
           <ChevronDown
             className={cn(
-              'h-4 w-4 text-muted-foreground transition-transform duration-200',
-              open && 'rotate-180'
+              'h-4 w-4 text-muted-foreground transition-all duration-300 ease-out',
+              open && 'rotate-180 text-primary',
             )}
           />
         </button>
       </CollapsibleTrigger>
 
       <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-        <div className="pb-2">
+        <div className="pt-4 pb-2">
           {children}
         </div>
       </CollapsibleContent>

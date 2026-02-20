@@ -2384,16 +2384,23 @@
 }
 
 .god-tier-card:hover {
-  border-color: hsl(51 100% 50% / 0.35);
-  transform: translateY(-3px);
+  border-color: hsl(51 100% 50% / 0.40);
+  transform: translateY(-4px);
   box-shadow:
-    0 20px 60px hsl(0 0% 0% / 0.4),
-    0 0 0 1px hsl(51 100% 50% / 0.08),
-    0 4px 20px hsl(51 100% 50% / 0.06);
+    0 20px 60px hsl(0 0% 0% / 0.45),
+    0 0 0 1px hsl(51 100% 50% / 0.12),
+    0 8px 32px hsl(51 100% 50% / 0.10),
+    0 0 40px hsl(51 100% 50% / 0.06);
 }
 
 .god-tier-card:hover::before { left: 100%; }
 .god-tier-card:hover::after { opacity: 1; }
+
+/* ── Active / pressed state ── */
+.god-tier-card:active {
+  transform: translateY(-1px) scale(0.99);
+  transition-duration: 80ms;
+}
 
 /* ── Breathing / Pulsing Status Dots ─────────────────────── */
 @keyframes breathe-green {
@@ -3359,4 +3366,129 @@ textarea.valid {
   .animate-pulse, .spinner-gold { display: none !important; }
 }
 
+
+/* ══════════════════════════════════════════════════════════════
+   DASHBOARD — AGENCY-LEVEL PREMIUM POLISH
+   ══════════════════════════════════════════════════════════════ */
+
+/* ─── Dashboard header premium ─── */
+.dashboard-header {
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border));
+  box-shadow:
+    0 2px 20px hsl(var(--primary) / 0.05),
+    inset 0 1px 0 hsl(var(--primary) / 0.04);
+  position: relative;
+  overflow: hidden;
+}
+.dashboard-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 100% 60% at 0% 0%, hsl(var(--primary) / 0.07), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, hsl(var(--accent-teal) / 0.04), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.dashboard-header > * { position: relative; z-index: 1; }
+
+/* ─── Period selector premium tabs ─── */
+.period-selector-premium {
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--primary) / 0.1) !important;
+  border-radius: 12px;
+}
+.period-btn {
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  min-height: 36px;
+  transition: all 0.2s ease;
+}
+.period-btn.active {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(45 100% 42%)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  box-shadow:
+    0 4px 16px hsl(var(--primary) / 0.35),
+    0 0 0 1px hsl(var(--primary) / 0.4) !important;
+  font-weight: 700;
+}
+.period-btn:not(.active):hover {
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.07);
+}
+
+/* ─── KPI card number shimmer on complete ─── */
+@keyframes metricComplete {
+  0%   { filter: drop-shadow(0 0 0px hsl(var(--primary) / 0)); }
+  40%  { filter: drop-shadow(0 0 12px hsl(var(--primary) / 0.6)); }
+  100% { filter: drop-shadow(0 0 6px hsl(var(--primary) / 0.3)); }
+}
+.metric-gold {
+  color: hsl(var(--primary));
+  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  animation: metricComplete 1.6s ease forwards;
+}
+
+/* ─── Recharts inside dashboard — enhanced ─── */
+.recharts-tooltip-wrapper { z-index: 100 !important; }
+.recharts-area-curve, .recharts-line-curve {
+  filter: drop-shadow(0 0 4px hsl(var(--primary) / 0.3));
+}
+.recharts-bar-rectangle path {
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+.recharts-bar-rectangle:hover path {
+  filter: brightness(1.2);
+  opacity: 0.95;
+}
+
+/* ─── Section reveal animation ─── */
+@keyframes sectionReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Trend badges ─── */
+.trend-badge-up {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  background: hsl(var(--success) / 0.12); color: hsl(var(--success));
+  border: 1px solid hsl(var(--success) / 0.25);
+}
+.trend-badge-down {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  background: hsl(var(--destructive) / 0.12); color: hsl(var(--destructive));
+  border: 1px solid hsl(var(--destructive) / 0.25);
+}
+.trend-badge-neutral {
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 2px 8px; border-radius: 100px; font-size: 11px; font-weight: 600;
+  background: hsl(var(--muted)); color: hsl(var(--muted-foreground));
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* ─── Collapsible animations ─── */
+@keyframes collapsible-down {
+  from { height: 0; opacity: 0; }
+  to   { height: var(--radix-collapsible-content-height); opacity: 1; }
+}
+@keyframes collapsible-up {
+  from { height: var(--radix-collapsible-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+[data-state="open"].animate-collapsible-down,
+.data-\[state\=open\]\:animate-collapsible-down[data-state="open"] {
+  animation: collapsible-down 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-state="closed"].animate-collapsible-up,
+.data-\[state\=closed\]\:animate-collapsible-up[data-state="closed"] {
+  animation: collapsible-up 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
 
