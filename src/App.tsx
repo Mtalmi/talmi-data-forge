@@ -74,6 +74,7 @@ const MobileField = lazy(() => import("./pages/MobileField"));
 const TrainingAcademy = lazy(() => import("./pages/TrainingAcademy"));
 const CommunityForum = lazy(() => import("./pages/CommunityForum"));
 const OperationsAgent = lazy(() => import("./pages/OperationsAgent"));
+const ArchiveLivraisons = lazy(() => import("./pages/ArchiveLivraisons"));
 
 const queryClient = new QueryClient();
 
@@ -159,6 +160,7 @@ const App = () => (
                      <Route path="/community" element={<CommunityForum />} />
                      <Route path="/operations-agent" element={<OperationsAgent />} />
                      <Route path="/settings" element={<Settings />} />
+                     <Route path="/archive-livraisons" element={<ArchiveLivraisons />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
