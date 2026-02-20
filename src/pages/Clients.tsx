@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import WorldClassClients from '@/components/clients/WorldClassClients';
 import { supabase } from '@/integrations/supabase/client';
 import { useI18n } from '@/i18n/I18nContext';
 import { getNumberLocale } from '@/i18n/dateLocale';
@@ -407,6 +408,7 @@ export default function Clients() {
 
   return (
     <MainLayout>
+      <WorldClassClients />
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
