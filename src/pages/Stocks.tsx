@@ -1,4 +1,5 @@
 import MainLayout from '@/components/layout/MainLayout';
+import WorldClassStocks from '@/components/stocks/WorldClassStocks';
 import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
 import { useI18n } from '@/i18n/I18nContext';
@@ -96,8 +97,8 @@ export default function Stocks() {
 
   return (
     <MainLayout>
+      <WorldClassStocks />
       <div className="space-y-4 sm:space-y-6">
-        {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
