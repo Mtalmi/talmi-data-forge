@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import WorldClassDeliveries from '@/components/logistics/WorldClassDeliveries';
 import { useI18n } from '@/i18n/I18nContext';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -189,6 +190,7 @@ export default function Logistique() {
 
   return (
     <MainLayout>
+      <WorldClassDeliveries />
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
