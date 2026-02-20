@@ -410,7 +410,7 @@ export default function WorldClassLaboratory() {
   const visibleNorms = normsExpanded ? NORMS : NORMS.slice(0, 4);
 
   return (
-    <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
+    <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, paddingBottom: 60 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -418,11 +418,9 @@ export default function WorldClassLaboratory() {
 
       {/* ══════════════════════════ PAGE HEADER ══════════════════════════ */}
       <div style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        background: `linear-gradient(180deg, ${T.navy} 80%, transparent)`,
-        backdropFilter: 'blur(16px)',
         borderBottom: `1px solid ${T.cardBorder}`,
         padding: '20px 32px 0',
+        marginBottom: 4,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
           <div>
