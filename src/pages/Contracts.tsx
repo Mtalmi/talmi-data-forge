@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale, getNumberLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
+import WorldClassContracts from '@/components/contracts/WorldClassContracts';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -262,7 +263,8 @@ export default function Contracts() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <WorldClassContracts />
+      <div className="space-y-6" style={{ display: 'none' }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
