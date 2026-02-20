@@ -79,8 +79,8 @@ describe('Smoke - Page Modules Can Be Imported', () => {
     expect(typeof mod.default).toBe('function');
   });
 
-  it('Landing page exports default', async () => {
-    const mod = await import('@/pages/Landing');
+  it('Auth page exports default', async () => {
+    const mod = await import('@/pages/Auth');
     expect(mod.default).toBeDefined();
   });
 

@@ -30,7 +30,7 @@ export default function Index() {
 
   // SYNCHRONOUS redirect — no useEffect delay, no flash of dashboard
   if (!user) {
-    return <Navigate to="/landing" replace />;
+    return <Navigate to="/auth" replace />;
   }
 
   return (

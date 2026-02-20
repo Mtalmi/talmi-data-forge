@@ -15,7 +15,6 @@ import { ScrollToTop } from "@/components/layout/ScrollToTop";
 // Critical path — loaded eagerly
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
-import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 
 // Lazy-loaded routes for code splitting & performance
@@ -106,7 +105,6 @@ const App = () => (
                     <Route path="/dashboard" element={<Index />} />
                     <Route path="/app" element={<Index />} />
                     <Route path="/auth" element={<Auth />} />
-                    <Route path="/landing" element={<Landing />} />
                     <Route path="/formules" element={<Formules />} />
                     <Route path="/clients" element={<Clients />} />
                     <Route path="/prix" element={<Prix />} />
