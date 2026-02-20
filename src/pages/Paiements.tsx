@@ -1,3 +1,4 @@
+import WorldClassPayments from '@/components/payments/WorldClassPayments';
 import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -165,7 +166,8 @@ export default function Paiements() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <WorldClassPayments />
+      <div className="space-y-6" style={{ display: 'none' }}>
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
