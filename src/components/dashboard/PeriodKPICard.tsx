@@ -123,14 +123,15 @@ export function PeriodKPICard({
       </div>
 
       {trend !== undefined && (
-        <div className={cn(
-          'flex items-center gap-1 mt-2 text-[10px] sm:text-xs',
-          getTrendColor()
-        )}>
-          {getTrendIcon()}
-          <span className="font-medium">{formatTrend(trend)}</span>
+        <div className="mt-3 pt-2 border-t border-border/30 flex items-center gap-2">
+          <span className={cn(
+            trend > 0 ? 'trend-badge-up' : trend < 0 ? 'trend-badge-down' : 'trend-badge-neutral'
+          )}>
+            {trend > 0 ? '↑' : trend < 0 ? '↓' : '→'}
+            {' '}{Math.abs(trend).toFixed(1)}%
+          </span>
           {trendLabel && (
-            <span className="text-muted-foreground ml-1 hidden sm:inline">vs {trendLabel}</span>
+            <span className="text-[10px] text-muted-foreground">vs {trendLabel}</span>
           )}
         </div>
       )}

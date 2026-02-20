@@ -100,8 +100,7 @@ export function HawaiiGreeting() {
 
   return (
     <div className={cn(
-      'relative overflow-hidden rounded-xl transition-all duration-1000 ease-out',
-      'bg-gradient-to-r from-background/80 via-primary/5 to-background/80',
+      'greeting-card relative overflow-hidden rounded-xl transition-all duration-1000 ease-out',
       'border border-primary/10 backdrop-blur-sm',
       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
     )}>
