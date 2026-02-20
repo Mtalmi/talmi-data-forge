@@ -2,14 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useI18n } from '@/i18n/I18nContext';
+import type { Language } from '@/i18n/I18nContext';
 import {
   AreaChart, Area, ResponsiveContainer, Tooltip,
 } from 'recharts';
 import {
-  ChevronDown, Menu, X, ArrowRight, Check, Star, Zap, Shield,
-  Lock, Globe, Play, Loader2, ChevronRight,
+  ChevronDown, Menu, X, Check, Zap, Play, Loader2,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 /* ─── DESIGN TOKENS ─────────────────────────────────────── */
 const NAVY   = '#0F1419';
@@ -321,12 +321,31 @@ function PricingPlan({ annual }: { annual: boolean }) {
   );
 }
 
+/* ─── NAV LINKS with section targets ─────────────────── */
+const NAV_LINKS = [
+  { label: { EN:'Features', FR:'Fonctionnalités', AR:'المميزات' }, id:'features' },
+  { label: { EN:'ROI',      FR:'ROI',             AR:'العائد'  }, id:'roi' },
+  { label: { EN:'Pricing',  FR:'Tarifs',           AR:'الأسعار' }, id:'pricing' },
+  { label: { EN:'Reviews',  FR:'Témoignages',      AR:'آراء'   }, id:'case-studies' },
+];
+
+function smoothScrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
 /* ─── MAIN COMPONENT ─────────────────────────────────── */
 export default function Landing() {
   const navigate = useNavigate();
+  const { lang: i18nLang, setLang: setI18nLang } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lang, setLang] = useState<'EN'|'FR'|'AR'>('EN');
   const [annual, setAnnual] = useState(false);
+  // Map i18n lang code → display code for this page
+  const langDisplay = i18nLang === 'ar' ? 'AR' : i18nLang === 'fr' ? 'FR' : 'EN';
+  const switchLang = (code: 'EN'|'FR'|'AR') => {
+    const map: Record<string, Language> = { EN:'en', FR:'fr', AR:'ar' };
+    setI18nLang(map[code]);
+  };
   const [demoLoading, setDemoLoading] = useState(false);
 
   // Hero entrance refs
@@ -406,22 +425,25 @@ export default function Landing() {
             <span style={{ color:GRAY, fontSize:11, fontFamily:'Inter,sans-serif' }}>by Talmi Beton</span>
           </div>
           <div style={{ display:'flex', gap:32, alignItems:'center' }} className="desktop-nav" id="desktop-links">
-            {['Features','ROI','Pricing','Case Studies'].map(l => (
-              <a key={l} href={`#${l.toLowerCase().replace(' ','-')}`} style={{ color:GRAY, fontFamily:'Inter,sans-serif', fontSize:14, textDecoration:'none', transition:'color 0.2s' }}
-                onMouseEnter={e=>(e.currentTarget.style.color=GOLD)} onMouseLeave={e=>(e.currentTarget.style.color=GRAY)}>{l}</a>
+            {NAV_LINKS.map(link => (
+              <button key={link.id} onClick={()=>smoothScrollTo(link.id)}
+                style={{ background:'none', border:'none', cursor:'pointer', color:GRAY, fontFamily:'Inter,sans-serif', fontSize:14, transition:'color 0.2s', padding:0 }}
+                onMouseEnter={e=>(e.currentTarget.style.color=GOLD)} onMouseLeave={e=>(e.currentTarget.style.color=GRAY)}>
+                {link.label[langDisplay as keyof typeof link.label]}
+              </button>
             ))}
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:12 }}>
             {/* Language switcher */}
             <div style={{ display:'flex', gap:6, background: CARD, border:`1px solid ${BORDER}`, borderRadius:8, padding:'4px 8px' }}>
-              {(['EN','FR','AR'] as const).map(l => (
-                <button key={l} onClick={()=>setLang(l)} style={{
+              {(['EN','FR','AR'] as const).map(c => (
+                <button key={c} onClick={()=>switchLang(c)} style={{
                   padding:'4px 8px', borderRadius:6, border:'none', cursor:'pointer', fontSize:12,
                   fontFamily:'Poppins,sans-serif', fontWeight:600,
-                  background: lang===l ? GOLD : 'transparent',
-                  color: lang===l ? '#000' : GRAY,
+                  background: langDisplay===c ? GOLD : 'transparent',
+                  color: langDisplay===c ? '#000' : GRAY,
                   transition:'all 0.2s',
-                }}>{l}</button>
+                }}>{c}</button>
               ))}
             </div>
             <button className="btn-gold" style={{ height:44, padding:'0 20px', fontSize:14 }} onClick={()=>navigate('/auth')}>
@@ -437,9 +459,11 @@ export default function Landing() {
         {menuOpen && (
           <div className="mobile-menu">
             <button style={{ position:'absolute', top:24, right:24, background:'none', border:'none', cursor:'pointer', color:'#fff' }} onClick={()=>setMenuOpen(false)}><X size={28}/></button>
-            {['Features','ROI','Pricing','Case Studies'].map(l => (
-              <a key={l} href={`#${l.toLowerCase().replace(' ','-')}`} onClick={()=>setMenuOpen(false)}
-                style={{ color:'#fff', fontFamily:'Poppins,sans-serif', fontSize:24, fontWeight:700, textDecoration:'none' }}>{l}</a>
+            {NAV_LINKS.map(link => (
+              <button key={link.id} onClick={()=>{ setMenuOpen(false); smoothScrollTo(link.id); }}
+                style={{ background:'none', border:'none', cursor:'pointer', color:'#fff', fontFamily:'Poppins,sans-serif', fontSize:24, fontWeight:700 }}>
+                {link.label[langDisplay as keyof typeof link.label]}
+              </button>
             ))}
             <button className="btn-gold" style={{ height:52, padding:'0 32px', fontSize:16 }} onClick={()=>{ setMenuOpen(false); navigate('/auth'); }}>Request Demo</button>
           </div>
@@ -649,7 +673,7 @@ export default function Landing() {
                   <span style={{ color:GOLD, fontSize:18, marginRight:8 }}>{'⭐'.repeat(5)}</span>
                   <span style={{ color:GRAY, fontSize:14 }}>4.9/5.0 Customer Satisfaction</span>
                 </div>
-                <button className="btn-gold" style={{ width:'100%', height:52, fontSize:15 }}>See Full Case Study →</button>
+                <button className="btn-gold" style={{ width:'100%', height:52, fontSize:15 }} onClick={()=>navigate('/success-stories')}>See Full Case Study →</button>
               </div>
             </div>
           </div>
@@ -734,7 +758,7 @@ export default function Landing() {
         </section>
 
         {/* ── SECTION 9: TESTIMONIALS ── */}
-        <section className="section-pad dot-grid">
+        <section id="case-studies" className="section-pad dot-grid">
           <div className="container-max">
             <div ref={r6} className="reveal" style={{ textAlign:'center', marginBottom:60 }}>
               <p style={{ fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:12, color:GOLD, letterSpacing:4, textTransform:'uppercase', marginBottom:12 }}>CUSTOMER STORIES</p>
@@ -756,7 +780,7 @@ export default function Landing() {
                     <cite style={{ color:GOLD, fontSize:12, fontFamily:'Poppins,sans-serif', fontWeight:600 }}>— {t.author}</cite>
                   </blockquote>
                   <p style={{ color:GOLD, fontSize:12, fontFamily:'JetBrains Mono,monospace', background:'rgba(255,215,0,0.06)', borderRadius:8, padding:'8px 12px', margin:'0 0 12px' }}>{t.results}</p>
-                  <button style={{ background:'none', border:'none', cursor:'pointer', color:GOLD, fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:13, padding:0 }}>Read Full Case Study →</button>
+                  <button onClick={()=>navigate('/success-stories')} style={{ background:'none', border:'none', cursor:'pointer', color:GOLD, fontFamily:'Poppins,sans-serif', fontWeight:600, fontSize:13, padding:0, textDecoration:'underline' }}>Read Full Case Study →</button>
                 </div>
               ))}
             </div>
@@ -855,12 +879,12 @@ export default function Landing() {
               <p style={{ color:GRAY, fontSize:12, margin:0 }}>© 2025 TBOS by Talmi Beton. All rights reserved.</p>
               <div style={{ display:'flex', gap:12, fontSize:20 }}>🇲🇦 🇸🇦 🇦🇪 🇪🇬</div>
               <div style={{ display:'flex', gap:16, alignItems:'center' }}>
-                {(['EN','FR','AR'] as const).map(l => (
-                  <button key={l} onClick={()=>setLang(l)} style={{
-                    background: lang===l ? GOLD : 'transparent', color: lang===l ? '#000' : GRAY,
-                    border: `1px solid ${lang===l ? GOLD : BORDER}`, borderRadius:6,
+                {(['EN','FR','AR'] as const).map(c => (
+                  <button key={c} onClick={()=>switchLang(c)} style={{
+                    background: langDisplay===c ? GOLD : 'transparent', color: langDisplay===c ? '#000' : GRAY,
+                    border: `1px solid ${langDisplay===c ? GOLD : BORDER}`, borderRadius:6,
                     padding:'4px 10px', fontSize:12, cursor:'pointer', fontFamily:'Poppins,sans-serif', fontWeight:600,
-                  }}>{l}</button>
+                  }}>{c}</button>
                 ))}
               </div>
             </div>
