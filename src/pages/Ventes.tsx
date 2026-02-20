@@ -414,13 +414,21 @@ export default function Ventes() {
     <TooltipProvider>
       <MainLayout>
         <div className="space-y-6">
-          {/* Header */}
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          {/* ── Premium Page Header ── */}
+          <div
+            className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border px-5 py-4 dashboard-header"
+            style={{
+              background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--primary)/0.03) 100%)',
+              borderColor: 'hsl(var(--primary)/0.15)',
+              boxShadow: '0 4px 24px hsl(var(--primary)/0.05)',
+            }}
+          >
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">{t.pages.ventes.title}</h1>
-              <p className="text-muted-foreground">
-                {t.pages.ventes.subtitle}
-              </p>
+              <div className="flex items-center gap-3 mb-1">
+                <span className="w-1 h-6 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)/0.4))', boxShadow: '0 0 8px hsl(var(--primary)/0.4)' }} />
+                <h1 className="text-2xl font-black tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>{t.pages.ventes.title}</h1>
+              </div>
+              <p className="text-sm text-muted-foreground pl-4">{t.pages.ventes.subtitle}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <SmartQuoteCalculator variant="prominent" />
@@ -539,31 +547,33 @@ export default function Ventes() {
           {/* Tabs for Devis, BC, Factures and Calendar */}
           <div id="ventes-tabs-section" className="scroll-mt-36">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList>
-               <TabsTrigger value="devis" className="gap-2">
-                 <FileText className="h-4 w-4" />
-                 {t.pages.ventes.devisTab} ({filteredDevis.length})
+            <TabsList className="h-auto p-1 gap-1 rounded-xl period-selector-premium">
+               <TabsTrigger value="devis" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+                 <FileText className="h-3.5 w-3.5" />
+                 {t.pages.ventes.devisTab}
+                 <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredDevis.length}</span>
                  {expiringDevisCount > 0 && (
-                   <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center">
-                     <AlertTriangle className="h-3 w-3" />
+                   <Badge variant="destructive" className="ml-0.5 h-4 w-4 p-0 flex items-center justify-center">
+                     <AlertTriangle className="h-2.5 w-2.5" />
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="bc" className="gap-2">
-                 <ShoppingCart className="h-4 w-4" />
-                 {t.pages.ventes.bcTab} ({filteredBc.length})
+               <TabsTrigger value="bc" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+                 <ShoppingCart className="h-3.5 w-3.5" />
+                 {t.pages.ventes.bcTab}
+                 <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredBc.length}</span>
                  {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
-                   <Badge variant="outline" className="ml-1 h-5 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse">
+                   <Badge variant="outline" className="ml-0.5 h-4 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse text-[9px]">
                      {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="factures" className="gap-2">
-                 <Receipt className="h-4 w-4" />
+               <TabsTrigger value="factures" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+                 <Receipt className="h-3.5 w-3.5" />
                  {t.pages.ventes.invoicesTab}
                </TabsTrigger>
-               <TabsTrigger value="calendar" className="gap-2">
-                 <Calendar className="h-4 w-4" />
+               <TabsTrigger value="calendar" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+                 <Calendar className="h-3.5 w-3.5" />
                  {t.pages.ventes.calendarTab}
                </TabsTrigger>
             </TabsList>
