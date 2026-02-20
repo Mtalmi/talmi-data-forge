@@ -487,15 +487,29 @@ export default function WorldClassClients() {
                       <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.3" />
                     </filter>
                   </defs>
-                  <Pie
-                    data={SEGMENTS} cx="50%" cy="50%" innerRadius={52} outerRadius={72}
-                    paddingAngle={3} dataKey="value"
-                    isAnimationActive animationDuration={800}
-                    label={false}
-                    labelLine={false}
-                  >
-                    {SEGMENTS.map((seg, i) => <Cell key={i} fill={seg.color} />)}
-                  </Pie>
+                  {SEGMENTS.map((seg, i) => (
+                    <Pie
+                      key={seg.name}
+                      data={[seg]}
+                      cx="50%" cy="50%"
+                      innerRadius={52} outerRadius={72}
+                      paddingAngle={0}
+                      dataKey="value"
+                      startAngle={
+                        90 - SEGMENTS.slice(0, i).reduce((acc, s) => acc + (s.value / 48) * 360, 0)
+                      }
+                      endAngle={
+                        90 - SEGMENTS.slice(0, i + 1).reduce((acc, s) => acc + (s.value / 48) * 360, 0)
+                      }
+                      isAnimationActive
+                      animationBegin={i * 150}
+                      animationDuration={600}
+                      label={false}
+                      labelLine={false}
+                    >
+                      <Cell fill={seg.color} />
+                    </Pie>
+                  ))}
                   <RechartsTooltip
                     content={({ active, payload }) => {
                       if (!active || !payload?.length) return null;
