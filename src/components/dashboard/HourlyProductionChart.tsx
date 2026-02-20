@@ -27,19 +27,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: 'hsl(var(--card))',
-        border: '1px solid hsl(51 100% 50% / 0.3)',
-        borderRadius: '10px',
-        padding: '10px 14px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.4), 0 0 20px hsl(51 100% 50% / 0.1)',
+        background: '#0F172A',
+        border: '1px solid rgba(255,215,0,0.25)',
+        borderRadius: 8,
+        padding: '8px 12px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
       }}>
-        <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '11px', marginBottom: '4px' }}>{label}</p>
-        <p style={{
-          fontFamily: 'JetBrains Mono, monospace',
-          fontWeight: 700,
-          fontSize: '18px',
-          color: 'hsl(51 100% 50%)',
-        }}>
+        <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 16, color: '#FFD700' }}>
           {payload[0].value} m³
         </p>
       </div>
