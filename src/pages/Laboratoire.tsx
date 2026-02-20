@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
+import WorldClassLaboratory from '@/components/laboratory/WorldClassLaboratory';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useLabTests } from '@/hooks/useLabTests';
@@ -170,7 +171,11 @@ export default function Laboratoire() {
 
   return (
     <MainLayout>
-      <div className="space-y-4 sm:space-y-6">
+      {/* ══ Premium Lab UI ══ */}
+      <WorldClassLaboratory />
+      {/* ══ Divider ══ */}
+      <div style={{ margin: '0 32px', borderTop: '1px solid #1E2D4A', paddingTop: 24 }} />
+      <div className="space-y-4 sm:space-y-6" style={{ padding: '0 32px 60px' }}>
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
