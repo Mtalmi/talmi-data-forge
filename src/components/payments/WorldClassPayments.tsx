@@ -615,8 +615,13 @@ export default function WorldClassPayments() {
         <section>
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
 
-            {/* Trend chart */}
-            <Card style={{ padding: 24 }}>
+            {/* Trend chart — plain div to avoid overflow:hidden clipping Recharts */}
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24, position: 'relative',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+              transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+            }}>
               <div style={{ marginBottom: 16 }}>
                 <p style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>Tendance Encaissements</p>
                 <p style={{ color: T.textDim, fontSize: 11 }}>6 derniers mois</p>
@@ -624,27 +629,27 @@ export default function WorldClassPayments() {
               <ResponsiveContainer width="100%" height={240}>
                 <AreaChart data={TREND_DATA} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="encGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={T.gold} stopOpacity={0.35} />
-                      <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
+                    <linearGradient id="pay-encGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={T.gold} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={T.gold} stopOpacity={0.02} />
                     </linearGradient>
-                    <linearGradient id="facGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={T.textSec} stopOpacity={0.2} />
-                      <stop offset="100%" stopColor={T.textSec} stopOpacity={0} />
+                    <linearGradient id="pay-facGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#94A3B8" stopOpacity={0.25} />
+                      <stop offset="100%" stopColor="#94A3B8" stopOpacity={0.02} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }}
-                    tickFormatter={v => `${v}K`} />
+                    tickFormatter={(v: number) => `${v}K`} domain={[200, 380]} />
                   <RechartsTooltip content={<DarkTooltip />} cursor={{ stroke: `${T.gold}30` }} />
                   <Area dataKey="facture" name="Facturé" type="monotone"
-                    stroke={T.textSec} strokeWidth={2} strokeDasharray="6 4"
-                    fill="url(#facGrad)" isAnimationActive animationDuration={1200} />
+                    stroke="#94A3B8" strokeWidth={2} strokeDasharray="6 4"
+                    fill="url(#pay-facGrad)" isAnimationActive animationDuration={1200} />
                   <Area dataKey="encaisse" name="Encaissé" type="monotone"
                     stroke={T.gold} strokeWidth={2.5}
-                    fill="url(#encGrad)" isAnimationActive animationDuration={1200}
-                    dot={{ fill: T.gold, r: 4 }} />
+                    fill="url(#pay-encGrad)" isAnimationActive animationDuration={1200}
+                    dot={{ fill: T.gold, r: 4, strokeWidth: 0 }} />
                 </AreaChart>
               </ResponsiveContainer>
               {/* Gap callout */}
@@ -659,23 +664,29 @@ export default function WorldClassPayments() {
                 </span>
                 <span style={{ color: T.textDim, fontSize: 11 }}>entre facturé et encaissé</span>
               </div>
-            </Card>
+            </div>
 
-            {/* Aging chart */}
-            <Card style={{ padding: 24 }}>
+            {/* Aging chart — plain div to avoid overflow:hidden */}
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24, position: 'relative',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+              transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+            }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                 <p style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>Analyse d'Âge</p>
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 800, color: T.gold }}>
                   457K DH
                 </span>
               </div>
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={AGING_DATA} layout="vertical" margin={{ top: 0, right: 40, left: 0, bottom: 0 }}>
+              <ResponsiveContainer width="100%" height={210}>
+                <BarChart data={AGING_DATA} layout="vertical" margin={{ top: 2, right: 50, left: 0, bottom: 2 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} horizontal={false} />
                   <XAxis type="number" axisLine={false} tickLine={false}
-                    tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
+                    tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={(v: number) => `${v}K`}
+                    domain={[0, 340]} />
                   <YAxis type="category" dataKey="bracket" axisLine={false} tickLine={false}
-                    tick={{ fill: T.textSec, fontSize: 11 }} width={72} />
+                    tick={{ fill: T.textSec, fontSize: 11 }} width={74} />
                   <RechartsTooltip content={<AgingTooltip />} cursor={{ fill: `${T.gold}08` }} />
                   <Bar dataKey="amount" radius={[0, 6, 6, 0]}
                     isAnimationActive animationDuration={1000}
@@ -696,7 +707,7 @@ export default function WorldClassPayments() {
                 <Badge label="21% 1-30j"   color={T.warning} bg={`${T.warning}15`} />
                 <Badge label="11% >30j"    color={T.danger}  bg={`${T.danger}15`} />
               </div>
-            </Card>
+            </div>
           </div>
         </section>
 
