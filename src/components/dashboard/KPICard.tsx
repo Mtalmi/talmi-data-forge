@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { useAnimatedCounterWithGlow } from '@/hooks/useAnimatedCounter';
+import { useCountUp } from '@/hooks/useCountUp';
 import { useI18n } from '@/i18n/I18nContext';
 
 interface KPICardProps {
@@ -14,9 +14,8 @@ interface KPICardProps {
 }
 
 export default function KPICard({
-  title,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   value,
+  title,
   subtitle,
   icon: Icon,
   trend,
@@ -26,7 +25,7 @@ export default function KPICard({
   const { t } = useI18n();
   const numericValue = typeof value === 'number' ? value : parseInt(String(value), 10);
   const isNumeric = !isNaN(numericValue) && typeof value === 'number';
-  const { display: animatedNum, done } = useAnimatedCounterWithGlow(isNumeric ? numericValue : 0, 1500, 0);
+  const animated = useCountUp(isNumeric ? numericValue : 0, 1600);
 
   const variantStyles = {
     default: '',
@@ -65,7 +64,7 @@ export default function KPICard({
 
   return (
     <div className={cn(
-      'kpi-card god-tier-card animate-fade-in group card-magnetic press-feedback ripple-container',
+      'kpi-card god-tier-card tbos-card animate-fade-in group card-magnetic press-feedback ripple-container',
       variantStyles[variant]
     )}>
       <div className="flex items-start justify-between gap-3">
@@ -75,30 +74,29 @@ export default function KPICard({
           </p>
           <p className={cn(
             'text-2xl sm:text-3xl font-black tracking-tight tabular-nums transition-all duration-700',
-            'metric-gold',
-            done && isNumeric ? 'drop-shadow-[0_0_12px_hsl(51_100%_50%/0.5)]' : ''
+            'metric-gold'
           )}>
-            {isNumeric ? animatedNum : value}
+            {isNumeric ? animated.toLocaleString('fr-MA') : value}
           </p>
           {subtitle && (
             <p className="text-sm text-muted-foreground truncate">{subtitle}</p>
           )}
         </div>
         <div className={cn(
-          "p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110",
+          'p-2.5 rounded-xl transition-transform duration-300 group-hover:scale-110',
           iconBgColors[variant]
         )}>
-          <Icon className={cn("h-5 w-5", iconColors[variant])} />
+          <Icon className={cn('h-5 w-5', iconColors[variant])} />
         </div>
       </div>
-      
+
       {trend && trendValue && TrendIcon && (
         <div className="mt-4 pt-3 border-t border-border/50 flex items-center gap-2">
           <div className={cn(
-            "flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold",
-            trend === 'up' && "bg-success/10",
-            trend === 'down' && "bg-destructive/10",
-            trend === 'neutral' && "bg-muted/50"
+            'flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold',
+            trend === 'up' && 'bg-success/10',
+            trend === 'down' && 'bg-destructive/10',
+            trend === 'neutral' && 'bg-muted/50'
           )}>
             <TrendIcon className={cn('h-3.5 w-3.5', trendColors[trend])} />
             <span className={trendColors[trend]}>{trendValue}</span>

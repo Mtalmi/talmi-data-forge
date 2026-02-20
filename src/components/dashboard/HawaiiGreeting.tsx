@@ -126,11 +126,16 @@ export function HawaiiGreeting() {
                   <span>{weather.city} • {weather.temp}°C</span>
                 </span>
                 <span className="hidden sm:inline text-primary/30">|</span>
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1.5">
                   <Factory className={cn(
                     'h-3.5 w-3.5',
                     efficiency.status === 'optimal' ? 'text-success' :
                     efficiency.status === 'good' ? 'text-warning' : 'text-destructive'
+                  )} />
+                  <span className={cn(
+                    'status-dot',
+                    efficiency.status === 'optimal' ? 'status-dot-green' :
+                    efficiency.status === 'good' ? 'status-dot-yellow' : 'status-dot-red'
                   )} />
                   <span>
                     {t.greeting.plantRunning}{' '}
