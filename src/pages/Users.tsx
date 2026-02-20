@@ -3,6 +3,7 @@ import { useI18n } from '@/i18n/I18nContext';
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/hooks/useAuth';
+import WorldClassUsers from '@/components/users/WorldClassUsers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -175,7 +176,8 @@ export default function Users() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <WorldClassUsers />
+      <div className="space-y-6" style={{ display: 'none' }}>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">{u.title}</h1>
