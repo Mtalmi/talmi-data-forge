@@ -101,6 +101,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { WorldClassDashboard } from '@/components/dashboard/WorldClassDashboard';
 
 export default function Dashboard() {
   const { t, lang } = useI18n();
@@ -329,6 +330,11 @@ export default function Dashboard() {
           }))} 
           onDismiss={dismissAlert} 
         />
+
+        {/* ═══════════════════════════════════════════════════════
+            WORLD-CLASS PREMIUM DASHBOARD
+            ═══════════════════════════════════════════════════════ */}
+        <WorldClassDashboard />
 
         {/* ═══════════════════════════════════════════════════════
             SECTION 1 — KPIs & PERFORMANCE
