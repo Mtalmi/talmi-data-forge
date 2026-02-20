@@ -2036,3 +2036,177 @@
   font-weight: 700 !important;
   margin-bottom: 1rem;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   GOD TIER DASHBOARD SYSTEM — Phase 1–10
+   World-class premium card system, micro-interactions, 
+   breathing status dots, skeleton shimmer, scroll reveals
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── God Tier Card — gold shimmer sweep on hover ─────────── */
+.god-tier-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Gold shimmer sweep line top */
+.god-tier-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(51 100% 50%), transparent);
+  transition: left 0.5s ease;
+  z-index: 1;
+}
+
+/* Radial glow overlay */
+.god-tier-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at top right, hsl(51 100% 50% / 0.04), transparent 70%);
+  transition: opacity 0.3s ease;
+}
+
+.god-tier-card:hover {
+  border-color: hsl(51 100% 50% / 0.35);
+  transform: translateY(-3px);
+  box-shadow:
+    0 20px 60px hsl(0 0% 0% / 0.4),
+    0 0 0 1px hsl(51 100% 50% / 0.08),
+    0 4px 20px hsl(51 100% 50% / 0.06);
+}
+
+.god-tier-card:hover::before { left: 100%; }
+.god-tier-card:hover::after { opacity: 1; }
+
+/* ── Breathing / Pulsing Status Dots ─────────────────────── */
+@keyframes breathe-green {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(145 65% 45% / 0.6); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 5px hsl(145 65% 45% / 0); }
+}
+
+@keyframes breathe-red {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(350 100% 50% / 0.6); }
+  50%       { opacity: 0.6; box-shadow: 0 0 0 5px hsl(350 100% 50% / 0); }
+}
+
+@keyframes breathe-gold {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(51 100% 50% / 0.5); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 5px hsl(51 100% 50% / 0); }
+}
+
+.status-dot-green {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: hsl(145 65% 45%);
+  animation: breathe-green 2s ease-in-out infinite;
+}
+
+.status-dot-red {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: hsl(350 100% 50%);
+  animation: breathe-red 1.5s ease-in-out infinite;
+}
+
+.status-dot-gold {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: hsl(51 100% 50%);
+  animation: breathe-gold 2.5s ease-in-out infinite;
+}
+
+/* ── Skeleton Shimmer — God Tier ─────────────────────────── */
+@keyframes skeleton-god-shimmer {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.skeleton-god {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--card)) 25%,
+    hsl(var(--muted)) 37%,
+    hsl(var(--card)) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-god-shimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+
+/* ── Scroll Reveal ───────────────────────────────────────── */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  will-change: transform, opacity;
+}
+
+.reveal-on-scroll.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Micro-interactions: Button press ────────────────────── */
+.god-tier-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.15s ease;
+  will-change: transform;
+}
+
+.god-tier-btn:hover  { transform: translateY(-2px); }
+.god-tier-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ── Gold metric numbers ─────────────────────────────────── */
+.metric-gold {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  color: hsl(51 100% 50%);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Input gold focus ────────────────────────────────────── */
+.tbos-input:focus {
+  border-color: hsl(51 100% 50%);
+  box-shadow: 0 0 0 3px hsl(51 100% 50% / 0.12);
+  outline: none;
+}
+
+.tbos-input.error {
+  border-color: hsl(350 100% 50%);
+  animation: input-shake 0.4s ease;
+}
+
+@keyframes input-shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-6px); }
+  75%       { transform: translateX(6px); }
+}
+
+/* ── Tab content fade ────────────────────────────────────── */
+@keyframes tab-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tab-fade { animation: tab-fade-in 0.2s ease both; }
+
+/* ── Performance: reduced motion ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

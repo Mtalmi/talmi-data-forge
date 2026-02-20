@@ -65,7 +65,7 @@ export default function KPICard({
 
   return (
     <div className={cn(
-      'kpi-card animate-fade-in group card-magnetic press-feedback ripple-container',
+      'kpi-card god-tier-card animate-fade-in group card-magnetic press-feedback ripple-container',
       variantStyles[variant]
     )}>
       <div className="flex items-start justify-between gap-3">
@@ -75,7 +75,8 @@ export default function KPICard({
           </p>
           <p className={cn(
             'text-2xl sm:text-3xl font-black tracking-tight tabular-nums transition-all duration-700',
-            done && isNumeric ? 'drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : ''
+            'metric-gold',
+            done && isNumeric ? 'drop-shadow-[0_0_12px_hsl(51_100%_50%/0.5)]' : ''
           )}>
             {isNumeric ? animatedNum : value}
           </p>
