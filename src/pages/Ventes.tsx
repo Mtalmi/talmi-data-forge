@@ -39,6 +39,7 @@ import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/
 import { SavedFilterViews } from '@/components/ventes/SavedFilterViews';
 import { ExpiringQuotesAlert } from '@/components/ventes/ExpiringQuotesAlert';
 import { RevenueForecastChart } from '@/components/ventes/RevenueForecastChart';
+import { SalesPerformanceCharts } from '@/components/ventes/SalesPerformanceCharts';
 import { BatchReminderDialog } from '@/components/ventes/BatchReminderDialog';
 import { CommunicationLogDrawer } from '@/components/ventes/CommunicationLogDrawer';
 import { ScheduledRemindersDialog } from '@/components/ventes/ScheduledRemindersDialog';
@@ -517,6 +518,9 @@ export default function Ventes() {
             </div>
             <RevenueForecastChart bcList={bcList} devisList={devisList} />
           </div>
+
+          {/* Sales Performance Charts - Rep / Product / Win-Loss */}
+          <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
 
           {/* Active Status Filter Indicator */}
           {filters.status !== 'all' && (
