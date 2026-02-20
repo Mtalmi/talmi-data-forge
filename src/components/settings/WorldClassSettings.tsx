@@ -352,6 +352,13 @@ export default function WorldClassSettings() {
     markChanged();
   };
 
+  // ── Alert thresholds ──────────────────────────────────────────────
+  const [thresh1, setThresh1] = useState('20');
+  const [thresh2, setThresh2] = useState('30');
+  const [thresh3, setThresh3] = useState('30');
+  const [thresh4, setThresh4] = useState('80');
+  const [thresh5, setThresh5] = useState('90');
+
   // ── Security toggles ──────────────────────────────────────────────
   const [tfa, setTfa] = useState(true);
   const [langue, setLangue] = useState('Français 🇫🇷');
@@ -394,50 +401,49 @@ export default function WorldClassSettings() {
 
       {/* ── PAGE HEADER ──────────────────────────────────────────────── */}
       <div style={{
-        position: 'sticky', top: 0, zIndex: 50, background: 'rgba(11,17,32,0.95)',
-        backdropFilter: 'blur(16px)', borderBottom: `1px solid ${BORDER}`,
-        padding: '0 32px',
+        borderBottom: `1px solid ${BORDER}`,
+        padding: '20px 32px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        marginBottom: 0,
       }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 72 }}>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: TEXT1, fontFamily: SANS, margin: 0, lineHeight: 1.2 }}>Paramètres</h1>
-            <p style={{ fontSize: 13, color: TEXT2, margin: 0, fontFamily: SANS }}>Configuration du système TBOS</p>
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button style={{
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 700, color: TEXT1, fontFamily: SANS, margin: 0, lineHeight: 1.2 }}>Paramètres</h1>
+          <p style={{ fontSize: 13, color: TEXT2, margin: 0, fontFamily: SANS }}>Configuration du système TBOS</p>
+        </div>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 8, padding: '8px 20px',
+            borderRadius: 10, border: `1px solid ${BORDER}`,
+            background: 'transparent', color: TEXT2, fontSize: 13, fontWeight: 600,
+            cursor: 'pointer', fontFamily: SANS,
+          }}>
+            <Download size={16} />
+            Exporter
+          </button>
+          <button
+            className="stgs-save"
+            disabled={!hasChanges}
+            style={{
               display: 'flex', alignItems: 'center', gap: 8, padding: '8px 20px',
-              borderRadius: 10, border: `1px solid ${BORDER}`,
-              background: 'transparent', color: TEXT2, fontSize: 13, fontWeight: 600,
-              cursor: 'pointer', fontFamily: SANS,
-            }}>
-              <Download size={16} />
-              Exporter
-            </button>
-            <button
-              className="stgs-save"
-              disabled={!hasChanges}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8, padding: '8px 20px',
-                borderRadius: 10, border: 'none',
-                background: hasChanges ? GOLD : 'rgba(255,215,0,0.2)',
-                color: hasChanges ? '#0B1120' : 'rgba(255,215,0,0.4)',
-                fontSize: 13, fontWeight: 700,
-                cursor: hasChanges ? 'pointer' : 'not-allowed',
-                fontFamily: SANS, transition: 'all 0.2s ease',
-              }}
-            >
-              <Save size={16} />
-              Sauvegarder
-            </button>
-          </div>
+              borderRadius: 10, border: 'none',
+              background: hasChanges ? GOLD : 'rgba(255,215,0,0.2)',
+              color: hasChanges ? '#0B1120' : 'rgba(255,215,0,0.4)',
+              fontSize: 13, fontWeight: 700,
+              cursor: hasChanges ? 'pointer' : 'not-allowed',
+              fontFamily: SANS, transition: 'all 0.2s ease',
+            }}
+          >
+            <Save size={16} />
+            Sauvegarder
+          </button>
         </div>
       </div>
 
       {/* ── MAIN LAYOUT ──────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', gap: 0, padding: '32px 32px' }}>
+      <div style={{ display: 'flex', gap: 0, padding: '32px 0' }}>
 
         {/* ── LEFT SIDEBAR NAV ─────────────────────────────────────── */}
-        <div style={{ width: 220, flexShrink: 0, position: 'sticky', top: 104, height: 'fit-content', paddingRight: 24 }}>
+        <div style={{ width: 220, flexShrink: 0, position: 'sticky', top: 80, height: 'fit-content', paddingRight: 24 }}>
           <div style={{ background: CARD, borderRadius: 16, border: `1px solid ${BORDER}`, padding: '8px 0', overflow: 'hidden' }}>
             {NAV_ITEMS.map(item => {
               const active = activeSection === item.id;
@@ -584,24 +590,25 @@ export default function WorldClassSettings() {
               ))}
             </Card>
 
-            {/* Alert Thresholds */}
+          {/* Alert Thresholds */}
             <Card>
               <div style={{ fontSize: 15, fontWeight: 700, color: TEXT1, fontFamily: SANS, marginBottom: 20 }}>Seuils d'Alerte</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                {[
-                  { label: 'Stock minimum',          value: '20',  suffix: '%'     },
-                  { label: 'Paiement en retard',      value: '30',  suffix: 'jours' },
-                  { label: 'Contrat expire dans',     value: '30',  suffix: 'jours' },
-                  { label: 'Consommation contrat',    value: '80',  suffix: '%'     },
-                  { label: 'Budget dépassé',          value: '90',  suffix: '%'     },
-                ].map((row, i) => {
-                  const [val, setVal] = useState(row.value);
-                  return (
-                    <SettingRow key={i} label={row.label}>
-                      <FieldInput label="" value={val} onChange={v => { setVal(v); markChanged(); }} mono suffix={row.suffix} type="number" />
-                    </SettingRow>
-                  );
-                })}
+                <SettingRow label="Stock minimum">
+                  <FieldInput label="" value={thresh1} onChange={v => { setThresh1(v); markChanged(); }} mono suffix="%" type="number" />
+                </SettingRow>
+                <SettingRow label="Paiement en retard">
+                  <FieldInput label="" value={thresh2} onChange={v => { setThresh2(v); markChanged(); }} mono suffix="jours" type="number" />
+                </SettingRow>
+                <SettingRow label="Contrat expire dans">
+                  <FieldInput label="" value={thresh3} onChange={v => { setThresh3(v); markChanged(); }} mono suffix="jours" type="number" />
+                </SettingRow>
+                <SettingRow label="Consommation contrat">
+                  <FieldInput label="" value={thresh4} onChange={v => { setThresh4(v); markChanged(); }} mono suffix="%" type="number" />
+                </SettingRow>
+                <SettingRow label="Budget dépassé">
+                  <FieldInput label="" value={thresh5} onChange={v => { setThresh5(v); markChanged(); }} mono suffix="%" type="number" />
+                </SettingRow>
               </div>
             </Card>
           </section>
