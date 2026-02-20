@@ -46,7 +46,7 @@ export function DashboardSection({
   };
 
   return (
-    <Collapsible open={open} onOpenChange={handleOpenChange} className={className}>
+    <Collapsible open={open} onOpenChange={handleOpenChange} className={cn('dashboard-section', className)}>
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center gap-3 py-3 px-1 group cursor-pointer select-none">
           <div className="flex items-center gap-2.5 min-w-0">

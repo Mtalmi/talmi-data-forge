@@ -2038,6 +2038,269 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   PREMIUM POLISH — Phase 2 CSS Variables & Global Systems
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --gold: hsl(51 100% 50%);
+  --gold-dim: hsl(51 100% 50% / 0.15);
+  --gold-border: hsl(51 100% 50% / 0.25);
+  --navy: hsl(215 30% 8%);
+  --card-bg: hsl(215 25% 12%);
+  --card-border: hsl(215 20% 18%);
+  --text-secondary: hsl(215 15% 65%);
+}
+
+/* ── Global card hover shimmer system ────────────────────── */
+/* Gold top line shimmer on ALL cards on hover */
+.card::after,
+[class*="card"]::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(51 100% 50%), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* EXCEPTION: god-tier-card already has its own ::before shimmer sweep — keep that working */
+.god-tier-card::after {
+  /* override: god-tier uses radial glow overlay, not top shimmer */
+  background: radial-gradient(ellipse at top right, hsl(51 100% 50% / 0.04), transparent 70%);
+  height: auto;
+  inset: 0;
+}
+
+/* ── Press / active feedback for all interactive cards ───── */
+.card-magnetic {
+  cursor: pointer;
+  will-change: transform;
+}
+
+.card-magnetic:active,
+.press-feedback:active {
+  transform: scale(0.97) !important;
+  box-shadow: inset 0 2px 8px hsl(0 0% 0% / 0.3) !important;
+}
+
+/* ── Gold ripple on active ────────────────────────────────── */
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, hsl(51 100% 50% / 0.07) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ripple-container:active::before {
+  opacity: 1;
+}
+
+/* ── Staggered page load animations ─────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-section:nth-child(1) { animation: fadeUp 0.4s ease 0ms both; }
+.dashboard-section:nth-child(2) { animation: fadeUp 0.4s ease 80ms both; }
+.dashboard-section:nth-child(3) { animation: fadeUp 0.4s ease 160ms both; }
+.dashboard-section:nth-child(4) { animation: fadeUp 0.4s ease 240ms both; }
+.dashboard-section:nth-child(5) { animation: fadeUp 0.4s ease 320ms both; }
+.dashboard-section:nth-child(6) { animation: fadeUp 0.4s ease 400ms both; }
+
+/* ── Timeline enhancements ───────────────────────────────── */
+.timeline-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 52px;
+}
+
+.timeline-row-current {
+  background: hsl(51 100% 50% / 0.05);
+  border-left: 3px solid hsl(51 100% 50%);
+  padding-left: 12px;
+}
+
+.timeline-row-available {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.6;
+}
+
+@keyframes timeline-pulse {
+  0%   { box-shadow: 0 0 0 0 hsl(51 100% 50% / 0.4); }
+  70%  { box-shadow: 0 0 0 8px hsl(51 100% 50% / 0); }
+  100% { box-shadow: 0 0 0 0 hsl(51 100% 50% / 0); }
+}
+
+.timeline-current-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: hsl(51 100% 50%);
+  animation: timeline-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ── Pipeline stage cards ────────────────────────────────── */
+.pipeline-stage-card {
+  background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--muted)));
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.pipeline-stage-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px hsl(0 0% 0% / 0.4);
+}
+
+.pipeline-stage-card.has-value {
+  border-color: hsl(51 100% 50% / 0.3);
+  box-shadow: 0 0 20px hsl(51 100% 50% / 0.06);
+}
+
+/* ── Workflow cards (Production page) ───────────────────── */
+.workflow-card {
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
+  border: 1px solid hsl(var(--border));
+  border-radius: 12px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.workflow-card:hover {
+  border-color: hsl(51 100% 50% / 0.3);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--secondary)) 100%);
+}
+
+.workflow-card svg {
+  color: hsl(51 100% 50%);
+  opacity: 0.7;
+  width: 32px; height: 32px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.workflow-card:hover svg {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ── Production progress bar — glowing ───────────────────── */
+.production-progress-bar {
+  position: relative;
+  height: 8px;
+  border-radius: 100px;
+  background: hsl(var(--muted));
+  overflow: hidden;
+}
+
+.production-progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Top navigation bar enhancements ────────────────────── */
+.top-nav {
+  background: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.top-nav-tab-active {
+  background: hsl(51 100% 50%);
+  color: hsl(0 0% 0%);
+  font-weight: 700;
+  border-radius: 8px;
+}
+
+.top-nav-tab:hover:not(.top-nav-tab-active) {
+  background: hsl(255 255% 255% / 0.06);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+/* ── Navigation sidebar enhancements ────────────────────── */
+.nav-item-active {
+  background: linear-gradient(90deg, hsl(51 100% 50% / 0.15), hsl(51 100% 50% / 0.05));
+  border-right: 3px solid hsl(51 100% 50%);
+  color: hsl(51 100% 50%);
+}
+
+.nav-item:hover:not(.nav-item-active) {
+  background: hsl(255 255% 255% / 0.04);
+  color: hsl(var(--foreground));
+  transform: translateX(2px);
+  transition: all 0.15s ease;
+}
+
+/* ── Trend badge ─────────────────────────────────────────── */
+.trend-badge-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  background: hsl(145 65% 45% / 0.12);
+  color: hsl(145 65% 45%);
+  border: 1px solid hsl(145 65% 45% / 0.25);
+}
+
+.trend-badge-down {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  background: hsl(350 100% 50% / 0.12);
+  color: hsl(350 100% 60%);
+  border: 1px solid hsl(350 100% 50% / 0.25);
+}
+
+.trend-badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  border: 1px solid hsl(var(--border));
+}
+
+/* ── Greeting card gold left border ─────────────────────── */
+.greeting-card {
+  border-left: 3px solid hsl(51 100% 50%) !important;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.5) 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════
    GOD TIER DASHBOARD SYSTEM — Phase 1–10
    World-class premium card system, micro-interactions, 
    breathing status dots, skeleton shimmer, scroll reveals
