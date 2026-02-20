@@ -48,6 +48,9 @@ const AuditExterne = lazy(() => import("./pages/AuditExterne"));
 const SecurityDashboard = lazy(() => import("./pages/SecurityDashboard"));
 const ClientTracking = lazy(() => import("./pages/ClientTracking"));
 const AideSupport = lazy(() => import("./pages/AideSupport"));
+const Analytics = lazy(() => import("./pages/Analytics"));
+const LeadScoring = lazy(() => import("./pages/LeadScoring"));
+const SuccessStories = lazy(() => import("./pages/SuccessStories"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Contracts = lazy(() => import("./pages/Contracts"));
 const ModeFormation = lazy(() => import("./pages/ModeFormation"));
@@ -150,6 +153,8 @@ const App = () => (
                     <Route path="/automation" element={<WorkflowAutomation />} />
                     <Route path="/predictive-maintenance" element={<PredictiveMaintenance />} />
                     <Route path="/mobile" element={<MobileField />} />
+                    <Route path="/lead-scoring" element={<LeadScoring />} />
+                    <Route path="/success-stories" element={<SuccessStories />} />
                     <Route path="/academy" element={<TrainingAcademy />} />
                      <Route path="/community" element={<CommunityForum />} />
                      <Route path="/operations-agent" element={<OperationsAgent />} />
