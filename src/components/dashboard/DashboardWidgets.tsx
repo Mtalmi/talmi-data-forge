@@ -148,13 +148,14 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: '#1E293B',
-        border: '1px solid #334155',
+        background: '#0F172A',
+        border: '1px solid rgba(255,215,0,0.25)',
         borderRadius: 8,
         padding: '8px 12px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
       }}>
-        <p style={{ color: '#94A3B8', fontSize: 12 }}>{label}</p>
-        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+        <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
+        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
           {payload[0].value.toLocaleString('fr-MA')} DH
         </p>
       </div>
@@ -296,9 +297,15 @@ export function StockLevelsWidget() {
   const STOCK_TOOLTIP = ({ active, payload, label }: any) => {
     if (active && payload?.length) {
       return (
-        <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: '8px 12px' }}>
-          <p style={{ color: '#94A3B8', fontSize: 12 }}>{label}</p>
-          <p style={{ color: payload[0]?.fill, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>
+        <div style={{
+          background: '#0F172A',
+          border: '1px solid rgba(255,215,0,0.25)',
+          borderRadius: 8,
+          padding: '8px 12px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
+        }}>
+          <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
+          <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
             {Number(payload[0]?.value).toLocaleString('fr-MA')}
           </p>
         </div>
@@ -362,9 +369,15 @@ export function StockLevelsWidget() {
 const DONUT_TOOLTIP = ({ active, payload }: any) => {
   if (active && payload?.length) {
     return (
-      <div style={{ background: '#1E293B', border: '1px solid #334155', borderRadius: 8, padding: '8px 12px' }}>
-        <p style={{ color: '#94A3B8', fontSize: 12 }}>{payload[0]?.name}</p>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: payload[0]?.fill }}>
+      <div style={{
+        background: '#0F172A',
+        border: '1px solid rgba(255,215,0,0.25)',
+        borderRadius: 8,
+        padding: '8px 12px',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
+      }}>
+        <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{payload[0]?.name}</p>
+        <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
           {payload[0]?.value}
         </p>
       </div>
