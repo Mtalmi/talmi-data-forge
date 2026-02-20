@@ -7,6 +7,7 @@ import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
   Bell, TrendingUp,
 } from 'lucide-react';
+import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
