@@ -34,6 +34,9 @@ import { OrderCalendarView } from '@/components/ventes/OrderCalendarView';
 import { WorkflowStepper, WorkflowStage } from '@/components/ventes/WorkflowStepper';
 import { FacturesTable } from '@/components/ventes/FacturesTable';
 
+// World-Class Premium Layer
+import { WorldClassVentes } from '@/components/ventes/WorldClassVentes';
+
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
 import { SavedFilterViews } from '@/components/ventes/SavedFilterViews';
@@ -501,6 +504,9 @@ export default function Ventes() {
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
           </div>
 
+
+          {/* ══ World-Class Sales Dashboard ══ */}
+          <WorldClassVentes />
 
           {/* Flux Commercial Widget */}
           <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
