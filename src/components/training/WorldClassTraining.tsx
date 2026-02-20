@@ -340,15 +340,16 @@ export default function WorldClassTraining() {
         {/* ── SECTION 2: WHAT TRAINING MODE DOES ──────────────────────────── */}
         <div style={{ opacity: v2 ? 1 : 0, transform: v2 ? 'none' : 'translateY(16px)', transition: 'all 0.5s ease' }}>
           <SHead icon={AlertCircle} label="Que fait le Mode Formation?" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {FEATURES.map((f, i) => {
               const FIcon = f.icon;
               return (
                 <div key={i} style={{
                   background: CARD, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 20,
-                  opacity: v2 ? (trainingOn ? 1 : 0.55) : 0,
+                  opacity: v2 ? (trainingOn ? 1 : 0.45) : 0,
+                  filter: trainingOn ? 'none' : 'saturate(0.3)',
                   transform: v2 ? 'translateY(0)' : 'translateY(18px)',
-                  transition: `opacity 0.4s ${i * 80}ms ease, transform 0.5s ${i * 80}ms ease, box-shadow 0.25s ease, border-color 0.25s ease`,
+                  transition: `opacity 0.5s ease, filter 0.5s ease, transform 0.5s ${i * 80}ms ease, box-shadow 0.25s ease, border-color 0.25s ease`,
                   cursor: 'default',
                 }}
                   onMouseEnter={e => {
@@ -608,8 +609,11 @@ export default function WorldClassTraining() {
               const WIcon = w.icon;
               return (
                 <div key={i} style={{
-                  background: CARD, borderRadius: 14,
-                  border: `1px solid ${BORDER}`, borderLeft: `4px solid ${w.color}`,
+                  background: `${w.colorD}`, borderRadius: 14,
+                  borderTop: `1px solid ${BORDER}`,
+                  borderRight: `1px solid ${BORDER}`,
+                  borderBottom: `1px solid ${BORDER}`,
+                  borderLeft: `4px solid ${w.color}`,
                   padding: '18px 20px', display: 'flex', alignItems: 'flex-start', gap: 16,
                   opacity: v6 ? 1 : 0, transform: v6 ? 'none' : 'translateY(10px)',
                   transition: `opacity 0.4s ${i * 80}ms ease, transform 0.4s ${i * 80}ms ease, box-shadow 0.25s ease`,
