@@ -81,7 +81,7 @@ export function PeriodKPICard({
   return (
     <div 
       className={cn(
-        'kpi-card p-3 sm:p-4 rounded-xl border card-magnetic press-feedback ripple-container',
+        'kpi-card god-tier-card p-3 sm:p-4 rounded-xl border card-magnetic press-feedback ripple-container',
         variant === 'positive' && 'positive bg-success/5 border-success/20',
         variant === 'negative' && 'negative bg-destructive/5 border-destructive/20',
         variant === 'warning' && 'warning bg-warning/5 border-warning/20',
@@ -94,11 +94,10 @@ export function PeriodKPICard({
         <div className="flex-1 min-w-0">
           <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider truncate">{title}</p>
           <p className={cn(
-            'text-lg sm:text-2xl font-bold font-mono mt-0.5 tabular-nums transition-all duration-700',
-            variant === 'positive' && 'text-success',
-            variant === 'negative' && 'text-destructive',
-            variant === 'warning' && 'text-warning',
-            done && parsed?.num ? 'drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : ''
+            'text-lg sm:text-2xl font-bold mt-0.5 tabular-nums transition-all duration-700 metric-gold',
+            variant === 'negative' && '!text-destructive',
+            variant === 'warning' && '!text-warning',
+            done && parsed?.num ? 'drop-shadow-[0_0_12px_hsl(51_100%_50%/0.5)]' : ''
           )}>
             {displayValue}
           </p>
