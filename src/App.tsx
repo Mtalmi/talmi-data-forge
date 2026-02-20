@@ -38,6 +38,7 @@ const Rapports = lazy(() => import("./pages/Rapports"));
 const Journal = lazy(() => import("./pages/Journal"));
 const Fournisseurs = lazy(() => import("./pages/Fournisseurs"));
 const Pointage = lazy(() => import("./pages/Pointage"));
+const Securite = lazy(() => import("./pages/Securite"));
 const Prestataires = lazy(() => import("./pages/Prestataires"));
 const Paiements = lazy(() => import("./pages/Paiements"));
 const Rapprochement = lazy(() => import("./pages/Rapprochement"));
@@ -133,6 +134,7 @@ const App = () => (
                     <Route path="/audit-superviseur" element={<AuditSuperviseur />} />
                     <Route path="/audit-externe" element={<AuditExterne />} />
                     <Route path="/securite" element={<SecurityDashboard />} />
+                    <Route path="/hse" element={<Securite />} />
                     <Route path="/track/:token" element={<ClientTracking />} />
                     <Route path="/aide" element={<AideSupport />} />
                     <Route path="/contracts" element={<Contracts />} />
