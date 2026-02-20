@@ -74,6 +74,7 @@ import { toast } from 'sonner';
 import { format, isWithinInterval, startOfDay, endOfDay, parseISO, isSameDay } from 'date-fns';
 
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { buildPlanningUrl } from '@/lib/workflowStatus';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -1154,28 +1155,21 @@ export default function Production() {
               <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
             </div>
           ) : filteredAndSortedBons.length === 0 ? (
-            <div className="p-8 text-center">
-              <Factory className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">
-                {activeFilter !== 'all' || searchQuery || dateRange.from
+            <EmptyState
+              icon={Factory}
+              title={activeFilter !== 'all' || searchQuery || dateRange.from
                   ? t.pages.production.noCorrespondingFilter
                   : t.pages.production.noProductionBons}
-              </p>
-              {(activeFilter !== 'all' || searchQuery || dateRange.from) && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => {
-                    setActiveFilter('all');
-                    setSearchQuery('');
-                    setDateRange({ from: null, to: null });
-                  }}
-                  className="mt-2"
-                >
-                  {t.pages.production.clearFilters}
-                </Button>
-              )}
-            </div>
+              description={activeFilter !== 'all' || searchQuery || dateRange.from
+                  ? 'Essayez de modifier vos filtres de recherche'
+                  : 'Les bons de production apparaîtront ici après la planification'}
+              actionLabel={(activeFilter !== 'all' || searchQuery || dateRange.from) ? t.pages.production.clearFilters : undefined}
+              onAction={(activeFilter !== 'all' || searchQuery || dateRange.from) ? () => {
+                setActiveFilter('all');
+                setSearchQuery('');
+                setDateRange({ from: null, to: null });
+              } : undefined}
+            />
           ) : (
             <Table className="data-table-industrial">
               <TableHeader>

@@ -42,6 +42,7 @@ import { BcApprovalTimeline } from '@/components/ventes/BcApprovalTimeline';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 // Status configs use static colors but labels are resolved dynamically via i18n
 const BC_STATUS_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
@@ -219,13 +220,11 @@ export function BcTable({
 
   if (bcList.length === 0) {
     return (
-      <div className="text-center py-12">
-        <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-        <p className="text-muted-foreground">{bt.noBc}</p>
-        <p className="text-sm text-muted-foreground mt-1">
-          {bt.convertQuoteToBc}
-        </p>
-      </div>
+      <EmptyState
+        icon={ShoppingCart}
+        title={bt.noBc}
+        description={bt.convertQuoteToBc}
+      />
     );
   }
 

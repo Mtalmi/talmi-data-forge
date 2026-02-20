@@ -24,6 +24,7 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface ProductionBatch {
   id: string;
@@ -222,15 +223,11 @@ export function LiveProductionFeed({ bons, onBatchAdded, className }: LiveProduc
               ))}
             </div>
           ) : batches.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Gauge className="h-12 w-12 text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">{lp.noBatches}</p>
-              {canAddBatch && (
-                <p className="text-sm text-muted-foreground mt-1">
-                  {lp.selectBlToStart}
-                </p>
-              )}
-            </div>
+            <EmptyState
+              icon={Gauge}
+              title={lp.noBatches}
+              description="Les batches de production apparaîtront ici en temps réel"
+            />
           ) : (
             <div className="space-y-3">
               {batches.map((batch) => {

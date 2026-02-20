@@ -28,29 +28,31 @@ export function EmptyState({
     <div
       className={cn(
         'flex flex-col items-center justify-center text-center animate-fade-in',
-        variant === 'default' ? 'py-12 px-6' : 'py-8 px-4',
+        variant === 'default' ? 'py-16 px-8' : 'py-8 px-4',
         className
       )}
     >
+      {/* Gold icon container */}
       <div
         className={cn(
           'rounded-2xl flex items-center justify-center mb-5 transition-all duration-500',
-          variant === 'default' ? 'h-20 w-20' : 'h-14 w-14',
-          'bg-gradient-to-br from-muted/60 to-muted/30 border border-border/40',
-          'shadow-[0_0_30px_hsl(var(--primary)/0.05)]'
+          variant === 'default' ? 'h-16 w-16' : 'h-12 w-12',
         )}
+        style={{
+          background: 'rgba(255, 215, 0, 0.08)',
+          border: '1px solid rgba(255, 215, 0, 0.18)',
+          boxShadow: '0 0 24px rgba(255, 215, 0, 0.06)',
+        }}
       >
         <Icon
-          className={cn(
-            'text-muted-foreground/70',
-            variant === 'default' ? 'h-9 w-9' : 'h-6 w-6'
-          )}
+          className={cn(variant === 'default' ? 'h-7 w-7' : 'h-5 w-5')}
+          style={{ color: '#FFD700' }}
         />
       </div>
 
       <h3
         className={cn(
-          'font-bold text-foreground mb-1.5 tracking-tight',
+          'font-semibold text-foreground mb-1.5 tracking-tight',
           variant === 'default' ? 'text-lg' : 'text-base'
         )}
       >
@@ -70,7 +72,12 @@ export function EmptyState({
         <Button
           onClick={onAction}
           size={variant === 'default' ? 'default' : 'sm'}
-          className="gap-2 min-h-[44px] rounded-xl shadow-[0_4px_16px_hsl(var(--primary)/0.2)]"
+          className="gap-2 rounded-xl font-medium"
+          style={{
+            background: '#FFD700',
+            color: '#000',
+            boxShadow: '0 4px 16px rgba(255, 215, 0, 0.25)',
+          }}
         >
           {ActionIcon && <ActionIcon className="h-4 w-4" />}
           {actionLabel}

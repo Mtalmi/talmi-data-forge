@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 function getNiveauConfig(t: any): Record<string, { icon: React.ElementType; label: string; color: string; bgColor: string }> {
   const a = t.pages.alertes;
@@ -296,9 +297,12 @@ export default function Alertes() {
           <TabsContent value="all" className="space-y-2">
             {filteredAlerts.length === 0 ? (
               <Card>
-                <CardContent className="py-12 text-center">
-                  <Bell className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
-                  <p className="text-muted-foreground">{a.noAlerts}</p>
+                <CardContent>
+                  <EmptyState
+                    icon={Bell}
+                    title={a.noAlerts}
+                    description="Aucune alerte active pour le moment — le système est propre"
+                  />
                 </CardContent>
               </Card>
             ) : (
