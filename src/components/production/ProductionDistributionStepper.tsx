@@ -85,51 +85,62 @@ export function ProductionDistributionStepper({
 
           return (
             <div key={stage.key} className="flex items-center flex-1">
-              <button
+            <button
                 onClick={() => onStageClick?.(stage.key)}
                 className={cn(
-                  "flex-1 p-3 rounded-lg border-2 transition-all",
-                  "hover:shadow-md hover:scale-[1.02]",
-                  isActive && `${stage.borderClass} ${stage.ringClass} ring-4`,
-                  !isActive && hasItems && `border-transparent ${stage.bgLightClass}`,
-                  !isActive && !hasItems && "border-dashed border-muted bg-muted/30"
+                  "flex-1 p-8 rounded-xl border-2 transition-all duration-200 cursor-pointer group",
+                  "flex flex-col items-center justify-center",
+                  "hover:scale-[1.02] hover:shadow-xl",
+                  isActive
+                    ? `${stage.borderClass} ${stage.ringClass} ring-4 bg-card`
+                    : hasItems
+                      ? `border-transparent ${stage.bgLightClass} hover:border-current`
+                      : "border-dashed border-muted bg-muted/20 hover:border-muted-foreground/40"
                 )}
               >
-                <div className="flex flex-col items-center gap-2">
-                  {/* Icon with count badge */}
-                  <div className="relative">
-                    <div className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center",
-                      hasItems ? stage.bgClass : "bg-muted",
-                      hasItems ? "text-white" : "text-muted-foreground"
-                    )}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    {count > 0 && (
-                      <span className={cn(
-                        "absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5",
-                        "rounded-full text-[10px] font-bold flex items-center justify-center",
-                        "bg-foreground text-background shadow-sm"
-                      )}>
-                        {count}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Label */}
-                  <span className={cn(
-                    "text-xs font-medium",
-                    hasItems ? stage.textClass : "text-muted-foreground"
-                  )}>
-                    {stage.label}
-                  </span>
-
-                  {/* Volume */}
-                  {volume > 0 && (
-                    <span className="text-[10px] text-muted-foreground font-mono">
-                      {volume.toFixed(0)} m³
-                    </span>
+                {/* Icon */}
+                <Icon
+                  size={40}
+                  className={cn(
+                    "transition-colors duration-200 mb-3",
+                    hasItems ? stage.textClass : "text-muted-foreground",
+                    "group-hover:text-yellow-400"
                   )}
+                />
+
+                {/* Count — JetBrains Mono gold */}
+                <span
+                  className="block text-5xl font-bold mb-1 tabular-nums"
+                  style={{ fontFamily: 'JetBrains Mono, monospace', color: '#FFD700' }}
+                >
+                  {count}
+                </span>
+
+                {/* Label */}
+                <span className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
+                  {stage.label}
+                </span>
+
+                {/* Volume */}
+                {volume > 0 && (
+                  <span
+                    className="text-xs text-muted-foreground mt-1 tabular-nums"
+                    style={{ fontFamily: 'JetBrains Mono, monospace' }}
+                  >
+                    {volume.toFixed(0)} m³
+                  </span>
+                )}
+
+                {/* Status indicator */}
+                <div className="flex items-center gap-1.5 mt-3">
+                  <span className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    hasItems ? stage.bgClass : "bg-muted-foreground/40",
+                    hasItems && count > 0 && "animate-pulse"
+                  )} />
+                  <span className="text-xs text-muted-foreground">
+                    {count > 0 ? 'Actif' : 'En attente'}
+                  </span>
                 </div>
               </button>
 
