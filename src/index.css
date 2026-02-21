@@ -185,10 +185,14 @@
   --navy:              #0F172A;
   --navy-card:         #1E293B;
   --navy-border:       #334155;
+  --gold:              #FFD700;
   --gold-soft:         rgba(255, 215, 0, 0.12);
   --gold-glow-rgba:    rgba(255, 215, 0, 0.25);
   --white:             #F8FAFC;
   --gray:              #94A3B8;
+  --success-hex:       #10B981;
+  --warning-hex:       #F59E0B;
+  --danger:            #EF4444;
   --info:              #3B82F6;
   --radius-sm:         6px;
   --radius-md:         12px;
@@ -212,6 +216,16 @@
 
 /* ─── Selection ─── */
 ::selection { background: var(--gold-soft); color: hsl(var(--primary)); }
+
+/* ─── Metric Typography ─── */
+.metric-value,
+[class*="kpi"] [class*="value"],
+[class*="kpi"] [class*="number"] {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 600 !important;
+  color: var(--gold) !important;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ─── Reduced motion ─── */
 @media (prefers-reduced-motion: reduce) {
