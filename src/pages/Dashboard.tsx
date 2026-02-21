@@ -104,7 +104,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { WorldClassDashboard } from '@/components/dashboard/WorldClassDashboard';
+const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
 
 export default function Dashboard() {
   const { t, lang } = useI18n();
@@ -336,9 +336,11 @@ export default function Dashboard() {
         />
 
         {/* ═══════════════════════════════════════════════════════
-            WORLD-CLASS PREMIUM DASHBOARD
+            WORLD-CLASS PREMIUM DASHBOARD (lazy-loaded — 851 lines + recharts)
             ═══════════════════════════════════════════════════════ */}
-        <WorldClassDashboard />
+        <Suspense fallback={<div className="h-[600px] rounded-xl bg-muted/20 animate-pulse" />}>
+          <WorldClassDashboard />
+        </Suspense>
 
         {/* ═══════════════════════════════════════════════════════
             SECTION 1 — KPIs & PERFORMANCE
@@ -511,9 +513,9 @@ export default function Dashboard() {
         </DashboardSection>
 
         {/* ═══════════════════════════════════════════════════════
-            SECTION 2 — PRODUCTION & QUALITÉ
+            SECTION 2 — PRODUCTION & QUALITÉ (lazy-mounted)
             ═══════════════════════════════════════════════════════ */}
-        <DashboardSection
+        <LazyDashboardSection
           title={t.dashboard.sections.productionQuality}
           icon={Factory}
           storageKey="production"
@@ -651,13 +653,13 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </DashboardSection>
+        </LazyDashboardSection>
 
         {/* ═══════════════════════════════════════════════════════
-            SECTION 3 — FINANCE & TRÉSORERIE
+            SECTION 3 — FINANCE & TRÉSORERIE (lazy-mounted)
             ═══════════════════════════════════════════════════════ */}
         {isCeo && (
-          <DashboardSection
+          <LazyDashboardSection
             title={t.dashboard.sections.financeTreasury}
             icon={Wallet}
             storageKey="finance"
@@ -686,7 +688,7 @@ export default function Dashboard() {
                 <SplitViewHandshake />
               </ParallaxCard>
             </div>
-          </DashboardSection>
+          </LazyDashboardSection>
         )}
 
         {/* ═══════════════════════════════════════════════════════
