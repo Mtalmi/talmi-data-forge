@@ -27,19 +27,37 @@
     <!-- Preconnect to Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Preload critical fonts for faster FCP -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@600&family=Cairo:wght@400;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" as="style" />
-    <!-- TBOS God Tier Typography Stack -->
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@600&family=Cairo:wght@400;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Non-render-blocking Google Fonts via preload + onload swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@600&family=Cairo:wght@400;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@600&family=Cairo:wght@400;600;700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
     <!-- Critical inline styles for LCP -->
     <style>
-      body { margin: 0; background: #0a0d14; color: #f1f5f9; }
+      body { margin: 0; background: #0a0d14; color: #f1f5f9; font-family: 'DM Sans', 'Inter', system-ui, sans-serif; }
       #root { min-height: 100vh; }
+      /* Critical skeleton to show immediately while JS loads */
+      .lcp-skeleton { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; }
+      .lcp-skeleton-bar { height: 2.5rem; border-radius: 0.75rem; background: rgba(255,255,255,0.04); animation: pulse 1.5s ease-in-out infinite; }
+      .lcp-skeleton-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+      .lcp-skeleton-card { height: 7rem; border-radius: 0.75rem; background: rgba(255,255,255,0.04); animation: pulse 1.5s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+      @media (max-width: 768px) { .lcp-skeleton-grid { grid-template-columns: repeat(2, 1fr); } }
     </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- SSR-like skeleton for instant FCP/LCP — replaced by React on mount -->
+      <div class="lcp-skeleton" style="max-width:1400px;margin:0 auto;padding-top:4rem;">
+        <div class="lcp-skeleton-bar" style="width:40%;height:1.5rem;"></div>
+        <div class="lcp-skeleton-grid">
+          <div class="lcp-skeleton-card"></div>
+          <div class="lcp-skeleton-card"></div>
+          <div class="lcp-skeleton-card"></div>
+          <div class="lcp-skeleton-card"></div>
+        </div>
+        <div class="lcp-skeleton-bar" style="height:18rem;"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
