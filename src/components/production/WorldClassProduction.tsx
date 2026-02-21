@@ -5,8 +5,9 @@ import {
 } from 'recharts';
 import {
   Factory, CheckCircle, Shield, Clock, Bell, Zap,
-  TrendingUp, Activity, Wrench, Settings,
+  TrendingUp, Activity, Wrench, Settings, ClipboardList, Play, CheckCircle2,
 } from 'lucide-react';
+import { useCountUp } from '@/hooks/useCountUp';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -245,7 +246,28 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 }
 
 // ─────────────────────────────────────────────────────
-// BATCH CARD
+// WORKFLOW STAGE CARD
+// ─────────────────────────────────────────────────────
+function WorkflowStageCard({ icon: Icon, count, label, color, delay = 0 }: {
+  icon: any; count: number; label: string; color: string; delay?: number;
+}) {
+  const animated = useCountUp(count, 1200, delay);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
+      <Card>
+        <div className="workflow-stage">
+          <Icon size={28} className="workflow-icon" style={{ color, transition: 'all 0.2s ease' }} />
+          <span className="workflow-count">{animated}</span>
+          <span className="workflow-label">{label}</span>
+          <span className="status-dot" style={{ background: color, color }} />
+        </div>
+      </Card>
+    </div>
+  );
+}
 // ─────────────────────────────────────────────────────
 function BatchCard({ batch, delay = 0 }: { batch: typeof batches[0]; delay?: number }) {
   const [visible, setVisible] = useState(false);
@@ -453,11 +475,19 @@ export default function WorldClassProduction() {
         {/* ── SECTION 1: KPI CARDS ── */}
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
             <KPICard label="Production Aujourd'hui" value={851} suffix="m³" color={T.gold} icon={Factory} trend="+12% vs hier" trendPositive delay={0} />
             <KPICard label="Batches Complétés" value={38} suffix="" color={T.success} icon={CheckCircle} trend="+5 vs hier" trendPositive delay={80} />
             <KPICard label="Taux de Conformité" value={96} suffix="%" color={T.success} icon={Shield} trend="+1.2% ↑" trendPositive delay={160} />
             <KPICard label="Temps d'Arrêt" value={42} suffix="min" color={T.warning} icon={Clock} trend="-15% ↓ amélioré" trendPositive delay={240} />
+          </div>
+
+          {/* Workflow Stage Cards */}
+          <SectionHeader icon={Activity} label="Workflow de Production" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+            <WorkflowStageCard icon={ClipboardList} count={5} label="Planifiés" color={T.warning} delay={0} />
+            <WorkflowStageCard icon={Play} count={2} label="En Production" color={T.info} delay={100} />
+            <WorkflowStageCard icon={CheckCircle2} count={31} label="Validation" color={T.success} delay={200} />
           </div>
         </section>
 

@@ -242,15 +242,16 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                 onClick={() => handleStageClick('en_attente')}
               >
                 <div
-                  className="inline-flex flex-col items-center gap-2 p-5 rounded-2xl transition-all duration-200 hover:shadow-lg"
+                  className="pipeline-stage inline-flex flex-col items-center gap-2 p-5 rounded-2xl transition-all duration-200 hover:shadow-lg"
                   style={{
                     background: 'linear-gradient(135deg, hsl(var(--warning)/0.10), hsl(var(--warning)/0.05))',
                     border: '1px solid hsl(var(--warning)/0.30)',
                   }}
                 >
                   <FileText className="h-8 w-8" style={{ color: 'hsl(var(--warning))' }} />
-                  <p className="text-xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--warning))' }}>{stats.devisEnAttente}</p>
+                  <p className="pipeline-count" style={{ color: 'hsl(var(--warning))' }}>{stats.devisEnAttente}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.quotes}</p>
+                  <span className="status-dot status-dot-yellow" />
                 </div>
               </div>
             </TooltipTrigger>
@@ -277,15 +278,16 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                 onClick={() => handleStageClick('pret_production')}
               >
                 <div
-                  className="inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
+                  className="pipeline-stage inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
                   style={{
                     background: 'linear-gradient(135deg, hsl(220 90% 60% / 0.10), hsl(220 90% 60% / 0.04))',
                     border: '1px solid hsl(220 90% 60% / 0.30)',
                   }}
                 >
                   <ShoppingCart className="h-8 w-8" style={{ color: 'hsl(220 90% 60%)' }} />
-                  <p className="text-xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(220 90% 60%)' }}>{stats.bcPretProduction}</p>
+                  <p className="pipeline-count" style={{ color: 'hsl(220 90% 60%)' }}>{stats.bcPretProduction}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.validatedBc}</p>
+                  <span className="status-dot status-dot-green" />
                 </div>
               </div>
             </TooltipTrigger>
@@ -303,7 +305,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                 onClick={() => handleStageClick('en_production')}
               >
                 <div
-                  className="inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
+                  className="pipeline-stage inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
                   style={{
                     background: 'linear-gradient(135deg, hsl(var(--accent-teal)/0.10), hsl(var(--accent-teal)/0.04))',
                     border: '1px solid hsl(var(--accent-teal)/0.30)',
@@ -313,8 +315,9 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                     className={cn('h-8 w-8', stats.bcEnProduction > 0 && 'animate-spin')}
                     style={{ color: 'hsl(var(--accent-teal))' }}
                   />
-                  <p className="text-xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--accent-teal))' }}>{stats.bcEnProduction}</p>
+                  <p className="pipeline-count" style={{ color: 'hsl(var(--accent-teal))' }}>{stats.bcEnProduction}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.inProduction}</p>
+                  <span className="status-dot status-dot-gold" />
                 </div>
               </div>
             </TooltipTrigger>
@@ -332,15 +335,16 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                 onClick={() => handleStageClick('termine')}
               >
                 <div
-                  className="inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
+                  className="pipeline-stage inline-flex flex-col items-center gap-2 p-5 rounded-2xl"
                   style={{
                     background: 'linear-gradient(135deg, hsl(var(--success)/0.10), hsl(var(--success)/0.04))',
                     border: '1px solid hsl(var(--success)/0.30)',
                   }}
                 >
                   <Truck className="h-8 w-8" style={{ color: 'hsl(var(--success))' }} />
-                  <p className="text-xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--success))' }}>{stats.bcLivre}</p>
+                  <p className="pipeline-count" style={{ color: 'hsl(var(--success))' }}>{stats.bcLivre}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.completed}</p>
+                  <span className="status-dot status-dot-green" />
                 </div>
               </div>
             </TooltipTrigger>
