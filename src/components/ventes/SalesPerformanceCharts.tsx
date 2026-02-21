@@ -127,7 +127,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
   const hasAnyData = bcList.length > 0 || devisList.length > 0;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 tbos-stagger-enter">
       {/* ── Revenue by Product ── */}
       <Card
         className="lg:col-span-1 overflow-hidden"

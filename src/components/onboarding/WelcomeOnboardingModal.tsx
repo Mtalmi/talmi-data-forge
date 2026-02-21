@@ -59,14 +59,14 @@ const FEATURES = [
   },
 ];
 
-const ONBOARDING_KEY = 'tbos_onboarding_shown';
+const ONBOARDING_KEY = 'tbos_onboarding_shown_v2';
 
 export function WelcomeOnboardingModal() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const shown = sessionStorage.getItem(ONBOARDING_KEY);
+    const shown = localStorage.getItem(ONBOARDING_KEY);
     if (!shown) {
       // Small delay to let dashboard render first
       const timer = setTimeout(() => setOpen(true), 1200);
@@ -75,7 +75,7 @@ export function WelcomeOnboardingModal() {
   }, []);
 
   const handleClose = () => {
-    sessionStorage.setItem(ONBOARDING_KEY, 'true');
+    localStorage.setItem(ONBOARDING_KEY, 'true');
     setOpen(false);
   };
 
@@ -107,7 +107,7 @@ export function WelcomeOnboardingModal() {
         </div>
 
         {/* Feature Grid */}
-        <div className="px-6 pb-2 grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="px-6 pb-2 grid grid-cols-2 sm:grid-cols-3 gap-3 tbos-stagger-enter">
           {FEATURES.map((f) => (
             <button
               key={f.title}

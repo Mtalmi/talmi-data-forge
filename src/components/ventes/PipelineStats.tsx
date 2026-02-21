@@ -117,7 +117,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
   return (
     <>
       {/* ── Top 5 KPI cards ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 tbos-stagger-enter">
         <StatCard
           icon={<FileText className="h-5 w-5" />}
           value={stats.devisEnAttente}
