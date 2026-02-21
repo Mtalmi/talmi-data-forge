@@ -2657,6 +2657,60 @@ header, nav, [class*="topbar"], [class*="navbar"] {
 }
 [class*="progress"] [class*="fill"] { transform-origin: left; animation: fillBar 1s cubic-bezier(0.4,0,0.2,1) forwards; }
 
+/* ─── Workflow stage cards (Production) ─── */
+.workflow-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  gap: 8px;
+  cursor: pointer;
+}
+.workflow-stage:hover .workflow-icon {
+  color: #FFD700;
+  transform: scale(1.15);
+  transition: all 0.2s ease;
+}
+.workflow-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 56px;
+  font-weight: 700;
+  color: #FFD700;
+  line-height: 1;
+}
+.workflow-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #94A3B8;
+}
+
+/* ─── Pipeline stage cards (Sales) ─── */
+.pipeline-stage {
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.pipeline-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent);
+  pointer-events: none;
+}
+.pipeline-stage:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+.pipeline-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* ══════════════════════════════════════════════════════════════
    AGENCY-LEVEL MASTER DESIGN SYSTEM v1.0
    Military-Grade Precision Meets Premium Elegance
