@@ -1,6 +1,6 @@
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAnimatedCounterWithGlow } from '@/hooks/useAnimatedCounter';
+import { useCountUp } from '@/hooks/useCountUp';
 
 interface PeriodKPICardProps {
   title: string;
@@ -12,6 +12,7 @@ interface PeriodKPICardProps {
   variant?: 'default' | 'positive' | 'negative' | 'warning';
   className?: string;
   style?: React.CSSProperties;
+  delay?: number;
 }
 
 function parseDisplayValue(value: string | number) {
@@ -46,17 +47,21 @@ export function PeriodKPICard({
   variant = 'default',
   className,
   style,
+  delay = 0,
 }: PeriodKPICardProps) {
   const parsed = parseDisplayValue(value);
-  const { display: animatedNum, done } = useAnimatedCounterWithGlow(
-    parsed?.num ?? 0,
-    1500,
-    parsed?.decimals ?? 0,
-  );
+  const animatedNum = useCountUp(parsed?.num ?? 0, 1600, delay);
 
-  const displayValue = parsed
-    ? `${parsed.prefix}${animatedNum}${parsed.suffix}`
-    : value;
+  const formatAnimated = () => {
+    if (!parsed) return value;
+    const formatted = parsed.decimals > 0
+      ? animatedNum.toLocaleString('fr-MA', { minimumFractionDigits: parsed.decimals, maximumFractionDigits: parsed.decimals })
+      : animatedNum.toLocaleString('fr-MA');
+    return `${parsed.prefix}${formatted}${parsed.suffix}`;
+  };
+
+  const displayValue = formatAnimated();
+  const done = animatedNum === Math.floor(parsed?.num ?? 0);
 
   const getTrendIcon = () => {
     if (trend === undefined || trend === 0) return <Minus className="h-3 w-3" />;
