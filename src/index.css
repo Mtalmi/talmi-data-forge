@@ -874,7 +874,7 @@
   /* ===== OBSIDIAN MOBILE NAVIGATION ===== */
   .mobile-bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
-    @apply lg:hidden;
+    @apply md:hidden;
     background: hsl(var(--card) / 0.98);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -3604,3 +3604,315 @@ textarea.valid {
 
 /* ─── Dividers ─── */
 hr, [class*="divider"] { border-color: #334155 !important; opacity: 0.6; }
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE OPTIMIZATION (375px-430px)
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* ─── Sidebar: hide on mobile ─── */
+  [class*="sidebar"],
+  [class*="Sidebar"],
+  aside {
+    display: none !important;
+  }
+
+  /* Main content full width */
+  [class*="main-content"],
+  [class*="MainContent"],
+  main {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    width: 100% !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* ─── Top nav compact ─── */
+  header, [class*="topbar"], [class*="navbar"] {
+    padding: 0 16px !important;
+    height: 56px !important;
+  }
+
+  header nav,
+  [class*="nav-tabs"],
+  [class*="NavTabs"] {
+    display: none !important;
+  }
+
+  [class*="logo"] {
+    font-size: 16px !important;
+  }
+
+  [class*="nav-actions"] {
+    gap: 8px !important;
+  }
+
+  /* ─── Page padding ─── */
+  [class*="page"],
+  [class*="Page"],
+  main > div {
+    padding: 16px 14px !important;
+  }
+
+  /* ─── Headings ─── */
+  h1 { font-size: 22px !important; }
+  h2 { font-size: 18px !important; }
+  h3 { font-size: 15px !important; }
+
+  /* ─── Section headers stack ─── */
+  [class*="section-header"],
+  [class*="SectionHeader"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  /* ─── Grids: 2 cols on mobile ─── */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4,
+  .grid-cols-5,
+  .grid-cols-6 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  [class*="full-width"],
+  [class*="FullWidth"] {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* ─── KPI cards ─── */
+  [class*="kpi-card"],
+  [class*="KpiCard"] {
+    padding: 14px !important;
+  }
+
+  [class*="kpi"] [class*="value"],
+  [class*="kpi"] [class*="number"],
+  .metric-value {
+    font-size: 22px !important;
+  }
+
+  /* ─── Dashboard: single col sections ─── */
+  [class*="dashboard-grid"],
+  [class*="DashboardGrid"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Charts full width */
+  [class*="chart"],
+  [class*="Chart"] {
+    width: 100% !important;
+  }
+
+  /* ─── Welcome banner ─── */
+  [class*="welcome"],
+  [class*="Welcome"] {
+    padding: 16px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  /* Period tabs: scroll horizontal */
+  [class*="period-tabs"],
+  [class*="PeriodTabs"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    padding-bottom: 4px !important;
+  }
+  [class*="period-tabs"]::-webkit-scrollbar { display: none !important; }
+
+  /* Action buttons scroll */
+  [class*="action-buttons"],
+  [class*="ActionButtons"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    padding-bottom: 4px !important;
+    gap: 8px !important;
+  }
+  [class*="action-buttons"]::-webkit-scrollbar { display: none !important; }
+
+  /* ─── Production: workflow stack ─── */
+  [class*="workflow"],
+  [class*="Workflow"] {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  [class*="workflow-arrow"],
+  [class*="WorkflowArrow"] {
+    transform: rotate(90deg) !important;
+  }
+
+  .workflow-count {
+    font-size: 40px !important;
+  }
+
+  .workflow-stage {
+    padding: 20px 16px !important;
+  }
+
+  /* ─── Sales: pipeline scroll ─── */
+  [class*="flux"],
+  [class*="Flux"],
+  [class*="pipeline"],
+  [class*="Pipeline"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 8px !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .pipeline-stage {
+    min-width: 120px !important;
+    flex-shrink: 0 !important;
+    padding: 16px 12px !important;
+  }
+
+  .pipeline-count {
+    font-size: 36px !important;
+  }
+
+  [class*="sales-actions"],
+  [class*="SalesActions"] {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  [class*="sales-actions"] button {
+    flex: 1 !important;
+    min-width: 120px !important;
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+
+  /* ─── Tables: horizontal scroll ─── */
+  [class*="table-container"],
+  [class*="TableContainer"],
+  .overflow-x-auto {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 8px !important;
+  }
+
+  table {
+    min-width: 600px !important;
+  }
+
+  td, th {
+    font-size: 12px !important;
+    padding: 10px 12px !important;
+    white-space: nowrap !important;
+  }
+
+  /* ─── Modals: bottom sheet on mobile ─── */
+  [role="dialog"],
+  [class*="modal"],
+  [class*="Modal"] {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-height: 50vh !important;
+    margin: 0 !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  /* Form inputs: prevent iOS zoom */
+  input, textarea, select {
+    font-size: 16px !important;
+    min-height: 44px !important;
+    padding: 12px 14px !important;
+  }
+
+  label {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+
+  [class*="form"] button[type="submit"],
+  [class*="Form"] button[type="submit"] {
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+
+  /* ─── Stocks: silo grid ─── */
+  [class*="silo-grid"],
+  [class*="SiloGrid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  [class*="silo"],
+  [class*="Silo"] {
+    height: 120px !important;
+  }
+
+  [class*="stock-table"],
+  [class*="StockTable"] {
+    overflow-x: auto !important;
+  }
+
+  /* ─── Cards ─── */
+  .tbos-card {
+    border-radius: 10px !important;
+  }
+
+  /* ─── Touch targets ─── */
+  button, a, [role="button"] {
+    min-height: 40px !important;
+    min-width: 40px !important;
+  }
+
+  /* ─── Hide desktop-only ─── */
+  [class*="hide-mobile"],
+  [class*="desktop-only"] {
+    display: none !important;
+  }
+
+  /* ─── Toast: bottom on mobile ─── */
+  [class*="toast"],
+  [class*="Toast"] {
+    top: auto !important;
+    bottom: 80px !important;
+    right: 12px !important;
+    left: 12px !important;
+    min-width: auto !important;
+  }
+}
+
+/* ─── Tablet adjustments (768-1023px) ─── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .grid-cols-6 { grid-template-columns: repeat(3, 1fr) !important; }
+
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    width: 60px !important;
+  }
+
+  [class*="sidebar"] [class*="label"],
+  [class*="sidebar"] span:not([class*="icon"]) {
+    display: none !important;
+  }
+
+  main, [class*="main-content"] {
+    margin-left: 60px !important;
+  }
+}
+
+/* ─── iPhone notch safe area ─── */
+@supports (padding: max(0px)) {
+  .mobile-bottom-nav {
+    padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    height: calc(64px + env(safe-area-inset-bottom)) !important;
+  }
+}
