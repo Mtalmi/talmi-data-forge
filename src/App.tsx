@@ -12,10 +12,12 @@ import { AIFloatingBubble } from "./components/ai/AIFloatingBubble";
 import { I18nProvider } from "@/i18n/I18nContext";
 import { ScrollToTop } from "@/components/layout/ScrollToTop";
 
-// Critical path — loaded eagerly
-import Index from "./pages/Index";
+// Critical path — Auth is eager (LCP element), others lazy
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+
+// Index/Dashboard lazy-loaded — avoids bundling heavy dashboard code with Auth
+const Index = lazy(() => import("./pages/Index"));
 
 // Lazy-loaded routes for code splitting & performance
 const Formules = lazy(() => import("./pages/Formules"));

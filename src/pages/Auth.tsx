@@ -11,7 +11,8 @@ import { Loader2, Shield, AlertCircle, ArrowRight, Zap, BarChart3, Lock, Globe, 
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
-import authIndustrial from '@/assets/auth-industrial.jpg';
+// Lazy-load heavy background image — not needed for LCP
+const authIndustrial = new URL('@/assets/auth-industrial.jpg', import.meta.url).href;
 
 
 const loginSchema = z.object({
@@ -226,7 +227,7 @@ export default function Auth() {
       <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative flex-col justify-between p-12 xl:p-16">
         {/* Cinematic Industrial Background */}
         <div className="absolute inset-0 z-0">
-          <img src={authIndustrial} alt="" className="w-full h-full object-cover" />
+          <img src={authIndustrial} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/70" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-background/60" />
         </div>
