@@ -73,11 +73,12 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
 // ─────────────────────────────────────────────────────
 // PREMIUM CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => { setHovered(false); setPressed(false); }}
       onMouseDown={() => setPressed(true)}
@@ -466,7 +467,7 @@ export default function WorldClassProduction() {
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
 
             {/* Daily Production Area Chart */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <p style={{ color: T.textSec, fontSize: 12, fontFamily: 'DM Sans, sans-serif', marginBottom: 4 }}>Production Horaire</p>
@@ -495,7 +496,7 @@ export default function WorldClassProduction() {
             </Card>
 
             {/* Donut by Product */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production par Produit</p>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -568,7 +569,7 @@ export default function WorldClassProduction() {
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
 
             {/* Stacked Bar Chart */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={qualityData} barSize={24}>

@@ -74,11 +74,12 @@ function useAnimatedWidth(target: number, delay = 0, duration = 900) {
 // ─────────────────────────────────────────────────────
 // CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)}
@@ -528,7 +529,7 @@ export default function WorldClassStocks() {
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24 }}>
 
             {/* Movement chart */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <div>
                   <p style={{ color: T.textPri, fontWeight: 700, fontSize: 14 }}>Mouvements de Stock</p>
