@@ -315,71 +315,7 @@ export function WorldClassDashboard() {
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
       `}</style>
 
-      {/* ══════════════════════════════════════════
-          STICKY HEADER
-      ══════════════════════════════════════════ */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.85)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`,
-        padding: '12px 24px',
-        display: 'flex', alignItems: 'center', gap: 16,
-      }}>
-        {/* Logo */}
-        <div style={{
-          width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-          background: `linear-gradient(135deg, ${T.gold}, #F59E0B)`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <BarChart3 size={18} color="#0B1120" />
-        </div>
-        <div>
-          <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1 }}>
-            TBOS <span style={{ color: T.gold }}>Dashboard</span>
-          </div>
-          <div style={{ fontSize: 10, color: T.textDim, marginTop: 1 }}>Tableau de Bord Opérationnel</div>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
-          {(['overview', 'production', 'finance'] as const).map((tab) => {
-            const labels = { overview: 'Vue d\'ensemble', production: 'Production', finance: 'Finances' };
-            const active = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                style={{
-                  padding: '6px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                  fontFamily: 'DM Sans, sans-serif', cursor: 'pointer',
-                  border: active ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                  background: active ? T.goldDim : 'transparent',
-                  color: active ? T.gold : T.textSec,
-                  transition: 'all 200ms',
-                }}
-              >
-                {labels[tab]}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Right: Clock + Bell */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <LiveClock />
-          <div style={{ position: 'relative' }}>
-            <Bell size={18} color={T.textSec} />
-            <span style={{
-              position: 'absolute', top: -4, right: -4,
-              width: 12, height: 12, borderRadius: '50%',
-              background: T.danger, border: `2px solid ${T.navy}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 7, fontWeight: 700, color: '#fff',
-            }}>3</span>
-          </div>
-        </div>
-      </div>
+      {/* Sticky header removed — handled by global TopNavBar */}
 
       <div style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto' }}>
 
@@ -394,10 +330,10 @@ export function WorldClassDashboard() {
           <Card style={{ gridColumn: '1', animationDelay: '0ms' }} className="tbos-card-enter">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 2 }}>Cash-Flow Time Machine</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 2 }}>Machine Cash-Flow</div>
                 <div style={{ fontSize: 11, color: T.textDim }}>30 jours · Actuel vs Projeté</div>
               </div>
-              <Badge label="Healthy" color={T.success} bg={`${T.success}20`} />
+              <Badge label="Sain" color={T.success} bg={`${T.success}20`} />
             </div>
 
             <div style={{ height: 160 }}>
@@ -442,7 +378,7 @@ export function WorldClassDashboard() {
           <Card style={{ animationDelay: '80ms' }} className="tbos-card-enter">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 2 }}>Accounts Receivable</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.textPri, marginBottom: 2 }}>Créances Clients</div>
                 <div style={{ fontSize: 11, color: T.textDim }}>Vieillissement des créances</div>
               </div>
               <Badge label="Bon état" color={T.success} bg={`${T.success}20`} />
