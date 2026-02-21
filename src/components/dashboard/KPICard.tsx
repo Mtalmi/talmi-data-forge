@@ -52,7 +52,7 @@ export default function KPICard({
   return (
     <div
       className={cn(
-        'kpi-card god-tier-card tbos-card animate-fade-in group card-magnetic press-feedback ripple-container',
+        'kpi-card god-tier-card tbos-card tbos-card-stagger animate-fade-in group card-magnetic press-feedback ripple-container',
         'relative overflow-hidden rounded-xl border p-4 sm:p-5',
         'transition-all duration-300 ease-out',
         'hover:-translate-y-1',

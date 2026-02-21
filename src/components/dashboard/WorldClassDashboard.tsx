@@ -324,7 +324,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Zap} label="Performance & KPIs" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
           {/* 1.1 Cash-Flow Time Machine */}
           <Card style={{ gridColumn: '1', animationDelay: '0ms' }} className="tbos-card-enter">
@@ -414,7 +414,7 @@ export function WorldClassDashboard() {
         </div>
 
         {/* Row 2: Stock + Pipeline + Trends */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
 
           {/* 1.3 Stock Levels */}
           <Card style={{ animationDelay: '160ms' }} className="tbos-card-enter">
@@ -521,7 +521,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Factory} label="Production & Qualité" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
           {/* 2.1 Daily Production */}
           <Card style={{ animationDelay: '0ms' }} className="tbos-card-enter">
@@ -627,7 +627,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Banknote} label="Finance & Trésorerie" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 24 }}>
 
           {/* 3.1 Treasury Gauge */}
           <Card className="tbos-card-enter">
@@ -747,7 +747,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Settings} label="Modules" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
           {modules.map((m, i) => (
             <ModuleCard key={i} module={m} delay={i * 80} />
           ))}
