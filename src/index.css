@@ -3610,10 +3610,9 @@ hr, [class*="divider"] { border-color: #334155 !important; opacity: 0.6; }
    ══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 767px) {
-  /* ─── Sidebar: hide on mobile ─── */
-  [class*="sidebar"],
-  [class*="Sidebar"],
-  aside {
+  /* ─── Sidebar: hide on mobile (use data-sidebar to avoid hiding SidebarProvider wrapper) ─── */
+  [data-sidebar="sidebar"],
+  aside[class*="sidebar"] {
     display: none !important;
   }
 
@@ -3894,13 +3893,12 @@ hr, [class*="divider"] { border-color: #334155 !important; opacity: 0.6; }
   .grid-cols-4 { grid-template-columns: repeat(2, 1fr) !important; }
   .grid-cols-6 { grid-template-columns: repeat(3, 1fr) !important; }
 
-  [class*="sidebar"],
-  [class*="Sidebar"] {
+  [data-sidebar="sidebar"] {
     width: 60px !important;
   }
 
-  [class*="sidebar"] [class*="label"],
-  [class*="sidebar"] span:not([class*="icon"]) {
+  [data-sidebar="sidebar"] [class*="label"],
+  [data-sidebar="sidebar"] span:not([class*="icon"]) {
     display: none !important;
   }
 
