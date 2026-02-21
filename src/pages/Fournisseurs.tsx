@@ -31,14 +31,14 @@ import { format } from 'date-fns';
 import PurchaseOrderForm from '@/components/suppliers/PurchaseOrderForm';
 
 const statusColors: Record<string, string> = {
-  en_attente: 'bg-yellow-100 text-yellow-800',
-  confirmee: 'bg-blue-100 text-blue-800',
-  en_transit: 'bg-purple-100 text-purple-800',
-  livree: 'bg-green-100 text-green-800',
-  annulee: 'bg-red-100 text-red-800',
-  partiel: 'bg-orange-100 text-orange-800',
-  payee: 'bg-green-100 text-green-800',
-  en_retard: 'bg-red-100 text-red-800',
+  en_attente: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+  confirmee: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+  en_transit: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+  livree: 'bg-green-500/20 text-green-400 border border-green-500/30',
+  annulee: 'bg-red-500/20 text-red-400 border border-red-500/30',
+  partiel: 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+  payee: 'bg-green-500/20 text-green-400 border border-green-500/30',
+  en_retard: 'bg-red-500/20 text-red-400 border border-red-500/30',
 };
 
 const statusLabels: Record<string, string> = {
@@ -198,7 +198,7 @@ export default function Fournisseurs() {
             </CardContent>
           </Card>
           
-          <Card className={stats.facturesEnRetard > 0 ? 'border-red-300 bg-red-50' : ''}>
+          <Card className={stats.facturesEnRetard > 0 ? 'border-red-500/30 bg-red-500/10' : ''}>
             <CardContent className="pt-4">
               <div className="flex items-center gap-2">
                 <AlertTriangle className={`h-5 w-5 ${stats.facturesEnRetard > 0 ? 'text-red-600' : 'text-gray-400'}`} />
@@ -213,9 +213,9 @@ export default function Fournisseurs() {
 
         {/* Reorder Alerts */}
         {alertesReappro.filter(a => a.actif).length > 0 && (
-          <Card className="border-amber-200 bg-amber-50">
+          <Card className="border-amber-500/30 bg-amber-500/10">
             <CardHeader className="pb-2">
-              <CardTitle className="text-amber-800 flex items-center gap-2">
+              <CardTitle className="text-amber-400 flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5" />
                 {t.pages.fournisseurs.reorderAlertsTitle}
               </CardTitle>
@@ -223,7 +223,7 @@ export default function Fournisseurs() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 {alertesReappro.filter(a => a.actif).map(alerte => (
-                  <div key={alerte.id} className="bg-white p-3 rounded-lg border border-amber-200">
+                  <div key={alerte.id} className="bg-card p-3 rounded-lg border border-amber-500/20">
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-medium">{alerte.materiau}</p>

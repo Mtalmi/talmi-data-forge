@@ -266,10 +266,10 @@ export default function Dashboard() {
                 <button
                   onClick={() => setShowExecutiveSummary(true)}
                   className="btn-premium min-h-[40px]"
-                  title="Executive Summary"
+                  title="Résumé Exécutif"
                 >
                   <Maximize2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Summary</span>
+                  <span className="hidden sm:inline">Résumé</span>
                 </button>
               )}
               <button 

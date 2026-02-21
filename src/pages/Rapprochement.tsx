@@ -59,9 +59,9 @@ export default function Rapprochement() {
   const canManage = isCeo || isAccounting;
 
   const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-    non_rapproche: { label: r.statusLabelPending, color: 'bg-amber-100 text-amber-800', icon: AlertCircle },
-    rapproche: { label: r.statusLabelReconciled, color: 'bg-green-100 text-green-800', icon: Check },
-    ignore: { label: r.statusLabelIgnored, color: 'bg-gray-100 text-gray-600', icon: Ban },
+    non_rapproche: { label: r.statusLabelPending, color: 'bg-amber-500/20 text-amber-400 border border-amber-500/30', icon: AlertCircle },
+    rapproche: { label: r.statusLabelReconciled, color: 'bg-green-500/20 text-green-400 border border-green-500/30', icon: Check },
+    ignore: { label: r.statusLabelIgnored, color: 'bg-muted text-muted-foreground', icon: Ban },
   };
 
   const filteredTransactions = useMemo(() => {
@@ -261,7 +261,7 @@ export default function Rapprochement() {
             </CardContent>
           </Card>
 
-          <Card className="border-amber-200 bg-amber-50/50">
+          <Card className="border-amber-500/30 bg-amber-500/10">
             <CardContent className="pt-4">
               <div className="flex items-center justify-between">
                 <div>
