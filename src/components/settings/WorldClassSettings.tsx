@@ -163,10 +163,11 @@ function SectionHead({ icon: Icon, title, badge }: {
 }
 
 // ─── Card wrapper ─────────────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{

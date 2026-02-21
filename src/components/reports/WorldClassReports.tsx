@@ -63,11 +63,12 @@ function useFadeIn(delay = 0) {
 // ─────────────────────────────────────────────────────
 // CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)}
@@ -710,7 +711,7 @@ export default function WorldClassReports() {
           <div style={{ display: 'grid', gridTemplateColumns: '50% 50%', gap: 20 }}>
 
             {/* Donut */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16 }}>Par Type</p>
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
@@ -771,7 +772,7 @@ export default function WorldClassReports() {
             </Card>
 
             {/* Area chart */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>Tendance</p>
                 <Badge label="64 total" color={T.gold} bg={`${T.gold}18`} />

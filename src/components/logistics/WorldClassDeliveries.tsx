@@ -54,11 +54,12 @@ function useAnimatedCounter(target: number, duration = 1000) {
 // ─────────────────────────────────────────────────────
 // CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)}

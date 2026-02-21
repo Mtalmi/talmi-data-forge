@@ -51,11 +51,12 @@ function useAnimatedCounter(target: number, duration = 1000) {
 // ─────────────────────────────────────────────────────
 // SHARED CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)}
@@ -470,7 +471,7 @@ export default function WorldClassPlanning() {
           <div style={{ display: 'grid', gridTemplateColumns: '40% 60%', gap: 24 }}>
 
             {/* Capacity Gauge */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Capacité de Production</p>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
                 <Gauge pct={72} />

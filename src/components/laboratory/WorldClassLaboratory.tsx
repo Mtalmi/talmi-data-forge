@@ -66,11 +66,12 @@ function useBarWidth(target: number, delay = 0) {
 // ─────────────────────────────────────────────────────
 // SHARED UI
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
@@ -478,7 +479,7 @@ export default function WorldClassLaboratory() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
 
             {/* Gauge left */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <SectionHeader icon={CheckCircle} label="Conformité" sub="aujourd'hui" />
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <ConformityGauge value={87.5} />

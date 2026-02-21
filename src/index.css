@@ -2551,25 +2551,20 @@
   overflow: hidden;
   will-change: transform;
 }
-
 .tbos-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+  top: 0; left: -100%;
+  width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, #FFD700, transparent);
   transition: left 0.5s ease;
   z-index: 1;
 }
-
 .tbos-card:hover {
-  border-color: hsl(var(--primary) / 0.35);
+  border-color: rgba(255, 215, 0, 0.35);
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md), 0 0 0 1px hsl(var(--primary) / 0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,215,0,0.08);
 }
-
 .tbos-card:hover::before { left: 100%; }
 
 /* ─── Stagger animation on page load ─── */
@@ -2577,11 +2572,7 @@
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.tbos-card-stagger {
-  animation: cardReveal 0.5s ease forwards;
-  opacity: 0;
-}
+.tbos-card-stagger { animation: cardReveal 0.5s ease forwards; opacity: 0; }
 .tbos-card-stagger:nth-child(1) { animation-delay: 0ms; }
 .tbos-card-stagger:nth-child(2) { animation-delay: 80ms; }
 .tbos-card-stagger:nth-child(3) { animation-delay: 160ms; }
@@ -2592,13 +2583,18 @@
 .tbos-card-stagger:nth-child(8) { animation-delay: 560ms; }
 
 /* ─── Button press feedback ─── */
-button:hover:not(:disabled) { transform: translateY(-1px); }
-button:active:not(:disabled) { transform: translateY(0) scale(0.97); }
-
+button, [role="button"] { transition: var(--transition) !important; will-change: transform; }
+button:hover:not(:disabled) { transform: translateY(-1px) !important; }
+button:active:not(:disabled) { transform: translateY(0) scale(0.97) !important; }
 button[class*="gold"]:hover,
-button[class*="primary"]:hover,
-.btn-gold:hover {
-  box-shadow: var(--shadow-gold) !important;
+button[class*="primary"]:hover { box-shadow: 0 8px 32px rgba(255,215,0,0.2) !important; }
+
+/* ─── Input focus glow ─── */
+input:focus, textarea:focus, select:focus {
+  border-color: #FFD700 !important;
+  box-shadow: 0 0 0 3px rgba(255,215,0,0.12) !important;
+  outline: none !important;
+  transition: var(--transition);
 }
 
 /* ─── Status dots ─── */
@@ -2606,32 +2602,33 @@ button[class*="primary"]:hover,
   0%, 100% { box-shadow: 0 0 0 0 currentColor; opacity: 1; }
   50%       { box-shadow: 0 0 0 5px transparent; opacity: 0.6; }
 }
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  animation: breathe 2s ease-in-out infinite;
-}
-
-.status-dot-green  { background: hsl(var(--success));     color: hsl(var(--success)); }
-.status-dot-yellow { background: hsl(var(--warning));     color: hsl(var(--warning));  animation-duration: 1.5s; }
-.status-dot-red    { background: hsl(var(--destructive)); color: hsl(var(--destructive)); animation-duration: 1s; }
-.status-dot-gold   { background: hsl(var(--primary));     color: hsl(var(--primary)); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: breathe 2s ease-in-out infinite; }
+.status-dot-green  { background: #10B981; color: #10B981; }
+.status-dot-yellow { background: #F59E0B; color: #F59E0B; animation-duration: 1.5s; }
+.status-dot-red    { background: #EF4444; color: #EF4444; animation-duration: 1s; }
+.status-dot-gold   { background: #FFD700; color: #FFD700; }
 
 /* ─── Tab transitions ─── */
 @keyframes tabReveal {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 [role="tabpanel"] { animation: tabReveal 0.25s ease forwards; }
 
 /* ─── Table row hovers ─── */
-tr:hover td {
-  background: hsl(var(--primary) / 0.03) !important;
-  transition: background 0.15s ease;
+tr:hover td { background: rgba(255,215,0,0.03) !important; transition: background 0.15s ease; }
+
+/* ─── Sidebar active state ─── */
+[class*="sidebar"] [class*="active"] {
+  background: linear-gradient(90deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03)) !important;
+  border-left: 2px solid #FFD700 !important;
+}
+
+/* ─── Header/Nav backdrop ─── */
+header, nav, [class*="topbar"], [class*="navbar"] {
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  background: rgba(15,23,42,0.85) !important;
 }
 
 /* ─── Skeleton loading ─── */
@@ -2639,12 +2636,11 @@ tr:hover td {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
-
 .skeleton {
-  background: linear-gradient(90deg, hsl(var(--card)) 25%, hsl(var(--muted)) 50%, hsl(var(--card)) 75%);
+  background: linear-gradient(90deg, #1E293B 25%, #2D3B50 50%, #1E293B 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
 }
 
 /* ─── Page reveal ─── */
@@ -2652,7 +2648,6 @@ tr:hover td {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 .page-content { animation: pageReveal 0.4s ease forwards; }
 
 /* ─── Progress bar fill ─── */
@@ -2660,12 +2655,7 @@ tr:hover td {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
-
-[class*="progress"] [class*="fill"],
-[class*="progress-bar"] {
-  transform-origin: left;
-  animation: fillBar 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
+[class*="progress"] [class*="fill"] { transform-origin: left; animation: fillBar 1s cubic-bezier(0.4,0,0.2,1) forwards; }
 
 /* ══════════════════════════════════════════════════════════════
    AGENCY-LEVEL MASTER DESIGN SYSTEM v1.0
@@ -3380,42 +3370,7 @@ textarea.valid {
   .animate-pulse, .spinner-gold { display: none !important; }
 }
 
-/* ─── TBOS Card Hover System ─── */
-.tbos-card {
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.tbos-card:hover {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3),
-              0 0 20px rgba(255, 215, 0, 0.15);
-  border-color: rgba(255, 215, 0, 0.3) !important;
-}
-.tbos-card:active {
-  transform: translateY(-1px) scale(0.98);
-  transition-duration: 0.1s;
-}
-
-/* ─── Staggered Fade-In-Up ─── */
-.tbos-stagger-enter > * {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: tbos-stagger-item 0.6s ease-out forwards;
-}
-.tbos-stagger-enter > *:nth-child(1) { animation-delay: 0ms; }
-.tbos-stagger-enter > *:nth-child(2) { animation-delay: 80ms; }
-.tbos-stagger-enter > *:nth-child(3) { animation-delay: 160ms; }
-.tbos-stagger-enter > *:nth-child(4) { animation-delay: 240ms; }
-.tbos-stagger-enter > *:nth-child(5) { animation-delay: 320ms; }
-.tbos-stagger-enter > *:nth-child(6) { animation-delay: 400ms; }
-.tbos-stagger-enter > *:nth-child(7) { animation-delay: 480ms; }
-.tbos-stagger-enter > *:nth-child(8) { animation-delay: 560ms; }
-
-@keyframes tbos-stagger-item {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* (tbos-card and tbos-stagger classes defined above — single source of truth) */
 
 
 /* ══════════════════════════════════════════════════════════════

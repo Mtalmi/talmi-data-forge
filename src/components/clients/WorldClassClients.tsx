@@ -65,11 +65,12 @@ function useFadeIn(delay = 0) {
 // ─────────────────────────────────────────────────────
 // CARD
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
+function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div
+      className={className}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => { setHov(false); setPress(false); }}
       onMouseDown={() => setPress(true)}
@@ -447,7 +448,7 @@ export default function WorldClassClients() {
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24 }}>
 
             {/* Top clients bar */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>Top Clients par CA</p>
                 <Badge label="Top 5" color={T.gold} bg={`${T.gold}18`} />
@@ -478,7 +479,7 @@ export default function WorldClassClients() {
             </Card>
 
             {/* Segmentation donut */}
-            <Card>
+            <Card className="tbos-card-stagger">
               <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16 }}>Segmentation</p>
               <ResponsiveContainer width="100%" height={160}>
                 <PieChart>
