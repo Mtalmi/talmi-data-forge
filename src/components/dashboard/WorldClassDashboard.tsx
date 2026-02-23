@@ -312,18 +312,25 @@ export function WorldClassDashboard() {
         }
         .tbos-card-enter { animation: tbos-fade-up 600ms ease-out forwards; }
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
+        
+        /* Mobile responsive overrides */
+        @media (max-width: 768px) {
+          .tbos-grid-2col { grid-template-columns: 1fr !important; }
+          .tbos-grid-3col { grid-template-columns: 1fr !important; }
+          .tbos-cashflow-metrics { grid-template-columns: 1fr 1fr !important; }
+        }
       `}</style>
 
       {/* Sticky header removed — handled by global TopNavBar */}
 
-      <div style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto' }}>
+      <div style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto', overflowX: 'hidden' as const }}>
 
         {/* ══════════════════════════════════════════
             SECTION 1 — PERFORMANCE & KPIs
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Zap} label="Performance & KPIs" />
 
-        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter tbos-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
           {/* 1.1 Cash-Flow Time Machine */}
           <Card style={{ gridColumn: '1', animationDelay: '0ms' }} className="tbos-card-enter">
@@ -358,7 +365,7 @@ export function WorldClassDashboard() {
               </ResponsiveContainer>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 16 }}>
+            <div className="tbos-cashflow-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 16 }}>
               {[
                 { label: 'Solde Actuel', value: `${solde}K DH`, color: T.gold },
                 { label: 'Fin de Mois', value: `${finMois}K DH`, color: T.textPri },
@@ -413,7 +420,7 @@ export function WorldClassDashboard() {
         </div>
 
         {/* Row 2: Stock + Pipeline + Trends */}
-        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter tbos-grid-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
 
           {/* 1.3 Stock Levels */}
           <Card style={{ animationDelay: '160ms' }} className="tbos-card-enter">

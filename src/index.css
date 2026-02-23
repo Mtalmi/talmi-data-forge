@@ -329,6 +329,18 @@
     border: 1px solid hsl(var(--primary) / 0.1);
   }
 
+  @media (max-width: 768px) {
+    .period-selector-premium {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .period-selector-premium::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   .period-btn {
     @apply relative flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold;
     @apply transition-all duration-300 ease-out;
