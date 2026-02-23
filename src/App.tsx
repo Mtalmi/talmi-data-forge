@@ -77,6 +77,7 @@ const TrainingAcademy = lazy(() => import("./pages/TrainingAcademy"));
 const CommunityForum = lazy(() => import("./pages/CommunityForum"));
 const OperationsAgent = lazy(() => import("./pages/OperationsAgent"));
 const ArchiveLivraisons = lazy(() => import("./pages/ArchiveLivraisons"));
+const TestGuide = lazy(() => import("./pages/TestGuide"));
 
 const queryClient = new QueryClient();
 
@@ -152,7 +153,8 @@ const App = () => (
                     <Route path="/analytics" element={<AnalyticsBI />} />
                     <Route path="/analytics-demo" element={<AdvancedAnalytics />} />
                     <Route path="/benchmarking" element={<IndustryBenchmarking />} />
-                    <Route path="/install" element={<InstallApp />} />
+                     <Route path="/install" element={<InstallApp />} />
+                     <Route path="/test-guide" element={<TestGuide />} />
                     <Route path="/automation" element={<WorkflowAutomation />} />
                     <Route path="/predictive-maintenance" element={<PredictiveMaintenance />} />
                     <Route path="/mobile" element={<MobileField />} />
