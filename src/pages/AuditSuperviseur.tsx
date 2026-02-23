@@ -77,7 +77,7 @@ function JsonDiff({ label, oldValue, newValue }: { label: string; oldValue: unkn
   const hasChanged = JSON.stringify(oldValue) !== JSON.stringify(newValue);
   if (!hasChanged && oldValue === undefined && newValue === undefined) return null;
   return (
-    <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-border/50 last:border-0">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 py-1.5 border-b border-border/50 last:border-0">
       <div className="font-medium text-sm text-muted-foreground">{label}</div>
       <div className={cn("text-sm font-mono break-all", hasChanged && "text-red-600 line-through")}>
         {oldValue !== undefined ? String(oldValue) : '—'}
@@ -175,7 +175,7 @@ function AuditLogRow({ log, labels }: { log: AuditLog; labels: any }) {
                 </Badge>
               </div>
               <div className="bg-background rounded-lg border">
-                <div className="grid grid-cols-3 gap-2 p-2 bg-muted/50 border-b font-medium text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-2 bg-muted/50 border-b font-medium text-sm">
                   <div>{labels.field}</div>
                   <div>{labels.oldValue}</div>
                   <div>{labels.newValue}</div>

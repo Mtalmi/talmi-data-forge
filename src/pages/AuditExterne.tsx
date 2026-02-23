@@ -273,11 +273,11 @@ export default function AuditExterne() {
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="space-y-3">
-                  <div className="grid grid-cols-4 gap-4 px-4 py-2 bg-muted/50 rounded-lg text-sm font-medium text-muted-foreground">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 px-4 py-2 bg-muted/50 rounded-lg text-sm font-medium text-muted-foreground">
                     <span>{e.blRef}</span><span>{e.docStatus}</span><span>{e.signatureCompliant}</span><span className="text-right">{e.verdict}</span>
                   </div>
                   {documentChecks.map((doc, index) => (
-                    <div key={doc.bl_id} className={cn("grid grid-cols-4 gap-4 items-center p-4 rounded-lg border-2 transition-all", doc.statut_document === 'present' && doc.signature_conforme ? "border-emerald-500/30 bg-emerald-500/5" : "border-red-500/30 bg-red-500/5")}>
+                    <div key={doc.bl_id} className={cn("grid grid-cols-2 sm:grid-cols-4 gap-4 items-center p-4 rounded-lg border-2 transition-all", doc.statut_document === 'present' && doc.signature_conforme ? "border-emerald-500/30 bg-emerald-500/5" : "border-red-500/30 bg-red-500/5")}>
                       <div className="font-mono font-semibold">{doc.bl_id}</div>
                       <div>
                         <Select value={doc.statut_document} onValueChange={(v) => updateDocumentStatus(index, 'statut_document', v)}>

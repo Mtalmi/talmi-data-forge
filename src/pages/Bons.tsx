@@ -586,7 +586,7 @@ export default function Bons() {
                   <DialogTitle>{t.pages.bons.createBon}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label className="form-label-industrial">{t.pages.bons.bonNumber}</Label>
                       <Input value={blId} onChange={(e) => setBlId(e.target.value)} required />
@@ -623,7 +623,7 @@ export default function Bons() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="form-label-industrial">{t.pages.bons.volume}</Label>
                       <Input
@@ -647,7 +647,7 @@ export default function Bons() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label className="form-label-industrial">{t.pages.bons.cementReal}</Label>
                       <Input

@@ -288,7 +288,7 @@ export function FleetPredatorPage() {
         <TabsContent value="map" className="mt-0">
           <div className="relative overflow-hidden rounded-2xl">
             <FleetGPSMap
-              className="min-h-[600px] h-[calc(100vh-340px)]"
+              className="min-h-[300px] md:min-h-[600px] h-[calc(100dvh-340px-5rem)] md:h-[calc(100dvh-340px)]"
               externalVehicles={mapVehicles}
               hideOverlay={false}
             />

@@ -395,9 +395,9 @@ export default function WorkflowAutomation() {
         {/* ═══════ VIEW 2: BUILDER ═══════ */}
         {tab === 'builder' && (
           <motion.div key="build" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-            className="flex h-[calc(100vh-65px)]">
+            className="flex flex-col md:flex-row h-[calc(100dvh-65px-5rem)] md:h-[calc(100dvh-65px)]">
             {/* Left Panel */}
-            <div className="w-[280px] flex-shrink-0 overflow-y-auto p-4 border-r" style={{ background: '#161D26', borderColor: '#2A3545' }}>
+            <div className="w-full md:w-[280px] flex-shrink-0 overflow-y-auto p-4 border-b md:border-b-0 md:border-r max-h-[40vh] md:max-h-none" style={{ background: '#161D26', borderColor: '#2A3545' }}>
               <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ fontFamily: "'Poppins', sans-serif" }}>Building Blocks</h3>
 
               <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: '#3B82F6' }}>Triggers</p>
