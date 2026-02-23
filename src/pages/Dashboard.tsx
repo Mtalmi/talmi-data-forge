@@ -227,8 +227,9 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-              <div className="period-selector-premium">
+            {/* Row 1: Scrollable pill bar + document buttons */}
+            <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 pb-2 w-full">
+              <div className="period-selector-premium shrink-0">
                 {[
                   { value: 'today' as Period, label: t.dashboard.period.today, shortLabel: t.dashboard.period.todayShort },
                   { value: 'week' as Period, label: t.dashboard.period.thisWeek, shortLabel: t.dashboard.period.thisWeekShort },
@@ -263,62 +264,70 @@ export default function Dashboard() {
                 ))}
               </div>
 
-              {isCeo && <SystemManualPdf />}
-              {isCeo && <DailyReportGenerator />}
-              {isCeo && <HawaiiReportButton />}
-              {isCeo && (
-                <button
-                  onClick={() => setShowExecutiveSummary(true)}
-                  className="btn-premium min-h-[40px]"
-                  title="Résumé Exécutif"
-                >
-                  <Maximize2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Résumé</span>
-                </button>
-              )}
-              <button 
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="btn-premium min-h-[40px]"
-              >
-                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                <span className="hidden sm:inline">{t.dashboard.refresh}</span>
-              </button>
+              {isCeo && <div className="shrink-0"><SystemManualPdf /></div>}
+              {isCeo && <div className="shrink-0"><DailyReportGenerator /></div>}
+              {isCeo && <div className="shrink-0"><HawaiiReportButton /></div>}
+            </div>
 
-              <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                <Bell className="h-4 w-4 text-muted-foreground" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                  3
-                </span>
-              </button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                    <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                      <span className="text-xs font-bold text-primary">MT</span>
-                    </div>
-                    <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+            {/* Row 2: Action icons (left) + bell & avatar (right) */}
+            <div className="flex items-center justify-between w-full gap-2">
+              <div className="flex items-center gap-2">
+                {isCeo && (
+                  <button
+                    onClick={() => setShowExecutiveSummary(true)}
+                    className="btn-premium min-h-[40px]"
+                    title="Résumé Exécutif"
+                  >
+                    <Maximize2 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Résumé</span>
                   </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">{t.dashboard.myAccount}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                   <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                    <User className="h-4 w-4 mr-2" />
-                    {t.dashboard.profile}
-                  </DropdownMenuItem>
-                   <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                    <Settings className="h-4 w-4 mr-2" />
-                    {t.nav.settings}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                   <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    {t.nav.logout}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                )}
+                <button 
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="btn-premium min-h-[40px]"
+                >
+                  <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <span className="hidden sm:inline">{t.dashboard.refresh}</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                  <Bell className="h-4 w-4 text-muted-foreground" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
+                    3
+                  </span>
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
+                      <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
+                        <span className="text-xs font-bold text-primary">MT</span>
+                      </div>
+                      <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">{t.dashboard.myAccount}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                     <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                      <User className="h-4 w-4 mr-2" />
+                      {t.dashboard.profile}
+                    </DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
+                      <Settings className="h-4 w-4 mr-2" />
+                      {t.nav.settings}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                     <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      {t.nav.logout}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         </div>

@@ -244,15 +244,15 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0 pr-1">
           {/* Search */}
           <div className="hidden md:block w-64">
             <GlobalSearch />
           </div>
 
           <LanguageSwitcher variant="compact" />
-          <SoundToggle />
-          <ThemeToggle />
+          <div className="hidden md:flex"><SoundToggle /></div>
+          <div className="hidden md:flex"><ThemeToggle /></div>
           <NotificationCenter />
           
           {/* Role Preview Switcher - CEO Only */}
