@@ -244,7 +244,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide flex-shrink-0">
           {/* Search */}
           <div className="hidden md:block w-64">
             <GlobalSearch />
