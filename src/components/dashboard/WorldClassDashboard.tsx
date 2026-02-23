@@ -291,7 +291,7 @@ export function WorldClassDashboard() {
   };
 
   return (
-    <div style={{
+    <div className="overflow-x-hidden max-w-full w-full" style={{
       fontFamily: 'DM Sans, sans-serif',
       color: T.textPri,
       minHeight: '100vh',
@@ -351,14 +351,14 @@ export function WorldClassDashboard() {
 
       {/* Sticky header removed — handled by global TopNavBar */}
 
-      <div className="tbos-dashboard-wrap" style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto', overflowX: 'hidden' as const }}>
+      <div className="tbos-dashboard-wrap overflow-x-hidden max-w-full w-full" style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto' }}>
 
         {/* ══════════════════════════════════════════
             SECTION 1 — PERFORMANCE & KPIs
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Zap} label="Performance & KPIs" />
 
-        <div className="tbos-stagger-enter tbos-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter tbos-grid-2col grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
           {/* 1.1 Cash-Flow Time Machine */}
           <Card style={{ gridColumn: '1', animationDelay: '0ms' }} className="tbos-card-enter">
@@ -370,7 +370,7 @@ export function WorldClassDashboard() {
               <Badge label="Sain" color={T.success} bg={`${T.success}20`} />
             </div>
 
-            <div style={{ height: 160 }}>
+            <div className="overflow-hidden w-full" style={{ height: 160 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={cashFlowData} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
                   <defs>
@@ -393,7 +393,7 @@ export function WorldClassDashboard() {
               </ResponsiveContainer>
             </div>
 
-            <div className="tbos-cashflow-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginTop: 16 }}>
+            <div className="tbos-cashflow-metrics grid grid-cols-2 md:grid-cols-4 gap-2 mt-4 w-full">
               {[
                 { label: 'Solde Actuel', value: `${solde}K DH`, color: T.gold },
                 { label: 'Fin de Mois', value: `${finMois}K DH`, color: T.textPri },
@@ -418,7 +418,7 @@ export function WorldClassDashboard() {
               <Badge label="Bon état" color={T.success} bg={`${T.success}20`} />
             </div>
 
-            <div style={{ height: 180 }}>
+            <div className="overflow-hidden w-full" style={{ height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={arAgingData} layout="vertical" barSize={18} margin={{ top: 0, right: 16, left: 0, bottom: 0 }}>
                   <XAxis type="number" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}K`} />
@@ -448,7 +448,7 @@ export function WorldClassDashboard() {
         </div>
 
         {/* Row 2: Stock + Pipeline + Trends */}
-        <div className="tbos-stagger-enter tbos-grid-3col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter tbos-grid-3col grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
           {/* 1.3 Stock Levels */}
           <Card style={{ animationDelay: '160ms' }} className="tbos-card-enter">
@@ -459,9 +459,9 @@ export function WorldClassDashboard() {
                 const color = getStockColor(s.current, s.max);
                 return (
                   <div key={i} style={{ opacity: 0, animation: `tbos-fade-up 600ms ease-out ${200 + i * 80}ms forwards` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                      <span style={{ fontSize: 12, fontWeight: 500, color: T.textSec }}>{s.name}</span>
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textPri }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, gap: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 500, color: T.textSec, flexShrink: 0 }}>{s.name}</span>
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textPri, textAlign: 'right', flexShrink: 0, whiteSpace: 'nowrap' }}>
                         {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                       </span>
                     </div>
@@ -529,7 +529,7 @@ export function WorldClassDashboard() {
               <div style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>vs Janvier</div>
             </div>
 
-            <div className="tbos-trends-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            <div className="tbos-trends-metrics grid grid-cols-2 md:grid-cols-3 gap-2 w-full">
               {[
                 { label: 'CA', value: '0K', color: T.textDim },
                 { label: 'Marge', value: '0%', color: T.textDim },
@@ -555,7 +555,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Factory} label="Production & Qualité" />
 
-        <div className="tbos-stagger-enter tbos-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter tbos-grid-2col grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
           {/* 2.1 Daily Production */}
           <Card style={{ animationDelay: '0ms' }} className="tbos-card-enter">
@@ -569,7 +569,7 @@ export function WorldClassDashboard() {
               </div>
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: 20, color: T.gold }}>851 m³</span>
             </div>
-            <div style={{ height: 180 }}>
+            <div className="overflow-hidden w-full" style={{ height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={hourlyProductionData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                   <defs>
@@ -602,7 +602,7 @@ export function WorldClassDashboard() {
                 <Badge label="0 Crit" color={T.danger} bg={`${T.danger}20`} />
               </div>
             </div>
-            <div style={{ height: 180 }}>
+            <div className="overflow-hidden w-full" style={{ height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={qualityData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -661,7 +661,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Banknote} label="Finance & Trésorerie" />
 
-        <div className="tbos-stagger-enter tbos-grid-finance" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter tbos-grid-finance grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-4 mb-6">
 
           {/* 3.1 Treasury Gauge */}
           <Card className="tbos-card-enter">
@@ -686,7 +686,7 @@ export function WorldClassDashboard() {
               </svg>
             </div>
 
-            <div className="tbos-budget-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            <div className="tbos-budget-metrics grid grid-cols-3 gap-2 w-full">
               {[
                 { label: 'Plafond', value: '15,000', color: T.textPri },
                 { label: 'Utilisé', value: '0', color: T.success },
@@ -782,7 +782,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Settings} label="Modules" />
 
-        <div className="tbos-stagger-enter tbos-grid-modules" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+        <div className="tbos-stagger-enter tbos-grid-modules grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
           {modules.map((m, i) => (
             <ModuleCard key={i} module={m} delay={i * 80} />
           ))}

@@ -47,7 +47,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         {!showMobileNav && <AppSidebar />}
 
         {/* Content Layer */}
-        <div className="relative z-10 flex flex-col min-h-[100dvh] flex-1">
+        <div className="relative z-10 flex flex-col min-h-[100dvh] flex-1 overflow-x-hidden max-w-full">
           {/* Preview Mode Banner */}
           {previewRole && (
             <RolePreviewBanner 
@@ -70,8 +70,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           </div>
           
           {/* Main Content Area with Page Transitions */}
-          <main className={`flex-1 overflow-y-auto scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-            <div className="p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom overflow-x-hidden">
+          <main className={`flex-1 overflow-y-auto overflow-x-hidden scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
+            <div className="p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom overflow-x-hidden w-full">
               <PageTransition>
                 {children}
               </PageTransition>

@@ -207,7 +207,7 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="space-y-5 sm:space-y-6">
+      <div className="space-y-5 sm:space-y-6 overflow-x-hidden max-w-full w-full">
         {/* Hawaii Greeting - CEO Only, hidden on mobile to avoid duplicate with header */}
         {isCeo && <div className="hidden sm:block"><HawaiiGreeting /></div>}
 
@@ -355,7 +355,7 @@ export default function Dashboard() {
             {/* Period KPI Grid */}
             <motion.div
               ref={kpiGridRef}
-              className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
               initial="initial"
               animate="enter"
               variants={{
@@ -420,7 +420,7 @@ export default function Dashboard() {
 
             {/* Profit & Expenses Row — CEO/Accounting */}
             {(isCeo || isAccounting) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {periodLoading ? (
                   Array.from({ length: 4 }).map((_, i) => <SkeletonKPI key={i} />)
                 ) : (
@@ -479,7 +479,7 @@ export default function Dashboard() {
 
             {/* Quick Access Widgets */}
             {(isCeo || isAccounting) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <PendingApprovalsWidget />
                 <TodaysPipelineWidget />
                 <ARAgingWidget />
@@ -545,7 +545,7 @@ export default function Dashboard() {
             </div>
 
             {/* Production Summary + Recent Deliveries */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
               <RecentDeliveries />
 
               {/* Production Summary — Premium Version */}
