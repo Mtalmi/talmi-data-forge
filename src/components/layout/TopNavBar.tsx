@@ -255,12 +255,14 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           <div className="hidden md:flex"><ThemeToggle /></div>
           <NotificationCenter />
           
-          {/* Role Preview Switcher - CEO Only */}
+          {/* Role Preview Switcher - CEO Only, hidden on mobile */}
           {onPreviewRoleChange && (
-            <RolePreviewSwitcher 
-              previewRole={previewRole || null} 
-              onPreviewRoleChange={onPreviewRoleChange} 
-            />
+            <div className="hidden md:flex">
+              <RolePreviewSwitcher 
+                previewRole={previewRole || null} 
+                onPreviewRoleChange={onPreviewRoleChange} 
+              />
+            </div>
           )}
 
           {/* User Menu */}
