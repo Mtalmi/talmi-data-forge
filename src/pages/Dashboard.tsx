@@ -217,8 +217,8 @@ export default function Dashboard() {
           className="dashboard-header sticky top-0 z-10 p-4 sm:p-5"
         >
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tighter font-display">
+            <div className="min-w-0 sm:hidden">
+              <h1 className="text-xl font-extrabold tracking-tighter font-display">
                 {t.dashboard.greeting}, {t.dashboard.master} 👋
               </h1>
               <div className="flex items-center gap-2 mt-1">
@@ -227,7 +227,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
+            <div className="flex items-center gap-2 md:gap-3 flex-wrap">
               <div className="period-selector-premium">
                 {[
                   { value: 'today' as Period, label: t.dashboard.period.today, shortLabel: t.dashboard.period.todayShort },
