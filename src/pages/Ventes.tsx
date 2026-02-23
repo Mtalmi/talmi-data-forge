@@ -11,7 +11,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 import SmartQuoteCalculator from '@/components/quotes/SmartQuoteCalculator';
 import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
@@ -419,8 +426,67 @@ export default function Ventes() {
       <MainLayout>
         <div className="space-y-6 overflow-x-hidden max-w-full w-full">
           {/* ── Premium Page Header ── */}
+          {/* MOBILE HEADER (< md) */}
+          <div className="md:hidden space-y-3">
+            {/* Title + Primary CTA */}
+            <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)/0.4))', boxShadow: '0 0 8px hsl(var(--primary)/0.4)' }} />
+                    <h1 className="text-[22px] font-black tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>{t.pages.ventes.title}</h1>
+                  </div>
+                  <p className="text-sm text-muted-foreground/50 pl-3.5 mt-0.5">{t.pages.ventes.subtitle}</p>
+                </div>
+                <SmartQuoteCalculator variant="prominent" />
+              </div>
+            </div>
+
+            {/* Secondary Actions + Search + Filter */}
+            <div className="flex items-center gap-2">
+              {/* More Actions Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="shrink-0 flex items-center gap-1.5 px-3 py-2 bg-white/[0.05] border border-white/[0.08] rounded-xl text-sm text-muted-foreground transition-all duration-200 active:scale-95">
+                    <span className="text-base">⋯</span> Actions
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56 bg-card/95 backdrop-blur-xl border border-border/50 rounded-2xl p-1.5">
+                  <DropdownMenuItem asChild className="rounded-xl px-3 py-2.5 cursor-pointer">
+                    <div onClick={() => document.querySelector<HTMLButtonElement>('[data-export-reports]')?.click()}>
+                      <FileText className="h-4 w-4 mr-3 text-muted-foreground" />
+                      Exporter
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setBatchReminderOpen(true)}>
+                    <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
+                    {t.pages.ventes.reminders}
+                  </DropdownMenuItem>
+                  {(canCreateBcDirect || isDirecteurOperations) && (
+                    <DropdownMenuItem className="rounded-xl px-3 py-2.5 cursor-pointer" onClick={() => setEmergencyBcOpen(true)}>
+                      <ShoppingCart className="h-4 w-4 mr-3 text-muted-foreground" />
+                      {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild className="rounded-xl px-3 py-2.5 cursor-pointer">
+                    <div><Receipt className="h-4 w-4 mr-3 text-muted-foreground" />Rappels Auto</div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="rounded-xl px-3 py-2.5 cursor-pointer">
+                    <div><Zap className="h-4 w-4 mr-3 text-muted-foreground" />Communications</div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="rounded-xl px-3 py-2.5 cursor-pointer">
+                    <div><Calendar className="h-4 w-4 mr-3 text-muted-foreground" />Historique</div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          {/* DESKTOP HEADER (md+) */}
           <div
-            className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border px-5 py-4 dashboard-header"
+            className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border px-5 py-4 dashboard-header"
             style={{
               background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--primary)/0.03) 100%)',
               borderColor: 'hsl(var(--primary)/0.15)',
@@ -452,7 +518,6 @@ export default function Ventes() {
                 <Mail className="h-4 w-4" />
                 {t.pages.ventes.reminders}
               </Button>
-              {/* Strategic BC Creation - Role-Based */}
               {(canCreateBcDirect || isDirecteurOperations) && (
                 <Button 
                   onClick={() => setEmergencyBcOpen(true)}

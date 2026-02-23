@@ -214,26 +214,31 @@ export default function Dashboard() {
         {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
           ref={kpiSectionRef}
-          className="dashboard-header sticky top-0 z-10 p-4 sm:p-5"
+          className="dashboard-header z-10"
         >
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="min-w-0 sm:hidden">
+          {/* ── MOBILE COMMAND STRIP (< md) ── */}
+          <div className="md:hidden space-y-3 p-3">
+            {/* Row 2 — Greeting Card */}
+            <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-4">
               <h1 className="text-xl font-extrabold tracking-tighter font-display">
                 {t.dashboard.greeting}, {t.dashboard.master} 👋
               </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                <span className="text-sm text-muted-foreground font-mono">Casablanca • 24°C ☀️</span>
+              <div className="flex items-center justify-between mt-1.5">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-sm text-muted-foreground font-mono">Casablanca · 24°C ☀️</span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                  Sain
+                </span>
               </div>
-            </div>
-
-            {/* Row 1: Scrollable pill bar + document buttons */}
-            <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 pb-2 w-full">
-              <div className="period-selector-premium shrink-0">
+              {/* Period pills */}
+              <div className="flex overflow-x-auto scrollbar-hide gap-2 mt-3">
                 {[
-                  { value: 'today' as Period, label: t.dashboard.period.today, shortLabel: t.dashboard.period.todayShort },
-                  { value: 'week' as Period, label: t.dashboard.period.thisWeek, shortLabel: t.dashboard.period.thisWeekShort },
-                  { value: 'month' as Period, label: t.dashboard.period.thisMonth, shortLabel: t.dashboard.period.thisMonthShort },
+                  { value: 'today' as Period, label: t.dashboard.period.todayShort },
+                  { value: 'week' as Period, label: t.dashboard.period.thisWeekShort },
+                  { value: 'month' as Period, label: t.dashboard.period.thisMonthShort },
                 ].map((p) => (
                   <button
                     key={p.value}
@@ -256,21 +261,85 @@ export default function Dashboard() {
                         scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
                       });
                     }}
-                    className={`period-btn ${period === p.value ? 'active' : ''}`}
+                    className={`shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 active:scale-95 ${
+                      period === p.value
+                        ? 'bg-yellow-500 text-black font-bold shadow-[0_0_12px_rgba(255,215,0,0.3)]'
+                        : 'bg-white/10 text-white/60 hover:bg-white/15'
+                    }`}
                   >
-                    <span className="hidden sm:inline">{p.label}</span>
-                    <span className="sm:hidden">{p.shortLabel}</span>
+                    {p.label}
                   </button>
                 ))}
               </div>
-
-              {isCeo && <div className="shrink-0"><SystemManualPdf /></div>}
-              {isCeo && <div className="shrink-0"><DailyReportGenerator /></div>}
-              {isCeo && <div className="shrink-0"><HawaiiReportButton /></div>}
             </div>
 
-            {/* Row 2: Action icons (left) + bell & avatar (right) */}
-            <div className="flex items-center justify-between w-full gap-2">
+            {/* Row 3 — Quick Actions Strip */}
+            <div className="flex overflow-x-auto scrollbar-hide gap-2 py-1">
+              {isCeo && <div className="shrink-0"><Suspense fallback={null}><SystemManualPdf /></Suspense></div>}
+              {isCeo && <div className="shrink-0"><Suspense fallback={null}><DailyReportGenerator /></Suspense></div>}
+              {isCeo && <div className="shrink-0"><Suspense fallback={null}><HawaiiReportButton /></Suspense></div>}
+              {isCeo && (
+                <button
+                  onClick={() => setShowExecutiveSummary(true)}
+                  className="shrink-0 w-9 h-9 flex items-center justify-center border border-yellow-500/30 rounded-xl bg-white/[0.03] transition-all duration-200 active:scale-95"
+                  title="Résumé Exécutif"
+                >
+                  <Maximize2 className="h-4 w-4 text-muted-foreground" />
+                </button>
+              )}
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="shrink-0 w-9 h-9 flex items-center justify-center border border-yellow-500/30 rounded-xl bg-white/[0.03] transition-all duration-200 active:scale-95"
+              >
+                <RefreshCw className={`h-4 w-4 text-muted-foreground ${refreshing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+          </div>
+
+          {/* ── DESKTOP HEADER (md+) ── */}
+          <div className="hidden md:block p-4 sm:p-5">
+            <div className="relative z-10 flex flex-row items-center justify-between gap-4">
+              <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 pb-2 w-full">
+                <div className="period-selector-premium shrink-0">
+                  {[
+                    { value: 'today' as Period, label: t.dashboard.period.today },
+                    { value: 'week' as Period, label: t.dashboard.period.thisWeek },
+                    { value: 'month' as Period, label: t.dashboard.period.thisMonth },
+                  ].map((p) => (
+                    <button
+                      key={p.value}
+                      onClick={() => {
+                        setPeriod(p.value);
+                        requestAnimationFrame(() => {
+                          const grid = kpiGridRef.current;
+                          if (!grid) return;
+                          const scrollContainer = grid.closest('main') as HTMLElement | null;
+                          if (!scrollContainer) {
+                            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            return;
+                          }
+                          const topBarHeight = document.getElementById('app-topbar')?.offsetHeight ?? 0;
+                          const headerHeight = kpiSectionRef.current?.offsetHeight ?? 0;
+                          const containerRect = scrollContainer.getBoundingClientRect();
+                          const gridRect = grid.getBoundingClientRect();
+                          const relativeTop = gridRect.top - containerRect.top + scrollContainer.scrollTop;
+                          const targetTop = Math.max(0, relativeTop - topBarHeight - headerHeight - 12);
+                          scrollContainer.scrollTo({ top: targetTop, behavior: 'smooth' });
+                        });
+                      }}
+                      className={`period-btn ${period === p.value ? 'active' : ''}`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+
+                {isCeo && <div className="shrink-0"><Suspense fallback={null}><SystemManualPdf /></Suspense></div>}
+                {isCeo && <div className="shrink-0"><Suspense fallback={null}><DailyReportGenerator /></Suspense></div>}
+                {isCeo && <div className="shrink-0"><Suspense fallback={null}><HawaiiReportButton /></Suspense></div>}
+              </div>
+
               <div className="flex items-center gap-2">
                 {isCeo && (
                   <button
@@ -279,54 +348,17 @@ export default function Dashboard() {
                     title="Résumé Exécutif"
                   >
                     <Maximize2 className="h-4 w-4" />
-                    <span className="hidden sm:inline">Résumé</span>
+                    <span>Résumé</span>
                   </button>
                 )}
-                <button 
+                <button
                   onClick={handleRefresh}
                   disabled={refreshing}
                   className="btn-premium min-h-[40px]"
                 >
                   <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-                  <span className="hidden sm:inline">{t.dashboard.refresh}</span>
+                  <span>{t.dashboard.refresh}</span>
                 </button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button className="relative p-2 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                  <Bell className="h-4 w-4 text-muted-foreground" />
-                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center">
-                    3
-                  </span>
-                </button>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex items-center gap-2 p-1.5 rounded-lg border border-border/40 hover:bg-muted/40 transition-colors">
-                      <div className="h-7 w-7 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                        <span className="text-xs font-bold text-primary">MT</span>
-                      </div>
-                      <ChevronDown className="h-3 w-3 text-muted-foreground hidden sm:block" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 bg-card border border-border z-50">
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">{t.dashboard.myAccount}</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                      <User className="h-4 w-4 mr-2" />
-                      {t.dashboard.profile}
-                    </DropdownMenuItem>
-                     <DropdownMenuItem onClick={() => navigate('/user_profile')} className="cursor-pointer">
-                      <Settings className="h-4 w-4 mr-2" />
-                      {t.nav.settings}
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer text-destructive">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      {t.nav.logout}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </div>
           </div>

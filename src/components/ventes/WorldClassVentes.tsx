@@ -898,50 +898,78 @@ export function WorldClassVentes() {
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid #1E2D4A',
-        padding: '12px 16px',
         marginBottom: 24,
       }}>
-        <div className="flex items-center gap-3 mb-2 md:mb-0">
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 8, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <TrendingUp size={18} color="#0B1120" />
-            </div>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: 14, lineHeight: 1.1 }}>
-                TBOS <span style={{ color: T.gold }}>Ventes</span>
+        {/* MOBILE header */}
+        <div className="md:hidden p-3">
+          <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-3.5">
+            <div className="flex items-center gap-2.5">
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <TrendingUp size={15} color="#0B1120" />
               </div>
-              <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 800, fontSize: 13, lineHeight: 1.1 }}>
+                  📈 TBOS <span style={{ color: T.gold }}>Ventes</span>
+                </div>
+                <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
+              </div>
             </div>
-          </div>
-
-          {/* Right — hidden on mobile, shown on md+ */}
-          <div className="hidden md:flex items-center gap-3 ml-auto">
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textDim }}>
-              {clock.toLocaleTimeString('fr-FR')}
-            </span>
-            <div style={{ position: 'relative', cursor: 'pointer' }}>
-              <Bell size={18} style={{ color: T.textSec }} />
-              <div style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: T.danger, border: '1.5px solid #0B1120' }} />
+            {/* Tabs inside card */}
+            <div className="flex overflow-x-auto scrollbar-hide gap-1 mt-3">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
+                  onClick={() => setActiveTab(tab.id as any)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-            <button className="wc-new-deal-btn">
-              <Plus size={14} />
-              Nouveau Deal
-            </button>
           </div>
         </div>
 
-        {/* Tabs — scrollable on mobile */}
-        <div className="flex overflow-x-auto scrollbar-hide gap-1 pb-1">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
-              onClick={() => setActiveTab(tab.id as any)}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* DESKTOP header */}
+        <div className="hidden md:block" style={{ padding: '12px 16px' }}>
+          <div className="flex items-center gap-3">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 8, flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendingUp size={18} color="#0B1120" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: 14, lineHeight: 1.1 }}>
+                  TBOS <span style={{ color: T.gold }}>Ventes</span>
+                </div>
+                <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 ml-auto">
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textDim }}>
+                {clock.toLocaleTimeString('fr-FR')}
+              </span>
+              <div style={{ position: 'relative', cursor: 'pointer' }}>
+                <Bell size={18} style={{ color: T.textSec }} />
+                <div style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: T.danger, border: '1.5px solid #0B1120' }} />
+              </div>
+              <button className="wc-new-deal-btn">
+                <Plus size={14} />
+                Nouveau Deal
+              </button>
+            </div>
+          </div>
+
+          <div className="flex overflow-x-auto scrollbar-hide gap-1 pb-1 mt-2">
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
+                onClick={() => setActiveTab(tab.id as any)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
