@@ -208,14 +208,14 @@ function PipelineSection() {
     <section>
       <SectionHeader icon={TrendingUp} title="Pipeline Commercial" />
       {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <KpiCard label="Pipeline Total" value={847} suffix="K DH" icon={Banknote} trend="+12.5% ↑" trendColor={T.success} delay={0} />
         <KpiCard label="Taux de Conversion" value={34} suffix="%" color={T.success} icon={TrendingUp} trend="+5.2% ↑" trendColor={T.success} delay={80} />
         <KpiCard label="Taille Moyenne" value={42} suffix="K DH" color={T.textPri} icon={BarChart3} trend="-2.1% ↓" trendColor={T.danger} delay={160} />
         <KpiCard label="Cycle de Vente" value={28} suffix=" jours" color={T.warning} icon={Clock} trend="+3 jours" trendColor={T.danger} delay={240} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Funnel */}
         <PCard delay={100}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 16 }}>Entonnoir de Vente</p>
@@ -314,7 +314,7 @@ function PerformanceSection() {
   return (
     <section>
       <SectionHeader icon={BarChart3} title="Performance Commerciale" />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         {/* Rep Chart */}
         <PCard delay={0}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 12 }}>Ventes par Commercial</p>
@@ -353,7 +353,7 @@ function PerformanceSection() {
         {/* Product Donut */}
         <PCard delay={80}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 8 }}>CA par Produit</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, alignItems: 'center' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
             <div style={{ position: 'relative', height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -402,7 +402,7 @@ function PerformanceSection() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginTop: 12 }}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
           {segmentData.map(d => (
             <div key={d.name} style={{ padding: '8px 10px', borderRadius: 8, background: `${d.color}10`, border: `1px solid ${d.color}20` }}>
               <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, fontWeight: 700, color: d.color }}>{d.name}</div>
@@ -456,14 +456,14 @@ function DealPipelineSection() {
     <section>
       <SectionHeader icon={Briefcase} title="Deals Actifs" />
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <KpiCard label="Deals Actifs" value={18} icon={FileText} delay={0} />
         <KpiCard label="Valeur Totale" value={504} suffix="K DH" icon={Banknote} delay={80} />
         <KpiCard label="Âge Moyen" value={22} suffix=" jours" color={T.textPri} icon={Clock} delay={160} />
         <KpiCard label="Taux de Gain" value={67} suffix="%" color={T.success} icon={TrendingUp} delay={240} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Deal List */}
         <PCard delay={100} style={{ padding: 16 }}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 12 }}>Liste des Deals</p>
@@ -623,7 +623,7 @@ function ForecastSection() {
   return (
     <section>
       <SectionHeader icon={Activity} title="Prévisions de Ventes" />
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Area Chart */}
         <PCard delay={0}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 12 }}>Prévision de Revenus</p>
@@ -650,7 +650,7 @@ function ForecastSection() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginTop: 12 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3">
             {[
               { label: 'Ce mois', value: '338K DH', color: T.gold },
               { label: 'Mois prochain', value: '365K DH', color: T.textPri },
@@ -668,7 +668,7 @@ function ForecastSection() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <PCard delay={100}>
             <GaugeSvg pct={78} />
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginTop: 8 }}>
+            <div className="grid grid-cols-3 gap-1.5 mt-2">
               {[
                 { label: 'Objectif', value: '450K', color: T.textPri },
                 { label: 'Réalisé', value: '351K', color: T.success },
@@ -742,7 +742,7 @@ function ActivitiesSection() {
     <section>
       <SectionHeader icon={Clock} title="Activités Commerciales" />
       {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {[
           { label: 'Appels', value: 34, icon: Phone, color: T.info, trend: '+12% ↑', sub: 'cette semaine' },
           { label: 'Emails', value: 67, icon: Mail, color: T.success, trend: '+8% ↑', sub: 'cette semaine' },
@@ -763,7 +763,7 @@ function ActivitiesSection() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
+      <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Timeline */}
         <PCard delay={100} style={{ padding: 16 }}>
           <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri, marginBottom: 14 }}>Historique & Planning</p>
@@ -879,7 +879,7 @@ export function WorldClassVentes() {
   ] as const;
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, color: T.textPri }}>
+    <div className="overflow-x-hidden max-w-full" style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, color: T.textPri }}>
       {/* Font imports */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap');
@@ -898,53 +898,55 @@ export function WorldClassVentes() {
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid #1E2D4A',
-        padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 16,
+        padding: '12px 16px',
         marginBottom: 24,
       }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 8 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <TrendingUp size={18} color="#0B1120" />
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, fontSize: 14, lineHeight: 1.1 }}>
-              TBOS <span style={{ color: T.gold }}>Ventes</span>
+        <div className="flex items-center gap-3 mb-2 md:mb-0">
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 8, flexShrink: 0 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <TrendingUp size={18} color="#0B1120" />
             </div>
-            <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: 14, lineHeight: 1.1 }}>
+                TBOS <span style={{ color: T.gold }}>Ventes</span>
+              </div>
+              <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
+            </div>
+          </div>
+
+          {/* Right — hidden on mobile, shown on md+ */}
+          <div className="hidden md:flex items-center gap-3 ml-auto">
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textDim }}>
+              {clock.toLocaleTimeString('fr-FR')}
+            </span>
+            <div style={{ position: 'relative', cursor: 'pointer' }}>
+              <Bell size={18} style={{ color: T.textSec }} />
+              <div style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: T.danger, border: '1.5px solid #0B1120' }} />
+            </div>
+            <button className="wc-new-deal-btn">
+              <Plus size={14} />
+              Nouveau Deal
+            </button>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
+        {/* Tabs — scrollable on mobile */}
+        <div className="flex overflow-x-auto scrollbar-hide gap-1 pb-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
-              className={`wc-tab-btn${activeTab === tab.id ? ' active' : ''}`}
+              className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
               onClick={() => setActiveTab(tab.id as any)}
             >
               {tab.label}
             </button>
           ))}
         </div>
-
-        {/* Right */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textDim }}>
-            {clock.toLocaleTimeString('fr-FR')}
-          </span>
-          <div style={{ position: 'relative', cursor: 'pointer' }}>
-            <Bell size={18} style={{ color: T.textSec }} />
-            <div style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: T.danger, border: '1.5px solid #0B1120' }} />
-          </div>
-          <button className="wc-new-deal-btn">
-            <Plus size={14} />
-            Nouveau Deal
-          </button>
-        </div>
       </div>
 
       {/* ── Content ── */}
-      <div style={{ padding: '0 24px 40px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div className="px-4 md:px-6 pb-10" style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
         {(activeTab === 'pipeline') && <PipelineSection />}
         {(activeTab === 'performance') && <PerformanceSection />}
         {(activeTab === 'previsions') && <ForecastSection />}
