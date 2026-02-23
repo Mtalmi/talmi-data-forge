@@ -8,7 +8,7 @@ export default function AIAssistant() {
 
   return (
     <MainLayout>
-      <div className="h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-0 lg:gap-6 p-0 lg:p-6">
+      <div className="h-[calc(100dvh-4rem-5rem)] md:h-[calc(100dvh-4rem)] flex flex-col lg:flex-row gap-0 lg:gap-6 p-0 lg:p-6">
         {/* Sidebar - Desktop only */}
         <div className="hidden lg:flex flex-col w-72 shrink-0 gap-4">
           <div className="rounded-2xl border border-border/50 bg-card/50 p-5">

@@ -113,7 +113,7 @@ export function TabletPlanningView({
   return (
     <div 
       ref={containerRef}
-      className="space-y-4 pb-20 overflow-y-auto h-[calc(100vh-64px)] -mx-4 px-4"
+      className="space-y-4 pb-28 md:pb-20 overflow-y-auto h-[calc(100dvh-64px-5rem)] md:h-[calc(100dvh-64px)] -mx-4 px-4"
     >
       <PullToRefreshIndicator
         pullDistance={pullDistance}

@@ -289,7 +289,7 @@ export default function PredictiveMaintenance() {
             </span>
             <span className="text-xs text-[#B0B8C1] ml-auto">ML models trained on 2.3M equipment data points across MENA</span>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {predictions.map((p, i) => {
               const riskColors = { critical: { border: "#EF4444", bg: "rgba(239,68,68,0.06)", text: "#EF4444", label: "🔴 CRITICAL RISK" }, high: { border: "#F59E0B", bg: "rgba(245,158,11,0.04)", text: "#F59E0B", label: "🟠 HIGH RISK" }, medium: { border: "#F59E0B", bg: "rgba(245,158,11,0.03)", text: "#F59E0B", label: "🟡 MEDIUM RISK" } };
               const rc = riskColors[p.risk as keyof typeof riskColors];
@@ -335,7 +335,7 @@ export default function PredictiveMaintenance() {
             </div>
 
             {/* Info strip */}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: "Health Score", val: "23/100", color: "#EF4444" },
                 { label: "Days Since Service", val: "87", color: "#F59E0B" },
@@ -352,7 +352,7 @@ export default function PredictiveMaintenance() {
             {/* Sensor readings */}
             <div>
               <h3 className="text-sm font-semibold mb-3">Sensor Readings — Vital Signs</h3>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {sensors.map((s, i) => (
                   <div key={i} className="rounded-lg bg-[#1C2533] border border-[#2A3545] p-3">
                     <div className="flex items-center justify-between mb-1">
