@@ -206,7 +206,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
           {variant === 'prominent' ? sq.newQuote : sq.quoteCalculator}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl w-[calc(100%-1rem)] sm:w-full">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5 text-primary" />

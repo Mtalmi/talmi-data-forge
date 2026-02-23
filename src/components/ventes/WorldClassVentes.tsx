@@ -975,12 +975,7 @@ export function WorldClassVentes() {
 
       {/* ── Content ── */}
       <div className="px-4 md:px-6 pb-10" style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
-        {(activeTab === 'pipeline') && <PipelineSection />}
-        {(activeTab === 'performance') && <PerformanceSection />}
-        {(activeTab === 'previsions') && <ForecastSection />}
-        {(activeTab === 'activites') && <ActivitiesSection />}
-        {/* On pipeline tab, show all sections stacked */}
-        {activeTab === 'pipeline' && (
+        {(activeTab === 'pipeline') && (
           <>
             <PerformanceSection />
             <DealPipelineSection />
@@ -988,6 +983,9 @@ export function WorldClassVentes() {
             <ActivitiesSection />
           </>
         )}
+        {(activeTab === 'performance') && <PerformanceSection />}
+        {(activeTab === 'previsions') && <ForecastSection />}
+        {(activeTab === 'activites') && <ActivitiesSection />}
 
         {/* Footer */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
