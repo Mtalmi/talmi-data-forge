@@ -23,13 +23,17 @@ export function HawaiiGreeting() {
   const [efficiency, setEfficiency] = useState<EfficiencyData>({ percentage: 85, status: 'optimal' });
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 640);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     const timeInterval = setInterval(() => setCurrentTime(new Date()), 60000);
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
     return () => {
       clearTimeout(timer);
       clearInterval(timeInterval);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -98,10 +102,16 @@ export function HawaiiGreeting() {
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Master';
   const title = isCeo ? 'Master' : displayName.split(' ')[0];
 
+  // Hide on mobile — the Dashboard header already shows a greeting
+  if (isMobile) {
+    return null;
+  }
+
   return (
     <div className={cn(
       'greeting-card relative overflow-hidden rounded-xl transition-all duration-1000 ease-out',
       'border border-primary/10 backdrop-blur-sm',
+      'hidden sm:block',
       isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
     )}>
       <div className="absolute top-0 left-0 right-0 h-px">
