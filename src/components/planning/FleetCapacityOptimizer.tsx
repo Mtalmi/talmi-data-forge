@@ -156,7 +156,7 @@ export function FleetCapacityOptimizer({
       </CardHeader>
       <CardContent className="space-y-3">
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
           <div className="p-2 rounded-lg bg-success/10">
             <p className="text-lg font-bold text-success">{summary.activeCount}</p>
             <p className="text-xs text-muted-foreground">Actifs</p>

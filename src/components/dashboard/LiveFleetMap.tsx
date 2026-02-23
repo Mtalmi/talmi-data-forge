@@ -380,7 +380,7 @@ export function LiveFleetMap() {
 
       <CardContent className="p-4 space-y-4">
         {/* Fleet Overview Stats */}
-        <div className="grid grid-cols-4 gap-2 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
           <div className="p-2 bg-success/10 rounded-lg border border-success/20">
             <Navigation2 className="h-4 w-4 text-success mx-auto mb-1" />
             <span className="text-lg font-bold">{activeTrucks.length}</span>

@@ -175,7 +175,7 @@ export const LeakageDrawer = forwardRef<HTMLDivElement, LeakageDrawerProps>(
                     </Badge>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
                     <div className="p-2 rounded bg-destructive/10 border border-destructive/20">
                       <p className="text-lg font-bold text-destructive">{highRiskCount}</p>
                       <p className="text-[10px] text-muted-foreground">{ld.critical}</p>

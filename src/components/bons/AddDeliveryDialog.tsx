@@ -121,7 +121,7 @@ export function AddDeliveryDialog({ bc, open, onOpenChange, onCreateDelivery, on
                 <span className="font-mono font-semibold">{progressPercent.toFixed(0)}%</span>
               </div>
               <Progress value={progressPercent} className="h-2" />
-              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center text-xs">
                 <div>
                   <p className="text-lg font-bold text-primary">{volumeLivre.toFixed(1)}</p>
                   <p className="text-muted-foreground">{ad.delivered}</p>

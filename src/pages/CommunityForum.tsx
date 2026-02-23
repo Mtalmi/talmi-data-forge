@@ -162,7 +162,7 @@ export default function CommunityForum() {
   if (selectedPost) {
     const post = selectedPost;
     return (
-      <div style={{ background: T.base, minHeight: '100vh', color: T.text1 }}>
+      <div className="overflow-x-hidden max-w-full w-full" style={{ background: T.base, minHeight: '100vh', color: T.text1 }}>
         <div className="w-full h-0.5" style={{ background: `linear-gradient(90deg, ${T.gold}, transparent 30%, transparent 70%, ${T.gold})` }} />
         <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: `radial-gradient(rgba(255,215,0,0.02) 1px, transparent 1px)`, backgroundSize: '20px 20px' }} />
 
@@ -461,7 +461,7 @@ export default function CommunityForum() {
               {/* Category */}
               <div className="mb-4">
                 <p className="text-xs font-medium mb-2" style={{ color: T.text2 }}>Category</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   {(Object.keys(CAT_META) as Category[]).map(cat => (
                     <button key={cat} onClick={() => setNpCategory(cat)} className="py-3 rounded-xl text-xs font-medium transition-all"
                       style={{ background: npCategory === cat ? `${CAT_META[cat].color}15` : T.elevated, border: npCategory === cat ? `1px solid ${T.gold}` : `1px solid ${T.border}`, color: npCategory === cat ? T.text1 : T.text2 }}>

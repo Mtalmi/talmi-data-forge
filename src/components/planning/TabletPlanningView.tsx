@@ -165,7 +165,7 @@ export function TabletPlanningView({
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 min-h-[60px]">
             <Calendar className="h-5 w-5 text-primary" />
             <div>

@@ -920,7 +920,7 @@ export default function Planning() {
           {getStatusBadge(bon.workflow_status)}
         </div>
         
-        <div className={cn("grid grid-cols-2 gap-2 mb-3", isTouchDevice ? "text-sm" : "text-xs")}>
+        <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-2 mb-3", isTouchDevice ? "text-sm" : "text-xs")}>
           <div className="flex items-center gap-1 text-muted-foreground">
             <Package className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span>{bon.formule_id}</span>
@@ -1409,7 +1409,7 @@ export default function Planning() {
                             </Badge>
                           </div>
                           
-                          <div className="grid grid-cols-2 gap-2 text-xs mb-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs mb-4">
                             <div className="flex items-center gap-1.5 text-muted-foreground">
                               <Package className="h-3 w-3" />
                               <span>{bon.formule_id}</span>

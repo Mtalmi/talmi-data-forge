@@ -157,7 +157,7 @@ export function CashPaymentDialog({
           {/* Payment Method Selection */}
           <div className="space-y-3">
             <Label>{cp.paymentMethod}</Label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('virement')}

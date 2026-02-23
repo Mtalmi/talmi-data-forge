@@ -176,7 +176,7 @@ export function CreditScoreCard({ client, compact = false }: CreditScoreCardProp
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 pt-2 border-t">
           <div className="text-center">
             <p className="text-lg font-bold">{client.on_time_payment_rate}%</p>
             <p className="text-xs text-muted-foreground">Paiements à temps</p>

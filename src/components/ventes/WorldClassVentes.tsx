@@ -668,7 +668,7 @@ function ForecastSection() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <PCard delay={100}>
             <GaugeSvg pct={78} />
-            <div className="grid grid-cols-3 gap-1.5 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 mt-2">
               {[
                 { label: 'Objectif', value: '450K', color: T.textPri },
                 { label: 'Réalisé', value: '351K', color: T.success },

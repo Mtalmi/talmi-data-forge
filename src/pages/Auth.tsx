@@ -295,7 +295,7 @@ export default function Auth() {
           </div>
 
           {/* Animated Stats */}
-          <div className="grid grid-cols-3 gap-8 p-6 rounded-2xl border border-border/30 bg-card/20 backdrop-blur-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 rounded-2xl border border-border/30 bg-card/20 backdrop-blur-sm">
             <AnimatedStat value={99} suffix="%" label="Uptime SLA" />
             <AnimatedStat value={50} suffix="+" label="Modules" />
             <AnimatedStat value={24} suffix="/7" label="Monitoring" />

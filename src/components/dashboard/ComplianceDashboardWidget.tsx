@@ -260,7 +260,7 @@ export function ComplianceDashboardWidget() {
     return (
       <div className="space-y-3 animate-pulse">
         <div className="h-32 rounded-xl bg-muted/30" />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {[1, 2, 3].map(i => <div key={i} className="h-20 rounded-lg bg-muted/30" />)}
         </div>
       </div>
@@ -299,7 +299,7 @@ export function ComplianceDashboardWidget() {
             <RiskRadar score={overallScore} />
             <div className="flex-1 ml-6 space-y-3">
               {/* Quick Status Cards */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div className={cn('p-2 rounded-lg border text-center', getStatusBg('compliant'))}>
                   <CheckCircle2 className="h-4 w-4 mx-auto mb-1 text-emerald-500" />
                   <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">

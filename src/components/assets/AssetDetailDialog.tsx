@@ -110,7 +110,7 @@ export function AssetDetailDialog({ asset, open, onOpenChange }: AssetDetailDial
           </TabsList>
 
           <TabsContent value="details" className="space-y-4 mt-4">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium text-muted-foreground">{dt.grossValue}</CardTitle>

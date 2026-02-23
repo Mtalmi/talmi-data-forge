@@ -3923,6 +3923,10 @@ hr, [class*="divider"] { border-color: #334155 !important; opacity: 0.6; }
   }
 }
 
+/* ─── Scrollbar Hide Utility ─── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* ─── iPhone notch safe area ─── */
 @supports (padding: max(0px)) {
   .mobile-bottom-nav {

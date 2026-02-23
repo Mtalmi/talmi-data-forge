@@ -141,7 +141,7 @@ export const QualityDrawer = forwardRef<HTMLDivElement, QualityDrawerProps>(
                 </CardContent>
               </Card>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <Card className={cn("border", slumpIssues.length > 0 ? "border-warning/50 bg-warning/5" : "border-success/50 bg-success/5")}>
                   <CardContent className="p-3 text-center">
                     <p className={cn("text-2xl font-bold", slumpIssues.length > 0 ? "text-warning" : "text-success")}>{slumpIssues.length}</p>

@@ -87,7 +87,7 @@ export function ProviderLeaderboard({ stats }: ProviderLeaderboardProps) {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide">{pl.rotations}</p>
               <p className="font-mono font-bold text-lg text-primary">{provider.nombre_rotations}</p>

@@ -289,7 +289,7 @@ export function TreasuryWidget() {
           </div>
 
           {/* Quick Stats */}
-          <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
             <div className="p-2 bg-warning/10 rounded-lg">
               <Clock className="h-4 w-4 text-warning mx-auto mb-1" />
               <span className="text-lg font-bold">{monthlyStats.pendingCount}</span>

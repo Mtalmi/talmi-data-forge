@@ -294,7 +294,7 @@ export default function AdvancedAnalytics() {
   };
 
   return (
-    <div style={{
+    <div className="overflow-x-hidden max-w-full w-full" style={{
       minHeight: '100vh', background: C.bgBase, color: C.text1,
       backgroundImage: `radial-gradient(${C.gold}05 1px, transparent 1px)`,
       backgroundSize: '24px 24px',
