@@ -208,8 +208,8 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="space-y-5 sm:space-y-6">
-        {/* Hawaii Greeting - CEO Only */}
-        {isCeo && <HawaiiGreeting />}
+        {/* Hawaii Greeting - CEO Only, hidden on mobile to avoid duplicate with header */}
+        {isCeo && <div className="hidden sm:block"><HawaiiGreeting /></div>}
 
         {/* ─── HEADER ─────────────────────────────────────────── */}
         <div
