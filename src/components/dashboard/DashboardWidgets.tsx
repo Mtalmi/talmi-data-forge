@@ -125,7 +125,7 @@ export function TodaysPipelineWidget() {
 
           <Progress value={progressPct} className="h-1.5 mb-3" />
 
-          <div className="grid grid-cols-3 gap-1.5 text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 text-xs">
             {[
               { label: t.widgets.pipeline.planned, value: data.plannedDeliveries, color: 'hsl(var(--muted-foreground))' },
               { label: t.widgets.pipeline.inProgress, value: data.inProgress, color: 'hsl(var(--warning))' },

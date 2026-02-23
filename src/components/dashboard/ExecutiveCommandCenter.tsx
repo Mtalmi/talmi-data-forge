@@ -231,7 +231,7 @@ export function ExecutiveCommandCenter() {
       </div>
 
       {/* The Big Three Gauges - Using Material Variance Formula */}
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4">
         <ExecutiveGauge
           value={Math.abs(metrics.materialVariancePct)}
           label="Taux de Fuite"
@@ -294,7 +294,7 @@ export function ExecutiveCommandCenter() {
       )}
 
       {/* One-Click Emergency Actions - Compact on mobile */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
         <Button
           variant="outline"
           className="h-auto py-3 px-2 flex flex-col items-center gap-1.5 hover:bg-warning/10 hover:border-warning/50 hover:text-warning transition-all min-h-[80px]"

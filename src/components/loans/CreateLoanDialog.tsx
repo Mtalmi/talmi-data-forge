@@ -452,7 +452,7 @@ export function CreateLoanDialog({ open, onOpenChange, onSuccess }: CreateLoanDi
 
                 <Separator />
 
-                <div className="grid grid-cols-3 gap-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">{cl.rate}</p>
                     <p className="font-medium">{interestRate}% {cl.perYear}</p>

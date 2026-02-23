@@ -297,7 +297,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {/* Summary chips */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <StatChip value={winLossData.won} label="Gagnés" color={SUCCESS} />
             <StatChip value={winLossData.lost} label="Perdus" color={DESTRUCTIVE} />
             <StatChip value={winLossData.pending} label="En cours" color={WARNING} />

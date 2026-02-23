@@ -228,7 +228,7 @@ export default function AuditExterne() {
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   {siloChecks.map((silo) => (
-                    <div key={silo.materiau} className={cn("grid grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors", Math.abs(silo.variance_pct) > 5 ? "border-red-500/50 bg-red-500/5" : "border-border bg-muted/30")}>
+                    <div key={silo.materiau} className={cn("grid grid-cols-2 md:grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors", Math.abs(silo.variance_pct) > 5 ? "border-red-500/50 bg-red-500/5" : "border-border bg-muted/30")}>
                       <div><Label className="text-xs text-muted-foreground">{e.silo}</Label><p className="font-semibold">{silo.materiau}</p></div>
                       <div><Label className="text-xs text-muted-foreground">{e.appLevel}</Label><p className="font-mono text-lg">{silo.niveau_app.toFixed(1)}</p></div>
                       <div><Label className="text-xs text-muted-foreground">{e.physicalLevel} *</Label><Input type="number" step="0.1" value={silo.niveau_physique || ''} onChange={(ev) => updateSiloPhysical(silo.materiau, parseFloat(ev.target.value) || 0)} placeholder={e.actualMeasure} className="font-mono" /></div>
@@ -320,7 +320,7 @@ export default function AuditExterne() {
               <CardContent className="pt-6">
                 <div className="space-y-4">
                   {truckChecks.map((truck, index) => (
-                    <div key={truck.id_camion} className={cn("grid grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors", truck.anomaly ? "border-red-500/50 bg-red-500/5" : "border-border bg-muted/30")}>
+                    <div key={truck.id_camion} className={cn("grid grid-cols-2 md:grid-cols-5 gap-4 items-center p-4 rounded-lg border-2 transition-colors", truck.anomaly ? "border-red-500/50 bg-red-500/5" : "border-border bg-muted/30")}>
                       <div><Label className="text-xs text-muted-foreground">{e.truck}</Label><p className="font-semibold">{truck.id_camion}</p><p className="text-xs text-muted-foreground">{truck.chauffeur}</p></div>
                       <div><Label className="text-xs text-muted-foreground">{e.kmApp}</Label><p className="font-mono text-lg">{truck.km_app.toLocaleString()}</p></div>
                       <div><Label className="text-xs text-muted-foreground">{e.kmReal} *</Label><Input type="number" value={truck.km_reel || ''} onChange={(ev) => updateTruckKm(index, parseFloat(ev.target.value) || 0)} placeholder={e.odometerReading} className="font-mono" /></div>

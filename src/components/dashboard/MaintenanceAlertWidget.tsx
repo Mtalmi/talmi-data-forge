@@ -99,7 +99,7 @@ export function MaintenanceAlertWidget() {
 
       <CardContent className="space-y-4">
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-2 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
           <div className="p-2 rounded-lg bg-success/10">
             <p className="text-lg font-bold text-success">{stats.healthy}</p>
             <p className="text-[10px] text-muted-foreground">OK</p>

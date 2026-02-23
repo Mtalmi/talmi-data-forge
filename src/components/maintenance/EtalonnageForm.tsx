@@ -109,7 +109,7 @@ export function EtalonnageForm({ equipements, onSuccess }: EtalonnageFormProps) 
 
           <div className="p-4 rounded-lg bg-muted/30 border space-y-4">
             <h4 className="font-medium flex items-center gap-2"><Scale className="h-4 w-4" />{et.measurements}</h4>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2"><Label>{et.referenceValue}</Label><Input type="number" step="0.001" value={valeurReference} onChange={(e) => setValeurReference(e.target.value)} placeholder="Ex: 10.000" /></div>
               <div className="space-y-2"><Label>{et.measuredValue}</Label><Input type="number" step="0.001" value={valeurMesuree} onChange={(e) => setValeurMesuree(e.target.value)} placeholder="Ex: 10.012" /></div>
               <div className="space-y-2"><Label>{et.tolerance}</Label><Input type="number" step="0.1" value={tolerancePct} onChange={(e) => setTolerancePct(e.target.value)} /></div>

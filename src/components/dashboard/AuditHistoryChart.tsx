@@ -145,7 +145,7 @@ export function AuditHistoryChart() {
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
               <div className="p-2 bg-muted/50 rounded-lg text-center">
                 <p className="text-xs text-muted-foreground">{ah.audits}</p>
                 <p className="text-lg font-bold">{audits.length}</p>

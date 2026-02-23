@@ -179,7 +179,7 @@ export default function PredictiveMaintenance() {
   };
 
   return (
-    <div className="min-h-screen text-white relative" style={{ background: "#0F1419", backgroundImage: "radial-gradient(rgba(255,215,0,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
+    <div className="min-h-screen text-white relative overflow-x-hidden max-w-full w-full" style={{ background: "#0F1419", backgroundImage: "radial-gradient(rgba(255,215,0,0.02) 1px, transparent 1px)", backgroundSize: "20px 20px" }}>
       {/* Gold shimmer bar */}
       <div className="h-[2px] w-full" style={{ background: "linear-gradient(90deg, #FFD700, transparent 40%, transparent 60%, #FFD700)" }} />
 
@@ -217,7 +217,7 @@ export default function PredictiveMaintenance() {
         )}
 
         {/* KPI Strip */}
-        <motion.div variants={stagger} initial="hidden" animate="show" className="grid grid-cols-5 gap-4">
+        <motion.div variants={stagger} initial="hidden" animate="show" className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
             { label: "Equipment Monitored", val: 38, suffix: " units", sub: "Across 4 plants", icon: "🏭", border: "#FFD700" },
             { label: "Health Score", val: 87, suffix: "/100", sub: "▲ 3pts this month", icon: "💚", border: "#10B981" },
@@ -244,7 +244,7 @@ export default function PredictiveMaintenance() {
               <p className="text-xs text-[#B0B8C1] mt-1">AI-monitored across all plants · Updated 2 min ago <span className="inline-block w-2 h-2 rounded-full bg-[#10B981] ml-1 animate-pulse" /></p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredPlants.map((plant, pi) => (
               <motion.div key={plant.name} variants={fadeUp} className="rounded-xl border border-[#2A3545] bg-[#1C2533] p-4">
                 <div className="flex items-center justify-between mb-3">
@@ -255,11 +255,11 @@ export default function PredictiveMaintenance() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <div className="grid grid-cols-5 text-[10px] text-[#B0B8C1] uppercase tracking-wider pb-1 border-b border-[#2A3545]">
+                  <div className="grid grid-cols-2 md:grid-cols-5 text-[10px] text-[#B0B8C1] uppercase tracking-wider pb-1 border-b border-[#2A3545]">
                     <span>Unit</span><span>Type</span><span>Health</span><span>Status</span><span>Next Service</span>
                   </div>
                   {plant.units.map(u => (
-                    <div key={u.id} onClick={() => setSelectedEquipment(u.id)} className="grid grid-cols-5 items-center text-xs py-1.5 hover:bg-[#FFD700]/5 rounded cursor-pointer transition-colors">
+                    <div key={u.id} onClick={() => setSelectedEquipment(u.id)} className="grid grid-cols-2 md:grid-cols-5 items-center text-xs py-1.5 hover:bg-[#FFD700]/5 rounded cursor-pointer transition-colors">
                       <span className="font-mono text-[#FFD700]">{u.id}</span>
                       <span className="text-[#B0B8C1]">{u.type}</span>
                       <div className="flex items-center gap-2">

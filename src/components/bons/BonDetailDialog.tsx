@@ -198,7 +198,7 @@ export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetai
 
           <div className="p-4 rounded-lg border border-border/50">
             <h4 className="font-semibold text-sm mb-3">{bd.actualConsumption}</h4>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">{bd.cement}</p>
                 <p className="font-mono font-medium">{bon.ciment_reel_kg} kg</p>

@@ -140,7 +140,7 @@ export function ClientInvoicesDialog({
         </DialogHeader>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="p-3 rounded-lg bg-muted/50">
             <p className="text-xs text-muted-foreground font-medium">{ci.totalInvoiced}</p>
             <p className="text-lg font-bold">{totalFactures.toLocaleString('fr-FR')} DH</p>

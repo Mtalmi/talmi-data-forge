@@ -104,7 +104,7 @@ export default function CreditScoreHistoryChart({ clientTrend, compact = false }
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div className="text-center p-2 rounded-lg bg-muted/50">
             <p className="text-2xl font-bold" style={{ color: gradeColor }}>{clientTrend.current_score.toFixed(0)}</p>
             <p className="text-xs text-muted-foreground">{c.currentScore}</p>

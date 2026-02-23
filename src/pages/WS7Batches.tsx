@@ -337,7 +337,7 @@ export default function WS7Batches() {
                     <CardTitle className="text-sm">{w.composition}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
                       <div className="bg-muted/30 rounded p-2 text-center">
                         <p className="text-muted-foreground">{w.cement}</p>
                         <p className="font-mono font-bold">{selectedBatch.cement_kg} kg</p>

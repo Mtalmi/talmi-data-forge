@@ -160,7 +160,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
 
       <CardContent className="space-y-4 pt-4">
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {/* Confirmed */}
           <div className="text-center p-2 rounded-xl" style={{ background: 'hsl(var(--primary)/0.06)', border: '1px solid hsl(var(--primary)/0.15)' }}>
             <p className="text-lg font-black" style={{ color: 'hsl(var(--primary))', fontFamily: 'JetBrains Mono, monospace' }}>

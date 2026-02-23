@@ -283,7 +283,7 @@ export default function OperationsAgent() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden max-w-full w-full" style={{
       backgroundImage: "radial-gradient(rgba(255,215,0,0.015) 1px, transparent 1px)",
       backgroundSize: "20px 20px",
     }}>
@@ -723,7 +723,7 @@ export default function OperationsAgent() {
                   <Brain className="w-4 h-4 text-yellow-400" />
                   <span className="text-sm font-semibold text-yellow-400">Architecture</span>
                 </div>
-                <div className="grid grid-cols-3 gap-4 text-center text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center text-xs">
                   {[
                     { label: "MONITOR", items: ["Supabase data", "Webhooks", "Schedules", "Sensors"], color: "text-blue-400 border-blue-400/30 bg-blue-400/5" },
                     { label: "DECIDE", items: ["Claude AI", "Rule engine", "Thresholds", "Pattern match"], color: "text-yellow-400 border-yellow-400/30 bg-yellow-400/5" },

@@ -1530,7 +1530,7 @@ export default function Production() {
             <div className="space-y-4 mt-4">
               {/* Order summary */}
               <div className="p-4 rounded-lg bg-muted/30 space-y-3">
-                <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   <div>
                     <span className="text-muted-foreground">{t.pages.production.slipNumber}:</span>
                     <p className="font-mono font-medium">{selectedBon.bl_id}</p>
@@ -1575,7 +1575,7 @@ export default function Production() {
                 <>
                   <div className="p-3 rounded-lg border space-y-2">
                     <h4 className="text-sm font-medium">{t.pages.production.theoreticalConsumption}</h4>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
                       <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
                         <span className="text-muted-foreground">{t.pages.production.cement}</span>
                         <span className="font-mono font-medium">{editValues.ciment_reel_kg.toFixed(0)} kg</span>

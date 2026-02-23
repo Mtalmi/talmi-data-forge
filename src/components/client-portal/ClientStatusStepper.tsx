@@ -72,7 +72,7 @@ export function ClientStatusStepper({
         </div>
 
         {/* Steps */}
-        <div className="relative grid grid-cols-4 gap-2">
+        <div className="relative grid grid-cols-2 md:grid-cols-4 gap-2">
           {STEPS.map((step) => {
             const state = getStepState(step.key);
             const Icon = step.icon;

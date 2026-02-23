@@ -162,7 +162,7 @@ export function PerformanceKPIs({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Key Metrics */}
-        <div className="grid grid-cols-4 gap-2 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-success/10 cursor-default">

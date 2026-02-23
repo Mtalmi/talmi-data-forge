@@ -215,7 +215,7 @@ export default function DriverView() {
 
         {/* Quick Stats */}
         {selectedCamion && (
-          <div className="grid grid-cols-3 gap-2 px-4 pb-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 px-4 pb-3">
             <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
               <Package className="h-4 w-4 text-primary" />
               <div>

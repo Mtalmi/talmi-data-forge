@@ -770,7 +770,7 @@ export default function MobileField() {
         <div className="space-y-5">
           <div>
             <label className="text-sm text-[#B0B8C1] block mb-1">Mix Type</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {['C25', 'C30', 'C35', 'C40'].map(m => (
                 <button
                   key={m}
@@ -829,7 +829,7 @@ export default function MobileField() {
 
           <div>
             <label className="text-sm text-[#B0B8C1] block mb-2">Visual Inspection</label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               {([
                 { v: 'pass' as const, label: '✅ PASS', active: 'bg-[#10B981] text-white' },
                 { v: 'marginal' as const, label: '⚠️ MARGINAL', active: 'bg-[#F59E0B] text-black' },

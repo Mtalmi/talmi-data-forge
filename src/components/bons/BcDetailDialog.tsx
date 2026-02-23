@@ -241,7 +241,7 @@ export function BcDetailDialog({
                 <Progress value={progressPercent} className="h-3" />
               </div>
 
-              <div className="grid grid-cols-3 gap-4 pt-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
                 <div className="text-center p-3 rounded-lg bg-muted/50">
                   <p className="text-2xl font-bold text-primary">{nbLivraisons}</p>
                   <p className="text-xs text-muted-foreground">{d.deliveries}</p>

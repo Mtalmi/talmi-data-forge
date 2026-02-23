@@ -66,7 +66,7 @@ export function AIClientRiskWidget() {
       {!isLoading && clientRisk && (
         <div className="space-y-3">
           {/* Summary */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
             <div className="rounded-lg border border-border/50 p-2 text-center">
               <p className="text-[10px] text-muted-foreground">Score moyen</p>
               <p className="text-lg font-bold">{clientRisk.summary.avg_portfolio_score}</p>

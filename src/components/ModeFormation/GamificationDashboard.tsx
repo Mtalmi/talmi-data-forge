@@ -191,7 +191,7 @@ interface BadgeGridProps {
 
 export function BadgeGrid({ earnedBadgeIds, stats }: BadgeGridProps) {
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
       {BADGES.map(badge => {
         const isEarned = earnedBadgeIds.includes(badge.id) || badge.condition(stats);
         const Icon = BADGE_ICONS[badge.icon];
@@ -242,7 +242,7 @@ export function ScoreBreakdown({ scores }: ScoreBreakdownProps) {
   ];
 
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
       {metrics.map(m => (
         <div key={m.label} className="text-center p-2 rounded-lg bg-muted/30 border border-border">
           <m.icon className={cn('h-4 w-4 mx-auto mb-1', m.color)} />

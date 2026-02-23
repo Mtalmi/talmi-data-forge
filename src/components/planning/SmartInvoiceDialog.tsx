@@ -278,7 +278,7 @@ export function SmartInvoiceDialog({
               <Clock className="h-4 w-4 text-muted-foreground" />
               Temps de Rotation
             </h4>
-            <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
               <div className="text-center p-2 bg-muted/30 rounded">
                 <p className="text-muted-foreground">Départ</p>
                 <p className="font-mono font-medium">{formatTime(delivery.heure_depart_centrale)}</p>
