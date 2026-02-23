@@ -207,9 +207,9 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
       </div>
 
       {/* ── Stage cards ── */}
-      <div className="flex items-stretch gap-0 divide-x divide-border/30">
+      <div className="flex items-stretch gap-0 divide-x divide-border/30 overflow-x-auto scrollbar-hide">
         {stages.map((stage, index) => (
-          <div key={stage.id} className="flex-1 flex">
+          <div key={stage.id} className="flex shrink-0 min-w-[80px]">
             <Tooltip>
               <TooltipTrigger asChild>
                 <button

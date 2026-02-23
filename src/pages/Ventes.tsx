@@ -417,7 +417,7 @@ export default function Ventes() {
   return (
     <TooltipProvider>
       <MainLayout>
-        <div className="space-y-6">
+        <div className="space-y-6 overflow-x-hidden max-w-full w-full">
           {/* ── Premium Page Header ── */}
           <div
             className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border px-5 py-4 dashboard-header"
@@ -557,8 +557,8 @@ export default function Ventes() {
           {/* Tabs for Devis, BC, Factures and Calendar */}
           <div id="ventes-tabs-section" className="scroll-mt-36">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="h-auto p-1 gap-1 rounded-xl period-selector-premium">
-               <TabsTrigger value="devis" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+            <TabsList className="h-auto p-1 gap-1 rounded-xl period-selector-premium flex flex-nowrap overflow-x-auto scrollbar-hide w-full">
+               <TabsTrigger value="devis" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
                  <FileText className="h-3.5 w-3.5" />
                  {t.pages.ventes.devisTab}
                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredDevis.length}</span>
@@ -568,7 +568,7 @@ export default function Ventes() {
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="bc" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="bc" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
                  <ShoppingCart className="h-3.5 w-3.5" />
                  {t.pages.ventes.bcTab}
                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredBc.length}</span>
@@ -578,11 +578,11 @@ export default function Ventes() {
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="factures" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="factures" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
                  <Receipt className="h-3.5 w-3.5" />
                  {t.pages.ventes.invoicesTab}
                </TabsTrigger>
-               <TabsTrigger value="calendar" className="gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
                  <Calendar className="h-3.5 w-3.5" />
                  {t.pages.ventes.calendarTab}
                </TabsTrigger>
