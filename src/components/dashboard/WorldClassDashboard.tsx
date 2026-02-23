@@ -315,15 +315,43 @@ export function WorldClassDashboard() {
         
         /* Mobile responsive overrides */
         @media (max-width: 768px) {
-          .tbos-grid-2col { grid-template-columns: 1fr !important; }
-          .tbos-grid-3col { grid-template-columns: 1fr !important; }
+          .tbos-grid-2col,
+          .tbos-grid-3col,
+          .tbos-grid-modules,
+          .tbos-grid-finance { grid-template-columns: 1fr !important; }
           .tbos-cashflow-metrics { grid-template-columns: 1fr 1fr !important; }
+          .tbos-grid-batches {
+            grid-template-columns: repeat(5, 75vw) !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 8px;
+          }
+          .tbos-grid-batches::-webkit-scrollbar { display: none; }
+          .tbos-trends-metrics { grid-template-columns: 1fr 1fr !important; }
+          .tbos-trends-metrics > :last-child { grid-column: 1 / -1; }
+          .tbos-compliance-row {
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+          }
+          .tbos-compliance-row > * {
+            min-width: 0 !important;
+            flex-shrink: 1 !important;
+          }
+          .tbos-budget-metrics { grid-template-columns: 1fr 1fr !important; }
+          .tbos-budget-metrics > :last-child { grid-column: 1 / -1; }
+          .tbos-ar-pills { flex-wrap: wrap !important; gap: 4px !important; }
+          .tbos-dashboard-wrap {
+            padding: 12px 12px 100px !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+          }
         }
       `}</style>
 
       {/* Sticky header removed — handled by global TopNavBar */}
 
-      <div style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto', overflowX: 'hidden' as const }}>
+      <div className="tbos-dashboard-wrap" style={{ padding: '24px 24px 40px', maxWidth: 1600, margin: '0 auto', overflowX: 'hidden' as const }}>
 
         {/* ══════════════════════════════════════════
             SECTION 1 — PERFORMANCE & KPIs
@@ -408,7 +436,7 @@ export function WorldClassDashboard() {
                 <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: 22, color: T.gold }}>{totalAR}K</span>
                 <span style={{ fontSize: 11, color: T.textDim, marginLeft: 4 }}>DH total</span>
               </div>
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div className="tbos-ar-pills" style={{ display: 'flex', gap: 6 }}>
                 {arAgingData.map((d, i) => (
                   <span key={i} style={{ padding: '2px 8px', borderRadius: 999, background: `${d.fill}20`, color: d.fill, fontSize: 9, fontWeight: 700, border: `1px solid ${d.fill}30` }}>
                     {d.label}
@@ -501,7 +529,7 @@ export function WorldClassDashboard() {
               <div style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>vs Janvier</div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            <div className="tbos-trends-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {[
                 { label: 'CA', value: '0K', color: T.textDim },
                 { label: 'Marge', value: '0%', color: T.textDim },
@@ -527,7 +555,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Factory} label="Production & Qualité" />
 
-        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+        <div className="tbos-stagger-enter tbos-grid-2col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
           {/* 2.1 Daily Production */}
           <Card style={{ animationDelay: '0ms' }} className="tbos-card-enter">
@@ -597,7 +625,7 @@ export function WorldClassDashboard() {
             <div style={{ fontSize: 13, fontWeight: 700 }}>Derniers Batches</div>
             <Badge label="Live" color={T.success} bg={`${T.success}15`} />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+          <div className="tbos-grid-batches" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
             {batches.map((b, i) => (
               <div
                 key={i}
@@ -633,7 +661,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Banknote} label="Finance & Trésorerie" />
 
-        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 24 }}>
+        <div className="tbos-stagger-enter tbos-grid-finance" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginBottom: 24 }}>
 
           {/* 3.1 Treasury Gauge */}
           <Card className="tbos-card-enter">
@@ -658,7 +686,7 @@ export function WorldClassDashboard() {
               </svg>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            <div className="tbos-budget-metrics" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
               {[
                 { label: 'Plafond', value: '15,000', color: T.textPri },
                 { label: 'Utilisé', value: '0', color: T.success },
@@ -693,6 +721,7 @@ export function WorldClassDashboard() {
                 return (
                   <div
                     key={i}
+                    className="tbos-compliance-row"
                     style={{
                       display: 'flex', alignItems: 'center', gap: 12,
                       padding: '10px 12px', borderRadius: 8,
@@ -753,7 +782,7 @@ export function WorldClassDashboard() {
         ══════════════════════════════════════════ */}
         <SectionHeader icon={Settings} label="Modules" />
 
-        <div className="tbos-stagger-enter" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+        <div className="tbos-stagger-enter tbos-grid-modules" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
           {modules.map((m, i) => (
             <ModuleCard key={i} module={m} delay={i * 80} />
           ))}

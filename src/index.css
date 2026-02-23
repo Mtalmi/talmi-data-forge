@@ -335,9 +335,13 @@
       flex-wrap: nowrap;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      padding-right: 16px;
     }
     .period-selector-premium::-webkit-scrollbar {
       display: none;
+    }
+    .period-selector-premium .period-btn {
+      flex-shrink: 0;
     }
   }
 

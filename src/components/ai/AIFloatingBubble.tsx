@@ -32,7 +32,7 @@ export function AIFloatingBubble() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-20 right-4 z-50 md:bottom-6 md:right-6 h-14 w-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center"
+            className="fixed bottom-36 right-4 z-50 md:bottom-6 md:right-6 h-14 w-14 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center"
             aria-label="Ouvrir l'assistant AI"
           >
             <Bot className="h-6 w-6" />
