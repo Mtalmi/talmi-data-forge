@@ -1,24 +1,19 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 import { supabase } from '@/integrations/supabase/client';
 import MainLayout from '@/components/layout/MainLayout';
 import AlertBanner from '@/components/dashboard/AlertBanner';
-import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LeakageAlertBanner from '@/components/dashboard/LeakageAlertBanner';
 import { type Period } from '@/components/dashboard/PeriodSelector';
-import { DashboardSection } from '@/components/dashboard/DashboardSection';
 import { LazyDashboardSection } from '@/components/dashboard/LazyDashboardSection';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  RefreshCw, Maximize2, Wallet, Zap, AlertTriangle,
-  TrendingUp, TrendingDown
-} from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet } from 'lucide-react';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -99,19 +94,15 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
-  // Extract user first name
-  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
-  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
-
   // Animated KPI values
-  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 851);
-  const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 75);
-  const marge = useCountUp(periodStats.margeBrutePct > 0 ? Math.round(periodStats.margeBrutePct * 10) : 490);
+  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671);
+  const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 76);
+  const marge = useCountUp(periodStats.margeBrutePct > 0 ? Math.round(periodStats.margeBrutePct * 10) : 499);
   const tresorerie = useCountUp(551);
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
-  const svgW = 100;
+  const svgW = 200;
   const svgH = 100;
   const points = SPARKLINE_DATA.map((d, i) => {
     const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
@@ -126,12 +117,25 @@ export default function Dashboard() {
   const peakX = (peakIdx / (SPARKLINE_DATA.length - 1)) * svgW;
   const peakY = svgH - (SPARKLINE_DATA[peakIdx].v / maxV) * svgH * 0.85 - 5;
   const lastIdx = SPARKLINE_DATA.length - 1;
-  const lastX = svgW;
+  const lastX = (lastIdx / (SPARKLINE_DATA.length - 1)) * svgW;
   const lastY = svgH - (SPARKLINE_DATA[lastIdx].v / maxV) * svgH * 0.85 - 5;
+
+  // Current time
+  const now = new Date();
+  const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} UTC+1`;
 
   return (
     <MainLayout>
-      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8" style={{ background: '#0B0F1A' }}>
+      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8 dashboard-bg" style={{ background: '#0a0e1a' }}>
+
+        {/* Dot grid background pattern */}
+        <style>{`
+          .dashboard-bg {
+            background-color: #0a0e1a;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 24px 24px;
+          }
+        `}</style>
 
         {/* ─── Action buttons: absolute top-right ─── */}
         <div className="absolute top-2 right-4 z-20 flex items-center gap-1.5">
@@ -154,134 +158,146 @@ export default function Dashboard() {
         </div>
 
         {/* ══════════════════════════════════════════════════
-            ZONE 1 — THE PULSE (above the fold)
+            ZONE 1 — THE PULSE: COMMAND CENTER
         ══════════════════════════════════════════════════ */}
 
-        {/* Row 1: Greeting + Status pills */}
-        <div className="pt-2 pb-6">
-          <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-            {firstName}
-          </h1>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-[pulse-subtle_3s_ease-in-out_infinite]" />
-              Operational
-            </span>
-            <span className="text-[11px] text-slate-600">Casablanca</span>
+        {/* PART 1: Unified Hero Panel */}
+        <div className="pt-4 pb-6">
+          <div className="relative rounded-2xl overflow-hidden">
+            {/* Gradient border glow */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-500/20 via-yellow-500/5 to-yellow-500/20 p-[1px]">
+              <div className="w-full h-full rounded-2xl bg-[#0a0e1a]" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 px-10 py-8">
+              {/* Top row: COMMAND CENTER + status */}
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h1 className="text-lg font-light text-white/60 tracking-wide">COMMAND CENTER</h1>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span className="text-[11px] text-slate-500 uppercase tracking-widest">Plant Operational — Casablanca</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-slate-600 uppercase tracking-widest">Dernière mise à jour</span>
+                  <div className="text-sm text-slate-400 font-mono tabular-nums">{timeStr}</div>
+                </div>
+              </div>
+
+              {/* KPI Row — 4 numbers with vertical dividers */}
+              <div className="flex items-baseline justify-between flex-wrap gap-y-6">
+                {/* KPI 1 — Volume */}
+                <div className="flex-1 min-w-[140px]">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Volume</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{prodVolume}</span>
+                    <span className="text-xl font-extralight text-slate-500">m³</span>
+                  </div>
+                  <div className="text-[11px] text-emerald-400/60 mt-2">↗ +12% vs hier</div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
+
+                {/* KPI 2 — Revenue */}
+                <div className="flex-1 min-w-[140px]">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Revenue</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{ca}.0K</span>
+                    <span className="text-xl font-extralight text-slate-500">DH</span>
+                  </div>
+                  <div className="text-[11px] text-emerald-400/60 mt-2">↗ +8.2% vs Jan</div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
+
+                {/* KPI 3 — Marge */}
+                <div className="flex-1 min-w-[140px]">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Marge</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{(marge / 10).toFixed(1)}</span>
+                    <span className="text-xl font-extralight text-slate-500">%</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
+                    <span className="text-[11px] text-slate-500">{(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs</span>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
+
+                {/* KPI 4 — Trésorerie */}
+                <div className="flex-1 min-w-[140px]">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Trésorerie</div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{tresorerie}K</span>
+                    <span className="text-xl font-extralight text-slate-500">DH</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
+                    <span className="text-[11px] text-slate-500">→ 502K fin mois</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Row 2: Hero KPI Cards — 4 columns */}
-        <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
-          initial="hidden"
-          animate="visible"
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
-        >
-          {[
-            {
-              label: 'PRODUCTION TODAY',
-              value: `${prodVolume}`,
-              unit: 'm³',
-              sub: 'Peak 14h',
-              compare: '+12%',
-              positive: true,
-            },
-            {
-              label: "CHIFFRE D'AFFAIRES",
-              value: `${ca}.0K`,
-              unit: 'DH',
-              sub: `${periodStats.nbFactures || 11} factures`,
-              compare: '+8.2%',
-              positive: true,
-            },
-            {
-              label: 'MARGE BRUTE',
-              value: `${(marge / 10).toFixed(1)}`,
-              unit: '%',
-              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH`,
-              compare: null,
-              healthy: true,
-            },
-            {
-              label: 'TRÉSORERIE',
-              value: `${tresorerie}K`,
-              unit: 'DH',
-              sub: '→ 502K fin mois',
-              compare: null,
-              healthy: true,
-            },
-          ].map((kpi, i) => (
-            <motion.div
-              key={i}
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
-              }}
-              className="rounded-xl p-7 transition-all duration-500 ease-out cursor-default relative overflow-hidden bg-white/[0.03] border border-white/[0.06] hover:border-yellow-500/[0.12]"
-            >
-              <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 mb-3">
-                {kpi.label}
-              </div>
-              <div className="leading-none tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <span className="text-5xl font-extralight tracking-tight text-white leading-none">
-                  {kpi.value}
-                </span>
-                <span className="text-lg font-extralight text-slate-400 ml-1">{kpi.unit}</span>
-              </div>
-              <div className="text-xs font-normal text-slate-500 mt-1.5">{kpi.sub}</div>
-              <div className="mt-1.5 flex items-center gap-1.5">
-                {kpi.compare && (
-                  <span className={`text-xs flex items-center gap-0.5 ${kpi.positive ? 'text-primary' : 'text-destructive'}`}>
-                    {kpi.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {kpi.compare}
-                  </span>
-                )}
-                {kpi.healthy && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Row 3: Live Production Sparkline */}
-        <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 lg:p-4 mb-8 h-28 lg:h-32 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.04]">
+        {/* PART 2: Dramatic Production Sparkline */}
+        <div className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3 lg:p-4 mb-8 h-48 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.03]">
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity="0.4" />
-                <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity="0.12" />
-                <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity="0" />
+              <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.5} />
+                <stop offset="30%" stopColor="rgb(234, 179, 8)" stopOpacity={0.2} />
+                <stop offset="70%" stopColor="rgb(234, 179, 8)" stopOpacity={0.05} />
+                <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <path d={areaPath} fill="url(#sparkGrad)" />
-            <path d={linePath} fill="none" stroke="rgb(234, 179, 8)" strokeWidth="2" strokeLinejoin="round" />
-            {/* Pulsing dot at last data point */}
-            <circle cx={lastX} cy={lastY} r="3" fill="rgb(234, 179, 8)">
-              <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
+            {/* Area fill */}
+            <path d={areaPath} fill="url(#heroGradient)" />
+            {/* Glow line (behind) */}
+            <path d={linePath} fill="none" stroke="rgba(234, 179, 8, 0.15)" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round" />
+            {/* Crisp line */}
+            <path d={linePath} fill="none" stroke="rgb(234, 179, 8)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            {/* Peak annotation line */}
+            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            {/* Pulsing beacon at live endpoint */}
+            <circle cx={lastX} cy={lastY} r="4" fill="rgb(234, 179, 8)">
+              <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(234, 179, 8, 0.2)">
+              <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
             </circle>
           </svg>
-          {/* Peak annotation */}
-          <div className="absolute top-2 right-3 flex items-center gap-1.5 text-[10px] text-slate-500">
+          {/* Peak annotation text */}
+          <div className="absolute top-2 right-3 text-[10px] font-mono text-slate-600 uppercase tracking-wider">
             Peak 14h
           </div>
         </div>
 
-        {/* Row 4: Alert Strip */}
+        {/* PART 3: Alert Strip — Minimal */}
         {!alertDismissed && (
-          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-lg px-4 py-2 mb-8 text-xs">
-            <AlertTriangle className="w-4 h-4 text-primary shrink-0" />
-            <span className="text-slate-400 flex-1">
-              E/C Ratio critique (0.000): Données de production absentes ou non saisies.
-            </span>
-            <button
-              onClick={() => navigate('/alertes')}
-              className="text-primary font-medium whitespace-nowrap hover:underline text-[11px]"
-            >
-              Voir tout →
-            </button>
-            <button onClick={() => setAlertDismissed(true)} className="text-slate-600 hover:text-slate-400 ml-1">✕</button>
+          <div className="flex items-center justify-between px-5 py-2.5 rounded-lg bg-amber-500/[0.04] border border-amber-500/[0.08] mb-8">
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-[11px] text-slate-400">E/C Ratio critique (0.000): Données de production absentes ou non saisies.</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/alertes')}
+                className="text-[10px] text-slate-500 hover:text-slate-300 transition-colors uppercase tracking-wider whitespace-nowrap"
+              >
+                Voir tout →
+              </button>
+              <button onClick={() => setAlertDismissed(true)} className="text-slate-600 hover:text-slate-400 text-xs">✕</button>
+            </div>
           </div>
         )}
 
@@ -296,28 +312,29 @@ export default function Dashboard() {
           onDismiss={dismissAlert}
         />
 
-        {/* ─── Zone divider ─── */}
-        <div className="h-px bg-white/[0.04] my-8" />
+        {/* PART 4: Cinematic Section Transition */}
+        <div className="my-8 flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Opérations</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        </div>
 
         {/* ══════════════════════════════════════════════════
-            ZONE 2 — OPERATIONS (collapsible)
+            ZONE 2 — OPERATIONS (always visible, no collapse)
         ══════════════════════════════════════════════════ */}
-        <DashboardSection
-          title="OPÉRATIONS"
-          icon={Zap}
-          storageKey="ops-zone"
-          defaultOpen={true}
-        >
-          <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
-            <WorldClassDashboard />
-          </Suspense>
-        </DashboardSection>
+        <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
+          <WorldClassDashboard />
+        </Suspense>
 
         {/* ─── Zone divider ─── */}
-        <div className="h-px bg-white/[0.04] my-8" />
+        <div className="my-8 flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        </div>
 
         {/* ══════════════════════════════════════════════════
-            ZONE 3 — FINANCE & COMPLIANCE (collapsed by default)
+            ZONE 3 — FINANCE & COMPLIANCE
         ══════════════════════════════════════════════════ */}
         {isCeo && (
           <LazyDashboardSection
@@ -327,7 +344,6 @@ export default function Dashboard() {
             defaultOpen={false}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {/* Left: Cash-Flow + Budget */}
               <div className="space-y-5">
                 <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <CashFlowForecast />
@@ -336,7 +352,6 @@ export default function Dashboard() {
                   <CircularBudgetGauge />
                 </Suspense>
               </div>
-              {/* Right: Billing + Tax Compliance */}
               <div className="space-y-5">
                 <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <BillingDashboardWidget />
