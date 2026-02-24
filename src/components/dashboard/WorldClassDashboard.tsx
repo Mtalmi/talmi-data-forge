@@ -350,8 +350,8 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGold2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.3} />
-                        <stop offset="50%" stopColor="rgb(234, 179, 8)" stopOpacity={0.08} />
+                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.45} />
+                        <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity={0.15} />
                         <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
@@ -472,6 +472,28 @@ export function WorldClassDashboard() {
                     <div style={{ fontSize: 9, color: T.textDim, marginTop: 2 }}>{m.label}</div>
                   </div>
                 ))}
+              </div>
+
+              {/* AI Insights section */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: 16, paddingTop: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                  <span style={{ color: T.gold }}>✦</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: T.textPri }}>AI Insights</span>
+                  <span style={{ fontSize: 9, color: T.textDim }}>Mis à jour à 21:52</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {[
+                    { color: T.success, text: 'Marge brute saine à 49.9% malgré un CA faible ce mois-ci.' },
+                    { color: T.warning, text: 'Prix moyen (112 MAD/m³) inférieur au seuil de 600 MAD/m³.' },
+                    { color: T.info, text: 'Diversifier le portefeuille client: seulement 3 clients actifs.' },
+                    { color: T.success, text: 'Taux de recouvrement excellent à 91%.' },
+                  ].map((insight, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 11 }}>
+                      <span style={{ color: insight.color, marginTop: 2, flexShrink: 0 }}>●</span>
+                      <span style={{ color: T.textSec }}>{insight.text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </Card>
           </div>

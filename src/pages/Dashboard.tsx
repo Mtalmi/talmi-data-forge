@@ -267,7 +267,8 @@ export default function Dashboard() {
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.25" />
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.45" />
+                <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
                 <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
               </linearGradient>
             </defs>
