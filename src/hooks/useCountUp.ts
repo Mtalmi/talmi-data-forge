@@ -1,33 +1,27 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-export const useCountUp = (
-  target: number,
-  duration: number = 1600,
-  delay: number = 0
-) => {
+export function useCountUp(target: number, duration = 1500, delay = 0, decimals = 0) {
   const [value, setValue] = useState(0);
-  const animated = useRef(false);
+  const frameRef = useRef<number>();
+  const startRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (animated.current) return;
-    animated.current = true;
-
-    const timer = setTimeout(() => {
-      const start = Date.now();
-
-      const step = () => {
-        const elapsed = Date.now() - start;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setValue(Math.floor(eased * target));
-        if (progress < 1) requestAnimationFrame(step);
+    const timeout = setTimeout(() => {
+      const animate = (ts: number) => {
+        if (!startRef.current) startRef.current = ts;
+        const progress = Math.min((ts - startRef.current) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        setValue(parseFloat((eased * target).toFixed(decimals)));
+        if (progress < 1) frameRef.current = requestAnimationFrame(animate);
+        else setValue(target);
       };
-
-      requestAnimationFrame(step);
+      frameRef.current = requestAnimationFrame(animate);
     }, delay);
-
-    return () => clearTimeout(timer);
-  }, [target, duration, delay]);
+    return () => {
+      clearTimeout(timeout);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+    };
+  }, [target, duration, delay, decimals]);
 
   return value;
-};
+}
