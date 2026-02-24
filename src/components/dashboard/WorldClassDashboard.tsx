@@ -67,21 +67,25 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
   );
 }
 
-// ─── Card ───
+// ─── Card with glass morphism ───
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`transition-all duration-300 hover:border-[rgba(255,215,0,0.2)] hover:shadow-lg hover:shadow-[rgba(255,215,0,0.05)] ${className}`}
+      className={`transition-all duration-500 ease-out hover:border-white/[0.08] ${className}`}
       style={{
-        background: T.cardBg,
-        border: `1px solid ${T.cardBorder}`,
+        background: 'linear-gradient(135deg, rgba(30,45,74,0.7) 0%, rgba(17,27,46,0.5) 50%, rgba(12,20,40,0.7) 100%)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.05)',
         borderRadius: 14,
         padding: 20,
         position: 'relative',
         overflow: 'hidden',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
         ...style,
       }}
     >
+      {/* Top reflection line */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent)' }} />
       {children}
     </div>
   );
@@ -195,13 +199,19 @@ function useWorldClassLiveData() {
       }
 
       if (batchesRes.data?.length) {
-        setRecentBatches(batchesRes.data.map(b => ({
-          id: b.bl_id,
-          status: b.quality_status === 'conforme' || b.affaissement_conforme ? 'complete' : 'variance',
-          volume: b.volume_m3 || 0,
-          quality: b.quality_status === 'conforme' || b.affaissement_conforme ? 'OK' : 'VAR',
-          time: b.created_at ? format(new Date(b.created_at), 'HH:mm') : '—',
-        })));
+        const mapped = batchesRes.data.map(b => {
+          const isOk = b.quality_status === 'conforme' || b.affaissement_conforme === true;
+          const isVar = b.quality_status === 'non_conforme' || b.affaissement_conforme === false;
+          return {
+            id: b.bl_id,
+            status: isVar ? 'variance' : 'complete',
+            volume: b.volume_m3 || 0,
+            quality: isVar ? 'VAR' : 'OK',
+            time: b.created_at ? format(new Date(b.created_at), 'HH:mm') : '—',
+          };
+        });
+        // Only use DB data if we get meaningful results, otherwise keep fallback
+        if (mapped.length > 0) setRecentBatches(mapped);
       }
 
       if (cashInRes.data || cashOutRes.data) {
@@ -263,12 +273,15 @@ function useWorldClassLiveData() {
   return { stats, statsLoading, stockData, arAgingData, recentBatches, cashFlowData, hourlyProductionData, qualityData, loading };
 }
 
-// ─── Stock color helper ───
+// ─── Stock gradient helper ───
+function getStockGradient(current: number, max: number) {
+  const pct = (current / max) * 100;
+  if (pct > 50) return { gradient: 'linear-gradient(to right, #059669, #34D399)', shadow: '0 0 6px rgba(16,185,129,0.2)', color: T.success };
+  if (pct > 20) return { gradient: 'linear-gradient(to right, #D97706, #FBBF24)', shadow: '0 0 6px rgba(245,158,11,0.2)', color: T.warning };
+  return { gradient: 'linear-gradient(to right, #DC2626, #F87171)', shadow: '0 0 6px rgba(239,68,68,0.2)', color: T.danger };
+}
 function getStockColor(current: number, max: number) {
-  const pct = current / max;
-  if (pct > 0.7) return T.success;
-  if (pct > 0.4) return T.warning;
-  return T.danger;
+  return getStockGradient(current, max).color;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -296,7 +309,7 @@ export function WorldClassDashboard() {
   ];
 
   return (
-    <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
+    <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, background: 'radial-gradient(ellipse at top, rgba(234,179,8,0.03) 0%, transparent 50%)' }}>
 
       <style>{`
         @keyframes tbos-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -337,8 +350,9 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGold2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.4} />
-                        <stop offset="100%" stopColor={T.gold} stopOpacity={0.01} />
+                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.3} />
+                        <stop offset="50%" stopColor="rgb(234, 179, 8)" stopOpacity={0.08} />
+                        <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
@@ -395,12 +409,12 @@ export function WorldClassDashboard() {
                     <div key={i}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, gap: 8 }}>
                         <span style={{ fontSize: 11, color: T.textSec }}>{s.name}</span>
-                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: T.textPri, whiteSpace: 'nowrap' }}>
+                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: T.textPri, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
                           {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                         </span>
                       </div>
-                      <div style={{ height: 5, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                        <div className="tbos-bar-animate" style={{ height: '100%', width: `${pct}%`, borderRadius: 999, background: color, boxShadow: `0 0 8px ${color}60` }} />
+                      <div style={{ height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
+                        <div className="tbos-bar-animate" style={{ height: '100%', width: `${pct}%`, borderRadius: 999, background: getStockGradient(s.current, s.max).gradient, boxShadow: getStockGradient(s.current, s.max).shadow }} />
                       </div>
                     </div>
                   );
@@ -476,11 +490,17 @@ export function WorldClassDashboard() {
               <div className="overflow-hidden w-full" style={{ height: 160 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={arAgingData} layout="vertical" barSize={16} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="arGrad0" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#059669" /><stop offset="100%" stopColor="#34D399" /></linearGradient>
+                      <linearGradient id="arGrad1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#D97706" /><stop offset="100%" stopColor="#FBBF24" /></linearGradient>
+                      <linearGradient id="arGrad2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#EA580C" /><stop offset="100%" stopColor="#FB923C" /></linearGradient>
+                      <linearGradient id="arGrad3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#DC2626" /><stop offset="100%" stopColor="#F87171" /></linearGradient>
+                    </defs>
                     <XAxis type="number" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}K`} />
                     <YAxis type="category" dataKey="label" tick={{ fill: T.textSec, fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} width={40} />
                     <Tooltip content={(p) => <GoldTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
                     <Bar dataKey="value" radius={[0, 6, 6, 0]} animationDuration={1000}>
-                      {arAgingData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                      {arAgingData.map((_, i) => <Cell key={i} fill={`url(#arGrad${i})`} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>

@@ -114,8 +114,8 @@ export function HourlyProductionChart() {
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(51, 100%, 50%)" stopOpacity={0.4} />
-                <stop offset="60%" stopColor="hsl(51, 100%, 50%)" stopOpacity={0.05} />
+                <stop offset="0%" stopColor="hsl(51, 100%, 50%)" stopOpacity={0.3} />
+                <stop offset="50%" stopColor="hsl(51, 100%, 50%)" stopOpacity={0.08} />
                 <stop offset="100%" stopColor="hsl(51, 100%, 50%)" stopOpacity={0} />
               </linearGradient>
             </defs>
