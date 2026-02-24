@@ -68,26 +68,26 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-[14px] p-6 transition-all duration-[400ms] ${className}`}
+      className={`relative overflow-hidden rounded-[16px] p-6 transition-all duration-[400ms] ${className}`}
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
         ...style,
       }}
       onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.12)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)';
       }}
       onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.05)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)';
       }}
     >
-      {/* Top highlight line */}
-      <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
+      {/* Top highlight line — visible */}
+      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }} />
       {children}
     </div>
   );
@@ -321,13 +321,15 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.3} />
+                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.35} />
+                        <stop offset="50%" stopColor="#E8B84B" stopOpacity={0.1} />
                         <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9 }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodFill)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
+                    {/* Remove YAxis completely — already absent */}
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
