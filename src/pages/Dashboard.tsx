@@ -143,7 +143,7 @@ export default function Dashboard() {
           @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
           @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
           @keyframes live-ping2 { 0% { transform: scale(1); opacity: 0.4; } 70% { transform: scale(2.8); opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
-          .tbos-kpi-number { text-shadow: 0 0 30px rgba(232,184,75,0.25), 0 0 60px rgba(232,184,75,0.1); }
+          .tbos-kpi-number { text-shadow: 0 0 40px rgba(232,184,75,0.08); }
           @keyframes cardEntrance {
             0% { opacity: 0; transform: translateY(24px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -182,39 +182,39 @@ export default function Dashboard() {
             animation: fadeInArea 1.5s ease-out 2s forwards;
           }
           .tbos-hero-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.04) 100%);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 24px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.012) 60%, rgba(255,255,255,0.025) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 28px 28px 24px;
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15), 0 8px 32px rgba(0,0,0,0.2);
           }
           .tbos-hero-card:hover {
-            border-color: rgba(232,184,75,0.25);
-            box-shadow: 0 0 0 1px rgba(232,184,75,0.1) inset, 0 4px 8px rgba(0,0,0,0.2), 0 20px 60px rgba(232,184,75,0.1);
-            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15), 0 16px 48px rgba(0,0,0,0.22), 0 0 0 1px rgba(232,184,75,0.06);
+            transform: translateY(-3px);
           }
           .tbos-hero-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 5%;
-            right: 5%;
+            left: 8%;
+            right: 8%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
           }
           .tbos-hero-card::after {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 10%;
-            right: 10%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(232,184,75,0.15), transparent);
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
           }
         `}</style>
 
@@ -293,11 +293,9 @@ export default function Dashboard() {
         {/* Ambient light orbs — DRAMATIC */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
               <div className="absolute -top-40 left-1/3 w-[800px] h-[600px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.08) 0%, transparent 60%)', filter: 'blur(120px)' }} />
+                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.05) 0%, transparent 60%)', filter: 'blur(140px)' }} />
               <div className="absolute -top-20 right-[10%] w-[500px] h-[400px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 60%)', filter: 'blur(100px)' }} />
-              <div className="absolute top-[40%] -left-20 w-[400px] h-[400px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.035) 0%, transparent 60%)', filter: 'blur(80px)' }} />
+                   style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.025) 0%, transparent 60%)', filter: 'blur(120px)' }} />
             </div>
 
           {/* Engineering grid pattern — blueprint precision */}
@@ -313,18 +311,19 @@ export default function Dashboard() {
           {/* Grid fade-out */}
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
-          {/* Greeting — Commanding Presence */}
-          <div className="pt-4 pb-6 relative z-[1]" style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.16,1,0.3,1) 0s both' }}>
-            <h1 className="text-[28px] font-light text-white tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+          {/* Greeting — Refined Presence */}
+          <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.16,1,0.3,1) 0s both' }}>
+            <h1 className="text-[32px] font-extralight text-white" style={{ letterSpacing: '-0.03em', lineHeight: 1.1 }}>
               {firstName}
             </h1>
-            <div className="flex items-center gap-3 mt-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+            <div className="flex items-center gap-3 mt-2.5">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.3)' }} />
               </span>
-              <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-slate-500">Operational</span>
-              <span className="text-[9px] font-normal text-slate-600 tracking-wider">Casablanca</span>
+              <span className="text-[9px] font-normal uppercase tracking-[0.3em] text-slate-500/70">Operational</span>
+              <span className="w-px h-2.5 bg-slate-700/50" />
+              <span className="text-[9px] font-normal text-slate-600/60 tracking-wider">Casablanca</span>
             </div>
           </div>
 
@@ -374,47 +373,29 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <div
               key={i}
-              className="relative overflow-hidden rounded-2xl p-8 group cursor-default"
+              className="tbos-hero-card group cursor-default"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.03) 100%)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                backdropFilter: 'blur(40px)',
-                WebkitBackdropFilter: 'blur(40px)',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
-                transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)',
                 animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both`,
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(253,185,19,0.2)';
-                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2), 0 16px 48px rgba(253,185,19,0.08), inset 0 1px 0 rgba(255,255,255,0.08)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
-                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)';
-              }}
             >
-              {/* Top white highlight */}
-              <div className="absolute top-0 left-[5%] right-[5%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
-              {/* Category color bar */}
-              <div className="absolute top-0 left-[10%] right-[10%] h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}80, transparent)` }} />
-              {/* Giant unit watermark */}
-              <div className="absolute bottom-[-10px] right-2 text-[80px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}08`, fontFamily: 'Inter, system-ui' }}>
+              {/* Category accent — refined thin line */}
+              <div className="absolute top-0 left-[15%] right-[15%] h-px" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}40, transparent)` }} />
+              {/* Giant unit watermark — subtler */}
+              <div className="absolute bottom-[-8px] right-3 text-[72px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06`, fontFamily: 'Inter, system-ui' }}>
                 {kpi.watermark}
               </div>
 
               {/* Label */}
-              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4" style={{ color: kpi.labelColor }}>
+              <div className="text-[9px] font-medium uppercase tracking-[0.25em] mb-5" style={{ color: kpi.labelColor }}>
                 {kpi.label}
               </div>
 
               {/* Main number with count-up */}
-              <div className="flex items-baseline gap-1.5 leading-none">
-                <span className="text-[2.75rem] font-extralight text-white tabular-nums tbos-kpi-number" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.03em' }}>
+              <div className="flex items-baseline gap-2 leading-none">
+                <span className="text-[2.5rem] font-extralight text-white/95 tabular-nums" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.04em' }}>
                   {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                 </span>
-                <span className="text-sm font-light text-slate-500">{kpi.unit}</span>
+                <span className="text-[13px] font-light text-white/25">{kpi.unit}</span>
               </div>
 
               {/* Sub info */}
@@ -433,20 +414,13 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* The Sparkline — A Living Pulse */}
+        {/* The Sparkline — Refined Living Pulse */}
         <div
-          className="mt-5 mb-4 relative z-[1] p-[1px] rounded-[20px]"
+          className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden"
           style={{
-            background: `conic-gradient(from var(--border-angle, 0deg), rgba(253,185,19,0.3), rgba(253,185,19,0.05), rgba(59,130,246,0.1), rgba(253,185,19,0.3))`,
-            animation: 'rotateBorder 8s linear infinite',
-          }}
-        >
-        <div
-          className="rounded-[19px] relative overflow-hidden transition-all duration-300"
-          style={{
-            background: 'linear-gradient(180deg, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.005) 30%, #0B0F1A 100%)',
+            background: 'linear-gradient(180deg, rgba(253,185,19,0.03) 0%, rgba(253,185,19,0.003) 40%, rgba(11,15,26,0.95) 100%)',
             border: '1px solid rgba(255,255,255,0.04)',
-            height: '220px',
+            height: '200px',
             padding: '20px 24px',
           }}
         >
@@ -484,20 +458,19 @@ export default function Dashboard() {
             <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(232,184,75,0.25)" strokeWidth="1" />
           </svg>
 
-          {/* Floating golden particles */}
+          {/* Subtle floating particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
-            {[...Array(12)].map((_, i) => (
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
                 className="absolute rounded-full"
                 style={{
-                  width: `${1 + Math.random() * 3}px`,
-                  height: `${1 + Math.random() * 3}px`,
-                  background: 'rgba(232,184,75,0.6)',
-                  left: `${5 + Math.random() * 90}%`,
-                  bottom: `${10 + Math.random() * 40}%`,
-                  animation: `floatUp ${3 + Math.random() * 4}s ease-out ${Math.random() * 5}s infinite`,
-                  boxShadow: '0 0 4px rgba(232,184,75,0.4)',
+                  width: `${1 + Math.random() * 2}px`,
+                  height: `${1 + Math.random() * 2}px`,
+                  background: 'rgba(232,184,75,0.35)',
+                  left: `${10 + Math.random() * 80}%`,
+                  bottom: `${15 + Math.random() * 35}%`,
+                  animation: `floatUp ${4 + Math.random() * 5}s ease-out ${Math.random() * 6}s infinite`,
                 }}
               />
             ))}
@@ -544,8 +517,7 @@ export default function Dashboard() {
               <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
             </circle>
           </svg>
-        </div>
-        </div>{/* end sparkline rotating border wrapper */}
+        </div>{/* end sparkline */}
 
         </div>{/* end hero zone wrapper */}
 
