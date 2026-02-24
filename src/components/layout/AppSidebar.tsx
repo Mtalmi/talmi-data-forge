@@ -220,6 +220,34 @@ export function AppSidebar() {
             </div>
           ))}
         </nav>
+        {/* Casablanca Skyline Silhouette — THE SOUL */}
+        {!collapsed && (
+          <div className="mt-auto px-4 pb-2 pointer-events-none select-none">
+            <svg width="100%" height="50" viewBox="0 0 200 50" preserveAspectRatio="xMidYMax meet" style={{ opacity: 0.07 }}>
+              {/* Hassan II Mosque inspired minaret */}
+              <rect x="45" y="2" width="6" height="45" fill="rgba(232,184,75,0.7)" />
+              <rect x="43" y="0" width="10" height="4" rx="1" fill="rgba(232,184,75,0.6)" />
+              <polygon points="48,0 46,0 48,-3 50,0" fill="rgba(232,184,75,0.5)" />
+              <rect x="44" y="10" width="8" height="12" rx="1" fill="rgba(232,184,75,0.5)" />
+              {/* Modern buildings */}
+              <rect x="60" y="15" width="14" height="32" rx="1" fill="rgba(232,184,75,0.5)" />
+              <rect x="78" y="20" width="10" height="27" rx="1" fill="rgba(232,184,75,0.4)" />
+              <rect x="92" y="12" width="12" height="35" rx="1" fill="rgba(232,184,75,0.45)" />
+              <rect x="108" y="18" width="16" height="29" rx="1" fill="rgba(232,184,75,0.5)" />
+              <rect x="128" y="22" width="10" height="25" rx="1" fill="rgba(232,184,75,0.35)" />
+              {/* Twin towers */}
+              <rect x="142" y="8" width="8" height="39" rx="1" fill="rgba(232,184,75,0.5)" />
+              <rect x="153" y="10" width="8" height="37" rx="1" fill="rgba(232,184,75,0.45)" />
+              <line x1="150" y1="6" x2="153" y2="6" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
+              {/* Smaller buildings */}
+              <rect x="20" y="25" width="12" height="22" rx="1" fill="rgba(232,184,75,0.35)" />
+              <rect x="165" y="28" width="15" height="19" rx="1" fill="rgba(232,184,75,0.3)" />
+              <rect x="5" y="30" width="10" height="17" rx="1" fill="rgba(232,184,75,0.25)" />
+              {/* Ground */}
+              <line x1="0" y1="47" x2="200" y2="47" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
+            </svg>
+          </div>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.03)', background: 'transparent' }}>

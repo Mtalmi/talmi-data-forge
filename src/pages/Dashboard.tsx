@@ -253,16 +253,39 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Compass/North arrow accent */}
-        <div className="absolute top-6 right-6 opacity-[0.06] pointer-events-none" style={{ zIndex: 0 }}>
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-            <circle cx="20" cy="20" r="18" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5"/>
-            <circle cx="20" cy="20" r="12" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
-            <line x1="20" y1="2" x2="20" y2="10" stroke="rgba(232,184,75,0.5)" strokeWidth="0.5"/>
-            <line x1="20" y1="30" x2="20" y2="38" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
-            <line x1="2" y1="20" x2="10" y2="20" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
-            <line x1="30" y1="20" x2="38" y2="20" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
-            <text x="20" y="8" textAnchor="middle" fill="rgba(232,184,75,0.4)" fontSize="4" fontFamily="Inter">N</text>
+        {/* Construction Crane Silhouette — top-right hero accent */}
+        <div className="absolute top-4 right-16 opacity-[0.05] pointer-events-none" style={{ zIndex: 0 }}>
+          <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
+            {/* Crane mast */}
+            <rect x="25" y="10" width="4" height="90" fill="rgba(232,184,75,0.6)" />
+            {/* Mast cross-bracing */}
+            <line x1="25" y1="20" x2="29" y2="30" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="29" y1="20" x2="25" y2="30" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="25" y1="35" x2="29" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="29" y1="35" x2="25" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="25" y1="50" x2="29" y2="60" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="29" y1="50" x2="25" y2="60" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="25" y1="65" x2="29" y2="75" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            <line x1="29" y1="65" x2="25" y2="75" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            {/* Jib (horizontal arm) */}
+            <rect x="29" y="10" width="80" height="2.5" fill="rgba(232,184,75,0.5)" />
+            {/* Counter-jib */}
+            <rect x="5" y="10" width="20" height="2.5" fill="rgba(232,184,75,0.4)" />
+            <rect x="5" y="8" width="8" height="6" fill="rgba(232,184,75,0.35)" />
+            {/* Jib support cables */}
+            <line x1="27" y1="5" x2="109" y2="10" stroke="rgba(232,184,75,0.35)" strokeWidth="0.5" />
+            <line x1="27" y1="5" x2="5" y2="10" stroke="rgba(232,184,75,0.35)" strokeWidth="0.5" />
+            <line x1="27" y1="5" x2="27" y2="10" stroke="rgba(232,184,75,0.5)" strokeWidth="1" />
+            <line x1="27" y1="5" x2="70" y2="10" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
+            {/* Hook cable */}
+            <line x1="95" y1="12.5" x2="95" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
+            {/* Hook */}
+            <path d="M93,45 Q93,50 95,50 Q97,50 97,45" fill="none" stroke="rgba(232,184,75,0.5)" strokeWidth="0.8" />
+            <rect x="93" y="43" width="4" height="3" fill="rgba(232,184,75,0.4)" />
+            {/* Counterweight */}
+            <rect x="5" y="14" width="10" height="8" fill="rgba(232,184,75,0.3)" />
+            {/* Base */}
+            <rect x="15" y="95" width="24" height="5" rx="1" fill="rgba(232,184,75,0.35)" />
           </svg>
         </div>
 
@@ -384,12 +407,49 @@ export default function Dashboard() {
             boxShadow: '0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3)',
           }}
         >
-          {/* Topographic contour lines — site survey depth */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.025 }} preserveAspectRatio="none" viewBox="0 0 1200 200">
-            <path d="M0,140 Q150,120 300,130 T600,110 T900,125 T1200,115" fill="none" stroke="rgba(232,184,75,0.5)" strokeWidth="0.5"/>
-            <path d="M0,100 Q200,85 400,95 T800,80 T1200,90" fill="none" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5"/>
-            <path d="M0,65 Q250,55 500,60 T1000,50 T1200,55" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
-            <path d="M0,170 Q180,160 360,165 T720,155 T1200,160" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+          {/* Batching Plant Silhouette — THE SIGNATURE */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.06, zIndex: 0 }} preserveAspectRatio="xMidYMax meet" viewBox="0 0 800 200">
+            {/* Left silo cluster */}
+            <rect x="30" y="60" width="35" height="120" rx="17" fill="rgba(232,184,75,0.5)" />
+            <rect x="70" y="40" width="40" height="140" rx="20" fill="rgba(232,184,75,0.6)" />
+            <rect x="115" y="55" width="35" height="125" rx="17" fill="rgba(232,184,75,0.45)" />
+            <ellipse cx="90" cy="38" rx="22" ry="6" fill="rgba(232,184,75,0.4)" />
+            {/* Conveyor belt going up to the right */}
+            <line x1="150" y1="90" x2="280" y2="50" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
+            <line x1="152" y1="95" x2="282" y2="55" stroke="rgba(232,184,75,0.25)" strokeWidth="1.5" />
+            {/* Main mixer/hopper */}
+            <rect x="270" y="50" width="80" height="80" rx="4" fill="rgba(232,184,75,0.5)" />
+            <polygon points="280,130 290,160 350,160 360,130" fill="rgba(232,184,75,0.4)" />
+            <rect x="295" y="35" width="30" height="18" rx="2" fill="rgba(232,184,75,0.35)" />
+            <circle cx="310" cy="90" r="15" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="1.5" />
+            {/* Discharge chute */}
+            <line x1="320" y1="160" x2="340" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
+            <line x1="320" y1="160" x2="300" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
+            {/* Truck loading area */}
+            <rect x="290" y="175" width="60" height="20" rx="3" fill="rgba(232,184,75,0.35)" />
+            <circle cx="300" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
+            <circle cx="340" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
+            {/* Control tower */}
+            <rect x="400" y="30" width="30" height="150" rx="2" fill="rgba(232,184,75,0.4)" />
+            <rect x="395" y="25" width="40" height="25" rx="3" fill="rgba(232,184,75,0.45)" />
+            {/* Windows on tower — brighter */}
+            <rect x="405" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
+            <rect x="418" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
+            <rect x="405" y="38" width="6" height="5" rx="1" fill="rgba(232,184,75,0.7)" />
+            {/* Aggregate bins - right side */}
+            <polygon points="500,100 530,100 540,180 490,180" fill="rgba(232,184,75,0.4)" />
+            <polygon points="545,90 575,90 585,180 535,180" fill="rgba(232,184,75,0.35)" />
+            <polygon points="590,105 615,105 625,180 580,180" fill="rgba(232,184,75,0.3)" />
+            {/* Second conveyor */}
+            <line x1="515" y1="100" x2="350" y2="60" stroke="rgba(232,184,75,0.3)" strokeWidth="2.5" />
+            <line x1="560" y1="90" x2="355" y2="55" stroke="rgba(232,184,75,0.2)" strokeWidth="1.5" />
+            {/* Storage silos - far right */}
+            <rect x="660" y="50" width="30" height="130" rx="15" fill="rgba(232,184,75,0.4)" />
+            <rect x="700" y="65" width="30" height="115" rx="15" fill="rgba(232,184,75,0.35)" />
+            <rect x="740" y="55" width="30" height="125" rx="15" fill="rgba(232,184,75,0.3)" />
+            <ellipse cx="675" cy="48" rx="17" ry="5" fill="rgba(232,184,75,0.3)" />
+            {/* Ground line */}
+            <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(232,184,75,0.25)" strokeWidth="1" />
           </svg>
 
           {/* Floating golden particles */}
