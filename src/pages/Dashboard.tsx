@@ -25,29 +25,7 @@ const CashFlowForecast = lazy(() => import('@/components/dashboard/CashFlowForec
 const BillingDashboardWidget = lazy(() => import('@/components/dashboard/BillingDashboardWidget').then(m => ({ default: m.BillingDashboardWidget })));
 const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m => ({ default: m.TaxComplianceWidget })));
 
-// ─── Count-up animation hook with delay ───
-function useCountUp(target: number, duration = 1500, delay = 0) {
-  const [value, setValue] = useState(0);
-  const rafRef = useRef<number>();
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      const start = performance.now();
-      const animate = (now: number) => {
-        const p = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setValue(Math.round(eased * target));
-        if (p < 1) rafRef.current = requestAnimationFrame(animate);
-      };
-      rafRef.current = requestAnimationFrame(animate);
-    }, delay);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [target, duration, delay]);
-  return value;
-}
+import { useCountUp } from '@/hooks/useCountUp';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
@@ -104,11 +82,11 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Animated KPI values — staggered wave effect
-  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671, 1500, 0);
-  const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 76, 1500, 200);
-  const marge = useCountUp(periodStats.margeBrutePct > 0 ? Math.round(periodStats.margeBrutePct * 10) : 499, 1500, 400);
-  const tresorerie = useCountUp(551, 1500, 600);
+  // Animated KPI values — staggered wave with decimals support
+  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671, 1800, 200);
+  const ca = useCountUp(periodStats.chiffreAffaires > 0 ? parseFloat((periodStats.chiffreAffaires / 1000).toFixed(1)) : 76.0, 1800, 400, 1);
+  const marge = useCountUp(periodStats.margeBrutePct > 0 ? parseFloat(periodStats.margeBrutePct.toFixed(1)) : 49.9, 1800, 600, 1);
+  const tresorerie = useCountUp(551, 1800, 800);
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
@@ -350,31 +328,34 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Hero KPI Cards — Glowing Data Monuments */}
+          {/* Hero KPI Cards — Premium Data Monuments */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5 mb-5 relative z-[1]">
           {[
             {
               label: 'VOLUME',
-              value: `${prodVolume}`,
+              value: prodVolume,
               unit: 'm³',
+              watermark: 'm³',
               sub: 'Peak 14h',
               trend: '↗ +12%',
-              accentColor: '#00D9FF', // Teal = Production
+              accentColor: '#00D9FF',
               labelColor: 'rgba(0,217,255,0.6)',
             },
             {
               label: 'REVENUE',
-              value: `${ca}.0K`,
-              unit: 'DH',
+              value: ca,
+              unit: 'K DH',
+              watermark: 'DH',
               sub: `${periodStats.nbFactures || 11} factures`,
               trend: '↗ +8.2%',
-              accentColor: '#FDB913', // Gold = Financial
+              accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
             },
             {
               label: 'MARGE',
-              value: `${(marge / 10).toFixed(1)}`,
+              value: marge,
               unit: '%',
+              watermark: '%',
               sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
               healthy: true,
               accentColor: '#FDB913',
@@ -382,8 +363,9 @@ export default function Dashboard() {
             },
             {
               label: 'TRÉSORERIE',
-              value: `${tresorerie}K`,
-              unit: 'DH',
+              value: tresorerie,
+              unit: 'K DH',
+              watermark: 'DH',
               sub: '→ 502K fin mois',
               healthy: true,
               accentColor: '#FDB913',
@@ -392,43 +374,59 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <div
               key={i}
-              className="tbos-hero-card cursor-default min-w-0 overflow-hidden group"
-              style={{ animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both` }}
+              className="relative overflow-hidden rounded-2xl p-8 group cursor-default"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 50%, rgba(255,255,255,0.03) 100%)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)',
+                transition: 'all 0.5s cubic-bezier(0.16,1,0.3,1)',
+                animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both`,
+              }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = `${kpi.accentColor}33`;
-                e.currentTarget.style.boxShadow = `0 2px 4px rgba(0,0,0,0.2), 0 16px 48px ${kpi.accentColor}14, inset 0 1px 0 rgba(255,255,255,0.08)`;
+                e.currentTarget.style.borderColor = 'rgba(253,185,19,0.2)';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2), 0 16px 48px rgba(253,185,19,0.08), inset 0 1px 0 rgba(255,255,255,0.08)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = '';
-                e.currentTarget.style.borderColor = '';
-                e.currentTarget.style.boxShadow = '';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.2), 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05)';
               }}
             >
-              {/* Category color bar — top accent */}
-              <div className="absolute top-0 left-[10%] right-[10%] h-[2px] rounded-b-full" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}80, transparent)` }} />
               {/* Top white highlight */}
               <div className="absolute top-0 left-[5%] right-[5%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
-              {/* Unit watermark */}
-              <div className="absolute bottom-1 right-3 text-[64px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06` }}>
-                {kpi.unit}
+              {/* Category color bar */}
+              <div className="absolute top-0 left-[10%] right-[10%] h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}80, transparent)` }} />
+              {/* Giant unit watermark */}
+              <div className="absolute bottom-[-10px] right-2 text-[80px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}08`, fontFamily: 'Inter, system-ui' }}>
+                {kpi.watermark}
               </div>
-              <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: kpi.labelColor }}>
+
+              {/* Label */}
+              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] mb-4" style={{ color: kpi.labelColor }}>
                 {kpi.label}
               </div>
-              <div className="leading-none tabular-nums whitespace-nowrap overflow-hidden" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <span className="text-3xl lg:text-4xl font-extralight text-white leading-none tbos-kpi-number">
-                  {kpi.value}
+
+              {/* Main number with count-up */}
+              <div className="flex items-baseline gap-1.5 leading-none">
+                <span className="text-[2.75rem] font-extralight text-white tabular-nums tbos-kpi-number" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.03em' }}>
+                  {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                 </span>
-                <span className="text-sm lg:text-base font-extralight text-slate-500 ml-1">{kpi.unit}</span>
+                <span className="text-sm font-light text-slate-500">{kpi.unit}</span>
               </div>
-              <div className="text-[11px] text-slate-500 mt-2 font-mono">{kpi.sub}</div>
-              <div className="mt-1.5 flex items-center gap-1.5">
+
+              {/* Sub info */}
+              <div className="text-[11px] text-slate-500 mt-3 font-mono tabular-nums">{kpi.sub}</div>
+
+              {/* Trend indicator */}
+              <div className="mt-2 flex items-center gap-1.5">
                 {kpi.trend && (
-                  <span className="text-[11px] font-mono" style={{ color: kpi.accentColor }}>{kpi.trend}</span>
+                  <span className="text-[11px] font-mono tabular-nums" style={{ color: kpi.accentColor }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.4)' }} />
                 )}
               </div>
             </div>

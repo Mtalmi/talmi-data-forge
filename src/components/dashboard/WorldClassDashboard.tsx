@@ -395,17 +395,17 @@ export function WorldClassDashboard() {
               </div>
               <div className="flex flex-col gap-3">
                 {[
-                  { label: 'Devis', value: '3', width: '100%' },
-                  { label: 'BCs Actifs', value: '2', width: '65%' },
-                  { label: 'En attente', value: '45K DH', width: '35%' },
+                  { label: 'Devis', value: '3', width: '100%', gradient: 'linear-gradient(90deg, #FDB913, #F2D06B)' },
+                  { label: 'BCs Actifs', value: '2', width: '65%', gradient: 'linear-gradient(90deg, #00D9FF, #38BDF8)' },
+                  { label: 'En attente', value: '45K DH', width: '35%', gradient: 'linear-gradient(90deg, #FF6B6B, #FB923C)' },
                 ].map((item, i) => (
                   <div key={i}>
                     <div className="flex justify-between mb-1">
                       <span className="text-[11px] text-slate-500">{item.label}</span>
-                      <span className="text-[11px] text-slate-300 tabular-nums">{item.value}</span>
+                      <span className="text-[11px] text-slate-300 tabular-nums font-mono">{item.value}</span>
                     </div>
                     <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.7 }} />
+                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: item.gradient }} />
                     </div>
                   </div>
                 ))}
@@ -439,21 +439,24 @@ export function WorldClassDashboard() {
                 ))}
               </div>
 
-              {/* AI Insights section */}
-              <div className="border-t border-white/[0.05] mt-4 pt-4">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <span style={{ color: T.gold, fontSize: 10 }}>✦</span>
-                  <span className="text-[11px] font-medium text-white/90">AI Insights</span>
-                  <span className="text-[9px] text-slate-500">21:52</span>
+              {/* AI Insights — Purple Accent Treatment */}
+              <div className="border-t border-white/[0.05] mt-4 pt-4 relative">
+                <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-1.5">
+                    <span style={{ color: '#8B5CF6', fontSize: 11 }}>✦</span>
+                    <span className="text-[11px] font-medium" style={{ color: '#A78BFA' }}>AI Insights</span>
+                  </div>
+                  <span className="text-[9px] font-mono text-slate-600 tabular-nums">21:52</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   {[
-                    { dot: T.dotOk, text: 'Marge brute saine à 49.9% malgré un CA faible ce mois-ci.' },
-                    { dot: T.dotWarn, text: 'Prix moyen (112 MAD/m³) inférieur au seuil de 600 MAD/m³.' },
-                    { dot: '#60A5FA', text: 'Diversifier le portefeuille client: seulement 3 clients actifs.' },
-                    { dot: T.dotOk, text: 'Taux de recouvrement excellent à 91%.' },
+                    { dot: '#34D399', text: 'Taux de recouvrement excellent à 91%.' },
+                    { dot: '#FDB913', text: 'Marge brute saine à 49.9% malgré un CA faible.' },
+                    { dot: '#FF6B6B', text: 'Prix moyen (112 MAD/m³) inférieur au seuil.' },
+                    { dot: '#FF6B6B', text: 'Diversifier portefeuille: 3 clients actifs seulement.' },
                   ].map((insight, i) => (
-                    <div key={i} className="flex items-start gap-1.5 text-[11px]">
+                    <div key={i} className="flex items-start gap-2 text-[11px]">
                       <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: insight.dot }} />
                       <span className="text-slate-400">{insight.text}</span>
                     </div>
@@ -514,12 +517,16 @@ export function WorldClassDashboard() {
                   <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                      <span className="text-[11px] font-mono text-slate-300">{q.id}</span>
+                      <span className="text-[11px] font-mono text-slate-300 tabular-nums">{q.id}</span>
                     </div>
                     <div className="flex items-center gap-2 text-[11px] text-slate-400">
                       <span>{q.test}</span>
-                      <span className={`text-[10px] ${q.ok ? 'text-slate-400' : 'text-amber-400/80'}`}>{q.ok ? 'OK' : 'Variance'}</span>
-                      <span className="text-[10px] font-mono text-slate-600">{q.time}</span>
+                      {q.ok ? (
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ color: '#34D399', background: 'rgba(52,211,153,0.1)' }}>OK</span>
+                      ) : (
+                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ color: '#F87171', background: 'rgba(248,113,113,0.1)' }}>Variance</span>
+                      )}
+                      <span className="text-[10px] font-mono text-slate-600 tabular-nums">{q.time}</span>
                     </div>
                   </div>
                 ))}
