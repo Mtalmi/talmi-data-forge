@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  AreaChart, Area, BarChart, Bar, Cell,
-  XAxis, YAxis, Tooltip, ResponsiveContainer,
+  AreaChart, Area,
+  XAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import {
-  CheckCircle2, AlertTriangle,
-} from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { format, subDays } from 'date-fns';
@@ -15,8 +12,9 @@ import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 // DESIGN TOKENS — Dark Luxury
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: '#E8B84B',
-  goldGradient: 'linear-gradient(135deg, #C4933B 0%, #F2D06B 40%, #E8B84B 70%, #C4933B 100%)',
+  gold: '#D4AF37',
+  goldBright: '#E8D5A3',
+  goldDim: '#C4933B',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
   textDim: '#475569',
@@ -50,7 +48,7 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
   return (
     <div style={{
       background: 'linear-gradient(135deg, rgba(15,20,35,0.95), rgba(10,14,26,0.98))',
-      border: '1px solid rgba(232,184,75,0.15)', borderRadius: 10,
+      border: '1px solid rgba(212,175,55,0.12)', borderRadius: 10,
       padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
       backdropFilter: 'blur(12px)',
     }}>
@@ -70,26 +68,270 @@ function Card({ children, className = '', style = {} }: { children: React.ReactN
     <div
       className={`relative overflow-hidden rounded-[16px] p-6 transition-all duration-[400ms] ${className}`}
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.07)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.06)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
         ...style,
       }}
       onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.12)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 100%)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,175,55,0.12)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)';
       }}
       onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.07)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)';
       }}
     >
-      {/* Top highlight line — visible */}
-      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)' }} />
+      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
       {children}
     </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// RADIAL GAUGE — Porsche Instrument Cluster
+// ═══════════════════════════════════════════════════════
+function RadialGauge({ name, current, max, unit }: { name: string; current: number; max: number; unit: string }) {
+  const pct = Math.min((current / max) * 100, 100);
+  const radius = 32;
+  const strokeWidth = 3;
+  const circumference = 2 * Math.PI * radius;
+  const arcLength = circumference * 0.75; // 270° arc
+  const dashOffset = arcLength - (arcLength * pct) / 100;
+  const isLow = pct < 20;
+  const isMid = pct < 40;
+  const color = isLow ? '#F87171' : isMid ? '#FBBF24' : T.gold;
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="relative" style={{ width: 76, height: 64 }}>
+        <svg width="76" height="64" viewBox="0 0 76 64">
+          {/* Background arc */}
+          <circle
+            cx="38" cy="38" r={radius}
+            fill="none"
+            stroke="rgba(255,255,255,0.04)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${arcLength} ${circumference}`}
+            strokeDashoffset={0}
+            strokeLinecap="round"
+            transform="rotate(135 38 38)"
+          />
+          {/* Value arc */}
+          <circle
+            cx="38" cy="38" r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${arcLength} ${circumference}`}
+            strokeDashoffset={dashOffset}
+            strokeLinecap="round"
+            transform="rotate(135 38 38)"
+            style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)', filter: `drop-shadow(0 0 4px ${color}40)` }}
+          />
+          {/* Glow arc */}
+          <circle
+            cx="38" cy="38" r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={6}
+            strokeOpacity={0.08}
+            strokeDasharray={`${arcLength} ${circumference}`}
+            strokeDashoffset={dashOffset}
+            strokeLinecap="round"
+            transform="rotate(135 38 38)"
+            style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)' }}
+          />
+        </svg>
+        {/* Center value */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ paddingTop: 8 }}>
+          <span className="text-[14px] font-extralight font-mono text-white tabular-nums leading-none">{Math.round(pct)}%</span>
+        </div>
+      </div>
+      <span className="text-[9px] uppercase tracking-[0.15em] text-slate-500 text-center leading-tight">{name}</span>
+      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{current >= 1000 ? `${(current/1000).toFixed(0)}K` : current} {unit}</span>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// BATCH TIMELINE — Git-style commit dots
+// ═══════════════════════════════════════════════════════
+function BatchTimeline({ batches }: { batches: { id: string; volume: number; quality: string; time: string; status: string }[] }) {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  
+  return (
+    <div className="relative">
+      {/* Timeline line */}
+      <div className="absolute top-[11px] left-4 right-4 h-px" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.2), rgba(212,175,55,0.06))' }} />
+      
+      <div className="flex items-start justify-between px-2 relative z-10">
+        {batches.slice(0, 6).map((b, i) => {
+          const isOk = b.quality === 'OK';
+          const isHovered = hoveredIdx === i;
+          const dotColor = isOk ? T.dotOk : T.dotWarn;
+          
+          return (
+            <div
+              key={i}
+              className="flex flex-col items-center cursor-pointer relative"
+              style={{ minWidth: 60, animation: `tbos-fade-up 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 * i + 0.2}s both` }}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              {/* Dot */}
+              <div className="relative">
+                <div
+                  className="w-[9px] h-[9px] rounded-full transition-all duration-300"
+                  style={{
+                    background: dotColor,
+                    boxShadow: isHovered ? `0 0 12px ${dotColor}60` : `0 0 4px ${dotColor}30`,
+                    transform: isHovered ? 'scale(1.4)' : 'scale(1)',
+                  }}
+                />
+                {i === 0 && (
+                  <div className="absolute inset-0 rounded-full" style={{ background: dotColor, animation: 'ping 2s cubic-bezier(0,0,0.2,1) infinite', opacity: 0.3 }} />
+                )}
+              </div>
+              
+              {/* Tooltip on hover */}
+              <div
+                className="mt-2 flex flex-col items-center transition-all duration-300"
+                style={{ opacity: isHovered ? 1 : 0.5 }}
+              >
+                <span className="text-[8px] font-mono text-slate-500 tabular-nums">{b.id.slice(-7)}</span>
+                <span className="text-[11px] font-extralight font-mono text-white tabular-nums mt-0.5">{b.volume}<span className="text-[8px] text-white/30">m³</span></span>
+                <span className="text-[8px] font-mono tabular-nums mt-0.5" style={{ color: T.textDim }}>{b.time}</span>
+              </div>
+              
+              {/* Expanded detail on hover */}
+              {isHovered && (
+                <div
+                  className="absolute top-full mt-1 px-3 py-2 rounded-lg z-20 whitespace-nowrap"
+                  style={{
+                    background: 'rgba(15,20,35,0.95)',
+                    border: '1px solid rgba(212,175,55,0.15)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                    backdropFilter: 'blur(12px)',
+                    animation: 'tbos-fade-up 0.2s ease-out',
+                  }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1 h-1 rounded-full" style={{ background: dotColor }} />
+                    <span className="text-[9px] font-medium" style={{ color: dotColor }}>{isOk ? 'Conforme' : 'Variance'}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// AI ANALYST BRIEF — Private Advisor Card
+// ═══════════════════════════════════════════════════════
+function AIAnalystBrief() {
+  const [visibleLines, setVisibleLines] = useState(0);
+  const insights = [
+    { icon: '◆', text: 'Recouvrement à 91% — seuil d\'excellence maintenu.', tone: 'positive' as const },
+    { icon: '◆', text: 'Marge brute 49.9% malgré CA modéré — pricing sain.', tone: 'positive' as const },
+    { icon: '▲', text: 'Prix moyen 112 MAD/m³ sous le seuil cible.', tone: 'warning' as const },
+    { icon: '▲', text: '3 clients actifs — risque de concentration élevé.', tone: 'critical' as const },
+  ];
+
+  useEffect(() => {
+    const timers = insights.map((_, i) =>
+      setTimeout(() => setVisibleLines(i + 1), 800 + i * 600)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  return (
+    <Card className="tbos-card-enter">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))' }}>
+            <span className="text-[10px]" style={{ color: T.gold }}>✦</span>
+          </div>
+          <span className="text-[11px] font-medium tracking-wider uppercase" style={{ color: T.goldBright }}>Analyst Brief</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute h-full w-full rounded-full opacity-30" style={{ background: T.gold }} />
+            <span className="relative rounded-full h-1.5 w-1.5" style={{ background: T.gold }} />
+          </span>
+          <span className="text-[9px] font-mono text-slate-600 tabular-nums">live</span>
+        </div>
+      </div>
+      
+      <div className="flex flex-col gap-2.5">
+        {insights.map((insight, i) => {
+          const color = insight.tone === 'positive' ? T.dotOk : insight.tone === 'warning' ? T.dotWarn : T.dotCrit;
+          return (
+            <div
+              key={i}
+              className="flex items-start gap-2.5 transition-all duration-500"
+              style={{
+                opacity: i < visibleLines ? 1 : 0,
+                transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
+              }}
+            >
+              <span className="w-1 h-1 rounded-full mt-[7px] shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}40` }} />
+              <span className="text-[11px] leading-relaxed" style={{ color: 'rgba(148,163,184,0.8)' }}>{insight.text}</span>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Blinking cursor at end */}
+      {visibleLines < insights.length && (
+        <div className="ml-4 mt-1 w-[6px] h-[14px] rounded-sm" style={{ background: T.gold, opacity: 0.6, animation: 'blink 1s step-end infinite' }} />
+      )}
+    </Card>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// PIPELINE FUNNEL — Horizontal Stepped Funnel
+// ═══════════════════════════════════════════════════════
+function PipelineFunnel() {
+  const stages = [
+    { label: 'Devis', value: 3, pct: 100 },
+    { label: 'BC Validés', value: 2, pct: 65 },
+    { label: 'Production', value: 1, pct: 35 },
+    { label: 'Facturé', value: 1, pct: 30 },
+  ];
+
+  return (
+    <Card className="tbos-card-enter">
+      <div className="flex justify-between items-center mb-5">
+        <span className="text-[14px] font-medium text-white/90">Pipeline</span>
+        <span className="text-[20px] font-extralight font-mono text-white tabular-nums">67<span className="text-[11px] text-white/30">%</span></span>
+      </div>
+      
+      <div className="flex items-end gap-1" style={{ height: 80 }}>
+        {stages.map((s, i) => (
+          <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+            <span className="text-[16px] font-extralight font-mono text-white tabular-nums">{s.value}</span>
+            <div
+              className="w-full rounded-sm transition-all duration-1000"
+              style={{
+                height: `${s.pct * 0.6}px`,
+                background: `linear-gradient(180deg, ${T.gold}${Math.round(0.15 + (1 - i/stages.length) * 0.45).toString(16).padStart(2,'0').slice(-2)}, ${T.gold}08)`,
+                border: `1px solid ${T.gold}${Math.round(0.06 + (1 - i/stages.length) * 0.12).toString(16).padStart(2,'0').slice(-2)}`,
+                animation: `tbos-bar-grow 1s cubic-bezier(0.4,0,0.2,1) ${0.15 * i}s both`,
+              }}
+            />
+            <span className="text-[8px] uppercase tracking-[0.12em] text-slate-600">{s.label}</span>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }
 
@@ -100,14 +342,15 @@ const FALLBACK_BATCHES = [
   { id: 'BL-2602-067', volume: 8, quality: 'VAR', time: '18:30', status: 'variance' },
   { id: 'BL-2602-065', volume: 10, quality: 'OK', time: '17:45', status: 'complete' },
   { id: 'BL-2602-068', volume: 8, quality: 'OK', time: '16:20', status: 'complete' },
+  { id: 'BL-2602-064', volume: 6, quality: 'OK', time: '15:10', status: 'complete' },
 ];
 
 const FALLBACK_STOCK = [
-  { name: 'Ciment', current: 7200, max: 10000, unit: 'kg' },
-  { name: 'Adjuvant', current: 320, max: 500, unit: 'L' },
-  { name: 'Gravette', current: 85000, max: 120000, unit: 'kg' },
-  { name: 'Sable', current: 45000, max: 80000, unit: 'kg' },
-  { name: 'Eau', current: 14000, max: 20000, unit: 'L' },
+  { name: 'Ciment', current: 42000, max: 80000, unit: 'kg' },
+  { name: 'Sable', current: 120000, max: 300000, unit: 'm3' },
+  { name: 'Gravette', current: 85000, max: 250000, unit: 'm3' },
+  { name: 'Adjuvant', current: 200, max: 2000, unit: 'L' },
+  { name: 'Eau', current: 15000, max: 999999, unit: 'L' },
 ];
 
 const EMPTY_AR = [
@@ -117,14 +360,6 @@ const EMPTY_AR = [
   { label: '>90j', value: 15000 },
 ];
 
-const EMPTY_CASHFLOW = Array.from({ length: 30 }, (_, i) => ({
-  day: i % 5 === 4 ? `J${i + 1}` : '',
-  fullDay: `J${i + 1}`,
-  actuel: 520000 + Math.sin(i * 0.3) * 15000 + i * 1200,
-  projete: 530000 + Math.sin(i * 0.3) * 12000 + i * 1500,
-}));
-
-// AR gold opacities for monochrome aging
 const AR_OPACITIES = [1, 0.65, 0.4, 0.2];
 
 // ─── Live Data Hook ───
@@ -133,7 +368,6 @@ function useWorldClassLiveData() {
   const [stockData, setStockData] = useState(FALLBACK_STOCK);
   const [arAgingData, setArAgingData] = useState(EMPTY_AR);
   const [recentBatches, setRecentBatches] = useState(FALLBACK_BATCHES);
-  const [cashFlowData, setCashFlowData] = useState(EMPTY_CASHFLOW);
   const [hourlyProductionData, setHourlyProductionData] = useState<{ hour: string; volume: number }[]>([]);
   const [qualityData, setQualityData] = useState([{ day: "Aujourd'hui", ok: 12, var: 2, crit: 0 }]);
   const [loading, setLoading] = useState(true);
@@ -142,16 +376,13 @@ function useWorldClassLiveData() {
     try {
       const today = new Date();
       const todayStr = format(today, 'yyyy-MM-dd');
-      const thirtyDaysAgo = format(subDays(today, 30), 'yyyy-MM-dd');
 
-      const [stocksRes, arRes, batchesRes, cashInRes, cashOutRes, blTodayRes] = await Promise.all([
+      const [stocksRes, arRes, batchesRes, blTodayRes] = await Promise.all([
         supabase.from('stocks').select('materiau, quantite_actuelle, seuil_alerte, capacite_max, unite'),
         supabase.from('clients').select('solde_du, created_at').gt('solde_du', 0),
         supabase.from('bons_livraison_reels')
           .select('bl_id, volume_m3, quality_status, date_livraison, created_at, formule_id, affaissement_conforme')
-          .order('created_at', { ascending: false }).limit(5),
-        supabase.from('factures').select('total_ttc, date_facture').gte('date_facture', thirtyDaysAgo),
-        supabase.from('depenses').select('montant, date_depense').gte('date_depense', thirtyDaysAgo),
+          .order('created_at', { ascending: false }).limit(6),
         supabase.from('bons_livraison_reels')
           .select('volume_m3, created_at, quality_status, affaissement_conforme')
           .gte('date_livraison', todayStr),
@@ -202,29 +433,6 @@ function useWorldClassLiveData() {
         if (mapped.length > 0) setRecentBatches(mapped);
       }
 
-      if (cashInRes.data || cashOutRes.data) {
-        const dayMap: Record<string, { actuel: number }> = {};
-        for (let i = 0; i < 30; i++) {
-          dayMap[format(subDays(today, 29 - i), 'yyyy-MM-dd')] = { actuel: 0 };
-        }
-        cashInRes.data?.forEach(f => {
-          const d = (f as any).date_facture;
-          if (dayMap[d]) dayMap[d].actuel += (f as any).total_ttc || 0;
-        });
-        cashOutRes.data?.forEach(dep => {
-          if (dayMap[dep.date_depense]) dayMap[dep.date_depense].actuel -= dep.montant || 0;
-        });
-        let cum = 0;
-        const hasRealData = Object.values(dayMap).some(v => v.actuel !== 0);
-        if (hasRealData) {
-          const cfData = Object.entries(dayMap).map(([, val], i) => {
-            cum += val.actuel;
-            return { day: i % 5 === 4 ? `J${i + 1}` : '', fullDay: `J${i + 1}`, actuel: Math.round(cum), projete: Math.round(cum * 1.08) };
-          });
-          setCashFlowData(cfData);
-        }
-      }
-
       if (blTodayRes.data?.length) {
         const hourBuckets: Record<string, number> = {};
         for (let h = 6; h <= 18; h++) hourBuckets[`${h.toString().padStart(2, '0')}h`] = 0;
@@ -258,7 +466,7 @@ function useWorldClassLiveData() {
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { stats, statsLoading, stockData, arAgingData, recentBatches, cashFlowData, hourlyProductionData, qualityData, loading };
+  return { stats, statsLoading, stockData, arAgingData, recentBatches, hourlyProductionData, qualityData, loading };
 }
 
 // ═══════════════════════════════════════════════════════
@@ -267,14 +475,12 @@ function useWorldClassLiveData() {
 export function WorldClassDashboard() {
   const {
     stats, stockData, arAgingData, recentBatches: batches,
-    cashFlowData, hourlyProductionData, qualityData, loading,
+    hourlyProductionData, qualityData, loading,
   } = useWorldClassLiveData();
 
-  const totalCashIn = cashFlowData.length ? cashFlowData[cashFlowData.length - 1]?.actuel || 0 : 0;
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851);
 
-  // Production chart data fallback
   const prodChartData = hourlyProductionData.length ? hourlyProductionData : [
     { hour: '06h', volume: 12 }, { hour: '07h', volume: 28 }, { hour: '08h', volume: 65 },
     { hour: '09h', volume: 82 }, { hour: '10h', volume: 95 }, { hour: '11h', volume: 78 },
@@ -287,23 +493,21 @@ export function WorldClassDashboard() {
     <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'Inter, system-ui, sans-serif', color: T.textPri }}>
 
       <style>{`
-        @keyframes tbos-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes tbos-bar-grow { from { width: 0%; } }
+        @keyframes tbos-fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes tbos-bar-grow { from { height: 0; } }
+        @keyframes blink { 50% { opacity: 0; } }
+        @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
         .tbos-card-enter { animation: tbos-fade-up 600ms ease-out forwards; }
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
         @media (max-width: 768px) {
-          .tbos-grid-2col, .tbos-grid-3col { grid-template-columns: 1fr !important; }
-          .tbos-grid-batches { grid-template-columns: repeat(5, 75vw) !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-          .tbos-grid-batches::-webkit-scrollbar { display: none; }
+          .tbos-grid-3col { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
       <div style={{ maxWidth: 1600, margin: '0 auto' }}>
-
-        {/* ═══ COLUMN 1/2/3 GRID ═══ */}
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5" style={{ alignItems: 'start' }}>
 
-          {/* ─── Col 1: Production & Quality ─── */}
+          {/* ─── Col 1: Production + Batch Timeline ─── */}
           <div className="space-y-5">
             {/* Daily Production Chart */}
             <Card className="tbos-card-enter" style={{ height: 280 }}>
@@ -311,11 +515,11 @@ export function WorldClassDashboard() {
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
                   <div className="flex items-center gap-2 text-[11px] mt-1">
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} /> {qualityData[0].ok} OK</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> {qualityData[0].ok} OK</span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FDB913' }} /> {qualityData[0].var} Var</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotWarn }} /> {qualityData[0].var} Var</span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FF6B6B' }} /> {qualityData[0].crit} Crit</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> {qualityData[0].crit} Crit</span>
                   </div>
                 </div>
                 <div>
@@ -328,47 +532,68 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#FDB913" stopOpacity={0.3} />
-                        <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
+                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.2} />
+                        <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
-                    {/* Glow layer */}
-                    <Area type="monotone" dataKey="volume" stroke="#FDB913" strokeWidth={8} strokeOpacity={0.12} fill="none" dot={false} activeDot={false} animationDuration={1200} />
-                    {/* Main curve */}
-                    <Area type="monotone" dataKey="volume" stroke="#FDB913" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 4, fill: '#FDB913', stroke: 'rgba(253,185,19,0.3)', strokeWidth: 8 }} animationDuration={1200} />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={5} strokeOpacity={0.06} fill="none" dot={false} activeDot={false} animationDuration={1200} />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={1.5} fill="url(#prodGrad)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: `${T.gold}40`, strokeWidth: 6 }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </Card>
 
-            {/* Derniers Batches */}
+            {/* Batch Timeline */}
             <Card className="tbos-card-enter">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: T.dotOk }} />
                 </span>
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
+                <span className="text-[9px] font-mono text-slate-600 ml-auto tabular-nums">{batches.length} récents</span>
               </div>
-              <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
-                {batches.slice(0, 5).map((b, i) => (
-                  <div key={i} className="flex-shrink-0 rounded-xl p-3 relative overflow-hidden"
-                    style={{
-                      width: '110px',
-                      minWidth: '110px',
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-                      border: '1px solid rgba(255,255,255,0.06)',
-                      animation: `tbos-fade-up 0.5s cubic-bezier(0.16,1,0.3,1) ${0.1 * i + 0.3}s both`,
-                    }}>
-                    {/* Status indicator — left border */}
-                    <div className="absolute top-2 bottom-2 left-0 w-[2px] rounded-full"
-                      style={{ background: b.quality === 'OK' ? '#10B981' : '#FDB913' }} />
-                    <div className="text-[9px] font-mono text-slate-500 truncate tabular-nums pl-2">{b.id}</div>
-                    <div className="text-lg font-light text-white mt-1 pl-2 font-mono tabular-nums">{b.volume} <span className="text-xs text-white/40">m³</span></div>
-                    <div className="flex items-center justify-between mt-2 pl-2">
-                      <span className="text-[9px] font-medium" style={{ color: b.quality === 'OK' ? '#10B981' : '#FDB913' }}>{b.quality}</span>
-                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{b.time}</span>
+              <BatchTimeline batches={batches} />
+            </Card>
+
+            {/* AI Analyst Brief */}
+            <AIAnalystBrief />
+          </div>
+
+          {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
+          <div className="space-y-5">
+            {/* Stock Levels — Radial Gauges */}
+            <Card className="tbos-card-enter">
+              <div className="text-[14px] font-medium text-white/90 mb-5">Niveaux de Stock</div>
+              <div className="grid grid-cols-3 gap-3">
+                {stockData.slice(0, 6).map((s, i) => (
+                  <RadialGauge key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
+                ))}
+              </div>
+            </Card>
+
+            {/* Pipeline Funnel */}
+            <PipelineFunnel />
+
+            {/* Quality feed — Compact */}
+            <Card className="tbos-card-enter">
+              <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
+              <div className="flex flex-col gap-1">
+                {[
+                  { id: 'BL-2602-070', test: 'Slump 18cm', ok: true, time: '20:41' },
+                  { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
+                  { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
+                ].map((q, i) => (
+                  <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? T.dotOk : T.dotWarn }} />
+                      <span className="text-[11px] font-mono text-slate-400 tabular-nums">{q.id}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <span className="text-slate-500">{q.test}</span>
+                      <span className="text-[9px] font-mono tabular-nums" style={{ color: q.ok ? T.dotOk : T.dotCrit }}>{q.ok ? 'OK' : 'VAR'}</span>
+                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
                     </div>
                   </div>
                 ))}
@@ -376,28 +601,42 @@ export function WorldClassDashboard() {
             </Card>
           </div>
 
-          {/* ─── Col 2: Stock & Pipeline ─── */}
+          {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-5">
-            {/* Stock Levels */}
+            {/* Créances — Minimal Horizontal Bars */}
             <Card className="tbos-card-enter">
-              <div className="text-[14px] font-medium text-white/90 mb-4">Niveaux de Stock</div>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
+                  <div className="text-[11px] text-slate-600">Vieillissement</div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K</span>
+                  <span className="text-[10px] text-slate-500 ml-1">DH</span>
+                </div>
+              </div>
               <div className="flex flex-col gap-3">
-                {stockData.map((s, i) => {
-                  const pct = (s.current / s.max) * 100;
+                {arAgingData.map((d, i) => {
+                  const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
+                  const pct = (d.value / maxVal) * 100;
+                  const isOverdue = i === 3;
                   return (
                     <div key={i}>
-                      <div className="flex justify-between mb-1 gap-2">
-                        <span className="text-[12px] text-slate-400">{s.name}</span>
-                        <span className="text-[12px] font-mono tabular-nums text-slate-300">
-                          {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
-                        </span>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-[10px] font-mono text-slate-500 tabular-nums">{d.label}</span>
+                        <span className="text-[10px] font-mono text-slate-400 tabular-nums">{(d.value / 1000).toFixed(0)}K</span>
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                        <div className="tbos-bar-animate h-full rounded-full transition-all duration-1000" style={{
-                          width: `${pct}%`,
-                          background: pct > 25 ? 'linear-gradient(90deg, #C4933B, #FDB913)' : 'linear-gradient(90deg, #FF6B6B, #FB923C)',
-                          opacity: pct > 50 ? 1 : pct > 25 ? 0.7 : 1,
-                        }} />
+                      <div className="h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                        <div
+                          className="h-full rounded-full transition-all duration-1000"
+                          style={{
+                            width: `${pct}%`,
+                            background: isOverdue
+                              ? 'linear-gradient(90deg, #F87171, #FB923C)'
+                              : `linear-gradient(90deg, ${T.gold}, ${T.goldBright})`,
+                            opacity: isOverdue ? 0.9 : AR_OPACITIES[i] * 0.7,
+                          }}
+                        />
                       </div>
                     </div>
                   );
@@ -405,152 +644,21 @@ export function WorldClassDashboard() {
               </div>
             </Card>
 
-            {/* Pipeline Commercial */}
-            <Card className="tbos-card-enter">
-              <div className="flex justify-between items-start mb-4">
-                <span className="text-sm font-medium text-white/90">Pipeline Commercial</span>
-                <span className="text-[11px] text-slate-400">67% conv.</span>
-              </div>
-              <div className="flex flex-col gap-3">
-                {[
-                  { label: 'Devis', value: '3', width: '100%', gradient: 'linear-gradient(90deg, #FDB913, #F2D06B)' },
-                  { label: 'BCs Actifs', value: '2', width: '65%', gradient: 'linear-gradient(90deg, #00D9FF, #38BDF8)' },
-                  { label: 'En attente', value: '45K DH', width: '35%', gradient: 'linear-gradient(90deg, #FF6B6B, #FB923C)' },
-                ].map((item, i) => (
-                  <div key={i}>
-                    <div className="flex justify-between mb-1">
-                      <span className="text-[11px] text-slate-500">{item.label}</span>
-                      <span className="text-[11px] text-slate-300 tabular-nums font-mono">{item.value}</span>
-                    </div>
-                    <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: item.gradient }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="text-center mt-4 pt-4 border-t border-white/[0.05]">
-                <div className="text-3xl font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>67%</div>
-                <div className="text-[11px] text-slate-500 mt-1">Taux de conversion</div>
-              </div>
-            </Card>
-
-            {/* Tendances */}
-            <Card className="tbos-card-enter">
-              <div className="text-[14px] font-medium text-white/90 mb-4">Tendances</div>
-              <div className="text-center py-4">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-[11px]" style={{ color: '#FDB913' }}>↗</span>
-                  <span className="text-4xl font-extralight font-mono text-white tabular-nums" style={{ textShadow: '0 0 30px rgba(253,185,19,0.15)' }}>+8.2</span>
-                  <span className="text-lg font-light text-white/40">%</span>
-                </div>
-                <div className="text-[11px] text-slate-500 mt-1.5 tracking-wider">vs Janvier</div>
-              </div>
-              <div className="grid grid-cols-3 gap-3 mt-4">
-                {[
-                  { label: 'CA', value: '75K', color: '#FDB913' },
-                  { label: 'Marge', value: '49%', color: '#FDB913' },
-                  { label: 'Volume', value: `${prodTotal}`, unit: 'm³', color: '#00D9FF' },
-                ].map((m, i) => (
-                  <div key={i} className="text-center py-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                    <div className="text-lg font-light font-mono text-white tabular-nums">{m.value}<span className="text-xs text-white/30 ml-0.5">{m.unit || ''}</span></div>
-                    <div className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: m.color, opacity: 0.5 }}>{m.label}</div>
-                  </div>
-                ))}
-              </div>
-
-              {/* AI Insights — Purple Accent Treatment */}
-              <div className="border-t border-white/[0.05] mt-4 pt-4 relative">
-                <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-1.5">
-                    <span style={{ color: '#8B5CF6', fontSize: 11 }}>✦</span>
-                    <span className="text-[11px] font-medium" style={{ color: '#A78BFA' }}>AI Insights</span>
-                  </div>
-                  <span className="text-[9px] font-mono text-slate-600 tabular-nums">21:52</span>
-                </div>
-                <div className="flex flex-col gap-2">
-                  {[
-                    { dot: '#34D399', text: 'Taux de recouvrement excellent à 91%.' },
-                    { dot: '#FDB913', text: 'Marge brute saine à 49.9% malgré un CA faible.' },
-                    { dot: '#FF6B6B', text: 'Prix moyen (112 MAD/m³) inférieur au seuil.' },
-                    { dot: '#FF6B6B', text: 'Diversifier portefeuille: 3 clients actifs seulement.' },
-                  ].map((insight, i) => (
-                    <div key={i} className="flex items-start gap-2 text-[11px]">
-                      <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: insight.dot }} />
-                      <span className="text-slate-400">{insight.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* ─── Col 3: Créances & Deliveries ─── */}
-          <div className="space-y-5">
-            {/* Créances par ancienneté */}
-            <Card className="tbos-card-enter">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <div className="text-sm font-medium text-white/90 mb-0.5">Créances Clients</div>
-                  <div className="text-[11px] text-slate-500">Vieillissement des créances</div>
-                </div>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mt-1.5" />
-              </div>
-              <div className="overflow-hidden w-full" style={{ height: 160 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={arAgingData} layout="vertical" barSize={6} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
-                    <XAxis type="number" hide />
-                    <YAxis type="category" dataKey="label" tick={{ fill: 'rgba(71,85,105,1)', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} width={40} />
-                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                    <Bar dataKey="value" radius={[0, 9999, 9999, 0]} animationDuration={1000}>
-                      {arAgingData.map((_, i) => (
-                        <Cell key={i} fill={i === 3 ? '#FF6B6B' : '#FDB913'} fillOpacity={i === 3 ? 0.8 : AR_OPACITIES[i]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/[0.05]">
-                <div>
-                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K</span>
-                  <span className="text-[11px] text-slate-500 ml-1.5">DH total</span>
-                </div>
-                <div className="flex gap-2">
-                  {arAgingData.map((d, i) => (
-                    <span key={i} className="text-[10px] font-mono text-slate-600">{d.label}</span>
-                  ))}
-                </div>
-              </div>
-            </Card>
-
             {/* Recent Deliveries */}
             <RecentDeliveries />
 
-            {/* Quality feed */}
+            {/* Daily P&L Signature Metric */}
             <Card className="tbos-card-enter">
-              <div className="text-sm font-medium text-white/90 mb-4">Contrôle Qualité</div>
-              <div className="flex flex-col gap-2">
-                {[
-                  { id: 'BL-2602-070', test: 'Slump 18cm', ok: true, time: '20:41' },
-                  { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
-                  { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
-                ].map((q, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                      <span className="text-[11px] font-mono text-slate-300 tabular-nums">{q.id}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                      <span>{q.test}</span>
-                      {q.ok ? (
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ color: '#34D399', background: 'rgba(52,211,153,0.1)' }}>OK</span>
-                      ) : (
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded" style={{ color: '#F87171', background: 'rgba(248,113,113,0.1)' }}>Variance</span>
-                      )}
-                      <span className="text-[10px] font-mono text-slate-600 tabular-nums">{q.time}</span>
-                    </div>
-                  </div>
-                ))}
+              <div className="text-center py-3">
+                <div className="text-[9px] uppercase tracking-[0.25em] text-slate-600 mb-2">P&L du jour</div>
+                <div className="text-3xl font-extralight font-mono text-white tabular-nums" style={{ textShadow: `0 0 20px ${T.gold}15` }}>
+                  +18.4K
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1">DH · marge nette estimée</div>
+                <div className="flex items-center justify-center gap-1 mt-2">
+                  <span className="w-1 h-1 rounded-full" style={{ background: T.dotOk }} />
+                  <span className="text-[9px]" style={{ color: T.dotOk }}>+12% vs hier</span>
+                </div>
               </div>
             </Card>
           </div>
