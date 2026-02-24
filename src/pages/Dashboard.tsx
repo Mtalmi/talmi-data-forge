@@ -25,21 +25,27 @@ const CashFlowForecast = lazy(() => import('@/components/dashboard/CashFlowForec
 const BillingDashboardWidget = lazy(() => import('@/components/dashboard/BillingDashboardWidget').then(m => ({ default: m.BillingDashboardWidget })));
 const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m => ({ default: m.TaxComplianceWidget })));
 
-// ─── Count-up animation hook ───
-function useCountUp(target: number, duration = 1200) {
+// ─── Count-up animation hook with delay ───
+function useCountUp(target: number, duration = 1500, delay = 0) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => {
-    const start = performance.now();
-    const animate = (now: number) => {
-      const p = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.round(eased * target));
-      if (p < 1) rafRef.current = requestAnimationFrame(animate);
+    timeoutRef.current = setTimeout(() => {
+      const start = performance.now();
+      const animate = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setValue(Math.round(eased * target));
+        if (p < 1) rafRef.current = requestAnimationFrame(animate);
+      };
+      rafRef.current = requestAnimationFrame(animate);
+    }, delay);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [target, duration]);
+  }, [target, duration, delay]);
   return value;
 }
 
@@ -98,11 +104,11 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Animated KPI values
-  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671);
-  const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 76);
-  const marge = useCountUp(periodStats.margeBrutePct > 0 ? Math.round(periodStats.margeBrutePct * 10) : 499);
-  const tresorerie = useCountUp(551);
+  // Animated KPI values — staggered wave effect
+  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671, 1500, 0);
+  const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 76, 1500, 200);
+  const marge = useCountUp(periodStats.margeBrutePct > 0 ? Math.round(periodStats.margeBrutePct * 10) : 499, 1500, 400);
+  const tresorerie = useCountUp(551, 1500, 600);
 
   // Build sparkline SVG path
   const maxV = Math.max(...SPARKLINE_DATA.map(d => d.v));
@@ -141,7 +147,45 @@ export default function Dashboard() {
         <style>{`
           @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
           @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
+          @keyframes live-ping2 { 0% { transform: scale(1); opacity: 0.4; } 70% { transform: scale(2.8); opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
           .tbos-kpi-number { text-shadow: 0 0 30px rgba(232,184,75,0.25), 0 0 60px rgba(232,184,75,0.1); }
+          @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(24px); }
+            100% { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+          }
+          @keyframes fadeInArea {
+            to { opacity: 1; }
+          }
+          @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 0; }
+            15% { opacity: 0.6; }
+            100% { transform: translateY(-100px); opacity: 0; }
+          }
+          @property --border-angle {
+            syntax: "<angle>";
+            initial-value: 0deg;
+            inherits: false;
+          }
+          @keyframes rotateBorder {
+            to { --border-angle: 360deg; }
+          }
+          .sparkline-draw path.main-line {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: drawLine 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+          }
+          .sparkline-draw path.glow-line {
+            stroke-dasharray: 2000;
+            stroke-dashoffset: 2000;
+            animation: drawLine 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+          }
+          .sparkline-draw path.area-fill {
+            opacity: 0;
+            animation: fadeInArea 1.5s ease-out 2s forwards;
+          }
           .tbos-hero-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.04) 100%);
             border: 1px solid rgba(255,255,255,0.1);
@@ -298,7 +342,7 @@ export default function Dashboard() {
               healthy: true,
             },
           ].map((kpi, i) => (
-            <div key={i} className="tbos-hero-card cursor-default min-w-0 overflow-hidden">
+            <div key={i} className="tbos-hero-card cursor-default min-w-0 overflow-hidden" style={{ animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s both` }}>
               {/* Unit watermark */}
               <div className="absolute bottom-2 right-3 text-[60px] font-extralight text-white/[0.02] leading-none pointer-events-none select-none">
                 {kpi.unit}
@@ -327,11 +371,16 @@ export default function Dashboard() {
 
         {/* The Sparkline — A Living Pulse */}
         <div
-          className="rounded-2xl p-3 lg:p-4 mt-5 mb-4 h-52 relative overflow-hidden transition-all duration-300 z-[1]"
+          className="mt-5 mb-4 h-52 relative z-[1] p-[1px] rounded-[20px]"
           style={{
-            background: 'linear-gradient(180deg, rgba(232,184,75,0.06) 0%, rgba(232,184,75,0.01) 30%, transparent 100%)',
-            border: '1px solid rgba(255,255,255,0.05)',
-            borderRadius: 20,
+            background: `conic-gradient(from var(--border-angle, 0deg), rgba(232,184,75,0.3), rgba(232,184,75,0.05), rgba(59,130,246,0.1), rgba(232,184,75,0.3))`,
+            animation: 'rotateBorder 8s linear infinite',
+          }}
+        >
+        <div
+          className="rounded-[19px] p-3 lg:p-4 h-full relative overflow-hidden transition-all duration-300"
+          style={{
+            background: 'linear-gradient(180deg, rgba(232,184,75,0.06) 0%, rgba(232,184,75,0.01) 30%, #0B0F1A 100%)',
             boxShadow: '0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3)',
           }}
         >
@@ -343,14 +392,34 @@ export default function Dashboard() {
             <path d="M0,170 Q180,160 360,165 T720,155 T1200,160" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
           </svg>
 
-          {/* LIVE indicator */}
+          {/* Floating golden particles */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  width: `${1 + Math.random() * 3}px`,
+                  height: `${1 + Math.random() * 3}px`,
+                  background: 'rgba(232,184,75,0.6)',
+                  left: `${5 + Math.random() * 90}%`,
+                  bottom: `${10 + Math.random() * 40}%`,
+                  animation: `floatUp ${3 + Math.random() * 4}s ease-out ${Math.random() * 5}s infinite`,
+                  boxShadow: '0 0 4px rgba(232,184,75,0.4)',
+                }}
+              />
+            ))}
+          </div>
+
+          {/* LIVE indicator — double ripple */}
           <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" style={{ animation: 'live-ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-30" style={{ animation: 'live-ping2 1.5s cubic-bezier(0,0,0.2,1) 0.3s infinite' }} />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ boxShadow: '0 0 10px rgba(52,211,153,0.5), 0 0 20px rgba(52,211,153,0.2)' }} />
             </span>
-            <span className="text-[9px] font-medium uppercase tracking-[0.25em] text-slate-500">Live</span>
-            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 ml-1">Peak 14h</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.25em]" style={{ color: '#34d399' }}>Live</span>
+            <span className="text-[9px] uppercase tracking-[0.2em]" style={{ color: '#6ee7b7' }}>Peak 14h</span>
           </div>
 
           {/* Last update */}
@@ -358,7 +427,7 @@ export default function Dashboard() {
             <span className="text-[9px] font-mono text-slate-600 tabular-nums">{timeStr}</span>
           </div>
 
-          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
+          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw" preserveAspectRatio="none">
             <defs>
               <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#F2D06B" stopOpacity={0.6} />
@@ -367,12 +436,12 @@ export default function Dashboard() {
                 <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
               </linearGradient>
             </defs>
-            {/* Area fill */}
-            <path d={areaPath} fill="url(#heroGradient)" />
+            {/* Area fill — fades in after line draws */}
+            <path d={areaPath} fill="url(#heroGradient)" className="area-fill" />
             {/* Glow line (behind — wide soft glow) */}
-            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="12" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" />
-            {/* Crisp line */}
-            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="12" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            {/* Crisp line — draws itself */}
+            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" className="main-line" />
             {/* Peak annotation line */}
             <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
             {/* Pulsing beacon at live endpoint */}
@@ -386,6 +455,7 @@ export default function Dashboard() {
             </circle>
           </svg>
         </div>
+        </div>{/* end sparkline rotating border wrapper */}
 
         </div>{/* end hero zone wrapper */}
 
