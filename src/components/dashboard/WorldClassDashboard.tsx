@@ -329,10 +329,7 @@ export function WorldClassDashboard() {
                     <div className="text-[9px] text-slate-500 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{b.id}</div>
                     <div className="text-base font-extralight text-white tabular-nums mt-1" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
-                      <span className="flex items-center gap-1">
-                        <span className={`w-1.5 h-1.5 rounded-full inline-block ${b.quality === 'OK' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                        <span className="text-[11px] text-slate-400">{b.quality}</span>
-                      </span>
+                      <span className={`text-[10px] ${b.quality === 'OK' ? 'text-slate-500' : 'text-amber-400/70'}`}>{b.quality}</span>
                       <span className="text-[9px] text-slate-500 tabular-nums">{b.time}</span>
                     </div>
                   </div>
@@ -371,10 +368,7 @@ export function WorldClassDashboard() {
             <Card className="tbos-card-enter">
               <div className="flex justify-between items-start mb-4">
                 <span className="text-sm font-medium text-white/90">Pipeline Commercial</span>
-                <span className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                  <span className="text-[11px] text-slate-400">67% conv.</span>
-                </span>
+                <span className="text-[11px] text-slate-400">67% conv.</span>
               </div>
               <div className="flex flex-col gap-3">
                 {[
@@ -498,7 +492,7 @@ export function WorldClassDashboard() {
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
                     <span className="text-[11px] text-slate-400 tabular-nums flex-1" style={{ fontFamily: 'Inter, system-ui' }}>{q.id}</span>
                     <span className="text-[11px] text-slate-500">{q.test}</span>
-                    <span className="text-[11px] text-slate-400">{q.ok ? 'OK' : 'Var'}</span>
+                    <span className={`text-[10px] ${q.ok ? 'text-slate-400' : 'text-amber-400/70'}`}>{q.ok ? 'OK' : 'Variance'}</span>
                     <span className="text-[9px] text-slate-500 tabular-nums">{q.time}</span>
                   </div>
                 ))}
