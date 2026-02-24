@@ -1368,6 +1368,12 @@
   height: 6px;
 }
 
+/* Dashboard slim scrollbar */
+.tbos-dashboard-scroll::-webkit-scrollbar { width: 4px; }
+.tbos-dashboard-scroll::-webkit-scrollbar-track { background: transparent; }
+.tbos-dashboard-scroll::-webkit-scrollbar-thumb { background: hsl(51 100% 50% / 0.2); border-radius: 2px; }
+.tbos-dashboard-scroll::-webkit-scrollbar-thumb:hover { background: hsl(51 100% 50% / 0.4); }
+
 ::-webkit-scrollbar-track {
   background: hsl(0 0% 4%);
   border-radius: 3px;
