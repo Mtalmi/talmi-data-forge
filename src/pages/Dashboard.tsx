@@ -603,49 +603,58 @@ export default function Dashboard() {
 
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none">
             <defs>
+              {/* Vogue editorial gradient — champagne to transparent */}
               <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.6} />
-                <stop offset="20%" stopColor="#FDB913" stopOpacity={0.3} />
-                <stop offset="50%" stopColor="#FDB913" stopOpacity={0.08} />
-                <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
+                <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.18} />
+                <stop offset="30%" stopColor="#D4AF37" stopOpacity={0.06} />
+                <stop offset="70%" stopColor="#D4AF37" stopOpacity={0.015} />
+                <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+              </linearGradient>
+              {/* Horizontal gradient along the line — warm to cool platinum */}
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#C9A84C" />
+                <stop offset="40%" stopColor="#E8D5A3" />
+                <stop offset="70%" stopColor="#F5ECD7" />
+                <stop offset="100%" stopColor="#D4AF37" />
               </linearGradient>
               <filter id="sparklineGlow">
-                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feGaussianBlur stdDeviation="2" result="blur" />
                 <feMerge>
                   <feMergeNode in="blur" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+              {/* Subtle outer atmosphere */}
+              <filter id="outerAtmo">
+                <feGaussianBlur stdDeviation="6" />
+              </filter>
             </defs>
-            {/* Area fill — fades in after line draws */}
+            {/* Area fill — whisper-thin wash */}
             <path d={areaPath} fill="url(#sparkGlow)" className="area-fill" />
-            {/* Ultra-wide ambient glow */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="16" strokeOpacity="0.05" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
-            {/* Glow line (behind — wide soft glow for light emission) */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="8" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
-            {/* Crisp line — draws itself */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
-            {/* Peak annotation line */}
-            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 18} stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" strokeDasharray="2 2" />
-            <circle cx={peakX} cy={peakY - 18} r="1" fill="rgba(255,255,255,0.15)" />
-            {/* Data point dots along curve */}
+            {/* Outermost atmospheric haze — barely visible */}
+            <path d={linePath} fill="none" stroke="#D4AF37" strokeWidth="12" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
+            {/* Soft warm glow — refined */}
+            <path d={linePath} fill="none" stroke="#D4AF37" strokeWidth="5" strokeOpacity="0.08" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            {/* Core line — platinum-champagne, editorial weight */}
+            <path d={linePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
+            {/* Peak whisker — architectural */}
+            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 14} stroke="rgba(212,175,55,0.12)" strokeWidth="0.5" strokeDasharray="1.5 2" />
+            <circle cx={peakX} cy={peakY - 14} r="0.8" fill="rgba(212,175,55,0.2)" />
+            {/* Minimal data markers — every other point */}
             {SPARKLINE_DATA.map((d, i) => {
+              if (i % 2 !== 0 && i !== lastIdx) return null;
               const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
               const y = svgH - (d.v / maxV) * svgH * 0.85 - 5;
-              return <circle key={i} cx={x} cy={y} r="1" fill="rgba(253,185,19,0.2)" className="area-fill" />;
+              return <circle key={i} cx={x} cy={y} r="0.8" fill="rgba(212,175,55,0.15)" className="area-fill" />;
             })}
-            {/* Pulsing beacon at live endpoint */}
-            <circle cx={lastX} cy={lastY} r="4" fill="#FDB913">
-              <animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
+            {/* Live endpoint — refined single pulse, no neon */}
+            <circle cx={lastX} cy={lastY} r="2.5" fill="#D4AF37" opacity="0.9">
+              <animate attributeName="r" values="2.5;4;2.5" dur="3s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
             </circle>
-            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(253,185,19,0.15)">
-              <animate attributeName="r" values="12;24;12" dur="3s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" />
-            </circle>
-            <circle cx={lastX} cy={lastY} r="20" fill="none" stroke="rgba(253,185,19,0.08)">
-              <animate attributeName="r" values="20;32;20" dur="3s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.15;0;0.15" dur="3s" repeatCount="indefinite" />
+            <circle cx={lastX} cy={lastY} r="8" fill="none" stroke="rgba(212,175,55,0.1)">
+              <animate attributeName="r" values="8;16;8" dur="4s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.15;0;0.15" dur="4s" repeatCount="indefinite" />
             </circle>
           </svg>
         </div>{/* end sparkline */}
