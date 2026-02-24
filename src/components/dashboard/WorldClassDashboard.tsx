@@ -306,7 +306,7 @@ export function WorldClassDashboard() {
                         <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: T.textFaint, fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148, 163, 184, 0.4)', fontSize: 9 }} axisLine={false} tickLine={false} />
                     <YAxis hide />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold2)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
@@ -457,7 +457,7 @@ export function WorldClassDashboard() {
                     <XAxis type="number" hide />
                     <YAxis type="category" dataKey="label" tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={40} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                    <Bar dataKey="value" radius={[0, 2, 2, 0]} animationDuration={1000}>
+                    <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={1000}>
                       {arAgingData.map((_, i) => <Cell key={i} fill={T.gold} fillOpacity={AR_OPACITIES[i]} />)}
                     </Bar>
                   </BarChart>
