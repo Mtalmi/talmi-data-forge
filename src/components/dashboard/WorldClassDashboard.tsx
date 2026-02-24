@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
 import {
   AreaChart, Area,
   XAxis, Tooltip, ResponsiveContainer,
@@ -63,38 +63,105 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
 }
 
 // ─── Card — World-Class Frosted Glass Surface with Spring Hover ───
-function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string; style?: React.CSSProperties }>(
+  ({ children, className = '', style = {} }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={`group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+          border: '1px solid transparent',
+          borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+          transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.4s ease',
+          ...style,
+        }}
+        onMouseEnter={e => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.transform = 'translateY(-3px) scale(1.008)';
+          el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
+          el.style.borderImage = 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,255,255,0.1), rgba(212,175,55,0.15)) 1';
+        }}
+        onMouseLeave={e => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.transform = 'translateY(0) scale(1)';
+          el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+          el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
+        }}
+      >
+        {/* Top highlight edge */}
+        <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
+        {/* Gradient border glow on hover */}
+        <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
+        {/* Breathing ambient glow */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.03) 0%, transparent 70%)', animation: 'breathe 4s ease-in-out infinite' }} />
+        {children}
+      </div>
+    );
+  }
+);
+Card.displayName = 'Card';
+
+// ─── Rich Tooltip with mini-chart (Datadog-style) ───
+function RichTooltip({ active, payload, label, unit = '', sparkData }: any) {
+  if (!active || !payload?.length) return null;
+  const value = payload[0].value;
   return (
-    <div
-      className={`group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid transparent',
-        borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.4s ease',
-        ...style,
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(-3px) scale(1.008)';
-        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
-        el.style.borderImage = 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,255,255,0.1), rgba(212,175,55,0.15)) 1';
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(0) scale(1)';
-        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
-        el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
-      }}
-    >
-      {/* Top highlight edge */}
-      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
-      {/* Gradient border glow on hover */}
-      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
-      {children}
+    <div style={{
+      background: 'linear-gradient(135deg, rgba(15,20,35,0.97), rgba(10,14,26,0.99))',
+      border: '1px solid rgba(212,175,55,0.15)',
+      borderRadius: 12,
+      padding: '10px 14px',
+      boxShadow: '0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)',
+      backdropFilter: 'blur(16px)',
+      minWidth: 140,
+    }}>
+      <div style={{ fontSize: 9, fontFamily: 'JetBrains Mono', color: 'rgba(148,163,184,0.5)', marginBottom: 4, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</div>
+      <div style={{ fontSize: 20, fontFamily: 'JetBrains Mono', fontWeight: 200, color: '#F1F5F9', letterSpacing: '-0.02em' }}>
+        {typeof value === 'number' ? value.toLocaleString() : value}
+        <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginLeft: 3 }}>{unit}</span>
+      </div>
+      {/* Mini sparkline inside tooltip */}
+      {sparkData && sparkData.length > 2 && (
+        <div style={{ marginTop: 6, height: 20, opacity: 0.5 }}>
+          <svg width="100%" height="20" viewBox={`0 0 ${sparkData.length * 10} 20`} preserveAspectRatio="none">
+            <polyline
+              fill="none"
+              stroke={T.gold}
+              strokeWidth="1"
+              points={sparkData.map((d: any, i: number) => `${i * 10},${20 - (d.volume / Math.max(...sparkData.map((s: any) => s.volume || 1))) * 18}`).join(' ')}
+            />
+          </svg>
+        </div>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+        <span style={{ width: 4, height: 4, borderRadius: '50%', background: T.dotOk }} />
+        <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.4)', fontFamily: 'JetBrains Mono' }}>temps réel</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Illustrated Empty State ───
+function EmptyState({ title, subtitle, icon }: { title: string; subtitle: string; icon: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-8 px-4">
+      <div className="relative mb-4">
+        <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{
+          background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))',
+          border: '1px solid rgba(212,175,55,0.1)',
+        }}>
+          <span className="text-2xl" style={{ filter: 'grayscale(0.3)' }}>{icon}</span>
+        </div>
+        {/* Decorative orbital rings */}
+        <div className="absolute -inset-3 rounded-full border border-dashed pointer-events-none" style={{ borderColor: 'rgba(212,175,55,0.06)', animation: 'spin 20s linear infinite' }} />
+        <div className="absolute -inset-6 rounded-full border border-dashed pointer-events-none" style={{ borderColor: 'rgba(212,175,55,0.03)', animation: 'spin 30s linear infinite reverse' }} />
+      </div>
+      <span className="text-[12px] font-medium text-white/60 mb-1">{title}</span>
+      <span className="text-[10px] text-slate-600 text-center max-w-[200px]">{subtitle}</span>
     </div>
   );
 }
@@ -563,8 +630,21 @@ export function WorldClassDashboard() {
         @keyframes blink { 50% { opacity: 0; } }
         @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
         @keyframes shimmer-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-        .tbos-card-enter { animation: tbos-fade-up 600ms ease-out forwards; }
+        @keyframes breathe { 0%, 100% { opacity: 0.03; transform: scale(1); } 50% { opacity: 0.08; transform: scale(1.1); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes tbos-scroll-reveal { from { opacity: 0; transform: translateY(20px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.15); opacity: 0.15; } 100% { transform: scale(1); opacity: 0.4; } }
+        .tbos-card-enter { animation: tbos-scroll-reveal 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
+        .tbos-stagger-1 { animation-delay: 0ms; }
+        .tbos-stagger-2 { animation-delay: 80ms; }
+        .tbos-stagger-3 { animation-delay: 160ms; }
+        .tbos-stagger-4 { animation-delay: 240ms; }
+        .tbos-stagger-5 { animation-delay: 300ms; }
+        .tbos-stagger-6 { animation-delay: 360ms; }
+        .tbos-stagger-7 { animation-delay: 420ms; }
+        .tbos-stagger-8 { animation-delay: 480ms; }
+        .tbos-stagger-9 { animation-delay: 540ms; }
         @media (max-width: 768px) {
           .tbos-grid-3col { grid-template-columns: 1fr !important; }
         }
@@ -576,7 +656,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 1: Production + Batch Timeline ─── */}
           <div className="space-y-5">
             {/* Daily Production Chart */}
-            <Card className="tbos-card-enter" style={{ height: 280 }}>
+            <Card className="tbos-card-enter tbos-stagger-1" style={{ height: 280 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
@@ -615,7 +695,7 @@ export function WorldClassDashboard() {
                       </filter>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
-                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
+                    <Tooltip content={(p) => <RichTooltip {...p} unit=" m³" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
                     {/* Layer 1: Deep glow */}
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={8} strokeOpacity={0.03} fill="url(#prodGradDeep)" dot={false} activeDot={false} animationDuration={1500} />
                     {/* Layer 2: Mid glow */}
@@ -628,7 +708,7 @@ export function WorldClassDashboard() {
             </Card>
 
             {/* Batch Timeline */}
-            <Card className="tbos-card-enter">
+            <Card className="tbos-card-enter tbos-stagger-2">
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: T.dotOk }} />
@@ -646,7 +726,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
           <div className="space-y-5">
             {/* Stock Levels — Radial Gauges */}
-            <Card className="tbos-card-enter">
+            <Card className="tbos-card-enter tbos-stagger-4">
               <div className="text-[14px] font-medium text-white/90 mb-5">Niveaux de Stock</div>
               <div className="grid grid-cols-3 gap-3">
                 {stockData.slice(0, 6).map((s, i) => (
@@ -659,7 +739,7 @@ export function WorldClassDashboard() {
             <PipelineFunnel />
 
             {/* Quality feed — Compact */}
-            <Card className="tbos-card-enter">
+            <Card className="tbos-card-enter tbos-stagger-6">
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
@@ -686,7 +766,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-5">
             {/* Créances — Minimal Horizontal Bars */}
-            <Card className="tbos-card-enter">
+            <Card className="tbos-card-enter tbos-stagger-7">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
@@ -730,7 +810,7 @@ export function WorldClassDashboard() {
             <RecentDeliveries />
 
             {/* Daily P&L Signature Metric */}
-            <Card className="tbos-card-enter">
+            <Card className="tbos-card-enter tbos-stagger-9">
               <div className="text-center py-3">
                 <div className="text-[9px] uppercase tracking-[0.25em] text-slate-600 mb-2">P&L du jour</div>
                 <div className="text-3xl font-extralight font-mono text-white tabular-nums" style={{ textShadow: `0 0 20px ${T.gold}15` }}>

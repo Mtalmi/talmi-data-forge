@@ -9,26 +9,29 @@ interface PageTransitionProps {
 const pageVariants = {
   initial: {
     opacity: 0,
-    y: 12,
-    filter: 'blur(4px)',
+    y: 10,
+    scale: 0.995,
+    filter: 'blur(6px)',
   },
   enter: {
     opacity: 1,
     y: 0,
+    scale: 1,
     filter: 'blur(0px)',
     transition: {
-      duration: 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94],
-      staggerChildren: 0.06,
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1], // Expo out — Vercel-tier
+      staggerChildren: 0.04,
     },
   },
   exit: {
     opacity: 0,
-    y: -8,
-    filter: 'blur(2px)',
+    y: -6,
+    scale: 1.005,
+    filter: 'blur(4px)',
     transition: {
-      duration: 0.2,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0.25,
+      ease: [0.4, 0, 1, 1],
     },
   },
 };
@@ -44,6 +47,7 @@ export function PageTransition({ children }: PageTransitionProps) {
         initial="initial"
         animate="enter"
         exit="exit"
+        style={{ willChange: 'transform, opacity, filter' }}
       >
         {children}
       </motion.div>
@@ -56,21 +60,21 @@ export const staggerContainer = {
   initial: {},
   enter: {
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
+      staggerChildren: 0.04,
+      delayChildren: 0.08,
     },
   },
 };
 
 export const staggerItem = {
-  initial: { opacity: 0, y: 16, scale: 0.98 },
+  initial: { opacity: 0, y: 14, scale: 0.97 },
   enter: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
-      duration: 0.4,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0.45,
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
