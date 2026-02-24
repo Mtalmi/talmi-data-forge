@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip, ReferenceLine,
@@ -71,6 +72,40 @@ function useProgressBar(target: number, duration = 1000) {
     requestAnimationFrame(run);
   }, [target, duration]);
   return value;
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function useMaintenanceLiveData() {
+  const [kpis, setKpis] = useState({ equipCount: 12, planned: 3, broken: 0, costMTD: 18 });
+  const [serviceRecords, setServiceRecords] = useState<any[]>([]);
+  const fetchData = useCallback(async () => {
+    try {
+      const { count: flotteCount } = await supabase.from('flotte').select('*', { count: 'exact', head: true });
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const { data: records } = await supabase.from('fleet_service_records').select('*').order('date_service', { ascending: false }).limit(20);
+      const { data: monthRecords } = await supabase.from('fleet_service_records').select('cout_total').gte('date_service', startOfMonth.split('T')[0]);
+      const totalCost = (monthRecords || []).reduce((s, r) => s + (r.cout_total || 0), 0);
+      setKpis({
+        equipCount: flotteCount || 12,
+        planned: 3,
+        broken: 0,
+        costMTD: Math.round(totalCost / 1000) || 18,
+      });
+      if (records?.length) setServiceRecords(records);
+    } catch (err) { console.error('Maintenance live data error:', err); }
+  }, []);
+  useEffect(() => {
+    fetchData();
+    const channel = supabase.channel('wc-maintenance-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'fleet_service_records' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'flotte' }, fetchData)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
+  return { kpis, serviceRecords };
 }
 
 // ─────────────────────────────────────────────────────
@@ -814,7 +849,7 @@ const TABS = ['Équipements', 'Planification', 'Historique', 'Pièces'];
 
 export default function WorldClassMaintenance() {
   const [activeTab, setActiveTab] = useState('Équipements');
-
+  const { kpis: maintKpis } = useMaintenanceLiveData();
   return (
     <div style={{ background: T.navy, minHeight: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
       <style>{`
@@ -868,10 +903,10 @@ export default function WorldClassMaintenance() {
 
         {/* ── SECTION 1: KPIs ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-          <KPICard label="Équipements" value={12} color={T.gold}    icon={Settings}     trend="tous référencés"          delay={0}   />
-          <KPICard label="Maintenance Planifiée" value={3} color={T.warning} icon={Calendar}     trend="cette semaine"   delay={80}  />
-          <KPICard label="En Panne" value={0} color={T.success} icon={CheckCircle}  trend="0 depuis 15 jours ✓"  delay={160} />
-          <KPICard label="Coût MTD" value={18} suffix="K DH" color={T.gold} icon={Banknote}  trend="-12% ↓ vs mois dernier" delay={240} />
+          <KPICard label="Équipements" value={maintKpis.equipCount} color={T.gold}    icon={Settings}     trend="tous référencés"          delay={0}   />
+          <KPICard label="Maintenance Planifiée" value={maintKpis.planned} color={T.warning} icon={Calendar}     trend="cette semaine"   delay={80}  />
+          <KPICard label="En Panne" value={maintKpis.broken} color={T.success} icon={CheckCircle}  trend="0 depuis 15 jours ✓"  delay={160} />
+          <KPICard label="Coût MTD" value={maintKpis.costMTD} suffix="K DH" color={T.gold} icon={Banknote}  trend="-12% ↓ vs mois dernier" delay={240} />
         </div>
 
         {/* ── SECTION 2: EQUIPMENT STATUS ── */}

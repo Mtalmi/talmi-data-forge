@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -61,6 +62,42 @@ function useBarWidth(target: number, delay = 0) {
   const [w, setW] = useState(0);
   useEffect(() => { const t = setTimeout(() => setW(target), delay + 400); return () => clearTimeout(t); }, [target, delay]);
   return w;
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function useLaboratoryLiveData() {
+  const [kpis, setKpis] = useState({ testsToday: 8, conformes: 7, nonConformes: 1, enAttente: 2 });
+  const [liveResults, setLiveResults] = useState<typeof RESULTS>([]);
+  const fetchData = useCallback(async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const { data: batches } = await supabase.from('production_batches')
+        .select('id, bl_id, batch_number, quality_status, variance_ciment_pct, variance_eau_pct, created_at')
+        .gte('created_at', today)
+        .order('created_at', { ascending: false });
+      if (batches?.length) {
+        const conformes = batches.filter(b => b.quality_status === 'conforme').length;
+        const nonConformes = batches.filter(b => b.quality_status === 'non_conforme').length;
+        const enAttente = batches.filter(b => !b.quality_status || b.quality_status === 'pending').length;
+        setKpis({
+          testsToday: batches.length,
+          conformes,
+          nonConformes,
+          enAttente,
+        });
+      }
+    } catch (err) { console.error('Laboratory live data error:', err); }
+  }, []);
+  useEffect(() => {
+    fetchData();
+    const channel = supabase.channel('wc-laboratory-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, fetchData)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
+  return { kpis, liveResults };
 }
 
 // ─────────────────────────────────────────────────────
@@ -401,6 +438,7 @@ export default function WorldClassLaboratory() {
   const [hoverNew, setHoverNew] = useState(false);
   const [activePie, setActivePie] = useState<number | null>(null);
   const [normsExpanded, setNormsExpanded] = useState(false);
+  const { kpis: labKpis } = useLaboratoryLiveData();
 
   const tabs = ["Aujourd'hui", 'Cette semaine', 'Résultats', 'Normes'];
   const chartStyle: React.CSSProperties = {
@@ -467,10 +505,10 @@ export default function WorldClassLaboratory() {
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-            <KPICard label="Tests Aujourd'hui"      value={8} color={T.gold}    icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
-            <KPICard label="Conformes"               value={7} color={T.success} icon={CheckCircle}    trend="87.5% taux"       delay={80}  />
-            <KPICard label="Non-Conformes"           value={1} color={T.danger}  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
-            <KPICard label="En Attente Résultat"     value={2} color={T.warning} icon={Clock}                                   delay={240} />
+            <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday} color={T.gold}    icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
+            <KPICard label="Conformes"               value={labKpis.conformes} color={T.success} icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
+            <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color={T.danger}  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />
+            <KPICard label="En Attente Résultat"     value={labKpis.enAttente} color={T.warning} icon={Clock}                                   delay={240} />
           </div>
         </section>
 

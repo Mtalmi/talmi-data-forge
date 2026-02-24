@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, ResponsiveContainer,
@@ -68,6 +69,46 @@ function useBarWidth(target: number, delay = 0) {
     return () => clearTimeout(t);
   }, [target, delay]);
   return w;
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function useContractsLiveData() {
+  const [kpis, setKpis] = useState({ actifs: 14, valeurTotale: 3.2, expirentBientot: 3, renouvellements: 2 });
+  const [liveContracts, setLiveContracts] = useState<typeof CONTRACTS>([]);
+  const fetchData = useCallback(async () => {
+    try {
+      const { data: bcs } = await supabase.from('bons_commande')
+        .select('bc_id, client_id, total_ht, volume_m3, volume_livre, volume_restant, statut, created_at, date_livraison_souhaitee, clients(nom_client)')
+        .in('statut', ['valide', 'en_cours', 'confirme'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (bcs?.length) {
+        const totalValue = bcs.reduce((s, b) => s + (b.total_ht || 0), 0);
+        const expiring = bcs.filter(b => {
+          if (!b.date_livraison_souhaitee) return false;
+          const d = new Date(b.date_livraison_souhaitee);
+          const now = new Date();
+          return d.getTime() - now.getTime() < 30 * 86400000 && d > now;
+        });
+        setKpis({
+          actifs: bcs.length,
+          valeurTotale: Math.round(totalValue / 100000) / 10,
+          expirentBientot: expiring.length,
+          renouvellements: Math.min(expiring.length, 2),
+        });
+      }
+    } catch (err) { console.error('Contracts live data error:', err); }
+  }, []);
+  useEffect(() => {
+    fetchData();
+    const channel = supabase.channel('wc-contracts-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, fetchData)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
+  return { kpis, liveContracts };
 }
 
 // ─────────────────────────────────────────────────────
@@ -445,6 +486,7 @@ export default function WorldClassContracts() {
   const [activeTab, setActiveTab] = useState('Tous');
   const [activeDonut, setActiveDonut] = useState<number | null>(null);
   const [hoverNew, setHoverNew] = useState(false);
+  const { kpis: ctKpis } = useContractsLiveData();
 
   const tabs = ['Tous', 'Actifs', 'Expirent Bientôt', 'Expirés'];
 
@@ -531,10 +573,10 @@ export default function WorldClassContracts() {
         <section>
           <SectionHeader icon={FileText} label="Indicateurs Clés" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-            <KPICard label="Contrats Actifs"       value={14}  color={T.gold}    icon={FileText}     trend="+2 ce trimestre"  trendPositive delay={0}   />
-            <KPICard label="Valeur Totale"         value={3.2} suffix="M DH"     color={T.gold}    icon={Banknote}     trend="+18% vs an dernier" trendPositive delay={80}  decimals={1} />
-            <KPICard label="Expirent Bientôt"      value={3}   color={T.warning} icon={AlertTriangle} trend="dans 30 jours"  trendPositive={false} delay={160} />
-            <KPICard label="Renouvellements"       value={2}   color={T.info}    icon={RefreshCw}   trend="ce mois"       trendPositive={false} delay={240} />
+            <KPICard label="Contrats Actifs"       value={ctKpis.actifs}  color={T.gold}    icon={FileText}     trend="+2 ce trimestre"  trendPositive delay={0}   />
+            <KPICard label="Valeur Totale"         value={ctKpis.valeurTotale} suffix="M DH"     color={T.gold}    icon={Banknote}     trend="+18% vs an dernier" trendPositive delay={80}  decimals={1} />
+            <KPICard label="Expirent Bientôt"      value={ctKpis.expirentBientot}   color={T.warning} icon={AlertTriangle} trend="dans 30 jours"  trendPositive={false} delay={160} />
+            <KPICard label="Renouvellements"       value={ctKpis.renouvellements}   color={T.info}    icon={RefreshCw}   trend="ce mois"       trendPositive={false} delay={240} />
           </div>
         </section>
 

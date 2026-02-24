@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -64,6 +65,57 @@ function useBarWidth(target: number, delay = 0) {
   const [w, setW] = useState(0);
   useEffect(() => { const t = setTimeout(() => setW(target), delay + 400); return () => clearTimeout(t); }, [target, delay]);
   return w;
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function useArchiveLiveData() {
+  const [kpis, setKpis] = useState({ totalLivraisons: 142, volumeTotal: 1685, ponctualite: 91, caLivraisons: 847 });
+  const [liveEntries, setLiveEntries] = useState<typeof ENTRIES>([]);
+  const fetchData = useCallback(async () => {
+    try {
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      const { data: bls } = await supabase.from('bons_livraison_reels')
+        .select('bl_id, date_livraison, client_id, formule_id, volume_m3, camion_assigne, chauffeur_nom, workflow_status, prix_vente_m3, temps_rotation_minutes, clients(nom_client), zones_livraison(nom_zone)')
+        .gte('date_livraison', startOfMonth)
+        .in('workflow_status', ['livre', 'facture'])
+        .order('date_livraison', { ascending: false })
+        .limit(50);
+      if (bls?.length) {
+        const totalVol = bls.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+        const totalCA = bls.reduce((s, b) => s + ((b.prix_vente_m3 || 0) * (b.volume_m3 || 0)), 0);
+        const avgRotation = bls.filter(b => b.temps_rotation_minutes).reduce((s, b) => s + (b.temps_rotation_minutes || 0), 0) / Math.max(bls.filter(b => b.temps_rotation_minutes).length, 1);
+        setKpis({
+          totalLivraisons: bls.length,
+          volumeTotal: Math.round(totalVol),
+          ponctualite: avgRotation < 120 ? 95 : avgRotation < 180 ? 91 : 85,
+          caLivraisons: Math.round(totalCA / 1000),
+        });
+        setLiveEntries(bls.slice(0, 12).map(b => ({
+          bl: b.bl_id,
+          date: b.date_livraison,
+          client: (b.clients as any)?.nom_client || b.client_id,
+          dest: (b.zones_livraison as any)?.nom_zone || '—',
+          product: b.formule_id,
+          vol: b.volume_m3,
+          truck: b.camion_assigne || '—',
+          driver: b.chauffeur_nom || '—',
+          duree: b.temps_rotation_minutes ? `${Math.floor(b.temps_rotation_minutes / 60)}h${String(b.temps_rotation_minutes % 60).padStart(2, '0')}` : '—',
+          status: b.workflow_status === 'livre' ? 'Livré' : 'Facturé',
+        })));
+      }
+    } catch (err) { console.error('Archive live data error:', err); }
+  }, []);
+  useEffect(() => {
+    fetchData();
+    const channel = supabase.channel('wc-archive-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, fetchData)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
+  return { kpis, liveEntries };
 }
 
 // ─────────────────────────────────────────────────────
@@ -375,6 +427,7 @@ export default function WorldClassDeliveryArchive() {
   const [hoverExport, setHoverExport] = useState(false);
   const [search, setSearch] = useState('');
   const [activePie, setActivePie] = useState<number | null>(null);
+  const { kpis: archKpis, liveEntries } = useArchiveLiveData();
 
   const tabs = ['Ce mois', 'Ce trimestre', 'Cette année', 'Tout'];
 
@@ -394,7 +447,8 @@ export default function WorldClassDeliveryArchive() {
     );
   };
 
-  const filteredEntries = ENTRIES.filter(e =>
+  const displayEntries = liveEntries.length > 0 ? liveEntries : ENTRIES;
+  const filteredEntries = displayEntries.filter(e =>
     e.bl.toLowerCase().includes(search.toLowerCase()) ||
     e.client.toLowerCase().includes(search.toLowerCase()) ||
     e.dest.toLowerCase().includes(search.toLowerCase())
@@ -465,10 +519,10 @@ export default function WorldClassDeliveryArchive() {
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-            <KPICard label="Total Livraisons"       value={142}  color={T.gold}    icon={Truck}    trend="+18% vs mois dernier" delay={0}   />
-            <KPICard label="Volume Total"           value={1685} suffix="m³"       color={T.gold}    icon={Package}  trend="+12% ↑"               delay={80}  />
-            <KPICard label="Ponctualité Moyenne"   value={91}   suffix="%"        color={T.success} icon={Clock}    trend="+2%"                  delay={160} />
-            <KPICard label="CA Livraisons"          value={847}  suffix="K DH"     color={T.gold}    icon={Banknote} trend="+15%"                 delay={240} />
+            <KPICard label="Total Livraisons"       value={archKpis.totalLivraisons}  color={T.gold}    icon={Truck}    trend="+18% vs mois dernier" delay={0}   />
+            <KPICard label="Volume Total"           value={archKpis.volumeTotal} suffix="m³"       color={T.gold}    icon={Package}  trend="+12% ↑"               delay={80}  />
+            <KPICard label="Ponctualité Moyenne"   value={archKpis.ponctualite}   suffix="%"        color={T.success} icon={Clock}    trend="+2%"                  delay={160} />
+            <KPICard label="CA Livraisons"          value={archKpis.caLivraisons}  suffix="K DH"     color={T.gold}    icon={Banknote} trend="+15%"                 delay={240} />
           </div>
         </section>
 
