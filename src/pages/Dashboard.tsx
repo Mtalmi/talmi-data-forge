@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
+import batchingPlantBg from '@/assets/batching-plant-backdrop.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
@@ -424,39 +425,18 @@ export default function Dashboard() {
             padding: '20px 24px',
           }}
         >
-          {/* Batching Plant Silhouette — THE SIGNATURE */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.06, zIndex: 0 }} preserveAspectRatio="xMidYMax meet" viewBox="0 0 800 200">
-            <rect x="30" y="60" width="35" height="120" rx="17" fill="rgba(232,184,75,0.5)" />
-            <rect x="70" y="40" width="40" height="140" rx="20" fill="rgba(232,184,75,0.6)" />
-            <rect x="115" y="55" width="35" height="125" rx="17" fill="rgba(232,184,75,0.45)" />
-            <ellipse cx="90" cy="38" rx="22" ry="6" fill="rgba(232,184,75,0.4)" />
-            <line x1="150" y1="90" x2="280" y2="50" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
-            <line x1="152" y1="95" x2="282" y2="55" stroke="rgba(232,184,75,0.25)" strokeWidth="1.5" />
-            <rect x="270" y="50" width="80" height="80" rx="4" fill="rgba(232,184,75,0.5)" />
-            <polygon points="280,130 290,160 350,160 360,130" fill="rgba(232,184,75,0.4)" />
-            <rect x="295" y="35" width="30" height="18" rx="2" fill="rgba(232,184,75,0.35)" />
-            <circle cx="310" cy="90" r="15" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="1.5" />
-            <line x1="320" y1="160" x2="340" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
-            <line x1="320" y1="160" x2="300" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
-            <rect x="290" y="175" width="60" height="20" rx="3" fill="rgba(232,184,75,0.35)" />
-            <circle cx="300" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
-            <circle cx="340" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
-            <rect x="400" y="30" width="30" height="150" rx="2" fill="rgba(232,184,75,0.4)" />
-            <rect x="395" y="25" width="40" height="25" rx="3" fill="rgba(232,184,75,0.45)" />
-            <rect x="405" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
-            <rect x="418" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
-            <rect x="405" y="38" width="6" height="5" rx="1" fill="rgba(232,184,75,0.7)" />
-            <polygon points="500,100 530,100 540,180 490,180" fill="rgba(232,184,75,0.4)" />
-            <polygon points="545,90 575,90 585,180 535,180" fill="rgba(232,184,75,0.35)" />
-            <polygon points="590,105 615,105 625,180 580,180" fill="rgba(232,184,75,0.3)" />
-            <line x1="515" y1="100" x2="350" y2="60" stroke="rgba(232,184,75,0.3)" strokeWidth="2.5" />
-            <line x1="560" y1="90" x2="355" y2="55" stroke="rgba(232,184,75,0.2)" strokeWidth="1.5" />
-            <rect x="660" y="50" width="30" height="130" rx="15" fill="rgba(232,184,75,0.4)" />
-            <rect x="700" y="65" width="30" height="115" rx="15" fill="rgba(232,184,75,0.35)" />
-            <rect x="740" y="55" width="30" height="125" rx="15" fill="rgba(232,184,75,0.3)" />
-            <ellipse cx="675" cy="48" rx="17" ry="5" fill="rgba(232,184,75,0.3)" />
-            <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(232,184,75,0.25)" strokeWidth="1" />
-          </svg>
+          {/* Real Batching Plant Photo — Vogue Editorial */}
+          <img
+            src={batchingPlantBg}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            style={{ opacity: 0.1, zIndex: 0, filter: 'saturate(0.3) brightness(0.7)' }}
+          />
+          {/* Dark gradient overlay to keep curve crisp */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            background: 'linear-gradient(180deg, rgba(11,15,26,0.4) 0%, rgba(11,15,26,0.7) 50%, rgba(11,15,26,0.85) 100%)',
+            zIndex: 1,
+          }} />
 
           {/* Subtle floating particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
