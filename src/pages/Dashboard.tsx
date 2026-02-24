@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
+import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
 import batchingPlantBg from '@/assets/batching-plant-backdrop.jpg';
 import heroPlantCinematic from '@/assets/hero-plant-cinematic.jpg';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,7 @@ const BillingDashboardWidget = lazy(() => import('@/components/dashboard/Billing
 const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m => ({ default: m.TaxComplianceWidget })));
 
 import { useCountUp } from '@/hooks/useCountUp';
+import { TiltCard } from '@/components/dashboard/TiltCard';
 
 // ─── Sparkline data (hourly production) ───
 const SPARKLINE_DATA = [
@@ -50,12 +51,56 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [alertDismissed, setAlertDismissed] = useState(false);
 
+  // ─── Typewriter effect for greeting ───
+  const [typedName, setTypedName] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
+
+  // ─── Mouse parallax state ───
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+
+  // Extract user first name (needed before typewriter)
+  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
+  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
+
   // Auto-refresh
   useEffect(() => {
     if (isCeo) checkPaymentDelays();
     const interval = setInterval(() => { refresh(); refreshPeriod(); }, 30000);
     return () => clearInterval(interval);
   }, [isCeo]);
+
+  // ─── Typewriter boot sequence ───
+  useEffect(() => {
+    const name = firstName;
+    let i = 0;
+    const delay = setTimeout(() => {
+      const interval = setInterval(() => {
+        setTypedName(name.slice(0, i + 1));
+        i++;
+        if (i >= name.length) {
+          clearInterval(interval);
+          setTimeout(() => setShowCursor(false), 1200);
+        }
+      }, 90);
+      return () => clearInterval(interval);
+    }, 600);
+    return () => clearTimeout(delay);
+  }, [firstName]);
+
+  // ─── Mouse parallax tracking ───
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+      setMouseOffset({ x, y });
+    };
+    const el = heroRef.current;
+    el?.addEventListener('mousemove', handleMouseMove);
+    return () => el?.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -80,9 +125,6 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
-  // Extract user first name
-  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
-  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
   // Animated KPI values — staggered wave with decimals support
   const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671, 1800, 200);
@@ -331,18 +373,19 @@ export default function Dashboard() {
         ══════════════════════════════════════════════════ */}
 
         {/* Hero zone wrapper with cinematic backdrop */}
-        <div className="relative">
-          {/* ═══ CINEMATIC HERO IMAGE — Ken Burns slow-motion ═══ */}
+        <div className="relative" ref={heroRef}>
+          {/* ═══ CINEMATIC HERO IMAGE — Ken Burns + Mouse Parallax ═══ */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
             <img
               src={heroPlantCinematic}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out"
               style={{
                 opacity: 0.3,
                 filter: 'saturate(0.5) brightness(0.5) contrast(1.2)',
                 animation: 'kenBurns 45s ease-in-out infinite',
                 transformOrigin: 'center center',
+                transform: `translate(${mouseOffset.x * -12}px, ${mouseOffset.y * -8}px) scale(1.08)`,
               }}
             />
             {/* Cinematic vignette — darkens edges, focuses center */}
@@ -389,7 +432,8 @@ export default function Dashboard() {
               <div>
                 <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-2 font-light">Command Center</p>
                 <h1 className="text-[38px] font-extralight text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>
-                  {firstName}<span className="text-[38px] font-extralight" style={{ color: 'rgba(253,185,19,0.4)' }}>.</span>
+                  {typedName || '\u00A0'}<span className="text-[38px] font-extralight" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
+                  {showCursor && <span className="inline-block w-[2px] h-[36px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                 </h1>
                 <div className="flex items-center gap-3 mt-3">
                   <span className="relative flex h-2 w-2">
@@ -454,7 +498,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
             },
           ].map((kpi, i) => (
-            <div
+            <TiltCard
               key={i}
               className="tbos-hero-card group cursor-default shimmer-effect"
               style={{
@@ -499,7 +543,7 @@ export default function Dashboard() {
                   <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
                 )}
               </div>
-            </div>
+            </TiltCard>
           ))}
         </div>
 
