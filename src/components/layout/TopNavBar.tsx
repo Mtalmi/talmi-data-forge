@@ -32,14 +32,26 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
   return (
     <header className="w-full">
-      <div className="flex items-center justify-end h-14 px-4" style={{ background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-        {/* Right Side — Utility Icons */}
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <div className="hidden md:block w-56">
-            <GlobalSearch />
+      <div
+        className="flex items-center justify-between h-14 px-4 lg:px-8"
+        style={{
+          background: 'rgba(15,23,42,0.8)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255,255,255,0.03)',
+        }}
+      >
+        {/* Search with ⌘K hint */}
+        <div className="relative hidden md:block">
+          <GlobalSearch />
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
+            <kbd className="text-[9px] text-slate-600 px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>⌘</kbd>
+            <kbd className="text-[9px] text-slate-600 px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>K</kbd>
           </div>
+        </div>
 
+        {/* Right side actions */}
+        <div className="flex items-center gap-2 ml-auto">
           <LanguageSwitcher variant="compact" />
           <div className="hidden md:flex"><SoundToggle /></div>
           <div className="hidden md:flex"><ThemeToggle /></div>
@@ -55,15 +67,12 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             </div>
           )}
 
-          {/* User Menu */}
+          {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-muted/50 transition-colors">
-                <div className="h-7 w-7 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-[0_0_12px_hsl(var(--primary)/0.25)]">
-                  <span className="text-xs font-bold text-primary-foreground">
-                    {user?.email?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
+              <button className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold ml-1 cursor-pointer transition-all duration-200 hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, rgba(253,185,19,0.25), rgba(253,185,19,0.08))', color: 'rgba(253,185,19,0.8)' }}>
+                {user?.email?.charAt(0).toUpperCase()}
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl">
