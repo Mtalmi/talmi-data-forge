@@ -74,6 +74,7 @@ function Card({ children, className = '', style = {} }: { children: React.ReactN
         border: '1px solid rgba(255,255,255,0.05)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15)',
         ...style,
       }}
       onMouseEnter={e => {
@@ -319,16 +320,14 @@ export function WorldClassDashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
-                      <linearGradient id="prodGold2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.5} />
-                        <stop offset="30%" stopColor="#E8B84B" stopOpacity={0.15} />
+                      <linearGradient id="prodFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.3} />
                         <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148, 163, 184, 0.3)', fontSize: 9 }} axisLine={false} tickLine={false} />
-                    <YAxis hide />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9 }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold2)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodFill)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -342,18 +341,18 @@ export function WorldClassDashboard() {
                 </span>
                 <span className="text-sm font-medium text-white/90">Derniers Batches</span>
               </div>
-              <div className="tbos-grid-batches" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+              <div className="flex gap-2.5 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {batches.map((b, i) => (
-                  <div key={i} className="rounded-lg p-3" style={{
+                  <div key={i} className="min-w-[110px] max-w-[120px] flex-shrink-0 rounded-xl p-3" style={{
                     background: 'rgba(255,255,255,0.02)',
                     border: '1px solid rgba(255,255,255,0.04)',
                     borderLeft: `2px solid ${b.quality === 'OK' ? T.dotOk : T.dotWarn}`,
                   }}>
-                    <div className="text-[9px] text-slate-500 tabular-nums font-mono">{b.id}</div>
-                    <div className="text-base font-extralight text-white tabular-nums mt-1" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
-                      <span className={`text-[10px] ${b.quality === 'OK' ? 'text-slate-500' : 'text-amber-400/70'}`}>{b.quality}</span>
-                      <span className="text-[9px] text-slate-500 tabular-nums">{b.time}</span>
+                    <div className="text-[9px] font-mono text-slate-500 truncate tabular-nums">{b.id}</div>
+                    <div className="text-base font-light text-white mt-1.5 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
+                    <div className="flex items-center justify-between mt-2 text-[9px] text-slate-500">
+                      <span className={b.quality === 'OK' ? '' : 'text-amber-400/70'}>{b.quality}</span>
+                      <span className="tabular-nums">{b.time}</span>
                     </div>
                   </div>
                 ))}
@@ -510,12 +509,16 @@ export function WorldClassDashboard() {
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
-                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                    <span className="text-[11px] text-slate-400 tabular-nums flex-1 font-mono">{q.id}</span>
-                    <span className="text-[11px] text-slate-500">{q.test}</span>
-                    <span className={`text-[10px] ${q.ok ? 'text-slate-400' : 'text-amber-400/70'}`}>{q.ok ? 'OK' : 'Variance'}</span>
-                    <span className="text-[9px] text-slate-500 tabular-nums">{q.time}</span>
+                  <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                      <span className="text-[11px] font-mono text-slate-300">{q.id}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                      <span>{q.test}</span>
+                      <span className={`text-[10px] ${q.ok ? 'text-slate-400' : 'text-amber-400/80'}`}>{q.ok ? 'OK' : 'Variance'}</span>
+                      <span className="text-[10px] font-mono text-slate-600">{q.time}</span>
+                    </div>
                   </div>
                 ))}
               </div>

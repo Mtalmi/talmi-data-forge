@@ -146,20 +146,19 @@ export function AppSidebar() {
   return (
     <Sidebar
       side={isRTL ? 'right' : 'left'}
-      className={cn(
-        'bg-background',
-        isRTL ? 'border-l border-border' : 'border-r border-border'
-      )}
+      className="!border-0"
       collapsible="icon"
+      style={{
+        background: '#070B12',
+        borderRight: '1px solid rgba(255,255,255,0.03)',
+      } as React.CSSProperties}
     >
-      <SidebarContent className="flex flex-col h-full">
-        {/* Brand */}
+      <SidebarContent className="flex flex-col h-full" style={{ background: 'transparent' }}>
+        {/* Brand — Architectural treatment */}
         {!collapsed && (
-          <div className="px-4 py-4 shrink-0 border-b border-border/30">
-            <span className="text-sm font-bold tracking-wide text-primary">
-              TBOS
-            </span>
-            <span className="text-xs text-muted-foreground ml-1">Suite</span>
+          <div className="px-6 pt-7 pb-6 shrink-0">
+            <div className="text-[13px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>TBOS</div>
+            <div className="text-[9px] tracking-[0.4em] uppercase text-slate-600 mt-0.5">Suite</div>
           </div>
         )}
 
@@ -168,51 +167,60 @@ export function AppSidebar() {
           {sections.map((section) => (
             <div key={section.label}>
               {!collapsed && (
-                <div className="px-4 pt-5 pb-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-muted-foreground/50">
+                <div className="px-6 pt-8 pb-2">
+                  <span className="text-[8px] font-medium uppercase tracking-[0.35em] text-slate-700">
                     {section.label}
                   </span>
                 </div>
               )}
               <SidebarMenu>
-                {section.items.map((item) => (
-                  <SidebarMenuItem key={item.url}>
-                    <SidebarMenuButton
-                      onClick={() => handleNav(item.url)}
-                      tooltip={item.title}
-                      className={cn(
-                        'flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl transition-all duration-200 active:scale-[0.98]',
-                        isActive(item.url)
-                          ? 'bg-primary/10 text-primary border border-primary/20 font-semibold'
-                          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                      )}
-                    >
-                      <item.icon
+                {section.items.map((item) => {
+                  const active = isActive(item.url);
+                  return (
+                    <SidebarMenuItem key={item.url}>
+                      <SidebarMenuButton
+                        onClick={() => handleNav(item.url)}
+                        tooltip={item.title}
                         className={cn(
-                          'h-4 w-4 shrink-0',
-                          isActive(item.url) ? 'text-primary' : 'text-muted-foreground'
+                          'relative flex items-center gap-3 px-6 py-2 mx-3 rounded-lg transition-all duration-300 cursor-pointer',
+                          active
+                            ? 'text-white/90 font-medium'
+                            : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]'
                         )}
-                      />
-                      {!collapsed && <span className="truncate text-sm">{item.title}</span>}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                        style={active ? { background: 'rgba(255,255,255,0.04)' } : undefined}
+                      >
+                        {active && (
+                          <div className="absolute left-0 top-[25%] bottom-[25%] w-[2px] rounded-full" style={{ background: 'linear-gradient(180deg, #D4A843, #F2D06B, #D4A843)' }} />
+                        )}
+                        <item.icon
+                          className={cn(
+                            'w-[15px] h-[15px] shrink-0',
+                            active ? 'opacity-60' : 'opacity-30'
+                          )}
+                        />
+                        {!collapsed && <span className="truncate text-[12.5px]">{item.title}</span>}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
               </SidebarMenu>
             </div>
           ))}
         </nav>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/30 py-3 shrink-0">
+      <SidebarFooter className="shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.03)', background: 'transparent' }}>
         {/* User info */}
         {!collapsed && (
-          <div className="flex items-center gap-3 px-3 pb-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-              <span className="text-xs font-bold text-primary">{userInitials}</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate text-foreground">{userName}</p>
-              <p className="text-[11px] text-muted-foreground truncate">{roleLabel}</p>
+          <div className="px-6 py-5">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.2), rgba(234,179,8,0.1))' }}>
+                <span className="text-[11px] font-medium" style={{ color: 'rgba(234,179,8,0.7)' }}>{userInitials}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-medium text-white/70 truncate">{userName}</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-slate-600 truncate">{roleLabel}</p>
+              </div>
             </div>
           </div>
         )}
@@ -225,10 +233,10 @@ export function AppSidebar() {
                 if (isMobile) setOpenMobile(false);
               }}
               tooltip={nav.logout}
-              className="flex items-center gap-3 px-3 py-2.5 mx-2 rounded-xl text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
+              className="px-6 py-3 text-[10px] text-slate-700 hover:text-slate-400 transition-colors cursor-pointer"
             >
-              <LogOut className="h-4 w-4 shrink-0" />
-              {!collapsed && <span className="text-sm">{nav.logout}</span>}
+              <LogOut className="w-[15px] h-[15px] opacity-30 shrink-0" />
+              {!collapsed && <span>{nav.logout}</span>}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
