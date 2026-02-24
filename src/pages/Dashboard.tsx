@@ -194,20 +194,20 @@ export default function Dashboard() {
             animation: fadeInArea 1.5s ease-out 2s forwards;
           }
           .tbos-hero-card {
-            background: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, rgba(255,255,255,0.03) 100%);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
             border-radius: 20px;
             padding: 28px 28px 24px;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(40px) saturate(1.2);
-            -webkit-backdrop-filter: blur(40px) saturate(1.2);
+            backdrop-filter: blur(24px) saturate(1.3);
+            -webkit-backdrop-filter: blur(24px) saturate(1.3);
             transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow:
-              inset 0 1px 0 rgba(255,255,255,0.07),
-              inset 0 0 40px rgba(253,185,19,0.015),
-              0 1px 3px rgba(0,0,0,0.15),
-              0 8px 32px rgba(0,0,0,0.2);
+              inset 0 1px 0 rgba(255,255,255,0.05),
+              inset 0 0 30px rgba(253,185,19,0.01),
+              0 1px 3px rgba(0,0,0,0.12),
+              0 8px 32px rgba(0,0,0,0.15);
           }
           .tbos-hero-card:hover {
             border-color: rgba(255,255,255,0.14);
@@ -339,15 +339,15 @@ export default function Dashboard() {
               alt=""
               className="absolute inset-0 w-full h-full object-cover"
               style={{
-                opacity: 0.12,
-                filter: 'saturate(0.2) brightness(0.6) contrast(1.1)',
+                opacity: 0.3,
+                filter: 'saturate(0.5) brightness(0.5) contrast(1.2)',
                 animation: 'kenBurns 45s ease-in-out infinite',
                 transformOrigin: 'center center',
               }}
             />
             {/* Cinematic vignette — darkens edges, focuses center */}
             <div className="absolute inset-0" style={{
-              background: `radial-gradient(ellipse 65% 55% at 50% 40%, transparent 0%, rgba(11,15,26,0.5) 50%, rgba(11,15,26,0.95) 100%)`,
+              background: `radial-gradient(ellipse 75% 65% at 50% 30%, transparent 0%, rgba(11,15,26,0.25) 40%, rgba(11,15,26,0.8) 100%)`,
               animation: 'vignettePulse 20s ease-in-out infinite',
             }} />
             {/* Bottom fade to seamless transition */}
@@ -355,8 +355,8 @@ export default function Dashboard() {
               background: 'linear-gradient(to top, #0B0F1A 0%, transparent 100%)',
             }} />
             {/* Top darkening for text readability */}
-            <div className="absolute top-0 left-0 right-0 h-[30%]" style={{
-              background: 'linear-gradient(to bottom, rgba(11,15,26,0.6) 0%, transparent 100%)',
+            <div className="absolute top-0 left-0 right-0 h-[25%]" style={{
+              background: 'linear-gradient(to bottom, rgba(11,15,26,0.4) 0%, transparent 100%)',
             }} />
           </div>
 
@@ -517,7 +517,7 @@ export default function Dashboard() {
             src={heroPlantCinematic}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{ opacity: 0.08, zIndex: 0, filter: 'saturate(0.15) brightness(0.5) contrast(1.2)', objectPosition: 'center 70%' }}
+            style={{ opacity: 0.14, zIndex: 0, filter: 'saturate(0.25) brightness(0.45) contrast(1.2)', objectPosition: 'center 70%' }}
           />
           {/* Dark gradient overlay to keep curve crisp */}
           <div className="absolute inset-0 pointer-events-none" style={{
