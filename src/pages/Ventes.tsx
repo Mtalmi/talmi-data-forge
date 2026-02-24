@@ -569,6 +569,32 @@ export default function Ventes() {
             <SavedFilterViews currentFilters={filters} onApplyFilter={setFilters} />
           </div>
 
+          {/* Active Status Filter Indicator */}
+          {filters.status !== 'all' && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
+               <span className="text-sm text-muted-foreground">{t.pages.ventes.activeFilter}:</span>
+               <Badge variant="secondary" className="gap-1">
+                 {filters.status === 'en_attente' && t.pages.ventes.statusEnAttente}
+                 {filters.status === 'accepte' && t.pages.ventes.statusAccepte}
+                 {filters.status === 'converti' && t.pages.ventes.statusConverti}
+                 {filters.status === 'refuse' && t.pages.ventes.statusRefuse}
+                 {filters.status === 'pret_production' && t.pages.ventes.statusPretProd}
+                 {filters.status === 'en_production' && t.pages.ventes.statusEnProd}
+                 {filters.status === 'termine' && t.pages.ventes.statusTermine}
+                 {filters.status === 'livre' && t.pages.ventes.statusLivre}
+               </Badge>
+               <Button
+                 variant="ghost"
+                 size="sm"
+                 onClick={() => setFilters({ ...filters, status: 'all' })}
+                 className="ml-auto gap-1 text-muted-foreground hover:text-foreground"
+               >
+                 <X className="h-3 w-3" />
+                 {t.pages.ventes.viewAll}
+              </Button>
+            </div>
+          )}
+
 
           {/* ══ World-Class Sales Dashboard ══ */}
           <WorldClassVentes />
