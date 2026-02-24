@@ -151,12 +151,13 @@ export default function Dashboard() {
             background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
             border: 1px solid rgba(255,255,255,0.06);
             border-radius: 16px;
-            padding: 28px 32px;
+            padding: 28px;
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15);
           }
           .tbos-hero-card:hover {
             border-color: rgba(234, 179, 8, 0.15);
@@ -173,6 +174,16 @@ export default function Dashboard() {
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
           }
         `}</style>
+
+        {/* Noise/grain texture overlay — concrete materiality */}
+        <div 
+          className="fixed inset-0 pointer-events-none z-50 opacity-[0.015]"
+          style={{ 
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat',
+            mixBlendMode: 'overlay' as const,
+          }}
+        />
 
         {/* ─── Action buttons: absolute top-right ─── */}
         <div className="absolute top-2 right-4 z-20 flex items-center gap-1.5">
@@ -198,23 +209,33 @@ export default function Dashboard() {
             ZONE 1 — THE PULSE: COMMAND CENTER
         ══════════════════════════════════════════════════ */}
 
-        {/* PART 10: Greeting — Commanding Presence */}
-        <div className="pt-4 pb-6">
-          <h1 className="text-[28px] font-light text-white tracking-tight" style={{ letterSpacing: '-0.02em' }}>
-            {firstName}
-          </h1>
-          <div className="flex items-center gap-3 mt-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
-            </span>
-            <span className="text-[11px] text-slate-500 uppercase tracking-widest">Operational</span>
-            <span className="text-[11px] text-slate-600">Casablanca</span>
+        {/* Hero zone wrapper with ambient aurora */}
+        <div className="relative">
+          {/* Golden aurora behind hero */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+            <div className="absolute -top-32 left-[20%] w-[500px] h-[400px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.04) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+            <div className="absolute -top-20 right-[15%] w-[400px] h-[350px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.025) 0%, transparent 70%)', filter: 'blur(80px)' }} />
           </div>
-        </div>
 
-        {/* PART 2: Hero KPI Cards — Glowing Data Monuments */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          {/* Greeting — Commanding Presence */}
+          <div className="pt-4 pb-6 relative z-[1]">
+            <h1 className="text-[28px] font-light text-white tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+              {firstName}
+            </h1>
+            <div className="flex items-center gap-3 mt-1.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+              </span>
+              <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-slate-500">Operational</span>
+              <span className="text-[9px] font-normal text-slate-600 tracking-wider">Casablanca</span>
+            </div>
+          </div>
+
+          {/* Hero KPI Cards — Glowing Data Monuments */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5 relative z-[1]">
           {[
             {
               label: 'VOLUME',
@@ -245,15 +266,15 @@ export default function Dashboard() {
               healthy: true,
             },
           ].map((kpi, i) => (
-            <div key={i} className="tbos-hero-card cursor-default">
+            <div key={i} className="tbos-hero-card cursor-default min-w-0 overflow-hidden">
               <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(234, 179, 8, 0.5)' }}>
                 {kpi.label}
               </div>
-              <div className="leading-none tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <span className="text-5xl font-extralight text-white leading-none tbos-kpi-number">
+              <div className="leading-none tabular-nums whitespace-nowrap" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                <span className="text-4xl font-extralight text-white leading-none tbos-kpi-number">
                   {kpi.value}
                 </span>
-                <span className="text-lg font-extralight text-slate-500 ml-1">{kpi.unit}</span>
+                <span className="text-base font-extralight text-slate-500 ml-1">{kpi.unit}</span>
               </div>
               <div className="text-[11px] text-slate-500 mt-2">{kpi.sub}</div>
               <div className="mt-1.5 flex items-center gap-1.5">
@@ -268,27 +289,28 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* PART 3: The Sparkline — A Living Pulse */}
+        {/* The Sparkline — A Living Pulse */}
         <div
-          className="rounded-2xl p-3 lg:p-4 mb-8 h-44 relative overflow-hidden transition-all duration-300"
+          className="rounded-2xl p-3 lg:p-4 mt-5 mb-4 h-44 relative overflow-hidden transition-all duration-300 z-[1]"
           style={{
-            background: 'linear-gradient(180deg, rgba(234, 179, 8, 0.03) 0%, transparent 60%)',
-            border: '1px solid rgba(255,255,255,0.04)',
+            background: 'linear-gradient(180deg, rgba(232,184,75,0.025) 0%, rgba(232,184,75,0.005) 40%, transparent 100%)',
+            border: '1px solid rgba(255,255,255,0.03)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15)',
           }}
         >
           {/* LIVE indicator */}
           <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" style={{ animation: 'live-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
             </span>
-            <span className="text-[10px] font-medium uppercase tracking-widest text-slate-500">Live</span>
-            <span className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">Peak 14h</span>
+            <span className="text-[9px] font-medium uppercase tracking-[0.25em] text-slate-500">Live</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 ml-1">Peak 14h</span>
           </div>
 
           {/* Last update */}
           <div className="absolute top-3 right-4 z-10">
-            <span className="text-[10px] text-slate-600 font-mono tabular-nums">{timeStr}</span>
+            <span className="text-[9px] font-mono text-slate-600 tabular-nums">{timeStr}</span>
           </div>
 
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
@@ -320,7 +342,9 @@ export default function Dashboard() {
           </svg>
         </div>
 
-        {/* PART 9: Alert Strip — Intelligent Urgency */}
+        </div>{/* end hero zone wrapper */}
+
+        {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
           <div
             className="flex items-center justify-between px-5 py-3 rounded-xl mb-8"
@@ -356,10 +380,10 @@ export default function Dashboard() {
           onDismiss={dismissAlert}
         />
 
-        {/* PART 4: Cinematic Section Transition */}
-        <div className="my-8 flex items-center gap-4">
+        {/* Cinematic Section Transition */}
+        <div className="mt-8 mb-8 flex items-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Opérations</span>
+          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500">Opérations</span>
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
         </div>
 
