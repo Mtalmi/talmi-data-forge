@@ -62,3 +62,69 @@ verify_jwt = false
 
 [functions.ai-predictive-analytics]
 verify_jwt = false
+
+[functions.n8n-quality-failure]
+verify_jwt = false
+
+[functions.n8n-delivery-event]
+verify_jwt = false
+
+[functions.n8n-inventory-alert]
+verify_jwt = false
+
+[functions.n8n-maintenance-alert]
+verify_jwt = false
+
+[functions.n8n-save-briefing]
+verify_jwt = false
+
+[functions.create-superviseur]
+verify_jwt = false
+
+[functions.demo-login]
+verify_jwt = false
+
+[functions.escalate-alerts]
+verify_jwt = false
+
+[functions.gdpr-export]
+verify_jwt = false
+
+[functions.generate-vapid-keys]
+verify_jwt = false
+
+[functions.gps-ingest]
+verify_jwt = false
+
+[functions.notify-devis-rollback]
+verify_jwt = false
+
+[functions.notify-incident]
+verify_jwt = false
+
+[functions.notify-quality-alert]
+verify_jwt = false
+
+[functions.notify-stock-critique]
+verify_jwt = false
+
+[functions.rate-limit-check]
+verify_jwt = false
+
+[functions.send-audit-report]
+verify_jwt = false
+
+[functions.send-daily-journal]
+verify_jwt = false
+
+[functions.send-devis-email]
+verify_jwt = false
+
+[functions.send-emergency-bc-notification]
+verify_jwt = false
+
+[functions.send-weekly-report]
+verify_jwt = false
+
+[functions.setup-employees]
+verify_jwt = false
