@@ -144,10 +144,9 @@ export default function Dashboard() {
           @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
           @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
           @keyframes live-ping2 { 0% { transform: scale(1); opacity: 0.4; } 70% { transform: scale(2.8); opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
-          .tbos-kpi-number { text-shadow: 0 0 40px rgba(232,184,75,0.08); }
           @keyframes cardEntrance {
-            0% { opacity: 0; transform: translateY(24px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(24px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
           }
           @keyframes drawLine {
             to { stroke-dashoffset: 0; }
@@ -160,13 +159,13 @@ export default function Dashboard() {
             15% { opacity: 0.6; }
             100% { transform: translateY(-100px); opacity: 0; }
           }
-          @property --border-angle {
-            syntax: "<angle>";
-            initial-value: 0deg;
-            inherits: false;
+          @keyframes heroGlow {
+            0%, 100% { opacity: 0.4; filter: blur(60px); }
+            50% { opacity: 0.7; filter: blur(80px); }
           }
-          @keyframes rotateBorder {
-            to { --border-angle: 360deg; }
+          @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
           }
           .sparkline-draw path.main-line {
             stroke-dasharray: 2000;
@@ -183,30 +182,39 @@ export default function Dashboard() {
             animation: fadeInArea 1.5s ease-out 2s forwards;
           }
           .tbos-hero-card {
-            background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.012) 60%, rgba(255,255,255,0.025) 100%);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.015) 40%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.07);
             border-radius: 20px;
             padding: 28px 28px 24px;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
+            backdrop-filter: blur(40px) saturate(1.2);
+            -webkit-backdrop-filter: blur(40px) saturate(1.2);
             transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.15), 0 8px 32px rgba(0,0,0,0.2);
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.07),
+              inset 0 0 40px rgba(253,185,19,0.015),
+              0 1px 3px rgba(0,0,0,0.15),
+              0 8px 32px rgba(0,0,0,0.2);
           }
           .tbos-hero-card:hover {
-            border-color: rgba(255,255,255,0.12);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15), 0 16px 48px rgba(0,0,0,0.22), 0 0 0 1px rgba(232,184,75,0.06);
-            transform: translateY(-3px);
+            border-color: rgba(255,255,255,0.14);
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.12),
+              inset 0 0 60px rgba(253,185,19,0.03),
+              0 4px 8px rgba(0,0,0,0.15),
+              0 24px 64px rgba(0,0,0,0.25),
+              0 0 0 1px rgba(253,185,19,0.1);
+            transform: translateY(-4px);
           }
           .tbos-hero-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 8%;
-            right: 8%;
+            left: 5%;
+            right: 5%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
           }
           .tbos-hero-card::after {
             content: '';
@@ -214,8 +222,29 @@ export default function Dashboard() {
             top: 0;
             left: 0;
             width: 1px;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+          }
+          /* Scanline effect on hero cards */
+          .tbos-hero-card .scanline-overlay {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+          }
+          .tbos-hero-card:hover .scanline-overlay {
+            opacity: 1;
+          }
+          .tbos-hero-card .scanline-overlay::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
             height: 40%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent);
+            background: linear-gradient(180deg, transparent, rgba(253,185,19,0.02), transparent);
+            animation: scanline 3s ease-in-out infinite;
           }
         `}</style>
 
@@ -291,12 +320,14 @@ export default function Dashboard() {
 
         {/* Hero zone wrapper with ambient aurora */}
         <div className="relative">
-        {/* Ambient light orbs — DRAMATIC */}
+        {/* Ambient light orbs — Cinematic aurora */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-              <div className="absolute -top-40 left-1/3 w-[800px] h-[600px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.05) 0%, transparent 60%)', filter: 'blur(140px)' }} />
-              <div className="absolute -top-20 right-[10%] w-[500px] h-[400px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.025) 0%, transparent 60%)', filter: 'blur(120px)' }} />
+              <div className="absolute -top-40 left-1/4 w-[900px] h-[700px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 30%, transparent 60%)', filter: 'blur(140px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
+              <div className="absolute -top-20 right-[5%] w-[600px] h-[500px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.03) 0%, transparent 60%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
+              <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.03) 0%, transparent 50%)', filter: 'blur(100px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
             </div>
 
           {/* Engineering grid pattern — blueprint precision */}
@@ -312,19 +343,30 @@ export default function Dashboard() {
           {/* Grid fade-out */}
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
-          {/* Greeting — Refined Presence */}
+          {/* Greeting — Cinematic Hero Moment */}
           <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.16,1,0.3,1) 0s both' }}>
-            <h1 className="text-[32px] font-extralight text-white" style={{ letterSpacing: '-0.03em', lineHeight: 1.1 }}>
-              {firstName}
-            </h1>
-            <div className="flex items-center gap-3 mt-2.5">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.3)' }} />
-              </span>
-              <span className="text-[9px] font-normal uppercase tracking-[0.3em] text-slate-500/70">Operational</span>
-              <span className="w-px h-2.5 bg-slate-700/50" />
-              <span className="text-[9px] font-normal text-slate-600/60 tracking-wider">Casablanca</span>
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-2 font-light">Command Center</p>
+                <h1 className="text-[38px] font-extralight text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>
+                  {firstName}<span className="text-[38px] font-extralight" style={{ color: 'rgba(253,185,19,0.4)' }}>.</span>
+                </h1>
+                <div className="flex items-center gap-3 mt-3">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+                  </span>
+                  <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-emerald-400/50">Operational</span>
+                  <span className="w-px h-3 bg-slate-700/40" />
+                  <span className="text-[9px] text-slate-600/50 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                  <span className="w-px h-3 bg-slate-700/40" />
+                  <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
+                </div>
+              </div>
+              {/* Live clock */}
+              <div className="hidden md:flex flex-col items-end">
+                <span className="text-[28px] font-extralight text-white/20 tabular-nums font-mono" style={{ letterSpacing: '-0.02em' }}>{timeStr}</span>
+              </div>
             </div>
           </div>
 
@@ -374,13 +416,19 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <div
               key={i}
-              className="tbos-hero-card group cursor-default"
+              className="tbos-hero-card group cursor-default shimmer-effect"
               style={{
                 animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both`,
               }}
             >
+              {/* Scanline hover effect */}
+              <div className="scanline-overlay" />
               {/* Category accent — refined thin line */}
-              <div className="absolute top-0 left-[15%] right-[15%] h-px" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}40, transparent)` }} />
+              <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}50, transparent)` }} />
+              {/* Corner accent — luxury watch detail */}
+              <div className="absolute top-0 right-0 w-12 h-12 pointer-events-none" style={{
+                background: `radial-gradient(circle at 100% 0%, ${kpi.accentColor}08 0%, transparent 70%)`,
+              }} />
               {/* Giant unit watermark — subtler */}
               <div className="absolute bottom-[-8px] right-3 text-[72px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06`, fontFamily: 'Inter, system-ui' }}>
                 {kpi.watermark}
@@ -393,14 +441,14 @@ export default function Dashboard() {
 
               {/* Main number with count-up */}
               <div className="flex items-baseline gap-2 leading-none">
-                <span className="text-[2.5rem] font-extralight text-white/95 tabular-nums" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.04em' }}>
+                <span className="text-[2.75rem] font-extralight text-white/95 tabular-nums" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.04em' }}>
                   {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                 </span>
-                <span className="text-[13px] font-light text-white/25">{kpi.unit}</span>
+                <span className="text-[13px] font-light text-white/20">{kpi.unit}</span>
               </div>
 
               {/* Sub info */}
-              <div className="text-[11px] text-slate-500 mt-3 font-mono tabular-nums">{kpi.sub}</div>
+              <div className="text-[11px] text-slate-500/80 mt-3 font-mono tabular-nums">{kpi.sub}</div>
 
               {/* Trend indicator */}
               <div className="mt-2 flex items-center gap-1.5">
@@ -408,7 +456,7 @@ export default function Dashboard() {
                   <span className="text-[11px] font-mono tabular-nums" style={{ color: kpi.accentColor }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 6px rgba(52,211,153,0.4)' }} />
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
                 )}
               </div>
             </div>
@@ -417,11 +465,10 @@ export default function Dashboard() {
 
         {/* The Sparkline — Refined Living Pulse */}
         <div
-          className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden"
+          className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
           style={{
-            background: 'linear-gradient(180deg, rgba(253,185,19,0.03) 0%, rgba(253,185,19,0.003) 40%, rgba(11,15,26,0.95) 100%)',
-            border: '1px solid rgba(255,255,255,0.04)',
-            height: '200px',
+            background: 'linear-gradient(180deg, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.005) 30%, rgba(11,15,26,0.98) 100%)',
+            height: '220px',
             padding: '20px 24px',
           }}
         >
@@ -473,28 +520,48 @@ export default function Dashboard() {
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none">
             <defs>
               <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.5} />
-                <stop offset="30%" stopColor="#FDB913" stopOpacity={0.2} />
-                <stop offset="70%" stopColor="#FDB913" stopOpacity={0.05} />
+                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.6} />
+                <stop offset="20%" stopColor="#FDB913" stopOpacity={0.3} />
+                <stop offset="50%" stopColor="#FDB913" stopOpacity={0.08} />
                 <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
               </linearGradient>
+              <filter id="sparklineGlow">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
             </defs>
             {/* Area fill — fades in after line draws */}
             <path d={areaPath} fill="url(#sparkGlow)" className="area-fill" />
+            {/* Ultra-wide ambient glow */}
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="16" strokeOpacity="0.05" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
             {/* Glow line (behind — wide soft glow for light emission) */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="8" strokeOpacity="0.12" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="8" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
             {/* Crisp line — draws itself */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" />
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
             {/* Peak annotation line */}
-            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 18} stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" strokeDasharray="2 2" />
+            <circle cx={peakX} cy={peakY - 18} r="1" fill="rgba(255,255,255,0.15)" />
+            {/* Data point dots along curve */}
+            {SPARKLINE_DATA.map((d, i) => {
+              const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+              const y = svgH - (d.v / maxV) * svgH * 0.85 - 5;
+              return <circle key={i} cx={x} cy={y} r="1" fill="rgba(253,185,19,0.2)" className="area-fill" />;
+            })}
             {/* Pulsing beacon at live endpoint */}
             <circle cx={lastX} cy={lastY} r="4" fill="#FDB913">
-              <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
             </circle>
-            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(253,185,19,0.2)">
-              <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
+            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(253,185,19,0.15)">
+              <animate attributeName="r" values="12;24;12" dur="3s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.3;0;0.3" dur="3s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={lastX} cy={lastY} r="20" fill="none" stroke="rgba(253,185,19,0.08)">
+              <animate attributeName="r" values="20;32;20" dur="3s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.15;0;0.15" dur="3s" repeatCount="indefinite" />
             </circle>
           </svg>
         </div>{/* end sparkline */}
