@@ -30,7 +30,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, role, signOut } = useAuth();
-  const { t, isRTL } = useI18n();
+  const { t } = useI18n();
 
   const nav = t.nav as Record<string, string>;
 
@@ -96,7 +96,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         { title: nav.security || 'Sécurité', url: '/securite', icon: Shield },
         { title: nav.auditLog || 'Journal', url: '/journal', icon: BookOpen },
         { title: nav.approvals || 'Approbations', url: '/approbations', icon: CheckSquare },
-        { title: nav.supervisorAudit || 'Audit Superviseur', url: '/audit-superviseur', icon: Search },
+        { title: nav.supervisorAudit || 'Audit', url: '/audit-superviseur', icon: Search },
         { title: nav.settings || 'Settings', url: '/settings', icon: Settings },
       ],
     },
@@ -118,24 +118,10 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const userInitials = userName.slice(0, 2).toUpperCase();
   const roleLabel = (role || 'user').toUpperCase();
 
-  const tierFontSize = {
-    command: 'text-[13.5px]',
-    ops: 'text-[12.5px]',
-    finance: 'text-[12px]',
-    admin: 'text-[11.5px]',
-  };
-
-  const tierIconSize = {
-    command: 'w-4 h-4',
-    ops: 'w-[15px] h-[15px]',
-    finance: 'w-[14px] h-[14px]',
-    admin: 'w-[13px] h-[13px]',
-  };
-
   return (
     <aside
       className={cn(
-        'fixed top-0 left-0 bottom-0 w-[240px] z-40 flex flex-col transition-transform duration-300 ease-out',
+        'fixed top-0 left-0 bottom-0 w-[220px] z-40 flex flex-col transition-transform duration-300 ease-out',
         'lg:translate-x-0',
         open ? 'translate-x-0' : '-translate-x-full'
       )}
@@ -149,173 +135,135 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(232,184,75,0.2) 30%, rgba(232,184,75,0.12) 70%, transparent 100%)' }}
       />
 
-      {/* Aggregate texture */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          opacity: 0.006,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='30' r='8' fill='white' opacity='0.3'/%3E%3Ccircle cx='70' cy='15' r='5' fill='white' opacity='0.2'/%3E%3Ccircle cx='45' cy='65' r='10' fill='white' opacity='0.25'/%3E%3Ccircle cx='85' cy='75' r='6' fill='white' opacity='0.2'/%3E%3C/svg%3E")`,
-          backgroundSize: '100px 100px',
-        }}
-      />
-
-      {/* ─── Logo ─── */}
-      <div className="px-6 pt-7 pb-5 shrink-0 relative z-[1]">
+      {/* ─── Logo — compact ─── */}
+      <div className="px-5 pt-4 pb-3 shrink-0 relative z-[1]">
         <div className="relative inline-block">
           <div className="absolute inset-0 blur-xl opacity-20" style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.5) 0%, transparent 70%)' }} />
-          <div className="relative text-[14px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>
+          <div className="relative text-[13px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>
             TBOS
           </div>
         </div>
-        <div className="text-[9px] tracking-[0.4em] uppercase text-slate-600 mt-0.5">Suite</div>
+        <div className="text-[8px] tracking-[0.4em] uppercase text-slate-700 mt-0.5">Suite</div>
       </div>
 
-      {/* ─── Navigation ─── */}
-      <nav className="flex-1 overflow-y-auto py-1 scrollbar-hide relative z-[1]">
-        {sections.map((section) => (
-          <div key={section.label}>
-            {/* Section header */}
-            <div className="px-6 pt-6 pb-1.5">
-              <span className="text-[8px] font-medium uppercase tracking-[0.35em] text-slate-700">
-                {section.label}
-              </span>
-            </div>
+      {/* ─── Navigation — full-fit, no scroll ─── */}
+      <nav className="flex-1 flex flex-col justify-between relative z-[1] min-h-0">
+        <div>
+          {sections.map((section, si) => (
+            <div key={section.label}>
+              {/* Section header — ultra-compact */}
+              <div className={cn('px-5 pb-0.5', si === 0 ? 'pt-1' : 'pt-3')}>
+                <span className="text-[7px] font-medium uppercase tracking-[0.35em] text-slate-700">
+                  {section.label}
+                </span>
+              </div>
 
-            {/* Section items */}
-            <div className="space-y-0.5">
-              {section.items.map((item) => {
-                const active = isActive(item.url);
-                return (
-                  <button
-                    key={item.url}
-                    onClick={() => handleNav(item.url)}
-                    className={cn(
-                      'relative w-full flex items-center gap-3 px-6 py-[7px] cursor-pointer text-left group',
-                      'transition-all duration-300 ease-out',
-                      tierFontSize[section.tier],
-                      active
-                        ? 'text-white/90 font-medium'
-                        : 'text-slate-500 hover:text-slate-300'
-                    )}
-                  >
-                    {/* Hover background sweep — subtle gold wash */}
-                    <span
+              {/* Section items — tight rows */}
+              <div>
+                {section.items.map((item) => {
+                  const active = isActive(item.url);
+                  return (
+                    <button
+                      key={item.url}
+                      onClick={() => handleNav(item.url)}
                       className={cn(
-                        'absolute inset-0 rounded-r-lg transition-all duration-500 ease-out',
+                        'relative w-full flex items-center gap-2.5 px-5 py-[5px] cursor-pointer text-left group',
+                        'transition-all duration-300 ease-out text-[11.5px]',
                         active
-                          ? 'opacity-100'
-                          : 'opacity-0 group-hover:opacity-100'
-                      )}
-                      style={{
-                        background: active
-                          ? 'linear-gradient(90deg, rgba(232,184,75,0.08), rgba(232,184,75,0.02), transparent)'
-                          : 'linear-gradient(90deg, rgba(255,255,255,0.02), transparent)',
-                      }}
-                    />
-
-                    {/* Active gold left bar — with glow */}
-                    {active && (
-                      <>
-                        <span
-                          className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
-                          style={{
-                            background: 'linear-gradient(180deg, #E8B84B, rgba(232,184,75,0.3))',
-                            boxShadow: '0 0 8px rgba(232,184,75,0.3), 0 0 20px rgba(232,184,75,0.1)',
-                          }}
-                        />
-                      </>
-                    )}
-
-                    {/* Icon — gold tint when active, pulse on hover */}
-                    <span
-                      className={cn(
-                        'shrink-0 relative z-[1] transition-all duration-300 flex items-center justify-center',
-                        active
-                          ? 'opacity-80'
-                          : 'opacity-25 group-hover:opacity-50 group-hover:scale-110'
-                      )}
-                      style={active ? { color: 'rgba(232,184,75,0.7)', filter: 'drop-shadow(0 0 4px rgba(232,184,75,0.2))' } : undefined}
-                    >
-                      <item.icon className={tierIconSize[section.tier]} />
-                    </span>
-
-                    {/* Label — slight slide on hover */}
-                    <span
-                      className={cn(
-                        'truncate relative z-[1] transition-all duration-300',
-                        !active && 'group-hover:translate-x-0.5'
+                          ? 'text-white/90 font-medium'
+                          : 'text-slate-500 hover:text-slate-300'
                       )}
                     >
-                      {item.title}
-                    </span>
-
-                    {/* Active beacon dot */}
-                    {active && (
+                      {/* Hover sweep */}
                       <span
-                        className="absolute right-4 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+                        className={cn(
+                          'absolute inset-0 rounded-r-md transition-all duration-500 ease-out',
+                          active ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                        )}
                         style={{
-                          background: '#E8B84B',
-                          boxShadow: '0 0 6px rgba(232,184,75,0.5)',
-                          animation: 'pulse 3s ease-in-out infinite',
+                          background: active
+                            ? 'linear-gradient(90deg, rgba(232,184,75,0.08), rgba(232,184,75,0.02), transparent)'
+                            : 'linear-gradient(90deg, rgba(255,255,255,0.02), transparent)',
                         }}
                       />
-                    )}
-                  </button>
-                );
-              })}
+
+                      {/* Active gold left bar */}
+                      {active && (
+                        <span
+                          className="absolute left-0 top-[3px] bottom-[3px] w-[2px] rounded-full"
+                          style={{
+                            background: 'linear-gradient(180deg, #E8B84B, rgba(232,184,75,0.3))',
+                            boxShadow: '0 0 8px rgba(232,184,75,0.3)',
+                          }}
+                        />
+                      )}
+
+                      {/* Icon */}
+                      <span
+                        className={cn(
+                          'shrink-0 relative z-[1] transition-all duration-300 flex items-center justify-center',
+                          active ? 'opacity-80' : 'opacity-25 group-hover:opacity-50'
+                        )}
+                        style={active ? { color: 'rgba(232,184,75,0.7)', filter: 'drop-shadow(0 0 4px rgba(232,184,75,0.2))' } : undefined}
+                      >
+                        <item.icon className="w-3.5 h-3.5" />
+                      </span>
+
+                      {/* Label */}
+                      <span
+                        className={cn(
+                          'truncate relative z-[1] transition-all duration-300',
+                          !active && 'group-hover:translate-x-0.5'
+                        )}
+                      >
+                        {item.title}
+                      </span>
+
+                      {/* Active beacon */}
+                      {active && (
+                        <span
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+                          style={{
+                            background: '#E8B84B',
+                            boxShadow: '0 0 6px rgba(232,184,75,0.5)',
+                            animation: 'pulse 3s ease-in-out infinite',
+                          }}
+                        />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </nav>
 
-      {/* ─── Casablanca Skyline ─── */}
-      <div className="mt-auto px-4 pb-1 pointer-events-none select-none relative z-[1]">
-        <svg width="100%" height="50" viewBox="0 0 200 50" preserveAspectRatio="xMidYMax meet" style={{ opacity: 0.08 }}>
-          <rect x="45" y="2" width="6" height="45" fill="rgba(232,184,75,0.7)" />
-          <rect x="43" y="0" width="10" height="4" rx="1" fill="rgba(232,184,75,0.6)" />
-          <polygon points="48,0 46,0 48,-3 50,0" fill="rgba(232,184,75,0.5)" />
-          <rect x="44" y="10" width="8" height="12" rx="1" fill="rgba(232,184,75,0.5)" />
-          <rect x="60" y="15" width="14" height="32" rx="1" fill="rgba(232,184,75,0.5)" />
-          <rect x="78" y="20" width="10" height="27" rx="1" fill="rgba(232,184,75,0.4)" />
-          <rect x="92" y="12" width="12" height="35" rx="1" fill="rgba(232,184,75,0.45)" />
-          <rect x="108" y="18" width="16" height="29" rx="1" fill="rgba(232,184,75,0.5)" />
-          <rect x="128" y="22" width="10" height="25" rx="1" fill="rgba(232,184,75,0.35)" />
-          <rect x="142" y="8" width="8" height="39" rx="1" fill="rgba(232,184,75,0.5)" />
-          <rect x="153" y="10" width="8" height="37" rx="1" fill="rgba(232,184,75,0.45)" />
-          <line x1="150" y1="6" x2="153" y2="6" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
-          <rect x="20" y="25" width="12" height="22" rx="1" fill="rgba(232,184,75,0.35)" />
-          <rect x="165" y="28" width="15" height="19" rx="1" fill="rgba(232,184,75,0.3)" />
-          <rect x="5" y="30" width="10" height="17" rx="1" fill="rgba(232,184,75,0.25)" />
-          <line x1="0" y1="47" x2="200" y2="47" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
-        </svg>
-      </div>
-
-      {/* ─── User Profile Footer ─── */}
-      <div className="shrink-0 relative z-[1]" style={{ borderTop: '1px solid rgba(232,184,75,0.06)' }}>
-        <div className="px-5 py-4 flex items-center gap-3 group">
-          {/* Avatar with gold ring */}
+      {/* ─── User Profile Footer — minimal ─── */}
+      <div className="shrink-0 relative z-[1] mt-auto" style={{ borderTop: '1px solid rgba(232,184,75,0.06)' }}>
+        <div className="px-4 py-3 flex items-center gap-2.5 group">
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105"
+            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105"
             style={{
               background: 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(234,179,8,0.08))',
-              boxShadow: '0 0 0 1px rgba(232,184,75,0.15), 0 0 12px rgba(232,184,75,0.05)',
+              boxShadow: '0 0 0 1px rgba(232,184,75,0.15)',
             }}
           >
-            <span className="text-[11px] font-medium" style={{ color: 'rgba(234,179,8,0.8)' }}>{userInitials}</span>
+            <span className="text-[10px] font-medium" style={{ color: 'rgba(234,179,8,0.8)' }}>{userInitials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-white/70 truncate transition-colors duration-300 group-hover:text-white/90">{userName}</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] transition-colors duration-300" style={{ color: 'rgba(232,184,75,0.35)' }}>{roleLabel}</p>
+            <p className="text-[11px] font-medium text-white/70 truncate">{userName}</p>
+            <p className="text-[8px] uppercase tracking-[0.2em]" style={{ color: 'rgba(232,184,75,0.35)' }}>{roleLabel}</p>
           </div>
           <button
             onClick={() => signOut()}
-            className="p-1.5 rounded-lg transition-all duration-300 hover:scale-110"
+            className="p-1 rounded-md transition-all duration-300 hover:scale-110"
             style={{ color: 'rgba(255,255,255,0.15)' }}
             onMouseEnter={e => { e.currentTarget.style.color = 'rgba(232,184,75,0.5)'; e.currentTarget.style.background = 'rgba(232,184,75,0.05)'; }}
             onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.15)'; e.currentTarget.style.background = 'transparent'; }}
             title={nav.logout || 'Logout'}
           >
-            <LogOut className="w-[14px] h-[14px]" />
+            <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
