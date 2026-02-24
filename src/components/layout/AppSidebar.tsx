@@ -109,18 +109,15 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
   const handleNav = (url: string) => {
     navigate(url);
-    // Close on mobile
     if (window.innerWidth < 1024) onClose();
   };
 
-  // User display
   const userEmail = user?.email || '';
   const rawUserName = user?.user_metadata?.full_name || userEmail.split('@')[0] || 'Utilisateur';
   const userName = rawUserName.charAt(0).toUpperCase() + rawUserName.slice(1);
   const userInitials = userName.slice(0, 2).toUpperCase();
   const roleLabel = (role || 'user').toUpperCase();
 
-  // Tier-specific font sizes
   const tierFontSize = {
     command: 'text-[13.5px]',
     ops: 'text-[12.5px]',
@@ -193,35 +190,76 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                     key={item.url}
                     onClick={() => handleNav(item.url)}
                     className={cn(
-                      'relative w-full flex items-center gap-3 px-6 py-[7px] transition-all duration-200 cursor-pointer text-left',
+                      'relative w-full flex items-center gap-3 px-6 py-[7px] cursor-pointer text-left group',
+                      'transition-all duration-300 ease-out',
                       tierFontSize[section.tier],
                       active
                         ? 'text-white/90 font-medium'
-                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]'
+                        : 'text-slate-500 hover:text-slate-300'
                     )}
                   >
-                    {/* Active gold left bar */}
-                    {active && (
-                      <span
-                        className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
-                        style={{ background: 'linear-gradient(180deg, #E8B84B, rgba(232,184,75,0.3))' }}
-                      />
-                    )}
-                    {/* Active tint background */}
-                    {active && (
-                      <span
-                        className="absolute inset-0 rounded-r-lg pointer-events-none"
-                        style={{ background: 'linear-gradient(90deg, rgba(232,184,75,0.06), transparent)' }}
-                      />
-                    )}
-                    <item.icon
+                    {/* Hover background sweep — subtle gold wash */}
+                    <span
                       className={cn(
-                        tierIconSize[section.tier],
-                        'shrink-0 relative z-[1]',
-                        active ? 'opacity-70' : 'opacity-30'
+                        'absolute inset-0 rounded-r-lg transition-all duration-500 ease-out',
+                        active
+                          ? 'opacity-100'
+                          : 'opacity-0 group-hover:opacity-100'
                       )}
+                      style={{
+                        background: active
+                          ? 'linear-gradient(90deg, rgba(232,184,75,0.08), rgba(232,184,75,0.02), transparent)'
+                          : 'linear-gradient(90deg, rgba(255,255,255,0.02), transparent)',
+                      }}
                     />
-                    <span className="truncate relative z-[1]">{item.title}</span>
+
+                    {/* Active gold left bar — with glow */}
+                    {active && (
+                      <>
+                        <span
+                          className="absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
+                          style={{
+                            background: 'linear-gradient(180deg, #E8B84B, rgba(232,184,75,0.3))',
+                            boxShadow: '0 0 8px rgba(232,184,75,0.3), 0 0 20px rgba(232,184,75,0.1)',
+                          }}
+                        />
+                      </>
+                    )}
+
+                    {/* Icon — gold tint when active, pulse on hover */}
+                    <span
+                      className={cn(
+                        'shrink-0 relative z-[1] transition-all duration-300 flex items-center justify-center',
+                        active
+                          ? 'opacity-80'
+                          : 'opacity-25 group-hover:opacity-50 group-hover:scale-110'
+                      )}
+                      style={active ? { color: 'rgba(232,184,75,0.7)', filter: 'drop-shadow(0 0 4px rgba(232,184,75,0.2))' } : undefined}
+                    >
+                      <item.icon className={tierIconSize[section.tier]} />
+                    </span>
+
+                    {/* Label — slight slide on hover */}
+                    <span
+                      className={cn(
+                        'truncate relative z-[1] transition-all duration-300',
+                        !active && 'group-hover:translate-x-0.5'
+                      )}
+                    >
+                      {item.title}
+                    </span>
+
+                    {/* Active beacon dot */}
+                    {active && (
+                      <span
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+                        style={{
+                          background: '#E8B84B',
+                          boxShadow: '0 0 6px rgba(232,184,75,0.5)',
+                          animation: 'pulse 3s ease-in-out infinite',
+                        }}
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -233,46 +271,48 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       {/* ─── Casablanca Skyline ─── */}
       <div className="mt-auto px-4 pb-1 pointer-events-none select-none relative z-[1]">
         <svg width="100%" height="50" viewBox="0 0 200 50" preserveAspectRatio="xMidYMax meet" style={{ opacity: 0.08 }}>
-          {/* Hassan II Mosque minaret */}
           <rect x="45" y="2" width="6" height="45" fill="rgba(232,184,75,0.7)" />
           <rect x="43" y="0" width="10" height="4" rx="1" fill="rgba(232,184,75,0.6)" />
           <polygon points="48,0 46,0 48,-3 50,0" fill="rgba(232,184,75,0.5)" />
           <rect x="44" y="10" width="8" height="12" rx="1" fill="rgba(232,184,75,0.5)" />
-          {/* Modern buildings */}
           <rect x="60" y="15" width="14" height="32" rx="1" fill="rgba(232,184,75,0.5)" />
           <rect x="78" y="20" width="10" height="27" rx="1" fill="rgba(232,184,75,0.4)" />
           <rect x="92" y="12" width="12" height="35" rx="1" fill="rgba(232,184,75,0.45)" />
           <rect x="108" y="18" width="16" height="29" rx="1" fill="rgba(232,184,75,0.5)" />
           <rect x="128" y="22" width="10" height="25" rx="1" fill="rgba(232,184,75,0.35)" />
-          {/* Twin towers */}
           <rect x="142" y="8" width="8" height="39" rx="1" fill="rgba(232,184,75,0.5)" />
           <rect x="153" y="10" width="8" height="37" rx="1" fill="rgba(232,184,75,0.45)" />
           <line x1="150" y1="6" x2="153" y2="6" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
-          {/* Smaller buildings */}
           <rect x="20" y="25" width="12" height="22" rx="1" fill="rgba(232,184,75,0.35)" />
           <rect x="165" y="28" width="15" height="19" rx="1" fill="rgba(232,184,75,0.3)" />
           <rect x="5" y="30" width="10" height="17" rx="1" fill="rgba(232,184,75,0.25)" />
-          {/* Ground */}
           <line x1="0" y1="47" x2="200" y2="47" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
         </svg>
       </div>
 
       {/* ─── User Profile Footer ─── */}
-      <div className="shrink-0 relative z-[1]" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className="px-5 py-4 flex items-center gap-3">
+      <div className="shrink-0 relative z-[1]" style={{ borderTop: '1px solid rgba(232,184,75,0.06)' }}>
+        <div className="px-5 py-4 flex items-center gap-3 group">
+          {/* Avatar with gold ring */}
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(234,179,8,0.08))' }}
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105"
+            style={{
+              background: 'linear-gradient(135deg, rgba(234,179,8,0.25), rgba(234,179,8,0.08))',
+              boxShadow: '0 0 0 1px rgba(232,184,75,0.15), 0 0 12px rgba(232,184,75,0.05)',
+            }}
           >
             <span className="text-[11px] font-medium" style={{ color: 'rgba(234,179,8,0.8)' }}>{userInitials}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-medium text-white/70 truncate">{userName}</p>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-slate-600">{roleLabel}</p>
+            <p className="text-[12px] font-medium text-white/70 truncate transition-colors duration-300 group-hover:text-white/90">{userName}</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] transition-colors duration-300" style={{ color: 'rgba(232,184,75,0.35)' }}>{roleLabel}</p>
           </div>
           <button
             onClick={() => signOut()}
-            className="p-1.5 rounded-lg text-slate-700 hover:text-slate-400 hover:bg-white/[0.03] transition-all"
+            className="p-1.5 rounded-lg transition-all duration-300 hover:scale-110"
+            style={{ color: 'rgba(255,255,255,0.15)' }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'rgba(232,184,75,0.5)'; e.currentTarget.style.background = 'rgba(232,184,75,0.05)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.15)'; e.currentTarget.style.background = 'transparent'; }}
             title={nav.logout || 'Logout'}
           >
             <LogOut className="w-[14px] h-[14px]" />
