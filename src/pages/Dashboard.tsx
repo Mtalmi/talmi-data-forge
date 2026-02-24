@@ -142,6 +142,23 @@ export default function Dashboard() {
           background: 'linear-gradient(165deg, #0D1117 0%, #0B0F1A 30%, #0A0E1C 50%, #0F0D1A 80%, #0D1117 100%)',
         }}
       >
+        {/* BACKGROUND LAYER: Hexagonal geometric pattern */}
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            opacity: 0.012,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 15v22L30 52 0 37V15z' fill='none' stroke='%23E8B84B' stroke-width='0.5'/%3E%3C/svg%3E")`,
+            backgroundSize: '60px 52px',
+          }}
+        />
+        {/* BACKGROUND LAYER: Diagonal accent lines */}
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            opacity: 0.008,
+            backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 80px, rgba(232,184,75,0.15) 80px, rgba(232,184,75,0.15) 81px)`,
+          }}
+        />
 
         {/* Dashboard luxury styles */}
         <style>{`
@@ -342,6 +359,8 @@ export default function Dashboard() {
               unit: 'm³',
               sub: 'Peak 14h',
               trend: '↗ +12%',
+              accentColor: '#00D9FF', // Teal = Production
+              labelColor: 'rgba(0,217,255,0.6)',
             },
             {
               label: 'REVENUE',
@@ -349,6 +368,8 @@ export default function Dashboard() {
               unit: 'DH',
               sub: `${periodStats.nbFactures || 11} factures`,
               trend: '↗ +8.2%',
+              accentColor: '#FDB913', // Gold = Financial
+              labelColor: 'rgba(253,185,19,0.6)',
             },
             {
               label: 'MARGE',
@@ -356,6 +377,8 @@ export default function Dashboard() {
               unit: '%',
               sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
               healthy: true,
+              accentColor: '#FDB913',
+              labelColor: 'rgba(253,185,19,0.6)',
             },
             {
               label: 'TRÉSORERIE',
@@ -363,14 +386,34 @@ export default function Dashboard() {
               unit: 'DH',
               sub: '→ 502K fin mois',
               healthy: true,
+              accentColor: '#FDB913',
+              labelColor: 'rgba(253,185,19,0.6)',
             },
           ].map((kpi, i) => (
-            <div key={i} className="tbos-hero-card cursor-default min-w-0 overflow-hidden" style={{ animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s both` }}>
+            <div
+              key={i}
+              className="tbos-hero-card cursor-default min-w-0 overflow-hidden group"
+              style={{ animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both` }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.borderColor = `${kpi.accentColor}33`;
+                e.currentTarget.style.boxShadow = `0 2px 4px rgba(0,0,0,0.2), 0 16px 48px ${kpi.accentColor}14, inset 0 1px 0 rgba(255,255,255,0.08)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = '';
+                e.currentTarget.style.borderColor = '';
+                e.currentTarget.style.boxShadow = '';
+              }}
+            >
+              {/* Category color bar — top accent */}
+              <div className="absolute top-0 left-[10%] right-[10%] h-[2px] rounded-b-full" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}80, transparent)` }} />
+              {/* Top white highlight */}
+              <div className="absolute top-0 left-[5%] right-[5%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }} />
               {/* Unit watermark */}
-              <div className="absolute bottom-2 right-3 text-[60px] font-extralight text-white/[0.02] leading-none pointer-events-none select-none">
+              <div className="absolute bottom-1 right-3 text-[64px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06` }}>
                 {kpi.unit}
               </div>
-              <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(234, 179, 8, 0.5)' }}>
+              <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: kpi.labelColor }}>
                 {kpi.label}
               </div>
               <div className="leading-none tabular-nums whitespace-nowrap overflow-hidden" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
@@ -379,10 +422,10 @@ export default function Dashboard() {
                 </span>
                 <span className="text-sm lg:text-base font-extralight text-slate-500 ml-1">{kpi.unit}</span>
               </div>
-              <div className="text-[11px] text-slate-500 mt-2">{kpi.sub}</div>
+              <div className="text-[11px] text-slate-500 mt-2 font-mono">{kpi.sub}</div>
               <div className="mt-1.5 flex items-center gap-1.5">
                 {kpi.trend && (
-                  <span className="text-[11px]" style={{ color: '#E8B84B' }}>{kpi.trend}</span>
+                  <span className="text-[11px] font-mono" style={{ color: kpi.accentColor }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
@@ -557,11 +600,10 @@ export default function Dashboard() {
 
         {/* Cinematic Section Transition — Opérations */}
         <div className="relative mt-8 mb-8 py-4">
-          <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(232,184,75,0.3) 10px, rgba(232,184,75,0.3) 11px)` }} />
           <div className="relative z-10 flex items-center gap-4">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
             <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500">Opérations</span>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
           </div>
         </div>
 
@@ -574,11 +616,10 @@ export default function Dashboard() {
 
         {/* Cinematic Section Transition — Finance */}
         <div className="relative my-8 py-4">
-          <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(232,184,75,0.3) 10px, rgba(232,184,75,0.3) 11px)` }} />
           <div className="relative z-10 flex items-center gap-4">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
             <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
           </div>
         </div>
 
