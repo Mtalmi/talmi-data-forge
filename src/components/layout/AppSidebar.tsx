@@ -151,9 +151,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         <div>
           {sections.map((section, si) => (
             <div key={section.label}>
-              {/* Section header — ultra-compact */}
-              <div className={cn('px-5 pb-0.5', si === 0 ? 'pt-1' : 'pt-3')}>
-                <span className="text-[7px] font-medium uppercase tracking-[0.35em] text-slate-700">
+              {/* Section header — refined with opacity transition */}
+              <div className={cn('px-5 pb-0.5 transition-opacity duration-500', si === 0 ? 'pt-1' : 'pt-3')}>
+                <span className="text-[7px] font-medium uppercase tracking-[0.35em] text-slate-700 transition-colors duration-300 group-hover:text-slate-600"
+                  style={{ transition: 'color 0.4s ease, letter-spacing 0.4s ease' }}
+                >
                   {section.label}
                 </span>
               </div>
@@ -168,11 +170,21 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       onClick={() => handleNav(item.url)}
                       className={cn(
                         'relative w-full flex items-center gap-2.5 px-5 py-[5px] cursor-pointer text-left group',
-                        'transition-all duration-300 ease-out text-[11.5px]',
+                        'text-[11.5px]',
                         active
                           ? 'text-white/90 font-medium'
                           : 'text-slate-500 hover:text-slate-300'
                       )}
+                      style={{
+                        transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        transform: 'translateX(0)',
+                      }}
+                      onMouseEnter={e => {
+                        if (!active) (e.currentTarget as HTMLElement).style.transform = 'translateX(2px)';
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLElement).style.transform = 'translateX(0)';
+                      }}
                     >
                       {/* Hover sweep */}
                       <span

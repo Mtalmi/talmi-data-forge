@@ -62,30 +62,66 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
   );
 }
 
-// ─── Card — Frosted Glass Surface ───
+// ─── Card — World-Class Frosted Glass Surface with Spring Hover ───
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-[16px] p-6 transition-all duration-[400ms] ${className}`}
+      className={`group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid transparent',
+        borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+        transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.4s ease',
         ...style,
       }}
       onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(212,175,55,0.12)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)';
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(-3px) scale(1.008)';
+        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
+        el.style.borderImage = 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,255,255,0.1), rgba(212,175,55,0.15)) 1';
       }}
       onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
-        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)';
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+        el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
       }}
     >
-      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
+      {/* Top highlight edge */}
+      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
+      {/* Gradient border glow on hover */}
+      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
       {children}
+    </div>
+  );
+}
+
+// ─── Skeleton Shimmer for Loading States ───
+function SkeletonCard({ height = 200 }: { height?: number }) {
+  return (
+    <div
+      className="relative overflow-hidden rounded-[16px]"
+      style={{
+        height,
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.04)',
+      }}
+    >
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%)',
+        animation: 'shimmer-sweep 2s ease-in-out infinite',
+      }} />
+      <div className="p-6 space-y-4">
+        <div className="h-3 rounded-full w-1/3" style={{ background: 'rgba(255,255,255,0.06)' }} />
+        <div className="h-8 rounded-lg w-1/2" style={{ background: 'rgba(255,255,255,0.04)' }} />
+        <div className="flex gap-3 mt-6">
+          <div className="h-2 rounded-full flex-1" style={{ background: 'rgba(255,255,255,0.03)' }} />
+          <div className="h-2 rounded-full flex-1" style={{ background: 'rgba(255,255,255,0.03)' }} />
+        </div>
+      </div>
     </div>
   );
 }
@@ -489,6 +525,35 @@ export function WorldClassDashboard() {
     { hour: '18h', volume: 38 },
   ];
 
+  if (loading) {
+    return (
+      <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'Inter, system-ui, sans-serif', color: T.textPri }}>
+        <style>{`
+          @keyframes shimmer-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        `}</style>
+        <div style={{ maxWidth: 1600, margin: '0 auto' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="space-y-5">
+              <SkeletonCard height={280} />
+              <SkeletonCard height={140} />
+              <SkeletonCard height={180} />
+            </div>
+            <div className="space-y-5">
+              <SkeletonCard height={240} />
+              <SkeletonCard height={200} />
+              <SkeletonCard height={160} />
+            </div>
+            <div className="space-y-5">
+              <SkeletonCard height={200} />
+              <SkeletonCard height={300} />
+              <SkeletonCard height={120} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'Inter, system-ui, sans-serif', color: T.textPri }}>
 
@@ -497,6 +562,7 @@ export function WorldClassDashboard() {
         @keyframes tbos-bar-grow { from { height: 0; } }
         @keyframes blink { 50% { opacity: 0; } }
         @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+        @keyframes shimmer-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         .tbos-card-enter { animation: tbos-fade-up 600ms ease-out forwards; }
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
         @media (max-width: 768px) {
@@ -532,13 +598,29 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.2} />
+                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.25} />
+                        <stop offset="40%" stopColor={T.gold} stopOpacity={0.12} />
                         <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
+                      <linearGradient id="prodGradDeep" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={T.goldBright} stopOpacity={0.08} />
+                        <stop offset="100%" stopColor={T.goldBright} stopOpacity={0} />
+                      </linearGradient>
+                      <filter id="sparkGlow">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feMerge>
+                          <feMergeNode in="blur" />
+                          <feMergeNode in="SourceGraphic" />
+                        </feMerge>
+                      </filter>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={5} strokeOpacity={0.06} fill="none" dot={false} activeDot={false} animationDuration={1200} />
+                    {/* Layer 1: Deep glow */}
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={8} strokeOpacity={0.03} fill="url(#prodGradDeep)" dot={false} activeDot={false} animationDuration={1500} />
+                    {/* Layer 2: Mid glow */}
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={4} strokeOpacity={0.08} fill="none" dot={false} activeDot={false} animationDuration={1300} filter="url(#sparkGlow)" />
+                    {/* Layer 3: Crisp line + fill */}
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={1.5} fill="url(#prodGrad)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: `${T.gold}40`, strokeWidth: 6 }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
