@@ -65,7 +65,7 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.04] ${className}`}
+      className={`bg-white/[0.02] border border-white/[0.05] rounded-xl p-6 relative overflow-hidden transition-all duration-500 hover:bg-white/[0.03] ${className}`}
       style={style}
     >
       {children}
@@ -306,7 +306,7 @@ export function WorldClassDashboard() {
                         <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148, 163, 184, 0.4)', fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148, 163, 184, 0.3)', fontSize: 9 }} axisLine={false} tickLine={false} />
                     <YAxis hide />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold2)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
@@ -346,7 +346,7 @@ export function WorldClassDashboard() {
               <div className="flex flex-col gap-3">
                 {stockData.map((s, i) => {
                   const pct = (s.current / s.max) * 100;
-                  const opacity = pct > 50 ? 0.8 : pct > 20 ? 0.5 : 0.25;
+                  const opacity = 0.5;
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1 gap-2">
@@ -355,8 +355,8 @@ export function WorldClassDashboard() {
                           {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                         </span>
                       </div>
-                      <div className="h-1.5 rounded-full bg-slate-700/30 overflow-hidden">
-                        <div className="tbos-bar-animate h-full rounded-full" style={{ width: `${pct}%`, background: T.gold, opacity }} />
+                      <div className="h-1 rounded-full bg-white/[0.04] overflow-hidden">
+                        <div className="tbos-bar-animate h-full rounded-full bg-yellow-500/50" style={{ width: `${pct}%` }} />
                       </div>
                     </div>
                   );
