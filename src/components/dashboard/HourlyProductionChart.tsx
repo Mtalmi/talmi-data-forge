@@ -77,11 +77,11 @@ export function HourlyProductionChart() {
             </defs>
             <XAxis
               dataKey="hour"
-              tick={{ fontSize: 9, fill: '#334155', fontFamily: 'Inter, system-ui' }}
+              tick={{ fontSize: 9, fill: 'rgba(148,163,184,0.25)', fontFamily: 'Inter, system-ui' }}
               axisLine={false}
               tickLine={false}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
             <Area
               type="monotone"
               dataKey="volume"

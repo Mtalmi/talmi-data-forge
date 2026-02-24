@@ -133,12 +133,7 @@ export default function Dashboard() {
       <div
         className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8"
         style={{
-          background: '#080C14',
-          backgroundImage: [
-            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(234, 179, 8, 0.04) 0%, transparent 50%)',
-            'radial-gradient(ellipse 60% 40% at 80% 20%, rgba(234, 179, 8, 0.02) 0%, transparent 40%)',
-            'radial-gradient(ellipse 50% 50% at 20% 80%, rgba(59, 130, 246, 0.015) 0%, transparent 40%)',
-          ].join(', '),
+          background: 'linear-gradient(165deg, #0D1117 0%, #0B0F1A 30%, #0A0E1C 50%, #0F0D1A 80%, #0D1117 100%)',
         }}
       >
 
@@ -146,32 +141,41 @@ export default function Dashboard() {
         <style>{`
           @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
           @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
-          .tbos-kpi-number { text-shadow: 0 0 40px rgba(234, 179, 8, 0.15), 0 0 80px rgba(234, 179, 8, 0.05); }
+          .tbos-kpi-number { text-shadow: 0 0 30px rgba(232,184,75,0.25), 0 0 60px rgba(232,184,75,0.1); }
           .tbos-hero-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 28px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.04) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
             transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset, 0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3);
           }
           .tbos-hero-card:hover {
-            border-color: rgba(234, 179, 8, 0.15);
-            box-shadow: 0 8px 40px rgba(234, 179, 8, 0.06), 0 0 0 1px rgba(234, 179, 8, 0.08);
-            transform: translateY(-2px);
+            border-color: rgba(232,184,75,0.25);
+            box-shadow: 0 0 0 1px rgba(232,184,75,0.1) inset, 0 4px 8px rgba(0,0,0,0.2), 0 20px 60px rgba(232,184,75,0.1);
+            transform: translateY(-4px);
           }
           .tbos-hero-card::before {
             content: '';
             position: absolute;
             top: 0;
+            left: 5%;
+            right: 5%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+          }
+          .tbos-hero-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
             left: 10%;
             right: 10%;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            background: linear-gradient(90deg, transparent, rgba(232,184,75,0.15), transparent);
           }
         `}</style>
 
@@ -224,13 +228,15 @@ export default function Dashboard() {
 
         {/* Hero zone wrapper with ambient aurora */}
         <div className="relative">
-          {/* Golden aurora behind hero */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-            <div className="absolute -top-32 left-[20%] w-[500px] h-[400px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.04) 0%, transparent 70%)', filter: 'blur(100px)' }} />
-            <div className="absolute -top-20 right-[15%] w-[400px] h-[350px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.025) 0%, transparent 70%)', filter: 'blur(80px)' }} />
-          </div>
+        {/* Ambient light orbs — DRAMATIC */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+              <div className="absolute -top-40 left-1/3 w-[800px] h-[600px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.08) 0%, transparent 60%)', filter: 'blur(120px)' }} />
+              <div className="absolute -top-20 right-[10%] w-[500px] h-[400px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 60%)', filter: 'blur(100px)' }} />
+              <div className="absolute top-[40%] -left-20 w-[400px] h-[400px] rounded-full" 
+                   style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.035) 0%, transparent 60%)', filter: 'blur(80px)' }} />
+            </div>
 
           {/* Engineering grid pattern — blueprint precision */}
           <div 
@@ -321,11 +327,12 @@ export default function Dashboard() {
 
         {/* The Sparkline — A Living Pulse */}
         <div
-          className="rounded-2xl p-3 lg:p-4 mt-5 mb-4 h-44 relative overflow-hidden transition-all duration-300 z-[1]"
+          className="rounded-2xl p-3 lg:p-4 mt-5 mb-4 h-52 relative overflow-hidden transition-all duration-300 z-[1]"
           style={{
-            background: 'linear-gradient(180deg, rgba(232,184,75,0.025) 0%, rgba(232,184,75,0.005) 40%, transparent 100%)',
-            border: '1px solid rgba(255,255,255,0.03)',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15)',
+            background: 'linear-gradient(180deg, rgba(232,184,75,0.06) 0%, rgba(232,184,75,0.01) 30%, transparent 100%)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            borderRadius: 20,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3)',
           }}
         >
           {/* Topographic contour lines — site survey depth */}
@@ -354,18 +361,18 @@ export default function Dashboard() {
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.5} />
-                <stop offset="30%" stopColor="#E8B84B" stopOpacity={0.2} />
-                <stop offset="70%" stopColor="#E8B84B" stopOpacity={0.05} />
+                <stop offset="0%" stopColor="#F2D06B" stopOpacity={0.6} />
+                <stop offset="25%" stopColor="#E8B84B" stopOpacity={0.3} />
+                <stop offset="50%" stopColor="#E8B84B" stopOpacity={0.1} />
                 <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
               </linearGradient>
             </defs>
             {/* Area fill */}
             <path d={areaPath} fill="url(#heroGradient)" />
-            {/* Glow line (behind) */}
-            <path d={linePath} fill="none" stroke="rgba(232, 184, 75, 0.15)" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round" />
+            {/* Glow line (behind — wide soft glow) */}
+            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="12" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" />
             {/* Crisp line */}
-            <path d={linePath} fill="none" stroke="#E8B84B" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
             {/* Peak annotation line */}
             <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
             {/* Pulsing beacon at live endpoint */}

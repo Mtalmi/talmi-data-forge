@@ -146,13 +146,16 @@ export function AppSidebar() {
   return (
     <Sidebar
       side={isRTL ? 'right' : 'left'}
-      className="!border-0"
+      className="!border-0 relative"
       collapsible="icon"
       style={{
         background: '#070B12',
-        borderRight: '1px solid rgba(255,255,255,0.03)',
+        borderRight: 'none',
       } as React.CSSProperties}
     >
+      {/* Golden spine — right edge gradient border */}
+      <div className="absolute top-0 right-0 bottom-0 w-[1px] z-50" style={{ background: 'linear-gradient(180deg, transparent 0%, rgba(232,184,75,0.2) 30%, rgba(232,184,75,0.15) 70%, transparent 100%)' }} />
+
       <SidebarContent className="flex flex-col h-full relative overflow-hidden" style={{ background: 'transparent' }}>
         {/* Aggregate texture — concrete materiality */}
         <div 
@@ -164,10 +167,13 @@ export function AppSidebar() {
           }}
         />
 
-        {/* Brand — Architectural treatment */}
+        {/* Brand — Architectural treatment with golden halo */}
         {!collapsed && (
           <div className="px-6 pt-7 pb-6 shrink-0 relative z-[1]">
-            <div className="text-[13px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>TBOS</div>
+            <div className="relative inline-block">
+              <div className="absolute inset-0 blur-xl opacity-20" style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.5) 0%, transparent 70%)' }} />
+              <div className="relative text-[13px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>TBOS</div>
+            </div>
             <div className="text-[9px] tracking-[0.4em] uppercase text-slate-600 mt-0.5">Suite</div>
           </div>
         )}
@@ -197,11 +203,8 @@ export function AppSidebar() {
                             ? 'text-white/90 font-medium'
                             : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]'
                         )}
-                        style={active ? { background: 'rgba(255,255,255,0.04)' } : undefined}
+                        style={active ? { background: 'rgba(232,184,75,0.06)', borderLeft: '2px solid #E8B84B' } : undefined}
                       >
-                        {active && (
-                          <div className="absolute left-0 top-[25%] bottom-[25%] w-[2px] rounded-full" style={{ background: 'linear-gradient(180deg, #D4A843, #F2D06B, #D4A843)' }} />
-                        )}
                         <item.icon
                           className={cn(
                             'w-[15px] h-[15px] shrink-0',
