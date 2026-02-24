@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -8,9 +8,11 @@ import {
   TrendingUp, Activity, Wrench, Settings, ClipboardList, Play, CheckCircle2,
 } from 'lucide-react';
 import { useCountUp } from '@/hooks/useCountUp';
+import { supabase } from '@/integrations/supabase/client';
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
-// DESIGN TOKENS (shared with Dashboard)
+// DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
   gold:       '#FFD700',
@@ -30,6 +32,8 @@ const T = {
   textSec:    '#94A3B8',
   textDim:    '#64748B',
 };
+
+const CHART_COLORS = [T.gold, T.info, T.success, T.purple, T.pink, T.warning, T.danger];
 
 // ─────────────────────────────────────────────────────
 // ANIMATED COUNTER HOOK
@@ -87,10 +91,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
       style={{
         background: T.cardBg,
         border: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
-        borderRadius: 14,
-        padding: 20,
-        position: 'relative',
-        overflow: 'hidden',
+        borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
         transform: pressed ? 'translateY(-1px) scale(0.995)' : hovered ? 'translateY(-3px) scale(1.005)' : 'none',
         boxShadow: hovered ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
         transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -100,8 +101,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0, height: 2,
         background: `linear-gradient(90deg, transparent 0%, ${T.gold} 50%, transparent 100%)`,
-        opacity: hovered ? 1 : 0,
-        transition: 'opacity 200ms',
+        opacity: hovered ? 1 : 0, transition: 'opacity 200ms',
       }} />
       {children}
     </div>
@@ -126,31 +126,19 @@ function Badge({ label, color, bg }: { label: string; color: string; bg: string 
   );
 }
 
-// ─────────────────────────────────────────────────────
-// SECTION HEADER
-// ─────────────────────────────────────────────────────
 function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
       <Icon size={16} color={T.gold} />
-      <span style={{
-        color: T.gold, fontFamily: 'DM Sans, sans-serif',
-        fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px',
-      }}>{label}</span>
+      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40 0%, transparent 80%)` }} />
     </div>
   );
 }
 
-// ─────────────────────────────────────────────────────
-// LIVE CLOCK
-// ─────────────────────────────────────────────────────
 function LiveClock() {
   const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
   return (
     <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: T.textSec }}>
       {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
@@ -159,57 +147,59 @@ function LiveClock() {
 }
 
 // ─────────────────────────────────────────────────────
-// MOCK DATA
+// LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
-const hourlyData = [
-  { hour: '6h', volume: 12 }, { hour: '7h', volume: 35 },
-  { hour: '8h', volume: 68 }, { hour: '9h', volume: 95 },
-  { hour: '10h', volume: 110 }, { hour: '11h', volume: 88 },
-  { hour: '12h', volume: 42 }, { hour: '13h', volume: 78 },
-  { hour: '14h', volume: 125 }, { hour: '15h', volume: 102 },
-  { hour: '16h', volume: 72 }, { hour: '17h', volume: 24 },
-];
+function useProductionLiveData() {
+  const [bons, setBons] = useState<any[]>([]);
+  const [batches, setBatches] = useState<any[]>([]);
+  const [weekBons, setWeekBons] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const productData = [
-  { name: 'B25', volume: 320, color: T.gold },
-  { name: 'B30', volume: 245, color: T.info },
-  { name: 'B35', volume: 165, color: T.success },
-  { name: 'B40', volume: 85, color: T.purple },
-  { name: 'Spécial', volume: 36, color: T.pink },
-];
+  const today = format(new Date(), 'yyyy-MM-dd');
+  const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+  const weekEnd = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
 
-const qualityData = [
-  { day: 'Lun', ok: 45, variances: 3, critical: 0 },
-  { day: 'Mar', ok: 52, variances: 1, critical: 1 },
-  { day: 'Mer', ok: 38, variances: 5, critical: 0 },
-  { day: 'Jeu', ok: 60, variances: 2, critical: 0 },
-  { day: 'Ven', ok: 48, variances: 4, critical: 1 },
-  { day: 'Sam', ok: 30, variances: 1, critical: 0 },
-];
+  const fetchAll = useCallback(async () => {
+    try {
+      const [bonsRes, batchesRes, weekRes] = await Promise.all([
+        supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, volume_m3, workflow_status, heure_prevue, camion_assigne, chauffeur_nom, formule_id, ciment_reel_kg, quality_status, production_batch_time, date_livraison, variance_ciment_pct, variance_eau_pct, variance_sable_pct, variance_gravette_pct, variance_adjuvant_pct')
+          .eq('date_livraison', today),
+        supabase
+          .from('production_batches')
+          .select('id, bl_id, batch_number, quality_status, has_critical_variance, entered_at, ciment_reel_kg, eau_reel_l, variance_ciment_pct, variance_eau_pct, entered_by_name')
+          .order('entered_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('bons_livraison_reels')
+          .select('bl_id, volume_m3, quality_status, date_livraison, variance_ciment_pct')
+          .gte('date_livraison', weekStart)
+          .lte('date_livraison', weekEnd),
+      ]);
 
-const batches = [
-  { id: 'BN-2024-0142', product: 'B25', volume: 12.5, status: 'Complete', quality: 'OK', time: '14:32', duration: '45 min', color: T.success },
-  { id: 'BN-2024-0141', product: 'B30', volume: 8.0, status: 'Complete', quality: 'OK', time: '13:15', duration: '38 min', color: T.success },
-  { id: 'BN-2024-0140', product: 'B35', volume: 10.2, status: 'Complete', quality: 'VAR', time: '11:48', duration: '52 min', color: T.warning },
-  { id: 'BN-2024-0139', product: 'B25', volume: 15.0, status: 'Complete', quality: 'OK', time: '10:22', duration: '41 min', color: T.success },
-  { id: 'BN-2024-0138', product: 'B40', volume: 9.8, status: 'Complete', quality: 'OK', time: '09:05', duration: '48 min', color: T.success },
-  { id: 'BN-2024-0137', product: 'B25', volume: 11.3, status: 'Complete', quality: 'OK', time: '08:10', duration: '43 min', color: T.success },
-  { id: 'BN-2024-0136', product: 'B30', volume: 7.5, status: 'Complete', quality: 'OK', time: '07:20', duration: '36 min', color: T.success },
-  { id: 'BN-2024-0135', product: 'Spécial', volume: 6.2, status: 'En cours', quality: '—', time: '15:45', duration: '—', color: T.info },
-];
+      setBons(bonsRes.data || []);
+      setBatches(batchesRes.data || []);
+      setWeekBons(weekRes.data || []);
+    } catch (e) {
+      console.error('WorldClassProduction fetch error:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [today, weekStart, weekEnd]);
 
-const equipment = [
-  { name: 'Centrale 1', status: 'Actif', uptime: 98.5, lastMaint: '15 Fév', statusColor: T.success },
-  { name: 'Malaxeur A', status: 'Actif', uptime: 97.2, lastMaint: '12 Fév', statusColor: T.success },
-  { name: 'Pompe BP-01', status: 'Maintenance', uptime: 89.1, lastMaint: "Aujourd'hui", statusColor: T.warning },
-  { name: 'Convoyeur C', status: 'Actif', uptime: 99.0, lastMaint: '18 Fév', statusColor: T.success },
-];
+  useEffect(() => {
+    fetchAll();
+    const channel = supabase
+      .channel('wc-production-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'production_batches' }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchAll]);
 
-const qualityVariances = [
-  { label: 'Slump hors tolérance', count: 3 },
-  { label: 'Température élevée', count: 2 },
-  { label: 'Dosage adjuvant', count: 1 },
-];
+  return { bons, batches, weekBons, loading };
+}
 
 // ─────────────────────────────────────────────────────
 // KPI CARD
@@ -245,9 +235,6 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   );
 }
 
-// ─────────────────────────────────────────────────────
-// WORKFLOW STAGE CARD
-// ─────────────────────────────────────────────────────
 function WorkflowStageCard({ icon: Icon, count, label, color, delay = 0 }: {
   icon: any; count: number; label: string; color: string; delay?: number;
 }) {
@@ -268,8 +255,18 @@ function WorkflowStageCard({ icon: Icon, count, label, color, delay = 0 }: {
     </div>
   );
 }
-// ─────────────────────────────────────────────────────
-function BatchCard({ batch, delay = 0 }: { batch: typeof batches[0]; delay?: number }) {
+
+interface BatchDisplay {
+  id: string;
+  product: string;
+  volume: number;
+  status: string;
+  quality: string;
+  time: string;
+  color: string;
+}
+
+function BatchCard({ batch, delay = 0 }: { batch: BatchDisplay; delay?: number }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   const [hovered, setHovered] = useState(false);
@@ -277,13 +274,7 @@ function BatchCard({ batch, delay = 0 }: { batch: typeof batches[0]; delay?: num
   const qualityColor = batch.quality === 'OK' ? T.success : batch.quality === 'VAR' ? T.warning : T.info;
 
   return (
-    <div
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'all 600ms ease-out',
-      }}
-    >
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
       <div
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -291,13 +282,11 @@ function BatchCard({ batch, delay = 0 }: { batch: typeof batches[0]; delay?: num
           background: T.cardBg,
           border: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
           borderLeft: `4px solid ${batch.color}`,
-          borderRadius: 12,
-          padding: '14px 16px',
+          borderRadius: 12, padding: '14px 16px',
           transform: hovered ? 'translateY(-3px)' : 'none',
           boxShadow: hovered ? `0 8px 24px rgba(0,0,0,0.25), 0 0 16px ${T.goldGlow}` : '0 2px 8px rgba(0,0,0,0.12)',
           transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-          position: 'relative',
-          overflow: 'hidden',
+          position: 'relative', overflow: 'hidden',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
@@ -318,64 +307,10 @@ function BatchCard({ batch, delay = 0 }: { batch: typeof batches[0]; delay?: num
           }}>
             {batch.quality === 'OK' ? '✓ OK' : batch.quality === 'VAR' ? '⚠ VAR' : '⟳ En cours'}
           </span>
-          <div style={{ textAlign: 'right' }}>
-            <p style={{ color: T.textSec, fontSize: 11 }}>{batch.time}</p>
-            <p style={{ color: T.textDim, fontSize: 10 }}>{batch.duration}</p>
-          </div>
+          <p style={{ color: T.textSec, fontSize: 11 }}>{batch.time}</p>
         </div>
       </div>
     </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────
-// EQUIPMENT CARD
-// ─────────────────────────────────────────────────────
-function EquipmentCard({ eq, delay = 0 }: { eq: typeof equipment[0]; delay?: number }) {
-  const [visible, setVisible] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const uptimePct = eq.uptime;
-  const barColor = uptimePct >= 95 ? T.success : uptimePct >= 90 ? T.warning : T.danger;
-
-  return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card style={{ height: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 14, color: T.textPri }}>{eq.name}</p>
-          <Badge label={eq.status} color={eq.statusColor} bg={`${eq.statusColor}18`} />
-        </div>
-        <div style={{ marginBottom: 10 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-            <span style={{ color: T.textDim, fontSize: 11 }}>Uptime</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: barColor }}>{eq.uptime}%</span>
-          </div>
-          <div style={{ height: 6, background: T.cardBorder, borderRadius: 999, overflow: 'hidden' }}>
-            <div style={{
-              height: '100%', borderRadius: 999, background: barColor,
-              width: `${uptimePct}%`,
-              transition: 'width 1s ease-out',
-              boxShadow: `0 0 8px ${barColor}60`,
-            }} />
-          </div>
-        </div>
-        <p style={{ color: T.textDim, fontSize: 11 }}>
-          Maint: <span style={{ color: T.textSec }}>{eq.lastMaint}</span>
-        </p>
-      </Card>
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────
-// CUSTOM DONUT LABEL
-// ─────────────────────────────────────────────────────
-function DonutCenter({ viewBox, total }: any) {
-  const { cx, cy } = viewBox;
-  return (
-    <g>
-      <text x={cx} y={cy - 8} textAnchor="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 800, fill: T.gold }}>{total}</text>
-      <text x={cx} y={cy + 12} textAnchor="middle" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, fill: T.textSec }}>m³ total</text>
-    </g>
   );
 }
 
@@ -387,6 +322,109 @@ export default function WorldClassProduction() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
 
+  const { bons, batches, weekBons, loading } = useProductionLiveData();
+
+  // ── Derived KPIs ──
+  const kpis = useMemo(() => {
+    const produced = bons.filter(b => b.workflow_status === 'validation_technique').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const inProgress = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const planned = bons.filter(b => b.workflow_status === 'planification').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const totalVolume = produced + inProgress + planned;
+
+    const completedBatches = batches.filter(b => b.quality_status === 'ok' || b.quality_status === 'warning').length;
+    const criticalBatches = batches.filter(b => b.quality_status === 'critical').length;
+    const totalBatches = batches.length;
+    const conformity = totalBatches > 0 ? Math.round(((totalBatches - criticalBatches) / totalBatches) * 100) : 100;
+
+    return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
+  }, [bons, batches]);
+
+  // ── Workflow counts ──
+  const workflowCounts = useMemo(() => ({
+    planification: bons.filter(b => b.workflow_status === 'planification').length,
+    production: bons.filter(b => b.workflow_status === 'production').length,
+    validation: bons.filter(b => b.workflow_status === 'validation_technique').length,
+  }), [bons]);
+
+  // ── Hourly chart data ──
+  const hourlyData = useMemo(() => {
+    const hourMap: Record<string, number> = {};
+    for (let h = 6; h <= 18; h++) hourMap[`${h}h`] = 0;
+    bons.forEach(b => {
+      if (b.production_batch_time || b.heure_prevue) {
+        const timeStr = b.production_batch_time || b.heure_prevue;
+        const hour = parseInt(timeStr?.split(':')[0] || '0', 10);
+        const key = `${hour}h`;
+        if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
+      }
+    });
+    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume) }));
+  }, [bons]);
+
+  // ── Product breakdown from formule_id ──
+  const productData = useMemo(() => {
+    const formulaMap: Record<string, number> = {};
+    bons.forEach(b => {
+      const fId = b.formule_id || 'Autre';
+      formulaMap[fId] = (formulaMap[fId] || 0) + (b.volume_m3 || 0);
+    });
+    return Object.entries(formulaMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
+  }, [bons]);
+
+  // ── Weekly quality data ──
+  const qualityData = useMemo(() => {
+    const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const dayMap: Record<string, { ok: number; variances: number; critical: number }> = {};
+    dayNames.forEach(d => { dayMap[d] = { ok: 0, variances: 0, critical: 0 }; });
+
+    weekBons.forEach(b => {
+      const dayIdx = new Date(b.date_livraison).getDay();
+      const dayName = dayNames[dayIdx];
+      if (!dayMap[dayName]) return;
+      const hasVariance = (b.variance_ciment_pct || 0) > 2;
+      const isCritical = b.quality_status === 'critical';
+      if (isCritical) dayMap[dayName].critical++;
+      else if (hasVariance) dayMap[dayName].variances++;
+      else dayMap[dayName].ok++;
+    });
+
+    return ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
+  }, [weekBons]);
+
+  // ── Batch display list ──
+  const batchDisplayList: BatchDisplay[] = useMemo(() => {
+    return batches.slice(0, 8).map((b, i) => {
+      const qualStatus = b.quality_status as string;
+      const quality = qualStatus === 'ok' ? 'OK' : qualStatus === 'warning' ? 'VAR' : qualStatus === 'critical' ? 'CRIT' : '—';
+      const color = qualStatus === 'ok' ? T.success : qualStatus === 'warning' ? T.warning : qualStatus === 'critical' ? T.danger : T.info;
+      return {
+        id: b.bl_id || `B-${b.batch_number}`,
+        product: `#${b.batch_number}`,
+        volume: Math.round((b.ciment_reel_kg || 0) / 1000 * 10) / 10,
+        status: qualStatus === 'pending' ? 'En cours' : 'Complete',
+        quality,
+        time: b.entered_at ? format(new Date(b.entered_at), 'HH:mm') : '—',
+        color,
+      };
+    });
+  }, [batches]);
+
+  // ── Quality variances ──
+  const qualityVariances = useMemo(() => {
+    const types: Record<string, number> = { 'Écart ciment': 0, 'Écart eau': 0, 'Écart sable': 0 };
+    batches.forEach(b => {
+      if ((b.variance_ciment_pct || 0) > 2) types['Écart ciment']++;
+      if ((b.variance_eau_pct || 0) > 2) types['Écart eau']++;
+    });
+    return Object.entries(types).filter(([, c]) => c > 0).map(([label, count]) => ({ label, count }));
+  }, [batches]);
+
+  const totalCriticalWeek = useMemo(() => weekBons.filter(b => b.quality_status === 'critical').length, [weekBons]);
+  const totalVariancesWeek = useMemo(() => weekBons.filter(b => (b.variance_ciment_pct || 0) > 2).length, [weekBons]);
+
   const tabs = [
     { id: 'overview', label: 'Vue d\'ensemble' },
     { id: 'batches', label: 'Batches' },
@@ -394,9 +432,10 @@ export default function WorldClassProduction() {
     { id: 'planning', label: 'Planning' },
   ];
 
+  const totalProductVolume = productData.reduce((s, p) => s + p.volume, 0);
+
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
-      {/* Google Fonts */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
@@ -409,62 +448,33 @@ export default function WorldClassProduction() {
       <div style={{
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`,
-        padding: '0 24px',
+        borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: `linear-gradient(135deg, ${T.gold} 0%, #B8860B 100%)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold} 0%, #B8860B 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Factory size={18} color={T.navy} />
             </div>
             <div>
               <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
               <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Production</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Gestion de la production béton</p>
+              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Données en temps réel</p>
             </div>
           </div>
-
-          {/* Tabs */}
           <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
             {tabs.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: '6px 16px', borderRadius: 8, cursor: 'pointer',
-                  background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
-                  border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                  color: activeTab === tab.id ? T.gold : T.textSec,
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13,
-                  transition: 'all 200ms',
-                }}
-              >
-                {tab.label}
-              </button>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                padding: '6px 16px', borderRadius: 8, cursor: 'pointer',
+                background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
+                border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
+                color: activeTab === tab.id ? T.gold : T.textSec,
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13, transition: 'all 200ms',
+              }}>{tab.label}</button>
             ))}
           </div>
-
-          {/* Right side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
             <LiveClock />
-            <div style={{ position: 'relative' }}>
-              <Bell size={18} color={T.textSec} />
-              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
-            </div>
-            <button style={{
-              padding: '7px 16px', borderRadius: 8,
-              background: T.gold, color: T.navy,
-              fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
-              border: 'none', cursor: 'pointer',
-              transition: 'all 150ms',
-            }}>
-              + Nouveau Batch
-            </button>
+            {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
           </div>
         </div>
       </div>
@@ -472,38 +482,35 @@ export default function WorldClassProduction() {
       {/* ── PAGE CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
-        {/* ── SECTION 1: KPI CARDS ── */}
+        {/* ── KPI CARDS ── */}
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-            <KPICard label="Production Aujourd'hui" value={851} suffix="m³" color={T.gold} icon={Factory} trend="+12% vs hier" trendPositive delay={0} />
-            <KPICard label="Batches Complétés" value={38} suffix="" color={T.success} icon={CheckCircle} trend="+5 vs hier" trendPositive delay={80} />
-            <KPICard label="Taux de Conformité" value={96} suffix="%" color={T.success} icon={Shield} trend="+1.2% ↑" trendPositive delay={160} />
-            <KPICard label="Temps d'Arrêt" value={42} suffix="min" color={T.warning} icon={Clock} trend="-15% ↓ amélioré" trendPositive delay={240} />
+            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} />
+            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} />
+            <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 95 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiés`} trendPositive delay={240} />
           </div>
 
-          {/* Workflow Stage Cards */}
           <SectionHeader icon={Activity} label="Workflow de Production" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <WorkflowStageCard icon={ClipboardList} count={5} label="Planifiés" color={T.warning} delay={0} />
-            <WorkflowStageCard icon={Play} count={2} label="En Production" color={T.info} delay={100} />
-            <WorkflowStageCard icon={CheckCircle2} count={31} label="Validation" color={T.success} delay={200} />
+            <WorkflowStageCard icon={ClipboardList} count={workflowCounts.planification} label="Planifiés" color={T.warning} delay={0} />
+            <WorkflowStageCard icon={Play} count={workflowCounts.production} label="En Production" color={T.info} delay={100} />
+            <WorkflowStageCard icon={CheckCircle2} count={workflowCounts.validation} label="Validation" color={T.success} delay={200} />
           </div>
         </section>
 
-        {/* ── SECTION 2: CHARTS ROW ── */}
+        {/* ── CHARTS ── */}
         <section>
           <SectionHeader icon={Activity} label="Production du Jour" />
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
-
-            {/* Daily Production Area Chart */}
-            <Card className="tbos-card-stagger">
+            <Card>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
-                  <p style={{ color: T.textSec, fontSize: 12, fontFamily: 'DM Sans, sans-serif', marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.gold }}>851 m³</p>
+                  <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.gold }}>{Math.round(kpis.totalVolume)} m³</p>
                 </div>
-                <Badge label="Peak 14h" color={T.warning} bg={`${T.warning}18`} />
+                <Badge label="Live" color={T.success} bg={`${T.success}18`} />
               </div>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={hourlyData}>
@@ -513,93 +520,88 @@ export default function WorldClassProduction() {
                       <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="hour" tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'DM Sans, sans-serif' }} axisLine={false} tickLine={false} />
+                  <XAxis dataKey="hour" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} width={30} />
                   <Tooltip content={<GoldTooltip unit=" m³" />} />
-                  <Area
-                    type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2.5}
-                    fill="url(#prodGold)" dot={{ fill: T.gold, r: 3 }} activeDot={{ r: 6, fill: T.gold }}
-                    animationDuration={1200}
-                  />
+                  <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2.5} fill="url(#prodGold)" dot={{ fill: T.gold, r: 3 }} activeDot={{ r: 6, fill: T.gold }} animationDuration={1200} />
                 </AreaChart>
               </ResponsiveContainer>
             </Card>
 
-            {/* Donut by Product */}
-            <Card className="tbos-card-stagger">
-              <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production par Produit</p>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={productData} dataKey="volume" nameKey="name"
-                    innerRadius={60} outerRadius={90}
-                    animationBegin={200} animationDuration={800}
-                    label={false}
-                  >
-                    {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
-                    <text />
-                  </Pie>
-                  <text
-                    x="50%" y="50%" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 800, fill: T.gold }}
-                  >851</text>
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (!active || !payload?.length) return null;
-                      const d = payload[0];
-                      return (
-                        <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '8px 12px' }}>
-                          <p style={{ color: T.textSec, fontSize: 11 }}>{d.name}</p>
-                          <p style={{ color: d.payload.color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
+            <Card>
+              <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production par Formule</p>
+              {productData.length > 0 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
+                        {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
+                      </Pie>
+                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 800, fill: T.gold }}>{totalProductVolume}</text>
+                      <Tooltip content={({ active, payload }) => {
+                        if (!active || !payload?.length) return null;
+                        const d = payload[0];
+                        return (
+                          <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '8px 12px' }}>
+                            <p style={{ color: T.textSec, fontSize: 11 }}>{d.name}</p>
+                            <p style={{ color: (d.payload as any).color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
+                          </div>
+                        );
+                      }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                    {productData.map(p => (
+                      <div key={p.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
+                          <span style={{ color: T.textSec, fontSize: 12 }}>{p.name}</span>
                         </div>
-                      );
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-              {/* Legend */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-                {productData.map(p => (
-                  <div key={p.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
-                      <span style={{ color: T.textSec, fontSize: 12, fontFamily: 'DM Sans, sans-serif' }}>{p.name}</span>
-                    </div>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.textPri }}>{p.volume} m³</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.textPri }}>{p.volume} m³</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, color: T.textDim, fontSize: 13 }}>
+                  Aucune donnée de production
+                </div>
+              )}
             </Card>
           </div>
         </section>
 
-        {/* ── SECTION 3: LIVE BATCHES ── */}
+        {/* ── LIVE BATCHES ── */}
         <section>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
             <Factory size={16} color={T.gold} />
-            <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>
-              Batches en Cours
-            </span>
+            <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>Batches Récents</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
               <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
             </div>
             <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40 0%, transparent 80%)` }} />
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
-            {batches.map((batch, i) => (
-              <BatchCard key={batch.id} batch={batch} delay={i * 60} />
-            ))}
-          </div>
+          {batchDisplayList.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+              {batchDisplayList.map((batch, i) => (
+                <BatchCard key={batch.id + i} batch={batch} delay={i * 60} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <div style={{ textAlign: 'center', padding: 32, color: T.textDim, fontSize: 13 }}>
+                Aucun batch enregistré aujourd'hui
+              </div>
+            </Card>
+          )}
         </section>
 
-        {/* ── SECTION 4: QUALITY OVERVIEW ── */}
+        {/* ── QUALITY ── */}
         <section>
           <SectionHeader icon={Shield} label="Qualité & Conformité" />
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
-
-            {/* Stacked Bar Chart */}
-            <Card className="tbos-card-stagger">
+            <Card>
               <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={qualityData} barSize={24}>
@@ -611,7 +613,6 @@ export default function WorldClassProduction() {
                   <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
                 </BarChart>
               </ResponsiveContainer>
-              {/* Legend */}
               <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
                 {[['OK', T.success], ['Variances', T.warning], ['Critique', T.danger]].map(([label, color]) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -622,66 +623,51 @@ export default function WorldClassProduction() {
               </div>
             </Card>
 
-            {/* Quality KPIs */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <Card>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <p style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Conformité</p>
-                  <Badge label="Excellent" color={T.success} bg={`${T.success}18`} />
+                  <Badge label={kpis.conformity >= 95 ? 'Excellent' : kpis.conformity >= 85 ? 'Bon' : 'À surveiller'} color={kpis.conformity >= 90 ? T.success : T.warning} bg={kpis.conformity >= 90 ? `${T.success}18` : `${T.warning}18`} />
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 32, fontWeight: 800, color: T.gold }}>96.2%</p>
+                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 32, fontWeight: 800, color: T.gold }}>{kpis.conformity}%</p>
               </Card>
 
               <Card>
-                <p style={{ color: T.success, fontSize: 13, fontWeight: 600, marginBottom: 8 }}>✓ 0 Critiques cette semaine</p>
+                <p style={{ color: totalCriticalWeek === 0 ? T.success : T.danger, fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
+                  {totalCriticalWeek === 0 ? '✓ 0 Critiques cette semaine' : `⚠ ${totalCriticalWeek} Critiques cette semaine`}
+                </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Badge label="6 Variances" color={T.warning} bg={`${T.warning}18`} />
+                  <Badge label={`${totalVariancesWeek} Variances`} color={T.warning} bg={`${T.warning}18`} />
                 </div>
               </Card>
 
-              <Card>
-                <p style={{ color: T.textSec, fontSize: 12, marginBottom: 12 }}>Détail des variances</p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {qualityVariances.map(v => (
-                    <div key={v.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ color: T.textSec, fontSize: 12 }}>{v.label}</span>
-                      <span style={{
-                        fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700,
-                        color: T.warning, background: `${T.warning}18`, padding: '2px 8px', borderRadius: 999,
-                      }}>{v.count}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              {qualityVariances.length > 0 && (
+                <Card>
+                  <p style={{ color: T.textSec, fontSize: 12, marginBottom: 12 }}>Détail des variances</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {qualityVariances.map(v => (
+                      <div key={v.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: T.textSec, fontSize: 12 }}>{v.label}</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.warning, background: `${T.warning}18`, padding: '2px 8px', borderRadius: 999 }}>{v.count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
             </div>
           </div>
         </section>
 
-        {/* ── SECTION 5: EQUIPMENT STATUS ── */}
-        <section>
-          <SectionHeader icon={Settings} label="État des Équipements" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {equipment.map((eq, i) => (
-              <EquipmentCard key={eq.name} eq={eq} delay={i * 80} />
-            ))}
-          </div>
-        </section>
-
         {/* ── FOOTER ── */}
-        <footer style={{
-          borderTop: `1px solid ${T.cardBorder}`,
-          paddingTop: 20,
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
+        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>
-            TBOS Production v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}
+            TBOS Production v2.0 — Données live • {new Date().toLocaleString('fr-FR')}
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
+            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Connecté</span>
           </div>
         </footer>
-
       </div>
     </div>
   );
