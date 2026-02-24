@@ -147,8 +147,8 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ─── Navigation — full-fit, no scroll ─── */}
-      <nav className="flex-1 flex flex-col justify-between relative z-[1] min-h-0">
-        <div>
+      <nav className="flex-1 flex flex-col justify-between relative z-[1] min-h-0 overflow-hidden">
+        <div className="overflow-y-auto overflow-x-hidden flex-1 min-h-0 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent">
           {sections.map((section, si) => (
             <div key={section.label}>
               {/* Section header — refined with opacity transition */}
@@ -252,8 +252,8 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </nav>
 
       {/* ─── User Profile Footer — minimal ─── */}
-      <div className="shrink-0 relative z-[1] mt-auto" style={{ borderTop: '1px solid rgba(232,184,75,0.06)' }}>
-        <div className="px-4 py-3 flex items-center gap-2.5 group">
+      <div className="shrink-0 relative z-[1]" style={{ borderTop: '1px solid rgba(232,184,75,0.06)' }}>
+        <div className="px-4 py-2.5 flex items-center gap-2.5 group">
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105"
             style={{

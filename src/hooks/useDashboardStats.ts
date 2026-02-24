@@ -268,9 +268,8 @@ export function useDashboardStats() {
 
   useEffect(() => {
     fetchStats();
-    const interval = setInterval(fetchStats, 30000);
 
-    // Realtime subscriptions for live KPI updates
+    // Realtime subscriptions for live KPI updates — no polling needed
     const channel = supabase
       .channel('dashboard-stats-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchStats())
@@ -280,7 +279,6 @@ export function useDashboardStats() {
       .subscribe();
 
     return () => {
-      clearInterval(interval);
       supabase.removeChannel(channel);
     };
   }, [fetchStats]);
