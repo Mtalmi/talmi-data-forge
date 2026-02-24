@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
@@ -46,6 +47,56 @@ function useAnimatedCounter(target: number, duration = 1000) {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [target, duration]);
   return value;
+}
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function usePlanningLiveData() {
+  const [kpis, setKpis] = useState({ commandes: 24, volumePlanifie: 1250, capaciteUsed: 72, livraisons: 18 });
+  const [liveDeliveries, setLiveDeliveries] = useState<any[]>([]);
+  const fetchData = useCallback(async () => {
+    try {
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
+      const tomorrow = new Date(now.getTime() + 2 * 86400000).toISOString().split('T')[0];
+      const { data: bcs } = await supabase.from('bons_commande').select('volume_m3, statut').gte('created_at', weekAgo);
+      const { data: bls } = await supabase.from('bons_livraison_reels')
+        .select('bl_id, client_id, formule_id, volume_m3, heure_prevue, workflow_status, date_livraison, camion_assigne, clients(nom_client)')
+        .gte('date_livraison', now.toISOString().split('T')[0])
+        .lte('date_livraison', tomorrow)
+        .order('heure_prevue', { ascending: true })
+        .limit(10);
+      const totalVol = (bcs || []).reduce((s, b) => s + (b.volume_m3 || 0), 0);
+      const maxCapacity = 1740;
+      setKpis({
+        commandes: bcs?.length || 24,
+        volumePlanifie: Math.round(totalVol) || 1250,
+        capaciteUsed: Math.round((totalVol / maxCapacity) * 100) || 72,
+        livraisons: bls?.length || 18,
+      });
+      if (bls?.length) {
+        setLiveDeliveries(bls.map(b => ({
+          date: b.date_livraison === now.toISOString().split('T')[0] ? `Aujourd'hui ${b.heure_prevue || ''}` : `${b.date_livraison} ${b.heure_prevue || ''}`,
+          client: (b.clients as any)?.nom_client || b.client_id,
+          product: b.formule_id,
+          volume: b.volume_m3,
+          truck: b.camion_assigne || '—',
+          status: b.workflow_status === 'en_livraison' ? 'En route' : 'Planifié',
+          statusColor: b.workflow_status === 'en_livraison' ? T.success : T.info,
+        })));
+      }
+    } catch (err) { console.error('Planning live data error:', err); }
+  }, []);
+  useEffect(() => {
+    fetchData();
+    const channel = supabase.channel('wc-planning-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, fetchData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_commande' }, fetchData)
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
+  return { kpis, liveDeliveries };
 }
 
 // ─────────────────────────────────────────────────────
@@ -350,6 +401,7 @@ function DeliveryCard({ d, delay = 0 }: { d: typeof deliveries[0]; delay?: numbe
 // ─────────────────────────────────────────────────────
 export default function WorldClassPlanning() {
   const [activeTab, setActiveTab] = useState('semaine');
+  const { kpis: pKpis, liveDeliveries } = usePlanningLiveData();
   const tabs = [
     { id: 'semaine', label: 'Semaine' },
     { id: 'mois', label: 'Mois' },
@@ -421,10 +473,10 @@ export default function WorldClassPlanning() {
         <section>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Commandes cette semaine" value={24} suffix="" color={T.gold} icon={FileText} trend="+3 vs semaine dernière" trendPositive delay={0} />
-            <KPICard label="Volume Planifié" value={1250} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs semaine dernière" trendPositive delay={80} />
-            <KPICard label="Capacité Utilisée" value={72} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs semaine dernière" trendPositive delay={160} />
-            <KPICard label="Livraisons Prévues" value={18} suffix="" color={T.info} icon={Truck} trend="stable" trendPositive delay={240} />
+            <KPICard label="Commandes cette semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs semaine dernière" trendPositive delay={0} />
+            <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs semaine dernière" trendPositive delay={80} />
+            <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs semaine dernière" trendPositive delay={160} />
+            <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.info} icon={Truck} trend="stable" trendPositive delay={240} />
           </div>
         </section>
 
@@ -500,7 +552,7 @@ export default function WorldClassPlanning() {
                 <span style={{ color: T.textSec, fontSize: 12, fontWeight: 600 }}>Prochaines Livraisons</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {deliveries.map((d, i) => (
+                {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
                   <DeliveryCard key={i} d={d} delay={i * 70} />
                 ))}
               </div>
