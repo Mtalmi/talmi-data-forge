@@ -63,10 +63,11 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Auto-refresh
+  // Auto-refresh — useDashboardStats already polls every 30s + has realtime,
+  // so we only need to check payment delays and refresh period stats
   useEffect(() => {
     if (isCeo) checkPaymentDelays();
-    const interval = setInterval(() => { refresh(); refreshPeriod(); }, 30000);
+    const interval = setInterval(() => { refreshPeriod(); }, 60000);
     return () => clearInterval(interval);
   }, [isCeo]);
 
@@ -672,7 +673,11 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-3">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-400" style={{ animation: 'pulse-alert 3s ease-in-out infinite' }} />
-              <span className="text-[11px] text-slate-400">E/C Ratio critique (0.000): Données de production absentes ou non saisies.</span>
+              <span className="text-[11px] text-slate-400">
+                {stats.tauxECMoyen > 0
+                  ? `E/C Ratio: ${stats.tauxECMoyen.toFixed(3)} — ${stats.tauxECMoyen > 0.55 ? 'Ratio élevé, vérifier dilution' : 'Dans les normes'}`
+                  : 'E/C Ratio: Données de production absentes ou non saisies.'}
+              </span>
             </div>
             <div className="flex items-center gap-3">
               <button
