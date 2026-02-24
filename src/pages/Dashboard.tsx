@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback } from 'react';
 import batchingPlantBg from '@/assets/batching-plant-backdrop.jpg';
+import heroPlantCinematic from '@/assets/hero-plant-cinematic.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
@@ -167,6 +168,17 @@ export default function Dashboard() {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(100%); }
           }
+          @keyframes kenBurns {
+            0% { transform: scale(1.05) translate(0%, 0%); }
+            25% { transform: scale(1.12) translate(-1%, -0.5%); }
+            50% { transform: scale(1.08) translate(0.5%, -1%); }
+            75% { transform: scale(1.15) translate(-0.5%, 0.5%); }
+            100% { transform: scale(1.05) translate(0%, 0%); }
+          }
+          @keyframes vignettePulse {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 0.75; }
+          }
           .sparkline-draw path.main-line {
             stroke-dasharray: 2000;
             stroke-dashoffset: 2000;
@@ -318,17 +330,45 @@ export default function Dashboard() {
             ZONE 1 — THE PULSE: COMMAND CENTER
         ══════════════════════════════════════════════════ */}
 
-        {/* Hero zone wrapper with ambient aurora */}
+        {/* Hero zone wrapper with cinematic backdrop */}
         <div className="relative">
-        {/* Ambient light orbs — Cinematic aurora */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-              <div className="absolute -top-40 left-1/4 w-[900px] h-[700px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 30%, transparent 60%)', filter: 'blur(140px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
-              <div className="absolute -top-20 right-[5%] w-[600px] h-[500px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.03) 0%, transparent 60%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
-              <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full" 
-                   style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.03) 0%, transparent 50%)', filter: 'blur(100px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
-            </div>
+          {/* ═══ CINEMATIC HERO IMAGE — Ken Burns slow-motion ═══ */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+            <img
+              src={heroPlantCinematic}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                opacity: 0.12,
+                filter: 'saturate(0.2) brightness(0.6) contrast(1.1)',
+                animation: 'kenBurns 45s ease-in-out infinite',
+                transformOrigin: 'center center',
+              }}
+            />
+            {/* Cinematic vignette — darkens edges, focuses center */}
+            <div className="absolute inset-0" style={{
+              background: `radial-gradient(ellipse 65% 55% at 50% 40%, transparent 0%, rgba(11,15,26,0.5) 50%, rgba(11,15,26,0.95) 100%)`,
+              animation: 'vignettePulse 20s ease-in-out infinite',
+            }} />
+            {/* Bottom fade to seamless transition */}
+            <div className="absolute bottom-0 left-0 right-0 h-[40%]" style={{
+              background: 'linear-gradient(to top, #0B0F1A 0%, transparent 100%)',
+            }} />
+            {/* Top darkening for text readability */}
+            <div className="absolute top-0 left-0 right-0 h-[30%]" style={{
+              background: 'linear-gradient(to bottom, rgba(11,15,26,0.6) 0%, transparent 100%)',
+            }} />
+          </div>
+
+          {/* Ambient light orbs — Cinematic aurora (on top of image) */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
+            <div className="absolute -top-40 left-1/4 w-[900px] h-[700px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 30%, transparent 60%)', filter: 'blur(140px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
+            <div className="absolute -top-20 right-[5%] w-[600px] h-[500px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.03) 0%, transparent 60%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
+            <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.03) 0%, transparent 50%)', filter: 'blur(100px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
+          </div>
 
           {/* Engineering grid pattern — blueprint precision */}
           <div 
@@ -472,12 +512,12 @@ export default function Dashboard() {
             padding: '20px 24px',
           }}
         >
-          {/* Real Batching Plant Photo — Vogue Editorial */}
+          {/* Real Batching Plant Photo — Cinematic Vogue Editorial */}
           <img
-            src={batchingPlantBg}
+            src={heroPlantCinematic}
             alt=""
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{ opacity: 0.1, zIndex: 0, filter: 'saturate(0.3) brightness(0.7)' }}
+            style={{ opacity: 0.08, zIndex: 0, filter: 'saturate(0.15) brightness(0.5) contrast(1.2)', objectPosition: 'center 70%' }}
           />
           {/* Dark gradient overlay to keep curve crisp */}
           <div className="absolute inset-0 pointer-events-none" style={{
