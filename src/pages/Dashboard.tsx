@@ -132,7 +132,7 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full">
+      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full" style={{ background: 'radial-gradient(ellipse at top, rgba(234,179,8,0.03) 0%, transparent 50%)' }}>
         {/* Golden gradient top edge */}
         <div className="h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent mb-2" />
 
@@ -222,13 +222,24 @@ export default function Dashboard() {
                 hidden: { opacity: 0, y: 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
               }}
-              className="tbos-card rounded-xl p-4 lg:p-5 transition-all duration-300 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-default"
-              style={{ backdropFilter: 'blur(8px)' }}
+              className="rounded-2xl p-5 lg:p-6 transition-all duration-500 ease-out cursor-default relative overflow-hidden hover:-translate-y-1"
+              style={{
+                background: 'linear-gradient(135deg, rgba(30,45,74,0.8) 0%, rgba(17,27,46,0.6) 50%, rgba(12,20,40,0.8) 100%)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+              }}
+              whileHover={{
+                borderColor: 'rgba(234,179,8,0.2)',
+                boxShadow: '0 12px 40px rgba(234,179,8,0.08)',
+              }}
             >
+              {/* Glass reflection line */}
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
               <div className="text-[10px] font-semibold uppercase tracking-wider text-primary/80 mb-2">
                 {kpi.label}
               </div>
-              <div className="text-2xl lg:text-3xl font-mono font-bold text-foreground leading-none">
+              <div className="text-2xl lg:text-3xl font-mono font-bold text-foreground leading-none tabular-nums">
                 {kpi.value}
                 <span className="text-sm font-medium text-muted-foreground ml-1">{kpi.unit}</span>
               </div>

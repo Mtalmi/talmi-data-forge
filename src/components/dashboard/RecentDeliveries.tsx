@@ -134,11 +134,12 @@ export default function RecentDeliveries() {
               <div
                 key={delivery.bl_id}
                 className={cn(
-                  'p-3 rounded-lg border transition-colors',
+                  'p-3 rounded-lg border transition-colors duration-200 hover:bg-white/[0.02]',
                   delivery.alerte_ecart
                     ? 'border-destructive/50 bg-destructive/5'
-                    : 'border-border bg-muted/20 hover:bg-muted/30'
+                    : 'border-border bg-muted/20'
                 )}
+                style={{ opacity: deliveries.indexOf(delivery) % 2 === 1 ? 0.9 : 1 }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
