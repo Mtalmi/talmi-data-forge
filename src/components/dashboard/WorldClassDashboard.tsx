@@ -12,10 +12,11 @@ import { format, subDays } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 
 // ─────────────────────────────────────────────────────
-// DESIGN TOKENS — Vogue mode
+// DESIGN TOKENS — Dark Luxury
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: 'rgb(234, 179, 8)',
+  gold: '#E8B84B',
+  goldGradient: 'linear-gradient(135deg, #C4933B 0%, #F2D06B 40%, #E8B84B 70%, #C4933B 100%)',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
   textDim: '#475569',
@@ -48,12 +49,14 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
-      background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-      padding: '6px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+      background: 'linear-gradient(135deg, rgba(15,20,35,0.95), rgba(10,14,26,0.98))',
+      border: '1px solid rgba(232,184,75,0.15)', borderRadius: 10,
+      padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)',
+      backdropFilter: 'blur(12px)',
     }}>
-      <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>{label}</p>
+      <p style={{ color: T.textDim, fontSize: 10, marginBottom: 3 }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>
+        <p key={i} style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 15, fontVariantNumeric: 'tabular-nums' }}>
           {typeof p.value === 'number' ? p.value.toLocaleString('fr-FR') : p.value}{unit}
         </p>
       ))}
@@ -61,13 +64,29 @@ function CleanTooltip({ active, payload, label, unit = '' }: any) {
   );
 }
 
-// ─── Card — minimal surface ───
+// ─── Card — Frosted Glass Surface ───
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`bg-white/[0.02] border border-white/[0.05] rounded-xl p-6 relative overflow-hidden transition-all duration-500 hover:bg-white/[0.03] ${className}`}
-      style={style}
+      className={`relative overflow-hidden rounded-[14px] p-6 transition-all duration-[400ms] ${className}`}
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        ...style,
+      }}
+      onMouseEnter={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%)';
+      }}
+      onMouseLeave={e => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.05)';
+        (e.currentTarget as HTMLElement).style.background = 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)';
+      }}
     >
+      {/* Top highlight line */}
+      <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
       {children}
     </div>
   );
@@ -105,7 +124,7 @@ const EMPTY_CASHFLOW = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 // AR gold opacities for monochrome aging
-const AR_OPACITIES = [0.8, 0.5, 0.3, 0.15];
+const AR_OPACITIES = [1, 0.65, 0.4, 0.2];
 
 // ─── Live Data Hook ───
 function useWorldClassLiveData() {
@@ -286,7 +305,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 1: Production & Quality ─── */}
           <div className="space-y-5">
             {/* Daily Production Chart */}
-            <Card className="tbos-card-enter" style={{ height: 280 } as any}>
+            <Card className="tbos-card-enter" style={{ height: 280 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <div className="text-sm font-medium text-white/90">Production Journalière</div>
@@ -301,14 +320,14 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGold2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.4} />
-                        <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity={0.12} />
-                        <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.5} />
+                        <stop offset="30%" stopColor="#E8B84B" stopOpacity={0.15} />
+                        <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: 'rgba(148, 163, 184, 0.3)', fontSize: 9 }} axisLine={false} tickLine={false} />
                     <YAxis hide />
-                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold2)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -318,15 +337,19 @@ export function WorldClassDashboard() {
             {/* Derniers Batches */}
             <Card className="tbos-card-enter">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-[pulse-subtle_3s_ease-in-out_infinite]" />
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+                </span>
                 <span className="text-sm font-medium text-white/90">Derniers Batches</span>
               </div>
               <div className="tbos-grid-batches" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
                 {batches.map((b, i) => (
-                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3" style={{
+                  <div key={i} className="rounded-lg p-3" style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: '1px solid rgba(255,255,255,0.04)',
                     borderLeft: `2px solid ${b.quality === 'OK' ? T.dotOk : T.dotWarn}`,
                   }}>
-                    <div className="text-[9px] text-slate-500 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{b.id}</div>
+                    <div className="text-[9px] text-slate-500 tabular-nums font-mono">{b.id}</div>
                     <div className="text-base font-extralight text-white tabular-nums mt-1" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
                       <span className={`text-[10px] ${b.quality === 'OK' ? 'text-slate-500' : 'text-amber-400/70'}`}>{b.quality}</span>
@@ -346,7 +369,6 @@ export function WorldClassDashboard() {
               <div className="flex flex-col gap-3">
                 {stockData.map((s, i) => {
                   const pct = (s.current / s.max) * 100;
-                  const opacity = 0.5;
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1 gap-2">
@@ -355,8 +377,8 @@ export function WorldClassDashboard() {
                           {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                         </span>
                       </div>
-                      <div className="h-1 rounded-full bg-white/[0.04] overflow-hidden">
-                        <div className="tbos-bar-animate h-full rounded-full bg-yellow-500/50" style={{ width: `${pct}%` }} />
+                      <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                        <div className="tbos-bar-animate h-full rounded-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #C4933B, #E8B84B, #F2D06B)' }} />
                       </div>
                     </div>
                   );
@@ -381,8 +403,8 @@ export function WorldClassDashboard() {
                       <span className="text-[11px] text-slate-500">{item.label}</span>
                       <span className="text-[11px] text-slate-300 tabular-nums">{item.value}</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-slate-700/30 overflow-hidden">
-                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: T.gold, opacity: 0.7 }} />
+                    <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.7 }} />
                     </div>
                   </div>
                 ))}
@@ -398,8 +420,8 @@ export function WorldClassDashboard() {
               <div className="text-sm font-medium text-white/90 mb-4">Tendances</div>
               <div className="text-center py-4">
                 <div className="flex items-center justify-center gap-2">
-                  <TrendingUp size={16} className="text-primary" />
-                  <span className="text-3xl font-extralight text-primary tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>+8.2%</span>
+                  <TrendingUp size={16} style={{ color: T.gold }} />
+                  <span className="text-3xl font-extralight tabular-nums" style={{ fontFamily: 'Inter, system-ui', color: T.gold }}>+8.2%</span>
                 </div>
                 <div className="text-[11px] text-slate-500 mt-2">vs Janvier</div>
               </div>
@@ -409,7 +431,7 @@ export function WorldClassDashboard() {
                   { label: 'Marge', value: '49%' },
                   { label: 'Volume', value: `${prodTotal} m³` },
                 ].map((m, i) => (
-                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-2 text-center">
+                  <div key={i} className="rounded-lg p-2 text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
                     <div className="text-sm font-normal text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{m.value}</div>
                     <div className="text-[9px] text-slate-500 mt-1">{m.label}</div>
                   </div>
@@ -453,11 +475,11 @@ export function WorldClassDashboard() {
               </div>
               <div className="overflow-hidden w-full" style={{ height: 160 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={arAgingData} layout="vertical" barSize={14} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
+                  <BarChart data={arAgingData} layout="vertical" barSize={6} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
                     <XAxis type="number" hide />
                     <YAxis type="category" dataKey="label" tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={40} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                    <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={1000}>
+                    <Bar dataKey="value" radius={[0, 9999, 9999, 0]} animationDuration={1000}>
                       {arAgingData.map((_, i) => <Cell key={i} fill={T.gold} fillOpacity={AR_OPACITIES[i]} />)}
                     </Bar>
                   </BarChart>
@@ -490,7 +512,7 @@ export function WorldClassDashboard() {
                 ].map((q, i) => (
                   <div key={i} className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
                     <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                    <span className="text-[11px] text-slate-400 tabular-nums flex-1" style={{ fontFamily: 'Inter, system-ui' }}>{q.id}</span>
+                    <span className="text-[11px] text-slate-400 tabular-nums flex-1 font-mono">{q.id}</span>
                     <span className="text-[11px] text-slate-500">{q.test}</span>
                     <span className={`text-[10px] ${q.ok ? 'text-slate-400' : 'text-amber-400/70'}`}>{q.ok ? 'OK' : 'Variance'}</span>
                     <span className="text-[9px] text-slate-500 tabular-nums">{q.time}</span>
