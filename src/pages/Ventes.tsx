@@ -596,56 +596,7 @@ export default function Ventes() {
           )}
 
 
-          {/* ══ World-Class Sales Dashboard ══ */}
-          <WorldClassVentes />
-
-          {/* Flux Commercial Widget */}
-          <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
-
-          {/* Pending BC Validation - For Admin/CEO */}
-          <PendingBcValidation onRefresh={fetchData} />
-
-          {/* Emergency BC Quality View - For Resp. Technique */}
-          <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
-
-          {/* Stats Cards + Revenue Forecast */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-            <div className="xl:col-span-2">
-              <PipelineStats stats={stats} onStageClick={handleStageClick} />
-            </div>
-            <RevenueForecastChart bcList={bcList} devisList={devisList} />
-          </div>
-
-          {/* Sales Performance Charts - Rep / Product / Win-Loss */}
-          <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
-
-          {/* Active Status Filter Indicator */}
-          {filters.status !== 'all' && (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
-               <span className="text-sm text-muted-foreground">{t.pages.ventes.activeFilter}:</span>
-               <Badge variant="secondary" className="gap-1">
-                 {filters.status === 'en_attente' && t.pages.ventes.statusEnAttente}
-                 {filters.status === 'accepte' && t.pages.ventes.statusAccepte}
-                 {filters.status === 'converti' && t.pages.ventes.statusConverti}
-                 {filters.status === 'refuse' && t.pages.ventes.statusRefuse}
-                 {filters.status === 'pret_production' && t.pages.ventes.statusPretProd}
-                 {filters.status === 'en_production' && t.pages.ventes.statusEnProd}
-                 {filters.status === 'termine' && t.pages.ventes.statusTermine}
-                 {filters.status === 'livre' && t.pages.ventes.statusLivre}
-               </Badge>
-               <Button
-                 variant="ghost"
-                 size="sm"
-                 onClick={() => setFilters({ ...filters, status: 'all' })}
-                 className="ml-auto gap-1 text-muted-foreground hover:text-foreground"
-               >
-                 <X className="h-3 w-3" />
-                 {t.pages.ventes.viewAll}
-              </Button>
-            </div>
-          )}
-
-          {/* Tabs for Devis, BC, Factures and Calendar */}
+          {/* Tabs for Devis, BC, Factures and Calendar — PRIMARY CONTENT */}
           <div id="ventes-tabs-section" className="scroll-mt-36">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList className="h-auto p-1 gap-1 rounded-xl period-selector-premium flex flex-nowrap overflow-x-auto scrollbar-hide w-full">
@@ -681,12 +632,10 @@ export default function Ventes() {
 
             {/* Devis Tab */}
             <TabsContent value="devis" className="space-y-4">
-              {/* Bulk Actions Toolbar */}
               <BulkActionsToolbar
                 selectedCount={selectedDevisIds.length}
                 type="devis"
                 onMarkRefused={async () => {
-                  // Mark selected devis as refused
                   for (const id of selectedDevisIds) {
                     const devis = filteredDevis.find(d => d.id === id);
                     if (devis) {
@@ -722,12 +671,10 @@ export default function Ventes() {
 
             {/* BC Tab */}
             <TabsContent value="bc" className="space-y-4">
-              {/* Bulk Actions Toolbar */}
               <BulkActionsToolbar
                 selectedCount={selectedBcIds.length}
                 type="bc"
                 onCancel={async () => {
-                  // Cancel selected BC (update status)
                   for (const id of selectedBcIds) {
                     await supabase
                       .from('bons_commande')
@@ -746,7 +693,6 @@ export default function Ventes() {
                     loading={loading}
                     onRowClick={handleOpenBcDetail}
                     onCreateBL={(bc) => {
-                      // Handle BL creation
                       console.log('Create BL for:', bc);
                     }}
                     onGenerateInvoice={(bc) => generateConsolidatedInvoice(bc.bc_id)}
@@ -775,6 +721,29 @@ export default function Ventes() {
             </TabsContent>
           </Tabs>
           </div>
+
+          {/* Flux Commercial Widget */}
+          <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
+
+          {/* Pending BC Validation - For Admin/CEO */}
+          <PendingBcValidation onRefresh={fetchData} />
+
+          {/* Emergency BC Quality View - For Resp. Technique */}
+          <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
+
+          {/* Stats Cards + Revenue Forecast */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
+            <div className="xl:col-span-2">
+              <PipelineStats stats={stats} onStageClick={handleStageClick} />
+            </div>
+            <RevenueForecastChart bcList={bcList} devisList={devisList} />
+          </div>
+
+          {/* Sales Performance Charts */}
+          <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
+
+          {/* ══ World-Class Sales Dashboard ══ */}
+          <WorldClassVentes />
         </div>
 
         {/* Convert to BC Dialog */}
