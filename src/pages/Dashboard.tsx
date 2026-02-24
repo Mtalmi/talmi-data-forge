@@ -435,61 +435,52 @@ export default function Dashboard() {
 
         {/* The Sparkline — A Living Pulse */}
         <div
-          className="mt-5 mb-4 h-52 relative z-[1] p-[1px] rounded-[20px]"
+          className="mt-5 mb-4 relative z-[1] p-[1px] rounded-[20px]"
           style={{
-            background: `conic-gradient(from var(--border-angle, 0deg), rgba(232,184,75,0.3), rgba(232,184,75,0.05), rgba(59,130,246,0.1), rgba(232,184,75,0.3))`,
+            background: `conic-gradient(from var(--border-angle, 0deg), rgba(253,185,19,0.3), rgba(253,185,19,0.05), rgba(59,130,246,0.1), rgba(253,185,19,0.3))`,
             animation: 'rotateBorder 8s linear infinite',
           }}
         >
         <div
-          className="rounded-[19px] p-3 lg:p-4 h-full relative overflow-hidden transition-all duration-300"
+          className="rounded-[19px] relative overflow-hidden transition-all duration-300"
           style={{
-            background: 'linear-gradient(180deg, rgba(232,184,75,0.06) 0%, rgba(232,184,75,0.01) 30%, #0B0F1A 100%)',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.3)',
+            background: 'linear-gradient(180deg, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.005) 30%, #0B0F1A 100%)',
+            border: '1px solid rgba(255,255,255,0.04)',
+            height: '220px',
+            padding: '20px 24px',
           }}
         >
           {/* Batching Plant Silhouette — THE SIGNATURE */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.06, zIndex: 0 }} preserveAspectRatio="xMidYMax meet" viewBox="0 0 800 200">
-            {/* Left silo cluster */}
             <rect x="30" y="60" width="35" height="120" rx="17" fill="rgba(232,184,75,0.5)" />
             <rect x="70" y="40" width="40" height="140" rx="20" fill="rgba(232,184,75,0.6)" />
             <rect x="115" y="55" width="35" height="125" rx="17" fill="rgba(232,184,75,0.45)" />
             <ellipse cx="90" cy="38" rx="22" ry="6" fill="rgba(232,184,75,0.4)" />
-            {/* Conveyor belt going up to the right */}
             <line x1="150" y1="90" x2="280" y2="50" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
             <line x1="152" y1="95" x2="282" y2="55" stroke="rgba(232,184,75,0.25)" strokeWidth="1.5" />
-            {/* Main mixer/hopper */}
             <rect x="270" y="50" width="80" height="80" rx="4" fill="rgba(232,184,75,0.5)" />
             <polygon points="280,130 290,160 350,160 360,130" fill="rgba(232,184,75,0.4)" />
             <rect x="295" y="35" width="30" height="18" rx="2" fill="rgba(232,184,75,0.35)" />
             <circle cx="310" cy="90" r="15" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="1.5" />
-            {/* Discharge chute */}
             <line x1="320" y1="160" x2="340" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
             <line x1="320" y1="160" x2="300" y2="175" stroke="rgba(232,184,75,0.4)" strokeWidth="3" />
-            {/* Truck loading area */}
             <rect x="290" y="175" width="60" height="20" rx="3" fill="rgba(232,184,75,0.35)" />
             <circle cx="300" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
             <circle cx="340" cy="198" r="5" fill="rgba(232,184,75,0.3)" />
-            {/* Control tower */}
             <rect x="400" y="30" width="30" height="150" rx="2" fill="rgba(232,184,75,0.4)" />
             <rect x="395" y="25" width="40" height="25" rx="3" fill="rgba(232,184,75,0.45)" />
-            {/* Windows on tower — brighter */}
             <rect x="405" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
             <rect x="418" y="30" width="6" height="5" rx="1" fill="rgba(232,184,75,0.9)" />
             <rect x="405" y="38" width="6" height="5" rx="1" fill="rgba(232,184,75,0.7)" />
-            {/* Aggregate bins - right side */}
             <polygon points="500,100 530,100 540,180 490,180" fill="rgba(232,184,75,0.4)" />
             <polygon points="545,90 575,90 585,180 535,180" fill="rgba(232,184,75,0.35)" />
             <polygon points="590,105 615,105 625,180 580,180" fill="rgba(232,184,75,0.3)" />
-            {/* Second conveyor */}
             <line x1="515" y1="100" x2="350" y2="60" stroke="rgba(232,184,75,0.3)" strokeWidth="2.5" />
             <line x1="560" y1="90" x2="355" y2="55" stroke="rgba(232,184,75,0.2)" strokeWidth="1.5" />
-            {/* Storage silos - far right */}
             <rect x="660" y="50" width="30" height="130" rx="15" fill="rgba(232,184,75,0.4)" />
             <rect x="700" y="65" width="30" height="115" rx="15" fill="rgba(232,184,75,0.35)" />
             <rect x="740" y="55" width="30" height="125" rx="15" fill="rgba(232,184,75,0.3)" />
             <ellipse cx="675" cy="48" rx="17" ry="5" fill="rgba(232,184,75,0.3)" />
-            {/* Ground line */}
             <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(232,184,75,0.25)" strokeWidth="1" />
           </svg>
 
@@ -513,44 +504,42 @@ export default function Dashboard() {
           </div>
 
           {/* LIVE indicator — double ripple */}
-          <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" style={{ animation: 'live-ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-30" style={{ animation: 'live-ping2 1.5s cubic-bezier(0,0,0.2,1) 0.3s infinite' }} />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ boxShadow: '0 0 10px rgba(52,211,153,0.5), 0 0 20px rgba(52,211,153,0.2)' }} />
+          <div className="absolute top-5 left-6 flex items-center gap-2.5 z-10">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-40" />
+              <span className="absolute h-full w-full rounded-full bg-emerald-400 opacity-15 animate-ping" style={{ animationDelay: '0.5s' }} />
+              <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
             </span>
-            <span className="text-[9px] font-semibold uppercase tracking-[0.25em]" style={{ color: '#34d399' }}>Live</span>
-            <span className="text-[9px] uppercase tracking-[0.2em]" style={{ color: '#6ee7b7' }}>Peak 14h</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Peak 14h</span>
           </div>
 
-          {/* Last update */}
-          <div className="absolute top-3 right-4 z-10">
-            <span className="text-[9px] font-mono text-slate-600 tabular-nums">{timeStr}</span>
-          </div>
+          {/* Timestamp */}
+          <div className="absolute top-5 right-6 text-[10px] font-mono text-slate-600 z-10 tabular-nums">{timeStr}</div>
 
-          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw" preserveAspectRatio="none">
+          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#F2D06B" stopOpacity={0.6} />
-                <stop offset="25%" stopColor="#E8B84B" stopOpacity={0.3} />
-                <stop offset="50%" stopColor="#E8B84B" stopOpacity={0.1} />
-                <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
+              <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.5} />
+                <stop offset="30%" stopColor="#FDB913" stopOpacity={0.2} />
+                <stop offset="70%" stopColor="#FDB913" stopOpacity={0.05} />
+                <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
               </linearGradient>
             </defs>
             {/* Area fill — fades in after line draws */}
-            <path d={areaPath} fill="url(#heroGradient)" className="area-fill" />
-            {/* Glow line (behind — wide soft glow) */}
-            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="12" strokeOpacity="0.15" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            <path d={areaPath} fill="url(#sparkGlow)" className="area-fill" />
+            {/* Glow line (behind — wide soft glow for light emission) */}
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="8" strokeOpacity="0.12" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
             {/* Crisp line — draws itself */}
-            <path d={linePath} fill="none" stroke="#F2D06B" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" className="main-line" />
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" />
             {/* Peak annotation line */}
             <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
             {/* Pulsing beacon at live endpoint */}
-            <circle cx={lastX} cy={lastY} r="4" fill="#E8B84B">
+            <circle cx={lastX} cy={lastY} r="4" fill="#FDB913">
               <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
             </circle>
-            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(232, 184, 75, 0.2)">
+            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(253,185,19,0.2)">
               <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
             </circle>

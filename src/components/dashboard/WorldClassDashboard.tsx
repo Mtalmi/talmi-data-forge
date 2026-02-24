@@ -4,7 +4,7 @@ import {
   XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
-  CheckCircle2, AlertTriangle, TrendingUp,
+  CheckCircle2, AlertTriangle,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
@@ -309,27 +309,35 @@ export function WorldClassDashboard() {
             <Card className="tbos-card-enter" style={{ height: 280 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
-                  <div className="text-sm font-medium text-white/90">Production Journalière</div>
-                  <div className="text-[11px] text-slate-500 mt-1">
-                    {qualityData[0].ok} OK · {qualityData[0].var} Var · {qualityData[0].crit} Crit
+                  <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
+                  <div className="flex items-center gap-2 text-[11px] mt-1">
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#10B981' }} /> {qualityData[0].ok} OK</span>
+                    <span className="text-slate-700">·</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FDB913' }} /> {qualityData[0].var} Var</span>
+                    <span className="text-slate-700">·</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: '#FF6B6B' }} /> {qualityData[0].crit} Crit</span>
                   </div>
                 </div>
-                <span className="text-[2rem] font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{prodTotal} <span className="text-lg text-slate-400">m³</span></span>
+                <div>
+                  <span className="text-3xl font-extralight text-white font-mono tracking-tight tabular-nums">{prodTotal}</span>
+                  <span className="text-sm font-light text-white/40 ml-1">m³</span>
+                </div>
               </div>
               <div className="overflow-hidden w-full" style={{ height: 180 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
-                      <linearGradient id="prodFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.35} />
-                        <stop offset="50%" stopColor="#E8B84B" stopOpacity={0.1} />
-                        <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
+                      <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#FDB913" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodFill)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
-                    {/* Remove YAxis completely — already absent */}
+                    {/* Glow layer */}
+                    <Area type="monotone" dataKey="volume" stroke="#FDB913" strokeWidth={8} strokeOpacity={0.12} fill="none" dot={false} activeDot={false} animationDuration={1200} />
+                    {/* Main curve */}
+                    <Area type="monotone" dataKey="volume" stroke="#FDB913" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 4, fill: '#FDB913', stroke: 'rgba(253,185,19,0.3)', strokeWidth: 8 }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -341,20 +349,26 @@ export function WorldClassDashboard() {
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
                 </span>
-                <span className="text-sm font-medium text-white/90">Derniers Batches</span>
+                <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
               </div>
-              <div className="flex gap-2.5 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-                {batches.map((b, i) => (
-                  <div key={i} className="min-w-[110px] max-w-[120px] flex-shrink-0 rounded-xl p-3" style={{
-                    background: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.04)',
-                    borderLeft: `2px solid ${b.quality === 'OK' ? T.dotOk : T.dotWarn}`,
-                  }}>
-                    <div className="text-[9px] font-mono text-slate-500 truncate tabular-nums">{b.id}</div>
-                    <div className="text-base font-light text-white mt-1.5 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
-                    <div className="flex items-center justify-between mt-2 text-[9px] text-slate-500">
-                      <span className={b.quality === 'OK' ? '' : 'text-amber-400/70'}>{b.quality}</span>
-                      <span className="tabular-nums">{b.time}</span>
+              <div className="flex gap-2.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+                {batches.slice(0, 5).map((b, i) => (
+                  <div key={i} className="flex-shrink-0 rounded-xl p-3 relative overflow-hidden"
+                    style={{
+                      width: '110px',
+                      minWidth: '110px',
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      animation: `tbos-fade-up 0.5s cubic-bezier(0.16,1,0.3,1) ${0.1 * i + 0.3}s both`,
+                    }}>
+                    {/* Status indicator — left border */}
+                    <div className="absolute top-2 bottom-2 left-0 w-[2px] rounded-full"
+                      style={{ background: b.quality === 'OK' ? '#10B981' : '#FDB913' }} />
+                    <div className="text-[9px] font-mono text-slate-500 truncate tabular-nums pl-2">{b.id}</div>
+                    <div className="text-lg font-light text-white mt-1 pl-2 font-mono tabular-nums">{b.volume} <span className="text-xs text-white/40">m³</span></div>
+                    <div className="flex items-center justify-between mt-2 pl-2">
+                      <span className="text-[9px] font-medium" style={{ color: b.quality === 'OK' ? '#10B981' : '#FDB913' }}>{b.quality}</span>
+                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{b.time}</span>
                     </div>
                   </div>
                 ))}
@@ -366,20 +380,24 @@ export function WorldClassDashboard() {
           <div className="space-y-5">
             {/* Stock Levels */}
             <Card className="tbos-card-enter">
-              <div className="text-sm font-medium text-white/90 mb-4">Niveaux de Stock</div>
+              <div className="text-[14px] font-medium text-white/90 mb-4">Niveaux de Stock</div>
               <div className="flex flex-col gap-3">
                 {stockData.map((s, i) => {
                   const pct = (s.current / s.max) * 100;
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1 gap-2">
-                        <span className="text-[11px] text-slate-500">{s.name}</span>
-                        <span className="text-sm font-normal tabular-nums text-slate-300" style={{ fontFamily: 'Inter, system-ui' }}>
+                        <span className="text-[12px] text-slate-400">{s.name}</span>
+                        <span className="text-[12px] font-mono tabular-nums text-slate-300">
                           {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                         </span>
                       </div>
-                      <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                        <div className="tbos-bar-animate h-full rounded-full" style={{ width: `${pct}%`, background: 'linear-gradient(90deg, #C4933B, #E8B84B, #F2D06B)' }} />
+                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                        <div className="tbos-bar-animate h-full rounded-full transition-all duration-1000" style={{
+                          width: `${pct}%`,
+                          background: pct > 25 ? 'linear-gradient(90deg, #C4933B, #FDB913)' : 'linear-gradient(90deg, #FF6B6B, #FB923C)',
+                          opacity: pct > 50 ? 1 : pct > 25 ? 0.7 : 1,
+                        }} />
                       </div>
                     </div>
                   );
@@ -418,23 +436,24 @@ export function WorldClassDashboard() {
 
             {/* Tendances */}
             <Card className="tbos-card-enter">
-              <div className="text-sm font-medium text-white/90 mb-4">Tendances</div>
+              <div className="text-[14px] font-medium text-white/90 mb-4">Tendances</div>
               <div className="text-center py-4">
                 <div className="flex items-center justify-center gap-2">
-                  <TrendingUp size={16} style={{ color: T.gold }} />
-                  <span className="text-3xl font-extralight tabular-nums" style={{ fontFamily: 'Inter, system-ui', color: T.gold }}>+8.2%</span>
+                  <span className="text-[11px]" style={{ color: '#FDB913' }}>↗</span>
+                  <span className="text-4xl font-extralight font-mono text-white tabular-nums" style={{ textShadow: '0 0 30px rgba(253,185,19,0.15)' }}>+8.2</span>
+                  <span className="text-lg font-light text-white/40">%</span>
                 </div>
-                <div className="text-[11px] text-slate-500 mt-2">vs Janvier</div>
+                <div className="text-[11px] text-slate-500 mt-1.5 tracking-wider">vs Janvier</div>
               </div>
-              <div className="grid grid-cols-3 gap-2 w-full">
+              <div className="grid grid-cols-3 gap-3 mt-4">
                 {[
-                  { label: 'CA', value: '75K' },
-                  { label: 'Marge', value: '49%' },
-                  { label: 'Volume', value: `${prodTotal} m³` },
+                  { label: 'CA', value: '75K', color: '#FDB913' },
+                  { label: 'Marge', value: '49%', color: '#FDB913' },
+                  { label: 'Volume', value: `${prodTotal}`, unit: 'm³', color: '#00D9FF' },
                 ].map((m, i) => (
-                  <div key={i} className="rounded-lg p-2 text-center" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)' }}>
-                    <div className="text-sm font-normal text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{m.value}</div>
-                    <div className="text-[9px] text-slate-500 mt-1">{m.label}</div>
+                  <div key={i} className="text-center py-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div className="text-lg font-light font-mono text-white tabular-nums">{m.value}<span className="text-xs text-white/30 ml-0.5">{m.unit || ''}</span></div>
+                    <div className="text-[9px] uppercase tracking-[0.2em] mt-1" style={{ color: m.color, opacity: 0.5 }}>{m.label}</div>
                   </div>
                 ))}
               </div>
@@ -481,22 +500,24 @@ export function WorldClassDashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={arAgingData} layout="vertical" barSize={6} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
                     <XAxis type="number" hide />
-                    <YAxis type="category" dataKey="label" tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={40} />
+                    <YAxis type="category" dataKey="label" tick={{ fill: 'rgba(71,85,105,1)', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} width={40} />
                     <Tooltip content={(p) => <CleanTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
                     <Bar dataKey="value" radius={[0, 9999, 9999, 0]} animationDuration={1000}>
-                      {arAgingData.map((_, i) => <Cell key={i} fill={T.gold} fillOpacity={AR_OPACITIES[i]} />)}
+                      {arAgingData.map((_, i) => (
+                        <Cell key={i} fill={i === 3 ? '#FF6B6B' : '#FDB913'} fillOpacity={i === 3 ? 0.8 : AR_OPACITIES[i]} />
+                      ))}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
               <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/[0.05]">
                 <div>
-                  <span className="text-xl font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{totalAR}K</span>
+                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K</span>
                   <span className="text-[11px] text-slate-500 ml-1.5">DH total</span>
                 </div>
                 <div className="flex gap-2">
                   {arAgingData.map((d, i) => (
-                    <span key={i} className="text-[9px] text-slate-500">{d.label}</span>
+                    <span key={i} className="text-[10px] font-mono text-slate-600">{d.label}</span>
                   ))}
                 </div>
               </div>
