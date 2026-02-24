@@ -43,8 +43,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           }}
         />
 
-        {/* Left Sidebar - hidden on mobile (uses bottom nav instead) */}
-        {!showMobileNav && <AppSidebar />}
+        {/* Left Sidebar - always rendered; shadcn handles mobile via Sheet overlay */}
+        <AppSidebar />
 
         {/* Content Layer */}
         <div className="relative z-10 flex flex-col min-h-[100dvh] flex-1 overflow-x-hidden max-w-full">
@@ -58,9 +58,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
           
           {/* Sleek Top Navigation */}
           <div className="flex items-center">
-            {!showMobileNav && (
-              <SidebarTrigger className="ml-2 text-muted-foreground hover:text-primary" />
-            )}
+            <SidebarTrigger className="ml-2 text-muted-foreground hover:text-primary" />
             <div className="flex-1">
               <TopNavBar 
                 previewRole={previewRole}
