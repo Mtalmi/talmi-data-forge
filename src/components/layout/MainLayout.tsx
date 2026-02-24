@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { TopNavBar } from './TopNavBar';
 import { AmbientGlow } from './AmbientGlow';
 import { QuickActionFAB } from './QuickActionFAB';
@@ -27,8 +27,18 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   const { previewRole, setPreviewRole } = usePreviewRole();
   usePushNotifications();
 
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  // Clear stale collapsed cookie on desktop mount
+  useEffect(() => {
+    if (!isMobile) {
+      setSidebarOpen(true);
+      document.cookie = 'sidebar:state=true; path=/; max-age=604800';
+    }
+  }, [isMobile]);
+
   return (
-    <SidebarProvider defaultOpen={!isMobile}>
+    <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
       <div className="relative min-h-[100dvh] bg-background overflow-hidden flex w-full">
         {/* Ambient Glow Background */}
         <AmbientGlow intensity="subtle" />

@@ -137,7 +137,7 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div
-        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8"
+        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full"
         style={{
           background: 'linear-gradient(165deg, #0D1117 0%, #0B0F1A 30%, #0A0E1C 50%, #0F0D1A 80%, #0D1117 100%)',
         }}
@@ -189,8 +189,8 @@ export default function Dashboard() {
           .tbos-hero-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 50%, rgba(255,255,255,0.04) 100%);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 32px;
+            border-radius: 16px;
+            padding: 24px;
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(40px);
@@ -334,7 +334,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Glowing Data Monuments */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-5 relative z-[1]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5 mb-5 relative z-[1]">
           {[
             {
               label: 'VOLUME',
@@ -373,11 +373,11 @@ export default function Dashboard() {
               <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(234, 179, 8, 0.5)' }}>
                 {kpi.label}
               </div>
-              <div className="leading-none tabular-nums whitespace-nowrap" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <span className="text-4xl font-extralight text-white leading-none tbos-kpi-number">
+              <div className="leading-none tabular-nums whitespace-nowrap overflow-hidden" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                <span className="text-3xl lg:text-4xl font-extralight text-white leading-none tbos-kpi-number">
                   {kpi.value}
                 </span>
-                <span className="text-base font-extralight text-slate-500 ml-1">{kpi.unit}</span>
+                <span className="text-sm lg:text-base font-extralight text-slate-500 ml-1">{kpi.unit}</span>
               </div>
               <div className="text-[11px] text-slate-500 mt-2">{kpi.sub}</div>
               <div className="mt-1.5 flex items-center gap-1.5">
