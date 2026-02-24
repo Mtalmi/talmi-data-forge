@@ -185,7 +185,7 @@ export default function Dashboard() {
           }}
         />
 
-        {/* ─── Action buttons: absolute top-right ─── */}
+        {/* ─── Action buttons + compass: absolute top-right ─── */}
         <div className="absolute top-2 right-4 z-20 flex items-center gap-1.5">
           {isCeo && (
             <button
@@ -205,6 +205,19 @@ export default function Dashboard() {
           </button>
         </div>
 
+        {/* Compass/North arrow accent */}
+        <div className="absolute top-6 right-6 opacity-[0.06] pointer-events-none" style={{ zIndex: 0 }}>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="18" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5"/>
+            <circle cx="20" cy="20" r="12" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+            <line x1="20" y1="2" x2="20" y2="10" stroke="rgba(232,184,75,0.5)" strokeWidth="0.5"/>
+            <line x1="20" y1="30" x2="20" y2="38" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+            <line x1="2" y1="20" x2="10" y2="20" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+            <line x1="30" y1="20" x2="38" y2="20" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+            <text x="20" y="8" textAnchor="middle" fill="rgba(232,184,75,0.4)" fontSize="4" fontFamily="Inter">N</text>
+          </svg>
+        </div>
+
         {/* ══════════════════════════════════════════════════
             ZONE 1 — THE PULSE: COMMAND CENTER
         ══════════════════════════════════════════════════ */}
@@ -218,6 +231,19 @@ export default function Dashboard() {
             <div className="absolute -top-20 right-[15%] w-[400px] h-[350px] rounded-full" 
                  style={{ background: 'radial-gradient(circle, rgba(232,184,75,0.025) 0%, transparent 70%)', filter: 'blur(80px)' }} />
           </div>
+
+          {/* Engineering grid pattern — blueprint precision */}
+          <div 
+            className="absolute inset-0 pointer-events-none overflow-hidden"
+            style={{ 
+              zIndex: 0,
+              opacity: 0.02,
+              backgroundImage: `linear-gradient(rgba(232,184,75,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(232,184,75,0.3) 1px, transparent 1px)`,
+              backgroundSize: '60px 60px'
+            }}
+          />
+          {/* Grid fade-out */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Greeting — Commanding Presence */}
           <div className="pt-4 pb-6 relative z-[1]">
@@ -267,6 +293,10 @@ export default function Dashboard() {
             },
           ].map((kpi, i) => (
             <div key={i} className="tbos-hero-card cursor-default min-w-0 overflow-hidden">
+              {/* Unit watermark */}
+              <div className="absolute bottom-2 right-3 text-[60px] font-extralight text-white/[0.02] leading-none pointer-events-none select-none">
+                {kpi.unit}
+              </div>
               <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(234, 179, 8, 0.5)' }}>
                 {kpi.label}
               </div>
@@ -298,6 +328,14 @@ export default function Dashboard() {
             boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 8px 24px rgba(0,0,0,0.15)',
           }}
         >
+          {/* Topographic contour lines — site survey depth */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.025 }} preserveAspectRatio="none" viewBox="0 0 1200 200">
+            <path d="M0,140 Q150,120 300,130 T600,110 T900,125 T1200,115" fill="none" stroke="rgba(232,184,75,0.5)" strokeWidth="0.5"/>
+            <path d="M0,100 Q200,85 400,95 T800,80 T1200,90" fill="none" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5"/>
+            <path d="M0,65 Q250,55 500,60 T1000,50 T1200,55" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+            <path d="M0,170 Q180,160 360,165 T720,155 T1200,160" fill="none" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5"/>
+          </svg>
+
           {/* LIVE indicator */}
           <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
             <span className="relative flex h-1.5 w-1.5">
@@ -380,11 +418,14 @@ export default function Dashboard() {
           onDismiss={dismissAlert}
         />
 
-        {/* Cinematic Section Transition */}
-        <div className="mt-8 mb-8 flex items-center gap-4">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500">Opérations</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        {/* Cinematic Section Transition — Opérations */}
+        <div className="relative mt-8 mb-8 py-4">
+          <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(232,184,75,0.3) 10px, rgba(232,184,75,0.3) 11px)` }} />
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500">Opérations</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          </div>
         </div>
 
         {/* ══════════════════════════════════════════════════
@@ -394,11 +435,14 @@ export default function Dashboard() {
           <WorldClassDashboard />
         </Suspense>
 
-        {/* Zone divider */}
-        <div className="my-8 flex items-center gap-4">
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>
-          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        {/* Cinematic Section Transition — Finance */}
+        <div className="relative my-8 py-4">
+          <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.015, backgroundImage: `repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(232,184,75,0.3) 10px, rgba(232,184,75,0.3) 11px)` }} />
+          <div className="relative z-10 flex items-center gap-4">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          </div>
         </div>
 
         {/* ══════════════════════════════════════════════════

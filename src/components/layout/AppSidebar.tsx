@@ -153,10 +153,20 @@ export function AppSidebar() {
         borderRight: '1px solid rgba(255,255,255,0.03)',
       } as React.CSSProperties}
     >
-      <SidebarContent className="flex flex-col h-full" style={{ background: 'transparent' }}>
+      <SidebarContent className="flex flex-col h-full relative overflow-hidden" style={{ background: 'transparent' }}>
+        {/* Aggregate texture — concrete materiality */}
+        <div 
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            opacity: 0.008,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='30' r='8' fill='white' opacity='0.3'/%3E%3Ccircle cx='70' cy='15' r='5' fill='white' opacity='0.2'/%3E%3Ccircle cx='45' cy='65' r='10' fill='white' opacity='0.25'/%3E%3Ccircle cx='85' cy='75' r='6' fill='white' opacity='0.2'/%3E%3Ccircle cx='15' cy='85' r='4' fill='white' opacity='0.15'/%3E%3Ccircle cx='60' cy='45' r='7' fill='white' opacity='0.2'/%3E%3C/svg%3E")`,
+            backgroundSize: '100px 100px'
+          }}
+        />
+
         {/* Brand — Architectural treatment */}
         {!collapsed && (
-          <div className="px-6 pt-7 pb-6 shrink-0">
+          <div className="px-6 pt-7 pb-6 shrink-0 relative z-[1]">
             <div className="text-[13px] font-semibold tracking-[0.3em] uppercase" style={{ color: '#E8B84B' }}>TBOS</div>
             <div className="text-[9px] tracking-[0.4em] uppercase text-slate-600 mt-0.5">Suite</div>
           </div>
