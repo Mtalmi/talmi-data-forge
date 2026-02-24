@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
@@ -7,6 +7,8 @@ import {
   Package, AlertTriangle, ArrowUpDown, RefreshCw,
   Droplets, Bell, ArrowUp, ArrowDown, TrendingUp,
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { format, subDays } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -138,51 +140,118 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
 }
 
 // ─────────────────────────────────────────────────────
-// MOCK DATA
+// LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
-const STOCKS = [
-  { name: 'Ciment CPA 55',          current: 5500,  max: 10000, unit: 'kg', pct: 55, liquid: false },
-  { name: 'Ciment CPJ 45',          current: 3200,  max: 8000,  unit: 'kg', pct: 40, liquid: false },
-  { name: 'Adjuvant Plastifiant',   current: 150,   max: 500,   unit: 'L',  pct: 30, liquid: true  },
-  { name: 'Adjuvant Retardateur',   current: 80,    max: 300,   unit: 'L',  pct: 27, liquid: true  },
-  { name: 'Gravette 8/15',          current: 95000, max: 120000,unit: 'kg', pct: 79, liquid: false },
-  { name: 'Gravette 15/25',         current: 62000, max: 100000,unit: 'kg', pct: 62, liquid: false },
-  { name: 'Sable 0/4',              current: 78000, max: 150000,unit: 'kg', pct: 52, liquid: false },
-  { name: 'Eau',                    current: 15000, max: 20000, unit: 'L',  pct: 75, liquid: true  },
-];
+function useStocksLiveData() {
+  const [STOCKS, setStocks] = useState<{ name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }[]>([]);
+  const [MOVEMENT_DATA, setMovementData] = useState<{ day: string; entrees: number; sorties: number }[]>([]);
+  const [ALERTS, setAlerts] = useState<{ name: string; current: string; min: string; deficit: string; urgency: string; color: string }[]>([]);
+  const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
+  const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
+  const [loading, setLoading] = useState(true);
 
-const MOVEMENT_DATA = [
-  { day: 'Lun', entrees: 12000, sorties: 8500 },
-  { day: 'Mar', entrees: 8000,  sorties: 9200 },
-  { day: 'Mer', entrees: 15000, sorties: 7800 },
-  { day: 'Jeu', entrees: 6000,  sorties: 11000 },
-  { day: 'Ven', entrees: 10000, sorties: 9500 },
-  { day: 'Sam', entrees: 4000,  sorties: 3200 },
-  { day: 'Dim', entrees: 0,     sorties: 0 },
-];
+  const fetchAll = useCallback(async () => {
+    try {
+      const [stocksRes, movementsRes] = await Promise.all([
+        supabase.from('stocks').select('*'),
+        supabase.from('mouvements_stock')
+          .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at')
+          .order('created_at', { ascending: false })
+          .limit(20),
+      ]);
 
-const ALERTS = [
-  { name: 'Adjuvant Plastifiant', current: '150 L',  min: '200 L',  deficit: '-50 L',   urgency: 'Critique', color: T.danger },
-  { name: 'Adjuvant Retardateur', current: '80 L',   min: '100 L',  deficit: '-20 L',   urgency: 'Critique', color: T.danger },
-  { name: 'Ciment CPJ 45',        current: '3 200 kg', min: '4 000 kg', deficit: '-800 kg', urgency: 'Attention', color: T.warning },
-];
+      // Stock levels
+      if (stocksRes.data?.length) {
+        const liquidMaterials = ['eau', 'adjuvant', 'plastifiant', 'retardateur'];
+        const stocks = stocksRes.data.map(s => {
+          const max = s.capacite_max || (s.quantite_actuelle || 0) * 2 || 10000;
+          const current = s.quantite_actuelle || 0;
+          const pct = max > 0 ? Math.round((current / max) * 100) : 0;
+          const isLiquid = liquidMaterials.some(l => (s.materiau || '').toLowerCase().includes(l));
+          return { name: s.materiau || 'Inconnu', current, max, unit: s.unite || 'kg', pct, liquid: isLiquid };
+        });
+        setStocks(stocks);
 
-const MOVEMENTS = [
-  { date: "Aujourd'hui 14:30", type: 'Sortie', material: 'Ciment CPA 55',    qty: '-1 200 kg', ref: 'BN-0142', resp: 'Karim B.' },
-  { date: "Aujourd'hui 11:00", type: 'Sortie', material: 'Gravette 8/15',    qty: '-3 500 kg', ref: 'BN-0140', resp: 'Youssef M.' },
-  { date: "Aujourd'hui 09:00", type: 'Entrée', material: 'Ciment CPA 55',    qty: '+5 000 kg', ref: 'REC-045', resp: 'Fournisseur A' },
-  { date: 'Hier 16:00',         type: 'Sortie', material: 'Adjuvant',         qty: '-25 L',     ref: 'BN-0138', resp: 'Karim B.' },
-  { date: 'Hier 10:00',         type: 'Entrée', material: 'Sable 0/4',        qty: '+15 000 kg', ref: 'REC-044', resp: 'Fournisseur B' },
-  { date: 'Hier 08:00',         type: 'Entrée', material: 'Gravette 15/25',   qty: '+12 000 kg', ref: 'REC-043', resp: 'Fournisseur C' },
-];
+        // Alerts (items below seuil_alerte)
+        const alerts = stocksRes.data
+          .filter(s => s.seuil_alerte && s.quantite_actuelle !== null && s.quantite_actuelle < s.seuil_alerte)
+          .map(s => {
+            const deficit = (s.quantite_actuelle || 0) - (s.seuil_alerte || 0);
+            const urgency = deficit < -(s.seuil_alerte || 0) * 0.5 ? 'Critique' : 'Attention';
+            return {
+              name: s.materiau || 'Inconnu',
+              current: `${(s.quantite_actuelle || 0).toLocaleString('fr-FR')} ${s.unite || 'kg'}`,
+              min: `${(s.seuil_alerte || 0).toLocaleString('fr-FR')} ${s.unite || 'kg'}`,
+              deficit: `${deficit.toLocaleString('fr-FR')} ${s.unite || 'kg'}`,
+              urgency,
+              color: urgency === 'Critique' ? T.danger : T.warning,
+            };
+          });
+        setAlerts(alerts);
 
-const VALUE_BREAKDOWN = [
-  { cat: 'Ciment',    value: 1050, color: T.gold },
-  { cat: 'Granulats', value: 780,  color: T.info },
-  { cat: 'Adjuvants', value: 320,  color: T.success },
-  { cat: 'Sable',     value: 185,  color: T.purple },
-  { cat: 'Eau',       value: 65,   color: T.cyan },
-];
+        // Value breakdown by category
+        const catMap: Record<string, { value: number; color: string }> = {};
+        const colorMap: Record<string, string> = { ciment: T.gold, gravel: T.info, adjuvant: T.success, sable: '#8B5CF6', eau: '#06B6D4' };
+        stocks.forEach(s => {
+          const key = s.name.toLowerCase().includes('ciment') ? 'Ciment'
+            : s.name.toLowerCase().includes('gravel') || s.name.toLowerCase().includes('gravette') ? 'Granulats'
+            : s.name.toLowerCase().includes('adjuvant') ? 'Adjuvants'
+            : s.name.toLowerCase().includes('sable') ? 'Sable'
+            : s.name.toLowerCase().includes('eau') ? 'Eau' : 'Autre';
+          const clr = key === 'Ciment' ? T.gold : key === 'Granulats' ? T.info : key === 'Adjuvants' ? T.success : key === 'Sable' ? '#8B5CF6' : '#06B6D4';
+          if (!catMap[key]) catMap[key] = { value: 0, color: clr };
+          catMap[key].value += Math.round(s.current / 1000);
+        });
+        setValueBreakdown(Object.entries(catMap).map(([cat, v]) => ({ cat, ...v })));
+      }
+
+      // Recent movements
+      if (movementsRes.data?.length) {
+        setMovements(movementsRes.data.map(m => ({
+          date: m.created_at ? format(new Date(m.created_at), 'dd/MM HH:mm') : '—',
+          type: m.type_mouvement === 'entree' ? 'Entrée' : 'Sortie',
+          material: m.materiau || '—',
+          qty: `${m.type_mouvement === 'entree' ? '+' : '-'}${Math.abs(m.quantite || 0).toLocaleString('fr-FR')}`,
+          ref: m.reference_id || '—',
+          resp: m.created_by || '—',
+        })));
+
+        // Weekly movement chart
+        const dayBuckets: Record<string, { entrees: number; sorties: number }> = {};
+        ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].forEach(d => dayBuckets[d] = { entrees: 0, sorties: 0 });
+        const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+        movementsRes.data.forEach(m => {
+          if (m.created_at) {
+            const dayName = dayNames[new Date(m.created_at).getDay()];
+            if (dayBuckets[dayName]) {
+              if (m.type_mouvement === 'entree') dayBuckets[dayName].entrees += Math.abs(m.quantite || 0);
+              else dayBuckets[dayName].sorties += Math.abs(m.quantite || 0);
+            }
+          }
+        });
+        setMovementData(['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(day => ({
+          day, entrees: dayBuckets[day].entrees, sorties: dayBuckets[day].sorties,
+        })));
+      }
+    } catch (err) {
+      console.error('WorldClassStocks fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+    const channel = supabase
+      .channel('wc-stocks-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchAll]);
+
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading };
+}
 
 // ─────────────────────────────────────────────────────
 // KPI CARD
@@ -223,7 +292,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // STOCK LEVEL ROW
 // ─────────────────────────────────────────────────────
-function StockRow({ stock, index }: { stock: typeof STOCKS[0]; index: number }) {
+function StockRow({ stock, index }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number }) {
   const [visible, setVisible] = useState(false);
   const barColor = stock.pct >= 60 ? T.success : stock.pct >= 30 ? T.warning : T.danger;
   const isAlert = stock.pct < 30;
@@ -290,7 +359,7 @@ function StockRow({ stock, index }: { stock: typeof STOCKS[0]; index: number }) 
 // ─────────────────────────────────────────────────────
 // ALERT CARD
 // ─────────────────────────────────────────────────────
-function AlertCard({ alert, delay = 0 }: { alert: typeof ALERTS[0]; delay?: number }) {
+function AlertCard({ alert, delay = 0 }: { alert: { name: string; current: string; min: string; deficit: string; urgency: string; color: string }; delay?: number }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -351,7 +420,7 @@ function AlertCard({ alert, delay = 0 }: { alert: typeof ALERTS[0]; delay?: numb
 // ─────────────────────────────────────────────────────
 // MOVEMENT ROW
 // ─────────────────────────────────────────────────────
-function MovementRow({ m, delay = 0 }: { m: typeof MOVEMENTS[0]; delay?: number }) {
+function MovementRow({ m, delay = 0 }: { m: { date: string; type: string; material: string; qty: string; ref: string; resp: string }; delay?: number }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -436,6 +505,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },

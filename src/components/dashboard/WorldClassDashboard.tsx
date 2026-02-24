@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -10,6 +10,9 @@ import {
   FlaskConical, Users, Package, Clock, CheckCircle2, AlertTriangle,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
+import { useDashboardStats } from '@/hooks/useDashboardStats';
+import { format, subDays, startOfDay, endOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (exact hex values per spec)
@@ -169,76 +172,175 @@ function LiveClock() {
 }
 
 // ─────────────────────────────────────────────────────
-// MOCK DATA
+// FALLBACK DATA (used while loading)
 // ─────────────────────────────────────────────────────
-const cashFlowData = Array.from({ length: 30 }, (_, i) => {
-  const base = 551000;
-  const trend = (i / 29) * 78000;
-  const wave = Math.sin((i / 29) * Math.PI * 4) * 8000;
-  return {
-    day: i % 5 === 4 ? `J${i + 1}` : '',
-    fullDay: `J${i + 1}`,
-    actuel: Math.round(base + trend * 0.6 + wave),
-    projete: Math.round(base + trend + wave * 0.5),
-  };
-});
+const EMPTY_CASHFLOW = Array.from({ length: 30 }, (_, i) => ({
+  day: i % 5 === 4 ? `J${i + 1}` : '',
+  fullDay: `J${i + 1}`,
+  actuel: 0,
+  projete: 0,
+}));
 
-const arAgingData = [
-  { label: '0-30j', value: 5200, fill: T.success },
-  { label: '31-60j', value: 1800, fill: T.warning },
-  { label: '61-90j', value: 700, fill: '#F97316' },
-  { label: '>90j', value: 300, fill: T.danger },
-];
-
-const stockData = [
-  { name: 'Ciment', current: 5500, max: 10000, unit: 'kg' },
-  { name: 'Adjuvant', current: 150, max: 500, unit: 'L' },
-  { name: 'Gravette', current: 95000, max: 120000, unit: 'kg' },
-  { name: 'Eau', current: 15000, max: 20000, unit: 'L' },
-];
-
-const hourlyProductionData = [
-  { hour: '06h', volume: 12 }, { hour: '07h', volume: 35 },
-  { hour: '08h', volume: 68 }, { hour: '09h', volume: 95 },
-  { hour: '10h', volume: 110 }, { hour: '11h', volume: 88 },
-  { hour: '12h', volume: 42 }, { hour: '13h', volume: 78 },
-  { hour: '14h', volume: 125 }, { hour: '15h', volume: 102 },
-  { hour: '16h', volume: 72 }, { hour: '17h', volume: 24 },
-];
-
-const qualityData = [
-  { day: 'Lun', ok: 45, var: 3, crit: 0 },
-  { day: 'Mar', ok: 52, var: 1, crit: 1 },
-  { day: 'Mer', ok: 38, var: 5, crit: 0 },
-  { day: 'Jeu', ok: 60, var: 2, crit: 0 },
-  { day: 'Ven', ok: 48, var: 4, crit: 1 },
-  { day: 'Sam', ok: 30, var: 1, crit: 0 },
-  { day: 'Dim', ok: 0, var: 0, crit: 0 },
-];
-
-const batches = [
-  { id: 'BN-2024-0142', status: 'complete', volume: 12.5, quality: 'OK', time: '14:32' },
-  { id: 'BN-2024-0141', status: 'complete', volume: 8.0, quality: 'OK', time: '13:15' },
-  { id: 'BN-2024-0140', status: 'variance', volume: 10.2, quality: 'VAR', time: '11:48' },
-  { id: 'BN-2024-0139', status: 'complete', volume: 15.0, quality: 'OK', time: '10:22' },
-  { id: 'BN-2024-0138', status: 'complete', volume: 9.8, quality: 'OK', time: '09:05' },
-];
-
-const complianceData = [
-  { name: 'TVA Déclaration', amount: 12450, due: '15 Fév', status: 'overdue' },
-  { name: 'CNSS Cotisation', amount: 8200, due: '10 Fév', status: 'overdue' },
-  { name: 'IR Mensuel', amount: 3100, due: '28 Fév', status: 'upcoming' },
-  { name: 'Taxe Professionnelle', amount: 5600, due: '15 Mars', status: 'ok' },
+const EMPTY_AR = [
+  { label: '0-30j', value: 0, fill: T.success },
+  { label: '31-60j', value: 0, fill: T.warning },
+  { label: '61-90j', value: 0, fill: '#F97316' },
+  { label: '>90j', value: 0, fill: T.danger },
 ];
 
 const modules = [
-  { icon: Factory, title: 'Production', desc: 'Batches, recettes, planning', color: T.gold, count: '3 actifs' },
-  { icon: Truck, title: 'Logistique', desc: 'Livraisons, stock, transport', color: T.info, count: '2 en cours' },
-  { icon: Banknote, title: 'Finances', desc: 'Factures, paiements, trésorerie', color: T.success, count: '5 en attente' },
-  { icon: FlaskConical, title: 'Laboratoire', desc: 'Tests qualité, conformité', color: '#8B5CF6', count: '1 test' },
-  { icon: Shield, title: 'Sécurité', desc: 'Incidents, EPI, formations', color: T.warning, count: '0 incident' },
-  { icon: Users, title: 'Équipe', desc: 'Présence, planning, tâches', color: '#EC4899', count: '12 présents' },
+  { icon: Factory, title: 'Production', desc: 'Batches, recettes, planning', color: T.gold, count: '—' },
+  { icon: Truck, title: 'Logistique', desc: 'Livraisons, stock, transport', color: T.info, count: '—' },
+  { icon: Banknote, title: 'Finances', desc: 'Factures, paiements, trésorerie', color: T.success, count: '—' },
+  { icon: FlaskConical, title: 'Laboratoire', desc: 'Tests qualité, conformité', color: '#8B5CF6', count: '—' },
+  { icon: Shield, title: 'Sécurité', desc: 'Incidents, EPI, formations', color: T.warning, count: '—' },
+  { icon: Users, title: 'Équipe', desc: 'Présence, planning, tâches', color: '#EC4899', count: '—' },
 ];
+
+// ─────────────────────────────────────────────────────
+// LIVE DATA HOOK
+// ─────────────────────────────────────────────────────
+function useWorldClassLiveData() {
+  const { stats, loading: statsLoading } = useDashboardStats();
+  const [stockData, setStockData] = useState<{ name: string; current: number; max: number; unit: string }[]>([]);
+  const [arAgingData, setArAgingData] = useState(EMPTY_AR);
+  const [recentBatches, setRecentBatches] = useState<any[]>([]);
+  const [cashFlowData, setCashFlowData] = useState(EMPTY_CASHFLOW);
+  const [hourlyProductionData, setHourlyProductionData] = useState<{ hour: string; volume: number }[]>([]);
+  const [qualityData, setQualityData] = useState<{ day: string; ok: number; var: number; crit: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const today = new Date();
+      const todayStr = format(today, 'yyyy-MM-dd');
+      const thirtyDaysAgo = format(subDays(today, 30), 'yyyy-MM-dd');
+
+      const [stocksRes, arRes, batchesRes, cashInRes, cashOutRes, blTodayRes] = await Promise.all([
+        supabase.from('stocks').select('materiau, quantite_actuelle, seuil_alerte, capacite_max, unite'),
+        supabase.from('clients').select('solde_du, created_at').gt('solde_du', 0),
+        supabase.from('bons_livraison_reels')
+          .select('bl_id, volume_m3, quality_status, date_livraison, created_at, formule_id, affaissement_conforme')
+          .order('created_at', { ascending: false })
+          .limit(5),
+        supabase.from('factures').select('total_ttc, date_facture')
+          .gte('date_facture', thirtyDaysAgo),
+        supabase.from('depenses').select('montant, date_depense')
+          .gte('date_depense', thirtyDaysAgo),
+        supabase.from('bons_livraison_reels')
+          .select('volume_m3, created_at, quality_status, affaissement_conforme')
+          .gte('date_livraison', todayStr),
+      ]);
+
+      // Stock levels
+      if (stocksRes.data?.length) {
+        setStockData(stocksRes.data.map(s => ({
+          name: s.materiau || 'Inconnu',
+          current: s.quantite_actuelle || 0,
+          max: s.capacite_max || (s.quantite_actuelle || 0) * 2 || 10000,
+          unit: s.unite || 'kg',
+        })));
+      }
+
+      // AR aging buckets
+      if (arRes.data?.length) {
+        const now = Date.now();
+        const buckets = { '0-30j': 0, '31-60j': 0, '61-90j': 0, '>90j': 0 };
+        arRes.data.forEach(c => {
+          const age = Math.floor((now - new Date(c.created_at).getTime()) / (1000 * 60 * 60 * 24));
+          const amount = c.solde_du || 0;
+          if (age <= 30) buckets['0-30j'] += amount;
+          else if (age <= 60) buckets['31-60j'] += amount;
+          else if (age <= 90) buckets['61-90j'] += amount;
+          else buckets['>90j'] += amount;
+        });
+        setArAgingData([
+          { label: '0-30j', value: Math.round(buckets['0-30j']), fill: T.success },
+          { label: '31-60j', value: Math.round(buckets['31-60j']), fill: T.warning },
+          { label: '61-90j', value: Math.round(buckets['61-90j']), fill: '#F97316' },
+          { label: '>90j', value: Math.round(buckets['>90j']), fill: T.danger },
+        ]);
+      }
+
+      // Recent batches
+      if (batchesRes.data?.length) {
+        setRecentBatches(batchesRes.data.map(b => ({
+          id: b.bl_id,
+          status: b.quality_status === 'conforme' || b.affaissement_conforme ? 'complete' : 'variance',
+          volume: b.volume_m3 || 0,
+          quality: b.quality_status === 'conforme' || b.affaissement_conforme ? 'OK' : 'VAR',
+          time: b.created_at ? format(new Date(b.created_at), 'HH:mm') : '—',
+        })));
+      }
+
+      // Cash flow (30 days)
+      if (cashInRes.data || cashOutRes.data) {
+        const dayMap: Record<string, { actuel: number; projete: number }> = {};
+        for (let i = 0; i < 30; i++) {
+          const d = format(subDays(today, 29 - i), 'yyyy-MM-dd');
+          dayMap[d] = { actuel: 0, projete: 0 };
+        }
+        cashInRes.data?.forEach(f => {
+          const d = (f as any).date_facture;
+          if (dayMap[d]) dayMap[d].actuel += (f as any).total_ttc || 0;
+        });
+        cashOutRes.data?.forEach(dep => {
+          const d = dep.date_depense;
+          if (dayMap[d]) dayMap[d].actuel -= dep.montant || 0;
+        });
+        let cumulative = 0;
+        const cfData = Object.entries(dayMap).map(([date, val], i) => {
+          cumulative += val.actuel;
+          return {
+            day: i % 5 === 4 ? `J${i + 1}` : '',
+            fullDay: `J${i + 1}`,
+            actuel: Math.round(cumulative),
+            projete: Math.round(cumulative * 1.08),
+          };
+        });
+        setCashFlowData(cfData);
+      }
+
+      // Hourly production (today)
+      if (blTodayRes.data?.length) {
+        const hourBuckets: Record<string, number> = {};
+        for (let h = 6; h <= 18; h++) hourBuckets[`${h.toString().padStart(2, '0')}h`] = 0;
+        blTodayRes.data.forEach(bl => {
+          if (bl.created_at) {
+            const hour = `${new Date(bl.created_at).getHours().toString().padStart(2, '0')}h`;
+            if (hourBuckets[hour] !== undefined) hourBuckets[hour] += bl.volume_m3 || 0;
+          }
+        });
+        setHourlyProductionData(Object.entries(hourBuckets).map(([hour, volume]) => ({
+          hour, volume: Math.round(volume),
+        })));
+
+        // Quality data from today's BLs
+        const okCount = blTodayRes.data.filter(b => b.quality_status === 'conforme' || b.affaissement_conforme).length;
+        const varCount = blTodayRes.data.filter(b => b.quality_status === 'non_conforme' || (b.affaissement_conforme === false)).length;
+        setQualityData([{ day: "Aujourd'hui", ok: okCount, var: varCount, crit: 0 }]);
+      }
+
+    } catch (err) {
+      console.error('WorldClassDashboard fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAll();
+    const channel = supabase
+      .channel('wc-dashboard-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetchAll())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchAll]);
+
+  return { stats, statsLoading, stockData, arAgingData, recentBatches, cashFlowData, hourlyProductionData, qualityData, loading };
+}
 
 // ─────────────────────────────────────────────────────
 // KPI ANIMATED CARD
@@ -273,15 +375,38 @@ function KpiBox({ label, value, unit = '', color = T.gold, icon, delay = 0 }: an
 // ─────────────────────────────────────────────────────
 export function WorldClassDashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'production' | 'finance'>('overview');
+  const {
+    stats, statsLoading,
+    stockData: liveStockData, arAgingData, recentBatches,
+    cashFlowData, hourlyProductionData, qualityData, loading,
+  } = useWorldClassLiveData();
 
-  // Animated counters
-  const solde = useAnimatedCounter(551);
-  const finMois = useAnimatedCounter(629);
-  const entrees = useAnimatedCounter(426);
-  const sorties = useAnimatedCounter(348);
-  const totalAR = useAnimatedCounter(8);
+  // Use live data or fallback
+  const stockData = liveStockData.length ? liveStockData : [
+    { name: 'Ciment', current: 0, max: 10000, unit: 'kg' },
+    { name: 'Adjuvant', current: 0, max: 500, unit: 'L' },
+    { name: 'Gravette', current: 0, max: 120000, unit: 'kg' },
+    { name: 'Eau', current: 0, max: 20000, unit: 'L' },
+  ];
+  const batches = recentBatches.length ? recentBatches : [];
+
+  // Compliance data (static fiscal calendar — no DB table for this yet)
+  const complianceData = [
+    { name: 'TVA Déclaration', amount: 12450, due: '15 Fév', status: 'overdue' },
+    { name: 'CNSS Cotisation', amount: 8200, due: '10 Fév', status: 'overdue' },
+    { name: 'IR Mensuel', amount: 3100, due: '28 Fév', status: 'upcoming' },
+    { name: 'Taxe Professionnelle', amount: 5600, due: '15 Mars', status: 'ok' },
+  ];
+
+  // Animated counters from LIVE stats
+  const totalCashIn = cashFlowData.length ? cashFlowData[cashFlowData.length - 1]?.actuel || 0 : 0;
+  const solde = useAnimatedCounter(Math.round(totalCashIn / 1000) || 0);
+  const finMois = useAnimatedCounter(Math.round((totalCashIn * 1.08) / 1000) || 0);
+  const entrees = useAnimatedCounter(Math.round(stats.totalVolume * (stats.curMoyen7j || 0) / 1000) || 0);
+  const sorties = useAnimatedCounter(Math.round(stats.pendingPaymentsTotal / 1000) || 0);
+  const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 0);
   const budgetGaugePct = useAnimatedCounter(0);
-  const prodTotal = useAnimatedCounter(851);
+  const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 0);
 
   const getStockColor = (current: number, max: number) => {
     const pct = current / max;
@@ -567,7 +692,7 @@ export function WorldClassDashboard() {
                 </div>
                 <div style={{ fontSize: 11, color: T.textDim, marginTop: 2 }}>Volumes par heure</div>
               </div>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: 20, color: T.gold }}>851 m³</span>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: 20, color: T.gold }}>{prodTotal} m³</span>
             </div>
             <div className="overflow-hidden w-full" style={{ height: 180 }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -597,9 +722,9 @@ export function WorldClassDashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 700 }}>Qualité Hebdomadaire</div>
               <div style={{ display: 'flex', gap: 6 }}>
-                <Badge label="0 OK" color={T.success} bg={`${T.success}20`} />
-                <Badge label="0 Var" color={T.warning} bg={`${T.warning}20`} />
-                <Badge label="0 Crit" color={T.danger} bg={`${T.danger}20`} />
+                <Badge label={`${qualityData.reduce((s, d) => s + d.ok, 0)} OK`} color={T.success} bg={`${T.success}20`} />
+                <Badge label={`${qualityData.reduce((s, d) => s + d.var, 0)} Var`} color={T.warning} bg={`${T.warning}20`} />
+                <Badge label={`${qualityData.reduce((s, d) => s + d.crit, 0)} Crit`} color={T.danger} bg={`${T.danger}20`} />
               </div>
             </div>
             <div className="overflow-hidden w-full" style={{ height: 180 }}>
