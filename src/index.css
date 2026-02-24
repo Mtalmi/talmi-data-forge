@@ -205,17 +205,54 @@
   --transition-slow:   all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Scrollbar ─── */
+/* ─── Premium Scrollbar — nearly invisible, golden on hover ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--navy-border);
-  border-radius: 100px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
 }
-::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary)); }
+::-webkit-scrollbar-thumb:hover { background: rgba(253,185,19,0.2); }
+* { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.06) transparent; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── Selection ─── */
-::selection { background: var(--gold-soft); color: hsl(var(--primary)); }
+/* ─── Gold-Tinted Selection ─── */
+::selection { background: rgba(253,185,19,0.25); color: white; }
+
+/* ─── Global Card Hover ─── */
+.card-hover {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,0.1) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 12px 36px rgba(0,0,0,0.25) !important;
+}
+
+/* ─── Link hover — gold underline animation ─── */
+.link-gold {
+  position: relative;
+  transition: color 0.2s ease;
+}
+.link-gold:hover { color: #FDB913; }
+.link-gold::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #FDB913;
+  transition: width 0.3s ease;
+}
+.link-gold:hover::after { width: 100%; }
+
+/* ─── Button press effect ─── */
+.btn-press:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
 
 /* ─── Metric Typography ─── */
 .metric-value,

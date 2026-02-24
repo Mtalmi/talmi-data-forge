@@ -314,7 +314,7 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Greeting — Commanding Presence */}
-          <div className="pt-4 pb-6 relative z-[1]">
+          <div className="pt-4 pb-6 relative z-[1]" style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.16,1,0.3,1) 0s both' }}>
             <h1 className="text-[28px] font-light text-white tracking-tight" style={{ letterSpacing: '-0.02em' }}>
               {firstName}
             </h1>
@@ -329,7 +329,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-5 mb-5 relative z-[1]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1]">
           {[
             {
               label: 'VOLUME',
@@ -552,7 +552,7 @@ export default function Dashboard() {
         {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
           <div
-            className="flex items-center justify-between px-5 py-3 rounded-xl mb-8"
+            className="flex items-center justify-between px-5 py-3 rounded-xl mt-5 mb-8"
             style={{
               background: 'linear-gradient(90deg, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 50%, rgba(234,179,8,0.06) 100%)',
               border: '1px solid rgba(234,179,8,0.1)',
@@ -586,11 +586,11 @@ export default function Dashboard() {
         />
 
         {/* Cinematic Section Transition — Opérations */}
-        <div className="relative mt-8 mb-8 py-4">
+        <div className="relative mt-8 mb-5 py-4">
           <div className="relative z-10 flex items-center gap-4">
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500">Opérations</span>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
+            <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-slate-500">Opérations</span>
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
           </div>
         </div>
 
@@ -602,11 +602,11 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Cinematic Section Transition — Finance */}
-        <div className="relative my-8 py-4">
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(232,184,75,0.12), transparent)' }} />
+        <div className="relative mt-10 mb-5 py-4">
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
+            <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-slate-500">Finance & Conformité</span>
+            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
           </div>
         </div>
 
