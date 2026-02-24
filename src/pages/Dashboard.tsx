@@ -159,7 +159,7 @@ export default function Dashboard() {
 
         {/* Row 1: Greeting + Status pills */}
         <div className="pt-2 pb-6">
-          <h1 className="text-2xl font-light text-white/90 tracking-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+          <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
             {firstName}
           </h1>
           <div className="flex items-center gap-3 mt-1">
@@ -220,11 +220,11 @@ export default function Dashboard() {
               }}
               className="rounded-xl p-7 transition-all duration-500 ease-out cursor-default relative overflow-hidden bg-white/[0.03] border border-white/[0.06] hover:border-yellow-500/[0.12]"
             >
-              <div className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 mb-3">
+              <div className="text-[10px] font-medium uppercase tracking-[0.2em] text-slate-500 mb-3">
                 {kpi.label}
               </div>
               <div className="leading-none tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-                <span className="text-[2.75rem] font-extralight tracking-tight text-white">
+                <span className="text-5xl font-extralight tracking-tight text-white leading-none">
                   {kpi.value}
                 </span>
                 <span className="text-lg font-extralight text-slate-400 ml-1">{kpi.unit}</span>
