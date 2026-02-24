@@ -245,6 +245,10 @@
     font-family: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     letter-spacing: -0.01em;
+    background:
+      radial-gradient(ellipse at top center, rgba(234,179,8,0.015) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(6,182,212,0.008) 0%, transparent 50%),
+      hsl(var(--background));
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -276,10 +280,10 @@
   }
 
   .glass-panel:hover {
-    border-color: hsl(51 100% 50% / 0.25);
+    border-color: rgba(255,255,255,0.15);
     box-shadow: 
-      0 0 40px hsl(51 100% 50% / 0.08),
-      inset 0 1px 0 hsl(51 100% 50% / 0.05);
+      0 4px 32px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.05);
   }
 
   /* Premium Gold Glow Border */
@@ -300,8 +304,8 @@
   }
 
   .card-holographic:hover {
-    border-color: hsl(51 100% 50% / 0.3);
-    box-shadow: 0 0 40px hsl(51 100% 50% / 0.12);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.4);
   }
 
   /* Vault Header — Bloomberg command bar */
@@ -891,11 +895,11 @@
   .mobile-bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
     @apply md:hidden;
-    background: hsl(var(--card) / 0.98);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-top: 1px solid hsl(var(--border));
-    box-shadow: 0 -4px 24px hsl(0 0% 0% / 0.15);
+    background: rgba(10, 15, 26, 0.85);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 -8px 32px rgba(0,0,0,0.3);
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
@@ -909,7 +913,7 @@
   .mobile-nav-item {
     @apply relative flex flex-col items-center justify-center;
     @apply min-h-[56px] min-w-[56px] px-3 py-2;
-    @apply text-muted-foreground;
+    color: rgba(255,255,255,0.4);
     @apply transition-all duration-200;
     @apply rounded-xl;
   }
@@ -920,7 +924,7 @@
 
   .mobile-nav-item-active {
     @apply text-primary;
-    background: hsl(var(--primary) / 0.08);
+    background: transparent;
   }
 
   .mobile-nav-icon {
@@ -928,19 +932,19 @@
   }
 
   .mobile-nav-item-active .mobile-nav-icon {
-    @apply h-6 w-6;
-    filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.5));
+    @apply h-5 w-5;
+    filter: drop-shadow(0 0 8px hsl(var(--primary) / 0.4));
   }
 
   .mobile-nav-label {
-    @apply text-[10px] font-bold leading-tight tracking-wide;
+    @apply text-[10px] font-medium leading-tight;
   }
 
   .mobile-nav-indicator {
-    @apply absolute -bottom-0.5 left-1/2 -translate-x-1/2;
-    @apply w-6 h-1 rounded-full;
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.7));
-    box-shadow: 0 0 16px hsl(var(--primary) / 0.6);
+    @apply absolute -top-0 left-1/2 -translate-x-1/2;
+    @apply w-8 h-0.5 rounded-full;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.6);
     animation: indicator-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
@@ -2559,29 +2563,113 @@
 
 /* ─── Universal Card ─── */
 .tbos-card {
-  background: var(--navy-card);
-  border: 1px solid var(--navy-border);
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-md);
-  transition: var(--transition);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   will-change: transform;
 }
-.tbos-card::before {
+.tbos-card:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+}
+.tbos-card:active {
+  transform: translateY(0) scale(0.995);
+}
+
+/* ─── Hero Card — most important data per page ─── */
+.tbos-card-hero {
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 4px 24px rgba(0,0,0,0.4),
+    0 0 48px rgba(234,179,8,0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.tbos-card-hero:hover {
+  border-color: rgba(255,255,255,0.18);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 8px 32px rgba(0,0,0,0.5),
+    0 0 64px rgba(234,179,8,0.05);
+  transform: translateY(-1px);
+}
+
+/* ─── Recessed Card — secondary/supporting info ─── */
+.tbos-card-recessed {
+  background: rgba(255,255,255,0.015);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.tbos-card-recessed:hover {
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.1);
+}
+
+/* ─── Section Header — receding organizer ─── */
+.tbos-section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 8px 16px;
+}
+.tbos-section-header span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 500;
+  color: rgba(255,255,255,0.25);
+  white-space: nowrap;
+}
+.tbos-section-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255,255,255,0.1), transparent);
+}
+
+/* ─── Live status badge with ping ─── */
+.tbos-status-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tbos-status-live .dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.tbos-status-live .dot::after {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 2px;
-  background: linear-gradient(90deg, transparent, #FFD700, transparent);
-  transition: left 0.5s ease;
-  z-index: 1;
+  inset: 0;
+  border-radius: 50%;
+  animation: tbos-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  opacity: 0.4;
 }
-.tbos-card:hover {
-  border-color: rgba(255, 215, 0, 0.35);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,215,0,0.08);
+@keyframes tbos-ping {
+  0% { transform: scale(1); opacity: 0.4; }
+  75%, 100% { transform: scale(2.5); opacity: 0; }
 }
-.tbos-card:hover::before { left: 100%; }
 
 /* ─── Stagger animation on page load ─── */
 @keyframes cardReveal {
@@ -2602,8 +2690,6 @@
 button, [role="button"] { transition: var(--transition) !important; will-change: transform; }
 button:hover:not(:disabled) { transform: translateY(-1px) !important; }
 button:active:not(:disabled) { transform: translateY(0) scale(0.97) !important; }
-button[class*="gold"]:hover,
-button[class*="primary"]:hover { box-shadow: 0 8px 32px rgba(255,215,0,0.2) !important; }
 
 /* ─── Input focus glow ─── */
 input:focus, textarea:focus, select:focus {

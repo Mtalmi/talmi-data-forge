@@ -175,14 +175,15 @@ export function QuickActionFAB() {
         <DropdownMenuTrigger asChild>
           <button
             className={cn(
-              'h-14 w-14 rounded-full shadow-lg transition-all hover:scale-105',
+              'h-12 w-12 rounded-2xl shadow-lg transition-all duration-200',
               'flex items-center justify-center relative',
+              'hover:scale-105 active:scale-95',
               hasHighPriority 
-                ? 'bg-warning hover:bg-warning/90 animate-pulse text-warning-foreground' 
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                ? 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-[0_4px_24px_rgba(245,158,11,0.3)] hover:shadow-[0_4px_32px_rgba(245,158,11,0.5)] text-black' 
+                : 'bg-gradient-to-br from-yellow-400 to-yellow-600 shadow-[0_4px_24px_rgba(234,179,8,0.3)] hover:shadow-[0_4px_32px_rgba(234,179,8,0.5)] text-black'
             )}
           >
-            <Zap className="h-6 w-6" />
+            <Zap className="h-5 w-5" />
             {totalTasks > 0 && (
               <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-xs flex items-center justify-center font-bold">
                 {totalTasks > 9 ? '9+' : totalTasks}

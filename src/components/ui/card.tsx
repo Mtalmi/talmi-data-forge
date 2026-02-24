@@ -2,13 +2,23 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "hero" | "recessed";
+}
+
+const cardVariantClasses = {
+  default: "tbos-card",
+  hero: "tbos-card-hero",
+  recessed: "tbos-card-recessed",
+};
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant = "default", ...props }, ref) => (
   <div 
     ref={ref} 
     className={cn(
-      "tbos-card rounded-2xl text-card-foreground",
-      "bg-card/40 backdrop-blur-sm",
-      "border border-primary/10 relative overflow-hidden",
+      cardVariantClasses[variant],
+      "rounded-2xl text-card-foreground",
+      "backdrop-blur-sm relative overflow-hidden",
       className
     )} 
     {...props} 
