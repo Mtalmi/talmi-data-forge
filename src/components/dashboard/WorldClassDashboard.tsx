@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  ReferenceLine,
+  XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
-  Zap, Factory, Banknote, TrendingUp, CheckCircle2, AlertTriangle,
+  CheckCircle2, AlertTriangle, TrendingUp,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
@@ -13,26 +12,21 @@ import { format, subDays } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 
 // ─────────────────────────────────────────────────────
-// DESIGN TOKENS
+// DESIGN TOKENS — Vogue mode
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: '#FFD700',
-  goldDim: 'rgba(255,215,0,0.15)',
-  goldGlow: 'rgba(255,215,0,0.25)',
-  goldBorder: 'rgba(255,215,0,0.3)',
-  cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-  cardBorder: '#1E2D4A',
-  success: '#10B981',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  info: '#3B82F6',
+  gold: 'rgb(234, 179, 8)',
   textPri: '#F1F5F9',
   textSec: '#94A3B8',
-  textDim: '#64748B',
+  textDim: '#475569',
+  textFaint: '#334155',
+  dotOk: '#34D399',
+  dotWarn: '#FBBF24',
+  dotCrit: '#F87171',
 };
 
 // ─── Animated counter ───
-function useAnimatedCounter(target: number, duration = 800) {
+function useAnimatedCounter(target: number, duration = 1200) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>();
   useEffect(() => {
@@ -50,16 +44,16 @@ function useAnimatedCounter(target: number, duration = 800) {
 }
 
 // ─── Tooltip ───
-function GoldTooltip({ active, payload, label, unit = '' }: any) {
+function CleanTooltip({ active, payload, label, unit = '' }: any) {
   if (!active || !payload?.length) return null;
   return (
     <div style={{
-      background: '#1A2540', border: `1px solid ${T.gold}`, borderRadius: 10,
-      padding: '8px 14px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+      background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
+      padding: '6px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
     }}>
-      <p style={{ color: T.textSec, fontSize: 11, marginBottom: 4 }}>{label}</p>
+      <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: p.color || T.gold, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 13 }}>
+        <p key={i} style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>
           {typeof p.value === 'number' ? p.value.toLocaleString('fr-FR') : p.value}{unit}
         </p>
       ))}
@@ -67,42 +61,15 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
   );
 }
 
-// ─── Card with glass morphism ───
+// ─── Card — minimal surface ───
 function Card({ children, className = '', style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   return (
     <div
-      className={`transition-all duration-500 ease-out hover:border-white/[0.08] ${className}`}
-      style={{
-        background: 'linear-gradient(135deg, rgba(30,45,74,0.7) 0%, rgba(17,27,46,0.5) 50%, rgba(12,20,40,0.7) 100%)',
-        backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        borderRadius: 14,
-        padding: 20,
-        position: 'relative',
-        overflow: 'hidden',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.2)',
-        ...style,
-      }}
+      className={`bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.04] ${className}`}
+      style={style}
     >
-      {/* Top reflection line */}
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent)' }} />
       {children}
     </div>
-  );
-}
-
-// ─── Badge ───
-function Badge({ label, color, bg }: { label: string; color: string; bg: string }) {
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '3px 10px', borderRadius: 999,
-      background: bg, border: `1px solid ${color}40`,
-      color, fontSize: 10, fontWeight: 700,
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, display: 'inline-block' }} />
-      {label}
-    </span>
   );
 }
 
@@ -124,10 +91,10 @@ const FALLBACK_STOCK = [
 ];
 
 const EMPTY_AR = [
-  { label: '0-30j', value: 32000, fill: T.success },
-  { label: '31-60j', value: 18000, fill: T.warning },
-  { label: '61-90j', value: 12000, fill: '#F97316' },
-  { label: '>90j', value: 15000, fill: T.danger },
+  { label: '0-30j', value: 32000 },
+  { label: '31-60j', value: 18000 },
+  { label: '61-90j', value: 12000 },
+  { label: '>90j', value: 15000 },
 ];
 
 const EMPTY_CASHFLOW = Array.from({ length: 30 }, (_, i) => ({
@@ -136,6 +103,9 @@ const EMPTY_CASHFLOW = Array.from({ length: 30 }, (_, i) => ({
   actuel: 520000 + Math.sin(i * 0.3) * 15000 + i * 1200,
   projete: 530000 + Math.sin(i * 0.3) * 12000 + i * 1500,
 }));
+
+// AR gold opacities for monochrome aging
+const AR_OPACITIES = [0.8, 0.5, 0.3, 0.15];
 
 // ─── Live Data Hook ───
 function useWorldClassLiveData() {
@@ -190,17 +160,16 @@ function useWorldClassLiveData() {
         const hasData = Object.values(buckets).some(v => v > 0);
         if (hasData) {
           setArAgingData([
-            { label: '0-30j', value: Math.round(buckets['0-30j']), fill: T.success },
-            { label: '31-60j', value: Math.round(buckets['31-60j']), fill: T.warning },
-            { label: '61-90j', value: Math.round(buckets['61-90j']), fill: '#F97316' },
-            { label: '>90j', value: Math.round(buckets['>90j']), fill: T.danger },
+            { label: '0-30j', value: Math.round(buckets['0-30j']) },
+            { label: '31-60j', value: Math.round(buckets['31-60j']) },
+            { label: '61-90j', value: Math.round(buckets['61-90j']) },
+            { label: '>90j', value: Math.round(buckets['>90j']) },
           ]);
         }
       }
 
       if (batchesRes.data?.length) {
         const mapped = batchesRes.data.map(b => {
-          const isOk = b.quality_status === 'conforme' || b.affaissement_conforme === true;
           const isVar = b.quality_status === 'non_conforme' || b.affaissement_conforme === false;
           return {
             id: b.bl_id,
@@ -210,7 +179,6 @@ function useWorldClassLiveData() {
             time: b.created_at ? format(new Date(b.created_at), 'HH:mm') : '—',
           };
         });
-        // Only use DB data if we get meaningful results, otherwise keep fallback
         if (mapped.length > 0) setRecentBatches(mapped);
       }
 
@@ -273,17 +241,6 @@ function useWorldClassLiveData() {
   return { stats, statsLoading, stockData, arAgingData, recentBatches, cashFlowData, hourlyProductionData, qualityData, loading };
 }
 
-// ─── Stock gradient helper ───
-function getStockGradient(current: number, max: number) {
-  const pct = (current / max) * 100;
-  if (pct > 50) return { gradient: 'linear-gradient(to right, #059669, #34D399)', shadow: '0 0 6px rgba(16,185,129,0.2)', color: T.success };
-  if (pct > 20) return { gradient: 'linear-gradient(to right, #D97706, #FBBF24)', shadow: '0 0 6px rgba(245,158,11,0.2)', color: T.warning };
-  return { gradient: 'linear-gradient(to right, #DC2626, #F87171)', shadow: '0 0 6px rgba(239,68,68,0.2)', color: T.danger };
-}
-function getStockColor(current: number, max: number) {
-  return getStockGradient(current, max).color;
-}
-
 // ═══════════════════════════════════════════════════════
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
@@ -294,8 +251,6 @@ export function WorldClassDashboard() {
   } = useWorldClassLiveData();
 
   const totalCashIn = cashFlowData.length ? cashFlowData[cashFlowData.length - 1]?.actuel || 0 : 0;
-  const solde = useAnimatedCounter(Math.round(totalCashIn / 1000) || 551);
-  const finMois = useAnimatedCounter(Math.round((totalCashIn * 1.08) / 1000) || 502);
   const totalAR = useAnimatedCounter(Math.round(arAgingData.reduce((s, d) => s + d.value, 0) / 1000) || 77);
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851);
 
@@ -309,7 +264,7 @@ export function WorldClassDashboard() {
   ];
 
   return (
-    <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri, background: 'radial-gradient(ellipse at top, rgba(234,179,8,0.03) 0%, transparent 50%)' }}>
+    <div className="overflow-x-hidden max-w-full w-full" style={{ fontFamily: 'Inter, system-ui, sans-serif', color: T.textPri }}>
 
       <style>{`
         @keyframes tbos-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -318,7 +273,6 @@ export function WorldClassDashboard() {
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
         @media (max-width: 768px) {
           .tbos-grid-2col, .tbos-grid-3col { grid-template-columns: 1fr !important; }
-          .tbos-cashflow-metrics { grid-template-columns: 1fr 1fr !important; }
           .tbos-grid-batches { grid-template-columns: repeat(5, 75vw) !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
           .tbos-grid-batches::-webkit-scrollbar { display: none; }
         }
@@ -326,41 +280,36 @@ export function WorldClassDashboard() {
 
       <div style={{ maxWidth: 1600, margin: '0 auto' }}>
 
-        {/* ═══ COLUMN 1/2/3 GRID — Production + Stock + Créances ═══ */}
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4" style={{ alignItems: 'start' }}>
+        {/* ═══ COLUMN 1/2/3 GRID ═══ */}
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production & Quality ─── */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Daily Production Chart */}
-            <Card className="tbos-card-enter" style={{ height: 280 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <Card className="tbos-card-enter" style={{ height: 280 } as any}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700 }}>Production Journalière</span>
-                    <Badge label="Peak 14h" color={T.warning} bg={`${T.warning}20`} />
-                  </div>
-                  <div style={{ fontSize: 11, color: T.textDim, marginTop: 2 }}>
+                  <div className="text-sm font-medium text-white/90">Production Journalière</div>
+                  <div className="text-[11px] text-slate-500 mt-1">
                     {qualityData[0].ok} OK · {qualityData[0].var} Var · {qualityData[0].crit} Crit
                   </div>
                 </div>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: 18, color: T.gold }}>{prodTotal} m³</span>
+                <span className="text-[2rem] font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{prodTotal} <span className="text-lg text-slate-400">m³</span></span>
               </div>
               <div className="overflow-hidden w-full" style={{ height: 180 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGold2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.45} />
-                        <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity={0.15} />
+                        <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.4} />
+                        <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity={0.12} />
                         <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                    <XAxis dataKey="hour" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} />
-                    <Tooltip content={(p) => <GoldTooltip {...p} unit=" m³" />} />
-                    <ReferenceLine x="14h" stroke={`${T.gold}50`} strokeDasharray="4 4" />
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2.5} fill="url(#prodGold2)" dot={{ r: 2, fill: T.gold }} animationDuration={1200} />
+                    <XAxis dataKey="hour" tick={{ fill: T.textFaint, fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <YAxis hide />
+                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" m³" />} cursor={{ stroke: 'rgba(255,255,255,0.1)' }} />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold2)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: 'none' }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -368,27 +317,23 @@ export function WorldClassDashboard() {
 
             {/* Derniers Batches */}
             <Card className="tbos-card-enter">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: T.success, animation: 'tbos-fade-up 2.5s infinite' }} />
-                <span style={{ fontSize: 13, fontWeight: 700 }}>Derniers Batches</span>
-                <Badge label="Live" color={T.success} bg={`${T.success}15`} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-[pulse-subtle_3s_ease-in-out_infinite]" />
+                <span className="text-sm font-medium text-white/90">Derniers Batches</span>
               </div>
               <div className="tbos-grid-batches" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
                 {batches.map((b, i) => (
-                  <div key={i} style={{
-                    background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.cardBorder}`,
-                    borderLeft: `3px solid ${b.status === 'complete' ? T.success : T.warning}`,
-                    borderRadius: 10, padding: 10,
+                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-3" style={{
+                    borderLeft: `2px solid ${b.quality === 'OK' ? T.dotOk : T.dotWarn}`,
                   }}>
-                    <div style={{ fontSize: 9, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>{b.id}</div>
-                    <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 16, color: T.gold }}>{b.volume} m³</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                      <span style={{
-                        padding: '1px 6px', borderRadius: 999, fontSize: 9, fontWeight: 700,
-                        background: b.quality === 'OK' ? `${T.success}20` : `${T.warning}20`,
-                        color: b.quality === 'OK' ? T.success : T.warning,
-                      }}>{b.quality}</span>
-                      <span style={{ fontSize: 9, color: T.textDim, fontFamily: 'JetBrains Mono' }}>{b.time}</span>
+                    <div className="text-[9px] text-slate-500 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{b.id}</div>
+                    <div className="text-base font-extralight text-white tabular-nums mt-1" style={{ fontFamily: 'Inter, system-ui' }}>{b.volume} m³</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 }}>
+                      <span className="flex items-center gap-1">
+                        <span className={`w-1.5 h-1.5 rounded-full inline-block ${b.quality === 'OK' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                        <span className="text-[11px] text-slate-400">{b.quality}</span>
+                      </span>
+                      <span className="text-[9px] text-slate-500 tabular-nums">{b.time}</span>
                     </div>
                   </div>
                 ))}
@@ -397,24 +342,24 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 2: Stock & Pipeline ─── */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Stock Levels */}
             <Card className="tbos-card-enter">
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 14 }}>Niveaux de Stock</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="text-sm font-medium text-white/90 mb-4">Niveaux de Stock</div>
+              <div className="flex flex-col gap-3">
                 {stockData.map((s, i) => {
                   const pct = (s.current / s.max) * 100;
-                  const color = getStockColor(s.current, s.max);
+                  const opacity = pct > 50 ? 0.8 : pct > 20 ? 0.5 : 0.25;
                   return (
                     <div key={i}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, gap: 8 }}>
-                        <span style={{ fontSize: 11, color: T.textSec }}>{s.name}</span>
-                        <span style={{ fontFamily: 'JetBrains Mono', fontSize: 10, color: T.textPri, whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' }}>
+                      <div className="flex justify-between mb-1 gap-2">
+                        <span className="text-[11px] text-slate-500">{s.name}</span>
+                        <span className="text-sm font-normal tabular-nums text-slate-300" style={{ fontFamily: 'Inter, system-ui' }}>
                           {s.current.toLocaleString('fr-FR')} / {s.max.toLocaleString('fr-FR')} {s.unit}
                         </span>
                       </div>
-                      <div style={{ height: 6, borderRadius: 999, background: 'rgba(255,255,255,0.04)', overflow: 'hidden' }}>
-                        <div className="tbos-bar-animate" style={{ height: '100%', width: `${pct}%`, borderRadius: 999, background: getStockGradient(s.current, s.max).gradient, boxShadow: getStockGradient(s.current, s.max).shadow }} />
+                      <div className="h-1.5 rounded-full bg-slate-700/30 overflow-hidden">
+                        <div className="tbos-bar-animate h-full rounded-full" style={{ width: `${pct}%`, background: T.gold, opacity }} />
                       </div>
                     </div>
                   );
@@ -422,75 +367,78 @@ export function WorldClassDashboard() {
               </div>
             </Card>
 
-            {/* Pipeline Commercial — POPULATED */}
+            {/* Pipeline Commercial */}
             <Card className="tbos-card-enter">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
-                <span style={{ fontSize: 13, fontWeight: 700 }}>Pipeline Commercial</span>
-                <Badge label="67% conv." color={T.success} bg={`${T.success}15`} />
+              <div className="flex justify-between items-start mb-4">
+                <span className="text-sm font-medium text-white/90">Pipeline Commercial</span>
+                <span className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                  <span className="text-[11px] text-slate-400">67% conv.</span>
+                </span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <div className="flex flex-col gap-3">
                 {[
-                  { label: 'Devis', value: 3, color: T.warning, width: '100%' },
-                  { label: 'BCs Actifs', value: 2, color: T.info, width: '65%' },
-                  { label: 'En attente', value: '45K DH', color: T.success, width: '35%' },
+                  { label: 'Devis', value: '3', width: '100%' },
+                  { label: 'BCs Actifs', value: '2', width: '65%' },
+                  { label: 'En attente', value: '45K DH', width: '35%' },
                 ].map((item, i) => (
                   <div key={i}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 11, color: T.textSec }}>{item.label}</span>
-                      <span style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: item.color }}>{item.value}</span>
+                    <div className="flex justify-between mb-1">
+                      <span className="text-[11px] text-slate-500">{item.label}</span>
+                      <span className="text-[11px] text-slate-300 tabular-nums">{item.value}</span>
                     </div>
-                    <div style={{ height: 7, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-                      <div className="tbos-bar-animate" style={{ height: '100%', width: item.width, borderRadius: 999, background: item.color, boxShadow: `0 0 8px ${item.color}60` }} />
+                    <div className="h-1.5 rounded-full bg-slate-700/30 overflow-hidden">
+                      <div className="tbos-bar-animate h-full rounded-full" style={{ width: item.width, background: T.gold, opacity: 0.7 }} />
                     </div>
                   </div>
                 ))}
               </div>
-              <div style={{ textAlign: 'center', marginTop: 16, paddingTop: 12, borderTop: `1px solid ${T.cardBorder}` }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: 32, fontWeight: 800, color: T.success, lineHeight: 1 }}>67%</div>
-                <div style={{ fontSize: 10, color: T.textDim, marginTop: 3 }}>Taux de conversion</div>
+              <div className="text-center mt-4 pt-4 border-t border-white/[0.05]">
+                <div className="text-3xl font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>67%</div>
+                <div className="text-[11px] text-slate-500 mt-1">Taux de conversion</div>
               </div>
             </Card>
 
-            {/* Tendances — POPULATED */}
+            {/* Tendances */}
             <Card className="tbos-card-enter">
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>Tendances</div>
-              <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: 38, fontWeight: 800, color: T.success, lineHeight: 1 }}>
-                  <TrendingUp size={20} color={T.success} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
-                  +8.2%
+              <div className="text-sm font-medium text-white/90 mb-4">Tendances</div>
+              <div className="text-center py-4">
+                <div className="flex items-center justify-center gap-2">
+                  <TrendingUp size={16} className="text-primary" />
+                  <span className="text-3xl font-extralight text-primary tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>+8.2%</span>
                 </div>
-                <div style={{ fontSize: 11, color: T.textDim, marginTop: 6 }}>vs Janvier</div>
+                <div className="text-[11px] text-slate-500 mt-2">vs Janvier</div>
               </div>
               <div className="grid grid-cols-3 gap-2 w-full">
                 {[
-                  { label: 'CA', value: '75K', color: T.gold },
-                  { label: 'Marge', value: '49%', color: T.success },
-                  { label: 'Volume', value: `${prodTotal} m³`, color: T.info },
+                  { label: 'CA', value: '75K' },
+                  { label: 'Marge', value: '49%' },
+                  { label: 'Volume', value: `${prodTotal} m³` },
                 ].map((m, i) => (
-                  <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.cardBorder}`, borderRadius: 8, padding: 8, textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'JetBrains Mono', fontWeight: 700, fontSize: 13, color: m.color }}>{m.value}</div>
-                    <div style={{ fontSize: 9, color: T.textDim, marginTop: 2 }}>{m.label}</div>
+                  <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-lg p-2 text-center">
+                    <div className="text-sm font-normal text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{m.value}</div>
+                    <div className="text-[9px] text-slate-500 mt-1">{m.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* AI Insights section */}
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: 16, paddingTop: 14 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                  <span style={{ color: T.gold }}>✦</span>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: T.textPri }}>AI Insights</span>
-                  <span style={{ fontSize: 9, color: T.textDim }}>Mis à jour à 21:52</span>
+              <div className="border-t border-white/[0.05] mt-4 pt-4">
+                <div className="flex items-center gap-1.5 mb-3">
+                  <span style={{ color: T.gold, fontSize: 10 }}>✦</span>
+                  <span className="text-[11px] font-medium text-white/90">AI Insights</span>
+                  <span className="text-[9px] text-slate-500">21:52</span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="flex flex-col gap-2">
                   {[
-                    { color: T.success, text: 'Marge brute saine à 49.9% malgré un CA faible ce mois-ci.' },
-                    { color: T.warning, text: 'Prix moyen (112 MAD/m³) inférieur au seuil de 600 MAD/m³.' },
-                    { color: T.info, text: 'Diversifier le portefeuille client: seulement 3 clients actifs.' },
-                    { color: T.success, text: 'Taux de recouvrement excellent à 91%.' },
+                    { dot: T.dotOk, text: 'Marge brute saine à 49.9% malgré un CA faible ce mois-ci.' },
+                    { dot: T.dotWarn, text: 'Prix moyen (112 MAD/m³) inférieur au seuil de 600 MAD/m³.' },
+                    { dot: '#60A5FA', text: 'Diversifier le portefeuille client: seulement 3 clients actifs.' },
+                    { dot: T.dotOk, text: 'Taux de recouvrement excellent à 91%.' },
                   ].map((insight, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 11 }}>
-                      <span style={{ color: insight.color, marginTop: 2, flexShrink: 0 }}>●</span>
-                      <span style={{ color: T.textSec }}>{insight.text}</span>
+                    <div key={i} className="flex items-start gap-1.5 text-[11px]">
+                      <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: insight.dot }} />
+                      <span className="text-slate-400">{insight.text}</span>
                     </div>
                   ))}
                 </div>
@@ -499,42 +447,36 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 3: Créances & Deliveries ─── */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             {/* Créances par ancienneté */}
             <Card className="tbos-card-enter">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+              <div className="flex justify-between items-start mb-4">
                 <div>
-                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>Créances Clients</div>
-                  <div style={{ fontSize: 11, color: T.textDim }}>Vieillissement des créances</div>
+                  <div className="text-sm font-medium text-white/90 mb-0.5">Créances Clients</div>
+                  <div className="text-[11px] text-slate-500">Vieillissement des créances</div>
                 </div>
-                <Badge label="Bon état" color={T.success} bg={`${T.success}20`} />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mt-1.5" />
               </div>
               <div className="overflow-hidden w-full" style={{ height: 160 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={arAgingData} layout="vertical" barSize={16} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="arGrad0" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#059669" /><stop offset="100%" stopColor="#34D399" /></linearGradient>
-                      <linearGradient id="arGrad1" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#D97706" /><stop offset="100%" stopColor="#FBBF24" /></linearGradient>
-                      <linearGradient id="arGrad2" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#EA580C" /><stop offset="100%" stopColor="#FB923C" /></linearGradient>
-                      <linearGradient id="arGrad3" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#DC2626" /><stop offset="100%" stopColor="#F87171" /></linearGradient>
-                    </defs>
-                    <XAxis type="number" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}K`} />
-                    <YAxis type="category" dataKey="label" tick={{ fill: T.textSec, fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} width={40} />
-                    <Tooltip content={(p) => <GoldTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
-                    <Bar dataKey="value" radius={[0, 6, 6, 0]} animationDuration={1000}>
-                      {arAgingData.map((_, i) => <Cell key={i} fill={`url(#arGrad${i})`} />)}
+                  <BarChart data={arAgingData} layout="vertical" barSize={14} margin={{ top: 0, right: 12, left: 0, bottom: 0 }}>
+                    <XAxis type="number" hide />
+                    <YAxis type="category" dataKey="label" tick={{ fill: T.textDim, fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={40} />
+                    <Tooltip content={(p) => <CleanTooltip {...p} unit=" DH" />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                    <Bar dataKey="value" radius={[0, 2, 2, 0]} animationDuration={1000}>
+                      {arAgingData.map((_, i) => <Cell key={i} fill={T.gold} fillOpacity={AR_OPACITIES[i]} />)}
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8, paddingTop: 8, borderTop: `1px solid ${T.cardBorder}` }}>
+              <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/[0.05]">
                 <div>
-                  <span style={{ fontFamily: 'JetBrains Mono', fontWeight: 800, fontSize: 20, color: T.gold }}>{totalAR}K</span>
-                  <span style={{ fontSize: 10, color: T.textDim, marginLeft: 3 }}>DH total</span>
+                  <span className="text-xl font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>{totalAR}K</span>
+                  <span className="text-[11px] text-slate-500 ml-1.5">DH total</span>
                 </div>
-                <div style={{ display: 'flex', gap: 4 }}>
+                <div className="flex gap-2">
                   {arAgingData.map((d, i) => (
-                    <span key={i} style={{ padding: '1px 6px', borderRadius: 999, background: `${d.fill}20`, color: d.fill, fontSize: 8, fontWeight: 700 }}>{d.label}</span>
+                    <span key={i} className="text-[9px] text-slate-500">{d.label}</span>
                   ))}
                 </div>
               </div>
@@ -545,27 +487,19 @@ export function WorldClassDashboard() {
 
             {/* Quality feed */}
             <Card className="tbos-card-enter">
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>Contrôle Qualité Live</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div className="text-sm font-medium text-white/90 mb-4">Contrôle Qualité</div>
+              <div className="flex flex-col gap-2">
                 {[
-                  { id: 'BL-2602-070', test: 'Slump 18cm', status: 'OK', time: '20:41', icon: <CheckCircle2 size={12} color={T.success} /> },
-                  { id: 'BL-2602-067', test: 'Slump 22cm', status: 'Variance', time: '18:28', icon: <AlertTriangle size={12} color={T.warning} /> },
-                  { id: 'BL-2602-073', test: 'Slump 17cm', status: 'OK', time: '19:13', icon: <CheckCircle2 size={12} color={T.success} /> },
+                  { id: 'BL-2602-070', test: 'Slump 18cm', ok: true, time: '20:41' },
+                  { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
+                  { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 8,
-                    background: q.status === 'OK' ? `${T.success}08` : `${T.warning}08`,
-                    borderLeft: `3px solid ${q.status === 'OK' ? T.success : T.warning}`,
-                  }}>
-                    {q.icon}
-                    <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono', color: T.textSec, flex: 1 }}>{q.id}</span>
-                    <span style={{ fontSize: 10, color: T.textSec }}>{q.test}</span>
-                    <span style={{
-                      padding: '1px 6px', borderRadius: 999, fontSize: 9, fontWeight: 700,
-                      background: q.status === 'OK' ? `${T.success}20` : `${T.warning}20`,
-                      color: q.status === 'OK' ? T.success : T.warning,
-                    }}>{q.status}</span>
-                    <span style={{ fontSize: 9, color: T.textDim, fontFamily: 'JetBrains Mono' }}>{q.time}</span>
+                  <div key={i} className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${q.ok ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                    <span className="text-[11px] text-slate-400 tabular-nums flex-1" style={{ fontFamily: 'Inter, system-ui' }}>{q.id}</span>
+                    <span className="text-[11px] text-slate-500">{q.test}</span>
+                    <span className="text-[11px] text-slate-400">{q.ok ? 'OK' : 'Var'}</span>
+                    <span className="text-[9px] text-slate-500 tabular-nums">{q.time}</span>
                   </div>
                 ))}
               </div>

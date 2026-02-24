@@ -16,8 +16,8 @@ import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  RefreshCw, Maximize2, Factory, Wallet, Zap, AlertTriangle,
-  TrendingUp, TrendingDown, ChevronRight
+  RefreshCw, Maximize2, Wallet, Zap, AlertTriangle,
+  TrendingUp, TrendingDown
 } from 'lucide-react';
 
 // Lazy-loaded heavy widgets
@@ -31,7 +31,7 @@ const BillingDashboardWidget = lazy(() => import('@/components/dashboard/Billing
 const TaxComplianceWidget = lazy(() => import('@/components/compliance').then(m => ({ default: m.TaxComplianceWidget })));
 
 // ─── Count-up animation hook ───
-function useCountUp(target: number, duration = 800) {
+function useCountUp(target: number, duration = 1200) {
   const [value, setValue] = useState(0);
   const rafRef = useRef<number>();
   useEffect(() => {
@@ -103,10 +103,6 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Time-based greeting
-  const hour = new Date().getHours();
-  const greetingText = hour >= 5 && hour < 12 ? 'Bonjour' : hour >= 12 && hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-
   // Animated KPI values
   const prodVolume = useCountUp(Math.round(stats.totalVolume) || 851);
   const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 75);
@@ -125,34 +121,35 @@ export default function Dashboard() {
   const linePath = `M${points.join(' L')}`;
   const areaPath = `${linePath} L${svgW},${svgH} L0,${svgH} Z`;
 
-  // Peak index
+  // Peak & last point
   const peakIdx = SPARKLINE_DATA.reduce((mi, d, i, arr) => d.v > arr[mi].v ? i : mi, 0);
   const peakX = (peakIdx / (SPARKLINE_DATA.length - 1)) * svgW;
   const peakY = svgH - (SPARKLINE_DATA[peakIdx].v / maxV) * svgH * 0.85 - 5;
+  const lastIdx = SPARKLINE_DATA.length - 1;
+  const lastX = svgW;
+  const lastY = svgH - (SPARKLINE_DATA[lastIdx].v / maxV) * svgH * 0.85 - 5;
 
   return (
     <MainLayout>
-      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full" style={{ background: 'radial-gradient(ellipse at top, rgba(234,179,8,0.03) 0%, transparent 50%)' }}>
-        {/* Golden gradient top edge */}
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent mb-2" />
+      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8" style={{ background: '#0B0F1A' }}>
 
         {/* ─── Action buttons: absolute top-right ─── */}
-        <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5">
+        <div className="absolute top-2 right-4 z-20 flex items-center gap-1.5">
           {isCeo && (
             <button
               onClick={() => setShowExecutiveSummary(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all"
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300"
               title="Résumé Exécutif"
             >
-              <Maximize2 className="h-3.5 w-3.5 text-muted-foreground" />
+              <Maximize2 className="h-3.5 w-3.5 text-slate-500" />
             </button>
           )}
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] transition-all"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300"
           >
-            <RefreshCw className={`h-3.5 w-3.5 text-muted-foreground ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-3.5 w-3.5 text-slate-500 ${refreshing ? 'animate-spin' : ''}`} />
           </button>
         </div>
 
@@ -161,23 +158,22 @@ export default function Dashboard() {
         ══════════════════════════════════════════════════ */}
 
         {/* Row 1: Greeting + Status pills */}
-        <div className="px-1 pt-1 pb-3">
-          <h1 className="text-2xl font-light text-foreground tracking-tight">
-            {greetingText}, <span className="font-normal">{firstName}</span>
+        <div className="pt-2 pb-6">
+          <h1 className="text-2xl font-light text-white/90 tracking-tight" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+            {firstName}
           </h1>
-          <div className="flex items-center gap-3 mt-1.5">
-            <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-success inline-block animate-[pulse-glow_2s_ease-in-out_infinite]" />
-              Plant Operational
+          <div className="flex items-center gap-3 mt-1">
+            <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-[pulse-subtle_3s_ease-in-out_infinite]" />
+              Operational
             </span>
-            <span className="text-xs text-muted-foreground">Casablanca</span>
-            <span className="text-xs text-muted-foreground">17°C</span>
+            <span className="text-[11px] text-slate-600">Casablanca</span>
           </div>
         </div>
 
         {/* Row 2: Hero KPI Cards — 4 columns */}
         <motion.div
-          className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8"
           initial="hidden"
           animate="visible"
           variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
@@ -187,8 +183,8 @@ export default function Dashboard() {
               label: 'PRODUCTION TODAY',
               value: `${prodVolume}`,
               unit: 'm³',
-              sub: '↗ Peak 14h',
-              compare: 'vs hier: +12%',
+              sub: 'Peak 14h',
+              compare: '+12%',
               positive: true,
             },
             {
@@ -196,14 +192,14 @@ export default function Dashboard() {
               value: `${ca}.0K`,
               unit: 'DH',
               sub: `${periodStats.nbFactures || 11} factures`,
-              compare: 'vs Jan: +8.2%',
+              compare: '+8.2%',
               positive: true,
             },
             {
               label: 'MARGE BRUTE',
               value: `${(marge / 10).toFixed(1)}`,
               unit: '%',
-              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
+              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH`,
               compare: null,
               healthy: true,
             },
@@ -222,40 +218,27 @@ export default function Dashboard() {
                 hidden: { opacity: 0, y: 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
               }}
-              className="rounded-2xl p-5 lg:p-6 transition-all duration-500 ease-out cursor-default relative overflow-hidden hover:-translate-y-1"
-              style={{
-                background: 'linear-gradient(135deg, rgba(30,45,74,0.8) 0%, rgba(17,27,46,0.6) 50%, rgba(12,20,40,0.8) 100%)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-              }}
-              whileHover={{
-                borderColor: 'rgba(234,179,8,0.2)',
-                boxShadow: '0 12px 40px rgba(234,179,8,0.08)',
-              }}
+              className="rounded-xl p-7 transition-all duration-500 ease-out cursor-default relative overflow-hidden bg-white/[0.03] border border-white/[0.06] hover:border-yellow-500/[0.12]"
             >
-              {/* Glass reflection line */}
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-primary/80 mb-2">
+              <div className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500 mb-3">
                 {kpi.label}
               </div>
-              <div className="text-2xl lg:text-3xl font-mono font-bold text-foreground leading-none tabular-nums">
-                {kpi.value}
-                <span className="text-sm font-medium text-muted-foreground ml-1">{kpi.unit}</span>
+              <div className="leading-none tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                <span className="text-[2.75rem] font-extralight tracking-tight text-white">
+                  {kpi.value}
+                </span>
+                <span className="text-lg font-extralight text-slate-400 ml-1">{kpi.unit}</span>
               </div>
-              <div className="text-xs text-muted-foreground mt-1.5">{kpi.sub}</div>
+              <div className="text-xs font-normal text-slate-500 mt-1.5">{kpi.sub}</div>
               <div className="mt-1.5 flex items-center gap-1.5">
                 {kpi.compare && (
-                  <span className={`text-xs flex items-center gap-0.5 ${kpi.positive ? 'text-emerald-400' : 'text-destructive'}`}>
+                  <span className={`text-xs flex items-center gap-0.5 ${kpi.positive ? 'text-primary' : 'text-destructive'}`}>
                     {kpi.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                     {kpi.compare}
                   </span>
                 )}
                 {kpi.healthy && (
-                  <span className="inline-flex items-center gap-1 text-xs text-emerald-400">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-                    Sain
-                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                 )}
               </div>
             </motion.div>
@@ -263,40 +246,42 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Row 3: Live Production Sparkline */}
-        <div className="tbos-card rounded-xl p-3 lg:p-4 mb-4 h-28 lg:h-32 relative overflow-hidden transition-all duration-300 hover:border-primary/20">
+        <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 lg:p-4 mb-8 h-28 lg:h-32 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.04]">
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.45" />
-                <stop offset="40%" stopColor="hsl(var(--primary))" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+                <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity="0.4" />
+                <stop offset="40%" stopColor="rgb(234, 179, 8)" stopOpacity="0.12" />
+                <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity="0" />
               </linearGradient>
             </defs>
             <path d={areaPath} fill="url(#sparkGrad)" />
-            <path d={linePath} fill="none" stroke="hsl(var(--primary))" strokeWidth="1.5" strokeLinejoin="round" />
-            <circle cx={peakX} cy={peakY} r="2.5" fill="hsl(var(--primary))" />
+            <path d={linePath} fill="none" stroke="rgb(234, 179, 8)" strokeWidth="2" strokeLinejoin="round" />
+            {/* Pulsing dot at last data point */}
+            <circle cx={lastX} cy={lastY} r="3" fill="rgb(234, 179, 8)">
+              <animate attributeName="opacity" values="1;0.4;1" dur="2s" repeatCount="indefinite" />
+            </circle>
           </svg>
           {/* Peak annotation */}
-          <div className="absolute top-2 right-3 flex items-center gap-1.5 text-[10px] font-mono text-primary">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            LIVE · Peak 14h
+          <div className="absolute top-2 right-3 flex items-center gap-1.5 text-[10px] text-slate-500">
+            Peak 14h
           </div>
         </div>
 
         {/* Row 4: Alert Strip */}
         {!alertDismissed && (
-          <div className="flex items-center gap-3 bg-gradient-to-r from-warning/5 via-warning/10 to-warning/5 bg-[length:200%_100%] animate-[alert-shimmer_3s_ease-in-out_infinite] border border-warning/30 rounded-lg px-4 py-2 mb-4 text-xs">
-            <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
-            <span className="text-foreground flex-1">
-              ⚠ E/C Ratio critique (0.000): Données de production absentes ou non saisies.
+          <div className="flex items-center gap-3 bg-white/[0.02] border border-white/[0.06] rounded-lg px-4 py-2 mb-8 text-xs">
+            <AlertTriangle className="w-4 h-4 text-primary shrink-0" />
+            <span className="text-slate-400 flex-1">
+              E/C Ratio critique (0.000): Données de production absentes ou non saisies.
             </span>
             <button
               onClick={() => navigate('/alertes')}
-              className="text-primary font-semibold whitespace-nowrap hover:underline"
+              className="text-primary font-medium whitespace-nowrap hover:underline text-[11px]"
             >
               Voir tout →
             </button>
-            <button onClick={() => setAlertDismissed(true)} className="text-muted-foreground hover:text-foreground ml-1">✕</button>
+            <button onClick={() => setAlertDismissed(true)} className="text-slate-600 hover:text-slate-400 ml-1">✕</button>
           </div>
         )}
 
@@ -312,51 +297,51 @@ export default function Dashboard() {
         />
 
         {/* ─── Zone divider ─── */}
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent my-6" />
+        <div className="h-px bg-white/[0.04] my-8" />
 
         {/* ══════════════════════════════════════════════════
             ZONE 2 — OPERATIONS (collapsible)
         ══════════════════════════════════════════════════ */}
         <DashboardSection
-          title="⚡ OPÉRATIONS"
+          title="OPÉRATIONS"
           icon={Zap}
           storageKey="ops-zone"
           defaultOpen={true}
         >
-          <Suspense fallback={<div className="h-[600px] rounded-xl bg-muted/20 animate-pulse" />}>
+          <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
             <WorldClassDashboard />
           </Suspense>
         </DashboardSection>
 
         {/* ─── Zone divider ─── */}
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent my-6" />
+        <div className="h-px bg-white/[0.04] my-8" />
 
         {/* ══════════════════════════════════════════════════
             ZONE 3 — FINANCE & COMPLIANCE (collapsed by default)
         ══════════════════════════════════════════════════ */}
         {isCeo && (
           <LazyDashboardSection
-            title="💰 FINANCE & CONFORMITÉ"
+            title="FINANCE & CONFORMITÉ"
             icon={Wallet}
             storageKey="finance-zone"
             defaultOpen={false}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {/* Left: Cash-Flow + Budget */}
-              <div className="space-y-4">
-                <Suspense fallback={<div className="h-64 rounded-xl bg-muted/20 animate-pulse" />}>
+              <div className="space-y-5">
+                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <CashFlowForecast />
                 </Suspense>
-                <Suspense fallback={<div className="h-64 rounded-xl bg-muted/20 animate-pulse" />}>
+                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <CircularBudgetGauge />
                 </Suspense>
               </div>
               {/* Right: Billing + Tax Compliance */}
-              <div className="space-y-4">
-                <Suspense fallback={<div className="h-64 rounded-xl bg-muted/20 animate-pulse" />}>
+              <div className="space-y-5">
+                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <BillingDashboardWidget />
                 </Suspense>
-                <Suspense fallback={<div className="h-64 rounded-xl bg-muted/20 animate-pulse" />}>
+                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
                   <TaxComplianceWidget />
                 </Suspense>
               </div>
