@@ -160,7 +160,7 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div
-        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full"
+        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden w-[calc(100%+1.5rem*2)] sm:w-[calc(100%+2rem*2)] md:w-[calc(100%+3rem*2)] lg:w-[calc(100%+4rem*2)] -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 -mt-3 sm:-mt-4 md:-mt-6 lg:-mt-8 -mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8"
         style={{
           background: 'linear-gradient(165deg, #0D1117 0%, #0B0F1A 30%, #0A0E1C 50%, #0F0D1A 80%, #0D1117 100%)',
         }}
