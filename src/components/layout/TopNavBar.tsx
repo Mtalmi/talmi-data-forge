@@ -32,7 +32,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
   return (
     <header className="w-full">
-      <div className="flex items-center justify-end h-12 px-4 border-b border-border/30">
+      <div className="flex items-center justify-end h-14 px-4" style={{ background: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
         {/* Right Side — Utility Icons */}
         <div className="flex items-center gap-3">
           {/* Search */}

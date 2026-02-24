@@ -94,6 +94,10 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
+  // Extract user first name
+  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
+  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
+
   // Animated KPI values
   const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671);
   const ca = useCountUp(Math.round(periodStats.chiffreAffaires / 1000) || 76);
@@ -126,14 +130,47 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
-      <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8 dashboard-bg" style={{ background: '#0a0e1a' }}>
+      <div
+        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full px-8"
+        style={{
+          background: '#080C14',
+          backgroundImage: [
+            'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(234, 179, 8, 0.04) 0%, transparent 50%)',
+            'radial-gradient(ellipse 60% 40% at 80% 20%, rgba(234, 179, 8, 0.02) 0%, transparent 40%)',
+            'radial-gradient(ellipse 50% 50% at 20% 80%, rgba(59, 130, 246, 0.015) 0%, transparent 40%)',
+          ].join(', '),
+        }}
+      >
 
-        {/* Dot grid background pattern */}
+        {/* Dashboard luxury styles */}
         <style>{`
-          .dashboard-bg {
-            background-color: #0a0e1a;
-            background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 24px 24px;
+          @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+          @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
+          .tbos-kpi-number { text-shadow: 0 0 40px rgba(234, 179, 8, 0.15), 0 0 80px rgba(234, 179, 8, 0.05); }
+          .tbos-hero-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 28px 32px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          .tbos-hero-card:hover {
+            border-color: rgba(234, 179, 8, 0.15);
+            box-shadow: 0 8px 40px rgba(234, 179, 8, 0.06), 0 0 0 1px rgba(234, 179, 8, 0.08);
+            transform: translateY(-2px);
+          }
+          .tbos-hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
           }
         `}</style>
 
@@ -161,132 +198,139 @@ export default function Dashboard() {
             ZONE 1 — THE PULSE: COMMAND CENTER
         ══════════════════════════════════════════════════ */}
 
-        {/* PART 1: Unified Hero Panel */}
+        {/* PART 10: Greeting — Commanding Presence */}
         <div className="pt-4 pb-6">
-          <div className="relative rounded-2xl overflow-hidden">
-            {/* Gradient border glow */}
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-yellow-500/20 via-yellow-500/5 to-yellow-500/20 p-[1px]">
-              <div className="w-full h-full rounded-2xl bg-[#0a0e1a]" />
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10 px-10 py-8">
-              {/* Top row: COMMAND CENTER + status */}
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <h1 className="text-lg font-light text-white/60 tracking-wide">COMMAND CENTER</h1>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[11px] text-slate-500 uppercase tracking-widest">Plant Operational — Casablanca</span>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-[11px] text-slate-600 uppercase tracking-widest">Dernière mise à jour</span>
-                  <div className="text-sm text-slate-400 font-mono tabular-nums">{timeStr}</div>
-                </div>
-              </div>
-
-              {/* KPI Row — 4 numbers with vertical dividers */}
-              <div className="flex items-baseline justify-between flex-wrap gap-y-6">
-                {/* KPI 1 — Volume */}
-                <div className="flex-1 min-w-[140px]">
-                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Volume</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{prodVolume}</span>
-                    <span className="text-xl font-extralight text-slate-500">m³</span>
-                  </div>
-                  <div className="text-[11px] text-emerald-400/60 mt-2">↗ +12% vs hier</div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
-
-                {/* KPI 2 — Revenue */}
-                <div className="flex-1 min-w-[140px]">
-                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Revenue</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{ca}.0K</span>
-                    <span className="text-xl font-extralight text-slate-500">DH</span>
-                  </div>
-                  <div className="text-[11px] text-emerald-400/60 mt-2">↗ +8.2% vs Jan</div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
-
-                {/* KPI 3 — Marge */}
-                <div className="flex-1 min-w-[140px]">
-                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Marge</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{(marge / 10).toFixed(1)}</span>
-                    <span className="text-xl font-extralight text-slate-500">%</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
-                    <span className="text-[11px] text-slate-500">{(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-20 bg-gradient-to-b from-transparent via-white/[0.06] to-transparent mx-6 hidden lg:block" />
-
-                {/* KPI 4 — Trésorerie */}
-                <div className="flex-1 min-w-[140px]">
-                  <div className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600 mb-2">Trésorerie</div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-6xl font-extralight text-white tracking-tighter tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>{tresorerie}K</span>
-                    <span className="text-xl font-extralight text-slate-500">DH</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 mt-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
-                    <span className="text-[11px] text-slate-500">→ 502K fin mois</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <h1 className="text-[28px] font-light text-white tracking-tight" style={{ letterSpacing: '-0.02em' }}>
+            {firstName}
+          </h1>
+          <div className="flex items-center gap-3 mt-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+            </span>
+            <span className="text-[11px] text-slate-500 uppercase tracking-widest">Operational</span>
+            <span className="text-[11px] text-slate-600">Casablanca</span>
           </div>
         </div>
 
-        {/* PART 2: Dramatic Production Sparkline */}
-        <div className="rounded-xl bg-white/[0.02] border border-white/[0.04] p-3 lg:p-4 mb-8 h-48 relative overflow-hidden transition-all duration-300 hover:bg-white/[0.03]">
+        {/* PART 2: Hero KPI Cards — Glowing Data Monuments */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+          {[
+            {
+              label: 'VOLUME',
+              value: `${prodVolume}`,
+              unit: 'm³',
+              sub: 'Peak 14h',
+              trend: '↗ +12%',
+            },
+            {
+              label: 'REVENUE',
+              value: `${ca}.0K`,
+              unit: 'DH',
+              sub: `${periodStats.nbFactures || 11} factures`,
+              trend: '↗ +8.2%',
+            },
+            {
+              label: 'MARGE',
+              value: `${(marge / 10).toFixed(1)}`,
+              unit: '%',
+              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
+              healthy: true,
+            },
+            {
+              label: 'TRÉSORERIE',
+              value: `${tresorerie}K`,
+              unit: 'DH',
+              sub: '→ 502K fin mois',
+              healthy: true,
+            },
+          ].map((kpi, i) => (
+            <div key={i} className="tbos-hero-card cursor-default">
+              <div className="text-[10px] font-medium uppercase tracking-[0.2em] mb-3" style={{ color: 'rgba(234, 179, 8, 0.5)' }}>
+                {kpi.label}
+              </div>
+              <div className="leading-none tabular-nums" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+                <span className="text-5xl font-extralight text-white leading-none tbos-kpi-number">
+                  {kpi.value}
+                </span>
+                <span className="text-lg font-extralight text-slate-500 ml-1">{kpi.unit}</span>
+              </div>
+              <div className="text-[11px] text-slate-500 mt-2">{kpi.sub}</div>
+              <div className="mt-1.5 flex items-center gap-1.5">
+                {kpi.trend && (
+                  <span className="text-[11px]" style={{ color: '#E8B84B' }}>{kpi.trend}</span>
+                )}
+                {kpi.healthy && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* PART 3: The Sparkline — A Living Pulse */}
+        <div
+          className="rounded-2xl p-3 lg:p-4 mb-8 h-44 relative overflow-hidden transition-all duration-300"
+          style={{
+            background: 'linear-gradient(180deg, rgba(234, 179, 8, 0.03) 0%, transparent 60%)',
+            border: '1px solid rgba(255,255,255,0.04)',
+          }}
+        >
+          {/* LIVE indicator */}
+          <div className="absolute top-3 left-4 z-10 flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" style={{ animation: 'live-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite' }} />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-widest text-slate-500">Live</span>
+            <span className="text-[10px] font-mono text-slate-600 uppercase tracking-wider">Peak 14h</span>
+          </div>
+
+          {/* Last update */}
+          <div className="absolute top-3 right-4 z-10">
+            <span className="text-[10px] text-slate-600 font-mono tabular-nums">{timeStr}</span>
+          </div>
+
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full" preserveAspectRatio="none">
             <defs>
               <linearGradient id="heroGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.5} />
-                <stop offset="30%" stopColor="rgb(234, 179, 8)" stopOpacity={0.2} />
-                <stop offset="70%" stopColor="rgb(234, 179, 8)" stopOpacity={0.05} />
-                <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
+                <stop offset="0%" stopColor="#E8B84B" stopOpacity={0.5} />
+                <stop offset="30%" stopColor="#E8B84B" stopOpacity={0.2} />
+                <stop offset="70%" stopColor="#E8B84B" stopOpacity={0.05} />
+                <stop offset="100%" stopColor="#E8B84B" stopOpacity={0} />
               </linearGradient>
             </defs>
             {/* Area fill */}
             <path d={areaPath} fill="url(#heroGradient)" />
             {/* Glow line (behind) */}
-            <path d={linePath} fill="none" stroke="rgba(234, 179, 8, 0.15)" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round" />
+            <path d={linePath} fill="none" stroke="rgba(232, 184, 75, 0.15)" strokeWidth="8" strokeLinejoin="round" strokeLinecap="round" />
             {/* Crisp line */}
-            <path d={linePath} fill="none" stroke="rgb(234, 179, 8)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+            <path d={linePath} fill="none" stroke="#E8B84B" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             {/* Peak annotation line */}
             <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 15} stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
             {/* Pulsing beacon at live endpoint */}
-            <circle cx={lastX} cy={lastY} r="4" fill="rgb(234, 179, 8)">
+            <circle cx={lastX} cy={lastY} r="4" fill="#E8B84B">
               <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" />
             </circle>
-            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(234, 179, 8, 0.2)">
+            <circle cx={lastX} cy={lastY} r="12" fill="none" stroke="rgba(232, 184, 75, 0.2)">
               <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite" />
             </circle>
           </svg>
-          {/* Peak annotation text */}
-          <div className="absolute top-2 right-3 text-[10px] font-mono text-slate-600 uppercase tracking-wider">
-            Peak 14h
-          </div>
         </div>
 
-        {/* PART 3: Alert Strip — Minimal */}
+        {/* PART 9: Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
-          <div className="flex items-center justify-between px-5 py-2.5 rounded-lg bg-amber-500/[0.04] border border-amber-500/[0.08] mb-8">
+          <div
+            className="flex items-center justify-between px-5 py-3 rounded-xl mb-8"
+            style={{
+              background: 'linear-gradient(90deg, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 50%, rgba(234,179,8,0.06) 100%)',
+              border: '1px solid rgba(234,179,8,0.1)',
+            }}
+          >
             <div className="flex items-center gap-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" style={{ animation: 'pulse-alert 3s ease-in-out infinite' }} />
               <span className="text-[11px] text-slate-400">E/C Ratio critique (0.000): Données de production absentes ou non saisies.</span>
             </div>
             <div className="flex items-center gap-3">
@@ -320,13 +364,13 @@ export default function Dashboard() {
         </div>
 
         {/* ══════════════════════════════════════════════════
-            ZONE 2 — OPERATIONS (always visible, no collapse)
+            ZONE 2 — OPERATIONS (always visible)
         ══════════════════════════════════════════════════ */}
         <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
           <WorldClassDashboard />
         </Suspense>
 
-        {/* ─── Zone divider ─── */}
+        {/* Zone divider */}
         <div className="my-8 flex items-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
           <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-slate-600">Finance & Conformité</span>

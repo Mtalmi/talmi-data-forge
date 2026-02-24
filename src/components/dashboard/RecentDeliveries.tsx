@@ -87,11 +87,18 @@ export default function RecentDeliveries() {
 
   if (loading) {
     return (
-      <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-6">
+      <div
+        className="relative overflow-hidden rounded-[14px] p-6"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+          border: '1px solid rgba(255,255,255,0.05)',
+        }}
+      >
+        <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
         <h3 className="text-sm font-medium text-white/90 mb-4">{t.widgets.recentDeliveries.title}</h3>
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-14 bg-white/[0.02] rounded-lg animate-pulse" />
+            <div key={i} className="h-14 rounded-lg animate-pulse" style={{ background: 'rgba(255,255,255,0.02)' }} />
           ))}
         </div>
       </div>
@@ -99,7 +106,18 @@ export default function RecentDeliveries() {
   }
 
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 transition-all duration-300 hover:bg-white/[0.04]">
+    <div
+      className="relative overflow-hidden rounded-[14px] p-6 transition-all duration-[400ms]"
+      style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.05)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* Top highlight line */}
+      <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
+
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-medium text-white/90">{t.widgets.recentDeliveries.title}</h3>
@@ -108,7 +126,7 @@ export default function RecentDeliveries() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-[pulse-subtle_3s_ease-in-out_infinite]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
           <Truck className="h-4 w-4 text-slate-500" />
         </div>
       </div>
@@ -120,24 +138,24 @@ export default function RecentDeliveries() {
         </div>
       ) : (
         <>
-          <div className="space-y-1 max-h-[400px] overflow-y-auto deliveries-scroll">
-            {deliveries.map((delivery, idx) => (
+          <div className="space-y-0 max-h-[380px] overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+            {deliveries.slice(0, 5).map((delivery, idx) => (
               <div
                 key={delivery.bl_id}
-                className="py-2.5 px-2 rounded-lg transition-colors duration-200 hover:bg-white/[0.02]"
-                style={{ opacity: idx % 2 === 1 ? 0.85 : 1 }}
+                className="py-3 px-4 rounded-[10px] transition-colors duration-200 hover:bg-white/[0.02]"
+                style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-[11px] text-slate-300 tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>
+                      <p className="text-[13px] text-white tabular-nums font-mono">
                         {delivery.bl_id}
                       </p>
                       {delivery.alerte_ecart && (
                         <AlertCircle className="h-3 w-3 text-amber-400 flex-shrink-0" />
                       )}
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    <p className="text-[12px] mt-0.5 truncate" style={{ color: 'rgba(148,163,184,0.6)' }}>
                       {delivery.client_name} · {delivery.volume_m3} m³
                     </p>
                   </div>
@@ -149,17 +167,14 @@ export default function RecentDeliveries() {
                       )} />
                       <span className="text-[11px] text-slate-400">{delivery.statut_paiement}</span>
                     </span>
-                    <p className="text-[9px] text-slate-500 mt-0.5 tabular-nums">
+                    <p className="text-[11px] mt-0.5 tabular-nums" style={{ color: 'rgba(148,163,184,0.4)' }}>
                       {format(new Date(delivery.date_livraison), 'dd MMM', { locale: dateFnsLocale })}
                     </p>
                   </div>
                 </div>
                 {delivery.ecart_marge !== null && (
                   <div className="mt-1.5 pt-1.5 border-t border-white/[0.04]">
-                    <p className={cn(
-                      'text-[11px] tabular-nums',
-                      delivery.ecart_marge > 0 ? 'text-primary' : 'text-slate-400'
-                    )}>
+                    <p className="text-[11px] tabular-nums" style={{ color: delivery.ecart_marge > 0 ? '#E8B84B' : 'rgba(148,163,184,0.5)' }}>
                       {delivery.ecart_marge > 0 ? '+' : ''}{delivery.ecart_marge.toFixed(2)} DH/m³
                     </p>
                   </div>
@@ -170,7 +185,7 @@ export default function RecentDeliveries() {
           {deliveries.length > 5 && (
             <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/[0.05]">
               <span className="text-[11px] text-slate-500">5 / {deliveries.length}</span>
-              <button className="text-[11px] text-primary font-medium hover:underline">Voir tout →</button>
+              <button className="text-[11px] font-medium hover:underline" style={{ color: '#E8B84B' }}>Voir tout →</button>
             </div>
           )}
         </>
