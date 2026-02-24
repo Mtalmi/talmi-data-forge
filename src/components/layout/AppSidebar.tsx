@@ -138,9 +138,10 @@ export function AppSidebar() {
 
   // User display
   const userEmail = user?.email || '';
-  const userName = user?.user_metadata?.full_name || userEmail.split('@')[0] || 'Utilisateur';
+  const rawUserName = user?.user_metadata?.full_name || userEmail.split('@')[0] || 'Utilisateur';
+  const userName = rawUserName.charAt(0).toUpperCase() + rawUserName.slice(1);
   const userInitials = userName.slice(0, 2).toUpperCase();
-  const roleLabel = role || 'user';
+  const roleLabel = (role || 'user').toUpperCase();
 
   return (
     <Sidebar
@@ -211,7 +212,7 @@ export function AppSidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate text-foreground">{userName}</p>
-              <p className="text-[11px] text-muted-foreground truncate capitalize">{roleLabel}</p>
+              <p className="text-[11px] text-muted-foreground truncate">{roleLabel}</p>
             </div>
           </div>
         )}

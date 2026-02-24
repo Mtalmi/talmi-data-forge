@@ -100,7 +100,8 @@ export default function Dashboard() {
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
   // Extract user first name
-  const firstName = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
+  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
+  const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
   // Time-based greeting
   const hour = new Date().getHours();
@@ -132,6 +133,8 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full">
+        {/* Golden gradient top edge */}
+        <div className="h-0.5 bg-gradient-to-r from-transparent via-primary/40 to-transparent mb-2" />
 
         {/* ─── Action buttons: absolute top-right ─── */}
         <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5">
@@ -164,7 +167,7 @@ export default function Dashboard() {
           </h1>
           <div className="flex items-center gap-3 mt-1.5">
             <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
+              <span className="w-2 h-2 rounded-full bg-success inline-block animate-[pulse-glow_2s_ease-in-out_infinite]" />
               Plant Operational
             </span>
             <span className="text-xs text-muted-foreground">Casablanca</span>
@@ -219,7 +222,7 @@ export default function Dashboard() {
                 hidden: { opacity: 0, y: 16 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
               }}
-              className="tbos-card rounded-xl p-4 lg:p-5 transition-all duration-300 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
+              className="tbos-card rounded-xl p-4 lg:p-5 transition-all duration-300 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 cursor-default"
               style={{ backdropFilter: 'blur(8px)' }}
             >
               <div className="text-[10px] font-semibold uppercase tracking-wider text-primary/80 mb-2">
@@ -270,7 +273,7 @@ export default function Dashboard() {
 
         {/* Row 4: Alert Strip */}
         {!alertDismissed && (
-          <div className="flex items-center gap-3 bg-warning/10 border border-warning/30 rounded-lg px-4 py-2 mb-4 text-xs">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-warning/5 via-warning/10 to-warning/5 bg-[length:200%_100%] animate-[alert-shimmer_3s_ease-in-out_infinite] border border-warning/30 rounded-lg px-4 py-2 mb-4 text-xs">
             <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
             <span className="text-foreground flex-1">
               ⚠ E/C Ratio critique (0.000): Données de production absentes ou non saisies.

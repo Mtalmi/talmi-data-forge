@@ -52,7 +52,7 @@ export function DashboardSection({
         <button
           className={cn(
             'w-full flex items-center gap-3 py-3 px-4 rounded-xl group cursor-pointer select-none',
-            'transition-all duration-200',
+            'transition-all duration-200 border-l-2 border-primary/60',
             'hover:bg-primary/[0.03]',
           )}
           style={{

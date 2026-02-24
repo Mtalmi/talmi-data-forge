@@ -314,7 +314,7 @@ export function WorldClassDashboard() {
       <div style={{ maxWidth: 1600, margin: '0 auto' }}>
 
         {/* ═══ COLUMN 1/2/3 GRID — Production + Stock + Créances ═══ */}
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production & Quality ─── */}
           <div className="space-y-4">
