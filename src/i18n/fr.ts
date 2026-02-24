@@ -1,9 +1,9 @@
 const fr = {
   nav: {
-    dashboard: 'Accueil',
+    dashboard: 'Tableau de Bord',
     production: 'Production',
     planning: 'Planning',
-    deliveries: 'Livraisons',
+    deliveries: 'Bons de Commande',
     sales: 'Ventes',
     stocks: 'Stocks',
     clients: 'Clients',
@@ -35,6 +35,24 @@ const fr = {
     trainingMode: 'Mode Formation',
     main: 'Principal',
     management: 'Gestion',
+    // Sidebar sections
+    sectionOperations: 'Opérations',
+    sectionCommercial: 'Commercial',
+    sectionFinance: 'Finance',
+    sectionResources: 'Ressources',
+    sectionIntelligence: 'Intelligence',
+    sectionAdmin: 'Administration',
+    // Additional nav items
+    receivables: 'Créances',
+    debts: 'Dettes',
+    fixedAssets: 'Immobilisations',
+    aiAgent: 'Agent IA',
+    analytics: 'Analytics',
+    alerts: 'Alertes',
+    profile: 'Profil',
+    auditLog: 'Journal',
+    approvals: 'Approbations',
+    supervisorAudit: 'Audit Superviseur',
   },
   auth: {
     welcome: 'Bienvenue sur TBOS',
