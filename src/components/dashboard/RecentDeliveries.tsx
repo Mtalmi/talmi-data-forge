@@ -128,53 +128,61 @@ export default function RecentDeliveries() {
           <p>{t.widgets.recentDeliveries.noRecent}</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {deliveries.map((delivery) => (
-            <div
-              key={delivery.bl_id}
-              className={cn(
-                'p-3 rounded-lg border transition-colors',
-                delivery.alerte_ecart
-                  ? 'border-destructive/50 bg-destructive/5'
-                  : 'border-border bg-muted/20 hover:bg-muted/30'
-              )}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-mono text-sm font-medium truncate">
-                      {delivery.bl_id}
+        <>
+          <div className="space-y-3 max-h-[400px] overflow-y-auto deliveries-scroll">
+            {deliveries.map((delivery) => (
+              <div
+                key={delivery.bl_id}
+                className={cn(
+                  'p-3 rounded-lg border transition-colors',
+                  delivery.alerte_ecart
+                    ? 'border-destructive/50 bg-destructive/5'
+                    : 'border-border bg-muted/20 hover:bg-muted/30'
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-mono text-sm font-medium truncate">
+                        {delivery.bl_id}
+                      </p>
+                      {delivery.alerte_ecart && (
+                        <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                      <span className="font-medium text-foreground">{delivery.client_name}</span> • {delivery.volume_m3} m³
                     </p>
-                    {delivery.alerte_ecart && (
-                      <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
-                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                    <span className="font-medium text-foreground">{delivery.client_name}</span> • {delivery.volume_m3} m³
-                  </p>
+                  <div className="text-right flex-shrink-0">
+                    <span className={cn('status-pill', getStatusPill(delivery.statut_paiement))}>
+                      {delivery.statut_paiement}
+                    </span>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {format(new Date(delivery.date_livraison), 'dd MMM', { locale: dateFnsLocale })}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <span className={cn('status-pill', getStatusPill(delivery.statut_paiement))}>
-                    {delivery.statut_paiement}
-                  </span>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {format(new Date(delivery.date_livraison), 'dd MMM', { locale: dateFnsLocale })}
-                  </p>
-                </div>
+                {delivery.ecart_marge !== null && (
+                  <div className="mt-2 pt-2 border-t border-border/50">
+                    <p className={cn(
+                      'text-xs font-medium',
+                      delivery.ecart_marge > 0 ? 'text-success' : 'text-destructive'
+                    )}>
+                      {t.widgets.recentDeliveries.marginVariance}: {delivery.ecart_marge > 0 ? '+' : ''}{delivery.ecart_marge.toFixed(2)} DH/m³
+                    </p>
+                  </div>
+                )}
               </div>
-              {delivery.ecart_marge !== null && (
-                <div className="mt-2 pt-2 border-t border-border/50">
-                  <p className={cn(
-                    'text-xs font-medium',
-                    delivery.ecart_marge > 0 ? 'text-success' : 'text-destructive'
-                  )}>
-                    {t.widgets.recentDeliveries.marginVariance}: {delivery.ecart_marge > 0 ? '+' : ''}{delivery.ecart_marge.toFixed(2)} DH/m³
-                  </p>
-                </div>
-              )}
+            ))}
+          </div>
+          {deliveries.length > 5 && (
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+              <span className="text-xs text-muted-foreground">Affichage 5 / {deliveries.length} livraisons</span>
+              <button className="text-xs text-primary font-semibold hover:underline">Voir tout →</button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );
