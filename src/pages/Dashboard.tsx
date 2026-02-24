@@ -162,7 +162,7 @@ export default function Dashboard() {
       <div
         className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden w-[calc(100%+1.5rem*2)] sm:w-[calc(100%+2rem*2)] md:w-[calc(100%+3rem*2)] lg:w-[calc(100%+4rem*2)] -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 -mt-3 sm:-mt-4 md:-mt-6 lg:-mt-8 -mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8"
         style={{
-          background: 'linear-gradient(165deg, #0D1117 0%, #0B0F1A 30%, #0A0E1C 50%, #0F0D1A 80%, #0D1117 100%)',
+          background: 'linear-gradient(170deg, #0D1220 0%, #0F172A 40%, #131B2E 100%)',
         }}
       >
         {/* BACKGROUND LAYER: Hexagonal geometric pattern */}
@@ -188,24 +188,9 @@ export default function Dashboard() {
           @keyframes pulse-alert { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
           @keyframes live-ping { 0% { transform: scale(1); opacity: 0.6; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
           @keyframes live-ping2 { 0% { transform: scale(1); opacity: 0.4; } 70% { transform: scale(2.8); opacity: 0; } 100% { transform: scale(2.8); opacity: 0; } }
-          @keyframes cardEntrance {
-            0% { opacity: 0; transform: translateY(24px) scale(0.97); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-          }
-          @keyframes drawLine {
-            to { stroke-dashoffset: 0; }
-          }
-          @keyframes fadeInArea {
-            to { opacity: 1; }
-          }
-          @keyframes floatUp {
-            0% { transform: translateY(0); opacity: 0; }
-            15% { opacity: 0.6; }
-            100% { transform: translateY(-100px); opacity: 0; }
-          }
           @keyframes heroGlow {
-            0%, 100% { opacity: 0.4; filter: blur(60px); }
-            50% { opacity: 0.7; filter: blur(80px); }
+            0%, 100% { opacity: 0.5; filter: blur(60px); }
+            50% { opacity: 0.8; filter: blur(80px); }
           }
           @keyframes scanline {
             0% { transform: translateY(-100%); }
@@ -221,20 +206,6 @@ export default function Dashboard() {
           @keyframes vignettePulse {
             0%, 100% { opacity: 0.85; }
             50% { opacity: 0.75; }
-          }
-          .sparkline-draw path.main-line {
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000;
-            animation: drawLine 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
-          }
-          .sparkline-draw path.glow-line {
-            stroke-dasharray: 2000;
-            stroke-dashoffset: 2000;
-            animation: drawLine 2.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
-          }
-          .sparkline-draw path.area-fill {
-            opacity: 0;
-            animation: fadeInArea 1.5s ease-out 2s forwards;
           }
           .tbos-hero-card {
             background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%);
@@ -404,14 +375,20 @@ export default function Dashboard() {
             }} />
           </div>
 
-          {/* Ambient light orbs — Cinematic aurora (on top of image) */}
+          {/* Ambient Light Pools — visible warm golden depth */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
-            <div className="absolute -top-40 left-1/4 w-[900px] h-[700px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 30%, transparent 60%)', filter: 'blur(140px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
-            <div className="absolute -top-20 right-[5%] w-[600px] h-[500px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.03) 0%, transparent 60%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
-            <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.03) 0%, transparent 50%)', filter: 'blur(100px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
+            {/* Primary golden pool — top left, large and warm */}
+            <div className="absolute -top-20 left-[15%] w-[1000px] h-[800px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.09) 0%, rgba(253,185,19,0.04) 25%, rgba(253,185,19,0.01) 45%, transparent 65%)', filter: 'blur(100px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
+            {/* Cool blue accent — top right, complementary */}
+            <div className="absolute -top-10 right-[5%] w-[700px] h-[600px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.05) 0%, rgba(0,217,255,0.02) 30%, transparent 55%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
+            {/* Secondary golden pool — mid-right */}
+            <div className="absolute top-[35%] left-[55%] w-[500px] h-[500px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.05) 0%, rgba(253,185,19,0.015) 40%, transparent 60%)', filter: 'blur(90px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
+            {/* Deep warm glow — bottom left, adds depth */}
+            <div className="absolute top-[60%] left-[5%] w-[600px] h-[400px] rounded-full" 
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.04) 0%, transparent 50%)', filter: 'blur(110px)', animation: 'heroGlow 15s ease-in-out infinite 6s' }} />
           </div>
 
           {/* Engineering grid pattern — blueprint precision */}
@@ -428,7 +405,7 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Greeting — Cinematic Hero Moment */}
-          <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'cardEntrance 0.6s cubic-bezier(0.16,1,0.3,1) 0s both' }}>
+          <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-2 font-light">Command Center</p>
@@ -450,7 +427,7 @@ export default function Dashboard() {
               </div>
               {/* Live clock */}
               <div className="hidden md:flex flex-col items-end">
-                <span className="text-[28px] font-extralight text-white/20 tabular-nums font-mono" style={{ letterSpacing: '-0.02em' }}>{timeStr}</span>
+                <span className="text-[28px] font-extralight text-white/20 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.02em' }}>{timeStr}</span>
               </div>
             </div>
           </div>
@@ -503,7 +480,7 @@ export default function Dashboard() {
               key={i}
               className="tbos-hero-card group cursor-default shimmer-effect"
               style={{
-                animation: `cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.12}s both`,
+                animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
               }}
             >
               {/* Scanline hover effect */}
@@ -520,25 +497,31 @@ export default function Dashboard() {
               </div>
 
               {/* Label */}
-              <div className="text-[9px] font-medium uppercase tracking-[0.25em] mb-5" style={{ color: kpi.labelColor }}>
+              <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.25em', textTransform: 'uppercase', color: kpi.labelColor }}>
                 {kpi.label}
               </div>
 
-              {/* Main number with count-up */}
+              {/* Main number with count-up — JetBrains Mono luminescent gauge */}
               <div className="flex items-baseline gap-2 leading-none">
-                <span className="text-[2.75rem] font-extralight text-white/95 tabular-nums" style={{ fontFamily: 'Inter, system-ui', letterSpacing: '-0.04em' }}>
+                <span className="font-mono tracking-tight text-white/95 tabular-nums" style={{
+                  fontSize: '2.75rem',
+                  fontWeight: 200,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  textShadow: '0 0 30px rgba(253,185,19,0.2), 0 0 60px rgba(253,185,19,0.08)',
+                  letterSpacing: '-0.04em',
+                }}>
                   {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                 </span>
                 <span className="text-[13px] font-light text-white/20">{kpi.unit}</span>
               </div>
 
               {/* Sub info */}
-              <div className="text-[11px] text-slate-500/80 mt-3 font-mono tabular-nums">{kpi.sub}</div>
+              <div className="text-[11px] text-slate-500/80 mt-3 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{kpi.sub}</div>
 
               {/* Trend indicator */}
               <div className="mt-2 flex items-center gap-1.5">
-                {kpi.trend && (
-                  <span className="text-[11px] font-mono tabular-nums" style={{ color: kpi.accentColor }}>{kpi.trend}</span>
+              {kpi.trend && (
+                  <span className="text-[11px] tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", color: kpi.accentColor }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
                   <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
@@ -548,12 +531,13 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* The Sparkline — Refined Living Pulse */}
+        {/* The Sparkline — THE GOLDEN RIVER */}
         <div
           className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
           style={{
-            background: 'linear-gradient(180deg, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.005) 30%, rgba(11,15,26,0.98) 100%)',
-            height: '220px',
+            background: 'linear-gradient(180deg, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 25%, rgba(11,15,26,0.98) 60%, rgba(11,15,26,1) 100%)',
+            minHeight: '260px',
+            height: '260px',
             padding: '20px 24px',
           }}
         >
@@ -570,19 +554,59 @@ export default function Dashboard() {
             zIndex: 1,
           }} />
 
-          {/* Subtle floating particles */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
-            {[...Array(6)].map((_, i) => (
+          {/* Batching Plant SVG Silhouette — Industrial identity behind the curve */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" style={{ zIndex: 1, opacity: 0.09 }}>
+            {/* Main silo cluster */}
+            <rect x="80" y="60" width="50" height="200" rx="6" fill="#D4AF37" opacity="0.5" />
+            <rect x="140" y="40" width="50" height="220" rx="6" fill="#D4AF37" opacity="0.6" />
+            <rect x="200" y="80" width="50" height="180" rx="6" fill="#D4AF37" opacity="0.45" />
+            <ellipse cx="105" cy="55" rx="30" ry="8" fill="#D4AF37" opacity="0.4" />
+            <ellipse cx="165" cy="35" rx="30" ry="8" fill="#D4AF37" opacity="0.5" />
+            <ellipse cx="225" cy="75" rx="30" ry="8" fill="#D4AF37" opacity="0.35" />
+            {/* Conveyor belt system */}
+            <line x1="260" y1="180" x2="420" y2="100" stroke="#D4AF37" strokeWidth="3" opacity="0.3" />
+            <line x1="260" y1="186" x2="420" y2="106" stroke="#D4AF37" strokeWidth="1.5" opacity="0.2" />
+            {/* Mixer / Central unit */}
+            <rect x="420" y="90" width="90" height="120" rx="4" fill="#D4AF37" opacity="0.35" />
+            <rect x="435" y="75" width="60" height="20" rx="3" fill="#D4AF37" opacity="0.3" />
+            {/* Discharge chute */}
+            <polygon points="470,210 490,210 510,260 450,260" fill="#D4AF37" opacity="0.25" />
+            {/* Control tower */}
+            <rect x="560" y="100" width="45" height="160" rx="2" fill="#D4AF37" opacity="0.3" />
+            <rect x="565" y="110" width="10" height="12" rx="1" fill="#FDB913" opacity="0.5" />
+            <rect x="580" y="110" width="10" height="12" rx="1" fill="#FDB913" opacity="0.4" />
+            <rect x="565" y="130" width="10" height="12" rx="1" fill="#FDB913" opacity="0.35" />
+            <rect x="580" y="130" width="10" height="12" rx="1" fill="#FDB913" opacity="0.45" />
+            {/* Aggregate hoppers */}
+            <polygon points="680,140 720,140 740,200 660,200" fill="#D4AF37" opacity="0.3" />
+            <polygon points="760,130 800,130 820,200 740,200" fill="#D4AF37" opacity="0.25" />
+            <polygon points="840,150 880,150 900,200 820,200" fill="#D4AF37" opacity="0.2" />
+            {/* Truck loading */}
+            <rect x="920" y="230" width="100" height="40" rx="4" fill="#D4AF37" opacity="0.2" />
+            <circle cx="940" cy="275" r="12" fill="#D4AF37" opacity="0.15" />
+            <circle cx="1000" cy="275" r="12" fill="#D4AF37" opacity="0.15" />
+            <rect x="920" y="215" width="60" height="20" rx="3" fill="#D4AF37" opacity="0.15" />
+            {/* Pipes connecting silos to mixer */}
+            <path d="M130 260 L130 270 L430 270 L430 210" fill="none" stroke="#D4AF37" strokeWidth="2" opacity="0.15" />
+            <path d="M190 260 L190 280 L450 280 L450 210" fill="none" stroke="#D4AF37" strokeWidth="2" opacity="0.12" />
+            {/* Ground line */}
+            <line x1="0" y1="290" x2="1200" y2="290" stroke="#D4AF37" strokeWidth="1" opacity="0.1" />
+          </svg>
+
+          {/* Golden ember particles — floating up like embers from the plant */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5] golden-embers">
+            {Array.from({ length: 14 }, (_, i) => (
               <div
                 key={i}
-                className="absolute rounded-full"
+                className="ember absolute rounded-full"
                 style={{
-                  width: `${1 + Math.random() * 2}px`,
-                  height: `${1 + Math.random() * 2}px`,
-                  background: 'rgba(232,184,75,0.35)',
-                  left: `${10 + Math.random() * 80}%`,
-                  bottom: `${15 + Math.random() * 35}%`,
-                  animation: `floatUp ${4 + Math.random() * 5}s ease-out ${Math.random() * 6}s infinite`,
+                  width: `${1.5 + (i % 3) * 0.8}px`,
+                  height: `${1.5 + (i % 3) * 0.8}px`,
+                  background: `rgba(253,185,19,${0.3 + (i % 4) * 0.1})`,
+                  boxShadow: '0 0 4px rgba(253,185,19,0.3)',
+                  left: `${8 + (i * 6.5)}%`,
+                  bottom: `${20 + (i % 5) * 8}%`,
+                  animation: `particleFloat ${5 + (i % 4) * 1.5}s ease-out ${3 + i * 0.4}s infinite`,
                 }}
               />
             ))}
@@ -600,15 +624,16 @@ export default function Dashboard() {
           </div>
 
           {/* Timestamp */}
-          <div className="absolute top-5 right-6 text-[10px] font-mono text-slate-600 z-10 tabular-nums">{timeStr}</div>
+          <div className="absolute top-5 right-6 text-slate-600 z-10 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{timeStr}</div>
 
           <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none">
             <defs>
-              {/* Vogue editorial gradient — champagne to transparent */}
+              {/* Golden River gradient — prominent, eye-catching fill */}
               <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.18} />
-                <stop offset="30%" stopColor="#D4AF37" stopOpacity={0.06} />
-                <stop offset="70%" stopColor="#D4AF37" stopOpacity={0.015} />
+                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.35} />
+                <stop offset="20%" stopColor="#D4AF37" stopOpacity={0.18} />
+                <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.06} />
+                <stop offset="80%" stopColor="#D4AF37" stopOpacity={0.015} />
                 <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
               </linearGradient>
               {/* Horizontal gradient along the line — warm to cool platinum */}
@@ -630,14 +655,14 @@ export default function Dashboard() {
                 <feGaussianBlur stdDeviation="6" />
               </filter>
             </defs>
-            {/* Area fill — whisper-thin wash */}
+            {/* Area fill — PROMINENT golden river */}
             <path d={areaPath} fill="url(#sparkGlow)" className="area-fill" />
-            {/* Outermost atmospheric haze — barely visible */}
-            <path d={linePath} fill="none" stroke="#D4AF37" strokeWidth="12" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
-            {/* Soft warm glow — refined */}
-            <path d={linePath} fill="none" stroke="#D4AF37" strokeWidth="5" strokeOpacity="0.08" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
-            {/* Core line — platinum-champagne, editorial weight */}
-            <path d={linePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
+            {/* Outermost atmospheric haze */}
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.05" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
+            {/* Soft warm glow — thicker for prominence */}
+            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.12" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            {/* Core line — golden, slightly thicker for river feel */}
+            <path d={linePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
             {/* Peak whisker — architectural */}
             <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 14} stroke="rgba(212,175,55,0.12)" strokeWidth="0.5" strokeDasharray="1.5 2" />
             <circle cx={peakX} cy={peakY - 14} r="0.8" fill="rgba(212,175,55,0.2)" />
