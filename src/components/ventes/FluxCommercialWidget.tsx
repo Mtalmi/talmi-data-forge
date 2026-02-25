@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCountUp } from '@/hooks/useCountUp';
+import { useI18n } from '@/i18n/I18nContext';
 
 interface FluxCommercialWidgetProps {
   stats: {
@@ -89,6 +90,8 @@ function PipelineConnector({ percentage }: { percentage?: string }) {
 }
 
 export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidgetProps) {
+  const { t } = useI18n();
+  const vt = t.pages.ventes;
   const navigate = useNavigate();
 
   const conversionRate = useMemo(() => {
@@ -104,10 +107,10 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
     : `${pipelineValue} DH`;
 
   const stages = [
-    { id: 'en_attente', count: stats.devisEnAttente, label: 'Devis', sublabel: 'en attente', color: '#FDB913' },
-    { id: 'pret_production', count: stats.bcPretProduction, label: 'BC Validés', sublabel: 'prêts prod.', color: '#3B82F6' },
-    { id: 'en_production', count: stats.bcEnProduction, label: 'En Production', sublabel: 'en cours', color: '#00D9FF', route: '/production' },
-    { id: 'termine', count: stats.bcLivre, label: 'Terminés', sublabel: 'livrés', color: '#10B981', route: '/journal' },
+    { id: 'en_attente', count: stats.devisEnAttente, label: vt.quotesLabel, sublabel: vt.pendingSub, color: '#FDB913' },
+    { id: 'pret_production', count: stats.bcPretProduction, label: vt.validatedPOs, sublabel: vt.readyForProd, color: '#3B82F6' },
+    { id: 'en_production', count: stats.bcEnProduction, label: vt.inProduction, sublabel: vt.inProgressSub, color: '#00D9FF', route: '/production' },
+    { id: 'termine', count: stats.bcLivre, label: vt.completed, sublabel: vt.deliveredSub, color: '#10B981', route: '/journal' },
   ];
 
   const activeCount = stages.filter(s => s.count > 0).length;
@@ -131,7 +134,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
           <span style={{
             fontSize: 11, fontWeight: 600, letterSpacing: '0.2em',
             color: 'rgba(226,232,240,0.6)', textTransform: 'uppercase',
-          }}>Flux Commercial</span>
+          }}>{ vt.salesFeed }</span>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '2px 8px', borderRadius: 6,
@@ -143,7 +146,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
               background: '#10B981',
               animation: 'pulse 2s ease-in-out infinite',
             }} />
-            <span style={{ fontSize: 9, fontWeight: 600, color: '#10B981', letterSpacing: '0.1em' }}>LIVE</span>
+            <span style={{ fontSize: 9, fontWeight: 600, color: '#10B981', letterSpacing: '0.1em' }}>{vt.live}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -164,7 +167,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
               fontSize: 11, fontFamily: "'JetBrains Mono', monospace",
               fontWeight: 500,
               color: conversionRate >= 50 ? '#10B981' : '#FDB913',
-            }}>{conversionRate}% conv.</span>
+            }}>{conversionRate}% {vt.conv}</span>
           )}
         </div>
       </div>

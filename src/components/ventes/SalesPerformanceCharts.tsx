@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -15,12 +16,7 @@ interface SalesPerformanceChartsProps {
 /* ───── Palette ───── */
 const GOLD = '#FDB913';
 const GOLD_COLORS = [GOLD, 'rgba(253,185,19,0.55)', 'rgba(253,185,19,0.30)'];
-const STATUS_COLORS: Record<string, string> = {
-  Validé: GOLD,
-  Livré: 'rgba(253,185,19,0.55)',
-  Autre: 'rgba(148,163,184,0.20)',
-  Production: 'rgba(253,185,19,0.40)',
-};
+// Status colors are mapped dynamically in the component using statusColorMap
 const SUCCESS = '#10B981';
 const DANGER = '#FF6B6B';
 const WARNING = '#FB923C';
@@ -84,6 +80,8 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceChartsProps) {
+  const { t } = useI18n();
+  const vt = t.pages.ventes;
   /* ── Sales by product (formule) ── */
   const productData = useMemo(() => {
     const map = new Map<string, number>();
@@ -112,9 +110,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
     : 0;
 
   const winLossPie = [
-    { name: 'En cours', value: winLossData.pending, color: GOLD },
-    { name: 'Gagnés', value: winLossData.won, color: SUCCESS },
-    { name: 'Perdus', value: winLossData.lost, color: DANGER },
+    { name: vt.inProgress, value: winLossData.pending, color: GOLD },
+    { name: vt.won, value: winLossData.won, color: SUCCESS },
+    { name: vt.lost, value: winLossData.lost, color: DANGER },
   ].filter(d => d.value > 0);
 
   /* ── Revenue by BC status (bar chart) ── */
@@ -122,15 +120,22 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
     const map: Record<string, number> = {};
     bcList.forEach(bc => {
       const label =
-        bc.statut === 'pret_production' ? 'Validé'
+        bc.statut === 'pret_production' ? vt.validated
         : bc.statut === 'en_production' ? 'Production'
-        : bc.statut === 'termine' || bc.statut === 'livre' ? 'Livré'
-        : 'Autre';
+        : bc.statut === 'termine' || bc.statut === 'livre' ? vt.statusLivre
+        : vt.other;
       map[label] = (map[label] || 0) + bc.total_ht;
     });
-    const order = ['Validé', 'Production', 'Livré', 'Autre'];
+    const order = [vt.validated, 'Production', vt.statusLivre, vt.other];
     return order.filter(k => map[k]).map(k => ({ name: k, value: map[k] }));
-  }, [bcList]);
+  }, [bcList, vt]);
+
+  const STATUS_COLORS: Record<string, string> = {
+    [vt.validated]: GOLD,
+    [vt.statusLivre]: 'rgba(253,185,19,0.55)',
+    [vt.other]: 'rgba(148,163,184,0.20)',
+    Production: 'rgba(253,185,19,0.40)',
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -142,7 +147,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         padding: 24,
         overflow: 'hidden',
       }}>
-        <SectionHeader title="CA par Formule" />
+        <SectionHeader title={vt.revenueByFormula} />
         {productData.length > 0 ? (
           <>
             <div style={{ height: 176 }}>
@@ -207,7 +212,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         padding: 24,
         overflow: 'hidden',
       }}>
-        <SectionHeader title="Pipeline par Statut" />
+        <SectionHeader title={vt.pipelineByStatus} />
         {statusRevenueData.length > 0 ? (
           <div style={{ height: 208 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -254,7 +259,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         overflow: 'hidden',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <SectionHeader title="Analyse Devis" />
+          <SectionHeader title={vt.quoteAnalysis} />
           {winRate > 0 && (
             <span style={{
               fontSize: 10, fontWeight: 600,
@@ -269,9 +274,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
         {/* Summary chips */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
-          <StatChip value={winLossData.won} label="Gagnés" color={SUCCESS} />
-          <StatChip value={winLossData.lost} label="Perdus" color={DANGER} />
-          <StatChip value={winLossData.pending} label="En cours" color={WARNING} />
+          <StatChip value={winLossData.won} label={vt.won} color={SUCCESS} />
+          <StatChip value={winLossData.lost} label={vt.lost} color={DANGER} />
+          <StatChip value={winLossData.pending} label={vt.inProgress} color={WARNING} />
         </div>
 
         {/* Pie chart */}
@@ -306,16 +311,16 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
               <span style={{
                 position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
                 fontSize: 10, fontStyle: 'italic', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap',
-              }}>No completed deals yet</span>
+              }}>{vt.noCompletedDeals}</span>
             </div>
           ) : (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
-                  <CheckCircle2 style={{ width: 12, height: 12, color: SUCCESS }} /> Gagnés
+                  <CheckCircle2 style={{ width: 12, height: 12, color: SUCCESS }} /> {vt.won}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
-                  <XCircle style={{ width: 12, height: 12, color: DANGER }} /> Perdus
+                  <XCircle style={{ width: 12, height: 12, color: DANGER }} /> {vt.lost}
                 </span>
               </div>
               <div style={{ height: 8, borderRadius: 4, overflow: 'hidden', display: 'flex', background: 'rgba(255,255,255,0.04)' }}>

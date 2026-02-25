@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useI18n } from '@/i18n/I18nContext';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -130,24 +131,39 @@ function Metric({ value, suffix = '', prefix = '', size = 28, color = T.gold }: 
 /* ═══════════════════════════════════════════════════════
    SECTION 1: PIPELINE
 ══════════════════════════════════════════════════════ */
-const funnelData = [
-  { stage: 'Leads', count: 48, value: 1200, rate: 100, width: '100%' },
-  { stage: 'Devis Envoyés', count: 24, value: 847, rate: 50, width: '72%' },
-  { stage: 'BCs Actifs', count: 12, value: 504, rate: 25, width: '45%' },
-  { stage: 'Deals Fermés', count: 8, value: 338, rate: 17, width: '28%' },
+const funnelStages = ['leads', 'quotesSent', 'activePOs', 'closedDeals'] as const;
+const funnelBase = [
+  { stageKey: 'leads' as const, count: 48, value: 1200, rate: 100, width: '100%' },
+  { stageKey: 'quotesSent' as const, count: 24, value: 847, rate: 50, width: '72%' },
+  { stageKey: 'activePOs' as const, count: 12, value: 504, rate: 25, width: '45%' },
+  { stageKey: 'closedDeals' as const, count: 8, value: 338, rate: 17, width: '28%' },
 ];
 
-const donutData = [
-  { name: 'Leads', value: 1200 },
-  { name: 'Devis', value: 847 },
-  { name: 'BCs Actifs', value: 504 },
-  { name: 'Fermés', value: 338 },
+const donutBase = [
+  { nameKey: 'leads' as const, value: 1200 },
+  { nameKey: 'quotesLabel' as const, value: 847 },
+  { nameKey: 'activePOs' as const, value: 504 },
+  { nameKey: 'closedDeals' as const, value: 338 },
 ];
 const DONUT_COLORS = [T.gold, 'rgba(253,185,19,0.65)', 'rgba(253,185,19,0.40)', 'rgba(253,185,19,0.22)'];
 
 function PipelineSection() {
+  const { t } = useI18n();
+  const vt = t.pages.ventes;
   const [barWidths, setBarWidths] = useState([0, 0, 0, 0]);
   const goldOpacities = [1, 0.75, 0.55, 0.40];
+
+  const stageLabels: Record<string, string> = {
+    leads: 'Leads',
+    quotesSent: vt.quotesSent,
+    activePOs: vt.activePOs,
+    closedDeals: vt.closedDeals,
+    quotesLabel: vt.quotesLabel,
+  };
+
+  const funnelData = funnelBase.map(f => ({ ...f, stage: stageLabels[f.stageKey] || f.stageKey }));
+  const donutData = donutBase.map(d => ({ ...d, name: stageLabels[d.nameKey] || d.nameKey }));
+
   useEffect(() => {
     funnelData.forEach((_, i) => {
       setTimeout(() => {
@@ -156,17 +172,19 @@ function PipelineSection() {
     });
   }, []);
 
+  const kpiLabels = [
+    { label: vt.pipelineTotal, value: 847, suffix: 'K DH' },
+    { label: vt.conversionRateLabel, value: 34, suffix: '%' },
+    { label: vt.averageDealSize, value: 42, suffix: 'K DH' },
+    { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}` },
+  ];
+
   return (
     <section>
-      <SectionHeader title="Pipeline Commercial" />
+      <SectionHeader title={vt.salesPipeline} />
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        {[
-          { label: 'Pipeline Total', value: 847, suffix: 'K DH' },
-          { label: 'Taux de Conversion', value: 34, suffix: '%' },
-          { label: 'Taille Moyenne', value: 42, suffix: 'K DH' },
-          { label: 'Cycle de Vente', value: 28, suffix: ' jours' },
-        ].map((k, i) => (
+        {kpiLabels.map((k, i) => (
           <GCard key={k.label} delay={i * 80}>
             <Metric value={k.value} suffix={k.suffix} size={32} color="white" />
             <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 8, display: 'block' }}>{k.label}</span>
@@ -177,7 +195,7 @@ function PipelineSection() {
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Funnel */}
         <GCard delay={100}>
-          <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 16, letterSpacing: '0.05em' }}>Entonnoir de Vente</p>
+          <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 16, letterSpacing: '0.05em' }}>{vt.salesFunnelLabel}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {funnelData.map((f, i) => (
               <div key={f.stage}>
@@ -208,7 +226,7 @@ function PipelineSection() {
 
         {/* Donut */}
         <GCard delay={200}>
-          <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 8, letterSpacing: '0.05em' }}>Pipeline par Étape</p>
+          <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 8, letterSpacing: '0.05em' }}>{vt.pipelineByStage}</p>
           <div style={{ position: 'relative', height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -828,12 +846,14 @@ function NextActionRow({ action, delay }: { action: typeof nextActions[0]; delay
 ══════════════════════════════════════════════════════ */
 export function WorldClassVentes() {
   const [activeTab, setActiveTab] = useState<'pipeline' | 'performance' | 'previsions' | 'activites'>('pipeline');
+  const { t } = useI18n();
+  const vt = t.pages.ventes;
 
   const tabs = [
     { id: 'pipeline', label: 'Pipeline' },
     { id: 'performance', label: 'Performance' },
-    { id: 'previsions', label: 'Prévisions' },
-    { id: 'activites', label: 'Activités' },
+    { id: 'previsions', label: vt.forecasts },
+    { id: 'activites', label: vt.activities },
   ] as const;
 
   return (
@@ -901,7 +921,7 @@ export function WorldClassVentes() {
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
               >
                 <Plus size={14} />
-                Nouveau Deal
+                {vt.newDeal}
               </button>
             </div>
           </div>
