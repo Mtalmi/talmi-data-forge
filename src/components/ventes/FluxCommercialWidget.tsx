@@ -67,9 +67,9 @@ function PipelineStage({
   );
 }
 
-function PipelineConnector({ percentage }: { percentage?: string }) {
+function PipelineConnector({ percentage, dimmed }: { percentage?: string; dimmed?: boolean }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px', opacity: dimmed ? 0.4 : 1, transition: 'opacity 0.2s ease' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{
           width: 40, height: 1,
@@ -220,6 +220,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
                 <PipelineConnector
                   key={`conn-${i}`}
                   percentage={i === 0 && conversionRate > 0 ? `${conversionRate}%` : undefined}
+                  dimmed={stages[i + 1].count === 0}
                 />
               )}
             </>
