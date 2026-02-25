@@ -173,10 +173,10 @@ function PipelineSection() {
   }, []);
 
   const kpiLabels = [
-    { label: vt.pipelineTotal, value: 847, suffix: 'K DH' },
-    { label: vt.conversionRateLabel, value: 34, suffix: '%' },
-    { label: vt.averageDealSize, value: 42, suffix: 'K DH' },
-    { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}` },
+    { label: vt.pipelineTotal, value: 847, suffix: 'K DH', trend: '↑ 12%', trendLabel: 'vs last month', trendColor: '#10B981' },
+    { label: vt.conversionRateLabel, value: 34, suffix: '%', trend: '→', trendLabel: 'stable', trendColor: 'rgba(255,255,255,0.4)' },
+    { label: vt.averageDealSize, value: 42, suffix: 'K DH', trend: '↑ 5%', trendLabel: '', trendColor: '#10B981' },
+    { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}`, trend: '↓ 3 days', trendLabel: '', trendColor: '#10B981' },
   ];
 
   return (
@@ -185,9 +185,12 @@ function PipelineSection() {
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {kpiLabels.map((k, i) => (
-          <GCard key={k.label} delay={i * 80}>
+          <GCard key={k.label} delay={i * 80} style={{ padding: 20 }}>
             <Metric value={k.value} suffix={k.suffix} size={32} color="white" />
             <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 8, display: 'block' }}>{k.label}</span>
+            <span style={{ fontSize: 11, color: k.trendColor, marginTop: 6, display: 'block', fontFamily: 'JetBrains Mono, monospace' }}>
+              {k.trend}{k.trendLabel ? ` ${k.trendLabel}` : ''}
+            </span>
           </GCard>
         ))}
       </div>
@@ -196,10 +199,16 @@ function PipelineSection() {
         {/* Funnel */}
         <GCard delay={100}>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 16, letterSpacing: '0.05em' }}>{vt.salesFunnelLabel}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {funnelData.map((f, i) => (
               <div key={f.stage}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                {i > 0 && (
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8, marginLeft: 45 }}>
+                    <div style={{ width: 1, height: 12, background: 'rgba(253,185,19,0.2)' }} />
+                    <span style={{ fontSize: 9, color: 'rgba(148,163,184,0.3)', marginLeft: 6, fontFamily: 'JetBrains Mono, monospace' }}>▼</span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 11, color: T.textSec, width: 100, flexShrink: 0 }}>{f.stage}</span>
                   <div style={{ flex: 1, position: 'relative', height: 28, background: `rgba(253,185,19,0.06)`, borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{
@@ -215,7 +224,7 @@ function PipelineSection() {
                       </span>
                     </div>
                   </div>
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: T.gold, fontWeight: 600, width: 32, textAlign: 'right' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600, width: 32, textAlign: 'right' }}>
                     {f.rate}%
                   </span>
                 </div>

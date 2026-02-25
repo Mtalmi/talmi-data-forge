@@ -749,10 +749,14 @@ export default function Ventes() {
           <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
 
           {/* Revenue Forecast */}
-          <RevenueForecastChart bcList={bcList} devisList={devisList} />
+          <div className="mb-8">
+            <RevenueForecastChart bcList={bcList} devisList={devisList} />
+          </div>
 
           {/* Sales Performance Charts */}
-          <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
+          <div className="mb-8">
+            <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
+          </div>
 
           {/* ══ World-Class Sales Dashboard ══ */}
           <WorldClassVentes />

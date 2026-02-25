@@ -44,7 +44,7 @@ function PipelineStage({
     <button
       onClick={onClick}
       className="group flex flex-col items-center gap-2 py-2 px-1 rounded-xl transition-colors duration-200 focus:outline-none"
-      style={{ background: 'transparent' }}
+      style={{ background: 'transparent', opacity: count === 0 ? 0.5 : 1 }}
       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
     >
@@ -56,7 +56,7 @@ function PipelineStage({
       }}>{label}</span>
       <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.35)' }}>{sublabel}</span>
       <div style={{
-        width: 4, height: 4, borderRadius: '50%', marginTop: 2,
+        width: 8, height: 8, borderRadius: '50%', marginTop: 2,
         background: status === 'active' ? color : 'rgba(148,163,184,0.3)',
         boxShadow: status === 'active' ? `0 0 8px ${color}40` : 'none',
       }} />
@@ -70,13 +70,13 @@ function PipelineConnector({ percentage }: { percentage?: string }) {
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{
           width: 40, height: 1,
-          background: 'linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.15))',
+          background: 'linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.25))',
         }} />
         <div style={{
           width: 0, height: 0,
           borderTop: '3px solid transparent',
           borderBottom: '3px solid transparent',
-          borderLeft: '5px solid rgba(255,255,255,0.15)',
+          borderLeft: '5px solid rgba(255,255,255,0.4)',
         }} />
       </div>
       {percentage && (
