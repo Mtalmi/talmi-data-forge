@@ -145,7 +145,7 @@ const donutBase = [
   { nameKey: 'activePOs' as const, value: 504 },
   { nameKey: 'closedDeals' as const, value: 338 },
 ];
-const DONUT_COLORS = [T.gold, 'rgba(253,185,19,0.65)', 'rgba(253,185,19,0.40)', 'rgba(253,185,19,0.22)'];
+const DONUT_COLORS = ['#D4A843', '#E8C860', '#B8860B', '#6B7280'];
 
 function PipelineSection() {
   const { t } = useI18n();
