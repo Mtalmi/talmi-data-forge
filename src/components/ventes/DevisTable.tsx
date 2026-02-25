@@ -70,6 +70,7 @@ import { getDateLocale } from '@/i18n/dateLocale';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
   en_attente: { label: 'En Attente', color: 'text-[#FDB913] bg-[rgba(253,185,19,0.08)] border border-[rgba(253,185,19,0.15)]', icon: <Clock className="h-3 w-3" />, isLocked: false },
+  attente_validation_tiers: { label: 'Attente validation client', color: 'text-[#FDB913] bg-[rgba(253,185,19,0.08)] border border-[rgba(253,185,19,0.15)]', icon: <Clock className="h-3 w-3" />, isLocked: false },
   valide: { label: 'Validé', color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)]', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
   accepte: { label: 'Accepté', color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)]', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
   refuse: { label: 'Refusé', color: 'text-[#FF6B6B] bg-[rgba(255,107,107,0.08)] border border-[rgba(255,107,107,0.15)]', icon: <XCircle className="h-3 w-3" />, isLocked: false },
@@ -409,9 +410,9 @@ export function DevisTable({
                   <div className="flex items-center gap-1 flex-wrap">
                     {/* Clickable Status Dropdown - only for non-locked statuses */}
                     {statusConfig.isLocked ? (
-                      <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                      <Badge variant="outline" className={cn("gap-1", statusConfig.color)} title={statusConfig.label}>
                         {statusConfig.icon}
-                        {statusConfig.label}
+                        <span className="truncate max-w-[120px]">{statusConfig.label}</span>
                       </Badge>
                     ) : (
                       <DropdownMenu>

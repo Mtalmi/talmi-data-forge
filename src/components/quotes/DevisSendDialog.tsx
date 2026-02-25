@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { Send, Mail, MessageCircle, Loader2, Check, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useI18n } from '@/i18n/I18nContext';
+import { formatMontant } from '@/utils/formatters';
 
 interface DevisSendDialogProps {
   devis: {
@@ -112,10 +113,10 @@ export function DevisSendDialog({ devis }: DevisSendDialogProps) {
       `━━━━━━━━━━━━━━━\n` +
       `🏗️ ${ds.waFormula}: ${devis.formule_id}\n` +
       `📦 ${ds.waVolume}: ${devis.volume_m3} m³\n` +
-      `💰 ${ds.waPrice}: ${devis.prix_vente_m3.toLocaleString()} DH/m³\n` +
+      `💰 ${ds.waPrice}: ${formatMontant(devis.prix_vente_m3)} DH/m³\n` +
       `━━━━━━━━━━━━━━━\n` +
-      `*TOTAL HT: ${devis.total_ht.toLocaleString()} DH*\n` +
-      `*TOTAL TTC: ${(devis.total_ht * 1.2).toLocaleString()} DH*\n\n` +
+      `*TOTAL HT: ${formatMontant(devis.total_ht)} DH*\n` +
+      `*TOTAL TTC: ${formatMontant(devis.total_ht * 1.2)} DH*\n\n` +
       (devis.date_expiration ? `⏰ ${ds.waValidUntil}: ${new Date(devis.date_expiration).toLocaleDateString()}\n\n` : '') +
       `${ds.waConfirm}\n\n` +
       `TALMI BETON 🏭`
@@ -238,10 +239,10 @@ export function DevisSendDialog({ devis }: DevisSendDialogProps) {
         <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
           <p className="font-medium mb-1">{ds.quoteSummary}:</p>
           <p className="text-muted-foreground">
-            {devis.volume_m3} m³ de {devis.formule_id} à {devis.prix_vente_m3.toLocaleString()} DH/m³
+            {devis.volume_m3} m³ de {devis.formule_id} à {formatMontant(devis.prix_vente_m3)} DH/m³
           </p>
           <p className="font-semibold text-primary mt-1">
-            {ds.totalTtc}: {(devis.total_ht * 1.2).toLocaleString()} DH
+            {ds.totalTtc}: {formatMontant(devis.total_ht * 1.2)} DH
           </p>
         </div>
       </DialogContent>

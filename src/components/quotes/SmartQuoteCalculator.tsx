@@ -23,6 +23,7 @@ import {
 import { Calculator, Loader2, TrendingUp, Truck, Package, Info, Save, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
+import { formatMontant } from '@/utils/formatters';
 
 interface Formule {
   formule_id: string;
@@ -256,20 +257,20 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
               <>
                 <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
                    <p className="text-xs font-semibold uppercase text-primary mb-1">{sq.minSalePrice}</p>
-                   <p className="text-3xl font-bold text-primary">{quoteResult.prix_vente_minimum.toLocaleString()} DH/m³</p>
+                   <p className="text-3xl font-bold text-primary">{formatMontant(quoteResult.prix_vente_minimum)} DH/m³</p>
                    <p className="text-xs text-muted-foreground">{sq.excludingTax}</p>
                   <div className="mt-3 pt-3 border-t border-primary/20 space-y-1">
                      <div className="flex justify-between text-sm">
                        <span>{sq.totalHT}</span>
-                       <span className="font-mono font-medium">{quoteResult.total_ht.toLocaleString()} DH</span>
+                       <span className="font-mono font-medium">{formatMontant(quoteResult.total_ht)} DH</span>
                      </div>
                      <div className="flex justify-between text-sm text-muted-foreground">
                        <span>{sq.tva}</span>
-                      <span className="font-mono">{quoteResult.tva.toLocaleString()} DH</span>
+                      <span className="font-mono">{formatMontant(quoteResult.tva)} DH</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold pt-1 border-t border-primary/20">
                       <span>{sq.totalTTC}</span>
-                      <span className="text-primary">{quoteResult.total_ttc.toLocaleString()} DH</span>
+                      <span className="text-primary">{formatMontant(quoteResult.total_ttc)} DH</span>
                     </div>
                   </div>
                 </div>

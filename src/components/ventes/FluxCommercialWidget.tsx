@@ -45,11 +45,11 @@ function PipelineStage({
     <button
       onClick={onClick}
       className="group flex flex-col items-center gap-2 py-2 px-1 rounded-xl transition-colors duration-200 focus:outline-none"
-      style={{ background: 'transparent' }}
+      style={{ background: 'transparent', opacity: Number(count) === 0 ? 0.35 : 1, transition: 'opacity 0.3s ease' }}
       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
     >
-      <div className="text-center" style={{ opacity: Number(count) === 0 ? 0.4 : 1 }}>
+      <div className="text-center">
         <StageCount value={count} />
         <span style={{
           fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
@@ -69,7 +69,7 @@ function PipelineStage({
 
 function PipelineConnector({ percentage, dimmed }: { percentage?: string; dimmed?: boolean }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px', opacity: dimmed ? 0.4 : 1, transition: 'opacity 0.2s ease' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px', opacity: dimmed ? 0.35 : 1, transition: 'opacity 0.3s ease' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{
           width: 40, height: 1,
@@ -220,7 +220,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
                 <PipelineConnector
                   key={`conn-${i}`}
                   percentage={i === 0 && conversionRate > 0 ? `${conversionRate}%` : undefined}
-                  dimmed={stages[i + 1].count === 0}
+                  dimmed={stages[i].count === 0 || stages[i + 1].count === 0}
                 />
               )}
             </>

@@ -149,9 +149,12 @@ export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLo
                 <div className="h-6 w-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               </div>
             ) : filteredLogs.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="flex flex-col items-center justify-center py-12 px-6 text-center text-muted-foreground">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                <p>Aucune communication enregistrée</p>
+                <p className="text-sm font-medium mb-2">Aucune communication enregistrée</p>
+                <p className="text-xs opacity-70 max-w-[240px]">
+                  Les emails, relances et messages WhatsApp envoyés à vos clients apparaîtront ici automatiquement.
+                </p>
               </div>
             ) : (
               <div className="space-y-6">
