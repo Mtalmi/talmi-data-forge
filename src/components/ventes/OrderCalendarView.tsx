@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import { BonCommande } from '@/hooks/useSalesWorkflow';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -91,13 +90,18 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* Calendar */}
-      <Card className="lg:col-span-2">
-        <CardHeader className="pb-2">
+      <div className="lg:col-span-2" style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 16,
+        padding: 24,
+      }}>
+        <div className="pb-2">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5 text-primary" />
+            <h3 className="flex items-center gap-2 text-white font-medium">
+              <CalendarIcon className="h-5 w-5 text-[#FDB913]" />
               {oc.deliveryCalendar}
-            </CardTitle>
+            </h3>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={goToToday}>
                 {oc.today}
@@ -113,12 +117,11 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
               </Button>
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
+        </div>
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-1 mb-2">
             {oc.dayNames.map((day: string) => (
-              <div key={day} className="text-center text-xs font-medium text-muted-foreground py-2">
+              <div key={day} style={{ fontSize: 11, fontWeight: 500, color: 'rgba(148,163,184,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }} className="text-center py-2">
                 {day}
               </div>
             ))}
@@ -137,36 +140,42 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
                 <button
                   key={idx}
                   onClick={() => setSelectedDate(day)}
-                  className={cn(
-                    "min-h-[80px] p-1 rounded-lg border transition-all text-left",
-                    !isCurrentMonth && "opacity-40",
-                    isSelected && "border-primary bg-primary/5 ring-1 ring-primary",
-                    isDayToday && !isSelected && "border-primary/50",
-                    !isSelected && "hover:bg-muted/50"
-                  )}
+                  className="text-left transition-all duration-200"
+                  style={{
+                    minHeight: 80,
+                    padding: 8,
+                    borderRadius: 8,
+                    border: `1px solid ${isSelected ? 'rgba(253,185,19,0.15)' : 'rgba(255,255,255,0.03)'}`,
+                    background: isDayToday && !isSelected ? 'rgba(253,185,19,0.04)' : isSelected ? 'rgba(253,185,19,0.06)' : 'transparent',
+                    opacity: isCurrentMonth ? 1 : 0.3,
+                  }}
+                  onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.02)'; }}
+                  onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = isDayToday ? 'rgba(253,185,19,0.04)' : 'transparent'; }}
                 >
-                  <div className={cn(
-                    "text-sm font-medium mb-1",
-                    isDayToday && "text-primary"
-                  )}>
+                  <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 4, color: isDayToday ? '#FDB913' : 'rgba(226,232,240,0.7)' }}>
                     {format(day, 'd')}
                   </div>
                   
                   {dayOrders.length > 0 && (
                     <div className="space-y-0.5">
-                      {dayOrders.slice(0, 3).map((order, i) => (
+                      {dayOrders.slice(0, 3).map((order) => (
                         <div
                           key={order.bc_id}
-                          className={cn(
-                            "text-[10px] px-1 py-0.5 rounded truncate text-white",
-                            STATUS_COLORS[order.statut] || 'bg-muted'
-                          )}
+                          style={{
+                            fontSize: 11,
+                            padding: '2px 6px',
+                            borderRadius: 4,
+                            color: 'rgba(253,185,19,0.8)',
+                            background: 'linear-gradient(90deg, rgba(253,185,19,0.15), rgba(253,185,19,0.08))',
+                            borderLeft: '2px solid #FDB913',
+                          }}
+                          className="truncate"
                         >
                           {order.volume_m3}m³
                         </div>
                       ))}
                       {dayOrders.length > 3 && (
-                        <div className="text-[10px] text-muted-foreground px-1">
+                        <div style={{ fontSize: 10, color: 'rgba(148,163,184,0.5)', paddingLeft: 4 }}>
                           +{dayOrders.length - 3} {oc.others}
                         </div>
                       )}
@@ -178,34 +187,35 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t">
+          <div className="flex flex-wrap gap-3 mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded bg-primary" />
-              <span>{oc.ready}</span>
+              <div className="w-3 h-3 rounded" style={{ background: '#FDB913' }} />
+              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.ready}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded bg-warning" />
-              <span>{oc.inProduction}</span>
+              <div className="w-3 h-3 rounded" style={{ background: '#F59E0B' }} />
+              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.inProduction}</span>
             </div>
             <div className="flex items-center gap-1.5 text-xs">
-              <div className="w-3 h-3 rounded bg-success" />
-              <span>{oc.completedDelivered}</span>
+              <div className="w-3 h-3 rounded" style={{ background: '#10B981' }} />
+              <span style={{ color: 'rgba(148,163,184,0.5)' }}>{oc.completedDelivered}</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+      </div>
 
       {/* Selected Date Details */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">
+      <div style={{
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 16,
+        padding: 24,
+      }}>
+        <h4 className="text-sm font-medium text-white pb-2">
             {selectedDate
               ? format(selectedDate, 'EEEE d MMMM', { locale: dateLocale })
               : oc.selectDate
             }
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        </h4>
           {!selectedDate ? (
             <div className="text-center py-8 text-muted-foreground">
               <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -270,8 +280,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
               </div>
             </ScrollArea>
           )}
-        </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }
