@@ -60,6 +60,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { sanitizeReason, rollbackReasonSchema } from '@/lib/security';
 
+const fmt = (v: number) =>
+  new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
 // Type for correction history entries
 interface CorrectionHistoryEntry {
   id: string;
@@ -369,29 +371,34 @@ export function DevisDetailDialog({
             </Alert>
           )}
 
-          {/* Client & Formule Info */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Informations Client
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">Client</p>
-                  <p className="font-semibold">{devis.client?.nom_client || 'Non spécifié'}</p>
-                </div>
-              </div>
+          {/* Émetteur / Client — Two-Column Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* ÉMETTEUR */}
+            <div className="border border-border rounded-lg p-4">
+              <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-2">Émetteur</p>
+              <p className="font-semibold text-foreground">Talmi Beton SARL</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Zone Industrielle, Lot 47<br />
+                Casablanca, Maroc<br />
+                Tél : +212 522 345 678<br />
+                contact@talmibeton.ma
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                RC : 387421 | IF : 24567890 | ICE : 002456789000045
+              </p>
+            </div>
+            {/* CLIENT */}
+            <div className="border border-border rounded-lg p-4">
+              <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-2">Client</p>
+              <p className="font-semibold text-foreground">{devis.client?.nom_client || 'Non spécifié'}</p>
               {devis.client?.adresse && (
-                <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                <div className="flex items-start gap-2 text-sm text-muted-foreground mt-1">
                   <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
                   <span>{devis.client.adresse}</span>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Product Details */}
           <Card>
@@ -423,9 +430,9 @@ export function DevisDetailDialog({
           </Card>
 
           {/* Pricing Summary */}
-          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+          <Card className="border-[#D4A843]/20 bg-gradient-to-br from-[#D4A843]/5 to-transparent">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2">
+              <CardTitle className="text-sm flex items-center gap-2 text-[#D4A843]">
                 <Calculator className="h-4 w-4" />
                 Tarification
               </CardTitle>
@@ -433,16 +440,32 @@ export function DevisDetailDialog({
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 rounded-lg bg-background/50 text-center">
-                  <p className="text-2xl font-mono font-bold text-primary">
-                    {devis.prix_vente_m3.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH
+                  <p className="text-2xl font-mono font-bold text-[#D4A843]">
+                    {fmt(devis.prix_vente_m3)} DH
                   </p>
                   <p className="text-xs text-muted-foreground">Prix / m³</p>
                 </div>
                 <div className="p-3 rounded-lg bg-background/50 text-center">
-                  <p className="text-2xl font-mono font-bold text-primary">
-                    {devis.total_ht.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH
+                  <p className="text-2xl font-mono font-bold text-[#D4A843]">
+                    {fmt(devis.total_ht)} DH
                   </p>
                   <p className="text-xs text-muted-foreground">Total HT</p>
+                </div>
+              </div>
+
+              {/* TVA & TTC */}
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between p-2 rounded bg-[#D4A843]/10">
+                  <span className="font-semibold text-[#D4A843]">TOTAL HT</span>
+                  <span className="font-mono font-bold text-[#D4A843]">{fmt(devis.total_ht)} DH</span>
+                </div>
+                <div className="flex justify-between p-2 rounded border-b">
+                  <span>TVA (20%)</span>
+                  <span className="font-mono font-semibold">{fmt(devis.total_ht * 0.2)} DH</span>
+                </div>
+                <div className="flex justify-between p-3 rounded-lg bg-[#D4A843] text-white">
+                  <span className="font-bold text-base">TOTAL TTC</span>
+                  <span className="font-mono font-bold text-base">{fmt(devis.total_ht * 1.2)} DH</span>
                 </div>
               </div>
 
@@ -450,21 +473,21 @@ export function DevisDetailDialog({
               <div className="space-y-1 text-sm pt-2 border-t">
                 <div className="flex justify-between p-2 bg-muted/30 rounded">
                   <span>CUT (Coût Unitaire Théorique)</span>
-                  <span className="font-mono">{devis.cut_per_m3.toFixed(2)} DH</span>
+                  <span className="font-mono">{fmt(devis.cut_per_m3)} DH</span>
                 </div>
                 <div className="flex justify-between p-2 bg-muted/30 rounded">
                   <span>Frais fixes</span>
-                  <span className="font-mono">{devis.fixed_cost_per_m3.toFixed(2)} DH</span>
+                  <span className="font-mono">{fmt(devis.fixed_cost_per_m3)} DH</span>
                 </div>
                 {devis.transport_extra_per_m3 > 0 && (
                   <div className="flex justify-between p-2 bg-muted/30 rounded">
                     <span>Supplément transport</span>
-                    <span className="font-mono">{devis.transport_extra_per_m3.toFixed(2)} DH</span>
+                    <span className="font-mono">{fmt(devis.transport_extra_per_m3)} DH</span>
                   </div>
                 )}
                 <div className="flex justify-between p-2 border rounded font-medium">
                   <span>Coût Total / m³</span>
-                  <span className="font-mono">{devis.total_cost_per_m3.toFixed(2)} DH</span>
+                  <span className="font-mono">{fmt(devis.total_cost_per_m3)} DH</span>
                 </div>
               </div>
             </CardContent>
@@ -626,7 +649,7 @@ export function DevisDetailDialog({
                   </p>
                 </div>
               ) : isReadOnlyRole ? (
-                <Badge variant="outline" className="ml-auto text-orange-500 border-orange-500">
+              <Badge variant="outline" className="ml-auto text-[#D4A843] border-[#D4A843]">
                   <Clock className="h-3 w-3 mr-1" />
                   En attente de validation
                 </Badge>
