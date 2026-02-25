@@ -351,7 +351,7 @@ export function BcTable({
             <TableRow 
               key={bc.id} 
               className={cn(
-                "cursor-pointer hover:bg-white/5 transition-colors",
+                "hover:bg-white/[0.03] transition-colors duration-150 cursor-pointer",
                 isSelected && "bg-primary/5",
                 // Emergency BC red pulse glow
                 bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",

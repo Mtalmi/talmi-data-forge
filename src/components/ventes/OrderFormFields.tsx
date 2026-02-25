@@ -152,6 +152,7 @@ export function OrderFormFields({
                   selected={deliveryDate}
                   onSelect={setDeliveryDate}
                   disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  locale={dateLocale || undefined}
                   initialFocus
                   className="pointer-events-auto"
                 />

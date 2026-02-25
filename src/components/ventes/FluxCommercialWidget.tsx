@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCountUp } from '@/hooks/useCountUp';
 import { useI18n } from '@/i18n/I18nContext';
+import { cn } from '@/lib/utils';
 
 interface FluxCommercialWidgetProps {
   stats: {
@@ -44,22 +45,24 @@ function PipelineStage({
     <button
       onClick={onClick}
       className="group flex flex-col items-center gap-2 py-2 px-1 rounded-xl transition-colors duration-200 focus:outline-none"
-      style={{ background: 'transparent', opacity: count === 0 ? 0.5 : 1 }}
+      style={{ background: 'transparent' }}
       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
     >
-      <StageCount value={count} />
-      <span style={{
-        fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-        color: 'rgba(226,232,240,0.7)', textTransform: 'uppercase',
-        fontFamily: 'DM Sans, sans-serif',
-      }}>{label}</span>
-      <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.35)' }}>{sublabel}</span>
-      <div style={{
-        width: 8, height: 8, borderRadius: '50%', marginTop: 2,
-        background: status === 'active' ? color : 'rgba(148,163,184,0.3)',
-        boxShadow: status === 'active' ? `0 0 8px ${color}40` : 'none',
-      }} />
+      <div className={cn("text-center", Number(count) === 0 && "opacity-50")}>
+        <StageCount value={count} />
+        <span style={{
+          fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
+          color: 'rgba(226,232,240,0.7)', textTransform: 'uppercase',
+          fontFamily: 'DM Sans, sans-serif',
+        }}>{label}</span>
+        <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.35)', display: 'block' }}>{sublabel}</span>
+        <div style={{
+          width: 8, height: 8, borderRadius: '50%', marginTop: 6, marginInline: 'auto',
+          background: status === 'active' ? color : 'rgba(148,163,184,0.3)',
+          boxShadow: status === 'active' ? `0 0 8px ${color}40` : 'none',
+        }} />
+      </div>
     </button>
   );
 }

@@ -322,19 +322,21 @@ export function DevisTable({
 
   const renderPriorityIndicator = (devis: Devis) => {
     const priority = isHighPriority(devis);
-    if (!priority.isPriority) {
-      return <Star className="h-4 w-4 text-white/15" />;
+    const hasPriority = Boolean((devis as any).priority) || priority.isPriority;
+
+    if (!hasPriority) {
+      return <Star className="w-5 h-5 text-white/10" />;
     }
     
     return (
       <Tooltip>
         <TooltipTrigger>
-          <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
+          <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
         </TooltipTrigger>
         <TooltipContent>
           <div className="flex items-center gap-1">
             <Zap className="h-3 w-3" />
-            {priority.reason}
+            {priority.reason || 'Priorité élevée'}
           </div>
         </TooltipContent>
       </Tooltip>
@@ -375,8 +377,7 @@ export function DevisTable({
               <TableRow 
                 key={devis.id}
                 className={cn(
-                  "cursor-pointer transition-colors duration-150 border-b border-white/5",
-                  "hover:bg-white/5",
+                  "hover:bg-white/[0.03] transition-colors duration-150 cursor-pointer border-b border-white/5",
                   getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
                   isSelected && "bg-primary/5"
                 )}
