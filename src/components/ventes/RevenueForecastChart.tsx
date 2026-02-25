@@ -142,7 +142,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
       <div
         style={{
           background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 16,
           padding: 24,
           overflow: 'hidden',
@@ -153,7 +153,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
           {/* Confirmed */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: 12,
             padding: '16px 20px',
             textAlign: 'center',
@@ -166,7 +166,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
           {/* Potential */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: 12,
             padding: '16px 20px',
             textAlign: 'center',
@@ -179,7 +179,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
           {/* Total Forecast */}
           <div style={{
             background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.08)',
             borderBottom: '2px solid rgba(253,185,19,0.3)',
             borderRadius: 12,
             padding: '16px 20px',
