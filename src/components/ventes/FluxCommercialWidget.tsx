@@ -49,7 +49,7 @@ function PipelineStage({
       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
     >
-      <div className={cn("text-center", Number(count) === 0 && "opacity-50")}>
+      <div className="text-center" style={{ opacity: Number(count) === 0 ? 0.4 : 1 }}>
         <StageCount value={count} />
         <span style={{
           fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
