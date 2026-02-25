@@ -19,14 +19,14 @@ interface FluxCommercialWidgetProps {
   onStageClick?: (stage: string) => void;
 }
 
-function StageCount({ value }: { value: number }) {
+function StageCount({ value, dimmed }: { value: number; dimmed?: boolean }) {
   const animated = useCountUp(value, 1200);
   return (
     <span style={{
       fontFamily: "'JetBrains Mono', monospace",
       fontSize: '2.5rem',
       fontWeight: 200,
-      color: 'white',
+      color: dimmed ? 'rgba(255,255,255,0.2)' : 'white',
       lineHeight: 1,
       letterSpacing: '-0.03em',
     }}>
@@ -41,26 +41,28 @@ function PipelineStage({
   count: number; label: string; sublabel: string;
   status: 'active' | 'waiting'; color: string; onClick?: () => void;
 }) {
+  const isEmpty = count === 0;
   return (
     <button
       onClick={onClick}
       className="group flex flex-col items-center gap-2 py-2 px-1 rounded-xl transition-colors duration-200 focus:outline-none"
-      style={{ background: 'transparent', opacity: Number(count) === 0 ? 0.35 : 1, transition: 'opacity 0.3s ease' }}
+      style={{ background: 'transparent' }}
       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
     >
       <div className="text-center">
-        <StageCount value={count} />
+        <StageCount value={count} dimmed={isEmpty} />
         <span style={{
           fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-          color: 'rgba(226,232,240,0.7)', textTransform: 'uppercase',
+          color: isEmpty ? 'rgba(226,232,240,0.2)' : 'rgba(226,232,240,0.7)',
+          textTransform: 'uppercase',
           fontFamily: 'DM Sans, sans-serif',
         }}>{label}</span>
-        <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.35)', display: 'block' }}>{sublabel}</span>
+        <span style={{ fontSize: 10, color: isEmpty ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.35)', display: 'block' }}>{sublabel}</span>
         <div style={{
           width: 8, height: 8, borderRadius: '50%', marginTop: 6, marginInline: 'auto',
-          background: status === 'active' ? color : 'rgba(148,163,184,0.3)',
-          boxShadow: status === 'active' ? `0 0 8px ${color}40` : 'none',
+          background: isEmpty ? 'rgba(148,163,184,0.15)' : (status === 'active' ? color : 'rgba(148,163,184,0.3)'),
+          boxShadow: isEmpty ? 'none' : (status === 'active' ? `0 0 8px ${color}40` : 'none'),
         }} />
       </div>
     </button>
@@ -68,18 +70,20 @@ function PipelineStage({
 }
 
 function PipelineConnector({ percentage, dimmed }: { percentage?: string; dimmed?: boolean }) {
+  const lineColor = dimmed ? 'rgba(255,255,255,0.06)' : 'linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.25))';
+  const arrowColor = dimmed ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.4)';
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px', opacity: dimmed ? 0.35 : 1, transition: 'opacity 0.3s ease' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '0 4px' }}>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{
           width: 40, height: 1,
-          background: 'linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.25))',
+          background: lineColor,
         }} />
         <div style={{
           width: 0, height: 0,
           borderTop: '3px solid transparent',
           borderBottom: '3px solid transparent',
-          borderLeft: '5px solid rgba(255,255,255,0.4)',
+          borderLeft: `5px solid ${arrowColor}`,
         }} />
       </div>
       {percentage && (
