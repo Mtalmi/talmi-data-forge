@@ -315,8 +315,8 @@ export function BcTable({
           <TableHead>{bt.client}</TableHead>
           <TableHead>{bt.formula}</TableHead>
           <TableHead>{bt.deliveryDate}</TableHead>
-          <TableHead className="text-right">{bt.volume}</TableHead>
-          <TableHead className="text-right">{bt.totalHt}</TableHead>
+          <TableHead className="text-right">{bt.volume} (m³)</TableHead>
+          <TableHead className="text-right">{bt.totalHt} (DH)</TableHead>
           <TableHead>{bt.status}</TableHead>
           <TableHead>{bt.invoice}</TableHead>
           <TableHead>{bt.progress}</TableHead>
@@ -381,7 +381,7 @@ export function BcTable({
               <TableCell>{renderDeliveryDate(bc)}</TableCell>
               <TableCell className="text-right">
                 <div className="flex flex-col items-end">
-                  <span className="font-mono">{bc.volume_m3} m³</span>
+                  <span className="font-mono">{bc.volume_m3}</span>
                   {bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (
                     <span className="text-[10px] text-muted-foreground">
                       {bc.volume_livre || 0}/{bc.volume_m3} livré
@@ -390,7 +390,7 @@ export function BcTable({
                 </div>
               </TableCell>
               <TableCell className="text-right font-mono font-medium">
-                {bc.total_ht.toLocaleString()} DH
+                {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </TableCell>
               <TableCell>
                 <div className="flex flex-col gap-1">
