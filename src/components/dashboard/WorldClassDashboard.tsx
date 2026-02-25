@@ -198,7 +198,6 @@ function SkeletonCard({ height = 200 }: { height?: number }) {
 // ═══════════════════════════════════════════════════════
 function HorizontalStockBar({ name, current, max, unit }: { name: string; current: number; max: number; unit: string }) {
   const pct = Math.min(Math.round((current / max) * 100), 100);
-  const isLow = pct < 25;
 
   return (
     <div className="py-2">
@@ -208,17 +207,14 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
           {current.toLocaleString()} / {max.toLocaleString()} {unit}
         </span>
       </div>
-      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
         <div
           className="h-full rounded-full transition-all duration-1000"
           style={{
             width: `${Math.max(pct, 3)}%`,
-            background: isLow
-              ? 'linear-gradient(90deg, #F87171, #FB923C)'
-              : 'linear-gradient(90deg, #C4933B, #FDB913)',
-            boxShadow: isLow
-              ? '0 0 8px rgba(248,113,113,0.3)'
-              : '0 0 6px rgba(253,185,19,0.15)',
+            background: 'linear-gradient(90deg, #C4933B, #FDB913)',
+            opacity: 0.7,
+            boxShadow: '0 0 6px rgba(253,185,19,0.15)',
           }}
         />
       </div>
@@ -743,7 +739,7 @@ export function WorldClassDashboard() {
                     </div>
                     <div className="flex items-center gap-2 text-[11px]">
                       <span className="text-slate-500">{q.test}</span>
-                      <span className="text-[9px] font-mono tabular-nums" style={{ color: q.ok ? T.dotOk : T.dotCrit }}>{q.ok ? 'OK' : 'VAR'}</span>
+                      <span className="text-[10px] font-mono tabular-nums" style={{ color: q.ok ? 'rgb(148,163,184)' : 'rgba(251,191,36,0.7)' }}>{q.ok ? 'OK' : 'VAR'}</span>
                       <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
                     </div>
                   </div>
@@ -772,15 +768,14 @@ export function WorldClassDashboard() {
                 {arAgingData.map((d, i) => {
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
-                  const isOverdue = i === 3;
-                  // Aging gold-fade system
-                  const barStyle = isOverdue
-                    ? { background: 'linear-gradient(90deg, #FF6B6B, #FB923C)', boxShadow: '0 0 6px rgba(255,107,107,0.2)', opacity: 0.9 }
-                    : i === 0
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', boxShadow: '0 0 6px rgba(253,185,19,0.15)', opacity: 1 }
+                  // Monochrome gold aging system
+                  const barStyle = i === 0
+                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.8 }
                     : i === 1
-                    ? { background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.65 }
-                    : { background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.35 };
+                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
+                    : i === 2
+                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.35 }
+                    : { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.2 };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
@@ -821,8 +816,8 @@ export function WorldClassDashboard() {
                   </div>
                   <div className="text-[10px] text-slate-500 mt-2">DH · marge nette estimée</div>
                   <div className="flex items-center justify-center gap-1.5 mt-3">
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk, boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
-                    <span className="text-[10px] font-mono" style={{ color: T.dotOk }}>+12% vs hier</span>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(52,211,153,0.6)' }} />
+                    <span className="text-[10px]" style={{ color: 'rgb(148,163,184)' }}>+12% vs hier</span>
                   </div>
                 </div>
               </div>

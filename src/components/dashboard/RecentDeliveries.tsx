@@ -181,7 +181,7 @@ export default function RecentDeliveries() {
                     <span className="flex items-center gap-1">
                       <span className={cn(
                         'w-1.5 h-1.5 rounded-full inline-block',
-                        delivery.statut_paiement === 'Payé' ? 'bg-emerald-400' : 'bg-amber-400'
+                        delivery.statut_paiement === 'Payé' ? 'bg-emerald-400/70' : 'bg-amber-400/70'
                       )} />
                       <span className="text-[11px] text-slate-400">{delivery.statut_paiement}</span>
                     </span>
