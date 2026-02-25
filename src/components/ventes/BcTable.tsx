@@ -236,13 +236,13 @@ export function BcTable({
       return (
         <Tooltip>
           <TooltipTrigger>
-            <Badge 
-              variant="destructive" 
-              className="gap-1 animate-pulse"
+            <span 
+              className="inline-flex items-center gap-1 animate-pulse"
+              style={{ color: '#FF6B6B', background: 'rgba(255,107,107,0.08)', border: 'none', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '4px' }}
             >
               <AlertCircle className="h-3 w-3" />
               Urgent
-            </Badge>
+            </span>
           </TooltipTrigger>
           <TooltipContent>
             <div className="flex items-center gap-1">
@@ -257,12 +257,12 @@ export function BcTable({
     return (
       <Tooltip>
         <TooltipTrigger>
-          <Badge 
-            variant="outline" 
-            className="gap-1 bg-amber-500/10 text-amber-600 border-amber-500/30"
+          <span 
+            className="inline-flex items-center gap-1"
+            style={{ color: '#FDB913', background: 'rgba(253,185,19,0.08)', border: 'none', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '4px' }}
           >
             <Star className="h-3 w-3 fill-current" />
-          </Badge>
+          </span>
         </TooltipTrigger>
         <TooltipContent>
           <div className="flex items-center gap-1">
@@ -401,10 +401,10 @@ export function BcTable({
                       URGENCE
                     </Badge>
                   )}
-                  <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                  <span className={cn("inline-flex items-center gap-1 rounded-md px-3 py-1 text-[11px] font-medium", statusConfig.color)}>
                     {statusConfig.icon}
                     {statusConfig.label}
-                  </Badge>
+                  </span>
                   {/* Show linked BL status if in production */}
                   {mostAdvancedBl && bc.statut === 'en_production' && (
                     <Tooltip>
@@ -465,12 +465,13 @@ export function BcTable({
                   {bc.statut === 'pret_production' && (
                     <>
                       {bcCanLaunch ? (
-                        <Button
+                         <Button
                           size="sm"
-                          variant={bcIsEmergency ? "destructive" : "outline"}
+                          variant="ghost"
                           onClick={() => onLaunchProduction(bc)}
                           disabled={launchingProduction === bc.bc_id}
-                          className={cn("gap-1", !bcIsEmergency && "text-primary hover:bg-primary/10 border-primary/30")}
+                          className="gap-1"
+                          style={{ color: '#FDB913', background: 'rgba(253,185,19,0.08)', border: '1px solid rgba(253,185,19,0.15)', fontSize: '11px', fontWeight: 500, padding: '5px 14px', borderRadius: '6px' }}
                         >
                           {launchingProduction === bc.bc_id ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
