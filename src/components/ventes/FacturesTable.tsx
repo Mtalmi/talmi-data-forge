@@ -267,7 +267,7 @@ export function FacturesTable({
             {pendingCount} {ft.pending}
           </Badge>
           <Badge variant="secondary" className="font-mono">
-            {totalHT.toLocaleString()} DH HT
+            {Number(totalHT).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH HT
           </Badge>
         </div>
       </div>
@@ -298,9 +298,9 @@ export function FacturesTable({
               <TableHead>{c.client}</TableHead>
               <TableHead>{ft.blBc}</TableHead>
               <TableHead>{c.date}</TableHead>
-              <TableHead className="text-right">{c.volume}</TableHead>
-              <TableHead className="text-right">{c.totalHT}</TableHead>
-              <TableHead className="text-right">{ft.totalTtc || 'Total Incl. Tax'}</TableHead>
+              <TableHead className="text-right">{c.volume} (m³)</TableHead>
+              <TableHead className="text-right">{c.totalHT} (DH)</TableHead>
+              <TableHead className="text-right">{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
               <TableHead>{ft.margin}</TableHead>
               <TableHead>{c.status}</TableHead>
               <TableHead>{ft.actions}</TableHead>
@@ -382,12 +382,12 @@ export function FacturesTable({
                   <TableCell className="text-sm">
                     {format(parseISO(facture.date_facture), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                   </TableCell>
-                  <TableCell className="text-right font-mono">{facture.volume_m3} m³</TableCell>
+                  <TableCell className="text-right font-mono">{facture.volume_m3}</TableCell>
                   <TableCell className="text-right font-mono font-medium">
-                    {facture.total_ht.toLocaleString()} DH
+                    {Number(facture.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
                   <TableCell className="text-right font-mono text-muted-foreground">
-                    {facture.total_ttc.toLocaleString()} DH
+                    {Number(facture.total_ttc).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
                   <TableCell>
                     {facture.marge_brute_pct !== null ? (

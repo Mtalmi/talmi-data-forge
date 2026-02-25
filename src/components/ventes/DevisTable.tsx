@@ -359,8 +359,8 @@ export function DevisTable({
             <TableHead>N° Devis</TableHead>
             <TableHead>Client</TableHead>
             <TableHead>Formule</TableHead>
-            <TableHead className="text-right">Volume</TableHead>
-            <TableHead className="text-right">Total HT</TableHead>
+            <TableHead className="text-right">Volume (m³)</TableHead>
+            <TableHead className="text-right">Total HT (DH)</TableHead>
             <TableHead>Statut</TableHead>
             <TableHead>Priorité</TableHead>
             <TableHead>Actions</TableHead>
@@ -401,9 +401,9 @@ export function DevisTable({
                 <TableCell>
                   <span className="text-xs">{devis.formule_id}</span>
                 </TableCell>
-                <TableCell className="text-right font-mono">{devis.volume_m3} m³</TableCell>
+                <TableCell className="text-right font-mono">{devis.volume_m3}</TableCell>
                 <TableCell className="text-right font-mono font-semibold">
-                  {devis.total_ht.toLocaleString()}<span className="font-normal text-white/50 ml-1">DH</span>
+                  {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-1 flex-wrap">
