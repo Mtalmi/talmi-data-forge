@@ -6,10 +6,10 @@ import {
 
 // ─── Chart data constants ───
 const arChartData = [
-  { name: '0-30j', value: 8000, fill: '#10B981' },
-  { name: '31-60j', value: 0, fill: '#F59E0B' },
-  { name: '61-90j', value: 0, fill: '#F97316' },
-  { name: '>90j', value: 0, fill: '#EF4444' },
+  { name: '0-30j', value: 8000, fill: 'rgba(253,185,19,0.8)' },
+  { name: '31-60j', value: 0, fill: 'rgba(253,185,19,0.55)' },
+  { name: '61-90j', value: 0, fill: 'rgba(253,185,19,0.35)' },
+  { name: '>90j', value: 0, fill: 'rgba(253,185,19,0.2)' },
 ];
 
 const stockChartData = [
@@ -19,26 +19,19 @@ const stockChartData = [
   { name: 'Eau', value: 15000, max: 20000 },
 ];
 
-const getStockChartColor = (value: number, max: number) => {
-  const pct = value / max;
-  if (pct < 0.2) return '#EF4444';
-  if (pct < 0.4) return '#F59E0B';
-  return '#10B981';
-};
-
 const pipelineChartData = [
-  { name: 'Devis', value: 1, color: '#FFD700' },
-  { name: 'BC Validés', value: 1, color: '#3B82F6' },
-  { name: 'En Prod', value: 1, color: '#F59E0B' },
-  { name: 'Terminés', value: 1, color: '#10B981' },
+  { name: 'Devis', value: 1, color: 'rgba(253,185,19,1)' },
+  { name: 'BC Validés', value: 1, color: 'rgba(253,185,19,0.65)' },
+  { name: 'En Prod', value: 1, color: 'rgba(253,185,19,0.4)' },
+  { name: 'Terminés', value: 1, color: 'rgba(253,185,19,0.2)' },
 ];
 
 const ChartTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#1E293B', border: '1px solid #FFD700', borderRadius: 8, padding: '6px 12px' }}>
-      <p style={{ color: '#94A3B8', fontSize: 10 }}>{label}</p>
-      <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 13 }}>
+    <div style={{ background: 'rgba(15,20,35,0.95)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 10, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)', backdropFilter: 'blur(12px)' }}>
+      <p style={{ color: 'rgba(148,163,184,0.5)', fontSize: 10 }}>{label}</p>
+      <p style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 13 }}>
         {typeof payload[0].value === 'number' ? payload[0].value.toLocaleString('fr-MA') : payload[0].value}
         {payload[0].name !== 'value' ? '' : ' DH'}
       </p>
@@ -55,10 +48,10 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
         <div style={{ height: 200 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={arChartData} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
-              <XAxis dataKey="name" tick={{ fill: '#94A3B8', fontSize: 10, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}K`} />
+              <XAxis dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 9, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} />
+              <YAxis hide />
               <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
-              <Bar dataKey="value" radius={[4, 4, 0, 0]} animationDuration={1000}>
+              <Bar dataKey="value" radius={[3, 3, 0, 0]} animationDuration={1000}>
                 {arChartData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
               </Bar>
             </BarChart>
@@ -72,11 +65,11 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
         <div style={{ height: 200 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={stockChartData} layout="vertical" margin={{ top: 5, right: 5, left: 10, bottom: 0 }}>
-              <XAxis type="number" tick={{ fill: '#64748B', fontSize: 10 }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="name" tick={{ fill: '#94A3B8', fontSize: 11, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} width={60} />
+              <XAxis type="number" hide />
+              <YAxis type="category" dataKey="name" tick={{ fill: 'rgba(148,163,184,0.4)', fontSize: 10, fontFamily: 'Inter, system-ui' }} axisLine={false} tickLine={false} width={60} />
               <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(255,215,0,0.04)' }} />
-              <Bar dataKey="value" radius={[0, 4, 4, 0]} animationDuration={1000} barSize={16}>
-                {stockChartData.map((entry, i) => <Cell key={i} fill={getStockChartColor(entry.value, entry.max)} />)}
+              <Bar dataKey="value" radius={[0, 3, 3, 0]} animationDuration={1000} barSize={14}>
+                {stockChartData.map((_, i) => <Cell key={i} fill="rgba(253,185,19,0.7)" />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -95,9 +88,9 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
               <Tooltip content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 return (
-                  <div style={{ background: '#1E293B', border: '1px solid #FFD700', borderRadius: 8, padding: '6px 12px' }}>
-                    <p style={{ color: '#94A3B8', fontSize: 10 }}>{payload[0].name}</p>
-                    <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 13 }}>
+                  <div style={{ background: 'rgba(15,20,35,0.95)', border: '1px solid rgba(212,175,55,0.15)', borderRadius: 10, padding: '8px 14px', boxShadow: '0 12px 40px rgba(0,0,0,0.6)' }}>
+                    <p style={{ color: 'rgba(148,163,184,0.5)', fontSize: 10 }}>{payload[0].name}</p>
+                    <p style={{ color: '#fff', fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 13 }}>
                       {payload[0].value}
                     </p>
                   </div>
