@@ -25,7 +25,7 @@ import { BcDetailDialog } from '@/components/bons/BcDetailDialog';
 import { AddDeliveryDialog } from '@/components/bons/AddDeliveryDialog';
 
 // Refactored components
-import { PipelineStats } from '@/components/ventes/PipelineStats';
+
 import { FluxCommercialWidget } from '@/components/ventes/FluxCommercialWidget';
 import { DevisTable } from '@/components/ventes/DevisTable';
 import { BcTable } from '@/components/ventes/BcTable';
@@ -735,13 +735,8 @@ export default function Ventes() {
           {/* Emergency BC Quality View - For Resp. Technique */}
           <EmergencyBcQualityView onNavigateToPlanning={(date) => navigate(`/planning?date=${date}`)} />
 
-          {/* Stats Cards + Revenue Forecast */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-            <div className="xl:col-span-2">
-              <PipelineStats stats={stats} onStageClick={handleStageClick} />
-            </div>
-            <RevenueForecastChart bcList={bcList} devisList={devisList} />
-          </div>
+          {/* Revenue Forecast */}
+          <RevenueForecastChart bcList={bcList} devisList={devisList} />
 
           {/* Sales Performance Charts */}
           <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
