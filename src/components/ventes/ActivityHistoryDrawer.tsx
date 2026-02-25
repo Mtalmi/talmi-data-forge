@@ -123,7 +123,10 @@ export function ActivityHistoryDrawer() {
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {label}
-                          {activity.client_name && (<> • <span className="text-foreground">{activity.client_name}</span></>)}
+                          {activity.client_name 
+                            ? (<> • <span className="text-foreground">{activity.client_name}</span></>)
+                            : (<> • <span className="text-amber-400/70 italic">{t.pages.ventes.unassignedClient}</span></>)
+                          }
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           {isToday

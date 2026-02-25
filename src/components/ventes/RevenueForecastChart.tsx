@@ -84,6 +84,7 @@ const CustomTooltip = ({ active, payload, label, rf }: any) => {
 export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChartProps) {
   const { t, lang } = useI18n();
   const rf = t.revenueForecast;
+  const vt = t.pages.ventes;
   const dateLocale = getDateLocale(lang);
 
   const forecastData = useMemo<WeeklyForecast[]>(() => {
@@ -162,6 +163,9 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
               <AnimatedKDH value={totalConfirmed} />
             </p>
             <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.confirmed}</p>
+            {totalConfirmed === 0 && (
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', marginTop: 4 }}>{vt.noConfirmedOrders}</p>
+            )}
           </div>
           {/* Potential */}
           <div style={{
