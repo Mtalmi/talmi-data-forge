@@ -749,9 +749,11 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Finance */}
-        <div className="relative mt-12 mb-8 flex items-center gap-4">
+        <div className="flex items-center gap-4 my-8 px-2">
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.12))' }} />
-          <span className="text-[10px] font-medium uppercase tracking-[0.35em]" style={{ color: 'rgba(253,185,19,0.4)' }}>Finance & Conformité</span>
+          <span style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.35em', textTransform: 'uppercase' as const, color: 'rgba(148,163,184,0.4)' }}>
+            FINANCE & CONFORMITÉ
+          </span>
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.12), transparent)' }} />
         </div>
 
@@ -760,7 +762,7 @@ export default function Dashboard() {
         ══════════════════════════════════════════════════ */}
         {isCeo && (
           <LazyDashboardSection
-            title="FINANCE & CONFORMITÉ"
+            title=""
             icon={Wallet}
             storageKey="finance-zone"
             defaultOpen={false}
