@@ -11,11 +11,12 @@ import {
 import { Input } from "@/components/ui/input";
 
 
-// Generate time slots in 5-minute intervals
+// Generate business time slots in 30-minute intervals (06:00 → 20:00)
 const generateTimeSlots = () => {
   const slots: string[] = [];
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 5) {
+  for (let h = 6; h <= 20; h++) {
+    for (let m = 0; m < 60; m += 30) {
+      if (h === 20 && m > 0) continue;
       slots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
     }
   }
@@ -33,13 +34,16 @@ const formatTimeInput = (value: string): string => {
   return cleaned.slice(0, 5);
 };
 
-// Validate time (5-min intervals)
+// Validate time (30-min intervals, 06:00 → 20:00)
 const validateTime = (value: string): boolean => {
   const match = value.match(/^(\d{1,2}):(\d{2})$/);
   if (!match) return false;
   const hours = parseInt(match[1], 10);
   const minutes = parseInt(match[2], 10);
-  return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 55 && minutes % 5 === 0;
+  const inRange = hours >= 6 && hours <= 20;
+  const validInterval = minutes === 0 || minutes === 30;
+  const validUpperBound = !(hours === 20 && minutes > 0);
+  return inRange && validInterval && validUpperBound;
 };
 
 interface TimePickerProps {
@@ -146,7 +150,7 @@ export function TimePicker({ value, onChange, placeholder = "HH:MM", className }
           />
           {!isValid && inputValue && (
             <p className="text-xs text-destructive mt-1">
-              Intervalles de 5 min
+              Intervalles de 30 min (06:00–20:00)
             </p>
           )}
         </div>
