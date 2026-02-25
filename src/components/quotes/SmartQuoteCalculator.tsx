@@ -245,8 +245,8 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
               <Label>{sq.distance}</Label>
               <Input type="number" min="1" placeholder="20" value={distance} onChange={(e) => setDistance(e.target.value)} />
             </div>
-            <Button onClick={calculateQuote} disabled={loading || !selectedFormule || !volume} className="w-full">
-              {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Calculator className="h-4 w-4 mr-2" />}
+            <Button onClick={calculateQuote} disabled={loading || !selectedFormule || !volume} className="w-full" style={{ background: 'linear-gradient(135deg, #C4933B, #FDB913)', color: '#0F172A', border: 'none' }}>
+              {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {sq.calculate}
             </Button>
           </div>
