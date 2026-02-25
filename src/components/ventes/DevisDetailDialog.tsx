@@ -434,13 +434,13 @@ export function DevisDetailDialog({
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-3 rounded-lg bg-background/50 text-center">
                   <p className="text-2xl font-mono font-bold text-primary">
-                    {devis.prix_vente_m3.toLocaleString()} DH
+                    {devis.prix_vente_m3.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH
                   </p>
                   <p className="text-xs text-muted-foreground">Prix / m³</p>
                 </div>
                 <div className="p-3 rounded-lg bg-background/50 text-center">
                   <p className="text-2xl font-mono font-bold text-primary">
-                    {devis.total_ht.toLocaleString()} DH
+                    {devis.total_ht.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} DH
                   </p>
                   <p className="text-xs text-muted-foreground">Total HT</p>
                 </div>
