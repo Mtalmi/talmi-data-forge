@@ -427,16 +427,13 @@ export default function Ventes() {
         <div className="space-y-6 overflow-x-hidden max-w-full w-full">
           {/* ── Premium Page Header ── */}
           {/* MOBILE HEADER (< md) */}
-          <div className="md:hidden space-y-3">
+           <div className="md:hidden space-y-3">
             {/* Title + Primary CTA */}
-            <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-3">
+            <div className="px-1 py-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)/0.4))', boxShadow: '0 0 8px hsl(var(--primary)/0.4)' }} />
-                    <h1 className="text-[22px] font-black tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>{t.pages.ventes.title}</h1>
-                  </div>
-                  <p className="text-sm text-muted-foreground/50 pl-3.5 mt-0.5">{t.pages.ventes.subtitle}</p>
+                  <h1 style={{ fontSize: 22, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
+                  <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
                 </div>
                 <SmartQuoteCalculator variant="prominent" />
               </div>
@@ -485,53 +482,51 @@ export default function Ventes() {
           </div>
 
           {/* DESKTOP HEADER (md+) */}
-          <div
-            className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-2xl border px-5 py-4 dashboard-header"
-            style={{
-              background: 'linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--primary)/0.03) 100%)',
-              borderColor: 'hsl(var(--primary)/0.15)',
-              boxShadow: '0 4px 24px hsl(var(--primary)/0.05)',
-            }}
-          >
+          <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <span className="w-1 h-6 rounded-full" style={{ background: 'linear-gradient(180deg, hsl(var(--primary)), hsl(var(--primary)/0.4))', boxShadow: '0 0 8px hsl(var(--primary)/0.4)' }} />
-                <h1 className="text-2xl font-black tracking-tight" style={{ fontFamily: 'Poppins, sans-serif' }}>{t.pages.ventes.title}</h1>
-              </div>
-              <p className="text-sm text-muted-foreground pl-4">{t.pages.ventes.subtitle}</p>
+              <h1 style={{ fontSize: 24, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
+              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {/* Primary — Gold gradient */}
               <SmartQuoteCalculator variant="prominent" />
+              {/* Secondary — Glass */}
               <ExportReportsDialog 
                 devisList={devisList}
                 bcList={bcList}
                 selectedDevisIds={selectedDevisIds}
                 selectedBcIds={selectedBcIds}
               />
-              <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
-              <Button 
-                onClick={() => setBatchReminderOpen(true)}
-                variant="outline"
-                size="sm"
-                className="gap-2"
-              >
-                <Mail className="h-4 w-4" />
-                {t.pages.ventes.reminders}
-              </Button>
               {(canCreateBcDirect || isDirecteurOperations) && (
                 <Button 
                   onClick={() => setEmergencyBcOpen(true)}
-                  variant={isInEmergencyWindow && isDirecteurOperations ? "default" : "outline"}
-                  className={`gap-2 ${isInEmergencyWindow && isDirecteurOperations ? 'bg-amber-500 hover:bg-amber-600' : ''}`}
+                  variant="outline"
+                  className="gap-2"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: 'rgba(226,232,240,0.7)',
+                    fontSize: 12,
+                    padding: '8px 14px',
+                    borderRadius: 8,
+                  }}
                 >
-                  {isInEmergencyWindow && isDirecteurOperations ? (
-                    <Zap className="h-4 w-4" />
-                  ) : (
-                    <ShoppingCart className="h-4 w-4" />
-                  )}
-                   {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
+                  <ShoppingCart className="h-4 w-4" />
+                  {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
                 </Button>
               )}
+              {/* Tertiary — Ghost */}
+              <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
+              <Button 
+                onClick={() => setBatchReminderOpen(true)}
+                variant="ghost"
+                size="sm"
+                className="gap-1.5"
+                style={{ color: 'rgba(148,163,184,0.5)', fontSize: 12 }}
+              >
+                <Mail className="h-3.5 w-3.5" />
+                {t.pages.ventes.reminders}
+              </Button>
               <CommunicationLogDrawer />
               <ActivityHistoryDrawer />
               <KeyboardShortcutsHint />
@@ -599,32 +594,41 @@ export default function Ventes() {
           {/* Tabs for Devis, BC, Factures and Calendar — PRIMARY CONTENT */}
           <div id="ventes-tabs-section" className="scroll-mt-36">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList className="h-auto p-1 gap-1 rounded-xl period-selector-premium flex flex-nowrap overflow-x-auto scrollbar-hide w-full">
-               <TabsTrigger value="devis" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+            <TabsList 
+              className="h-auto gap-0.5 flex flex-nowrap overflow-x-auto scrollbar-hide w-auto"
+              style={{
+                background: 'rgba(255,255,255,0.02)',
+                border: '1px solid rgba(255,255,255,0.04)',
+                borderRadius: 12,
+                padding: 4,
+                display: 'inline-flex',
+              }}
+            >
+               <TabsTrigger value="devis" className="shrink-0 whitespace-nowrap gap-2 rounded-[9px] px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-slate-400/50 data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-white/[0.06] data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
                  <FileText className="h-3.5 w-3.5" />
                  {t.pages.ventes.devisTab}
-                 <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredDevis.length}</span>
+                 <span className="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-semibold" style={{ color: '#FDB913', background: 'rgba(253,185,19,0.1)' }}>{filteredDevis.length}</span>
                  {expiringDevisCount > 0 && (
                    <Badge variant="destructive" className="ml-0.5 h-4 w-4 p-0 flex items-center justify-center">
                      <AlertTriangle className="h-2.5 w-2.5" />
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="bc" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="bc" className="shrink-0 whitespace-nowrap gap-2 rounded-[9px] px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-slate-400/50 data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-white/[0.06] data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
                  <ShoppingCart className="h-3.5 w-3.5" />
                  {t.pages.ventes.bcTab}
-                 <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-black bg-background/20">{filteredBc.length}</span>
+                 <span className="ml-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-semibold" style={{ color: '#FDB913', background: 'rgba(253,185,19,0.1)' }}>{filteredBc.length}</span>
                  {filteredBc.some(bc => bc.statut === 'en_attente_validation') && canValidateBcPrice && (
                    <Badge variant="outline" className="ml-0.5 h-4 px-1 bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse text-[9px]">
                      {filteredBc.filter(bc => bc.statut === 'en_attente_validation').length}
                    </Badge>
                  )}
                </TabsTrigger>
-               <TabsTrigger value="factures" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="factures" className="shrink-0 whitespace-nowrap gap-2 rounded-[9px] px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-slate-400/50 data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-white/[0.06] data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
                  <Receipt className="h-3.5 w-3.5" />
                  {t.pages.ventes.invoicesTab}
                </TabsTrigger>
-               <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-wide transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-[0_4px_16px_hsl(var(--primary)/0.35)]">
+               <TabsTrigger value="calendar" className="shrink-0 whitespace-nowrap gap-2 rounded-[9px] px-[18px] py-2 text-xs font-medium transition-all data-[state=inactive]:text-slate-400/50 data-[state=inactive]:hover:text-slate-300/80 data-[state=inactive]:hover:bg-white/[0.03] data-[state=active]:bg-white/[0.06] data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
                  <Calendar className="h-3.5 w-3.5" />
                  {t.pages.ventes.calendarTab}
                </TabsTrigger>
