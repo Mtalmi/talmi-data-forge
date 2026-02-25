@@ -531,7 +531,7 @@ export default function Dashboard() {
                   <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
                 )}
               </div>
             </TiltCard>
