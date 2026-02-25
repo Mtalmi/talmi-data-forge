@@ -537,11 +537,11 @@ export function DevisTable({
                           {dt.validate}
                         </Button>
                       ) : isCreator(devis) ? (
-                        <span className="text-xs text-amber-600 italic">
+                        <span className="text-[10px] italic" style={{ color: 'rgba(253,185,19,0.5)' }}>
                           {dt.awaitingThirdParty}
                         </span>
                       ) : isReadOnlyRole ? (
-                        <Badge variant="outline" className="text-orange-500 border-orange-500">
+                        <Badge variant="outline" className="text-[10px]" style={{ color: 'rgba(253,185,19,0.6)', borderColor: 'rgba(253,185,19,0.2)', background: 'rgba(253,185,19,0.05)' }}>
                           {dt.awaitingValidation}
                         </Badge>
                       ) : null

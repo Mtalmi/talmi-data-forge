@@ -41,11 +41,14 @@ function StageCount({ value }: { value: number }) {
   const animated = useCountUp(value, 1200);
   return (
     <span
-      className="text-3xl md:text-4xl font-black tabular-nums leading-none"
+      className="tabular-nums leading-none"
       style={{
-        fontFamily: 'JetBrains Mono, monospace',
-        color: 'hsl(var(--primary))',
-        textShadow: value > 0 ? '0 0 20px hsl(var(--primary) / 0.4)' : 'none',
+        fontFamily: "'JetBrains Mono', monospace",
+        fontWeight: 200,
+        fontSize: '2.25rem',
+        color: 'white',
+        letterSpacing: '-0.03em',
+        textShadow: value > 0 ? '0 0 25px hsl(var(--primary) / 0.3), 0 0 50px hsl(var(--primary) / 0.1)' : 'none',
       }}
     >
       {animated}
