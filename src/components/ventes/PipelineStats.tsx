@@ -70,7 +70,7 @@ function StatCard({ icon, value, label, accentColor, glowColor, bgGradient, onCl
         style={{ background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${glowColor}, transparent 70%)` }}
       />
 
-      <div className="flex items-center gap-3 relative">
+      <div className={cn("flex items-center gap-3 relative", value === 0 && "opacity-60")}>
         <div
           className="p-2 rounded-lg flex-shrink-0 transition-all duration-300 group-hover:scale-110"
           style={{ background: `${accentColor}15`, border: `1px solid ${accentColor}25`, color: accentColor }}
