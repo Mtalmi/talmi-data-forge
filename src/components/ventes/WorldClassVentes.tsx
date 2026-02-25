@@ -115,13 +115,17 @@ function PCard({ children, className = '', style = {}, delay = 0 }: {
   );
 }
 
-/* ─── SECTION HEADER ─── */
-function SectionHeader({ icon: Icon, title, color = T.gold }: { icon: any; title: string; color?: string }) {
+/* ─── SECTION HEADER — Clean gold-gradient lines ─── */
+function SectionHeader({ title }: { icon?: any; title: string; color?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} style={{ color }} />
-      <span style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color, letterSpacing: '0.12em', textTransform: 'uppercase' }}>{title}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${color}40, transparent)` }} />
+    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(253,185,19,0.3), rgba(253,185,19,0.05), transparent)' }} />
+      <span style={{
+        fontSize: 11, fontWeight: 600, letterSpacing: '0.2em',
+        color: 'rgba(253,185,19,0.5)', textTransform: 'uppercase' as const,
+        whiteSpace: 'nowrap' as const, fontFamily: 'DM Sans, sans-serif',
+      }}>{title}</span>
+      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.3))' }} />
     </div>
   );
 }
@@ -326,27 +330,32 @@ function PerformanceSection() {
                 <YAxis tickFormatter={v => `${v}K`} tick={{ fontSize: 10, fill: T.textDim }} axisLine={false} tickLine={false} />
                 <Tooltip content={<GoldTooltip unit="K DH" />} />
                 <Bar dataKey="sales" name="Ventes" radius={[4, 4, 0, 0]} animationDuration={1000}>
-                  {repData.map((d, i) => (
-                    <Cell key={i} fill={d.att >= 100 ? T.success : d.att >= 80 ? T.warning : T.danger} />
-                  ))}
+                  {repData.map((d, i) => {
+                    const goldOpacities = [1, 0.75, 0.55, 0.40, 0.25];
+                    return <Cell key={i} fill={`rgba(253,185,19,${goldOpacities[i] || 0.25})`} />;
+                  })}
                 </Bar>
-                <ReferenceLine y={150} stroke={T.gold} strokeDasharray="4 4" strokeWidth={1} />
+                <ReferenceLine y={150} stroke="rgba(16,185,129,0.4)" strokeDasharray="6 4" strokeWidth={1} />
               </BarChart>
             </ResponsiveContainer>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
-            {repData.map(r => (
-              <div key={r.name} style={{
-                padding: '4px 8px', borderRadius: 6,
-                background: r.att >= 100 ? `${T.success}15` : r.att >= 80 ? `${T.warning}15` : `${T.danger}15`,
-                border: `1px solid ${r.att >= 100 ? T.success : r.att >= 80 ? T.warning : T.danger}30`,
-              }}>
-                <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: T.textSec }}>{r.name} </span>
-                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: r.att >= 100 ? T.success : r.att >= 80 ? T.warning : T.danger }}>
-                  {r.att}%
-                </span>
-              </div>
-            ))}
+            {repData.map(r => {
+              const badgeColor = r.att >= 100 ? '#10B981' : r.att >= 80 ? '#FDB913' : '#FB923C';
+              const badgeBg = r.att >= 100 ? 'rgba(16,185,129,0.08)' : r.att >= 80 ? 'rgba(253,185,19,0.08)' : 'rgba(251,146,60,0.08)';
+              return (
+                <div key={r.name} style={{
+                  padding: '4px 10px', borderRadius: 6,
+                  background: badgeBg,
+                  fontSize: 11, fontWeight: 500,
+                }}>
+                  <span style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: 'rgba(148,163,184,0.6)' }}>{r.name} </span>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 500, color: badgeColor }}>
+                    {r.att}%
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </PCard>
 
@@ -552,9 +561,11 @@ function DealRow({ deal, delay }: { deal: typeof deals[0]; delay: number }) {
       <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 800, color: T.gold, flexShrink: 0 }}>{deal.amount}K</span>
       <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: probColor, flexShrink: 0 }}>{deal.prob}%</span>
       <span style={{
-        padding: '2px 7px', borderRadius: 100, fontSize: 9, fontWeight: 600, fontFamily: 'DM Sans, sans-serif',
-        background: `${deal.statusColor}18`, color: deal.statusColor, border: `1px solid ${deal.statusColor}30`,
-        flexShrink: 0, animation: 'tbos-pulse 2.5s ease-in-out infinite',
+        padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 500, fontFamily: 'DM Sans, sans-serif',
+        background: deal.status === 'On track' ? 'rgba(16,185,129,0.08)' : deal.status === 'At risk' ? 'rgba(251,146,60,0.08)' : 'rgba(255,107,107,0.08)',
+        color: deal.status === 'On track' ? '#10B981' : deal.status === 'At risk' ? '#FB923C' : '#FF6B6B',
+        border: `1px solid ${deal.status === 'On track' ? 'rgba(16,185,129,0.12)' : deal.status === 'At risk' ? 'rgba(251,146,60,0.12)' : 'rgba(255,107,107,0.12)'}`,
+        flexShrink: 0,
       }}>{deal.status}</span>
     </div>
   );
@@ -744,21 +755,28 @@ function ActivitiesSection() {
       {/* KPI */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         {[
-          { label: 'Appels', value: 34, icon: Phone, color: T.info, trend: '+12% ↑', sub: 'cette semaine' },
-          { label: 'Emails', value: 67, icon: Mail, color: T.success, trend: '+8% ↑', sub: 'cette semaine' },
-          { label: 'Réunions', value: 12, icon: Users, color: T.purple, trend: '-5% ↓', sub: 'cette semaine' },
-          { label: 'Propositions', value: 8, icon: FileText, color: T.gold, trend: '+25% ↑', sub: 'cette semaine' },
+          { label: 'Appels', value: 34, icon: Phone, trend: '+12% ↑', sub: 'cette semaine' },
+          { label: 'Emails', value: 67, icon: Mail, trend: '+8% ↑', sub: 'cette semaine' },
+          { label: 'Réunions', value: 12, icon: Users, trend: '-5% ↓', sub: 'cette semaine' },
+          { label: 'Propositions', value: 8, icon: FileText, trend: '+25% ↑', sub: 'cette semaine' },
         ].map((k, i) => (
           <PCard key={k.label} delay={i * 80} style={{ minHeight: 100 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: `${k.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <k.icon size={16} style={{ color: k.color }} />
+              <div style={{
+                width: 36, height: 36, borderRadius: 12, padding: 10,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <k.icon size={16} style={{ color: 'rgba(148,163,184,0.5)' }} />
               </div>
               <span style={{ fontSize: 10, fontWeight: 600, color: k.trend.includes('↑') ? T.success : T.danger, fontFamily: 'DM Sans, sans-serif' }}>{k.trend}</span>
             </div>
-            <Metric value={k.value} color={k.color} size={24} />
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 11, color: T.textSec, marginTop: 4 }}>{k.label}</div>
-            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: T.textDim }}>{k.sub}</div>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '2rem', color: 'white', lineHeight: 1 }}>
+              {k.value}
+            </span>
+            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 13, color: 'rgba(226,232,240,0.6)', marginTop: 4 }}>{k.label}</div>
+            <div style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, color: 'rgba(148,163,184,0.3)' }}>{k.sub}</div>
           </PCard>
         ))}
       </div>
@@ -893,29 +911,21 @@ export function WorldClassVentes() {
         .wc-new-deal-btn:active { transform:scale(0.97); }
       `}</style>
 
-      {/* ── Header ── */}
+      {/* ── Header — simplified: just tabs + Nouveau Deal ── */}
       <div style={{
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(16px)',
         borderBottom: '1px solid #1E2D4A',
         marginBottom: 24,
       }}>
-        {/* MOBILE header */}
+        {/* MOBILE */}
         <div className="md:hidden p-3">
-          <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-3.5">
-            <div className="flex items-center gap-2.5">
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <TrendingUp size={15} color="#0B1120" />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 800, fontSize: 13, lineHeight: 1.1 }}>
-                  📈 TBOS <span style={{ color: T.gold }}>Ventes</span>
-                </div>
-                <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
-              </div>
-            </div>
-            {/* Tabs inside card */}
-            <div className="flex overflow-x-auto scrollbar-hide gap-1 mt-3">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              display: 'flex', gap: 2, padding: 3,
+              background: 'rgba(255,255,255,0.02)', borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.04)', flex: 1, overflow: 'auto',
+            }}>
               {tabs.map(tab => (
                 <button
                   key={tab.id}
@@ -929,46 +939,41 @@ export function WorldClassVentes() {
           </div>
         </div>
 
-        {/* DESKTOP header */}
-        <div className="hidden md:block" style={{ padding: '12px 16px' }}>
-          <div className="flex items-center gap-3">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginRight: 8, flexShrink: 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, ${T.warning})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={18} color="#0B1120" />
-              </div>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: 14, lineHeight: 1.1 }}>
-                  TBOS <span style={{ color: T.gold }}>Ventes</span>
-                </div>
-                <div style={{ fontSize: 9, color: T.textDim }}>Sales Command Center</div>
-              </div>
+        {/* DESKTOP */}
+        <div className="hidden md:block" style={{ padding: '10px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{
+              display: 'flex', gap: 2, padding: 3,
+              background: 'rgba(255,255,255,0.02)', borderRadius: 10,
+              border: '1px solid rgba(255,255,255,0.04)',
+            }}>
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
+                  onClick={() => setActiveTab(tab.id as any)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-
-            <div className="flex items-center gap-3 ml-auto">
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textDim }}>
-                {clock.toLocaleTimeString('fr-FR')}
-              </span>
-              <div style={{ position: 'relative', cursor: 'pointer' }}>
-                <Bell size={18} style={{ color: T.textSec }} />
-                <div style={{ position: 'absolute', top: -2, right: -2, width: 7, height: 7, borderRadius: '50%', background: T.danger, border: '1.5px solid #0B1120' }} />
-              </div>
-              <button className="wc-new-deal-btn">
+            <div style={{ marginLeft: 'auto' }}>
+              <button style={{
+                background: 'transparent',
+                border: '1px solid rgba(253,185,19,0.2)',
+                color: '#FDB913',
+                fontSize: 12, padding: '6px 14px', borderRadius: 8,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600,
+                transition: 'all 150ms',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
                 <Plus size={14} />
                 Nouveau Deal
               </button>
             </div>
-          </div>
-
-          <div className="flex overflow-x-auto scrollbar-hide gap-1 pb-1 mt-2">
-            {tabs.map(tab => (
-              <button
-                key={tab.id}
-                className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
-                onClick={() => setActiveTab(tab.id as any)}
-              >
-                {tab.label}
-              </button>
-            ))}
           </div>
         </div>
       </div>

@@ -69,13 +69,13 @@ import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 
 const DEVIS_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; isLocked?: boolean }> = {
-  en_attente: { label: 'En Attente', color: 'bg-warning/10 text-warning border-warning/30', icon: <Clock className="h-3 w-3" />, isLocked: false },
-  valide: { label: 'Validé', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
-  accepte: { label: 'Accepté', color: 'bg-success/10 text-success border-success/30', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
-  refuse: { label: 'Refusé', color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <XCircle className="h-3 w-3" />, isLocked: false },
-  converti: { label: 'Converti en BC', color: 'bg-primary/10 text-primary border-primary/30', icon: <Lock className="h-3 w-3" />, isLocked: true },
-  expire: { label: 'Expiré', color: 'bg-muted text-muted-foreground border-muted', icon: <AlertTriangle className="h-3 w-3" />, isLocked: false },
-  annule: { label: 'Annulé', color: 'bg-slate-500/10 text-slate-500 border-slate-500/30', icon: <XCircle className="h-3 w-3" />, isLocked: true },
+  en_attente: { label: 'En Attente', color: 'text-[#FDB913] bg-[rgba(253,185,19,0.08)] border border-[rgba(253,185,19,0.15)]', icon: <Clock className="h-3 w-3" />, isLocked: false },
+  valide: { label: 'Validé', color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)]', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
+  accepte: { label: 'Accepté', color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border border-[rgba(16,185,129,0.15)]', icon: <ShieldCheck className="h-3 w-3" />, isLocked: true },
+  refuse: { label: 'Refusé', color: 'text-[#FF6B6B] bg-[rgba(255,107,107,0.08)] border border-[rgba(255,107,107,0.15)]', icon: <XCircle className="h-3 w-3" />, isLocked: false },
+  converti: { label: 'Converti en BC', color: 'text-[#00D9FF] bg-[rgba(0,217,255,0.08)] border border-[rgba(0,217,255,0.15)]', icon: <Lock className="h-3 w-3" />, isLocked: true },
+  expire: { label: 'Expiré', color: 'text-[rgba(226,232,240,0.6)] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)]', icon: <AlertTriangle className="h-3 w-3" />, isLocked: false },
+  annule: { label: 'Annulé', color: 'text-[rgba(226,232,240,0.6)] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)]', icon: <XCircle className="h-3 w-3" />, isLocked: true },
 };
 
 // Priority thresholds
