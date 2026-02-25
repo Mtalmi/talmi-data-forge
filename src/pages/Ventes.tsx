@@ -424,7 +424,20 @@ export default function Ventes() {
   return (
     <TooltipProvider>
       <MainLayout>
-        <div className="space-y-6 overflow-x-hidden max-w-full w-full">
+        {/* Ambient Atmosphere */}
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, pointerEvents: 'none', zIndex: 0 }}>
+          <div style={{
+            position: 'absolute', top: '-15%', left: '30%', width: '50%', height: '40%',
+            background: 'radial-gradient(ellipse, rgba(253,185,19,0.04) 0%, transparent 70%)',
+            filter: 'blur(80px)',
+          }}/>
+          <div style={{
+            position: 'absolute', top: '20%', right: '-5%', width: '30%', height: '35%',
+            background: 'radial-gradient(ellipse, rgba(0,217,255,0.02) 0%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}/>
+        </div>
+        <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]">
           {/* ── Premium Page Header ── */}
           {/* MOBILE HEADER (< md) */}
            <div className="md:hidden space-y-3">

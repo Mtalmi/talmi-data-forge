@@ -1,6 +1,4 @@
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   AreaChart,
   Area,
@@ -11,7 +9,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { TrendingUp, Target, Calendar, Zap } from 'lucide-react';
+import { Target } from 'lucide-react';
 import { BonCommande, Devis } from '@/hooks/useSalesWorkflow';
 import { format, startOfWeek, endOfWeek, addWeeks, isWithinInterval, parseISO } from 'date-fns';
 import { useI18n } from '@/i18n/I18nContext';
@@ -45,34 +43,35 @@ const CustomTooltip = ({ active, payload, label, rf }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div
-      className="rounded-xl border shadow-xl p-3 space-y-2 text-sm"
       style={{
-        background: 'hsl(var(--card))',
-        borderColor: 'hsl(var(--primary)/0.3)',
-        boxShadow: '0 8px 32px hsl(var(--primary)/0.15)',
+        borderRadius: 12,
+        padding: '10px 14px',
+        background: 'rgba(13,18,32,0.95)',
+        border: '1px solid rgba(253,185,19,0.2)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
       }}
     >
-      <p className="font-bold text-foreground">{rf.weekOf} {label}</p>
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'hsl(var(--primary))' }} />
-          <span className="text-muted-foreground text-xs">{rf.confirmed}:</span>
-          <span className="font-bold ml-auto" style={{ color: 'hsl(var(--primary))', fontFamily: 'JetBrains Mono, monospace' }}>
+      <p style={{ fontWeight: 700, color: 'white', fontSize: 12, marginBottom: 6 }}>{rf.weekOf} {label}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#FDB913' }} />
+          <span style={{ color: 'rgba(148,163,184,0.6)', fontSize: 11 }}>{rf.confirmed}:</span>
+          <span style={{ fontWeight: 700, marginLeft: 'auto', color: '#FDB913', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
             {(payload[0]?.value / 1000).toFixed(1)}K DH
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full border border-dashed" style={{ borderColor: 'hsl(var(--primary)/0.5)' }} />
-          <span className="text-muted-foreground text-xs">{rf.potential}:</span>
-          <span className="font-bold ml-auto text-muted-foreground" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', border: '1.5px dashed rgba(253,185,19,0.4)' }} />
+          <span style={{ color: 'rgba(148,163,184,0.6)', fontSize: 11 }}>{rf.potential}:</span>
+          <span style={{ fontWeight: 700, marginLeft: 'auto', color: 'rgba(148,163,184,0.6)', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
             {(payload[1]?.value / 1000).toFixed(1)}K DH
           </span>
         </div>
-        <div className="border-t pt-1.5" style={{ borderColor: 'hsl(var(--border)/0.5)' }}>
-          <div className="flex items-center gap-2">
-            <Target className="h-3 w-3 text-muted-foreground" />
-            <span className="text-muted-foreground text-xs">Total:</span>
-            <span className="font-black ml-auto" style={{ color: 'hsl(var(--primary))', fontFamily: 'JetBrains Mono, monospace' }}>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 4, marginTop: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Target style={{ width: 10, height: 10, color: 'rgba(148,163,184,0.4)' }} />
+            <span style={{ color: 'rgba(148,163,184,0.6)', fontSize: 11 }}>Total:</span>
+            <span style={{ fontWeight: 700, marginLeft: 'auto', color: '#FDB913', fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
               {((payload[0]?.value + payload[1]?.value) / 1000).toFixed(1)}K DH
             </span>
           </div>
@@ -126,127 +125,128 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
   };
 
   return (
-    <Card
-      className="overflow-hidden god-tier-card"
-      style={{
-        background: 'linear-gradient(160deg, hsl(var(--card)) 0%, hsl(var(--primary)/0.02) 100%)',
-        borderColor: 'hsl(var(--primary)/0.15)',
-      }}
-    >
-      <CardHeader className="pb-3 pt-4" style={{
-        borderBottom: '1px solid hsl(var(--border)/0.4)',
-        background: 'linear-gradient(90deg, hsl(var(--primary)/0.05) 0%, transparent 70%)',
-      }}>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-bold uppercase tracking-[0.08em] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg" style={{ background: 'hsl(var(--primary)/0.12)' }}>
-              <TrendingUp className="h-3.5 w-3.5" style={{ color: 'hsl(var(--primary))' }} />
-            </div>
-            {rf.title}
-          </CardTitle>
-          <Badge
-            className="gap-1 text-xs"
-            style={{
-              background: 'hsl(var(--primary)/0.08)',
-              color: 'hsl(var(--primary))',
-              border: '1px solid hsl(var(--primary)/0.2)',
-            }}
-          >
-            <Calendar className="h-3 w-3" />
-            {rf.weeks}
-          </Badge>
-        </div>
-      </CardHeader>
+    <div>
+      {/* Section header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(253,185,19,0.25), rgba(253,185,19,0.05), transparent)' }} />
+        <span style={{
+          fontSize: 10, fontWeight: 600, letterSpacing: '0.25em',
+          color: 'rgba(253,185,19,0.45)', textTransform: 'uppercase' as const,
+          whiteSpace: 'nowrap' as const,
+        }}>
+          {rf.title}
+        </span>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.25))' }} />
+      </div>
 
-      <CardContent className="space-y-4 pt-4">
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 16,
+          padding: 24,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Summary Stats — uniform glass cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
           {/* Confirmed */}
-          <div className="text-center p-2 rounded-xl" style={{ background: 'hsl(var(--primary)/0.06)', border: '1px solid hsl(var(--primary)/0.15)' }}>
-            <p className="text-lg font-black" style={{ color: 'hsl(var(--primary))', fontFamily: 'JetBrains Mono, monospace' }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 12,
+            padding: '16px 20px',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
               <AnimatedKDH value={totalConfirmed} />
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{rf.confirmed}</p>
+            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.confirmed}</p>
           </div>
           {/* Potential */}
-          <div className="text-center p-2 rounded-xl" style={{ background: 'hsl(var(--muted)/0.5)', border: '1px solid hsl(var(--border)/0.4)' }}>
-            <p className="text-lg font-black text-muted-foreground" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 12,
+            padding: '16px 20px',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
               <AnimatedKDH value={totalPotential} />
             </p>
-            <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{rf.potential}</p>
+            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.potential}</p>
           </div>
-          {/* Total */}
-          <div className="text-center p-2 rounded-xl" style={{
-            background: 'linear-gradient(135deg, hsl(var(--primary)/0.1), hsl(var(--primary)/0.05))',
-            border: '1px solid hsl(var(--primary)/0.25)',
-            boxShadow: '0 4px 16px hsl(var(--primary)/0.08)',
+          {/* Total Forecast */}
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '2px solid rgba(253,185,19,0.3)',
+            borderRadius: 12,
+            padding: '16px 20px',
+            textAlign: 'center',
           }}>
-            <p className="text-lg font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--primary))', fontFamily: 'JetBrains Mono, monospace' }}>
-              <Zap className="h-3.5 w-3.5" />
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
               <AnimatedKDH value={totalForecast} />
             </p>
-            <p className="text-[10px] mt-0.5 font-bold" style={{ color: 'hsl(var(--primary)/0.7)' }}>{rf.forecast}</p>
+            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.forecast}</p>
           </div>
+        </div>
+
+        {/* 6 weeks inside card */}
+        <div style={{ marginBottom: 12, textAlign: 'right' }}>
+          <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.3)', fontFamily: 'JetBrains Mono, monospace' }}>{rf.weeks}</span>
         </div>
 
         {/* Chart */}
-        <div className="h-44 mt-2">
+        <div className="h-44">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={forecastData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="rfConfirmedGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(51 100% 50%)" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="hsl(51 100% 50%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#FDB913" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#FDB913" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="rfPotentialGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(51 100% 50%)" stopOpacity={0.12} />
-                  <stop offset="95%" stopColor="hsl(51 100% 50%)" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#FDB913" stopOpacity={0.08} />
+                  <stop offset="95%" stopColor="#FDB913" stopOpacity={0} />
                 </linearGradient>
-                <filter id="rfGlow">
-                  <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-                  <feMerge>
-                    <feMergeNode in="coloredBlur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
               </defs>
-              <CartesianGrid strokeDasharray="2 4" stroke="hsl(var(--border)/0.4)" />
+              <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.05)" />
               <XAxis
                 dataKey="week"
-                tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 10, fill: 'rgba(148,163,184,0.4)' }}
                 tickLine={false}
                 axisLine={false}
               />
               <YAxis
                 tickFormatter={formatValue}
-                tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 10, fill: 'rgba(148,163,184,0.4)' }}
                 tickLine={false}
                 axisLine={false}
               />
               <Tooltip content={<CustomTooltip rf={rf} />} />
               <ReferenceLine
                 x={forecastData[0]?.week}
-                stroke="hsl(var(--primary))"
+                stroke="#FDB913"
                 strokeDasharray="3 3"
                 strokeWidth={1.5}
-                label={{ value: rf.today, position: 'top', fontSize: 9, fill: 'hsl(var(--primary))' }}
+                label={{ value: rf.today, position: 'top', fontSize: 9, fill: '#FDB913' }}
               />
               <Area
                 type="monotone"
                 dataKey="confirmed"
                 stackId="1"
-                stroke="hsl(51 100% 50%)"
-                strokeWidth={2.5}
+                stroke="#FDB913"
+                strokeWidth={2}
                 fill="url(#rfConfirmedGrad)"
-                filter="url(#rfGlow)"
               />
               <Area
                 type="monotone"
                 dataKey="potential"
                 stackId="1"
-                stroke="hsl(51 100% 50% / 0.5)"
+                stroke="rgba(253,185,19,0.4)"
                 strokeWidth={1.5}
-                strokeDasharray="5 3"
+                strokeDasharray="6 4"
                 fill="url(#rfPotentialGrad)"
               />
             </AreaChart>
@@ -254,17 +254,17 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-5 text-xs text-muted-foreground pt-1 border-t" style={{ borderColor: 'hsl(var(--border)/0.3)' }}>
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-[2.5px] rounded-full" style={{ background: 'hsl(var(--primary))' }} />
-            <span>{rf.confirmedOrders}</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.04)', marginTop: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 16, height: 2.5, borderRadius: 2, background: '#FDB913' }} />
+            <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.5)' }}>{rf.confirmedOrders}</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-4 h-[1.5px] rounded-full border-t-2 border-dashed" style={{ borderColor: 'hsl(var(--primary)/0.5)' }} />
-            <span>{rf.potentialQuotes}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 16, height: 0, borderTop: '2px dashed rgba(253,185,19,0.4)' }} />
+            <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.5)' }}>{rf.potentialQuotes}</span>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
