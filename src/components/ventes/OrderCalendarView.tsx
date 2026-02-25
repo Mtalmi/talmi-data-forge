@@ -21,6 +21,8 @@ import {
   isSameMonth,
   isSameDay,
   isToday,
+  isBefore,
+  startOfDay,
   addMonths,
   subMonths,
 } from 'date-fns';
@@ -72,6 +74,24 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
     
     return eachDayOfInterval({ start: startDate, end: endDate });
   }, [currentMonth]);
+
+  // Month summary
+  const monthSummary = useMemo(() => {
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+    let deliveries = 0;
+    let totalVolume = 0;
+    ordersByDate.forEach((orders, dateKey) => {
+      const d = new Date(dateKey);
+      if (d >= monthStart && d <= monthEnd) {
+        deliveries += orders.length;
+        totalVolume += orders.reduce((sum, o) => sum + o.volume_m3, 0);
+      }
+    });
+    return { deliveries, totalVolume };
+  }, [ordersByDate, currentMonth]);
+
+  const today = startOfDay(new Date());
 
   // Get orders for selected date
   const selectedDateOrders = useMemo(() => {
@@ -135,24 +155,25 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
               const isCurrentMonth = isSameMonth(day, currentMonth);
               const isSelected = selectedDate && isSameDay(day, selectedDate);
               const isDayToday = isToday(day);
+              const isPast = isBefore(day, today) && !isDayToday;
+              const dayOfWeek = day.getDay();
+              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
               return (
                 <button
                   key={idx}
                   onClick={() => setSelectedDate(day)}
-                  className="text-left transition-all duration-200"
+                  className="text-left transition-all duration-150 hover:bg-white/5 rounded-md cursor-pointer"
                   style={{
                     minHeight: 80,
                     padding: 8,
                     borderRadius: 8,
                     border: `1px solid ${isSelected ? 'rgba(253,185,19,0.15)' : 'rgba(255,255,255,0.03)'}`,
-                    background: isDayToday && !isSelected ? 'rgba(253,185,19,0.04)' : isSelected ? 'rgba(253,185,19,0.06)' : 'transparent',
+                    background: isSelected ? 'rgba(253,185,19,0.06)' : isDayToday ? 'rgba(253,185,19,0.04)' : isWeekend ? 'rgba(255,255,255,0.02)' : 'transparent',
                     opacity: isCurrentMonth ? 1 : 0.3,
                   }}
-                  onMouseEnter={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.02)'; }}
-                  onMouseLeave={(e) => { if (!isSelected) (e.currentTarget as HTMLElement).style.background = isDayToday ? 'rgba(253,185,19,0.04)' : 'transparent'; }}
                 >
-                  <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 4, color: isDayToday ? '#FDB913' : 'rgba(226,232,240,0.7)' }}>
+                  <div style={{ fontSize: 13, fontWeight: 500, marginBottom: 4, color: isDayToday ? '#FDB913' : isPast ? 'rgba(255,255,255,0.3)' : 'rgba(226,232,240,0.7)' }}>
                     {format(day, 'd')}
                   </div>
                   
@@ -219,7 +240,9 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
           {!selectedDate ? (
             <div className="text-center py-8 text-muted-foreground">
               <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p className="text-sm">{oc.clickDateToView}</p>
+              <p className="text-sm font-medium text-white/70 mb-1">{format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}</p>
+              <p className="text-sm font-medium text-amber-400">{monthSummary.deliveries} deliveries · {monthSummary.totalVolume}m³ total</p>
+              <p className="text-sm mt-3 text-muted-foreground">{oc.clickDateToView}</p>
             </div>
           ) : selectedDateOrders.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
