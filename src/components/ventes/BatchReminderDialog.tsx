@@ -22,6 +22,7 @@ import { format, differenceInDays } from 'date-fns';
 import { logCommunication } from '@/lib/communicationLogger';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { formatMontant } from '@/utils/formatters';
 
 interface BatchReminderDialogProps {
   open: boolean;
@@ -265,7 +266,7 @@ export function BatchReminderDialog({ open, onOpenChange, devisList, onSuccess }
                               )}
                             </div>
                             <p className="text-sm text-muted-foreground truncate">
-                              {devis.client?.nom_client} · {devis.total_ht.toLocaleString()} DH
+                              {devis.client?.nom_client} · {formatMontant(devis.total_ht)} DH
                             </p>
                           </div>
                           <span className="text-sm text-muted-foreground">
@@ -302,7 +303,7 @@ export function BatchReminderDialog({ open, onOpenChange, devisList, onSuccess }
                                   </Badge>
                                 </div>
                                 <p className="text-sm text-muted-foreground truncate">
-                                  {devis.client?.nom_client} · {devis.total_ht.toLocaleString()} DH
+                                  {devis.client?.nom_client} · {formatMontant(devis.total_ht)} DH
                                 </p>
                               </div>
                             </div>

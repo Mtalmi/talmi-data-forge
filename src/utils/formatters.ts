@@ -4,8 +4,10 @@
  */
 
 /** Format a monetary amount with exactly 2 decimal places in French locale. */
-export const formatMontant = (amount: number): string => {
-  return Number(amount).toLocaleString('fr-FR', {
+export const formatMontant = (amount: number | string | null | undefined): string => {
+  const num = typeof amount === 'string' ? parseFloat(amount) : Number(amount);
+  if (isNaN(num) || amount == null) return '0,00';
+  return num.toLocaleString('fr-FR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });

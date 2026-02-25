@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { logCommunication } from '@/lib/communicationLogger';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { formatMontant } from '@/utils/formatters';
 
 interface WhatsAppShareButtonProps {
   devis?: Devis;
@@ -27,8 +28,8 @@ export function WhatsAppShareButton({ devis, bc, phoneNumber, compact }: WhatsAp
       `👤 ${ws.client}: ${devis.client?.nom_client || 'N/A'}`,
       `🏗️ ${ws.formula}: ${devis.formule_id}`,
       `📦 ${ws.volume}: ${devis.volume_m3} m³`,
-      `💰 ${ws.unitPrice}: ${devis.prix_vente_m3?.toLocaleString() || 'N/A'} DH/m³`,
-      `📊 *${ws.totalHT}: ${devis.total_ht.toLocaleString()} DH*`,
+      `💰 ${ws.unitPrice}: ${formatMontant(devis.prix_vente_m3)} DH/m³`,
+      `📊 *${ws.totalHT}: ${formatMontant(devis.total_ht)} DH*`,
       '',
       devis.date_expiration ? `⏰ ${ws.validUntil}: ${format(new Date(devis.date_expiration), 'dd MMMM yyyy', { locale: dateLocale || undefined })}` : '',
       '',
