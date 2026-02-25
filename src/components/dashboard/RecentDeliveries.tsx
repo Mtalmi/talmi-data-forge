@@ -107,16 +107,32 @@ export default function RecentDeliveries() {
 
   return (
     <div
-      className="relative overflow-hidden rounded-[14px] p-6 transition-all duration-[400ms]"
+      className="group/card relative overflow-hidden rounded-[16px] p-6 transition-all duration-500"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.05)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
+        border: '1px solid transparent',
+        borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(-3px) scale(1.008)';
+        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
+        el.style.borderImage = 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,255,255,0.1), rgba(212,175,55,0.15)) 1';
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+        el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
       }}
     >
-      {/* Top highlight line */}
-      <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
+      {/* Top highlight edge */}
+      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
+      {/* Gradient border glow on hover */}
+      <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
 
       <div className="flex items-center justify-between mb-4">
         <div>

@@ -632,26 +632,36 @@ export function WorldClassDashboard() {
         @keyframes shimmer-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         @keyframes breathe { 0%, 100% { opacity: 0.03; transform: scale(1); } 50% { opacity: 0.08; transform: scale(1.1); } }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes tbos-scroll-reveal { from { opacity: 0; transform: translateY(20px) scale(0.97); filter: blur(4px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+        @keyframes tbos-scroll-reveal { from { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(6px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.15); opacity: 0.15; } 100% { transform: scale(1); opacity: 0.4; } }
-        .tbos-card-enter { animation: tbos-scroll-reveal 700ms cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes opsGlow {
+          0%, 100% { opacity: 0.4; filter: blur(80px); }
+          50% { opacity: 0.7; filter: blur(100px); }
+        }
+        .tbos-card-enter { animation: tbos-scroll-reveal 800ms cubic-bezier(0.16, 1, 0.3, 1) both; }
         .tbos-bar-animate { animation: tbos-bar-grow 1200ms cubic-bezier(0.4,0,0.2,1) forwards; }
-        .tbos-stagger-1 { animation-delay: 0ms; }
-        .tbos-stagger-2 { animation-delay: 80ms; }
-        .tbos-stagger-3 { animation-delay: 160ms; }
-        .tbos-stagger-4 { animation-delay: 240ms; }
-        .tbos-stagger-5 { animation-delay: 300ms; }
-        .tbos-stagger-6 { animation-delay: 360ms; }
-        .tbos-stagger-7 { animation-delay: 420ms; }
-        .tbos-stagger-8 { animation-delay: 480ms; }
-        .tbos-stagger-9 { animation-delay: 540ms; }
+        .tbos-stagger-1 { animation-delay: 100ms; }
+        .tbos-stagger-2 { animation-delay: 200ms; }
+        .tbos-stagger-3 { animation-delay: 300ms; }
+        .tbos-stagger-4 { animation-delay: 180ms; }
+        .tbos-stagger-5 { animation-delay: 280ms; }
+        .tbos-stagger-6 { animation-delay: 380ms; }
+        .tbos-stagger-7 { animation-delay: 150ms; }
+        .tbos-stagger-8 { animation-delay: 250ms; }
+        .tbos-stagger-9 { animation-delay: 350ms; }
         @media (max-width: 768px) {
           .tbos-grid-3col { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
-      <div style={{ maxWidth: 1600, margin: '0 auto' }}>
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5" style={{ alignItems: 'start' }}>
+      <div style={{ maxWidth: 1600, margin: '0 auto' }} className="relative">
+        {/* Ops zone ambient atmosphere — extends the hero warmth */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+          <div className="absolute -top-40 left-[20%] w-[700px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.01) 40%, transparent 65%)', filter: 'blur(80px)', animation: 'opsGlow 12s ease-in-out infinite' }} />
+          <div className="absolute top-[40%] right-[10%] w-[500px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.025) 0%, transparent 55%)', filter: 'blur(100px)', animation: 'opsGlow 16s ease-in-out infinite 4s' }} />
+          <div className="absolute bottom-0 left-[40%] w-[600px] h-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.025) 0%, transparent 50%)', filter: 'blur(90px)', animation: 'opsGlow 14s ease-in-out infinite 8s' }} />
+        </div>
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 relative z-[1]" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
           <div className="space-y-5">
@@ -811,15 +821,24 @@ export function WorldClassDashboard() {
 
             {/* Daily P&L Signature Metric */}
             <Card className="tbos-card-enter tbos-stagger-9">
-              <div className="text-center py-3">
-                <div className="text-[9px] uppercase tracking-[0.25em] text-slate-600 mb-2">P&L du jour</div>
-                <div className="text-3xl font-extralight font-mono text-white tabular-nums" style={{ textShadow: `0 0 20px ${T.gold}15` }}>
-                  +18.4K
-                </div>
-                <div className="text-[10px] text-slate-500 mt-1">DH · marge nette estimée</div>
-                <div className="flex items-center justify-center gap-1 mt-2">
-                  <span className="w-1 h-1 rounded-full" style={{ background: T.dotOk }} />
-                  <span className="text-[9px]" style={{ color: T.dotOk }}>+12% vs hier</span>
+              <div className="text-center py-4 relative">
+                {/* Golden ambient behind number */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, transparent 70%)', filter: 'blur(30px)' }} />
+                <div className="relative z-[1]">
+                  <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-3 font-medium">P&L du jour</div>
+                  <div className="text-[2.5rem] font-extralight font-mono text-white tabular-nums leading-none" style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 200,
+                    textShadow: '0 0 30px rgba(253,185,19,0.2), 0 0 60px rgba(253,185,19,0.08)',
+                    letterSpacing: '-0.03em',
+                  }}>
+                    +18.4K
+                  </div>
+                  <div className="text-[10px] text-slate-500 mt-2">DH · marge nette estimée</div>
+                  <div className="flex items-center justify-center gap-1.5 mt-3">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk, boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+                    <span className="text-[10px] font-mono" style={{ color: T.dotOk }}>+12% vs hier</span>
+                  </div>
                 </div>
               </div>
             </Card>
