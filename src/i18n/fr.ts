@@ -1032,6 +1032,8 @@ const fr = {
       validated: 'Validé',
       other: 'Autre',
       noCompletedDeals: 'Aucun deal finalisé',
+      noConfirmedOrders: 'Aucune commande confirmée',
+      unassignedClient: 'Non assigné',
       pipelineTotal: 'Pipeline Total',
       days: 'jours',
       conv: 'conv.',

@@ -1032,6 +1032,8 @@ const ar = {
       validated: 'مؤكد',
       other: 'أخرى',
       noCompletedDeals: 'لا توجد صفقات مكتملة بعد',
+      noConfirmedOrders: 'لا توجد طلبات مؤكدة بعد',
+      unassignedClient: 'غير معين',
       pipelineTotal: 'إجمالي خط الأنابيب',
       days: 'أيام',
       conv: 'تحويل',

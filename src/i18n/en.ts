@@ -1040,6 +1040,8 @@ const en = {
       validated: 'Validated',
       other: 'Other',
       noCompletedDeals: 'No completed deals yet',
+      noConfirmedOrders: 'No confirmed orders yet',
+      unassignedClient: 'Unassigned',
       pipelineTotal: 'Pipeline Total',
       days: 'days',
       conv: 'conv.',

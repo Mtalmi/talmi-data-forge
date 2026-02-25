@@ -48,7 +48,7 @@ const GoldTooltip = ({ active, payload, label }: any) => {
 };
 
 /* ───── Animated stat chip ───── */
-function StatChip({ value, label, color }: { value: number; label: string; color: string }) {
+function StatChip({ value, label, color, subtext }: { value: number; label: string; color: string; subtext?: string }) {
   const animated = useCountUp(Math.round(value), 1200);
   return (
     <div style={{
@@ -60,6 +60,12 @@ function StatChip({ value, label, color }: { value: number; label: string; color
         {animated >= 1000 ? `${(animated / 1000).toFixed(1)}K` : animated}
       </p>
       <p style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4 }}>{label}</p>
+      {value === 0 && !subtext && (
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 2 }}>—</p>
+      )}
+      {subtext && (
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{subtext}</p>
+      )}
     </div>
   );
 }
@@ -103,8 +109,10 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
   const winLossData = useMemo(() => {
     const won = devisList.filter(d => d.statut === 'converti' || d.statut === 'accepte').length;
     const lost = devisList.filter(d => d.statut === 'refuse' || d.statut === 'expire').length;
-    const pending = devisList.filter(d => d.statut === 'en_attente').length;
-    return { won, lost, pending, total: won + lost + pending };
+    const pendingDevis = devisList.filter(d => d.statut === 'en_attente');
+    const pending = pendingDevis.length;
+    const pendingValueHT = pendingDevis.reduce((sum, d) => sum + (d.total_ht || 0), 0);
+    return { won, lost, pending, total: won + lost + pending, pendingValueHT };
   }, [devisList]);
 
   const winRate = winLossData.total > 0
@@ -278,7 +286,12 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
           <StatChip value={winLossData.won} label={vt.won} color={SUCCESS} />
           <StatChip value={winLossData.lost} label={vt.lost} color={DANGER} />
-          <StatChip value={winLossData.pending} label={vt.inProgress} color={WARNING} />
+          <StatChip 
+            value={winLossData.pending} 
+            label={vt.inProgress} 
+            color={WARNING} 
+            subtext={winLossData.pendingValueHT > 0 ? `${winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH` : undefined}
+          />
         </div>
 
         {/* Pie chart */}
