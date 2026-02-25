@@ -141,10 +141,10 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
             background: 'rgba(16,185,129,0.08)',
             border: '1px solid rgba(16,185,129,0.15)',
           }}>
-            <div style={{
+            <div className="animate-pulse" style={{
               width: 5, height: 5, borderRadius: '50%',
               background: '#10B981',
-              animation: 'pulse 2s ease-in-out infinite',
+              boxShadow: '0 0 6px rgba(16,185,129,0.5)',
             }} />
             <span style={{ fontSize: 9, fontWeight: 600, color: '#10B981', letterSpacing: '0.1em' }}>{vt.live}</span>
           </div>
@@ -177,7 +177,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         position: 'relative',
         padding: '24px 16px',
         background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.05)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         overflow: 'hidden',
       }}>

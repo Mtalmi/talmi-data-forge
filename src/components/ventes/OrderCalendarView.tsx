@@ -112,7 +112,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
       {/* Calendar */}
       <div className="lg:col-span-2" style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         padding: 24,
       }}>
@@ -227,7 +227,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
       {/* Selected Date Details */}
       <div style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         padding: 24,
       }}>

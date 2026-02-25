@@ -54,7 +54,7 @@ function StatChip({ value, label, color }: { value: number; label: string; color
     <div style={{
       textAlign: 'center', padding: 12, borderRadius: 12,
       background: 'rgba(255,255,255,0.02)',
-      border: '1px solid rgba(255,255,255,0.06)',
+      border: '1px solid rgba(255,255,255,0.08)',
     }}>
       <p style={{ fontSize: '1.25rem', fontWeight: 200, fontFamily: 'JetBrains Mono, monospace', color }}>
         {animated >= 1000 ? `${(animated / 1000).toFixed(1)}K` : animated}
@@ -142,7 +142,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
       {/* ── Revenue by Product ── */}
       <div style={{
         background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         padding: 24,
         overflow: 'hidden',
@@ -207,7 +207,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
       {/* ── Revenue by Status (bar) ── */}
       <div style={{
         background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         padding: 24,
         overflow: 'hidden',
@@ -253,7 +253,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
       {/* ── Win / Loss Analysis ── */}
       <div style={{
         background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
         padding: 24,
         overflow: 'hidden',
