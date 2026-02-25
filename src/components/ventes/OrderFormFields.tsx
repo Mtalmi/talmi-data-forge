@@ -213,7 +213,7 @@ export function OrderFormFields({
             <Input
               value={telephoneChantier}
               onChange={(e) => setTelephoneChantier(e.target.value)}
-              placeholder="06 XX XX XX XX"
+              placeholder="+212 6XX XXX XXX"
             />
           </div>
         </div>

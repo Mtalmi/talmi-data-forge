@@ -391,15 +391,17 @@ export function FacturesTable({
                   </TableCell>
                   <TableCell>
                     {facture.marge_brute_pct !== null ? (
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "font-mono",
-                          getMarginColor(parseFloat(String(facture.marge_brute_pct)))
-                        )}
+                      <span
+                        className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold font-mono"
+                        style={(() => {
+                          const m = parseFloat(String(facture.marge_brute_pct));
+                          if (m >= 50) return { color: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)' };
+                          if (m >= 30) return { color: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.1)' };
+                          return { color: '#f87171', backgroundColor: 'rgba(248,113,113,0.1)' };
+                        })()}
                       >
                         {facture.marge_brute_pct.toFixed(1)}%
-                      </Badge>
+                      </span>
                     ) : (
                       '—'
                     )}
