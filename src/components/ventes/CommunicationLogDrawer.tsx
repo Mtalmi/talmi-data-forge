@@ -108,8 +108,8 @@ export function CommunicationLogDrawer({ clientId, clientName }: CommunicationLo
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <MessageSquare className="h-4 w-4" />
+        <Button variant="ghost" size="sm" className="gap-2" style={{ background: 'transparent', border: 'none', boxShadow: 'none', color: 'rgba(148,163,184,0.45)', fontSize: 12 }}>
+          <MessageSquare className="h-3.5 w-3.5" />
           {clientName ? 'Historique' : 'Communications'}
         </Button>
       </SheetTrigger>
