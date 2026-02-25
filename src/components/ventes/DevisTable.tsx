@@ -417,21 +417,20 @@ export function DevisTable({
                     ) : (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button 
+                      <button 
                             className={cn(
-                              "inline-flex items-center gap-1 px-2 py-1 rounded-md border text-xs font-medium",
-                              "hover:bg-muted/50 transition-colors cursor-pointer",
+                              "inline-flex items-center gap-1 rounded-md text-xs font-medium",
+                              "hover:opacity-80 transition-colors cursor-pointer",
                               statusConfig.color
                             )}
+                            style={{ padding: '4px 12px', borderRadius: 6, border: 'none' }}
                             disabled={updatingStatus === devis.devis_id}
                           >
+                            <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'currentColor', opacity: 0.6, flexShrink: 0 }} />
                             {updatingStatus === devis.devis_id ? (
                               <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              statusConfig.icon
-                            )}
+                            ) : null}
                             {statusConfig.label}
-                            <ChevronDown className="h-3 w-3 opacity-50" />
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" className="w-40 bg-background">

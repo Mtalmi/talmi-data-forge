@@ -87,8 +87,8 @@ export function ActivityHistoryDrawer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <History className="h-4 w-4" />{ah.title}
+        <Button variant="ghost" size="sm" className="gap-2" style={{ background: 'transparent', border: 'none', boxShadow: 'none', color: 'rgba(148,163,184,0.45)', fontSize: 12 }}>
+          <History className="h-3.5 w-3.5" />{ah.title}
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md">

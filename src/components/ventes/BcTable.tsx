@@ -46,15 +46,15 @@ import { EmptyState } from '@/components/ui/EmptyState';
 
 // Status configs use static colors but labels are resolved dynamically via i18n
 const BC_STATUS_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
-  en_attente_validation: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/30 animate-pulse', icon: <Clock className="h-3 w-3" /> },
-  pret_production: { color: 'bg-blue-500/10 text-blue-600 border-blue-500/30', icon: <CheckCircle className="h-3 w-3" /> },
-  en_production: { color: 'bg-orange-500/10 text-orange-600 border-orange-500/30', icon: <Factory className="h-3 w-3" /> },
-  en_livraison: { color: 'bg-rose-500/10 text-rose-600 border-rose-500/30', icon: <Truck className="h-3 w-3" /> },
-  en_retour: { color: 'bg-amber-500/10 text-amber-600 border-amber-500/30', icon: <Truck className="h-3 w-3" /> },
-  termine: { color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  livre: { color: 'bg-success/10 text-success border-success/30', icon: <Truck className="h-3 w-3" /> },
-  facture: { color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-  refuse: { color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertCircle className="h-3 w-3" /> },
+  en_attente_validation: { color: 'text-[#FDB913] bg-[rgba(253,185,19,0.08)] border-none', icon: <Clock className="h-3 w-3" /> },
+  pret_production: { color: 'text-[#3B82F6] bg-[rgba(59,130,246,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
+  en_production: { color: 'text-[#00D9FF] bg-[rgba(0,217,255,0.08)] border-none', icon: <Factory className="h-3 w-3" /> },
+  en_livraison: { color: 'text-[#FB923C] bg-[rgba(251,146,60,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
+  en_retour: { color: 'text-[#FB923C] bg-[rgba(251,146,60,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
+  termine: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
+  livre: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <Truck className="h-3 w-3" /> },
+  facture: { color: 'text-[#10B981] bg-[rgba(16,185,129,0.08)] border-none', icon: <CheckCircle className="h-3 w-3" /> },
+  refuse: { color: 'text-[#FF6B6B] bg-[rgba(255,107,107,0.08)] border-none', icon: <AlertCircle className="h-3 w-3" /> },
 };
 
 const BL_STATUS_COLORS: Record<string, string> = {
