@@ -271,7 +271,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
           <StatChip value={winLossData.won} label="Gagnés" color={SUCCESS} />
           <StatChip value={winLossData.lost} label="Perdus" color={DANGER} />
-          <StatChip value={winLossData.pending} label="En cours" color={GOLD} />
+          <StatChip value={winLossData.pending} label="En cours" color={WARNING} />
         </div>
 
         {/* Pie chart */}
@@ -297,22 +297,37 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
         {/* Win rate bar */}
         <div style={{ marginTop: 16 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
-              <CheckCircle2 style={{ width: 12, height: 12, color: SUCCESS }} /> Gagnés
-            </span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
-              <XCircle style={{ width: 12, height: 12, color: DANGER }} /> Perdus
-            </span>
-          </div>
-          <div style={{ height: 8, borderRadius: 4, overflow: 'hidden', display: 'flex', background: 'rgba(255,255,255,0.04)' }}>
-            <div style={{ width: `${winRate}%`, height: '100%', background: SUCCESS, borderRadius: '4px 0 0 4px', transition: 'width 1s ease' }} />
-            <div style={{ width: `${100 - winRate}%`, height: '100%', background: DANGER, borderRadius: '0 4px 4px 0', transition: 'width 1s ease' }} />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: SUCCESS }}>{winRate}%</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: DANGER }}>{100 - winRate}%</span>
-          </div>
+          {(winLossData.won === 0 && winLossData.lost === 0) ? (
+            <div style={{
+              height: 8, borderRadius: 4,
+              background: 'rgba(148,163,184,0.15)',
+              position: 'relative',
+            }}>
+              <span style={{
+                position: 'absolute', top: 14, left: '50%', transform: 'translateX(-50%)',
+                fontSize: 10, fontStyle: 'italic', color: 'rgba(255,255,255,0.4)', whiteSpace: 'nowrap',
+              }}>No completed deals yet</span>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
+                  <CheckCircle2 style={{ width: 12, height: 12, color: SUCCESS }} /> Gagnés
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: 'rgba(148,163,184,0.5)' }}>
+                  <XCircle style={{ width: 12, height: 12, color: DANGER }} /> Perdus
+                </span>
+              </div>
+              <div style={{ height: 8, borderRadius: 4, overflow: 'hidden', display: 'flex', background: 'rgba(255,255,255,0.04)' }}>
+                <div style={{ width: `${winRate}%`, height: '100%', background: SUCCESS, borderRadius: '4px 0 0 4px', transition: 'width 1s ease' }} />
+                <div style={{ width: `${100 - winRate}%`, height: '100%', background: DANGER, borderRadius: '0 4px 4px 0', transition: 'width 1s ease' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: SUCCESS }}>{winRate}%</span>
+                <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: DANGER }}>{100 - winRate}%</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

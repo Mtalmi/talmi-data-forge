@@ -66,7 +66,8 @@ export function DevisCardMobile({
 
   const isHighPriority = devis.total_ht >= HIGH_VALUE_THRESHOLD || devis.volume_m3 >= HIGH_VOLUME_THRESHOLD;
   const expirationInfo = getExpirationInfo?.(devis);
-  const clientName = devis.client?.nom_client || '—';
+  const clientName = devis.client?.nom_client || null;
+  const hasClient = !!clientName;
   const formuleName = devis.formule?.designation;
 
   const handleCardClick = (e: React.MouseEvent) => {
@@ -94,7 +95,11 @@ export function DevisCardMobile({
               </Badge>
             )}
           </div>
-          <p className="text-base font-semibold text-foreground">{clientName}</p>
+          {hasClient ? (
+            <p className="text-base font-semibold text-foreground">{clientName}</p>
+          ) : (
+            <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">Unassigned</span>
+          )}
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
