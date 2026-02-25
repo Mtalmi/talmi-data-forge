@@ -408,9 +408,9 @@ export default function Dashboard() {
           <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <div className="flex items-end justify-between">
               <div>
-            <h1 className="text-[38px] font-extralight text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>
-                  {typedName || '\u00A0'}<span className="text-[38px] font-extralight" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
-                  {showCursor && <span className="inline-block w-[2px] h-[36px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
+            <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ lineHeight: 1 }}>
+                  {typedName || '\u00A0'}<span className="text-2xl font-light" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
+                  {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                 </h1>
                 <div className="flex items-center gap-3 mt-3">
                   <span className="relative flex h-2 w-2">
@@ -496,7 +496,7 @@ export default function Dashboard() {
               </div>
 
               {/* Label */}
-              <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.25em', textTransform: 'uppercase', color: kpi.labelColor }}>
+              <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
                 {kpi.label}
               </div>
 
@@ -523,12 +523,12 @@ export default function Dashboard() {
               </div>
 
               {/* Sub info */}
-              <div className="text-[11px] text-slate-500/80 mt-3 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{kpi.sub}</div>
+              <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
 
               {/* Trend indicator */}
               <div className="mt-2 flex items-center gap-1.5">
               {kpi.trend && (
-                  <span className="text-[11px] tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", color: kpi.accentColor }}>{kpi.trend}</span>
+                  <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
                 )}
                 {kpi.healthy && (
                   <span className="w-2 h-2 rounded-full bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
@@ -737,7 +737,7 @@ export default function Dashboard() {
         {/* Section Divider — Opérations */}
         <div className="relative mt-10 mb-8 flex items-center gap-4">
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
-          <span className="text-[10px] font-medium uppercase tracking-[0.35em]" style={{ color: 'rgba(253,185,19,0.5)' }}>Opérations</span>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'rgb(148,163,184)' }}>Opérations</span>
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
         </div>
 
@@ -751,8 +751,8 @@ export default function Dashboard() {
         {/* Section Divider — Finance */}
         <div className="flex items-center gap-4 my-8 px-2">
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.12))' }} />
-          <span style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.35em', textTransform: 'uppercase' as const, color: 'rgba(148,163,184,0.4)' }}>
-            FINANCE & CONFORMITÉ
+          <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(148,163,184)' }}>
+            Finance & Conformité
           </span>
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.12), transparent)' }} />
         </div>
