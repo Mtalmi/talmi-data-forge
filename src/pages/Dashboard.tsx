@@ -728,11 +728,27 @@ export default function Dashboard() {
         />
 
         {/* Cinematic Section Transition — Opérations */}
-        <div className="relative mt-8 mb-5 py-4">
-          <div className="relative z-10 flex items-center gap-4">
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-slate-500">Opérations</span>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
+        <div className="relative mt-10 mb-8 py-6">
+          {/* Ambient golden line glow */}
+          <div className="absolute inset-0 flex items-center pointer-events-none">
+            <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(253,185,19,0.08) 30%, rgba(253,185,19,0.15) 50%, rgba(253,185,19,0.08) 70%, transparent 95%)' }} />
+          </div>
+          {/* Label with diamond accents */}
+          <div className="relative z-10 flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.3)' }} />
+              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.5)' }} />
+            </div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.4em] px-5 py-1.5 rounded-full" style={{ 
+              color: 'rgba(253,185,19,0.6)', 
+              background: 'linear-gradient(135deg, rgba(253,185,19,0.06), rgba(253,185,19,0.02))',
+              border: '1px solid rgba(253,185,19,0.1)',
+              backdropFilter: 'blur(12px)',
+            }}>Opérations</span>
+            <div className="flex items-center gap-2">
+              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.5)' }} />
+              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.3)' }} />
+            </div>
           </div>
         </div>
 
@@ -744,11 +760,25 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Cinematic Section Transition — Finance */}
-        <div className="relative mt-10 mb-5 py-4">
-          <div className="relative z-10 flex items-center gap-3">
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.35em] text-slate-500">Finance & Conformité</span>
-            <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
+        <div className="relative mt-12 mb-8 py-6">
+          <div className="absolute inset-0 flex items-center pointer-events-none">
+            <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(253,185,19,0.06) 30%, rgba(253,185,19,0.12) 50%, rgba(253,185,19,0.06) 70%, transparent 95%)' }} />
+          </div>
+          <div className="relative z-10 flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.25)' }} />
+              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.4)' }} />
+            </div>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.4em] px-5 py-1.5 rounded-full" style={{ 
+              color: 'rgba(253,185,19,0.5)', 
+              background: 'linear-gradient(135deg, rgba(253,185,19,0.04), rgba(253,185,19,0.015))',
+              border: '1px solid rgba(253,185,19,0.08)',
+              backdropFilter: 'blur(12px)',
+            }}>Finance & Conformité</span>
+            <div className="flex items-center gap-2">
+              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.4)' }} />
+              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.25)' }} />
+            </div>
           </div>
         </div>
 
