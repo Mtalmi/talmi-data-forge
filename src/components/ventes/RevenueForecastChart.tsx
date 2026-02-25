@@ -194,7 +194,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
 
         {/* 6 weeks inside card */}
         <div style={{ marginBottom: 12, textAlign: 'right' }}>
-          <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.3)', fontFamily: 'JetBrains Mono, monospace' }}>{rf.weeks}</span>
+          <span style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontFamily: 'JetBrains Mono, monospace', cursor: 'pointer', textDecoration: 'none', transition: 'all 0.15s ease' }} className="hover:underline hover:text-amber-400/60">{rf.weeks}</span>
         </div>
 
         {/* Chart */}

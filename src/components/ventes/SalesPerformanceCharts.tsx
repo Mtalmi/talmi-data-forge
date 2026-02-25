@@ -15,7 +15,7 @@ interface SalesPerformanceChartsProps {
 
 /* ───── Palette ───── */
 const GOLD = '#FDB913';
-const GOLD_COLORS = [GOLD, 'rgba(253,185,19,0.55)', 'rgba(253,185,19,0.30)'];
+const PRODUCT_COLORS = ['#D4A843', '#E8C860', '#8B6914'];
 // Status colors are mapped dynamically in the component using statusColorMap
 const SUCCESS = '#10B981';
 const DANGER = '#FF6B6B';
@@ -131,10 +131,10 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
   }, [bcList, vt]);
 
   const STATUS_COLORS: Record<string, string> = {
-    [vt.validated]: GOLD,
-    [vt.statusLivre]: 'rgba(253,185,19,0.55)',
-    [vt.other]: 'rgba(148,163,184,0.20)',
-    Production: 'rgba(253,185,19,0.40)',
+    [vt.validated]: '#D4A843',
+    [vt.statusLivre]: '#E8C860',
+    [vt.other]: '#6B7280',
+    Production: '#B8860B',
   };
 
   return (
@@ -165,7 +165,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
                     animationDuration={900}
                   >
                     {productData.map((_, i) => (
-                      <Cell key={i} fill={GOLD_COLORS[i % GOLD_COLORS.length]} stroke="transparent" />
+                      <Cell key={i} fill={PRODUCT_COLORS[i % PRODUCT_COLORS.length]} stroke="transparent" />
                     ))}
                   </Pie>
                   <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle"
@@ -185,7 +185,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 12 }}>
               {productData.map((d, i) => {
                 const pct = totalProductRevenue > 0 ? Math.round((d.value / totalProductRevenue) * 100) : 0;
-                const color = GOLD_COLORS[i % GOLD_COLORS.length];
+                const color = PRODUCT_COLORS[i % PRODUCT_COLORS.length];
                 return (
                   <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
