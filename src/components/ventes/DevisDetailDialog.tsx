@@ -300,9 +300,18 @@ export function DevisDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <FileText className="h-6 w-6 text-primary" />
-            Devis {devis.devis_id}
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 bg-[#D4A843] rounded-sm mt-1 shrink-0" />
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">TALMI BETON</h1>
+                <p className="text-sm text-muted-foreground">Excellence en Béton Prêt à l'Emploi</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold">Devis</p>
+              <p className="font-mono font-bold text-base">{devis.devis_id}</p>
+            </div>
           </DialogTitle>
           <DialogDescription>
             Créé le {format(new Date(devis.created_at), 'dd MMMM yyyy', { locale: dateLocale })}
@@ -333,21 +342,17 @@ export function DevisDetailDialog({
             </div>
             
             {expirationDate && devis.statut === 'en_attente' && (
-              <Badge 
-                variant="outline" 
-                className={cn(
-                  "gap-1",
-                  isExpired ? "bg-destructive/10 text-destructive" : 
-                  isExpiring ? "bg-warning/10 text-warning" : 
-                  "bg-muted"
-                )}
-              >
-                <Calendar className="h-3 w-3" />
-                {isExpired 
-                  ? `Expiré depuis ${Math.abs(daysUntilExpiration!)} jours`
-                  : `Expire dans ${daysUntilExpiration} jours`
-                }
-              </Badge>
+              isExpired ? (
+                <Badge variant="outline" className="gap-1 bg-destructive/10 text-destructive">
+                  <Calendar className="h-3 w-3" />
+                  Expiré depuis {Math.abs(daysUntilExpiration!)} jours
+                </Badge>
+              ) : (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border border-[#D4A843]/30 text-[#D4A843] bg-[#D4A843]/5">
+                  <Calendar className="h-3 w-3 mr-1.5" />
+                  Valide jusqu'au {format(expirationDate, 'dd/MM/yyyy')}
+                </span>
+              )
             )}
           </div>
           
@@ -372,9 +377,9 @@ export function DevisDetailDialog({
           )}
 
           {/* Émetteur / Client — Two-Column Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col md:flex-row gap-4 items-stretch">
             {/* ÉMETTEUR */}
-            <div className="border border-border rounded-lg p-4">
+            <div className="flex-1 border border-border rounded-lg p-4">
               <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-2">Émetteur</p>
               <p className="font-semibold text-foreground">Talmi Beton SARL</p>
               <p className="text-sm text-muted-foreground mt-1">
@@ -388,7 +393,7 @@ export function DevisDetailDialog({
               </p>
             </div>
             {/* CLIENT */}
-            <div className="border border-border rounded-lg p-4">
+            <div className="flex-1 border border-border rounded-lg p-4">
               <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-2">Client</p>
               <p className="font-semibold text-foreground">{devis.client?.nom_client || 'Non spécifié'}</p>
               {devis.client?.adresse && (
@@ -429,48 +434,142 @@ export function DevisDetailDialog({
             </CardContent>
           </Card>
 
-          {/* Pricing Summary */}
-          <Card className="border-[#D4A843]/20 bg-gradient-to-br from-[#D4A843]/5 to-transparent">
+          {/* ═══ DETAILS TABLE ═══ */}
+          <div>
+            <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-3">Détails du Devis</p>
+            <div className="overflow-x-auto border border-border rounded-lg">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b-2 border-[#D4A843]/30 bg-muted/30">
+                    <th className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground" style={{width:'40%'}}>Description</th>
+                    <th className="text-center px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground" style={{width:'15%'}}>Quantité</th>
+                    <th className="text-right px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground" style={{width:'25%'}}>Prix Unitaire</th>
+                    <th className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground" style={{width:'20%'}}>Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Concrete line */}
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-foreground">{devis.formule_id}</p>
+                      <p className="text-xs text-muted-foreground">{devis.formule?.designation || 'Béton prêt à l\'emploi'}</p>
+                    </td>
+                    <td className="text-center px-3 py-3 font-mono">{devis.volume_m3} m³</td>
+                    <td className="text-right px-3 py-3">
+                      <span className="font-mono font-semibold">{fmt(devis.prix_vente_m3)}</span>
+                      <span className="text-muted-foreground ml-1">DH</span>
+                    </td>
+                    <td className="text-right px-4 py-3">
+                      <span className="font-mono font-semibold">{fmt(devis.total_ht)}</span>
+                      <span className="text-muted-foreground ml-1">DH</span>
+                    </td>
+                  </tr>
+                  {/* Transport line */}
+                  {devis.distance_km > 0 && (
+                    <tr className="border-b border-border bg-muted/20">
+                      <td className="px-4 py-3">
+                        <p className="font-semibold text-foreground">Transport</p>
+                        <p className="text-xs text-muted-foreground">Livraison zone — {devis.distance_km} km</p>
+                      </td>
+                      <td className="text-center px-3 py-3 font-mono">{devis.volume_m3} m³</td>
+                      <td className="text-right px-3 py-3">
+                        <span className="font-mono font-semibold">{fmt(devis.transport_extra_per_m3 > 0 ? devis.transport_extra_per_m3 : 50)}</span>
+                        <span className="text-muted-foreground ml-1">DH</span>
+                      </td>
+                      <td className="text-right px-4 py-3">
+                        <span className="font-mono font-semibold">{fmt((devis.transport_extra_per_m3 > 0 ? devis.transport_extra_per_m3 : 50) * devis.volume_m3)}</span>
+                        <span className="text-muted-foreground ml-1">DH</span>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* ═══ TOTALS ═══ */}
+            {(() => {
+              const transportRate = devis.transport_extra_per_m3 > 0 ? devis.transport_extra_per_m3 : 50;
+              const transportTotal = devis.distance_km > 0 ? transportRate * devis.volume_m3 : 0;
+              const totalHt = devis.total_ht + transportTotal;
+              const tva = totalHt * 0.2;
+              const ttc = totalHt * 1.2;
+              return (
+                <div className="flex justify-end mt-3">
+                  <div className="w-72 space-y-1 text-sm">
+                    <div className="flex justify-between bg-[#D4A843]/10 rounded-md px-4 py-2">
+                      <span className="font-semibold text-[#D4A843]">TOTAL HT</span>
+                      <span>
+                        <span className="font-mono font-bold text-[#D4A843]">{fmt(totalHt)}</span>
+                        <span className="text-[#D4A843]/60 ml-1">DH</span>
+                      </span>
+                    </div>
+                    <div className="flex justify-between px-4 py-2">
+                      <span className="text-muted-foreground">TVA (20%)</span>
+                      <span>
+                        <span className="font-mono font-semibold">{fmt(tva)}</span>
+                        <span className="text-muted-foreground ml-1">DH</span>
+                      </span>
+                    </div>
+                    <div className="flex justify-between bg-[#D4A843] text-white rounded-md px-4 py-2.5">
+                      <span className="font-bold text-base">TOTAL TTC</span>
+                      <span className="font-mono font-bold text-base">{fmt(ttc)} DH</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* ═══ CONDITIONS DE PAIEMENT ═══ */}
+          <div className="bg-[#FFFBF0] dark:bg-[#D4A843]/5 border border-[#D4A843]/20 rounded-lg p-6 space-y-3">
+            <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-3">Conditions de Paiement</p>
+            <div className="space-y-2 text-sm text-foreground">
+              <p>💳 <span className="font-semibold">Mode :</span> Virement Bancaire</p>
+              <p>📅 <span className="font-semibold">Échéance :</span> 30 jours fin de mois</p>
+              <p>📋 <span className="font-semibold">Validité :</span> 30 jours à compter de la date d'émission</p>
+              <p>📞 <span className="font-semibold">Contact :</span> Karim El Fassi — +212 661 234 567</p>
+            </div>
+            <div className="mt-3 p-3 bg-background border border-border rounded-md text-xs text-muted-foreground leading-relaxed">
+              <p className="font-semibold text-foreground mb-1">🏦 Coordonnées Bancaires</p>
+              RIB : 007 780 0001234567890123 76<br />
+              Banque : Attijariwafa Bank — Agence Casablanca Centre<br />
+              IBAN : MA76 0077 8000 0123 4567 8901 2376
+            </div>
+          </div>
+
+          {/* ═══ BON POUR ACCORD ═══ */}
+          <div className="border border-border rounded-lg p-6">
+            <p className="text-[#D4A843] uppercase text-xs tracking-widest font-semibold mb-2">Bon pour Accord</p>
+            <p className="text-xs text-muted-foreground mb-5 leading-relaxed">
+              En signant ce document, le client accepte les conditions générales de vente et s'engage à respecter les termes du présent devis.
+            </p>
+            <div className="flex gap-6">
+              <div className="flex-1 border border-dashed border-border rounded-md p-4 min-h-[180px]">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Le Client</p>
+                <p className="text-xs text-muted-foreground">Date : __ / __ / ____</p>
+                <p className="text-xs text-muted-foreground mt-4">Signature et cachet :</p>
+              </div>
+              <div className="flex-1 border border-dashed border-border rounded-md p-4 min-h-[180px]">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Talmi Beton SARL</p>
+                <p className="text-xs text-muted-foreground">Date : {format(new Date(), 'dd/MM/yyyy')}</p>
+                <p className="text-xs text-muted-foreground mt-4">Signature :</p>
+                <div className="border-b border-muted-foreground/30 mt-8 w-4/5" />
+                <p className="text-xs font-semibold mt-2">Karim El Fassi</p>
+                <p className="text-[10px] text-muted-foreground">Directeur Commercial</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing Summary — Internal cost breakdown */}
+          <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm flex items-center gap-2 text-[#D4A843]">
+              <CardTitle className="text-sm flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
-                Tarification
+                Décomposition des Coûts (Interne)
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-lg bg-background/50 text-center">
-                  <p className="text-2xl font-mono font-bold text-[#D4A843]">
-                    {fmt(devis.prix_vente_m3)} DH
-                  </p>
-                  <p className="text-xs text-muted-foreground">Prix / m³</p>
-                </div>
-                <div className="p-3 rounded-lg bg-background/50 text-center">
-                  <p className="text-2xl font-mono font-bold text-[#D4A843]">
-                    {fmt(devis.total_ht)} DH
-                  </p>
-                  <p className="text-xs text-muted-foreground">Total HT</p>
-                </div>
-              </div>
-
-              {/* TVA & TTC */}
+            <CardContent>
               <div className="space-y-1 text-sm">
-                <div className="flex justify-between p-2 rounded bg-[#D4A843]/10">
-                  <span className="font-semibold text-[#D4A843]">TOTAL HT</span>
-                  <span className="font-mono font-bold text-[#D4A843]">{fmt(devis.total_ht)} DH</span>
-                </div>
-                <div className="flex justify-between p-2 rounded border-b">
-                  <span>TVA (20%)</span>
-                  <span className="font-mono font-semibold">{fmt(devis.total_ht * 0.2)} DH</span>
-                </div>
-                <div className="flex justify-between p-3 rounded-lg bg-[#D4A843] text-white">
-                  <span className="font-bold text-base">TOTAL TTC</span>
-                  <span className="font-mono font-bold text-base">{fmt(devis.total_ht * 1.2)} DH</span>
-                </div>
-              </div>
-
-              {/* Cost Breakdown (internal) */}
-              <div className="space-y-1 text-sm pt-2 border-t">
                 <div className="flex justify-between p-2 bg-muted/30 rounded">
                   <span>CUT (Coût Unitaire Théorique)</span>
                   <span className="font-mono">{fmt(devis.cut_per_m3)} DH</span>
@@ -488,6 +587,10 @@ export function DevisDetailDialog({
                 <div className="flex justify-between p-2 border rounded font-medium">
                   <span>Coût Total / m³</span>
                   <span className="font-mono">{fmt(devis.total_cost_per_m3)} DH</span>
+                </div>
+                <div className="flex justify-between p-2 bg-muted/30 rounded">
+                  <span>Marge</span>
+                  <span className="font-mono">{devis.margin_pct}%</span>
                 </div>
               </div>
             </CardContent>
