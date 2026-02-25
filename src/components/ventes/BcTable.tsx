@@ -467,10 +467,10 @@ export function BcTable({
                       {bcCanLaunch ? (
                         <Button
                           size="sm"
-                          variant="default"
+                          variant={bcIsEmergency ? "destructive" : "outline"}
                           onClick={() => onLaunchProduction(bc)}
                           disabled={launchingProduction === bc.bc_id}
-                          className={cn("gap-1", bcIsEmergency && "bg-red-600 hover:bg-red-700")}
+                          className={cn("gap-1", !bcIsEmergency && "text-primary hover:bg-primary/10 border-primary/30")}
                         >
                           {launchingProduction === bc.bc_id ? (
                             <Loader2 className="h-3 w-3 animate-spin" />

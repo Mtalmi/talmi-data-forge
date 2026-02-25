@@ -79,8 +79,15 @@ function StatCard({ icon, value, label, accentColor, glowColor, bgGradient, onCl
         </div>
         <div>
           <p
-            className="text-2xl font-black tabular-nums leading-none"
-            style={{ fontFamily: 'JetBrains Mono, monospace', color: accentColor }}
+            className="tabular-nums leading-none"
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontWeight: 200,
+              fontSize: '1.75rem',
+              letterSpacing: '-0.03em',
+              color: 'white',
+              textShadow: `0 0 20px ${accentColor}40`,
+            }}
           >
             {animated}
           </p>
@@ -158,11 +165,11 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
               <Percent className="h-5 w-5" />
             </div>
             <div>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(var(--primary))', textShadow: '0 0 16px hsl(var(--primary)/0.4)' }}>
+            <div className="flex items-baseline gap-1">
+                <span className="tabular-nums leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', letterSpacing: '-0.03em', color: 'white', textShadow: '0 0 20px hsl(var(--primary)/0.4)' }}>
                   {conversionRate}
                 </span>
-                <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary)/0.7)' }}>%</span>
+                <span className="text-sm" style={{ fontWeight: 300, color: 'hsl(var(--primary)/0.5)' }}>%</span>
               </div>
               <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wide mt-1">{p.conversionRate}</p>
             </div>
@@ -249,7 +256,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                   }}
                 >
                   <FileText className="h-8 w-8" style={{ color: 'hsl(var(--warning))' }} />
-                  <p className="pipeline-count" style={{ color: 'hsl(var(--warning))' }}>{stats.devisEnAttente}</p>
+                  <p className="pipeline-count" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', letterSpacing: '-0.03em', color: 'hsl(var(--warning))' }}>{stats.devisEnAttente}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.quotes}</p>
                   <span className="status-dot status-dot-yellow" />
                 </div>
@@ -285,7 +292,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                   }}
                 >
                   <ShoppingCart className="h-8 w-8" style={{ color: 'hsl(220 90% 60%)' }} />
-                  <p className="pipeline-count" style={{ color: 'hsl(220 90% 60%)' }}>{stats.bcPretProduction}</p>
+                  <p style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', letterSpacing: '-0.03em', color: 'hsl(220 90% 60%)' }}>{stats.bcPretProduction}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.validatedBc}</p>
                   <span className="status-dot status-dot-green" />
                 </div>
@@ -315,7 +322,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                     className={cn('h-8 w-8', stats.bcEnProduction > 0 && 'animate-spin')}
                     style={{ color: 'hsl(var(--accent-teal))' }}
                   />
-                  <p className="pipeline-count" style={{ color: 'hsl(var(--accent-teal))' }}>{stats.bcEnProduction}</p>
+                  <p style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', letterSpacing: '-0.03em', color: 'hsl(var(--accent-teal))' }}>{stats.bcEnProduction}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.inProduction}</p>
                   <span className="status-dot status-dot-gold" />
                 </div>
@@ -342,7 +349,7 @@ export function PipelineStats({ stats, onStageClick }: PipelineStatsProps) {
                   }}
                 >
                   <Truck className="h-8 w-8" style={{ color: 'hsl(var(--success))' }} />
-                  <p className="pipeline-count" style={{ color: 'hsl(var(--success))' }}>{stats.bcLivre}</p>
+                  <p style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', letterSpacing: '-0.03em', color: 'hsl(var(--success))' }}>{stats.bcLivre}</p>
                   <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-wide">{p.completed}</p>
                   <span className="status-dot status-dot-green" />
                 </div>

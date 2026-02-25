@@ -48,36 +48,68 @@ export function OrderStatusTimeline({ bc, compact = false, showDeliveryProgress 
   const isComplete = volumeRestant <= 0;
 
   if (compact) {
+    const progressPct = TIMELINE_STAGES.length > 1
+      ? (effectiveStageIndex / (TIMELINE_STAGES.length - 1)) * 100
+      : 0;
     return (
-      <div className="space-y-1">
-        <div className="flex items-center gap-1">
-          {TIMELINE_STAGES.map((stage, index) => {
-            const stageComplete = index <= effectiveStageIndex;
-            const isCurrent = index === effectiveStageIndex;
-            const StageIcon = stage.icon;
-            return (
-              <Tooltip key={stage.id}>
-                <TooltipTrigger asChild>
-                  <div className={cn(
-                    "h-2 w-2 rounded-full transition-colors",
-                    stageComplete ? "bg-primary" : "bg-muted",
-                    isCurrent && "ring-2 ring-primary/30"
-                  )} />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <div className="flex items-center gap-1">
+      <div className="space-y-1.5">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="w-full">
+              {/* Horizontal progress bar replacing dots */}
+              <div
+                className="h-[5px] w-full rounded-full overflow-hidden"
+                style={{ background: 'rgba(255,255,255,0.04)' }}
+              >
+                <div
+                  className="h-full rounded-full transition-all duration-700"
+                  style={{
+                    width: `${Math.max(progressPct, 5)}%`,
+                    background: effectiveStageIndex >= 3
+                      ? 'linear-gradient(90deg, hsl(var(--success)/0.6), hsl(var(--success)))'
+                      : 'linear-gradient(90deg, hsl(var(--primary)/0.5), hsl(var(--primary)))',
+                    boxShadow: effectiveStageIndex >= 3
+                      ? '0 0 6px hsl(var(--success)/0.3)'
+                      : '0 0 6px hsl(var(--primary)/0.3)',
+                  }}
+                />
+              </div>
+              <span className="text-[10px] font-mono" style={{ color: 'rgba(148,163,184,0.5)' }}>
+                {TIMELINE_STAGES[effectiveStageIndex]?.label}
+              </span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <div className="space-y-1">
+              {TIMELINE_STAGES.map((stage, index) => {
+                const stageComplete = index <= effectiveStageIndex;
+                const isCurrent = index === effectiveStageIndex;
+                const StageIcon = stage.icon;
+                return (
+                  <div key={stage.id} className={cn("flex items-center gap-1.5 text-xs", isCurrent ? "text-primary font-medium" : stageComplete ? "text-muted-foreground" : "text-muted-foreground/40")}>
                     <StageIcon className="h-3 w-3" />
                     {stage.label}
+                    {stageComplete && index < effectiveStageIndex && " ✓"}
                     {isCurrent && ` (${o.current})`}
                   </div>
-                </TooltipContent>
-              </Tooltip>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+          </TooltipContent>
+        </Tooltip>
         {isMultiDelivery && showDeliveryProgress && (
           <div className="flex items-center gap-2">
-            <Progress value={deliveryProgress} className="h-1 flex-1" />
+            <div className="h-[3px] flex-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  width: `${Math.max(deliveryProgress, 3)}%`,
+                  background: isComplete
+                    ? 'linear-gradient(90deg, hsl(var(--success)/0.6), hsl(var(--success)))'
+                    : 'linear-gradient(90deg, hsl(var(--primary)/0.4), hsl(var(--primary)))',
+                }}
+              />
+            </div>
             <span className="text-[10px] font-mono text-muted-foreground">
               {volumeLivre}/{volumeTotal}m³
             </span>
