@@ -61,6 +61,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
   const { saveDevis } = useSalesWorkflow();
   const { t } = useI18n();
   const sq = t.smartQuoteCalc;
+  const formulaNames = (t as any).formulaNames || {};
   const { isDirecteurOperations, isCentraliste, canApproveDevis } = useAuth();
   
   // DIR_OPS and CENTRALISTE create devis but cannot approve them
@@ -150,7 +151,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
         tva,
         total_ttc: totalTTC,
       });
-      toast.success('Devis calculé');
+      toast.success(sq.quoteCalculated || 'Quote calculated');
     } finally {
       setLoading(false);
     }
@@ -221,7 +222,7 @@ export default function SmartQuoteCalculator({ variant = 'default' }: SmartQuote
                 <SelectTrigger><SelectValue placeholder={t.common?.select || 'Sélectionner...'} /></SelectTrigger>
                 <SelectContent>
                   {formules.map((f) => (
-                    <SelectItem key={f.formule_id} value={f.formule_id}>{f.formule_id} - {f.designation}</SelectItem>
+                    <SelectItem key={f.formule_id} value={f.formule_id}>{f.formule_id} - {formulaNames[f.designation] || f.designation}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

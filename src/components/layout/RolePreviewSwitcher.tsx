@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, X, Navigation } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nContext';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -32,6 +33,7 @@ interface RolePreviewSwitcherProps {
 export function RolePreviewSwitcher({ previewRole, onPreviewRoleChange }: RolePreviewSwitcherProps) {
   const { isCeo } = useAuth();
   const navigate = useNavigate();
+  const { lang } = useI18n();
   
   // Only CEO can use this feature
   if (!isCeo) return null;
@@ -67,7 +69,7 @@ export function RolePreviewSwitcher({ previewRole, onPreviewRoleChange }: RolePr
           <Button variant="ghost" size="sm" className="gap-2">
             {previewRole ? <Navigation className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             <span className="hidden sm:inline">
-              {previewRole ? 'Tester un rôle' : 'Voir comme...'}
+              {previewRole ? (lang === 'fr' ? 'Tester un rôle' : lang === 'ar' ? 'اختبار دور' : 'Test a role') : (lang === 'fr' ? 'Voir comme...' : lang === 'ar' ? 'عرض كـ...' : 'View as...')}
             </span>
           </Button>
         </DropdownMenuTrigger>

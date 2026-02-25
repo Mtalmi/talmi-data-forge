@@ -351,7 +351,7 @@ export function BcTable({
             <TableRow 
               key={bc.id} 
               className={cn(
-                "cursor-pointer hover:bg-muted/50",
+                "cursor-pointer hover:bg-white/5 transition-colors",
                 isSelected && "bg-primary/5",
                 // Emergency BC red pulse glow
                 bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
@@ -478,7 +478,7 @@ export function BcTable({
                           ) : (
                             <Factory className="h-3 w-3" />
                           )}
-                          Lancer
+                          {bt.launch || 'Launch'}
                         </Button>
                       ) : isDirecteurOperations && onSubmitForValidation ? (
                         <Tooltip>
@@ -490,7 +490,7 @@ export function BcTable({
                               className="gap-1 text-amber-600 border-amber-500 hover:bg-amber-50"
                             >
                               <Send className="h-3 w-3" />
-                              Soumettre
+                              {bt.submit || 'Submit'}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
