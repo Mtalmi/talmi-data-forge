@@ -82,18 +82,20 @@ function SectionHeader({ title }: { title: string }) {
 export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceChartsProps) {
   const { t } = useI18n();
   const vt = t.pages.ventes;
+  const formulaNames = (t as any).formulaNames || {};
   /* ── Sales by product (formule) ── */
   const productData = useMemo(() => {
     const map = new Map<string, number>();
     bcList.forEach(bc => {
-      const key = bc.formule?.designation || bc.formule_id || 'Autre';
+      const rawName = bc.formule?.designation || bc.formule_id || 'Autre';
+      const key = formulaNames[rawName] || rawName;
       map.set(key, (map.get(key) || 0) + bc.total_ht);
     });
     return Array.from(map.entries())
       .map(([name, value]) => ({ name: name.length > 20 ? name.slice(0, 18) + '…' : name, value }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 6);
-  }, [bcList]);
+  }, [bcList, formulaNames]);
 
   const totalProductRevenue = productData.reduce((s, d) => s + d.value, 0);
 

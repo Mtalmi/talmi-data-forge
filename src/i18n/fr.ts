@@ -3767,6 +3767,7 @@ const fr = {
     statusEnvoyee: 'Envoyée',
     statusPayee: 'Payée',
     statusRetard: 'En Retard',
+    totalTtc: 'Total TTC',
   },
   factureDetail: {
     references: 'Références',
@@ -3990,6 +3991,8 @@ const fr = {
     waitingValidationDesc: "Le BL en cours doit être validé par le centraliste avant d'ajouter une nouvelle livraison",
     addDelivery: 'Ajouter une livraison ({remaining} m³ restants)',
     select: 'Sélectionner',
+    launch: 'Lancer',
+    submit: 'Soumettre',
   },
   clientInvoices: {
     invoicesFor: 'Factures',
@@ -5229,7 +5232,16 @@ const fr = {
     saveQuote: 'Enregistrer Devis',
     new: 'Nouveau',
     selectFormulaPrompt: 'Sélectionnez une formule et un volume pour calculer',
+    quoteCalculated: 'Devis calculé',
   },
+  formulaNames: {
+    'Beton B25 Standard': 'Béton B25 Standard',
+    'Beton B30 Structurel': 'Béton B30 Structurel',
+    'Beton B20 Fondation': 'Béton B20 Fondation',
+    'Béton B25 Standard': 'Béton B25 Standard',
+    'Béton B30 Structurel': 'Béton B30 Structurel',
+    'Béton B20 Fondation': 'Béton B20 Fondation',
+  } as Record<string, string>,
   fleetHealth: {
     refresh: 'Actualiser',
   },

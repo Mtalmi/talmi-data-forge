@@ -3738,6 +3738,7 @@ const ar = {
     statusEnvoyee: 'مرسلة',
     statusPayee: 'مدفوعة',
     statusRetard: 'متأخرة',
+    totalTtc: 'الإجمالي شامل الضريبة',
   },
   factureDetail: {
     references: 'المراجع',
@@ -3961,6 +3962,8 @@ const ar = {
     waitingValidationDesc: 'يجب التحقق من وصل التسليم الحالي قبل إضافة تسليم جديد',
     addDelivery: 'إضافة تسليم ({remaining} م³ متبقية)',
     select: 'تحديد',
+    launch: 'إطلاق',
+    submit: 'إرسال',
   },
   clientInvoices: {
     invoicesFor: 'الفواتير',
@@ -5200,7 +5203,16 @@ const ar = {
     saveQuote: 'حفظ عرض السعر',
     new: 'جديد',
     selectFormulaPrompt: 'اختر تركيبة وحجماً للحساب',
+    quoteCalculated: 'تم حساب عرض السعر',
   },
+  formulaNames: {
+    'Beton B25 Standard': 'خرسانة B25 قياسية',
+    'Beton B30 Structurel': 'خرسانة B30 هيكلية',
+    'Beton B20 Fondation': 'خرسانة B20 أساسات',
+    'Béton B25 Standard': 'خرسانة B25 قياسية',
+    'Béton B30 Structurel': 'خرسانة B30 هيكلية',
+    'Béton B20 Fondation': 'خرسانة B20 أساسات',
+  } as Record<string, string>,
   fleetHealth: {
     refresh: 'تحديث',
   },

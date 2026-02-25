@@ -3746,6 +3746,7 @@ const en = {
     statusEnvoyee: 'Sent',
     statusPayee: 'Paid',
     statusRetard: 'Overdue',
+    totalTtc: 'Total Incl. Tax',
   },
   factureDetail: {
     references: 'References',
@@ -3950,7 +3951,7 @@ const en = {
     toInvoice: 'To invoice',
     linkedBls: 'Linked BL(s)',
     statusWaitingAdmin: 'Waiting Admin',
-    statusReadyProd: 'Ready Production',
+    statusReadyProd: 'Ready for Production',
     statusInProd: 'In Production',
     statusInDelivery: 'In Delivery',
     statusReturning: 'Returning',
@@ -3969,6 +3970,8 @@ const en = {
     waitingValidationDesc: 'The current delivery note must be validated by the operator before adding a new delivery',
     addDelivery: 'Add a delivery ({remaining} m³ remaining)',
     select: 'Select',
+    launch: 'Launch',
+    submit: 'Submit',
   },
   clientInvoices: {
     invoicesFor: 'Invoices',
@@ -5208,7 +5211,16 @@ const en = {
     saveQuote: 'Save Quote',
     new: 'New',
     selectFormulaPrompt: 'Select a formula and volume to calculate',
+    quoteCalculated: 'Quote calculated',
   },
+  formulaNames: {
+    'Beton B25 Standard': 'Standard Concrete B25',
+    'Beton B30 Structurel': 'Structural Concrete B30',
+    'Beton B20 Fondation': 'Foundation Concrete B20',
+    'Béton B25 Standard': 'Standard Concrete B25',
+    'Béton B30 Structurel': 'Structural Concrete B30',
+    'Béton B20 Fondation': 'Foundation Concrete B20',
+  } as Record<string, string>,
   fleetHealth: {
     refresh: 'Refresh',
   },
