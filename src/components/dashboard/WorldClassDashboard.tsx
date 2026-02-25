@@ -212,7 +212,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
         <div
           className="h-full rounded-full transition-all duration-1000"
           style={{
-            width: `${pct}%`,
+            width: `${Math.max(pct, 3)}%`,
             background: isLow
               ? 'linear-gradient(90deg, #F87171, #FB923C)'
               : 'linear-gradient(90deg, #C4933B, #FDB913)',
@@ -424,7 +424,7 @@ const FALLBACK_STOCK = [
   { name: 'Sable', current: 120000, max: 300000, unit: 'm3' },
   { name: 'Gravette', current: 85000, max: 250000, unit: 'm3' },
   { name: 'Adjuvant', current: 200, max: 2000, unit: 'L' },
-  { name: 'Eau', current: 15000, max: 999999, unit: 'L' },
+  { name: 'Eau', current: 15000, max: 50000, unit: 'L' },
 ];
 
 const EMPTY_AR = [
