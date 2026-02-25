@@ -162,7 +162,7 @@ export function QuickClientCreate({ onClientCreated }: QuickClientCreateProps) {
                 id="telephone"
                 value={telephone}
                 onChange={(e) => { setTelephone(e.target.value); clearError('telephone'); }}
-                placeholder="06 XX XX XX XX"
+                placeholder="+212 6XX XXX XXX"
                 className={errors.telephone ? 'border-destructive' : ''}
               />
               {errors.telephone && <p className="text-xs text-destructive">{errors.telephone}</p>}
