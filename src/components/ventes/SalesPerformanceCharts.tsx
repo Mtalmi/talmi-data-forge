@@ -137,12 +137,11 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         }}
       >
         <CardHeader className="pb-3 pt-4" style={{ borderBottom: '1px solid hsl(var(--border)/0.4)' }}>
-          <CardTitle className="text-sm font-bold uppercase tracking-[0.08em] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg" style={{ background: 'hsl(var(--primary)/0.12)' }}>
-              <Trophy className="h-3.5 w-3.5" style={{ color: GOLD }} />
-            </div>
-            CA par Formule
-          </CardTitle>
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.3), rgba(253,185,19,0.05), transparent)' }} />
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', color: 'rgba(253,185,19,0.5)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>CA par Formule</span>
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.3))' }} />
+          </div>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {productData.length > 0 ? (
@@ -215,12 +214,11 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         }}
       >
         <CardHeader className="pb-3 pt-4" style={{ borderBottom: '1px solid hsl(var(--border)/0.4)' }}>
-          <CardTitle className="text-sm font-bold uppercase tracking-[0.08em] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg" style={{ background: 'hsl(var(--primary)/0.12)' }}>
-              <Target className="h-3.5 w-3.5" style={{ color: 'hsl(var(--primary))' }} />
-            </div>
-            Pipeline par Statut
-          </CardTitle>
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.3), rgba(253,185,19,0.05), transparent)' }} />
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', color: 'rgba(253,185,19,0.5)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Pipeline par Statut</span>
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.3))' }} />
+          </div>
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {statusRevenueData.length > 0 ? (
@@ -278,13 +276,14 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         }}
       >
         <CardHeader className="pb-3 pt-4" style={{ borderBottom: '1px solid hsl(var(--border)/0.4)' }}>
-          <CardTitle className="text-sm font-bold uppercase tracking-[0.08em] flex items-center gap-2">
-            <div className="p-1.5 rounded-lg" style={{ background: 'hsl(var(--primary)/0.12)' }}>
-              <TrendingUp className="h-3.5 w-3.5" style={{ color: 'hsl(var(--primary))' }} />
-            </div>
-            Analyse Devis
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.3), rgba(253,185,19,0.05), transparent)' }} />
+            <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.2em', color: 'rgba(253,185,19,0.5)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Analyse Devis</span>
+            <div className="h-px flex-1" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.3))' }} />
+          </div>
+          {winRate > 0 && (
             <Badge
-              className="ml-auto text-[10px] font-bold"
+              className="ml-auto text-[10px] font-bold mt-2"
               style={{
                 background: winRate >= 50 ? 'hsl(var(--success)/0.12)' : 'hsl(var(--destructive)/0.12)',
                 color: winRate >= 50 ? SUCCESS : DESTRUCTIVE,
@@ -293,7 +292,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             >
               {winRate}% taux
             </Badge>
-          </CardTitle>
+          )}
         </CardHeader>
         <CardContent className="pt-4 space-y-4">
           {/* Summary chips */}

@@ -529,7 +529,7 @@ export default function Ventes() {
               </Button>
               <CommunicationLogDrawer />
               <ActivityHistoryDrawer />
-              <KeyboardShortcutsHint />
+              
             </div>
           </div>
 
