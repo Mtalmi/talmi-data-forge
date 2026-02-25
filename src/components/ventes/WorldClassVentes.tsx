@@ -173,10 +173,10 @@ function PipelineSection() {
   }, []);
 
   const kpiLabels = [
-    { label: vt.pipelineTotal, value: 847, suffix: 'K DH', trend: '↑ 12%', trendLabel: 'vs last month', trendColor: '#10B981' },
+    { label: vt.pipelineTotal, value: 847, suffix: 'K DH', trend: '↑ 12%', trendLabel: vt.vsLastMonth, trendColor: '#10B981' },
     { label: vt.conversionRateLabel, value: 34, suffix: '%', trend: '→', trendLabel: 'stable', trendColor: 'rgba(255,255,255,0.4)' },
     { label: vt.averageDealSize, value: 42, suffix: 'K DH', trend: '↑ 5%', trendLabel: '', trendColor: '#10B981' },
-    { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}`, trend: '↓ 3 days', trendLabel: '', trendColor: '#10B981' },
+    { label: vt.salesCycle, value: 28, suffix: ` ${vt.days}`, trend: `↓ 3 ${vt.trendDays}`, trendLabel: '', trendColor: '#10B981' },
   ];
 
   return (

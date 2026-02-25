@@ -98,7 +98,7 @@ export function DevisCardMobile({
           {hasClient ? (
             <p className="text-base font-semibold text-foreground">{clientName}</p>
           ) : (
-            <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">Unassigned</span>
+            <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">{t.devisTable.unassigned}</span>
           )}
         </div>
         <DropdownMenu>

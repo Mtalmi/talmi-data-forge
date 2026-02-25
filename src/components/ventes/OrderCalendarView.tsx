@@ -241,7 +241,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
             <div className="text-center py-8 text-muted-foreground">
               <CalendarIcon className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p className="text-sm font-medium text-white/70 mb-1">{format(currentMonth, 'MMMM yyyy', { locale: dateLocale })}</p>
-              <p className="text-sm font-medium text-amber-400">{monthSummary.deliveries} deliveries · {monthSummary.totalVolume}m³ total</p>
+              <p className="text-sm font-medium text-amber-400">{monthSummary.deliveries} {oc.deliveriesLabel} · {monthSummary.totalVolume}m³ {oc.totalLabel}</p>
               <p className="text-sm mt-3 text-muted-foreground">{oc.clickDateToView}</p>
             </div>
           ) : selectedDateOrders.length === 0 ? (

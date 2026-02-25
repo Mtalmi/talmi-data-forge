@@ -1044,6 +1044,8 @@ const en = {
       days: 'days',
       conv: 'conv.',
       live: 'LIVE',
+      vsLastMonth: 'vs last month',
+      trendDays: 'days',
     },
     planning: {
       title: 'Planning & Dispatch',
@@ -3009,7 +3011,7 @@ const en = {
     statuses: {
       en_attente: 'Pending',
       en_attente_validation: 'Pending Admin',
-      pret_production: 'Ready Production',
+      pret_production: 'Ready for Production',
       valide: 'Validated',
       en_production: 'In Production',
       livre: 'Delivered',
@@ -3042,7 +3044,7 @@ const en = {
     refused: 'Refused',
     bcSummary: 'Purchase Order Summary',
     totalBC: 'Total POs',
-    readyProduction: 'Ready Production',
+    readyProduction: 'Ready for Production',
     inProduction: 'In Production',
     deliveredLabel: 'Delivered',
   },
@@ -3917,6 +3919,8 @@ const en = {
     clickDateToView: 'Click a date to view orders',
     noOrdersPlanned: 'No orders planned',
     others: 'others',
+    deliveriesLabel: 'deliveries',
+    totalLabel: 'total',
     ready: 'Ready',
     inProduction: 'In Production',
     completedDelivered: 'Completed/Delivered',
@@ -4251,6 +4255,7 @@ const en = {
     statusError: 'Error updating status',
     approvedBy: 'Quote approved by',
     approvalError: 'Error during approval',
+    unassigned: 'Unassigned',
   },
   revenueForecast: {
     title: 'Revenue Forecast',

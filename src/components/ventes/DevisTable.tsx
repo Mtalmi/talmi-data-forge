@@ -394,7 +394,7 @@ export function DevisTable({
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
                   ) : (
-                    <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">Unassigned</span>
+                    <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">{dt.unassigned}</span>
                   )}
                 </TableCell>
                 <TableCell>

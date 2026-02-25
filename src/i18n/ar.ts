@@ -1036,6 +1036,8 @@ const ar = {
       days: 'أيام',
       conv: 'تحويل',
       live: 'مباشر',
+      vsLastMonth: 'مقابل الشهر الماضي',
+      trendDays: 'أيام',
     },
     planning: {
       title: 'التخطيط والإرسال',
@@ -3909,6 +3911,8 @@ const ar = {
     clickDateToView: 'انقر على تاريخ لعرض الطلبات',
     noOrdersPlanned: 'لا توجد طلبات مخططة',
     others: 'أخرى',
+    deliveriesLabel: 'توصيلات',
+    totalLabel: 'إجمالي',
     ready: 'جاهز',
     inProduction: 'قيد الإنتاج',
     completedDelivered: 'مكتمل/مُسلَّم',
@@ -4243,6 +4247,7 @@ const ar = {
     statusError: 'خطأ في تحديث الحالة',
     approvedBy: 'تمت الموافقة على العرض بواسطة',
     approvalError: 'خطأ أثناء الموافقة',
+    unassigned: 'غير معيّن',
   },
   revenueForecast: {
     title: 'توقعات الإيرادات',
