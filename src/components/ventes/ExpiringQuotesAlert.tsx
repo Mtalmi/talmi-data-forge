@@ -6,6 +6,7 @@ import { Devis } from '@/hooks/useSalesWorkflow';
 import { differenceInDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
+import { formatMontant } from '@/utils/formatters';
 
 interface ExpiringQuotesAlertProps {
   devisList: Devis[];
@@ -98,7 +99,7 @@ export function ExpiringQuotesAlert({ devisList, onViewExpiring, onDismiss }: Ex
               : eq.expiringIn7Days.replace('{count}', String(expiringQuotes.length))}
             {' '}
             <span className="font-medium">
-              {eq.totalValue}: {totalValue.toLocaleString()} DH
+              {eq.totalValue}: {formatMontant(totalValue)} DH
             </span>
           </p>
 

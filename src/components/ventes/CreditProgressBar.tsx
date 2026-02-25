@@ -3,6 +3,7 @@ import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, Ban, Check, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { hapticError, hapticWarning } from '@/lib/haptics';
+import { formatMontant } from '@/utils/formatters';
 
 interface CreditProgressBarProps {
   usedCredit: number;
@@ -129,13 +130,13 @@ export function CreditProgressBar({
               isOverLimit && 'text-destructive'
             )}
           >
-            {usedCredit.toLocaleString()} DH
+            {formatMontant(usedCredit)} DH
           </span>
         </div>
         <div className="text-muted-foreground">
           Limite:{' '}
           <span className="font-mono font-semibold">
-            {totalLimit.toLocaleString()} DH
+            {formatMontant(totalLimit)} DH
           </span>
         </div>
       </div>
@@ -146,7 +147,7 @@ export function CreditProgressBar({
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">Crédit Disponible:</span>
             <span className="font-mono font-semibold text-success">
-              {available.toLocaleString()} DH
+              {formatMontant(available)} DH
             </span>
           </div>
         </div>
@@ -158,7 +159,7 @@ export function CreditProgressBar({
           <div className="flex items-center gap-2 mb-2">
             <Ban className="h-4 w-4 text-destructive" />
             <span className="text-sm font-semibold text-destructive">
-              Dépassement: {(usedCredit - totalLimit).toLocaleString()} DH
+              Dépassement: {formatMontant(usedCredit - totalLimit)} DH
             </span>
           </div>
           <Button

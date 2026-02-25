@@ -12,6 +12,7 @@ import { FacturePdfGenerator } from '@/components/documents/FacturePdfGenerator'
 import { FacturePdfProGenerator } from '@/components/documents/FacturePdfProGenerator';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
+import { formatMontant } from '@/utils/formatters';
 
 interface Facture {
   id: string;
@@ -177,23 +178,23 @@ export function FactureDetailDialog({ facture, open, onOpenChange }: FactureDeta
                   </div>
                   <div className="text-right">
                     <p className="font-mono">{facture.volume_m3} m³</p>
-                    <p className="text-sm text-muted-foreground">{facture.prix_vente_m3.toLocaleString()} DH/m³</p>
+                    <p className="text-sm text-muted-foreground">{formatMontant(facture.prix_vente_m3)} DH/m³</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{c.totalHT}</span>
-                    <span className="font-mono">{facture.total_ht.toLocaleString()} DH</span>
+                    <span className="font-mono">{formatMontant(facture.total_ht)} DH</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{c.tax} ({facture.tva_pct}%)</span>
-                    <span className="font-mono">{tvaAmount.toLocaleString()} DH</span>
+                    <span className="font-mono">{formatMontant(tvaAmount)} DH</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-semibold text-lg">
                     <span>Total TTC</span>
-                    <span className="font-mono text-primary">{facture.total_ttc.toLocaleString()} DH</span>
+                    <span className="font-mono text-primary">{formatMontant(facture.total_ttc)} DH</span>
                   </div>
                 </div>
 
@@ -222,13 +223,13 @@ export function FactureDetailDialog({ facture, open, onOpenChange }: FactureDeta
                   {facture.cur_reel !== null && (
                     <div className="text-center p-3 rounded-lg bg-muted/50">
                       <p className="text-xs text-muted-foreground mb-1">{fd.curReal}</p>
-                      <p className="font-mono font-semibold">{facture.cur_reel.toLocaleString()} DH/m³</p>
+                      <p className="font-mono font-semibold">{formatMontant(facture.cur_reel)} DH/m³</p>
                     </div>
                   )}
                   {facture.marge_brute_dh !== null && (
                     <div className="text-center p-3 rounded-lg bg-muted/50">
                       <p className="text-xs text-muted-foreground mb-1">{fd.grossMargin}</p>
-                      <p className="font-mono font-semibold">{facture.marge_brute_dh.toLocaleString()} DH</p>
+                      <p className="font-mono font-semibold">{formatMontant(facture.marge_brute_dh)} DH</p>
                     </div>
                   )}
                   {facture.marge_brute_pct !== null && (
