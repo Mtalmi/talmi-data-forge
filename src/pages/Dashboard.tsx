@@ -408,8 +408,7 @@ export default function Dashboard() {
           <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.4em] text-slate-600 mb-2 font-light">Command Center</p>
-                <h1 className="text-[38px] font-extralight text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>
+            <h1 className="text-[38px] font-extralight text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>
                   {typedName || '\u00A0'}<span className="text-[38px] font-extralight" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
                   {showCursor && <span className="inline-block w-[2px] h-[36px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                 </h1>
@@ -425,9 +424,9 @@ export default function Dashboard() {
                   <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
                 </div>
               </div>
-              {/* Live clock */}
+              {/* Live clock — tiny reference */}
               <div className="hidden md:flex flex-col items-end">
-                <span className="text-[28px] font-extralight text-white/20 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", letterSpacing: '-0.02em' }}>{timeStr}</span>
+                <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
               </div>
             </div>
           </div>
@@ -503,16 +502,24 @@ export default function Dashboard() {
 
               {/* Main number with count-up — JetBrains Mono luminescent gauge */}
               <div className="flex items-baseline gap-2 leading-none">
-                <span className="font-mono tracking-tight text-white/95 tabular-nums" style={{
-                  fontSize: '2.75rem',
+                <span style={{
+                  fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
                   fontWeight: 200,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  textShadow: '0 0 30px rgba(253,185,19,0.2), 0 0 60px rgba(253,185,19,0.08)',
-                  letterSpacing: '-0.04em',
+                  fontSize: '3rem',
+                  color: 'white',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1,
+                  textShadow: '0 0 35px rgba(253,185,19,0.2), 0 0 70px rgba(253,185,19,0.07)',
                 }}>
                   {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                 </span>
-                <span className="text-[13px] font-light text-white/20">{kpi.unit}</span>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontWeight: 300,
+                  fontSize: '14px',
+                  color: 'rgba(255,255,255,0.3)',
+                  marginLeft: '4px',
+                }}>{kpi.unit}</span>
               </div>
 
               {/* Sub info */}
@@ -727,29 +734,11 @@ export default function Dashboard() {
           onDismiss={dismissAlert}
         />
 
-        {/* Cinematic Section Transition — Opérations */}
-        <div className="relative mt-10 mb-8 py-6">
-          {/* Ambient golden line glow */}
-          <div className="absolute inset-0 flex items-center pointer-events-none">
-            <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(253,185,19,0.08) 30%, rgba(253,185,19,0.15) 50%, rgba(253,185,19,0.08) 70%, transparent 95%)' }} />
-          </div>
-          {/* Label with diamond accents */}
-          <div className="relative z-10 flex items-center justify-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.3)' }} />
-              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.5)' }} />
-            </div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.4em] px-5 py-1.5 rounded-full" style={{ 
-              color: 'rgba(253,185,19,0.6)', 
-              background: 'linear-gradient(135deg, rgba(253,185,19,0.06), rgba(253,185,19,0.02))',
-              border: '1px solid rgba(253,185,19,0.1)',
-              backdropFilter: 'blur(12px)',
-            }}>Opérations</span>
-            <div className="flex items-center gap-2">
-              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.5)' }} />
-              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.3)' }} />
-            </div>
-          </div>
+        {/* Section Divider — Opérations */}
+        <div className="relative mt-10 mb-8 flex items-center gap-4">
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
+          <span className="text-[10px] font-medium uppercase tracking-[0.35em]" style={{ color: 'rgba(253,185,19,0.5)' }}>Opérations</span>
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
         </div>
 
         {/* ══════════════════════════════════════════════════
@@ -759,27 +748,11 @@ export default function Dashboard() {
           <WorldClassDashboard />
         </Suspense>
 
-        {/* Cinematic Section Transition — Finance */}
-        <div className="relative mt-12 mb-8 py-6">
-          <div className="absolute inset-0 flex items-center pointer-events-none">
-            <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(253,185,19,0.06) 30%, rgba(253,185,19,0.12) 50%, rgba(253,185,19,0.06) 70%, transparent 95%)' }} />
-          </div>
-          <div className="relative z-10 flex items-center justify-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.25)' }} />
-              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.4)' }} />
-            </div>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.4em] px-5 py-1.5 rounded-full" style={{ 
-              color: 'rgba(253,185,19,0.5)', 
-              background: 'linear-gradient(135deg, rgba(253,185,19,0.04), rgba(253,185,19,0.015))',
-              border: '1px solid rgba(253,185,19,0.08)',
-              backdropFilter: 'blur(12px)',
-            }}>Finance & Conformité</span>
-            <div className="flex items-center gap-2">
-              <span className="block w-1.5 h-1.5 rotate-45" style={{ background: 'rgba(253,185,19,0.4)' }} />
-              <span className="block w-1 h-1 rotate-45" style={{ background: 'rgba(253,185,19,0.25)' }} />
-            </div>
-          </div>
+        {/* Section Divider — Finance */}
+        <div className="relative mt-12 mb-8 flex items-center gap-4">
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.12))' }} />
+          <span className="text-[10px] font-medium uppercase tracking-[0.35em]" style={{ color: 'rgba(253,185,19,0.4)' }}>Finance & Conformité</span>
+          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.12), transparent)' }} />
         </div>
 
         {/* ══════════════════════════════════════════════════

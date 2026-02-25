@@ -129,6 +129,8 @@ export default function RecentDeliveries() {
         el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
       }}
     >
+      {/* Category accent — emerald for logistics */}
+      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #10B981, transparent)' }} />
       {/* Top highlight edge */}
       <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
       {/* Gradient border glow on hover */}

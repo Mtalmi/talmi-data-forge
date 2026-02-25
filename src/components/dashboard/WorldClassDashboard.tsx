@@ -196,65 +196,32 @@ function SkeletonCard({ height = 200 }: { height?: number }) {
 // ═══════════════════════════════════════════════════════
 // RADIAL GAUGE — Porsche Instrument Cluster
 // ═══════════════════════════════════════════════════════
-function RadialGauge({ name, current, max, unit }: { name: string; current: number; max: number; unit: string }) {
-  const pct = Math.min((current / max) * 100, 100);
-  const radius = 32;
-  const strokeWidth = 3;
-  const circumference = 2 * Math.PI * radius;
-  const arcLength = circumference * 0.75; // 270° arc
-  const dashOffset = arcLength - (arcLength * pct) / 100;
-  const isLow = pct < 20;
-  const isMid = pct < 40;
-  const color = isLow ? '#F87171' : isMid ? '#FBBF24' : T.gold;
+function HorizontalStockBar({ name, current, max, unit }: { name: string; current: number; max: number; unit: string }) {
+  const pct = Math.min(Math.round((current / max) * 100), 100);
+  const isLow = pct < 25;
 
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="relative" style={{ width: 76, height: 64 }}>
-        <svg width="76" height="64" viewBox="0 0 76 64">
-          {/* Background arc */}
-          <circle
-            cx="38" cy="38" r={radius}
-            fill="none"
-            stroke="rgba(255,255,255,0.04)"
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${arcLength} ${circumference}`}
-            strokeDashoffset={0}
-            strokeLinecap="round"
-            transform="rotate(135 38 38)"
-          />
-          {/* Value arc */}
-          <circle
-            cx="38" cy="38" r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
-            strokeDasharray={`${arcLength} ${circumference}`}
-            strokeDashoffset={dashOffset}
-            strokeLinecap="round"
-            transform="rotate(135 38 38)"
-            style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)', filter: `drop-shadow(0 0 4px ${color}40)` }}
-          />
-          {/* Glow arc */}
-          <circle
-            cx="38" cy="38" r={radius}
-            fill="none"
-            stroke={color}
-            strokeWidth={6}
-            strokeOpacity={0.08}
-            strokeDasharray={`${arcLength} ${circumference}`}
-            strokeDashoffset={dashOffset}
-            strokeLinecap="round"
-            transform="rotate(135 38 38)"
-            style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1)' }}
-          />
-        </svg>
-        {/* Center value */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center" style={{ paddingTop: 8 }}>
-          <span className="text-[14px] font-extralight font-mono text-white tabular-nums leading-none">{Math.round(pct)}%</span>
-        </div>
+    <div className="py-2">
+      <div className="flex justify-between items-baseline mb-1.5">
+        <span className="text-[11px] text-white/80">{name}</span>
+        <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.5)' }}>
+          {current.toLocaleString()} / {max.toLocaleString()} {unit}
+        </span>
       </div>
-      <span className="text-[9px] uppercase tracking-[0.15em] text-slate-500 text-center leading-tight">{name}</span>
-      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{current >= 1000 ? `${(current/1000).toFixed(0)}K` : current} {unit}</span>
+      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
+        <div
+          className="h-full rounded-full transition-all duration-1000"
+          style={{
+            width: `${pct}%`,
+            background: isLow
+              ? 'linear-gradient(90deg, #F87171, #FB923C)'
+              : 'linear-gradient(90deg, #C4933B, #FDB913)',
+            boxShadow: isLow
+              ? '0 0 8px rgba(248,113,113,0.3)'
+              : '0 0 6px rgba(253,185,19,0.15)',
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -356,6 +323,8 @@ function AIAnalystBrief() {
 
   return (
     <Card className="tbos-card-enter">
+      {/* Category accent — purple for AI */}
+      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #8B5CF6, transparent)' }} />
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))' }}>
@@ -412,15 +381,17 @@ function PipelineFunnel() {
 
   return (
     <Card className="tbos-card-enter">
+      {/* Category accent — gold for financial */}
+      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
       <div className="flex justify-between items-center mb-5">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
-        <span className="text-[20px] font-extralight font-mono text-white tabular-nums">67<span className="text-[11px] text-white/30">%</span></span>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', color: 'white', textShadow: '0 0 25px rgba(253,185,19,0.15)' }}>67<span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>%</span></span>
       </div>
       
       <div className="flex items-end gap-1" style={{ height: 80 }}>
         {stages.map((s, i) => (
           <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
-            <span className="text-[16px] font-extralight font-mono text-white tabular-nums">{s.value}</span>
+            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 300, fontSize: '1.5rem', color: 'white' }}>{s.value}</span>
             <div
               className="w-full rounded-sm transition-all duration-1000"
               style={{
@@ -430,7 +401,7 @@ function PipelineFunnel() {
                 animation: `tbos-bar-grow 1s cubic-bezier(0.4,0,0.2,1) ${0.15 * i}s both`,
               }}
             />
-            <span className="text-[8px] uppercase tracking-[0.12em] text-slate-600">{s.label}</span>
+            <span style={{ fontSize: '8px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgba(148,163,184,0.4)' }}>{s.label}</span>
           </div>
         ))}
       </div>
@@ -667,6 +638,8 @@ export function WorldClassDashboard() {
           <div className="space-y-5">
             {/* Daily Production Chart */}
             <Card className="tbos-card-enter tbos-stagger-1" style={{ height: 280 }}>
+              {/* Category accent — teal for production */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
@@ -719,6 +692,8 @@ export function WorldClassDashboard() {
 
             {/* Batch Timeline */}
             <Card className="tbos-card-enter tbos-stagger-2">
+              {/* Category accent — teal for production */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: T.dotOk }} />
@@ -735,12 +710,14 @@ export function WorldClassDashboard() {
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
           <div className="space-y-5">
-            {/* Stock Levels — Radial Gauges */}
+            {/* Stock Levels — Horizontal Bars */}
             <Card className="tbos-card-enter tbos-stagger-4">
-              <div className="text-[14px] font-medium text-white/90 mb-5">Niveaux de Stock</div>
-              <div className="grid grid-cols-3 gap-3">
+              {/* Category accent — teal for production */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
+              <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
+              <div className="flex flex-col">
                 {stockData.slice(0, 6).map((s, i) => (
-                  <RadialGauge key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
+                  <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
                 ))}
               </div>
             </Card>
@@ -750,6 +727,8 @@ export function WorldClassDashboard() {
 
             {/* Quality feed — Compact */}
             <Card className="tbos-card-enter tbos-stagger-6">
+              {/* Category accent — emerald for quality */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #10B981, transparent)' }} />
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
@@ -775,8 +754,10 @@ export function WorldClassDashboard() {
 
           {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-5">
-            {/* Créances — Minimal Horizontal Bars */}
+            {/* Créances — Aging Gold-Fade System */}
             <Card className="tbos-card-enter tbos-stagger-7">
+              {/* Category accent — gold for financial */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
@@ -792,22 +773,24 @@ export function WorldClassDashboard() {
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
                   const isOverdue = i === 3;
+                  // Aging gold-fade system
+                  const barStyle = isOverdue
+                    ? { background: 'linear-gradient(90deg, #FF6B6B, #FB923C)', boxShadow: '0 0 6px rgba(255,107,107,0.2)', opacity: 0.9 }
+                    : i === 0
+                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', boxShadow: '0 0 6px rgba(253,185,19,0.15)', opacity: 1 }
+                    : i === 1
+                    ? { background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.65 }
+                    : { background: 'linear-gradient(90deg, #C4933B, #E8B84B)', opacity: 0.35 };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
-                        <span className="text-[10px] font-mono text-slate-500 tabular-nums">{d.label}</span>
-                        <span className="text-[10px] font-mono text-slate-400 tabular-nums">{(d.value / 1000).toFixed(0)}K</span>
+                        <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.5)' }}>{d.label}</span>
+                        <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.6)' }}>{(d.value / 1000).toFixed(0)}K</span>
                       </div>
-                      <div className="h-[3px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
                         <div
                           className="h-full rounded-full transition-all duration-1000"
-                          style={{
-                            width: `${pct}%`,
-                            background: isOverdue
-                              ? 'linear-gradient(90deg, #F87171, #FB923C)'
-                              : `linear-gradient(90deg, ${T.gold}, ${T.goldBright})`,
-                            opacity: isOverdue ? 0.9 : AR_OPACITIES[i] * 0.7,
-                          }}
+                          style={{ width: `${pct}%`, ...barStyle }}
                         />
                       </div>
                     </div>
@@ -821,6 +804,8 @@ export function WorldClassDashboard() {
 
             {/* Daily P&L Signature Metric */}
             <Card className="tbos-card-enter tbos-stagger-9">
+              {/* Category accent — gold for financial */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="text-center py-4 relative">
                 {/* Golden ambient behind number */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, transparent 70%)', filter: 'blur(30px)' }} />
