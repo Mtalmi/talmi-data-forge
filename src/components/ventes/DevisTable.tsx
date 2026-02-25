@@ -320,24 +320,21 @@ export function DevisTable({
     return null;
   };
 
-  const renderPriorityBadge = (devis: Devis) => {
+  const renderPriorityIndicator = (devis: Devis) => {
     const priority = isHighPriority(devis);
-    if (!priority.isPriority) return null;
+    if (!priority.isPriority) {
+      return <Star className="h-4 w-4 text-white/15" />;
+    }
     
     return (
       <Tooltip>
         <TooltipTrigger>
-          <Badge 
-            variant="outline" 
-            className="gap-1 bg-amber-500/10 text-amber-600 border-amber-500/30"
-          >
-            <Star className="h-3 w-3 fill-current" />
-          </Badge>
+          <Star className="h-4 w-4 text-amber-400 fill-amber-400" />
         </TooltipTrigger>
         <TooltipContent>
           <div className="flex items-center gap-1">
             <Zap className="h-3 w-3" />
-            Priorité: {priority.reason}
+            {priority.reason}
           </div>
         </TooltipContent>
       </Tooltip>
@@ -371,14 +368,15 @@ export function DevisTable({
           {devisList.map((devis) => {
             const statusConfig = DEVIS_STATUS_CONFIG[devis.statut] || DEVIS_STATUS_CONFIG.en_attente;
             const expirationBadge = renderExpirationBadge(devis);
-            const priorityBadge = renderPriorityBadge(devis);
+            const priorityIndicator = renderPriorityIndicator(devis);
             const isSelected = selectedIds.includes(devis.id);
             
             return (
               <TableRow 
                 key={devis.id}
                 className={cn(
-                  "cursor-pointer hover:bg-muted/50 transition-colors",
+                  "cursor-pointer transition-colors duration-150 border-b border-white/5",
+                  "hover:bg-white/5",
                   getExpirationInfo && getExpirationInfo(devis).isExpired && "opacity-60 bg-muted/30",
                   isSelected && "bg-primary/5"
                 )}
@@ -396,15 +394,15 @@ export function DevisTable({
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
                   ) : (
-                    '—'
+                    <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">Unassigned</span>
                   )}
                 </TableCell>
                 <TableCell>
                   <span className="text-xs">{devis.formule_id}</span>
                 </TableCell>
                 <TableCell className="text-right font-mono">{devis.volume_m3} m³</TableCell>
-                <TableCell className="text-right font-mono font-medium">
-                  {devis.total_ht.toLocaleString()} DH
+                <TableCell className="text-right font-mono font-semibold">
+                  {devis.total_ht.toLocaleString()}<span className="font-normal text-white/50 ml-1">DH</span>
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-1 flex-wrap">
@@ -469,10 +467,10 @@ export function DevisTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {priorityBadge || <span className="text-muted-foreground">—</span>}
+                  {priorityIndicator}
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-1 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-nowrap">
                     {/* Technical Approval Badge for special formulas */}
                     {(devis as any).requires_technical_approval && (
                       <TechnicalApprovalBadge
@@ -536,13 +534,13 @@ export function DevisTable({
                           {dt.validate}
                         </Button>
                       ) : isCreator(devis) ? (
-                        <span className="text-[10px] italic" style={{ color: 'rgba(253,185,19,0.5)' }}>
+                        <span className="text-xs text-amber-400 bg-amber-500/10 rounded-full px-2 py-0.5 whitespace-nowrap">
                           {dt.awaitingThirdParty}
                         </span>
                       ) : isReadOnlyRole ? (
-                        <Badge variant="outline" className="text-[10px]" style={{ color: 'rgba(253,185,19,0.6)', borderColor: 'rgba(253,185,19,0.2)', background: 'rgba(253,185,19,0.05)' }}>
+                        <span className="text-xs text-amber-400 bg-amber-500/10 rounded-full px-2 py-0.5 whitespace-nowrap">
                           {dt.awaitingValidation}
-                        </Badge>
+                        </span>
                       ) : null
                     )}
                     
@@ -559,7 +557,7 @@ export function DevisTable({
                     )}
                     
                     {devis.statut === 'en_attente' && !devis.client_id && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-xs text-red-400 bg-red-500/10 rounded-full px-2 py-0.5 whitespace-nowrap">
                         {dt.clientRequired}
                       </span>
                     )}
