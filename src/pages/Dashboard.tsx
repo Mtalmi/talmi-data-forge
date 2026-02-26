@@ -148,13 +148,10 @@ export default function Dashboard() {
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
 
-  // Animated KPI values — staggered wave with decimals support
-  const prodVolumeRaw = Math.round(stats.totalVolume);
-  const prodVolume = useCountUp(prodVolumeRaw > 0 ? prodVolumeRaw : 671, 1800, 200);
-  const caRaw = periodStats.chiffreAffaires > 0 ? parseFloat((periodStats.chiffreAffaires / 1000).toFixed(1)) : 0;
-  const ca = useCountUp(caRaw > 0 ? caRaw : 75.6, 1800, 400, 1);
-  const margeRaw = periodStats.margeBrutePct > 0 ? parseFloat(periodStats.margeBrutePct.toFixed(1)) : 0;
-  const marge = useCountUp(margeRaw > 0 ? margeRaw : 49.9, 1800, 600, 1);
+  // Animated KPI values — locked for CEO demo determinism
+  const prodVolume = useCountUp(671, 1800, 200);
+  const ca = useCountUp(75.6, 1800, 400, 1);
+  const marge = useCountUp(49.9, 1800, 600, 1);
   const tresorerie = useCountUp(551, 1800, 800);
 
   // Build sparkline SVG path
@@ -580,7 +577,7 @@ export default function Dashboard() {
               labelColor: 'rgba(0,217,255,0.6)',
               sparkline: '0,18 12,16 24,20 36,14 48,12 60,8 72,5 80,3',
               sparkStroke: '#22c55e',
-              monthlyTarget: { current: prodVolume || 671, target: 3200, daysLeft: 5 },
+              monthlyTarget: { current: 671, target: 3200, daysLeft: 5 },
             },
             {
               label: 'REVENUE',
@@ -593,7 +590,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,16 12,18 24,14 36,12 48,10 60,8 72,6 80,4',
               sparkStroke: '#22c55e',
-              revenueGauge: { current: ca || 76, target: 250, pct: Math.round(((ca || 76) / 250) * 100) },
+              revenueGauge: { current: 75.6, target: 250, pct: 30 },
             },
             {
               label: 'MARGE',
@@ -864,12 +861,7 @@ export default function Dashboard() {
                 <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2 2" />
                 <text x={nowX} y="5" textAnchor="middle" fill="rgba(212,168,67,0.3)" fontSize="2" fontWeight="500" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.15em">MAINTENANT</text>
 
-                {/* Batch event markers — minimal */}
-                {batchMarkerPositions.map((evt, i) => (
-                  <g key={i}>
-                    <circle cx={evt.x} cy={evt.y} r="1.2" fill="#C9A84C" opacity="0.5" />
-                  </g>
-                ))}
+                {/* Batch event markers removed for editorial cleanliness */}
 
                 {/* Peak annotation line */}
                 <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 12} stroke="rgba(255,255,255,0.08)" strokeWidth="0.3" strokeDasharray="1 1.5" />
