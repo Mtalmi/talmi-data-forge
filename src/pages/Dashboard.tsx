@@ -446,6 +446,56 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Quick Actions Command Bar */}
+          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
+            <button
+              onClick={() => navigate('/ventes')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-[1.03]"
+              style={{
+                background: 'rgba(253,185,19,0.08)',
+                border: '1px solid rgba(253,185,19,0.2)',
+                color: 'rgba(253,185,19,0.85)',
+              }}
+            >
+              <span>📋</span>
+              <span>Nouveau Devis</span>
+            </button>
+            <button
+              onClick={() => navigate('/production')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 hover:bg-white/[0.06]"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(203,213,225,0.8)' }}
+            >
+              <span>🚀</span>
+              <span>Lancer Production</span>
+            </button>
+            <button
+              onClick={() => navigate('/analytics')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 hover:bg-white/[0.06]"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(203,213,225,0.8)' }}
+            >
+              <span>📊</span>
+              <span>Rapport du Jour</span>
+            </button>
+            <button
+              onClick={() => navigate('/creances')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 hover:bg-white/[0.06]"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(203,213,225,0.8)' }}
+            >
+              <span>📞</span>
+              <span>Relancer Clients</span>
+            </button>
+
+            {/* Next delivery countdown */}
+            <div className="ml-auto hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(251,191,36,0.7)', animation: 'pulse-alert 2s ease-in-out infinite' }} />
+              <span className="text-[10px] text-slate-500">Prochaine livraison</span>
+              <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums">47 min</span>
+              <span className="text-[10px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+            </div>
+          </div>
+
           {/* Hero KPI Cards — Premium Data Monuments */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1]">
           {[
@@ -460,6 +510,7 @@ export default function Dashboard() {
               labelColor: 'rgba(0,217,255,0.6)',
               sparkline: '0,18 12,16 24,20 36,14 48,12 60,8 72,5 80,3',
               sparkStroke: '#22c55e',
+              monthlyTarget: { current: prodVolume || 671, target: 3200, daysLeft: 5 },
             },
             {
               label: 'REVENUE',
@@ -480,6 +531,7 @@ export default function Dashboard() {
               watermark: '%',
               sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
               healthy: true,
+              healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,10 12,12 24,10 36,9 48,11 60,10 72,8 80,8',
@@ -492,6 +544,7 @@ export default function Dashboard() {
               watermark: 'DH',
               sub: '→ 502K fin mois',
               healthy: true,
+              healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,20 12,18 24,16 36,15 48,12 60,10 72,6 80,3',
@@ -503,6 +556,10 @@ export default function Dashboard() {
               className="tbos-hero-card group cursor-default shimmer-effect"
               style={{
                 animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
+                ...(kpi.healthyGlow ? {
+                  boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
+                  borderColor: 'rgba(34,197,94,0.12)',
+                } : {}),
               }}
             >
               {/* Scanline hover effect */}
@@ -570,6 +627,34 @@ export default function Dashboard() {
                     points={kpi.sparkline}
                   />
                 </svg>
+              )}
+
+              {/* Monthly Target Progress Ring */}
+              {kpi.monthlyTarget && (
+                <div className="flex items-center gap-2.5 mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                  <svg width="36" height="36" viewBox="0 0 36 36" className="shrink-0">
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2.5" />
+                    <circle
+                      cx="18" cy="18" r="14"
+                      fill="none" stroke="#D4A843" strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeDasharray={`${Math.min((kpi.monthlyTarget.current / kpi.monthlyTarget.target), 1) * 88} 88`}
+                      transform="rotate(-90 18 18)"
+                      style={{ transition: 'stroke-dasharray 1s ease-out' }}
+                    />
+                    <text x="18" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      {Math.round((kpi.monthlyTarget.current / kpi.monthlyTarget.target) * 100)}%
+                    </text>
+                  </svg>
+                  <div className="flex flex-col">
+                    <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>Objectif mensuel</span>
+                    <span className="text-[10px]" style={{ color: 'rgba(203,213,225,0.6)' }}>
+                      <span className="text-white/70 font-medium">{kpi.monthlyTarget.current}</span>
+                      <span className="text-slate-600"> / {kpi.monthlyTarget.target.toLocaleString()} m³</span>
+                    </span>
+                    <span className="text-[9px]" style={{ color: 'rgba(251,191,36,0.7)' }}>{kpi.monthlyTarget.daysLeft} jours restants</span>
+                  </div>
+                </div>
               )}
             </TiltCard>
           ))}
