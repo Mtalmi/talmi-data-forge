@@ -97,7 +97,7 @@ export function DeliveryRotationProgress({
                     "relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
                     isCompleted && `bg-gradient-to-br ${step.gradient} shadow-lg`,
                     isActive && cn(step.bgLight, `ring-2 ${step.ringColor}`),
-                    !isCompleted && !isActive && "bg-muted/60 border border-border/50"
+                    !isCompleted && !isActive && "bg-white/[0.06] border border-white/[0.10]"
                   )}
                 >
                   {isCompleted ? (
@@ -105,7 +105,7 @@ export function DeliveryRotationProgress({
                   ) : (
                     <Icon className={cn(
                       "h-3.5 w-3.5 transition-all",
-                      isActive ? step.textColor : "text-muted-foreground/60"
+                      isActive ? step.textColor : "text-white/[0.20]"
                     )} />
                   )}
                   {isActive && (
@@ -168,7 +168,7 @@ export function DeliveryRotationProgress({
                   "relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300",
                   isCompleted && `bg-gradient-to-br ${step.gradient} shadow-lg shadow-${step.gradient.split('-')[1]}-500/25`,
                   isActive && cn(step.bgLight, `ring-2 ${step.ringColor} backdrop-blur-sm`),
-                  !isCompleted && !isActive && "bg-muted/40 border-2 border-dashed border-border/60"
+                  !isCompleted && !isActive && "bg-white/[0.04] border-2 border-dashed border-white/[0.10]"
                 )}
               >
                 {isCompleted ? (
@@ -176,7 +176,7 @@ export function DeliveryRotationProgress({
                 ) : (
                   <Icon className={cn(
                     "h-4 w-4 transition-all",
-                    isActive ? step.textColor : "text-muted-foreground/50"
+                    isActive ? step.textColor : "text-white/[0.20]"
                   )} />
                 )}
                 
@@ -192,7 +192,7 @@ export function DeliveryRotationProgress({
               {/* Label */}
               <span className={cn(
                 "text-[11px] font-medium mt-1.5 transition-colors",
-                isCompleted ? step.textColor : isActive ? step.textColor : "text-muted-foreground/70"
+                isCompleted ? step.textColor : isActive ? step.textColor : "text-white/[0.30]"
               )}>
                 {step.label}
               </span>
