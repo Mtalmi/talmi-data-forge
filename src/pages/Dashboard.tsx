@@ -757,101 +757,35 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* The Sparkline — THE GOLDEN RIVER */}
+        {/* ═══════════════════════════════════════════════════════════ */}
+        {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
+        {/* ═══════════════════════════════════════════════════════════ */}
         <div
           className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
           style={{
-            background: 'linear-gradient(180deg, rgba(253,185,19,0.06) 0%, rgba(253,185,19,0.02) 25%, rgba(11,15,26,0.98) 60%, rgba(11,15,26,1) 100%)',
-            minHeight: '260px',
-            height: '260px',
-            padding: '20px 24px',
+            background: 'linear-gradient(135deg, rgba(10,15,28,0.95) 0%, rgba(15,20,35,0.98) 50%, rgba(10,15,28,0.95) 100%)',
+            border: '1px solid rgba(212,168,67,0.08)',
+            boxShadow: '0 0 40px rgba(212,168,67,0.03), inset 0 1px 0 rgba(255,255,255,0.03)',
           }}
         >
-          {/* Real Batching Plant Photo — Cinematic Vogue Editorial */}
-          <img
-            src={heroPlantCinematic}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            style={{ opacity: 0.14, zIndex: 0, filter: 'saturate(0.25) brightness(0.45) contrast(1.2)', objectPosition: 'center 70%' }}
-          />
-          {/* Dark gradient overlay to keep curve crisp */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'linear-gradient(180deg, rgba(11,15,26,0.4) 0%, rgba(11,15,26,0.7) 50%, rgba(11,15,26,0.85) 100%)',
-            zIndex: 1,
+          {/* Subtle mission-control grid overlay */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+            backgroundImage: `linear-gradient(rgba(212,168,67,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.3) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
           }} />
 
-          {/* Batching Plant SVG Silhouette — Industrial identity behind the curve */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" style={{ zIndex: 1, opacity: 0.09 }}>
-            {/* Main silo cluster */}
-            <rect x="80" y="60" width="50" height="200" rx="6" fill="#D4AF37" opacity="0.5" />
-            <rect x="140" y="40" width="50" height="220" rx="6" fill="#D4AF37" opacity="0.6" />
-            <rect x="200" y="80" width="50" height="180" rx="6" fill="#D4AF37" opacity="0.45" />
-            <ellipse cx="105" cy="55" rx="30" ry="8" fill="#D4AF37" opacity="0.4" />
-            <ellipse cx="165" cy="35" rx="30" ry="8" fill="#D4AF37" opacity="0.5" />
-            <ellipse cx="225" cy="75" rx="30" ry="8" fill="#D4AF37" opacity="0.35" />
-            {/* Conveyor belt system */}
-            <line x1="260" y1="180" x2="420" y2="100" stroke="#D4AF37" strokeWidth="3" opacity="0.3" />
-            <line x1="260" y1="186" x2="420" y2="106" stroke="#D4AF37" strokeWidth="1.5" opacity="0.2" />
-            {/* Mixer / Central unit */}
-            <rect x="420" y="90" width="90" height="120" rx="4" fill="#D4AF37" opacity="0.35" />
-            <rect x="435" y="75" width="60" height="20" rx="3" fill="#D4AF37" opacity="0.3" />
-            {/* Discharge chute */}
-            <polygon points="470,210 490,210 510,260 450,260" fill="#D4AF37" opacity="0.25" />
-            {/* Control tower */}
-            <rect x="560" y="100" width="45" height="160" rx="2" fill="#D4AF37" opacity="0.3" />
-            <rect x="565" y="110" width="10" height="12" rx="1" fill="#FDB913" opacity="0.5" />
-            <rect x="580" y="110" width="10" height="12" rx="1" fill="#FDB913" opacity="0.4" />
-            <rect x="565" y="130" width="10" height="12" rx="1" fill="#FDB913" opacity="0.35" />
-            <rect x="580" y="130" width="10" height="12" rx="1" fill="#FDB913" opacity="0.45" />
-            {/* Aggregate hoppers */}
-            <polygon points="680,140 720,140 740,200 660,200" fill="#D4AF37" opacity="0.3" />
-            <polygon points="760,130 800,130 820,200 740,200" fill="#D4AF37" opacity="0.25" />
-            <polygon points="840,150 880,150 900,200 820,200" fill="#D4AF37" opacity="0.2" />
-            {/* Truck loading */}
-            <rect x="920" y="230" width="100" height="40" rx="4" fill="#D4AF37" opacity="0.2" />
-            <circle cx="940" cy="275" r="12" fill="#D4AF37" opacity="0.15" />
-            <circle cx="1000" cy="275" r="12" fill="#D4AF37" opacity="0.15" />
-            <rect x="920" y="215" width="60" height="20" rx="3" fill="#D4AF37" opacity="0.15" />
-            {/* Pipes connecting silos to mixer */}
-            <path d="M130 260 L130 270 L430 270 L430 210" fill="none" stroke="#D4AF37" strokeWidth="2" opacity="0.15" />
-            <path d="M190 260 L190 280 L450 280 L450 210" fill="none" stroke="#D4AF37" strokeWidth="2" opacity="0.12" />
-            {/* Ground line */}
-            <line x1="0" y1="290" x2="1200" y2="290" stroke="#D4AF37" strokeWidth="1" opacity="0.1" />
-          </svg>
-
-          {/* Golden ember particles — floating up like embers from the plant */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5] golden-embers">
-            {Array.from({ length: 14 }, (_, i) => (
-              <div
-                key={i}
-                className="ember absolute rounded-full"
-                style={{
-                  width: `${1.5 + (i % 3) * 0.8}px`,
-                  height: `${1.5 + (i % 3) * 0.8}px`,
-                  background: `rgba(253,185,19,${0.3 + (i % 4) * 0.1})`,
-                  boxShadow: '0 0 4px rgba(253,185,19,0.3)',
-                  left: `${8 + (i * 6.5)}%`,
-                  bottom: `${20 + (i % 5) * 8}%`,
-                  animation: `particleFloat ${5 + (i % 4) * 1.5}s ease-out ${3 + i * 0.4}s infinite`,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* ═══ ENHANCED HEADER — Live Metrics Ticker ═══ */}
-          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 py-3 z-10">
-            {/* Left: Live badge + title */}
+          {/* ── HEADER BAR ── */}
+          <div className="relative flex items-center justify-between px-5 pt-4 pb-2 z-10">
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-40" />
-                <span className="absolute h-full w-full rounded-full bg-emerald-400 opacity-15 animate-ping" style={{ animationDelay: '0.5s' }} />
                 <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
               </span>
               <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Total du jour</span>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Production du Jour</span>
+              <div className="w-px h-3 bg-white/10 mx-1" />
+              <span className="text-[9px] text-slate-700 font-mono">Casablanca · UTC+1</span>
             </div>
-
-            {/* Center: Live metrics */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <span className="text-[13px] text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>671</span>
@@ -873,110 +807,267 @@ export default function Dashboard() {
                 <span className="text-[10px] text-emerald-400">▲ +12%</span>
                 <span className="text-[9px] text-slate-600">vs hier</span>
               </div>
+              <div className="w-px h-3 bg-white/10" />
+              <span className="text-slate-600 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{timeStr}</span>
             </div>
-
-            {/* Right: Time */}
-            <span className="text-slate-600 z-10 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{timeStr}</span>
           </div>
 
-          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none" style={{ marginTop: '12px' }}>
-            <defs>
-              {/* Golden River gradient — prominent, eye-catching fill */}
-              <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.35} />
-                <stop offset="20%" stopColor="#D4AF37" stopOpacity={0.18} />
-                <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.06} />
-                <stop offset="80%" stopColor="#D4AF37" stopOpacity={0.015} />
-                <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
-              </linearGradient>
-              {/* Faded forecast fill */}
-              <linearGradient id="forecastFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.08} />
-                <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
-              </linearGradient>
-              {/* Horizontal gradient along the line — warm to cool platinum */}
-              <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#C9A84C" />
-                <stop offset="40%" stopColor="#E8D5A3" />
-                <stop offset="70%" stopColor="#F5ECD7" />
-                <stop offset="100%" stopColor="#D4AF37" />
-              </linearGradient>
-              <filter id="sparklineGlow">
-                <feGaussianBlur stdDeviation="2" result="blur" />
-                <feMerge>
-                  <feMergeNode in="blur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              {/* Subtle outer atmosphere */}
-              <filter id="outerAtmo">
-                <feGaussianBlur stdDeviation="6" />
-              </filter>
-            </defs>
+          {/* ── MAIN 3-PANEL LAYOUT ── */}
+          <div className="relative flex gap-0 px-4 pb-3 z-10" style={{ minHeight: '220px' }}>
 
-            {/* ── ELEMENT 5: Reference lines ── */}
-            {/* Objectif line */}
-            <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.15)" strokeWidth="0.5" strokeDasharray="3 2" />
-            <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.35)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Objectif</text>
-            {/* Seuil min line */}
-            <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.1)" strokeWidth="0.5" strokeDasharray="2 3" />
-            <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.25)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
+            {/* ══ PANEL 1: PRODUCTION CHART (70%) ══ */}
+            <div className="flex-[7] relative">
+              {/* Batching Plant silhouette */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" style={{ zIndex: 0, opacity: 0.06 }}>
+                <rect x="80" y="60" width="50" height="200" rx="6" fill="#D4AF37" opacity="0.5" />
+                <rect x="140" y="40" width="50" height="220" rx="6" fill="#D4AF37" opacity="0.6" />
+                <rect x="200" y="80" width="50" height="180" rx="6" fill="#D4AF37" opacity="0.45" />
+                <line x1="260" y1="180" x2="420" y2="100" stroke="#D4AF37" strokeWidth="3" opacity="0.3" />
+                <rect x="420" y="90" width="90" height="120" rx="4" fill="#D4AF37" opacity="0.35" />
+                <polygon points="470,210 490,210 510,260 450,260" fill="#D4AF37" opacity="0.25" />
+                <rect x="560" y="100" width="45" height="160" rx="2" fill="#D4AF37" opacity="0.3" />
+                <polygon points="680,140 720,140 740,200 660,200" fill="#D4AF37" opacity="0.3" />
+                <polygon points="760,130 800,130 820,200 740,200" fill="#D4AF37" opacity="0.25" />
+                <rect x="920" y="230" width="100" height="40" rx="4" fill="#D4AF37" opacity="0.2" />
+                <line x1="0" y1="290" x2="1200" y2="290" stroke="#D4AF37" strokeWidth="1" opacity="0.1" />
+              </svg>
 
-            {/* ── ELEMENT 1: Target line (dashed white ghost) ── */}
-            <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 2" strokeLinejoin="round" strokeLinecap="round" />
+              {/* Ember particles */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden z-[2] golden-embers">
+                {Array.from({ length: 10 }, (_, i) => (
+                  <div key={i} className="ember absolute rounded-full" style={{
+                    width: `${1.5 + (i % 3) * 0.8}px`, height: `${1.5 + (i % 3) * 0.8}px`,
+                    background: `rgba(253,185,19,${0.3 + (i % 4) * 0.1})`,
+                    boxShadow: '0 0 4px rgba(253,185,19,0.3)',
+                    left: `${8 + (i * 9)}%`, bottom: `${20 + (i % 5) * 8}%`,
+                    animation: `particleFloat ${5 + (i % 4) * 1.5}s ease-out ${3 + i * 0.4}s infinite`,
+                  }} />
+                ))}
+              </div>
 
-            {/* ── Area fill — past section only ── */}
-            <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
+              {/* Peak annotation overlay */}
+              <div className="absolute z-[5]" style={{ right: '35%', top: '8px' }}>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.15)' }}>
+                  <span className="text-[8px] text-amber-400/70 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>▲ PEAK 14H</span>
+                  <span className="text-[8px] text-white font-semibold font-mono">110 m³</span>
+                </div>
+              </div>
 
-            {/* ── Atmospheric glow on past line ── */}
-            <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
-            <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.1" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
-            {/* Core gold line — past (solid) */}
-            <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
+              {/* The Golden River SVG chart */}
+              <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[3]" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#FDB913" stopOpacity={0.35} />
+                    <stop offset="20%" stopColor="#D4AF37" stopOpacity={0.18} />
+                    <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.06} />
+                    <stop offset="80%" stopColor="#D4AF37" stopOpacity={0.015} />
+                    <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#C9A84C" />
+                    <stop offset="40%" stopColor="#E8D5A3" />
+                    <stop offset="70%" stopColor="#F5ECD7" />
+                    <stop offset="100%" stopColor="#D4AF37" />
+                  </linearGradient>
+                  <filter id="sparklineGlow">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                  <filter id="outerAtmo"><feGaussianBlur stdDeviation="6" /></filter>
+                </defs>
 
-            {/* ── ELEMENT 3: Forecast line (dashed, faded) ── */}
-            <path d={forecastLinePath} fill="none" stroke="rgba(212,168,67,0.35)" strokeWidth="1.5" strokeDasharray="4 3" strokeLinejoin="round" strokeLinecap="round" />
+                {/* Reference lines */}
+                <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.15)" strokeWidth="0.5" strokeDasharray="3 2" />
+                <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.35)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Objectif</text>
+                <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.1)" strokeWidth="0.5" strokeDasharray="2 3" />
+                <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.25)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
 
-            {/* ── ELEMENT 3: NOW playhead ── */}
-            <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="0.8" strokeOpacity="0.5" />
-            <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="3" strokeOpacity="0.06" />
-            <text x={nowX} y="5" textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace" opacity="0.7">MAINTENANT</text>
+                {/* Target line (dashed white ghost) */}
+                <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 2" strokeLinejoin="round" strokeLinecap="round" />
 
-            {/* ── ELEMENT 2: Batch event markers ── */}
-            {batchMarkerPositions.map((evt, i) => (
-              <g key={i}>
-                <line x1={evt.x} y1={evt.y} x2={evt.x} y2={evt.y + 12} stroke="rgba(212,168,67,0.15)" strokeWidth="0.5" strokeDasharray="1 1.5" />
-                <circle cx={evt.x} cy={evt.y} r="1.8" fill="#D4A843" opacity="0.7" />
-                <circle cx={evt.x} cy={evt.y} r="3.5" fill="none" stroke="rgba(212,168,67,0.2)" strokeWidth="0.5" />
-              </g>
-            ))}
+                {/* Area fill — past section */}
+                <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
 
-            {/* ── ELEMENT 6: Peak annotation ── */}
-            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 16} stroke="rgba(212,175,55,0.15)" strokeWidth="0.5" strokeDasharray="1.5 2" />
-            <rect x={peakX - 14} y={peakY - 22} width="28" height="7" rx="1.5" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.2)" strokeWidth="0.3" />
-            <text x={peakX} y={peakY - 17} textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace">
-              PEAK 14h
-            </text>
+                {/* Atmospheric glow */}
+                <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" filter="url(#outerAtmo)" />
+                <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.1" strokeLinejoin="round" strokeLinecap="round" />
+                {/* Core gold line — past */}
+                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparklineGlow)" />
 
-            {/* Minimal data markers — every other point */}
-            {SPARKLINE_DATA.map((d, i) => {
-              if (i % 2 !== 0 && i !== lastIdx) return null;
-              const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
-              const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
-              return <circle key={i} cx={x} cy={y} r="0.8" fill="rgba(212,175,55,0.15)" className="area-fill" />;
-            })}
+                {/* Forecast line (dashed, faded) */}
+                <path d={forecastLinePath} fill="none" stroke="rgba(212,168,67,0.35)" strokeWidth="1.5" strokeDasharray="4 3" strokeLinejoin="round" strokeLinecap="round" />
 
-            {/* Live endpoint — refined single pulse */}
-            <circle cx={lastX} cy={lastY} r="2.5" fill="#D4AF37" opacity="0.9">
-              <animate attributeName="r" values="2.5;4;2.5" dur="3s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
-            </circle>
-            <circle cx={lastX} cy={lastY} r="8" fill="none" stroke="rgba(212,175,55,0.1)">
-              <animate attributeName="r" values="8;16;8" dur="4s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.15;0;0.15" dur="4s" repeatCount="indefinite" />
-            </circle>
-          </svg>
-        </div>{/* end sparkline */}
+                {/* NOW playhead */}
+                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="0.8" strokeOpacity="0.5" />
+                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="3" strokeOpacity="0.06" />
+                <text x={nowX} y="5" textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace" opacity="0.7">MAINTENANT</text>
+
+                {/* Batch event markers */}
+                {batchMarkerPositions.map((evt, i) => (
+                  <g key={i}>
+                    <line x1={evt.x} y1={evt.y} x2={evt.x} y2={evt.y + 12} stroke="rgba(212,168,67,0.15)" strokeWidth="0.5" strokeDasharray="1 1.5" />
+                    <circle cx={evt.x} cy={evt.y} r="1.8" fill="#D4A843" opacity="0.7" />
+                    <circle cx={evt.x} cy={evt.y} r="3.5" fill="none" stroke="rgba(212,168,67,0.2)" strokeWidth="0.5" />
+                  </g>
+                ))}
+
+                {/* Peak annotation line */}
+                <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 16} stroke="rgba(212,175,55,0.15)" strokeWidth="0.5" strokeDasharray="1.5 2" />
+
+                {/* Data markers */}
+                {SPARKLINE_DATA.map((d, i) => {
+                  if (i % 2 !== 0 && i !== lastIdx) return null;
+                  const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                  const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                  return <circle key={i} cx={x} cy={y} r="0.8" fill="rgba(212,175,55,0.15)" className="area-fill" />;
+                })}
+
+                {/* Live endpoint pulse */}
+                <circle cx={lastX} cy={lastY} r="2.5" fill="#D4AF37" opacity="0.9">
+                  <animate attributeName="r" values="2.5;4;2.5" dur="3s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
+                </circle>
+                <circle cx={lastX} cy={lastY} r="8" fill="none" stroke="rgba(212,175,55,0.1)">
+                  <animate attributeName="r" values="8;16;8" dur="4s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.15;0;0.15" dur="4s" repeatCount="indefinite" />
+                </circle>
+              </svg>
+            </div>
+
+            {/* ══ PANEL 2: LIVE BATCH QUEUE (18%) ══ */}
+            <div className="flex-[1.8] border-l border-white/[0.05] pl-3 ml-2">
+              <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                File de Production
+              </div>
+
+              {/* Current batch — highlighted */}
+              <div className="mb-2 p-2.5 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.12)' }}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                  <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
+                </div>
+                <div className="text-[9px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: '72%', background: 'linear-gradient(90deg, #f59e0b, #22c55e)' }} />
+                  </div>
+                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
+                </div>
+                <div className="flex items-center justify-between mt-1">
+                  <span className="text-[9px] text-amber-400/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>⏱ 01:47</span>
+                  <span className="text-[8px] text-emerald-400/60">Déchargement</span>
+                </div>
+              </div>
+
+              {/* Queued batches */}
+              <div className="space-y-1">
+                {[
+                  { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
+                  { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
+                  { id: '#403-071', formula: 'F-B25 · 10 m³', client: 'Immob. Prestige' },
+                ].map((batch) => (
+                  <div key={batch.id} className="flex items-center gap-1.5 p-1.5 rounded hover:bg-white/[0.02] transition-colors">
+                    <span className="w-1 h-1 bg-slate-600 rounded-full" />
+                    <div className="min-w-0">
+                      <div className="text-[9px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
+                      <div className="text-[8px] text-slate-600 truncate">{batch.formula} · {batch.client}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Queue footer */}
+              <div className="mt-2 pt-2 border-t border-white/[0.04]">
+                <div className="text-[8px] text-slate-600">
+                  Total file: <span className="text-slate-400 font-medium">38 m³</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ══ PANEL 3: KEY METRICS (12%) ══ */}
+            <div className="flex-[1.2] border-l border-white/[0.05] pl-3 ml-2">
+              <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                Métriques
+              </div>
+
+              <div className="space-y-3">
+                {/* Cadence */}
+                <div>
+                  <div className="text-2xl text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>47</div>
+                  <div className="text-[9px] text-slate-500 mt-0.5">m³/heure</div>
+                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Au-dessus cible</div>
+                </div>
+
+                {/* Efficiency */}
+                <div>
+                  <div className="flex items-baseline">
+                    <span className="text-2xl text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>94</span>
+                    <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>%</span>
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-0.5">Efficacité</div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '94%' }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Downtime */}
+                <div>
+                  <div className="flex items-baseline gap-0.5">
+                    <span className="text-lg text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>12</span>
+                    <span className="text-[10px] text-slate-500">min</span>
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-0.5">Arrêt cumulé</div>
+                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Excellent</div>
+                </div>
+
+                {/* Waste */}
+                <div>
+                  <div className="flex items-baseline gap-0.5">
+                    <span className="text-lg text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>1.2</span>
+                    <span className="text-[10px] text-slate-500">%</span>
+                  </div>
+                  <div className="text-[9px] text-slate-500 mt-0.5">Perte matière</div>
+                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Sous seuil</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── BOTTOM TICKER BAR ── */}
+          <div className="relative flex items-center justify-between px-5 py-2 z-10 border-t border-white/[0.04]" style={{ background: 'rgba(0,0,0,0.2)' }}>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                <span className="text-[9px] text-slate-500">Malaxeur</span>
+                <span className="text-[9px] text-emerald-400 font-medium">ACTIF</span>
+              </div>
+              <div className="w-px h-2.5 bg-white/5" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-slate-500">E/C Ratio</span>
+                <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>0.502</span>
+                <span className="text-[9px] text-emerald-400">✓</span>
+              </div>
+              <div className="w-px h-2.5 bg-white/5" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-slate-500">Température</span>
+                <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
+              </div>
+              <div className="w-px h-2.5 bg-white/5" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-slate-500">Humidité</span>
+                <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
+                <span className="text-[9px] text-emerald-400">Optimal</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[9px] text-slate-600">Prochain camion</span>
+              <span className="text-[9px] text-amber-400 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+              <span className="text-[9px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+            </div>
+          </div>
+        </div>{/* end production command center */}
 
         </div>{/* end hero zone wrapper */}
 
