@@ -439,7 +439,7 @@ export default function Dashboard() {
               value: prodVolume,
               unit: 'm³',
               watermark: 'm³',
-              sub: 'Peak 14h',
+              sub: 'Total du jour',
               trend: '↗ +12%',
               accentColor: '#00D9FF',
               labelColor: 'rgba(0,217,255,0.6)',
@@ -627,7 +627,7 @@ export default function Dashboard() {
               <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
             </span>
             <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
-            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Peak 14h</span>
+            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Total du jour</span>
           </div>
 
           {/* Timestamp */}
