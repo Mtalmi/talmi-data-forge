@@ -514,7 +514,7 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions Command Bar */}
-          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
+          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1] overflow-hidden" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
             <button
               onClick={() => navigate('/ventes')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-[1.03]"
@@ -553,13 +553,13 @@ export default function Dashboard() {
             </button>
 
             {/* Next delivery countdown */}
-            <div className="ml-auto hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg"
+            <div className="ml-auto hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg overflow-hidden"
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(251,191,36,0.7)', animation: 'pulse-alert 2s ease-in-out infinite' }} />
-              <span className="text-[10px] text-slate-500 flex-shrink-0">Prochaine livraison</span>
+              <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'rgba(251,191,36,0.7)', animation: 'pulse-alert 2s ease-in-out infinite' }} />
+              <span className="text-[10px] text-slate-500 flex-shrink-0">Prochaine</span>
               <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums flex-shrink-0">47 min</span>
-              <span className="text-[10px] text-slate-600 flex-shrink-0">→ Constr. Modernes · 20 m³</span>
+              <span className="text-[10px] text-slate-600 truncate">→ C. Modernes · 20 m³</span>
             </div>
           </div>
 
@@ -642,6 +642,9 @@ export default function Dashboard() {
               <div className="absolute bottom-[-8px] right-3 text-[72px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06`, fontFamily: 'Inter, system-ui' }}>
                 {kpi.watermark}
               </div>
+
+              {/* Content wrapper for equal height */}
+              <div className="relative z-[1] flex flex-col flex-1">
 
               {/* Label */}
               <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
@@ -756,6 +759,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               )}
+              </div>{/* end content wrapper */}
             </TiltCard>
           ))}
         </div>
