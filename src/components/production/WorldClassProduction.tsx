@@ -12,6 +12,8 @@ import { useCountUp } from '@/hooks/useCountUp';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import BatchesTab from './BatchesTab';
+import RecettesTab from './RecettesTab';
+import PlanningTab from './PlanningTab';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -520,27 +522,11 @@ export default function WorldClassProduction() {
           <BatchesTab bons={bons} batches={batches} loading={loading} />
         )}
 
-        {/* ── RECETTES TAB (placeholder) ── */}
-        {activeTab === 'recettes' && (
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 48 }}>
-            <div className="flex flex-col items-center justify-center gap-3">
-              <Settings size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
-              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>Gestion des Recettes</p>
-              <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Module en cours de développement</p>
-            </div>
-          </div>
-        )}
+        {/* ── RECETTES TAB ── */}
+        {activeTab === 'recettes' && <RecettesTab />}
 
-        {/* ── PLANNING TAB (placeholder) ── */}
-        {activeTab === 'planning' && (
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 48 }}>
-            <div className="flex flex-col items-center justify-center gap-3">
-              <Clock size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
-              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>Planning de Production</p>
-              <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Module en cours de développement</p>
-            </div>
-          </div>
-        )}
+        {/* ── PLANNING TAB ── */}
+        {activeTab === 'planning' && <PlanningTab />}
 
         {/* ── VUE D'ENSEMBLE ── */}
         {activeTab === 'overview' && <>
