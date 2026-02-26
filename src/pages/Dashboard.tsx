@@ -685,7 +685,7 @@ export default function Dashboard() {
 
               {/* Mini sparkline */}
               {kpi.sparkline && (
-                <svg width="80" height="20" viewBox="0 0 80 20" className="mt-2" style={{ opacity: 0.5 }}>
+                <svg width="80" height="20" viewBox="0 0 80 20" className="mt-2" style={{ opacity: 0.7 }}>
                   <polyline
                     fill="none"
                     stroke={kpi.sparkStroke || '#22c55e'}
@@ -1014,7 +1014,7 @@ export default function Dashboard() {
         {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
           <div
-            className="flex items-center justify-between px-5 py-3 rounded-xl mt-5 mb-8"
+            className="flex items-center justify-between px-5 py-3 rounded-xl mt-3 mb-2"
             style={{
               background: 'linear-gradient(90deg, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 50%, rgba(234,179,8,0.06) 100%)',
               border: '1px solid rgba(234,179,8,0.1)',
@@ -1052,12 +1052,12 @@ export default function Dashboard() {
         />
 
         {/* ═══ PLANT FLOW SCHEMATIC — Real-time value chain ═══ */}
-        <Suspense fallback={<div className="h-32 rounded-xl bg-white/[0.02] animate-pulse mt-6" />}>
+        <Suspense fallback={<div className="h-32 rounded-xl bg-white/[0.02] animate-pulse mt-2" />}>
           <PlantFlowSchematic />
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="relative mt-10 mb-8 flex items-center gap-4">
+        <div className="relative mt-6 mb-6 flex items-center gap-4">
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
           <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'rgb(148,163,184)' }}>Opérations</span>
           <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
@@ -1070,45 +1070,7 @@ export default function Dashboard() {
           <WorldClassDashboard />
         </Suspense>
 
-        {/* Section Divider — Finance */}
-        <div className="flex items-center gap-4 my-8 px-2">
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.12))' }} />
-          <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(148,163,184)' }}>
-            Finance & Conformité
-          </span>
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.12), transparent)' }} />
-        </div>
-
-        {/* ══════════════════════════════════════════════════
-            ZONE 3 — FINANCE & COMPLIANCE
-        ══════════════════════════════════════════════════ */}
-        {isCeo && (
-          <LazyDashboardSection
-            title=""
-            icon={Wallet}
-            storageKey="finance-zone"
-            defaultOpen={false}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <div className="space-y-5">
-                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
-                  <CashFlowForecast />
-                </Suspense>
-                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
-                  <CircularBudgetGauge />
-                </Suspense>
-              </div>
-              <div className="space-y-5">
-                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
-                  <BillingDashboardWidget />
-                </Suspense>
-                <Suspense fallback={<div className="h-64 rounded-xl bg-white/[0.02] animate-pulse" />}>
-                  <TaxComplianceWidget />
-                </Suspense>
-              </div>
-            </div>
-          </LazyDashboardSection>
-        )}
+        {/* FINANCE & CONFORMITÉ — Hidden for CEO demo (no content yet) */}
 
         {/* Bottom spacing for mobile nav */}
         <div className="h-20 md:h-8" />
