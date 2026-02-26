@@ -186,19 +186,9 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ── SEARCH SHORTCUT (display-only) ── */}
-      <div className="px-3 pb-3 shrink-0">
-        <div
-          className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer hover:bg-white/[0.05] transition-colors"
-          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
-          onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true }))}
-        >
-          <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" strokeWidth={1.5} />
-          <span className="text-[11px] text-gray-500 flex-1">Recherche...</span>
-          <div className="flex items-center gap-0.5">
-            <span className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono leading-none" style={{ background: 'rgba(255,255,255,0.06)' }}>⌘</span>
-            <span className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono leading-none" style={{ background: 'rgba(255,255,255,0.06)' }}>K</span>
-          </div>
-        </div>
+      <div className="flex items-center gap-2 mx-3 my-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] cursor-default select-none shrink-0">
+        <Search className="w-3.5 h-3.5 text-white/20 flex-shrink-0" strokeWidth={1.5} />
+        <span className="text-white/30 text-xs">Recherche...</span>
       </div>
 
       {/* ── NAVIGATION ── */}
