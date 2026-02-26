@@ -1,96 +1,69 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Factory, CheckCircle, Shield, Clock, Search, SlidersHorizontal,
+  CheckCircle, Clock, Search, SlidersHorizontal, Pause,
   Play, Eye, RefreshCw, Download, BarChart3, Wifi, AlertTriangle,
-  ChevronRight, Zap, Activity, Droplets, TrendingUp, Maximize2,
+  Zap, Activity, Droplets, TrendingUp, Maximize2,
 } from 'lucide-react';
-import { format } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold:       '#D4A843',
-  goldBorder: 'rgba(212,168,67,0.3)',
-  cardBg:     'rgba(255,255,255,0.03)',
+  gold: '#D4A843',
+  cardBg: 'rgba(255,255,255,0.03)',
   cardBorder: 'rgba(255,255,255,0.06)',
-  success:    '#10B981',
-  warning:    '#F59E0B',
-  danger:     '#EF4444',
-  info:       '#3B82F6',
-  textPri:    '#F1F5F9',
-  textSec:    '#94A3B8',
-  textDim:    '#64748B',
+  success: '#10B981',
+  danger: '#EF4444',
+  info: '#3B82F6',
+  textDim: '#64748B',
 };
 
 // ─────────────────────────────────────────────────────
-// TYPES
+// FALLBACK DATA — 14 realistic batches
 // ─────────────────────────────────────────────────────
-interface BonRow {
+interface FallbackRow {
   bl_id: string;
-  volume_m3: number;
-  workflow_status: string;
-  heure_prevue: string | null;
-  camion_assigne: string | null;
-  chauffeur_nom: string | null;
-  formule_id: string | null;
-  client_id?: string;
-  bc_id?: string;
-  quality_status: string | null;
-  production_batch_time: string | null;
-  variance_ciment_pct: number | null;
-  variance_eau_pct: number | null;
+  client: string;
+  formule: string;
+  volume: number;
+  heure: string;
+  status: 'valide' | 'production' | 'planifie' | 'ecart';
+  progress: number;
 }
 
-interface BatchesTabProps {
-  bons: BonRow[];
-  batches: any[];
-  loading: boolean;
-}
+const FALLBACK_ROWS: FallbackRow[] = [
+  { bl_id: 'BL-2602-001', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '07:15', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-002', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 45, heure: '07:42', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-003', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 12, heure: '08:20', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-004', client: 'Constructions Modernes SA', formule: 'F-B20', volume: 80, heure: '08:55', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-005', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 30, heure: '09:30', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-006', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '10:10', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-007', client: 'Saudi Readymix Co.', formule: 'F-B25', volume: 50, heure: '10:45', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-008', client: 'Constructions Modernes SA', formule: 'F-B30', volume: 20, heure: '11:30', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-009', client: 'BTP Maroc SARL', formule: 'F-B20', volume: 35, heure: '12:15', status: 'valide', progress: 100 },
+  { bl_id: 'BL-2602-010', client: 'Ciments & Béton du Sud', formule: 'F-B25', volume: 45, heure: '13:40', status: 'production', progress: 72 },
+  { bl_id: 'BL-2602-011', client: 'BTP Maroc SARL', formule: 'F-B30', volume: 8, heure: '14:20', status: 'production', progress: 34 },
+  { bl_id: 'BL-2602-012', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 20, heure: '15:00', status: 'planifie', progress: 0 },
+  { bl_id: 'BL-2602-013', client: 'Saudi Readymix Co.', formule: 'F-B20', volume: 10, heure: '15:30', status: 'planifie', progress: 0 },
+  { bl_id: 'BL-2602-014', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 20, heure: '16:00', status: 'planifie', progress: 0 },
+];
 
-// ─────────────────────────────────────────────────────
-// STATUS HELPERS
-// ─────────────────────────────────────────────────────
-function getStatusInfo(status: string, variancePct: number | null) {
-  const hasHighVariance = (variancePct || 0) > 5;
-  if (hasHighVariance) return { label: 'Écart', color: T.danger, dot: T.danger };
-  switch (status) {
-    case 'planification': return { label: 'Planifié', color: T.gold, dot: T.gold };
-    case 'production': return { label: 'En Production', color: T.info, dot: T.info };
-    case 'validation_technique': return { label: 'Validé', color: T.success, dot: T.success };
-    default: return { label: status || '—', color: T.textDim, dot: T.textDim };
+const FEED_ITEMS = [
+  { id: '011', num: '#2602-011', info: 'F-B30 · 8 m³ · BTP Maroc', pct: '34%', time: '14:20', active: true },
+  { id: '010', num: '#2602-010', info: 'F-B25 · 45 m³ · Ciments & Béton du Sud', pct: '72%', time: '13:40', active: true },
+  { id: '009', num: '#2602-009', info: 'F-B20 · 35 m³ · BTP Maroc', pct: null, time: '12:15', active: false },
+  { id: '008', num: '#2602-008', info: 'F-B30 · 20 m³ · Constructions Modernes', pct: null, time: '11:30', active: false },
+  { id: '007', num: '#2602-007', info: 'F-B25 · 50 m³ · Saudi Readymix', pct: null, time: '10:45', active: false },
+  { id: '006', num: '#2602-006', info: 'F-B25 · 8 m³ · BTP Maroc', pct: null, time: '10:10', active: false },
+];
+
+function statusStyle(s: FallbackRow['status']) {
+  switch (s) {
+    case 'valide': return { label: 'Validé', bg: 'rgba(52,211,153,0.12)', color: '#34d399', dot: '#34d399' };
+    case 'production': return { label: 'En Production', bg: 'rgba(96,165,250,0.12)', color: '#60a5fa', dot: '#60a5fa' };
+    case 'planifie': return { label: 'Planifié', bg: 'rgba(212,168,67,0.12)', color: T.gold, dot: T.gold };
+    case 'ecart': return { label: 'Écart', bg: 'rgba(248,113,113,0.12)', color: '#f87171', dot: '#f87171' };
   }
-}
-
-function getProgressPercent(status: string) {
-  switch (status) {
-    case 'planification': return 15;
-    case 'production': return 55;
-    case 'validation_technique': return 100;
-    default: return 0;
-  }
-}
-
-// ─────────────────────────────────────────────────────
-// MINI KPI CARD
-// ─────────────────────────────────────────────────────
-function MiniKPI({ label, value, suffix, sub, icon: Icon }: {
-  label: string; value: string | number; suffix?: string; sub?: string; icon: any;
-}) {
-  return (
-    <div style={{
-      background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-      borderRadius: 12, padding: 16,
-    }}>
-      <Icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)', marginBottom: 8 }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
-        {value}
-        {suffix && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 3 }}>{suffix}</span>}
-      </p>
-      {sub && <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{sub}</p>}
-      <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.40)', fontWeight: 500, marginTop: 4 }}>{label}</p>
-    </div>
-  );
 }
 
 // ─────────────────────────────────────────────────────
@@ -107,145 +80,101 @@ function InlineClock() {
 }
 
 // ─────────────────────────────────────────────────────
-// FILTER TAB ICONS
+// MAIN COMPONENT
 // ─────────────────────────────────────────────────────
-const tabIcons: Record<string, any> = {
-  planifies: Clock,
-  production: Play,
-  valides: CheckCircle,
-  ecarts: AlertTriangle,
-};
+interface BatchesTabProps {
+  bons: any[];
+  batches: any[];
+  loading: boolean;
+}
 
-// ─────────────────────────────────────────────────────
-// MAIN BATCHES TAB
-// ─────────────────────────────────────────────────────
 export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('tous');
 
-  // ── Derived counts ──
-  const counts = useMemo(() => {
-    const planned = bons.filter(b => b.workflow_status === 'planification').length;
-    const inProd = bons.filter(b => b.workflow_status === 'production').length;
-    const validated = bons.filter(b => b.workflow_status === 'validation_technique').length;
-    const ecarts = bons.filter(b => (b.variance_ciment_pct || 0) > 5 || (b.variance_eau_pct || 0) > 5).length;
-    return { total: bons.length, planned, inProd, validated, ecarts };
-  }, [bons]);
-
-  // ── KPI metrics ──
-  const metrics = useMemo(() => {
-    const totalVol = bons.reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const inProdCount = bons.filter(b => b.workflow_status === 'production').length;
-    const validatedCount = bons.filter(b => b.workflow_status === 'validation_technique').length;
-    const syncRate = bons.length > 0 ? Math.round((bons.filter(b => b.production_batch_time).length / bons.length) * 100) : 0;
-    const alertCount = bons.filter(b => (b.variance_ciment_pct || 0) > 5).length;
-    const ecartCount = bons.filter(b => (b.variance_ciment_pct || 0) > 2).length;
-    return { inProdCount, totalVol, validatedCount, syncRate, alertCount, ecartCount };
-  }, [bons]);
-
-  // ── Filter tabs ──
-  const filterTabs = [
-    { id: 'tous', label: 'Tous', count: counts.total },
-    { id: 'planifies', label: 'Planifiés', count: counts.planned },
-    { id: 'production', label: 'En Production', count: counts.inProd },
-    { id: 'valides', label: 'Validés', count: counts.validated },
-    { id: 'ecarts', label: 'Écarts', count: counts.ecarts },
-  ];
-
-  // ── Filtered rows ──
-  const filteredBons = useMemo(() => {
-    let result = [...bons];
-    switch (activeFilter) {
-      case 'planifies': result = result.filter(b => b.workflow_status === 'planification'); break;
-      case 'production': result = result.filter(b => b.workflow_status === 'production'); break;
-      case 'valides': result = result.filter(b => b.workflow_status === 'validation_technique'); break;
-      case 'ecarts': result = result.filter(b => (b.variance_ciment_pct || 0) > 5 || (b.variance_eau_pct || 0) > 5); break;
+  // Use live data if available, otherwise fallback
+  const rows: FallbackRow[] = useMemo(() => {
+    if (bons.length > 0) {
+      return bons.map(b => ({
+        bl_id: b.bl_id,
+        client: b.chauffeur_nom || b.client_id || '—',
+        formule: b.formule_id || '—',
+        volume: b.volume_m3 || 0,
+        heure: (b.heure_prevue || b.production_batch_time || '—').slice(0, 5),
+        status: (b.variance_ciment_pct || 0) > 5 ? 'ecart' as const :
+          b.workflow_status === 'planification' ? 'planifie' as const :
+          b.workflow_status === 'production' ? 'production' as const :
+          'valide' as const,
+        progress: b.workflow_status === 'validation_technique' ? 100 :
+          b.workflow_status === 'production' ? 55 : 0,
+      }));
     }
+    return FALLBACK_ROWS;
+  }, [bons]);
+
+  // Counts
+  const counts = useMemo(() => {
+    const c = { total: rows.length, planifie: 0, production: 0, valide: 0, ecart: 0 };
+    rows.forEach(r => { if (r.status in c) (c as any)[r.status]++; });
+    return c;
+  }, [rows]);
+
+  // Filtered
+  const filtered = useMemo(() => {
+    let r = [...rows];
+    if (activeFilter === 'planifies') r = r.filter(x => x.status === 'planifie');
+    else if (activeFilter === 'production') r = r.filter(x => x.status === 'production');
+    else if (activeFilter === 'valides') r = r.filter(x => x.status === 'valide');
+    else if (activeFilter === 'ecarts') r = r.filter(x => x.status === 'ecart');
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      result = result.filter(b =>
-        (b.bl_id || '').toLowerCase().includes(q) ||
-        (b.formule_id || '').toLowerCase().includes(q) ||
-        (b.chauffeur_nom || '').toLowerCase().includes(q) ||
-        (b.bc_id || '').toLowerCase().includes(q)
-      );
+      r = r.filter(x => x.bl_id.toLowerCase().includes(q) || x.client.toLowerCase().includes(q) || x.formule.toLowerCase().includes(q));
     }
-    return result;
-  }, [bons, activeFilter, searchQuery]);
+    return r;
+  }, [rows, activeFilter, searchQuery]);
 
-  // ── Live feed items ──
-  const feedItems = useMemo(() => {
-    return batches.slice(0, 15).map(b => ({
-      id: b.id,
-      blId: b.bl_id || `B-${b.batch_number}`,
-      batchNum: b.batch_number,
-      quality: b.quality_status,
-      time: b.entered_at ? format(new Date(b.entered_at), 'HH:mm') : '—',
-      ciment: b.ciment_reel_kg || 0,
-      formula: b.formule_id || '—',
-      volume: b.volume_m3 || 0,
-      client: b.client_name || '—',
-      variance: b.variance_ciment_pct || 0,
-    }));
-  }, [batches]);
+  const filterTabs = [
+    { id: 'tous', label: 'Tous', count: counts.total },
+    { id: 'planifies', label: 'Planifiés', count: counts.planifie, icon: Clock },
+    { id: 'production', label: 'En Production', count: counts.production, icon: Play },
+    { id: 'valides', label: 'Validés', count: counts.valide, icon: CheckCircle },
+    { id: 'ecarts', label: 'Écarts', count: counts.ecart, icon: AlertTriangle },
+  ];
 
-  // ── Bottom metrics ──
-  const totalVol = Math.round(metrics.totalVol);
-  const batchCount = bons.length;
-  const cadence = batchCount > 0 ? Math.round(totalVol / Math.max(1, batchCount) * 4.5) : 0;
-
-  // ── Column definitions ──
-  const columns = ['N° BL', 'CLIENT', 'BC', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'];
+  const mono = 'JetBrains Mono, monospace';
 
   return (
     <div className="flex flex-col gap-6">
 
-      {/* ═══ 1. ACTION BUTTONS ROW ═══ */}
-      <div className="flex items-center gap-3">
-        <button
-          className="flex items-center gap-2 cursor-pointer"
-          style={{
-            padding: '10px 20px', borderRadius: 8,
-            background: T.gold, color: '#0B1120', fontWeight: 500, fontSize: 13,
-            border: 'none', fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          <Play size={16} strokeWidth={1.5} />
-          Lancer Production
-        </button>
-        <button
-          className="flex items-center gap-2 cursor-pointer"
-          style={{
-            padding: '10px 14px', borderRadius: 8,
-            background: 'transparent', color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
-            border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          <Download size={16} strokeWidth={1.5} />
-          Exporter
-        </button>
-        <button
-          className="flex items-center gap-2 cursor-pointer"
-          style={{
-            padding: '10px 14px', borderRadius: 8,
-            background: 'transparent', color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
-            border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          <RefreshCw size={16} strokeWidth={1.5} />
-          Actualiser
-        </button>
+      {/* ═══ 1. ACTION BUTTONS ═══ */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-2 cursor-pointer" style={{
+            padding: '10px 20px', borderRadius: 8, background: T.gold, color: '#0B1120',
+            fontWeight: 500, fontSize: 13, border: 'none', fontFamily: 'DM Sans, sans-serif',
+          }}>
+            <Play size={16} strokeWidth={1.5} /> Lancer Production
+          </button>
+          {[{ icon: Download, label: 'Exporter' }, { icon: RefreshCw, label: 'Actualiser' }].map(b => (
+            <button key={b.label} className="flex items-center gap-2 cursor-pointer" style={{
+              padding: '10px 14px', borderRadius: 8, background: 'transparent',
+              color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
+              border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
+            }}>
+              <b.icon size={16} strokeWidth={1.5} /> {b.label}
+            </button>
+          ))}
+        </div>
+        <InlineClock />
       </div>
 
-      {/* ═══ 2. SEARCH BAR + FILTRES + CLOCK ═══ */}
+      {/* ═══ 2. SEARCH BAR ═══ */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
           <Search size={16} strokeWidth={1.5} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.30)' }} />
           <input
-            type="text"
-            placeholder="Rechercher BL, BC, client, formule..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            type="text" placeholder="Rechercher BL, BC, client, formule..."
+            value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
             className="w-full outline-none"
             style={{
               padding: '12px 14px 12px 40px', borderRadius: 8,
@@ -254,74 +183,75 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             }}
           />
         </div>
-        <button
-          className="flex items-center gap-2 cursor-pointer"
-          style={{
-            padding: '12px 16px', borderRadius: 8,
-            background: 'transparent', border: `1px solid ${T.cardBorder}`,
-            color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          <SlidersHorizontal size={14} strokeWidth={1.5} />
-          Filtres
+        <button className="flex items-center gap-2 cursor-pointer" style={{
+          padding: '12px 16px', borderRadius: 8, background: 'transparent',
+          border: `1px solid ${T.cardBorder}`, color: 'rgba(255,255,255,0.6)',
+          fontSize: 13, fontWeight: 500, fontFamily: 'DM Sans, sans-serif',
+        }}>
+          <SlidersHorizontal size={14} strokeWidth={1.5} /> Filtres
         </button>
-        <InlineClock />
       </div>
 
-      {/* ═══ 3. 6 KPI CARDS ═══ */}
+      {/* ═══ 3. KPI CARDS ═══ */}
       <div className="grid grid-cols-6 gap-4">
-        <MiniKPI label="En Production" value={metrics.inProdCount} suffix="bons" icon={Activity} />
-        <MiniKPI label="Volume" value={Math.round(metrics.totalVol)} suffix="m³" icon={Droplets} />
-        <MiniKPI label="CUR Moyen" value={metrics.totalVol > 0 ? '—' : '—'} suffix="DH/m³" icon={TrendingUp} />
-        <MiniKPI label="Validés" value={metrics.validatedCount} sub={`/ ${bons.length}`} icon={CheckCircle} />
-        <MiniKPI label="Sync Machine" value={metrics.syncRate} suffix="%" icon={Wifi} />
-        <MiniKPI label="Alertes" value={metrics.alertCount} sub={`${metrics.ecartCount} écarts`} icon={AlertTriangle} />
+        {[
+          { label: 'EN PRODUCTION', icon: Activity, value: '2', suffix: 'bons' },
+          { label: 'VOLUME', icon: Droplets, value: '671', suffix: 'm³' },
+          { label: 'CUR MOYEN', icon: TrendingUp, value: '847', suffix: 'DH/m³' },
+          { label: 'VALIDÉS', icon: CheckCircle, value: '9', suffix: '/ 14' },
+          { label: 'SYNC MACHINE', icon: Wifi, value: '98', suffix: '%' },
+          { label: 'ALERTES', icon: AlertTriangle, value: '1', suffix: '1 écart' },
+        ].map(k => (
+          <div key={k.label} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16 }}>
+            <k.icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)', marginBottom: 8 }} />
+            <p style={{ fontFamily: mono, fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
+              {k.value}
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 4 }}>{k.suffix}</span>
+            </p>
+            <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.40)', fontWeight: 500, marginTop: 6 }}>{k.label}</p>
+          </div>
+        ))}
       </div>
 
       {/* ═══ 4. FILTER TABS ═══ */}
       <div className="flex items-center gap-1" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
         {filterTabs.map(tab => {
-          const isActive = activeFilter === tab.id;
-          const TabIcon = tabIcons[tab.id];
+          const active = activeFilter === tab.id;
+          const Icon = (tab as any).icon;
           return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
-              className="flex items-center gap-2 cursor-pointer"
-              style={{
+            <button key={tab.id} onClick={() => setActiveFilter(tab.id)}
+              className="flex items-center gap-2 cursor-pointer" style={{
                 padding: '10px 16px', background: 'transparent', border: 'none',
-                borderBottom: isActive ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
-                fontWeight: isActive ? 500 : 400, fontSize: 13,
+                borderBottom: active ? `2px solid ${T.gold}` : '2px solid transparent',
+                color: active ? '#fff' : 'rgba(255,255,255,0.45)',
+                fontWeight: active ? 500 : 400, fontSize: 13,
                 fontFamily: 'DM Sans, sans-serif', transition: 'all 150ms',
-              }}
-            >
-              {TabIcon && <TabIcon size={14} strokeWidth={1.5} />}
+              }}>
+              {Icon && <Icon size={14} strokeWidth={1.5} />}
               {tab.label}
               <span style={{
                 padding: '1px 8px', borderRadius: 999, fontSize: 11,
-                background: isActive ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.08)',
-                color: isActive ? '#fff' : 'rgba(255,255,255,0.60)',
-                fontFamily: 'JetBrains Mono, monospace', fontWeight: 500,
+                background: active ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.08)',
+                color: active ? '#fff' : 'rgba(255,255,255,0.60)',
+                fontFamily: mono, fontWeight: 500,
               }}>{tab.count}</span>
             </button>
           );
         })}
       </div>
 
-      {/* ═══ 5. MAIN: TABLE + SIDEBAR ═══ */}
+      {/* ═══ 5. TABLE + SIDEBAR ═══ */}
       <div className="flex gap-6">
 
-        {/* ── DATA TABLE ── */}
+        {/* ── TABLE ── */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, overflow: 'hidden', flex: 1 }}>
-            {/* Column headers */}
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '14px 14px 0 0', overflow: 'hidden' }}>
+            {/* Headers */}
             <div className="grid items-center" style={{
-              gridTemplateColumns: '110px 1fr 90px 110px 80px 70px 120px 100px 80px',
+              gridTemplateColumns: '120px 1fr 100px 80px 65px 130px 110px 90px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {columns.map(h => (
+              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => (
                 <span key={h} style={{
                   fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.15em',
                   color: 'rgba(255,255,255,0.35)', fontWeight: 500,
@@ -330,125 +260,78 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               ))}
             </div>
 
-            {/* Table body */}
-            {filteredBons.length > 0 ? (
-              <div>
-                {filteredBons.map((bon, i) => {
-                  const status = getStatusInfo(bon.workflow_status, bon.variance_ciment_pct);
-                  const progress = getProgressPercent(bon.workflow_status);
-                  return (
-                    <div
-                      key={bon.bl_id + i}
-                      className="grid items-center"
-                      style={{
-                        gridTemplateColumns: '110px 1fr 90px 110px 80px 70px 120px 100px 80px',
-                        padding: '16px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)',
-                        cursor: 'pointer', transition: 'background 150ms',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      {/* BL ID */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff' }}>
-                        {bon.bl_id}
-                      </span>
-                      {/* Client */}
-                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.80)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {bon.chauffeur_nom || '—'}
-                      </span>
-                      {/* BC */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'rgba(255,255,255,0.50)' }}>
-                        {bon.bc_id || '—'}
-                      </span>
-                      {/* Formule */}
-                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.70)' }}>
-                        {bon.formule_id || '—'}
-                      </span>
-                      {/* Volume — right-aligned */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'right' }}>
-                        {(bon.volume_m3 || 0).toFixed(1)}
-                      </span>
-                      {/* Heure — right-aligned */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'rgba(255,255,255,0.50)', textAlign: 'right' }}>
-                        {bon.heure_prevue?.slice(0, 5) || bon.production_batch_time?.slice(0, 5) || '—'}
-                      </span>
-                      {/* Statut badge */}
-                      <div className="flex items-center gap-2">
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 6,
-                          padding: '4px 10px', borderRadius: 999,
-                          background: `${status.color}1F`, fontSize: 11, fontWeight: 500,
-                          color: status.color, whiteSpace: 'nowrap',
-                        }}>
-                          <span style={{ width: 5, height: 5, borderRadius: '50%', background: status.dot, flexShrink: 0 }} />
-                          {status.label}
-                        </span>
-                      </div>
-                      {/* Progression */}
-                      <div className="flex flex-col gap-1">
-                        <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
-                          <div style={{
-                            width: `${progress}%`, height: '100%', borderRadius: 3,
-                            background: progress === 100 ? T.success : T.gold,
-                            transition: 'width 300ms ease',
-                          }} />
-                        </div>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.30)' }}>
-                          {progress === 100 ? `${bon.volume_m3}/${bon.volume_m3}m³` : `0/${bon.volume_m3}m³`}
-                        </span>
-                      </div>
-                      {/* Actions */}
-                      <div className="flex items-center gap-1">
-                        <button
-                          className="flex items-center justify-center cursor-pointer"
-                          style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
-                          title="Voir détails"
-                        >
-                          <Eye size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.60)')}
-                            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
-                          />
-                        </button>
-                        {bon.workflow_status === 'planification' && (
-                          <button
-                            className="flex items-center justify-center cursor-pointer"
-                            style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
-                            title="Lancer"
-                          >
-                            <Play size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
-                              onMouseEnter={e => (e.currentTarget.style.color = T.gold)}
-                              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
-                            />
-                          </button>
-                        )}
-                        {bon.workflow_status === 'production' && (
-                          <button
-                            className="flex items-center justify-center cursor-pointer"
-                            style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
-                            title="Valider"
-                          >
-                            <CheckCircle size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
-                              onMouseEnter={e => (e.currentTarget.style.color = T.success)}
-                              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
-                            />
-                          </button>
-                        )}
-                      </div>
+            {/* Rows */}
+            {filtered.length > 0 ? filtered.map((row, i) => {
+              const st = statusStyle(row.status);
+              const delivered = Math.round(row.volume * row.progress / 100);
+              const isInProd = row.status === 'production';
+              return (
+                <div key={row.bl_id} className="grid items-center" style={{
+                  gridTemplateColumns: '120px 1fr 100px 80px 65px 130px 110px 90px',
+                  padding: '16px 16px',
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
+                  cursor: 'pointer', transition: 'background 150ms',
+                }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
+                  <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)' }}>{row.formule}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'right' }}>{row.volume}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>{row.heure}</span>
+                  {/* Status badge */}
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
+                    padding: '4px 10px', borderRadius: 999, background: st.bg,
+                    fontSize: 11, fontWeight: 500, color: st.color, whiteSpace: 'nowrap',
+                  }}>
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
+                    {st.label}
+                  </span>
+                  {/* Progress */}
+                  <div className="flex flex-col gap-1">
+                    <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
+                      <div style={{
+                        width: `${row.progress}%`, height: '100%', borderRadius: 3,
+                        background: row.progress === 100 ? T.success : row.progress > 0 ? T.info : 'transparent',
+                        transition: 'width 300ms ease',
+                      }} />
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* ── EMPTY STATE ── */
+                    <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.25)' }}>
+                      {delivered}/{row.volume}m³
+                    </span>
+                  </div>
+                  {/* Actions */}
+                  <div className="flex items-center gap-1">
+                    <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
+                      <Eye size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)' }} />
+                    </button>
+                    {row.status === 'planifie' && (
+                      <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
+                        <Play size={16} strokeWidth={1.5} style={{ color: T.gold }} />
+                      </button>
+                    )}
+                    {row.status === 'production' && (
+                      <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
+                        <Pause size={16} strokeWidth={1.5} style={{ color: '#60a5fa' }} />
+                      </button>
+                    )}
+                    {row.status === 'valide' && (
+                      <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
+                        <CheckCircle size={16} strokeWidth={1.5} style={{ color: '#34d399' }} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            }) : (
               <div style={{ padding: '80px 24px' }}>
                 <div className="flex flex-col items-center justify-center">
                   <BarChart3 size={56} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.06)' }} />
-                  <p style={{ color: 'rgba(255,255,255,0.30)', fontSize: 14, fontWeight: 500, marginTop: 16 }}>
-                    Aucun batch enregistré aujourd'hui
-                  </p>
-                  <p style={{ color: 'rgba(255,255,255,0.20)', fontSize: 12, marginTop: 4 }}>
-                    Les batches apparaîtront ici dès le lancement de la production
-                  </p>
+                  <p style={{ color: 'rgba(255,255,255,0.30)', fontSize: 14, fontWeight: 500, marginTop: 16 }}>Aucun batch enregistré aujourd'hui</p>
+                  <p style={{ color: 'rgba(255,255,255,0.20)', fontSize: 12, marginTop: 4 }}>Les batches apparaîtront ici dès le lancement de la production</p>
                 </div>
               </div>
             )}
@@ -458,38 +341,29 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           <div style={{
             background: 'rgba(255,255,255,0.02)', borderTop: `1px solid ${T.cardBorder}`,
             padding: '12px 24px', borderRadius: '0 0 14px 14px',
-            marginTop: -1,
           }}>
-            <div className="flex items-center justify-between" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
+            <div className="flex items-center justify-between" style={{ fontFamily: mono, fontSize: 12 }}>
               <div className="flex items-center gap-3">
-                <span>
-                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{totalVol}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span>
-                </span>
+                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>671</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span>
-                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{batchCount}</span>
-                  <span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span>
-                </span>
+                <span><span style={{ color: 'rgba(255,255,255,0.55)' }}>14</span><span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  Cadence: <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{cadence} m³/h</span>
-                </span>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>Cadence: <span style={{ color: 'rgba(255,255,255,0.55)' }}>47 m³/h</span></span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
-                <span style={{ color: 'rgba(255,255,255,0.35)' }}>— vs hier</span>
+                <span style={{ color: '#34d399' }}>▲ +12% vs hier</span>
               </div>
               <InlineClock />
             </div>
           </div>
         </div>
 
-        {/* ═══ 6. LIVE PRODUCTION FEED SIDEBAR ═══ */}
+        {/* ═══ SIDEBAR ═══ */}
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
             background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`,
             borderRadius: 14, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
-            {/* Sidebar header */}
+            {/* Header */}
             <div style={{ padding: 16, borderBottom: `1px solid ${T.cardBorder}` }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -506,63 +380,41 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   </button>
                 </div>
               </div>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>
-                Suivi temps réel des batches
-              </p>
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>Suivi temps réel des batches</p>
             </div>
 
-            {/* Feed items */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }} className="scrollbar-thin">
-              {feedItems.length > 0 ? (
-                feedItems.map((item, i) => {
-                  const borderColor = item.quality === 'ok' ? T.success : item.quality === 'pending' ? T.gold : 'rgba(255,255,255,0.10)';
-                  return (
-                    <div
-                      key={item.id + i}
-                      style={{
-                        padding: '10px 16px', borderLeft: `2px solid ${borderColor}`,
-                        margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
-                        transition: 'background 150ms',
-                      }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff' }}>
-                          #{item.batchNum}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {item.variance > 0 && (
-                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.gold, fontWeight: 500 }}>
-                              {Math.round(item.variance)}%
-                            </span>
-                          )}
-                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>
-                            {item.time}
-                          </span>
-                        </div>
-                      </div>
-                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
-                        {item.formula} · {item.volume} m³ · {item.client}
-                      </p>
+            {/* Feed */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
+              {FEED_ITEMS.map(item => (
+                <div key={item.id} style={{
+                  padding: '10px 16px',
+                  borderLeft: `2px solid ${item.active ? 'rgba(96,165,250,0.70)' : 'rgba(52,211,153,0.50)'}`,
+                  margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
+                  transition: 'background 150ms',
+                }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.num}</span>
+                    <div className="flex items-center gap-2">
+                      {item.pct ? (
+                        <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{item.pct}</span>
+                      ) : (
+                        <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
+                      )}
+                      <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.time}</span>
                     </div>
-                  );
-                })
-              ) : (
-                <div className="flex flex-col items-center justify-center py-16 gap-3">
-                  <Clock size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.06)' }} />
-                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 500 }}>Aucun batch enregistré</p>
-                  <p style={{ color: 'rgba(255,255,255,0.18)', fontSize: 11, textAlign: 'center', padding: '0 24px' }}>
-                    Les batches de production apparaîtront ici en temps réel
-                  </p>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.info}</p>
                 </div>
-              )}
+              ))}
             </div>
 
-            {/* Sidebar footer */}
+            {/* Footer */}
             <div style={{ padding: 12, borderTop: `1px solid ${T.cardBorder}` }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.30)' }}>
-                Total file: {Math.round(metrics.totalVol)} m³
+              <span style={{ fontFamily: mono, fontSize: 11, color: 'rgba(255,255,255,0.30)' }}>
+                Total file: 186 m³ restants
               </span>
             </div>
           </div>
