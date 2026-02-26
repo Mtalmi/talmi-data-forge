@@ -766,16 +766,11 @@ export default function Dashboard() {
         <div
           className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
           style={{
-            background: 'linear-gradient(180deg, rgba(12,17,30,0.97) 0%, rgba(8,12,24,0.99) 100%)',
-            border: '1px solid rgba(212,168,67,0.06)',
-            boxShadow: '0 0 30px rgba(212,168,67,0.02), inset 0 1px 0 rgba(255,255,255,0.02)',
+            background: 'linear-gradient(180deg, rgba(10,14,26,0.98) 0%, rgba(6,10,20,1) 100%)',
+            border: '1px solid rgba(255,255,255,0.03)',
           }}
         >
-          {/* Subtle mission-control grid overlay */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.015]" style={{
-            backgroundImage: `linear-gradient(rgba(212,168,67,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.2) 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }} />
+          {/* Grid removed for clean editorial look */}
 
           {/* ── HEADER BAR ── */}
           <div className="relative flex items-center justify-between px-5 pt-4 pb-2 z-10">
@@ -821,37 +816,14 @@ export default function Dashboard() {
             {/* ══ PANEL 1: PRODUCTION CHART (70%) ══ */}
             <div className="flex-[7] relative">
               {/* Batching Plant silhouette */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" style={{ zIndex: 0, opacity: 0.06 }}>
-                <rect x="80" y="60" width="50" height="200" rx="6" fill="#D4AF37" opacity="0.5" />
-                <rect x="140" y="40" width="50" height="220" rx="6" fill="#D4AF37" opacity="0.6" />
-                <rect x="200" y="80" width="50" height="180" rx="6" fill="#D4AF37" opacity="0.45" />
-                <line x1="260" y1="180" x2="420" y2="100" stroke="#D4AF37" strokeWidth="3" opacity="0.3" />
-                <rect x="420" y="90" width="90" height="120" rx="4" fill="#D4AF37" opacity="0.35" />
-                <polygon points="470,210 490,210 510,260 450,260" fill="#D4AF37" opacity="0.25" />
-                <rect x="560" y="100" width="45" height="160" rx="2" fill="#D4AF37" opacity="0.3" />
-                <polygon points="680,140 720,140 740,200 660,200" fill="#D4AF37" opacity="0.3" />
-                <polygon points="760,130 800,130 820,200 740,200" fill="#D4AF37" opacity="0.25" />
-                <rect x="920" y="230" width="100" height="40" rx="4" fill="#D4AF37" opacity="0.2" />
-                <line x1="0" y1="290" x2="1200" y2="290" stroke="#D4AF37" strokeWidth="1" opacity="0.1" />
-              </svg>
+              {/* Plant silhouette — removed for editorial cleanliness */}
 
-              {/* Ember particles */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden z-[2] golden-embers">
-                {Array.from({ length: 10 }, (_, i) => (
-                  <div key={i} className="ember absolute rounded-full" style={{
-                    width: `${1.5 + (i % 3) * 0.8}px`, height: `${1.5 + (i % 3) * 0.8}px`,
-                    background: `rgba(253,185,19,${0.3 + (i % 4) * 0.1})`,
-                    boxShadow: '0 0 4px rgba(253,185,19,0.3)',
-                    left: `${8 + (i * 9)}%`, bottom: `${20 + (i % 5) * 8}%`,
-                    animation: `particleFloat ${5 + (i % 4) * 1.5}s ease-out ${3 + i * 0.4}s infinite`,
-                  }} />
-                ))}
-              </div>
+              {/* Embers removed for editorial cleanliness */}
 
               {/* Peak annotation overlay */}
               <div className="absolute z-[5]" style={{ right: '35%', top: '8px' }}>
-                <div className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.10)' }}>
-                  <span className="text-[8px] tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(212,168,67,0.6)' }}>▲ PEAK 14H · 110 m³</span>
+                <div className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span className="text-[7px] tracking-wider font-medium" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(255,255,255,0.4)' }}>PEAK 14H · 110 m³</span>
                 </div>
               </div>
 
@@ -859,9 +831,8 @@ export default function Dashboard() {
               <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[3]" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#C9A84C" stopOpacity={0.15} />
-                    <stop offset="30%" stopColor="#C9A84C" stopOpacity={0.06} />
-                    <stop offset="60%" stopColor="#C9A84C" stopOpacity={0.02} />
+                    <stop offset="0%" stopColor="#C9A84C" stopOpacity={0.12} />
+                    <stop offset="40%" stopColor="#C9A84C" stopOpacity={0.04} />
                     <stop offset="100%" stopColor="#C9A84C" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
@@ -869,67 +840,44 @@ export default function Dashboard() {
                     <stop offset="50%" stopColor="#D4B060" />
                     <stop offset="100%" stopColor="#C9A84C" />
                   </linearGradient>
-                  <filter id="sparklineGlow">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                  </filter>
-                  <filter id="outerAtmo"><feGaussianBlur stdDeviation="6" /></filter>
                 </defs>
 
-                {/* Reference lines */}
-                <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.10)" strokeWidth="0.5" strokeDasharray="4 3" />
-                <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.25)" fontSize="2.5" fontFamily="'JetBrains Mono', monospace">Objectif</text>
-                <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.08)" strokeWidth="0.5" strokeDasharray="3 3" />
-                <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.20)" fontSize="2.5" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
+                {/* Reference lines — monochromatic whispers */}
+                <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" strokeDasharray="5 4" />
+                <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(255,255,255,0.15)" fontSize="2" fontFamily="'JetBrains Mono', monospace">Objectif</text>
+                <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" strokeDasharray="3 4" />
+                <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(255,255,255,0.12)" fontSize="2" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
 
                 {/* Target line (dashed white ghost) */}
-                <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 2" strokeLinejoin="round" strokeLinecap="round" />
+                <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" strokeDasharray="3 2.5" strokeLinejoin="round" strokeLinecap="round" />
 
                 {/* Area fill — past section */}
                 <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
 
-                {/* Atmospheric glow — subtle */}
-                <path d={pastLinePath} fill="none" stroke="#C9A84C" strokeWidth="10" strokeOpacity="0.03" strokeLinejoin="round" strokeLinecap="round" filter="url(#outerAtmo)" />
-                <path d={pastLinePath} fill="none" stroke="#C9A84C" strokeWidth="4" strokeOpacity="0.06" strokeLinejoin="round" strokeLinecap="round" />
-                {/* Core gold line — past (thin, precise) */}
-                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparklineGlow)" />
+                {/* Core gold line — past (thin, precise, no glow) */}
+                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
 
                 {/* Forecast line (dashed, faded) */}
-                <path d={forecastLinePath} fill="none" stroke="rgba(201,168,76,0.25)" strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinejoin="round" strokeLinecap="round" />
+                <path d={forecastLinePath} fill="none" stroke="rgba(201,168,76,0.20)" strokeWidth="1.5" strokeDasharray="4 6" strokeLinejoin="round" strokeLinecap="round" />
 
                 {/* NOW playhead */}
-                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.35)" strokeWidth="0.7" />
-                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.06)" strokeWidth="2.5" />
-                <text x={nowX} y="5" textAnchor="middle" fill="rgba(212,168,67,0.4)" fontSize="2.5" fontWeight="500" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.1em">MAINTENANT</text>
+                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2 2" />
+                <text x={nowX} y="5" textAnchor="middle" fill="rgba(212,168,67,0.3)" fontSize="2" fontWeight="500" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.15em">MAINTENANT</text>
 
-                {/* Batch event markers */}
+                {/* Batch event markers — minimal */}
                 {batchMarkerPositions.map((evt, i) => (
                   <g key={i}>
-                    <line x1={evt.x} y1={evt.y} x2={evt.x} y2={evt.y + 12} stroke="rgba(212,168,67,0.15)" strokeWidth="0.5" strokeDasharray="1 1.5" />
-                    <circle cx={evt.x} cy={evt.y} r="1.8" fill="#D4A843" opacity="0.7" />
-                    <circle cx={evt.x} cy={evt.y} r="3.5" fill="none" stroke="rgba(212,168,67,0.2)" strokeWidth="0.5" />
+                    <circle cx={evt.x} cy={evt.y} r="1.2" fill="#C9A84C" opacity="0.5" />
                   </g>
                 ))}
 
                 {/* Peak annotation line */}
-                <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 16} stroke="rgba(212,175,55,0.15)" strokeWidth="0.5" strokeDasharray="1.5 2" />
+                <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 12} stroke="rgba(255,255,255,0.08)" strokeWidth="0.3" strokeDasharray="1 1.5" />
 
-                {/* Data markers */}
-                {SPARKLINE_DATA.map((d, i) => {
-                  if (i % 2 !== 0 && i !== lastIdx) return null;
-                  const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
-                  const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
-                  return <circle key={i} cx={x} cy={y} r="0.8" fill="rgba(212,175,55,0.15)" className="area-fill" />;
-                })}
-
-                {/* Live endpoint pulse */}
-                <circle cx={lastX} cy={lastY} r="2.5" fill="#D4AF37" opacity="0.9">
-                  <animate attributeName="r" values="2.5;4;2.5" dur="3s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
-                </circle>
-                <circle cx={lastX} cy={lastY} r="8" fill="none" stroke="rgba(212,175,55,0.1)">
-                  <animate attributeName="r" values="8;16;8" dur="4s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.15;0;0.15" dur="4s" repeatCount="indefinite" />
+                {/* Live endpoint — subtle pulse */}
+                <circle cx={lastX} cy={lastY} r="2" fill="#C9A84C" opacity="0.8">
+                  <animate attributeName="r" values="2;3;2" dur="3s" repeatCount="indefinite" />
+                  <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3s" repeatCount="indefinite" />
                 </circle>
               </svg>
             </div>
