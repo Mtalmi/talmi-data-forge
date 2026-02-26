@@ -21,9 +21,7 @@ const T = {
   success:    '#10B981',
   warning:    '#F59E0B',
   danger:     '#EF4444',
-  info:       '#3B82F6',
-  purple:     '#8B5CF6',
-  pink:       '#EC4899',
+  info:       '#60A5FA',
   textPri:    '#F1F5F9',
   textSec:    '#94A3B8',
   textDim:    '#64748B',
@@ -215,7 +213,7 @@ function Gauge({ pct }: { pct: number }) {
 // MOCK DATA
 // ─────────────────────────────────────────────────────
 const PRODUCT_COLORS: Record<string, string> = {
-  B25: T.gold, B30: T.info, B35: T.success, B40: T.purple, 'Spécial': T.pink,
+  B25: T.gold, B30: T.info, B35: T.success, B40: T.gold, 'Spécial': T.warning,
 };
 
 const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];

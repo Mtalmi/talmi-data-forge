@@ -26,21 +26,21 @@ interface DailyTimelineProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  'en_attente_validation': 'bg-amber-500',
-  'planification': 'bg-blue-600',
-  'production': 'bg-orange-500',
-  'en_chargement': 'bg-violet-600',
-  'en_livraison': 'bg-rose-600',
+  'en_attente_validation': 'bg-[#D4A843]',
+  'planification': 'bg-white/50',
+  'production': 'bg-[#D4A843]',
+  'en_chargement': 'bg-blue-400',
+  'en_livraison': 'bg-emerald-400',
   'livre': 'bg-emerald-600',
 };
 
 const STATUS_GRADIENTS: Record<string, string> = {
-  'en_attente_validation': 'bg-gradient-to-r from-amber-500 to-amber-400',
-  'planification': 'bg-gradient-to-r from-blue-600 to-sky-500',
-  'production': 'bg-gradient-to-r from-orange-500 to-amber-400',
-  'en_chargement': 'bg-gradient-to-r from-violet-600 to-purple-500',
-  'en_livraison': 'bg-gradient-to-r from-rose-600 to-pink-500',
-  'livre': 'bg-gradient-to-r from-emerald-600 to-teal-500',
+  'en_attente_validation': 'bg-gradient-to-r from-[#D4A843] to-[#E8D5A3]',
+  'planification': 'bg-gradient-to-r from-white/50 to-white/30',
+  'production': 'bg-gradient-to-r from-[#D4A843] to-[#E8D5A3]',
+  'en_chargement': 'bg-gradient-to-r from-blue-400 to-blue-300',
+  'en_livraison': 'bg-gradient-to-r from-emerald-400 to-emerald-300',
+  'livre': 'bg-gradient-to-r from-emerald-600 to-emerald-500',
 };
 
 export function DailyTimeline({
