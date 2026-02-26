@@ -564,7 +564,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch" style={{ alignItems: 'stretch' }}>
           {[
             {
               label: 'VOLUME',
@@ -623,6 +623,9 @@ export default function Dashboard() {
               key={i}
               className="tbos-hero-card group cursor-default shimmer-effect h-full flex flex-col"
               style={{
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
@@ -644,121 +647,124 @@ export default function Dashboard() {
               </div>
 
               {/* Content wrapper for equal height */}
-              <div className="relative z-[1] flex flex-col flex-1">
-
-              {/* Label */}
-              <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
-                {kpi.label}
-              </div>
-
-              {/* Main number with count-up — JetBrains Mono luminescent gauge */}
-              <div className="flex items-baseline gap-2 leading-none">
-                <span style={{
-                  fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
-                  fontWeight: 200,
-                  fontSize: '3rem',
-                  color: 'white',
-                  letterSpacing: '-0.03em',
-                  lineHeight: 1,
-                  textShadow: '0 0 35px rgba(253,185,19,0.2), 0 0 70px rgba(253,185,19,0.07)',
-                }}>
-                  {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
-                </span>
-                <span style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontWeight: 300,
-                  fontSize: '14px',
-                  color: 'rgba(255,255,255,0.3)',
-                  marginLeft: '4px',
-                }}>{kpi.unit}</span>
-              </div>
-
-              {/* Sub info */}
-              <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
-
-              {/* Trend indicator */}
-              {kpi.trend && (
-                <div className="mt-2 flex items-center gap-1.5">
-                  <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
-                </div>
-              )}
-
-              {/* Mini sparkline */}
-              {kpi.sparkline && (
-                <svg width="120" height="32" viewBox="0 0 120 32" className="mt-auto pt-3">
-                  <polyline
-                    fill="none"
-                    stroke={kpi.sparkStroke || '#22c55e'}
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    points={kpi.sparkline}
-                    style={{ opacity: 0.6 }}
-                  />
-                  {(() => {
-                    const pts = kpi.sparkline.split(' ');
-                    const last = pts[pts.length - 1]?.split(',');
-                    return last ? <circle cx={last[0]} cy={last[1]} r="2" fill={kpi.sparkStroke || '#22c55e'} style={{ opacity: 0.8 }} /> : null;
-                  })()}
-                </svg>
-               )}
-
-              {/* Revenue Target Gauge */}
-              {kpi.revenueGauge && (
-                <div className="flex flex-col items-center mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <svg width="90" height="50" viewBox="0 0 100 55">
-                    {/* Background arc */}
-                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round" />
-                    {/* Red zone */}
-                    <path d="M 10 50 A 40 40 0 0 1 36.3 14.2" fill="none" stroke="rgba(239,68,68,0.25)" strokeWidth="5" strokeLinecap="round" />
-                    {/* Yellow zone */}
-                    <path d="M 36.3 14.2 A 40 40 0 0 1 63.7 14.2" fill="none" stroke="rgba(234,179,8,0.25)" strokeWidth="5" strokeLinecap="round" />
-                    {/* Green zone */}
-                    <path d="M 63.7 14.2 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(34,197,94,0.25)" strokeWidth="5" strokeLinecap="round" />
-                    {/* Progress arc */}
-                    <path
-                      d={`M 10 50 A 40 40 0 0 1 ${10 + Math.min(kpi.revenueGauge.pct / 100, 1) * 80} ${50 - Math.sin(Math.min(kpi.revenueGauge.pct / 100, 1) * Math.PI) * 40}`}
-                      fill="none"
-                      stroke={kpi.revenueGauge.pct < 33 ? '#ef4444' : kpi.revenueGauge.pct < 66 ? '#eab308' : '#22c55e'}
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                    />
-                    <text x="50" y="44" textAnchor="middle" fill="white" fontSize="10" fontWeight="500" style={{ fontFamily: "'JetBrains Mono'" }}>
-                      {kpi.revenueGauge.pct}%
-                    </text>
-                    <text x="50" y="53" textAnchor="middle" fill="rgba(148,163,184,0.4)" fontSize="6">de l'objectif</text>
-                  </svg>
-                  <div className="text-[9px] mt-0.5" style={{ color: 'rgba(148,163,184,0.4)' }}>
-                    Objectif: <span className="text-white/60">{kpi.revenueGauge.target}K DH</span>
+              <div className="relative z-[1] flex flex-col flex-1" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ flex: '1 1 auto' }}>
+                  {/* Label */}
+                  <div className="mb-5" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgb(100,116,139)' }}>
+                    {kpi.label}
                   </div>
-                </div>
-              )}
-              {kpi.monthlyTarget && (
-                <div className="flex items-center gap-2.5 mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <svg width="36" height="36" viewBox="0 0 36 36" className="shrink-0">
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2.5" />
-                    <circle
-                      cx="18" cy="18" r="14"
-                      fill="none" stroke="#D4A843" strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeDasharray={`${Math.min((kpi.monthlyTarget.current / kpi.monthlyTarget.target), 1) * 88} 88`}
-                      transform="rotate(-90 18 18)"
-                      style={{ transition: 'stroke-dasharray 1s ease-out' }}
-                    />
-                    <text x="18" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                      {Math.round((kpi.monthlyTarget.current / kpi.monthlyTarget.target) * 100)}%
-                    </text>
-                  </svg>
-                  <div className="flex flex-col">
-                    <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>Objectif mensuel</span>
-                    <span className="text-[10px]" style={{ color: 'rgba(203,213,225,0.6)' }}>
-                      <span className="text-white/70 font-medium">{kpi.monthlyTarget.current}</span>
-                      <span className="text-slate-600"> / {kpi.monthlyTarget.target.toLocaleString()} m³</span>
+
+                  {/* Main number with count-up — JetBrains Mono luminescent gauge */}
+                  <div className="flex items-baseline gap-2 leading-none">
+                    <span style={{
+                      fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
+                      fontWeight: 200,
+                      fontSize: '3rem',
+                      color: 'white',
+                      letterSpacing: '-0.03em',
+                      lineHeight: 1,
+                      textShadow: '0 0 35px rgba(253,185,19,0.2), 0 0 70px rgba(253,185,19,0.07)',
+                    }}>
+                      {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
-                    <span className="text-[9px]" style={{ color: 'rgba(251,191,36,0.7)' }}>{kpi.monthlyTarget.daysLeft} jours restants</span>
+                    <span style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontWeight: 300,
+                      fontSize: '14px',
+                      color: 'rgba(255,255,255,0.3)',
+                      marginLeft: '4px',
+                    }}>{kpi.unit}</span>
                   </div>
+
+                  {/* Sub info */}
+                  <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
+
+                  {/* Trend indicator */}
+                  {kpi.trend && (
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
+                    </div>
+                  )}
                 </div>
-              )}
+
+                <div style={{ marginTop: 'auto' }}>
+                  {/* Mini sparkline */}
+                  {kpi.sparkline && (
+                    <svg width="120" height="32" viewBox="0 0 120 32" className="mt-auto pt-3">
+                      <polyline
+                        fill="none"
+                        stroke={kpi.sparkStroke || '#22c55e'}
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        points={kpi.sparkline}
+                        style={{ opacity: 0.6 }}
+                      />
+                      {(() => {
+                        const pts = kpi.sparkline.split(' ');
+                        const last = pts[pts.length - 1]?.split(',');
+                        return last ? <circle cx={last[0]} cy={last[1]} r="2" fill={kpi.sparkStroke || '#22c55e'} style={{ opacity: 0.8 }} /> : null;
+                      })()}
+                    </svg>
+                   )}
+
+                  {/* Revenue Target Gauge */}
+                  {kpi.revenueGauge && (
+                    <div className="flex flex-col items-center mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <svg width="90" height="50" viewBox="0 0 100 55">
+                        {/* Background arc */}
+                        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round" />
+                        {/* Red zone */}
+                        <path d="M 10 50 A 40 40 0 0 1 36.3 14.2" fill="none" stroke="rgba(239,68,68,0.25)" strokeWidth="5" strokeLinecap="round" />
+                        {/* Yellow zone */}
+                        <path d="M 36.3 14.2 A 40 40 0 0 1 63.7 14.2" fill="none" stroke="rgba(234,179,8,0.25)" strokeWidth="5" strokeLinecap="round" />
+                        {/* Green zone */}
+                        <path d="M 63.7 14.2 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(34,197,94,0.25)" strokeWidth="5" strokeLinecap="round" />
+                        {/* Progress arc */}
+                        <path
+                          d={`M 10 50 A 40 40 0 0 1 ${10 + Math.min(kpi.revenueGauge.pct / 100, 1) * 80} ${50 - Math.sin(Math.min(kpi.revenueGauge.pct / 100, 1) * Math.PI) * 40}`}
+                          fill="none"
+                          stroke={kpi.revenueGauge.pct < 33 ? '#ef4444' : kpi.revenueGauge.pct < 66 ? '#eab308' : '#22c55e'}
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                        />
+                        <text x="50" y="44" textAnchor="middle" fill="white" fontSize="10" fontWeight="500" style={{ fontFamily: "'JetBrains Mono'" }}>
+                          {kpi.revenueGauge.pct}%
+                        </text>
+                        <text x="50" y="53" textAnchor="middle" fill="rgba(148,163,184,0.4)" fontSize="6">de l'objectif</text>
+                      </svg>
+                      <div className="text-[9px] mt-0.5" style={{ color: 'rgba(148,163,184,0.4)' }}>
+                        Objectif: <span className="text-white/60">{kpi.revenueGauge.target}K DH</span>
+                      </div>
+                    </div>
+                  )}
+                  {kpi.monthlyTarget && (
+                    <div className="flex items-center gap-2.5 mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <svg width="36" height="36" viewBox="0 0 36 36" className="shrink-0">
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2.5" />
+                        <circle
+                          cx="18" cy="18" r="14"
+                          fill="none" stroke="#D4A843" strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeDasharray={`${Math.min((kpi.monthlyTarget.current / kpi.monthlyTarget.target), 1) * 88} 88`}
+                          transform="rotate(-90 18 18)"
+                          style={{ transition: 'stroke-dasharray 1s ease-out' }}
+                        />
+                        <text x="18" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                          {Math.round((kpi.monthlyTarget.current / kpi.monthlyTarget.target) * 100)}%
+                        </text>
+                      </svg>
+                      <div className="flex flex-col">
+                        <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>Objectif mensuel</span>
+                        <span className="text-[10px]" style={{ color: 'rgba(203,213,225,0.6)' }}>
+                          <span className="text-white/70 font-medium">{kpi.monthlyTarget.current}</span>
+                          <span className="text-slate-600"> / {kpi.monthlyTarget.target.toLocaleString()} m³</span>
+                        </span>
+                        <span className="text-[9px]" style={{ color: 'rgba(251,191,36,0.7)' }}>{kpi.monthlyTarget.daysLeft} jours restants</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>{/* end content wrapper */}
             </TiltCard>
           ))}
