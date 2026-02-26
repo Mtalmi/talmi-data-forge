@@ -604,6 +604,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,22 20,18 40,20 60,14 80,12 100,10 120,6',
               sparkStroke: '#22c55e',
+              costBreakdown: true,
             },
             {
               label: 'TRÉSORERIE',
@@ -617,6 +618,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               sparkStroke: '#22c55e',
+              cashFlow: true,
             },
           ].map((kpi, i) => (
             <TiltCard
@@ -708,7 +710,43 @@ export default function Dashboard() {
                     </svg>
                    )}
 
-                  {/* Revenue Target Gauge */}
+                  {/* Cost breakdown mini-stat for MARGE */}
+                  {kpi.costBreakdown && (
+                    <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Matières</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>28.1%</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Transport</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>12.4%</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Main-d'œuvre</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>9.4%</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cash flow mini-stat for TRÉSORERIE */}
+                  {kpi.cashFlow && (
+                    <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Entrées</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(52,211,153,0.7)' }}>+92K</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Sorties</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(248,113,113,0.7)' }}>-43K</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Net</div>
+                        <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(52,211,153,0.7)' }}>+49K</div>
+                      </div>
+                    </div>
+                  )}
+
+
                   {kpi.revenueGauge && (
                     <div className="flex flex-col items-center mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                       <svg width="90" height="50" viewBox="0 0 100 55">
