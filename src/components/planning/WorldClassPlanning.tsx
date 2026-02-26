@@ -67,11 +67,13 @@ function usePlanningLiveData() {
         .limit(10);
       const totalVol = (bcs || []).reduce((s, b) => s + (b.volume_m3 || 0), 0);
       const maxCapacity = 1740;
+      // Use demo values when real data is too sparse (< 5 orders likely means seed/test data)
+      const hasSubstantialData = (bcs?.length || 0) >= 5;
       setKpis({
-        commandes: bcs?.length || 24,
-        volumePlanifie: Math.round(totalVol) || 1250,
-        capaciteUsed: Math.round((totalVol / maxCapacity) * 100) || 72,
-        livraisons: bls?.length || 18,
+        commandes: hasSubstantialData ? bcs!.length : 24,
+        volumePlanifie: hasSubstantialData ? Math.round(totalVol) : 1250,
+        capaciteUsed: hasSubstantialData ? Math.round((totalVol / maxCapacity) * 100) : 72,
+        livraisons: (bls?.length || 0) >= 5 ? bls!.length : 18,
       });
       if (bls?.length) {
         setLiveDeliveries(bls.map(b => ({
