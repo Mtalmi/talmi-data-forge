@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Factory, CheckCircle, Shield, Clock, Search, Filter,
   Play, Eye, RefreshCw, Download, BarChart3, Wifi, AlertTriangle,
@@ -99,10 +99,7 @@ function MiniKPI({ label, value, suffix, icon: Icon }: {
 // ─────────────────────────────────────────────────────
 function InlineClock() {
   const [time, setTime] = useState(new Date());
-  useState(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  });
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
   return (
     <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>
       {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
