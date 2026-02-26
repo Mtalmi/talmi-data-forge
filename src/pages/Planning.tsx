@@ -947,7 +947,7 @@ export default function Planning() {
                 value={timeDraft}
                 onChange={(e) => setTimeDraft(e.target.value)}
                 onBlur={commitTime}
-                className={cn("text-sm bg-input border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}
+                className={cn("text-sm bg-muted border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}
               />
             </div>
             <div className="space-y-2">
@@ -957,7 +957,7 @@ export default function Planning() {
                   value={bon.camion_assigne || bon.toupie_assignee || 'none'}
                   onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
                 >
-                  <SelectTrigger className={cn("text-sm bg-input border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}>
+                  <SelectTrigger className={cn("text-sm bg-muted border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}>
                     <SelectValue placeholder={t.pages.planning.assignTruckPlaceholder} />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
@@ -1687,7 +1687,7 @@ export default function Planning() {
         {/* Live Dispatch Board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* À Produire */}
-          <Card className="bg-card border border-border rounded-xl">
+          <Card className="bg-secondary border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <ClipboardList className="h-6 w-6 text-[#D4A843]" strokeWidth={1.5} />
@@ -1713,7 +1713,7 @@ export default function Planning() {
           </Card>
 
           {/* En Chargement */}
-          <Card className="bg-card border border-border rounded-xl">
+          <Card className="bg-secondary border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Loader className="h-6 w-6 text-blue-400" strokeWidth={1.5} />
@@ -1752,7 +1752,7 @@ export default function Planning() {
           </Card>
 
           {/* En Livraison */}
-          <Card className="bg-card border border-border rounded-xl">
+          <Card className="bg-secondary border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Truck className="h-6 w-6 text-emerald-400" strokeWidth={1.5} />
