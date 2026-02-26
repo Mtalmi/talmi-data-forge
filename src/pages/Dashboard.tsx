@@ -602,7 +602,7 @@ export default function Dashboard() {
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,10 12,12 24,10 36,9 48,11 60,10 72,8 80,8',
+              sparkline: '0,18 12,14 24,16 36,10 48,12 60,8 72,10 80,6',
               sparkStroke: '#22c55e',
             },
             {
@@ -685,7 +685,7 @@ export default function Dashboard() {
 
               {/* Mini sparkline */}
               {kpi.sparkline && (
-                <svg width="80" height="20" viewBox="0 0 80 20" className="mt-2" style={{ opacity: 0.7 }}>
+                <svg width="80" height="24" viewBox="0 0 80 24" className="mt-2">
                   <polyline
                     fill="none"
                     stroke={kpi.sparkStroke || '#22c55e'}
@@ -693,6 +693,7 @@ export default function Dashboard() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     points={kpi.sparkline}
+                    style={{ opacity: 0.6 }}
                   />
                 </svg>
                )}
