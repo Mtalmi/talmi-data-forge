@@ -409,10 +409,17 @@ export default function Dashboard() {
             <div className="flex items-end justify-between">
               <div>
             <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ lineHeight: 1 }}>
-                  {typedName || '\u00A0'}<span className="text-2xl font-light" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
+                  <span style={{ color: 'rgba(148,163,184,0.5)', fontWeight: 300 }}>Bonjour </span>{typedName || '\u00A0'}<span className="text-2xl font-light" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
                   {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                 </h1>
-                <div className="flex items-center gap-3 mt-3">
+                {/* Dynamic CEO briefing line */}
+                <p className="text-[11px] mt-2 leading-relaxed" style={{ color: 'rgba(148,163,184,0.5)' }}>
+                  Votre centrale tourne à <span className="text-white/80 font-medium">87%</span> de capacité.{" "}
+                  <span style={{ color: 'rgba(251,191,36,0.8)' }}>2 livraisons urgentes</span> · {" "}
+                  <span className="text-white/70">{prodVolume} m³ produits</span> · {" "}
+                  Marge <span style={{ color: 'rgba(52,211,153,0.8)' }}>{marge}%</span>
+                </p>
+                <div className="flex flex-wrap items-center gap-3 mt-3">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
@@ -422,6 +429,14 @@ export default function Dashboard() {
                   <span className="text-[9px] text-slate-600/50 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
                   <span className="w-px h-3 bg-slate-700/40" />
                   <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
+                  <span className="w-px h-3 bg-slate-700/40" />
+                  {/* Weather widget */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm">☀️</span>
+                    <span className="text-[10px] text-white/70 font-mono tabular-nums">22°C</span>
+                    <span className="text-[9px] text-slate-600/50">Ensoleillé · 45%</span>
+                    <span className="text-[9px] font-medium" style={{ color: 'rgba(52,211,153,0.6)' }}>● Optimal</span>
+                  </div>
                 </div>
               </div>
               {/* Live clock — tiny reference */}
@@ -443,6 +458,8 @@ export default function Dashboard() {
               trend: '↗ +12%',
               accentColor: '#00D9FF',
               labelColor: 'rgba(0,217,255,0.6)',
+              sparkline: '0,18 12,16 24,20 36,14 48,12 60,8 72,5 80,3',
+              sparkStroke: '#22c55e',
             },
             {
               label: 'REVENUE',
@@ -453,6 +470,8 @@ export default function Dashboard() {
               trend: '↗ +8.2%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
+              sparkline: '0,16 12,18 24,14 36,12 48,10 60,8 72,6 80,4',
+              sparkStroke: '#22c55e',
             },
             {
               label: 'MARGE',
@@ -463,6 +482,8 @@ export default function Dashboard() {
               healthy: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
+              sparkline: '0,10 12,12 24,10 36,9 48,11 60,10 72,8 80,8',
+              sparkStroke: '#22c55e',
             },
             {
               label: 'TRÉSORERIE',
@@ -473,6 +494,8 @@ export default function Dashboard() {
               healthy: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
+              sparkline: '0,20 12,18 24,16 36,15 48,12 60,10 72,6 80,3',
+              sparkStroke: '#22c55e',
             },
           ].map((kpi, i) => (
             <TiltCard
@@ -534,6 +557,20 @@ export default function Dashboard() {
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
                 )}
               </div>
+
+              {/* Mini sparkline */}
+              {kpi.sparkline && (
+                <svg width="80" height="20" viewBox="0 0 80 20" className="mt-2" style={{ opacity: 0.5 }}>
+                  <polyline
+                    fill="none"
+                    stroke={kpi.sparkStroke || '#22c55e'}
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points={kpi.sparkline}
+                  />
+                </svg>
+              )}
             </TiltCard>
           ))}
         </div>
