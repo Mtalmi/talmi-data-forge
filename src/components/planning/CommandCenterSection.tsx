@@ -108,10 +108,6 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
           <CardContent className="space-y-6 pt-6">
             {/* Timeline Gantt View */}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                Timeline Journalière
-              </h3>
               <DailyTimeline 
                 bons={bons.filter(b => !['annule', 'livre', 'facture', 'en_attente_validation'].includes(b.workflow_status)).map(b => ({
                   bl_id: b.bl_id,
@@ -127,11 +123,7 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
 
             {/* Fleet & KPIs Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                  Capacité Flotte
-                </h3>
+              <div>
                 <FleetCapacityOptimizer 
                   camions={camions.map(c => ({
                     id_camion: c.id_camion,
@@ -150,12 +142,8 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
                 />
               </div>
               
-              <div className="space-y-2">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  Performance du Jour
-                </h3>
-                <PerformanceKPIs 
+              <div>
+                <PerformanceKPIs
                   bons={bons.map(b => ({
                     bl_id: b.bl_id,
                     toupie_assignee: b.camion_assigne || b.toupie_assignee,

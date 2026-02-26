@@ -140,123 +140,116 @@ export function PerformanceKPIs({
   };
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between text-sm">
+    <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" style={{ color: '#D4A843' }} />
+          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#D4A843' }}>Performance du Jour</span>
+        </div>
+        {finalOverallStats.deliveryChange !== 0 && (
+          <span className={cn(
+            "text-xs font-mono",
+            finalOverallStats.deliveryChange > 0 ? "text-emerald-400" : "text-red-400"
+          )}>
+            {finalOverallStats.deliveryChange > 0 ? '↑' : '↓'} {Math.abs(Math.round(finalOverallStats.deliveryChange))}% vs hier
+          </span>
+        )}
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center mb-4">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="p-2 rounded-lg bg-emerald-400/10 cursor-default">
+              <p className="text-xl font-mono font-normal text-emerald-400">{finalOverallStats.totalDelivered}</p>
+              <p className="text-[10px] text-white/40 uppercase">Livrés</p>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons complétées aujourd'hui</TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="p-2 rounded-lg bg-blue-400/10 cursor-default">
+              <p className="text-xl font-mono font-normal text-blue-400">{finalOverallStats.totalInProgress}</p>
+              <p className="text-[10px] text-white/40 uppercase">En cours</p>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons en production ou en route</TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="p-2 rounded-lg bg-[#D4A843]/10 cursor-default">
+              <p className="text-xl font-mono font-normal text-[#D4A843]">{finalOverallStats.totalPending}</p>
+              <p className="text-[10px] text-white/40 uppercase">Attente</p>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons en attente de démarrage</TooltipContent>
+        </Tooltip>
+        
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="p-2 rounded-lg bg-white/[0.04] cursor-default">
+              <p className="text-xl font-mono font-normal text-white/70">{finalOverallStats.onTimeRate}%</p>
+              <p className="text-[10px] text-white/40 uppercase">À l'heure</p>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent className="bg-[#111B2E] text-white border-white/10">Taux de livraison dans les temps</TooltipContent>
+        </Tooltip>
+      </div>
+
+      {/* Average Rotation Time */}
+      {overallStats.avgRotation && (
+        <div className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-white/[0.06]">
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-primary" />
-            Performance du Jour
+            <RotateCcw className="h-4 w-4 text-white/30" />
+            <span className="text-sm text-white/50">Temps rotation moyen</span>
           </div>
-          {finalOverallStats.deliveryChange !== 0 && (
-            <Badge 
-              variant="outline" 
+          <span className="font-mono font-normal text-white/70">
+            {formatMinutes(overallStats.avgRotation)}
+          </span>
+        </div>
+      )}
+
+      {/* Top Performers */}
+      {driverStats.length > 0 && (
+        <div className="space-y-2 mt-3">
+          <p className="text-[10px] font-bold text-white/30 uppercase tracking-[0.15em]">Chauffeurs Actifs</p>
+          {driverStats.slice(0, 4).map((driver, index) => (
+            <div 
+              key={driver.id}
               className={cn(
-                finalOverallStats.deliveryChange > 0 ? "border-success text-success" : "border-destructive text-destructive"
+                "flex items-center justify-between p-2 rounded-lg",
+                index === 0 ? "bg-emerald-400/10 border border-emerald-400/20" : "bg-white/[0.03]"
               )}
             >
-              {finalOverallStats.deliveryChange > 0 ? (
-                <TrendingUp className="h-3 w-3 mr-1" />
-              ) : (
-                <TrendingDown className="h-3 w-3 mr-1" />
-              )}
-              {Math.abs(Math.round(finalOverallStats.deliveryChange))}% vs hier
-            </Badge>
-          )}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="p-2 rounded-lg bg-success/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-success">{finalOverallStats.totalDelivered}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Livrés</p>
+              <div className="flex items-center gap-2">
+                {index === 0 && <Zap className="h-4 w-4 text-emerald-400" />}
+                <div>
+                  <p className="text-sm font-medium text-white/80">{driver.name || driver.id}</p>
+                  <p className="text-xs text-white/30 font-mono">
+                    {driver.totalVolume} m³
+                  </p>
+                </div>
               </div>
-            </TooltipTrigger>
-            <TooltipContent>Livraisons complétées aujourd'hui</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="p-2 rounded-lg bg-primary/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-primary">{finalOverallStats.totalInProgress}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">En cours</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Livraisons en production ou en route</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="p-2 rounded-lg bg-warning/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-warning">{finalOverallStats.totalPending}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Attente</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Livraisons en attente de démarrage</TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="p-2 rounded-lg bg-muted cursor-default">
-                <p className="text-xl font-mono font-normal">{finalOverallStats.onTimeRate}%</p>
-                <p className="text-[10px] text-muted-foreground uppercase">À l'heure</p>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>Taux de livraison dans les temps</TooltipContent>
-          </Tooltip>
-        </div>
-
-        {/* Average Rotation Time */}
-        {overallStats.avgRotation && (
-          <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-            <div className="flex items-center gap-2">
-              <RotateCcw className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm">Temps rotation moyen</span>
-            </div>
-            <span className="font-mono font-normal">
-              {formatMinutes(overallStats.avgRotation)}
-            </span>
-          </div>
-        )}
-
-        {/* Top Performers */}
-        {driverStats.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase">Chauffeurs Actifs</p>
-            {driverStats.slice(0, 4).map((driver, index) => (
-              <div 
-                key={driver.id}
-                className={cn(
-                  "flex items-center justify-between p-2 rounded-lg",
-                  index === 0 ? "bg-success/10 border border-success/30" : "bg-muted/30"
+              <div className="flex items-center gap-2">
+                <span className={cn(
+                  "font-mono text-sm px-2 py-0.5 rounded",
+                  index === 0 ? "bg-emerald-400/20 text-emerald-400" : "bg-white/[0.06] text-white/50"
+                )}>
+                  {driver.deliveriesCompleted}
+                </span>
+                {driver.deliveriesInProgress > 0 && (
+                  <span className="text-xs font-mono text-white/30">
+                    +{driver.deliveriesInProgress}
+                  </span>
                 )}
-              >
-                <div className="flex items-center gap-2">
-                  {index === 0 && <Zap className="h-4 w-4 text-success" />}
-                  <div>
-                    <p className="text-sm font-medium">{driver.name || driver.id}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {driver.totalVolume} m³
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={index === 0 ? "default" : "secondary"} className="font-mono">
-                    {driver.deliveriesCompleted}
-                  </Badge>
-                  {driver.deliveriesInProgress > 0 && (
-                    <Badge variant="outline" className="text-xs">
-                      +{driver.deliveriesInProgress}
-                    </Badge>
-                  )}
-                </div>
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

@@ -790,45 +790,42 @@ export default function Planning() {
 
   // Premium status badge with gradient styling
   const getStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; className?: string }> = {
+    const statusConfig: Record<string, { label: string; className: string }> = {
       en_attente_validation: { 
         label: t.pages.planning.statusToConfirm, 
-        variant: 'outline', 
-        className: 'border-amber-400/60 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/30' 
+        className: 'bg-[#D4A843]/[0.12] text-[#D4A843] border border-[#D4A843]/20' 
       },
       planification: { 
         label: t.pages.planning.statusToStart, 
-        variant: 'outline', 
-        className: 'border-blue-400/60 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/30' 
+        className: 'bg-white/[0.08] text-white/50 border border-white/[0.08]' 
       },
       production: { 
         label: t.pages.planning.statusLoading, 
-        variant: 'secondary', 
-        className: 'bg-blue-400/20 text-blue-400 border border-blue-400/30' 
+        className: 'bg-blue-400/[0.12] text-blue-400 border border-blue-400/20' 
       },
       validation_technique: { 
         label: t.pages.planning.statusToValidate, 
-        variant: 'secondary', 
-        className: 'bg-[#D4A843]/20 text-[#D4A843] border border-[#D4A843]/30' 
+        className: 'bg-[#D4A843]/[0.12] text-[#D4A843] border border-[#D4A843]/20' 
+      },
+      en_chargement: { 
+        label: 'En Chargement', 
+        className: 'bg-[#D4A843]/[0.12] text-[#D4A843] border border-[#D4A843]/20' 
       },
       en_livraison: { 
         label: t.pages.planning.statusEnRoute, 
-        variant: 'default', 
-        className: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25 border-0' 
+        className: 'bg-blue-400/[0.12] text-blue-400 border border-blue-400/20' 
       },
       livre: { 
         label: t.pages.planning.statusDelivered, 
-        variant: 'default', 
-        className: 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 border-0' 
+        className: 'bg-emerald-400/[0.12] text-emerald-400 border border-emerald-400/20' 
       },
       facture: { 
         label: t.pages.planning.statusInvoiced, 
-        variant: 'default', 
-        className: 'bg-emerald-700 text-white shadow-md shadow-emerald-700/25 border-0' 
+        className: 'bg-emerald-400/[0.12] text-emerald-400 border border-emerald-400/20' 
       },
     };
-    const config = statusConfig[status] || { label: status, variant: 'outline' as const };
-    return <Badge variant={config.variant} className={cn("font-medium", config.className)}>{config.label}</Badge>;
+    const config = statusConfig[status] || { label: status, className: 'bg-white/[0.08] text-white/50' };
+    return <Badge className={cn("font-medium text-xs border-0", config.className)}>{config.label}</Badge>;
   };
 
   const BonCard = ({ bon, showTimeInput = false }: { bon: BonLivraison; showTimeInput?: boolean }) => {
@@ -897,17 +894,16 @@ export default function Planning() {
     };
 
     return (
-      <Card
+      <div
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
-          "mb-3 border-l-4 hover:shadow-lg hover:shadow-black/5 transition-all duration-200 bg-card/80 backdrop-blur-sm",
+          "mb-3 border-l-4 rounded-lg transition-all duration-200 bg-white/[0.04] border border-white/[0.06]",
           getBorderColor(bon.workflow_status),
           isTouchDevice && "active:scale-[0.98]",
-          // Add red ring for credit issues
           creditStatus !== 'green' && "ring-1 ring-red-500/30"
         )}
       >
-        <CardContent className={cn("p-4", isTouchDevice && "p-5")}>
+        <div className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">
           <div className="flex items-center gap-2">
             {/* Credit Status Indicator - Red/Green Light */}
@@ -1208,8 +1204,8 @@ export default function Planning() {
             })()}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
   };
 
@@ -1641,50 +1637,42 @@ export default function Planning() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Calendar className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-mono font-normal">{displayTotalBonsToday}</p>
-                <p className="text-xs text-muted-foreground">{t.pages.planning.deliveriesToday}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-warning/10">
-                <Clock className="h-5 w-5 text-warning" />
-              </div>
-              <div>
-                <p className="text-2xl font-mono font-normal">{displayPendingBons}</p>
-                <p className="text-xs text-muted-foreground">{t.pages.planning.waitingLabel}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-success/10">
-                <Truck className="h-5 w-5 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-mono font-normal">{displayAvailableCamions}/{displayTotalCamions}</p>
-                <p className="text-xs text-muted-foreground">{t.pages.planning.trucksAvailable}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Navigation className="h-5 w-5 text-accent" />
-              </div>
-              <div>
-                <p className="text-2xl font-mono font-normal">{displayEnLivraison.length}</p>
-                <p className="text-xs text-muted-foreground">{t.pages.planning.onRoute}</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-400/10">
+              <Calendar className="h-5 w-5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-mono font-normal text-white/80">{displayTotalBonsToday}</p>
+              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.deliveriesToday}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#D4A843]/10">
+              <Clock className="h-5 w-5 text-[#D4A843]" />
+            </div>
+            <div>
+              <p className="text-2xl font-mono font-normal text-white/80">{displayPendingBons}</p>
+              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.waitingLabel}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-400/10">
+              <Truck className="h-5 w-5 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-mono font-normal text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.trucksAvailable}</p>
+            </div>
+          </div>
+          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-blue-400/10">
+              <Navigation className="h-5 w-5 text-blue-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-mono font-normal text-white/80">{displayEnLivraison.length}</p>
+              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.onRoute}</p>
+            </div>
+          </div>
         </div>
 
         {/* 🆕 Command Center - Intelligence Dashboard */}
@@ -1873,20 +1861,32 @@ export default function Planning() {
         </div>
 
         {/* Full Day Schedule */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              {t.pages.planning.chronologicalPlanning} — {formattedPlanningDate}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+          <div className="p-5 pb-3 border-b border-white/[0.06]">
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" style={{ color: '#D4A843' }} />
+              <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#D4A843' }}>
+                {t.pages.planning.chronologicalPlanning}
+              </span>
+              <span className="text-xs text-white/30 font-mono ml-2">— {formattedPlanningDate}</span>
+            </div>
+          </div>
+          <div className="p-5">
             {displayChronologicalBons.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">
+              <p className="text-center text-white/30 py-8">
                 {t.pages.planning.noScheduledDelivery}
               </p>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-0">
+                {/* Column Headers */}
+                <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_auto] gap-4 px-3 pb-3 mb-2 border-b border-white/[0.06]">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Heure</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">BL</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Client</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Formule</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Toupie</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Statut</span>
+                </div>
                 {displayChronologicalBons
                   .sort((a, b) => {
                     const am = timeToMinutes(a.heure_prevue);
@@ -1899,29 +1899,25 @@ export default function Planning() {
                   .map(bon => (
                     <div 
                       key={bon.bl_id}
-                      className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
+                      className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_auto] gap-4 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                     >
-                      <div className="w-16 text-center">
-                        <p className="font-mono font-normal text-lg">
-                          {formatTimeHHmm(bon.heure_prevue) || '--:--'}
-                        </p>
+                      <span className="font-mono font-normal text-lg text-white/50">
+                        {formatTimeHHmm(bon.heure_prevue) || '--:--'}
+                      </span>
+                      <span className="font-mono font-medium text-white/80">{bon.bl_id}</span>
+                      <span className="text-sm text-white/50">{bon.clients?.nom_client || bon.client_id}</span>
+                      <span className="text-sm text-white/60">{bon.formule_id} · {bon.volume_m3}m³</span>
+                      <div className="flex items-center gap-2">
+                        <Truck className="h-3.5 w-3.5 text-white/25" />
+                        <span className="text-sm font-mono text-white/50">{bon.camion_assigne || bon.toupie_assignee || t.pages.planning.notAssigned}</span>
                       </div>
-                      <div className="flex-1 grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
-                        <p className="font-medium">{bon.bl_id}</p>
-                        <p className="text-sm text-muted-foreground">{bon.clients?.nom_client || bon.client_id}</p>
-                        <p className="text-sm">{bon.formule_id} - {bon.volume_m3}m³</p>
-                        <div className="flex items-center gap-2">
-                          <Truck className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{bon.camion_assigne || bon.toupie_assignee || t.pages.planning.notAssigned}</span>
-                        </div>
-                        {getStatusBadge(bon.workflow_status)}
-                      </div>
+                      {getStatusBadge(bon.workflow_status)}
                     </div>
                   ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Smart Invoice Dialog */}
         {selectedDeliveryForInvoice && (
