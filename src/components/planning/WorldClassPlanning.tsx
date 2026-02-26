@@ -427,8 +427,8 @@ export default function WorldClassPlanning() {
             </div>
             <div>
               <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Planning</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Planification de la production</p>
+              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Planning & Expédition</span>
+              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Planification & dispatch des livraisons</p>
             </div>
           </div>
 
@@ -560,7 +560,7 @@ export default function WorldClassPlanning() {
 
         {/* ── FOOTER ── */}
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
+          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
             <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Système opérationnel</span>
