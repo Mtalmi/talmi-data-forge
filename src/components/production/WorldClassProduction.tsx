@@ -100,7 +100,7 @@ function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
 function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; sub: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-3">
-      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
+      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)' }} />
       <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>{message}</p>
       <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>{sub}</p>
     </div>

@@ -9,10 +9,10 @@ const T = {
   gold:       '#D4A843',
   cardBg:     'rgba(255,255,255,0.03)',
   cardBorder: 'rgba(255,255,255,0.06)',
-  success:    '#34d399',
-  warning:    '#fbbf24',
-  danger:     '#f87171',
-  info:       '#60a5fa',
+  success:    '#10B981',
+  warning:    '#F59E0B',
+  danger:     '#EF4444',
+  info:       '#3B82F6',
   textSec:    '#94A3B8',
   textDim:    '#64748B',
 };
@@ -45,7 +45,7 @@ function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
 function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; sub: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-16 gap-3">
-      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
+      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)' }} />
       <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>{message}</p>
       <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>{sub}</p>
     </div>
