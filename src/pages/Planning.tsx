@@ -27,6 +27,8 @@ import {
   ArrowRight,
   CheckCircle,
   ClipboardCheck,
+  ClipboardList,
+  Loader,
   X,
   ChevronDown,
   ChevronUp,
@@ -1215,6 +1217,170 @@ export default function Planning() {
   const totalBonsToday = bons.length;
   const pendingBons = bons.filter(b => ['planification', 'validation_technique'].includes(b.workflow_status)).length;
 
+  const createDemoBon = (overrides: Partial<BonLivraison>): BonLivraison => ({
+    bl_id: overrides.bl_id || 'BL-DEMO',
+    bc_id: overrides.bc_id ?? null,
+    client_id: overrides.client_id || 'client_demo',
+    formule_id: overrides.formule_id || 'F-B25',
+    volume_m3: overrides.volume_m3 ?? 0,
+    workflow_status: overrides.workflow_status || 'planification',
+    heure_prevue: overrides.heure_prevue ?? null,
+    camion_assigne: overrides.camion_assigne ?? null,
+    toupie_assignee: overrides.toupie_assignee ?? null,
+    date_livraison: overrides.date_livraison || selectedDate,
+    heure_depart_centrale: overrides.heure_depart_centrale ?? null,
+    heure_arrivee_chantier: overrides.heure_arrivee_chantier ?? null,
+    heure_retour_centrale: overrides.heure_retour_centrale ?? null,
+    temps_rotation_minutes: overrides.temps_rotation_minutes ?? null,
+    temps_attente_chantier_minutes: overrides.temps_attente_chantier_minutes ?? null,
+    facturer_attente: overrides.facturer_attente ?? null,
+    prix_vente_m3: overrides.prix_vente_m3 ?? null,
+    cur_reel: overrides.cur_reel ?? null,
+    marge_brute_pct: overrides.marge_brute_pct ?? null,
+    prix_livraison_m3: overrides.prix_livraison_m3 ?? null,
+    facture_generee: overrides.facture_generee ?? null,
+    created_at: overrides.created_at || new Date().toISOString(),
+    zone_livraison_id: overrides.zone_livraison_id ?? null,
+    mode_paiement: overrides.mode_paiement ?? null,
+    prestataire_id: overrides.prestataire_id ?? null,
+    clients: overrides.clients ?? null,
+    zones_livraison: overrides.zones_livraison ?? null,
+  });
+
+  const demoDate = selectedDate;
+  const demoAProduireBon = createDemoBon({
+    bl_id: 'BL-2602-015',
+    client_id: 'BTP_MAROC',
+    clients: { nom_client: 'BTP Maroc' },
+    formule_id: 'F-B30',
+    volume_m3: 20,
+    workflow_status: 'planification',
+    heure_prevue: '15:00',
+    toupie_assignee: 'TOU-02',
+    date_livraison: demoDate,
+  });
+
+  const demoEnChargementBon = createDemoBon({
+    bl_id: 'BL-2602-014',
+    client_id: 'SAUDI_READYMIX',
+    clients: { nom_client: 'Saudi Readymix' },
+    formule_id: 'F-B25',
+    volume_m3: 50,
+    workflow_status: 'en_chargement',
+    heure_prevue: '13:00',
+    toupie_assignee: 'TOU-03',
+    date_livraison: demoDate,
+  });
+
+  const demoEnLivraisonBon1 = createDemoBon({
+    bl_id: 'BL-2602-013',
+    client_id: 'CONSTRUCTIONS_MODERNES',
+    clients: { nom_client: 'Constructions Modernes' },
+    formule_id: 'F-B20',
+    volume_m3: 80,
+    workflow_status: 'en_livraison',
+    heure_prevue: '10:30',
+    toupie_assignee: 'TOU-01',
+    date_livraison: demoDate,
+  });
+
+  const demoEnLivraisonBon2 = createDemoBon({
+    bl_id: 'BL-2602-012',
+    client_id: 'CIMENTS_BETON_SUD',
+    clients: { nom_client: 'Ciments & Béton du Sud' },
+    formule_id: 'F-B30',
+    volume_m3: 30,
+    workflow_status: 'en_livraison',
+    heure_prevue: '09:00',
+    toupie_assignee: 'TOU-02',
+    date_livraison: demoDate,
+  });
+
+  const demoChronologicalBons: BonLivraison[] = [
+    createDemoBon({
+      bl_id: 'BL-2602-011',
+      client_id: 'BTP_MAROC',
+      clients: { nom_client: 'BTP Maroc' },
+      formule_id: 'F-B25',
+      volume_m3: 45,
+      workflow_status: 'livre',
+      heure_prevue: '07:00',
+      toupie_assignee: 'TOU-01',
+      date_livraison: demoDate,
+    }),
+    createDemoBon({
+      bl_id: 'BL-2602-012',
+      client_id: 'CIMENTS_BETON_SUD',
+      clients: { nom_client: 'Ciments & Béton du Sud' },
+      formule_id: 'F-B30',
+      volume_m3: 30,
+      workflow_status: 'livre',
+      heure_prevue: '09:00',
+      toupie_assignee: 'TOU-02',
+      date_livraison: demoDate,
+    }),
+    createDemoBon({
+      bl_id: 'BL-2602-013',
+      client_id: 'CONSTRUCTIONS_MODERNES',
+      clients: { nom_client: 'Constructions Modernes' },
+      formule_id: 'F-B20',
+      volume_m3: 80,
+      workflow_status: 'en_livraison',
+      heure_prevue: '10:30',
+      toupie_assignee: 'TOU-01',
+      date_livraison: demoDate,
+    }),
+    createDemoBon({
+      bl_id: 'BL-2602-014',
+      client_id: 'SAUDI_READYMIX',
+      clients: { nom_client: 'Saudi Readymix' },
+      formule_id: 'F-B25',
+      volume_m3: 50,
+      workflow_status: 'en_chargement',
+      heure_prevue: '13:00',
+      toupie_assignee: 'TOU-03',
+      date_livraison: demoDate,
+    }),
+    createDemoBon({
+      bl_id: 'BL-2602-015',
+      client_id: 'BTP_MAROC',
+      clients: { nom_client: 'BTP Maroc' },
+      formule_id: 'F-B30',
+      volume_m3: 20,
+      workflow_status: 'planification',
+      heure_prevue: '15:00',
+      toupie_assignee: 'TOU-02',
+      date_livraison: demoDate,
+    }),
+  ];
+
+  const demoTimelineBons = demoChronologicalBons.filter((bon) => ['planification', 'production', 'en_chargement', 'en_livraison', 'livre'].includes(bon.workflow_status));
+
+  const demoCamions: Camion[] = [
+    { id_camion: 'TOU-01', immatriculation: 'TOU-01', chauffeur: 'Hassan Amrani', statut: 'En Livraison', capacite_m3: 100 },
+    { id_camion: 'TOU-02', immatriculation: 'TOU-02', chauffeur: 'Youssef Bakkali', statut: 'Disponible', capacite_m3: 100 },
+    { id_camion: 'TOU-03', immatriculation: 'TOU-03', chauffeur: 'Omar Tahiri', statut: 'Maintenance', capacite_m3: 100 },
+  ];
+
+  const isBottomDemoMode = totalBonsToday === 0;
+
+  const displayTotalBonsToday = isBottomDemoMode ? 5 : totalBonsToday;
+  const displayPendingBons = isBottomDemoMode ? 2 : pendingBons;
+  const displayAvailableCamions = isBottomDemoMode ? 1 : availableCamions;
+  const displayTotalCamions = isBottomDemoMode ? 3 : camions.length;
+
+  const displayAProduire = isBottomDemoMode ? [demoAProduireBon] : aProduire;
+  const displayEnChargement = isBottomDemoMode ? [demoEnChargementBon] : enChargement;
+  const displayEnLivraison = isBottomDemoMode ? [demoEnLivraisonBon1, demoEnLivraisonBon2] : enLivraison;
+  const displayCommandCenterBons = isBottomDemoMode ? demoTimelineBons : bons;
+  const displayCommandCenterCamions = isBottomDemoMode ? demoCamions : camions;
+  const displayChronologicalBons = isBottomDemoMode
+    ? demoChronologicalBons
+    : bons.filter((b) => !['annule', 'livre', 'facture'].includes(b.workflow_status));
+
+  const formattedPlanningDate = format(parseISO(selectedDate), 'EEEE d MMMM yyyy', { locale: dateLocale })
+    .replace(/(^|\s)\p{L}/gu, (char) => char.toUpperCase());
+
   // Mark as delivered
   const markDelivered = async (bon: BonLivraison) => {
     try {
@@ -1481,7 +1647,7 @@ export default function Planning() {
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-mono font-normal">{totalBonsToday}</p>
+                <p className="text-2xl font-mono font-normal">{displayTotalBonsToday}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.deliveriesToday}</p>
               </div>
             </CardContent>
@@ -1492,7 +1658,7 @@ export default function Planning() {
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-mono font-normal">{pendingBons}</p>
+                <p className="text-2xl font-mono font-normal">{displayPendingBons}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.waitingLabel}</p>
               </div>
             </CardContent>
@@ -1503,7 +1669,7 @@ export default function Planning() {
                 <Truck className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-mono font-normal">{availableCamions}/{camions.length}</p>
+                <p className="text-2xl font-mono font-normal">{displayAvailableCamions}/{displayTotalCamions}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.trucksAvailable}</p>
               </div>
             </CardContent>
@@ -1514,7 +1680,7 @@ export default function Planning() {
                 <Navigation className="h-5 w-5 text-accent" />
               </div>
               <div>
-                <p className="text-2xl font-mono font-normal">{enLivraison.length}</p>
+                <p className="text-2xl font-mono font-normal">{displayEnLivraison.length}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.onRoute}</p>
               </div>
             </CardContent>
@@ -1523,8 +1689,9 @@ export default function Planning() {
 
         {/* 🆕 Command Center - Intelligence Dashboard */}
         <CommandCenterSection 
-          bons={bons}
-          camions={camions}
+          bons={displayCommandCenterBons}
+          camions={displayCommandCenterCamions}
+          demoMode={isBottomDemoMode}
         />
 
         {/* Live Dispatch Board */}
@@ -1532,29 +1699,25 @@ export default function Planning() {
           {/* À Produire */}
           <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl" style={{ background: 'rgba(212,168,67,0.12)' }}>
-                  <ClipboardCheck className="h-5 w-5" style={{ color: '#D4A843' }} />
-                </div>
+              <CardTitle className="flex items-center gap-3 text-base">
+                <ClipboardList className="h-10 w-10 text-[#D4A843]" />
                 <span className="text-lg font-medium text-white">
                   {t.pages.planning.toProduce}
                 </span>
-                <Badge className="ml-auto text-xs" style={{ background: 'rgba(212,168,67,0.2)', color: '#D4A843', border: 'none' }}>
-                  {aProduire.length}
+                <Badge className="ml-auto text-xs bg-[#D4A843]/20 text-[#D4A843] border-0">
+                  {displayAProduire.length}
                 </Badge>
               </CardTitle>
               <p className="text-[11px] text-white/[0.40]">{t.pages.planning.next2Hours}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {aProduire.length === 0 ? (
+              {displayAProduire.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'rgba(212,168,67,0.08)' }}>
-                    <ClipboardCheck className="h-12 w-12" style={{ color: 'rgba(212,168,67,0.2)' }} />
-                  </div>
+                  <ClipboardList className="h-12 w-12 mx-auto mb-4 text-[#D4A843]/20" />
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
                 </div>
               ) : (
-                aProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
+                displayAProduire.map(bon => <BonCard key={bon.bl_id} bon={bon} showTimeInput />)
               )}
             </CardContent>
           </Card>
@@ -1562,17 +1725,15 @@ export default function Planning() {
           {/* En Chargement */}
           <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl bg-blue-400/[0.12]">
-                  <Package className="h-5 w-5 text-blue-400" />
-                </div>
+              <CardTitle className="flex items-center gap-3 text-base">
+                <Loader className="h-10 w-10 text-blue-400" />
                 <span className="text-lg font-medium text-white">
                   {t.pages.planning.enChargement}
                 </span>
-                <Badge className="bg-blue-400/[0.2] text-blue-400 border-0">
-                  {enChargement.length}
+                <Badge className="ml-auto bg-blue-400/20 text-blue-400 border-0">
+                  {displayEnChargement.length}
                 </Badge>
-                {enChargement.length > 0 && (
+                {displayEnChargement.length > 0 && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -1589,15 +1750,13 @@ export default function Planning() {
               <p className="text-[11px] text-white/[0.40]">{t.pages.planning.productionAndValidation}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {enChargement.length === 0 ? (
+              {displayEnChargement.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-400/[0.08] flex items-center justify-center">
-                    <Package className="h-12 w-12 text-blue-400/20" />
-                  </div>
+                  <Loader className="h-12 w-12 mx-auto mb-4 text-blue-400/20" />
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
                 </div>
               ) : (
-                enChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
+                displayEnChargement.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
               )}
             </CardContent>
           </Card>
@@ -1605,29 +1764,25 @@ export default function Planning() {
           {/* En Livraison */}
           <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl bg-emerald-400/[0.12]">
-                  <Truck className="h-5 w-5 text-emerald-400" />
-                </div>
+              <CardTitle className="flex items-center gap-3 text-base">
+                <Truck className="h-10 w-10 text-emerald-400" />
                 <span className="text-lg font-medium text-white">
                   {t.pages.planning.enLivraison}
                 </span>
-                <Badge className="ml-auto bg-emerald-400/[0.2] text-emerald-400 border-0">
-                  {enLivraison.length}
+                <Badge className="ml-auto bg-emerald-400/20 text-emerald-400 border-0">
+                  {displayEnLivraison.length}
                 </Badge>
               </CardTitle>
               <p className="text-[11px] text-white/[0.40]">{t.pages.planning.trucksOnRoute}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
-              {enLivraison.length === 0 ? (
+              {displayEnLivraison.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-400/[0.08] flex items-center justify-center">
-                    <Truck className="h-12 w-12 text-emerald-400/20" />
-                  </div>
+                  <Truck className="h-12 w-12 mx-auto mb-4 text-emerald-400/20" />
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
                 </div>
               ) : (
-                enLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
+                displayEnLivraison.map(bon => <BonCard key={bon.bl_id} bon={bon} />)
               )}
             </CardContent>
           </Card>
@@ -1722,18 +1877,17 @@ export default function Planning() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              {t.pages.planning.chronologicalPlanning} - {format(parseISO(selectedDate), 'EEEE d MMMM yyyy', { locale: dateLocale })}
+              {t.pages.planning.chronologicalPlanning} — {formattedPlanningDate}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {bons.filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status)).length === 0 ? (
+            {displayChronologicalBons.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
                 {t.pages.planning.noScheduledDelivery}
               </p>
             ) : (
               <div className="space-y-2">
-                {bons
-                  .filter(b => !['annule', 'livre', 'facture'].includes(b.workflow_status))
+                {displayChronologicalBons
                   .sort((a, b) => {
                     const am = timeToMinutes(a.heure_prevue);
                     const bm = timeToMinutes(b.heure_prevue);
@@ -1748,7 +1902,7 @@ export default function Planning() {
                       className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
                     >
                       <div className="w-16 text-center">
-                        <p className="font-mono font-semibold text-lg">
+                        <p className="font-mono font-normal text-lg">
                           {formatTimeHHmm(bon.heure_prevue) || '--:--'}
                         </p>
                       </div>

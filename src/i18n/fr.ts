@@ -1055,7 +1055,7 @@ const fr = {
       dailyPerformance: 'Performance du Jour',
       chronologicalPlanning: 'Planning Chronologique',
       dailyTimeline: 'Timeline Journalière',
-      noScheduledDelivery: 'Aucune livraison programmée pour cette date',
+      noScheduledDelivery: 'Aucune livraison planifiée pour cette date',
       waiting: 'En attente',
       inProgress: 'En cours',
       delivered: 'Livré',
@@ -6143,7 +6143,7 @@ const fr = {
   dailyTimeline: {
     title: 'Timeline Journalière',
     deliveries: 'livraisons',
-    noDeliveries: 'Aucune livraison programmée',
+    noDeliveries: 'Aucune livraison planifiée',
   },
   aiAnomaly: {
     title: '🤖 AI Anomaly Scanner',
