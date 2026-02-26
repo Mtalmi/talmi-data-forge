@@ -10,7 +10,7 @@ export const formatMontant = (amount: number | string | null | undefined): strin
   return num.toLocaleString('fr-FR', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  });
+  }).replace(/\u202F/g, ' ').replace(/\u00A0/g, ' ');
 };
 
 /** Format volume: integers for whole numbers, 1 decimal otherwise. */
