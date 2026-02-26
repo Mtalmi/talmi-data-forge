@@ -1,4 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
@@ -59,13 +58,13 @@ export function DriverDispatchCard({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'planification': return 'border-l-muted-foreground';
-      case 'production': return 'border-l-warning';
-      case 'validation_technique': return 'border-l-purple-500';
-      case 'en_livraison': return 'border-l-blue-500';
-      case 'livre': return 'border-l-success';
-      case 'facture': return 'border-l-primary';
-      default: return 'border-l-muted';
+      case 'planification': return 'border-l-white/30';
+      case 'production': return 'border-l-[#D4A843]';
+      case 'validation_technique': return 'border-l-[#D4A843]';
+      case 'en_livraison': return 'border-l-blue-400';
+      case 'livre': return 'border-l-emerald-400';
+      case 'facture': return 'border-l-emerald-500';
+      default: return 'border-l-white/20';
     }
   };
 
@@ -81,70 +80,67 @@ export function DriverDispatchCard({
     return labels[status] || status;
   };
 
-  const getStatusBadgeVariant = (status: string): 'default' | 'secondary' | 'outline' | 'destructive' => {
+  const getStatusBadgeClass = (status: string): string => {
     switch (status) {
-      case 'en_livraison': return 'default';
-      case 'production': case 'validation_technique': return 'secondary';
-      case 'livre': case 'facture': return 'default';
-      default: return 'outline';
+      case 'en_livraison': return 'bg-blue-400/[0.12] text-blue-400';
+      case 'production': case 'validation_technique': return 'bg-[#D4A843]/[0.12] text-[#D4A843]';
+      case 'livre': case 'facture': return 'bg-emerald-400/[0.12] text-emerald-400';
+      default: return 'bg-white/[0.08] text-white/50';
     }
   };
 
   return (
-    <Card 
+    <div 
       className={cn(
-        'border-l-4 transition-all active:scale-[0.98]',
+        'border-l-4 rounded-xl transition-all active:scale-[0.98] bg-white/[0.03] border border-white/[0.06]',
         getStatusColor(bon.workflow_status),
-        'touch-manipulation'
+        'touch-manipulation cursor-pointer'
       )}
       onClick={onOpenDetails}
     >
-      <CardContent className="p-4 sm:p-5">
+      <div className="p-4 sm:p-5">
         <div className="flex justify-between items-start gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <p className="font-bold text-lg truncate">{bon.bl_id}</p>
-            <p className="text-base text-muted-foreground truncate">
+            <p className="font-bold text-lg text-white truncate">{bon.bl_id}</p>
+            <p className="text-base text-white/40 truncate">
               {bon.clients?.nom_client || bon.client_id}
             </p>
           </div>
-          <Badge 
-            variant={getStatusBadgeVariant(bon.workflow_status)}
-            className="text-sm px-3 py-1 shrink-0"
-          >
+          <Badge className={cn("text-sm px-3 py-1 shrink-0 border-0", getStatusBadgeClass(bon.workflow_status))}>
             {getStatusLabel(bon.workflow_status)}
           </Badge>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg min-h-[56px]">
-            <Package className="h-5 w-5 text-primary shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/[0.06] rounded-lg min-h-[56px]">
+            <Package className="h-5 w-5 text-[#D4A843] shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">{d.formula}</p>
-              <p className="font-semibold text-sm">{bon.formule_id}</p>
+              <p className="text-xs text-white/30">{d.formula}</p>
+              <p className="font-semibold text-sm text-white/80">{bon.formule_id}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg min-h-[56px]">
-            <Factory className="h-5 w-5 text-primary shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/[0.06] rounded-lg min-h-[56px]">
+            <Factory className="h-5 w-5 text-[#D4A843] shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">{d.volume}</p>
-              <p className="font-bold text-lg">{bon.volume_m3} m³</p>
+              <p className="text-xs text-white/30">{d.volume}</p>
+              <p className="font-bold text-lg text-white">{bon.volume_m3} m³</p>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg min-h-[56px]">
-            <Clock className="h-5 w-5 text-primary shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/[0.06] rounded-lg min-h-[56px]">
+            <Clock className="h-5 w-5 text-white/30 shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">{d.scheduledTime}</p>
-              <p className="font-bold text-xl">{bon.heure_prevue || '--:--'}</p>
+              <p className="text-xs text-white/30">{d.scheduledTime}</p>
+              <p className="font-bold text-xl font-mono font-normal text-white/70">{bon.heure_prevue || '--:--'}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg min-h-[56px]">
-            <Truck className="h-5 w-5 text-primary shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-white/[0.04] border border-white/[0.06] rounded-lg min-h-[56px]">
+            <Truck className="h-5 w-5 text-white/30 shrink-0" />
             <div>
-              <p className="text-xs text-muted-foreground">{d.truck}</p>
-              <p className="font-semibold text-sm truncate">
+              <p className="text-xs text-white/30">{d.truck}</p>
+              <p className="font-semibold text-sm text-white/70 truncate">
                 {bon.camion_assigne || bon.toupie_assignee || c.notAssigned}
               </p>
             </div>
@@ -152,11 +148,11 @@ export function DriverDispatchCard({
         </div>
 
         {bon.zones_livraison && (
-          <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg mb-4 min-h-[48px]">
-            <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+          <div className="flex items-center gap-3 p-3 bg-white/[0.03] border border-white/[0.06] rounded-lg mb-4 min-h-[48px]">
+            <MapPin className="h-5 w-5 text-white/20 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm truncate">
-                <span className="font-semibold">{d.zone} {bon.zones_livraison.code_zone}:</span>{' '}
+              <p className="text-sm text-white/50 truncate">
+                <span className="font-semibold text-white/60">{d.zone} {bon.zones_livraison.code_zone}:</span>{' '}
                 {bon.zones_livraison.nom_zone}
               </p>
             </div>
@@ -165,17 +161,17 @@ export function DriverDispatchCard({
 
         {bon.mode_paiement && (
           <div className="mb-4">
-            <Badge variant="outline" className="text-xs">
+            <Badge className="text-xs bg-[#D4A843]/[0.12] text-[#D4A843] border-0">
               💰 {bon.mode_paiement}
             </Badge>
           </div>
         )}
 
         {bon.workflow_status === 'en_livraison' && (
-          <div className="mb-4 p-3 bg-muted/30 rounded-lg space-y-3">
+          <div className="mb-4 p-3 bg-white/[0.03] border border-white/[0.06] rounded-lg space-y-3">
             {showProxyControls && (
-              <div className="flex items-center justify-between pb-2 border-b border-border/50">
-                <span className="text-xs font-medium text-muted-foreground">{d.rotationTracking}</span>
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
+                <span className="text-xs font-medium text-white/30">{d.rotationTracking}</span>
                 <DispatcherProxyControls
                   blId={bon.bl_id}
                   heureDepart={bon.heure_depart_centrale ?? null}
@@ -210,7 +206,7 @@ export function DriverDispatchCard({
             {bon.workflow_status === 'planification' && onStartProduction && (
               <Button 
                 size="lg"
-                className="flex-1 min-h-[52px] text-base gap-2 touch-manipulation"
+                className="flex-1 min-h-[52px] text-base gap-2 touch-manipulation bg-[#D4A843] hover:bg-[#D4A843]/90 text-black"
                 onClick={(e) => {
                   e.stopPropagation();
                   onStartProduction();
@@ -223,8 +219,7 @@ export function DriverDispatchCard({
             {bon.workflow_status === 'en_livraison' && onMarkDelivered && (
               <Button 
                 size="lg"
-                variant="default"
-                className="flex-1 min-h-[52px] text-base gap-2 bg-success hover:bg-success/90 touch-manipulation"
+                className="flex-1 min-h-[52px] text-base gap-2 bg-emerald-500 hover:bg-emerald-500/90 text-white touch-manipulation"
                 onClick={(e) => {
                   e.stopPropagation();
                   onMarkDelivered();
@@ -238,7 +233,7 @@ export function DriverDispatchCard({
               <Button 
                 size="lg"
                 variant="outline"
-                className="min-h-[52px] min-w-[52px] touch-manipulation"
+                className="min-h-[52px] min-w-[52px] touch-manipulation border-white/[0.08] text-white/50 hover:bg-white/[0.05]"
                 onClick={(e) => {
                   e.stopPropagation();
                   onOpenDetails();
@@ -249,7 +244,7 @@ export function DriverDispatchCard({
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
