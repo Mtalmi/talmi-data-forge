@@ -70,7 +70,7 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
     }}>
       <p style={{ color: T.textSec, fontSize: 11, marginBottom: 4 }}>{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ color: p.color || T.gold, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 13 }}>
+        <p key={i} style={{ color: p.color || T.gold, fontFamily: 'JetBrains Mono, monospace', fontWeight: 400, fontSize: 13 }}>
           {typeof p.value === 'number' ? p.value.toLocaleString('fr-FR') : p.value}{unit}
         </p>
       ))}
@@ -242,7 +242,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginBottom: 10,
             }}>{label}</p>
             <p style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700,
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
             }}>
               {animated.toLocaleString('fr-FR')}
@@ -282,7 +282,7 @@ function WorkflowStep({ count, label, color, statusLabel, delay = 0 }: {
       transition: 'all 500ms ease-out', cursor: 'pointer',
     }}>
       <p style={{
-        fontFamily: 'JetBrains Mono, monospace', fontSize: 42, fontWeight: 700,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 42, fontWeight: 400,
         color: '#fff', lineHeight: 1, letterSpacing: '-0.02em',
       }}>{animated}</p>
       <p style={{
@@ -329,7 +329,7 @@ function BatchCard({ batch, delay = 0 }: { batch: BatchDisplay; delay?: number }
             background: `${batch.color}18`, color: batch.color, border: `1px solid ${batch.color}40`,
           }}>{batch.product}</span>
         </div>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400, color: '#fff', marginBottom: 8 }}>
           {batch.volume} m³
         </p>
         <div className="flex justify-between items-center">
@@ -578,7 +578,7 @@ export default function WorldClassProduction() {
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 700, color: T.gold }}>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 400, color: T.gold }}>
                     {Math.round(kpis.totalVolume)} m³
                   </p>
                 </div>
@@ -633,14 +633,14 @@ export default function WorldClassProduction() {
                       <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
                         {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
                       </Pie>
-                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: '#fff' }}>{totalProductVolume}</text>
+                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 400, fill: '#fff' }}>{totalProductVolume}</text>
                       <Tooltip content={({ active, payload }) => {
                         if (!active || !payload?.length) return null;
                         const d = payload[0];
                         return (
                           <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '8px 12px' }}>
                             <p style={{ color: T.textSec, fontSize: 11 }}>{d.name}</p>
-                            <p style={{ color: (d.payload as any).color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
+                            <p style={{ color: (d.payload as any).color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 400 }}>{(d.value as number).toLocaleString('fr-FR')} m³</p>
                           </div>
                         );
                       }} />
@@ -653,7 +653,7 @@ export default function WorldClassProduction() {
                           <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
                           <span style={{ color: T.textSec, fontSize: 12 }}>{p.name}</span>
                         </div>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: '#fff' }}>{p.volume} m³</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: '#fff' }}>{p.volume} m³</span>
                       </div>
                     ))}
                   </div>
@@ -724,7 +724,7 @@ export default function WorldClassProduction() {
                     {kpis.conformity >= 95 ? 'Excellent' : kpis.conformity >= 85 ? 'Bon' : 'À surveiller'}
                   </span>
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 700, color: '#fff' }}>{kpis.conformity}%</p>
+                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 400, color: '#fff' }}>{kpis.conformity}%</p>
               </div>
 
               <div style={{
@@ -755,7 +755,7 @@ export default function WorldClassProduction() {
                     {qualityVariances.map(v => (
                       <div key={v.label} className="flex justify-between items-center">
                         <span style={{ color: T.textSec, fontSize: 12 }}>{v.label}</span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.warning, background: `${T.warning}18`, padding: '2px 8px', borderRadius: 999 }}>{v.count}</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 400, color: T.warning, background: `${T.warning}18`, padding: '2px 8px', borderRadius: 999 }}>{v.count}</span>
                       </div>
                     ))}
                   </div>

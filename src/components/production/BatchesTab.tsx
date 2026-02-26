@@ -83,7 +83,7 @@ function MiniKPI({ label, value, suffix, sub, icon: Icon }: {
       borderRadius: 12, padding: 16,
     }}>
       <Icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)', marginBottom: 8 }} />
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 400, color: '#fff', lineHeight: 1 }}>
         {value}
         {suffix && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 3 }}>{suffix}</span>}
       </p>
@@ -349,7 +349,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       {/* BL ID */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: '#fff' }}>
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff' }}>
                         {bon.bl_id}
                       </span>
                       {/* Client */}
@@ -365,7 +365,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                         {bon.formule_id || '—'}
                       </span>
                       {/* Volume — right-aligned */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: '#fff', textAlign: 'right' }}>
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'right' }}>
                         {(bon.volume_m3 || 0).toFixed(1)}
                       </span>
                       {/* Heure — right-aligned */}
@@ -463,17 +463,17 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             <div className="flex items-center justify-between" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
               <div className="flex items-center gap-3">
                 <span>
-                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{totalVol}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{totalVol}</span>
                   <span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span>
                 </span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
                 <span>
-                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{batchCount}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{batchCount}</span>
                   <span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span>
                 </span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>
-                  Cadence: <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{cadence} m³/h</span>
+                  Cadence: <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 400 }}>{cadence} m³/h</span>
                 </span>
                 <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
                 <span style={{ color: 'rgba(255,255,255,0.35)' }}>— vs hier</span>
@@ -528,7 +528,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#fff' }}>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 400, color: '#fff' }}>
                           #{item.batchNum}
                         </span>
                         <div className="flex items-center gap-2">
