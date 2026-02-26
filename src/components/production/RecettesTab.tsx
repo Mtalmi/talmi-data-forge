@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Beaker, CheckCircle } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, Legend,
-  ResponsiveContainer, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip,
+  ResponsiveContainer,
 } from 'recharts';
 
 const T = {
