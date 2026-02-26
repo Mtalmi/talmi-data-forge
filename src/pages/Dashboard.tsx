@@ -557,14 +557,14 @@ export default function Dashboard() {
               style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(251,191,36,0.7)', animation: 'pulse-alert 2s ease-in-out infinite' }} />
-              <span className="text-[10px] text-slate-500">Prochaine livraison</span>
-              <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums">47 min</span>
-              <span className="text-[10px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+              <span className="text-[10px] text-slate-500 flex-shrink-0">Prochaine livraison</span>
+              <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums flex-shrink-0">47 min</span>
+              <span className="text-[10px] text-slate-600 flex-shrink-0">→ Constr. Modernes · 20 m³</span>
             </div>
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch">
           {[
             {
               label: 'VOLUME',
@@ -575,7 +575,7 @@ export default function Dashboard() {
               trend: '↗ +12%',
               accentColor: '#00D9FF',
               labelColor: 'rgba(0,217,255,0.6)',
-              sparkline: '0,18 12,16 24,20 36,14 48,12 60,8 72,5 80,3',
+              sparkline: '0,26 20,22 40,28 60,18 80,14 100,8 120,4',
               sparkStroke: '#22c55e',
               monthlyTarget: { current: 671, target: 3200, daysLeft: 5 },
             },
@@ -588,7 +588,7 @@ export default function Dashboard() {
               trend: '↗ +8.2%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,16 12,18 24,14 36,12 48,10 60,8 72,6 80,4',
+              sparkline: '0,22 20,24 40,18 60,16 80,12 100,8 120,4',
               sparkStroke: '#22c55e',
               revenueGauge: { current: 75.6, target: 250, pct: 30 },
             },
@@ -598,11 +598,11 @@ export default function Dashboard() {
               unit: '%',
               watermark: '%',
               sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'} K DH costs`,
-              healthy: true,
+              trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,18 12,14 24,16 36,10 48,12 60,8 72,10 80,6',
+              sparkline: '0,22 20,18 40,20 60,14 80,12 100,10 120,6',
               sparkStroke: '#22c55e',
             },
             {
@@ -611,17 +611,17 @@ export default function Dashboard() {
               unit: 'K DH',
               watermark: 'DH',
               sub: '→ 502K fin mois',
-              healthy: true,
+              trend: '↗ +9.7%',
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,20 12,18 24,16 36,15 48,12 60,10 72,6 80,3',
+              sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
               sparkStroke: '#22c55e',
             },
           ].map((kpi, i) => (
             <TiltCard
               key={i}
-              className="tbos-hero-card group cursor-default shimmer-effect"
+              className="tbos-hero-card group cursor-default shimmer-effect h-full flex flex-col"
               style={{
                 animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
                 ...(kpi.healthyGlow ? {
@@ -674,18 +674,15 @@ export default function Dashboard() {
               <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
 
               {/* Trend indicator */}
-              <div className="mt-2 flex items-center gap-1.5">
               {kpi.trend && (
+                <div className="mt-2 flex items-center gap-1.5">
                   <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
-                )}
-                {kpi.healthy && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/60" />
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Mini sparkline */}
               {kpi.sparkline && (
-                <svg width="80" height="24" viewBox="0 0 80 24" className="mt-2">
+                <svg width="120" height="32" viewBox="0 0 120 32" className="mt-auto pt-3">
                   <polyline
                     fill="none"
                     stroke={kpi.sparkStroke || '#22c55e'}
@@ -695,6 +692,11 @@ export default function Dashboard() {
                     points={kpi.sparkline}
                     style={{ opacity: 0.6 }}
                   />
+                  {(() => {
+                    const pts = kpi.sparkline.split(' ');
+                    const last = pts[pts.length - 1]?.split(',');
+                    return last ? <circle cx={last[0]} cy={last[1]} r="2" fill={kpi.sparkStroke || '#22c55e'} style={{ opacity: 0.8 }} /> : null;
+                  })()}
                 </svg>
                )}
 
