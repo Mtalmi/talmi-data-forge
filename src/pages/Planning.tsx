@@ -897,7 +897,8 @@ export default function Planning() {
       <div
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
-          "mb-3 border-l-4 rounded-xl transition-all duration-200 bg-white/[0.04] border border-white/[0.06]",
+          "mb-3 border-l-4 rounded-xl transition-all duration-200",
+          "bg-white/[0.05] border border-white/[0.08] shadow-lg shadow-black/20",
           getBorderColor(bon.workflow_status),
           isTouchDevice && "active:scale-[0.98]",
           creditStatus !== 'green' && "ring-1 ring-red-500/30"
