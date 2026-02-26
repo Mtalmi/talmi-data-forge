@@ -58,8 +58,7 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card className={cn(
-        "border border-white/[0.06] overflow-hidden transition-all duration-300",
-        "bg-white/[0.02]"
+        "border-0 bg-transparent overflow-hidden transition-all duration-300 shadow-none"
       )}>
         <CollapsibleTrigger asChild>
           <CardHeader className={cn(
