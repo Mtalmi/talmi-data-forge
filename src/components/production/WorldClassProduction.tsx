@@ -397,7 +397,7 @@ export default function WorldClassProduction() {
     { hour: '12h', volume: 42, objectif: 90 }, { hour: '13h', volume: 68, objectif: 90 },
     { hour: '14h', volume: 95, objectif: 90 }, { hour: '15h', volume: 108, objectif: 90 },
     { hour: '16h', volume: 72, objectif: 90 }, { hour: '17h', volume: 35, objectif: 90 },
-    { hour: '18h', volume: 2, objectif: 90 },
+    { hour: '18h', volume: 12, objectif: 90 },
   ];
 
   const hourlyData = useMemo(() => {
@@ -518,7 +518,7 @@ export default function WorldClassProduction() {
   // Sparkline data for KPIs (7 days trending)
   const sparkVolume = [320, 410, 380, 520, 490, 580, kpis.totalVolume];
   const sparkBatches = [6, 9, 8, 11, 10, 13, kpis.totalBatches];
-  const sparkConformity = [91, 93, 95, 92, 96, 93, kpis.conformity];
+  const sparkConformity = [94, 96, 95, 97, 94, 96, kpis.conformity];
   const sparkInProg = [3, 5, 2, 4, 3, 6, Math.round(kpis.inProgress)];
 
   return (
@@ -734,7 +734,7 @@ export default function WorldClassProduction() {
                     <BarChart data={qualityData} barSize={24}>
                       <XAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={25} />
-                      <Tooltip content={<GoldTooltip />} />
+                      <Tooltip content={<GoldTooltip />} trigger="hover" />
                       <Bar dataKey="ok" stackId="q" fill={T.success} name="OK" radius={[0, 0, 0, 0]} animationDuration={1000} />
                       <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={1000} />
                       <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
