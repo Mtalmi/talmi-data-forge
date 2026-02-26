@@ -111,8 +111,13 @@ function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; 
 // SPARKLINE
 // ─────────────────────────────────────────────────────
 function MiniSparkline({ data, color = T.gold }: { data: number[]; color?: string }) {
-  const max = Math.max(...data, 1);
-  const min = Math.min(...data, 0);
+  const rawMax = Math.max(...data, 1);
+  const rawMin = Math.min(...data, 0);
+  const rawRange = rawMax - rawMin || 1;
+  // Ensure minimum visual range so tight data (e.g. 93-100) renders as a wave, not a block
+  const padding = rawRange < 20 ? 20 : 0;
+  const min = rawMin - padding * 0.3;
+  const max = rawMax + padding * 0.7;
   const range = max - min || 1;
   const w = 120;
   const h = 32;
