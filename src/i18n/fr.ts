@@ -2,7 +2,7 @@ const fr = {
   nav: {
     dashboard: 'Tableau de Bord',
     production: 'Production',
-    planning: 'Planning',
+    planning: 'Planning & Expédition',
     deliveries: 'Bons de Commande',
     sales: 'Ventes',
     stocks: 'Stocks',

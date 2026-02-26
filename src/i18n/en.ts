@@ -2,7 +2,7 @@ const en = {
   nav: {
     dashboard: 'Dashboard',
     production: 'Production',
-    planning: 'Planning',
+    planning: 'Planning & Dispatch',
     deliveries: 'Orders',
     sales: 'Sales',
     stocks: 'Stocks',
