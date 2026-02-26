@@ -347,7 +347,7 @@ export function FacturePdfProGenerator({ facture, compact = false }: FacturePdfP
     return (
       <Button variant="outline" size="sm" onClick={generatePdf} disabled={generating} className="gap-2">
         {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-        PDF Pro
+        PDF
       </Button>
     );
   }
@@ -360,7 +360,7 @@ export function FacturePdfProGenerator({ facture, compact = false }: FacturePdfP
       </div>
       <Button onClick={generatePdf} disabled={generating} className="gap-2">
         {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-        Télécharger PDF Pro
+        Télécharger PDF
       </Button>
     </div>
   );

@@ -286,8 +286,8 @@ export function BcTable({
         priority.isUrgent && bc.statut === 'pret_production' && "text-destructive font-medium"
       )}>
         {isToday(date) ? (
-          <span className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
+          <span className="flex items-center gap-1 text-[#D4A843] font-medium">
+            <span className="h-2 w-2 rounded-full bg-[#D4A843] animate-pulse" />
             Aujourd'hui
           </span>
         ) : isTomorrow(date) ? (

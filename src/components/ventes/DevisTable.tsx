@@ -412,7 +412,7 @@ export function DevisTable({
                     {statusConfig.isLocked ? (
                       <Badge variant="outline" className={cn("gap-1", statusConfig.color)} title={statusConfig.label}>
                         {statusConfig.icon}
-                        <span className="truncate max-w-[120px]">{statusConfig.label}</span>
+                        <span className="whitespace-nowrap">{statusConfig.label}</span>
                       </Badge>
                     ) : (
                       <DropdownMenu>
@@ -473,46 +473,9 @@ export function DevisTable({
                 </TableCell>
                 <TableCell onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center gap-1.5 flex-nowrap">
-                    {/* Technical Approval Badge for special formulas */}
-                    {(devis as any).requires_technical_approval && (
-                      <TechnicalApprovalBadge
-                        devisId={devis.devis_id}
-                        requiresApproval={(devis as any).requires_technical_approval}
-                        isApproved={!!(devis as any).technical_approved_at}
-                        approvedByName={(devis as any).technical_approved_by_name}
-                        approvedAt={(devis as any).technical_approved_at}
-                        canApprove={canApproveTechnical}
-                        onApproved={onRefresh}
-                      />
-                    )}
-                    
-                    {/* Responsibility Stamp if validated */}
-                    {(devis as any).validated_by_name && (
-                      <ResponsibilityStamp
-                        actionType="validated"
-                        userName={(devis as any).validated_by_name}
-                        userRole={(devis as any).validated_by_role}
-                        timestamp={(devis as any).validated_at}
-                        compact
-                      />
-                    )}
-                    
-                    {/* Duplicate Button */}
-                    <DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact />
-                    
-                    {/* Quick Send Button - prominent for pending devis */}
+                    {/* Quick Send + PDF - primary actions for pending devis */}
                     {devis.statut === 'en_attente' && devis.client_id && (
-                      <>
-                        <WhatsAppShareButton devis={devis} compact />
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span>
-                              <DevisSendDialog devis={devis} />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent>{dt.sendByEmail}</TooltipContent>
-                        </Tooltip>
-                      </>
+                      <DevisSendDialog devis={devis} />
                     )}
                     
                     {/* PDF Button */}
@@ -563,6 +526,55 @@ export function DevisTable({
                         {dt.clientRequired}
                       </span>
                     )}
+                    
+                    {/* More actions dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-white/30 hover:text-white/60">
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44">
+                        {/* Technical Approval Badge */}
+                        {(devis as any).requires_technical_approval && (
+                          <DropdownMenuItem className="gap-2" asChild>
+                            <div>
+                              <TechnicalApprovalBadge
+                                devisId={devis.devis_id}
+                                requiresApproval={(devis as any).requires_technical_approval}
+                                isApproved={!!(devis as any).technical_approved_at}
+                                approvedByName={(devis as any).technical_approved_by_name}
+                                approvedAt={(devis as any).technical_approved_at}
+                                canApprove={canApproveTechnical}
+                                onApproved={onRefresh}
+                              />
+                            </div>
+                          </DropdownMenuItem>
+                        )}
+                        {/* Responsibility Stamp */}
+                        {(devis as any).validated_by_name && (
+                          <DropdownMenuItem className="gap-2" asChild>
+                            <div>
+                              <ResponsibilityStamp
+                                actionType="validated"
+                                userName={(devis as any).validated_by_name}
+                                userRole={(devis as any).validated_by_role}
+                                timestamp={(devis as any).validated_at}
+                                compact
+                              />
+                            </div>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem className="gap-2" asChild>
+                          <div><DuplicateDevisButton devis={devis} onDuplicated={onRefresh} compact /></div>
+                        </DropdownMenuItem>
+                        {devis.statut === 'en_attente' && devis.client_id && (
+                          <DropdownMenuItem className="gap-2" asChild>
+                            <div><WhatsAppShareButton devis={devis} compact /></div>
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </TableCell>
               </TableRow>
