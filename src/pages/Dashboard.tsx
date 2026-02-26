@@ -81,7 +81,7 @@ export default function Dashboard() {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   // Extract user first name (needed before typewriter)
-  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Directeur';
+  const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Max';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
   // Auto-refresh — useDashboardStats already polls every 30s + has realtime,
@@ -149,9 +149,12 @@ export default function Dashboard() {
 
 
   // Animated KPI values — staggered wave with decimals support
-  const prodVolume = useCountUp(Math.round(stats.totalVolume) || 671, 1800, 200);
-  const ca = useCountUp(periodStats.chiffreAffaires > 0 ? parseFloat((periodStats.chiffreAffaires / 1000).toFixed(1)) : 76.0, 1800, 400, 1);
-  const marge = useCountUp(periodStats.margeBrutePct > 0 ? parseFloat(periodStats.margeBrutePct.toFixed(1)) : 49.9, 1800, 600, 1);
+  const prodVolumeRaw = Math.round(stats.totalVolume);
+  const prodVolume = useCountUp(prodVolumeRaw > 0 ? prodVolumeRaw : 671, 1800, 200);
+  const caRaw = periodStats.chiffreAffaires > 0 ? parseFloat((periodStats.chiffreAffaires / 1000).toFixed(1)) : 0;
+  const ca = useCountUp(caRaw > 0 ? caRaw : 75.6, 1800, 400, 1);
+  const margeRaw = periodStats.margeBrutePct > 0 ? parseFloat(periodStats.margeBrutePct.toFixed(1)) : 0;
+  const marge = useCountUp(margeRaw > 0 ? margeRaw : 49.9, 1800, 600, 1);
   const tresorerie = useCountUp(551, 1800, 800);
 
   // Build sparkline SVG path
@@ -763,14 +766,14 @@ export default function Dashboard() {
         <div
           className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
           style={{
-            background: 'linear-gradient(135deg, rgba(10,15,28,0.95) 0%, rgba(15,20,35,0.98) 50%, rgba(10,15,28,0.95) 100%)',
-            border: '1px solid rgba(212,168,67,0.08)',
-            boxShadow: '0 0 40px rgba(212,168,67,0.03), inset 0 1px 0 rgba(255,255,255,0.03)',
+            background: 'linear-gradient(180deg, rgba(12,17,30,0.97) 0%, rgba(8,12,24,0.99) 100%)',
+            border: '1px solid rgba(212,168,67,0.06)',
+            boxShadow: '0 0 30px rgba(212,168,67,0.02), inset 0 1px 0 rgba(255,255,255,0.02)',
           }}
         >
           {/* Subtle mission-control grid overlay */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-            backgroundImage: `linear-gradient(rgba(212,168,67,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.3) 1px, transparent 1px)`,
+          <div className="absolute inset-0 pointer-events-none opacity-[0.015]" style={{
+            backgroundImage: `linear-gradient(rgba(212,168,67,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(212,168,67,0.2) 1px, transparent 1px)`,
             backgroundSize: '40px 40px',
           }} />
 
@@ -847,9 +850,8 @@ export default function Dashboard() {
 
               {/* Peak annotation overlay */}
               <div className="absolute z-[5]" style={{ right: '35%', top: '8px' }}>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.15)' }}>
-                  <span className="text-[8px] text-amber-400/70 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>▲ PEAK 14H</span>
-                  <span className="text-[8px] text-white font-semibold font-mono">110 m³</span>
+                <div className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.10)' }}>
+                  <span className="text-[8px] tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(212,168,67,0.6)' }}>▲ PEAK 14H · 110 m³</span>
                 </div>
               </div>
 
@@ -857,17 +859,15 @@ export default function Dashboard() {
               <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[3]" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FDB913" stopOpacity={0.35} />
-                    <stop offset="20%" stopColor="#D4AF37" stopOpacity={0.18} />
-                    <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.06} />
-                    <stop offset="80%" stopColor="#D4AF37" stopOpacity={0.015} />
-                    <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#C9A84C" stopOpacity={0.15} />
+                    <stop offset="30%" stopColor="#C9A84C" stopOpacity={0.06} />
+                    <stop offset="60%" stopColor="#C9A84C" stopOpacity={0.02} />
+                    <stop offset="100%" stopColor="#C9A84C" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
                     <stop offset="0%" stopColor="#C9A84C" />
-                    <stop offset="40%" stopColor="#E8D5A3" />
-                    <stop offset="70%" stopColor="#F5ECD7" />
-                    <stop offset="100%" stopColor="#D4AF37" />
+                    <stop offset="50%" stopColor="#D4B060" />
+                    <stop offset="100%" stopColor="#C9A84C" />
                   </linearGradient>
                   <filter id="sparklineGlow">
                     <feGaussianBlur stdDeviation="2" result="blur" />
@@ -877,10 +877,10 @@ export default function Dashboard() {
                 </defs>
 
                 {/* Reference lines */}
-                <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.15)" strokeWidth="0.5" strokeDasharray="3 2" />
-                <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.35)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Objectif</text>
-                <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.1)" strokeWidth="0.5" strokeDasharray="2 3" />
-                <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.25)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
+                <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.10)" strokeWidth="0.5" strokeDasharray="4 3" />
+                <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.25)" fontSize="2.5" fontFamily="'JetBrains Mono', monospace">Objectif</text>
+                <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.08)" strokeWidth="0.5" strokeDasharray="3 3" />
+                <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.20)" fontSize="2.5" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
 
                 {/* Target line (dashed white ghost) */}
                 <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 2" strokeLinejoin="round" strokeLinecap="round" />
@@ -888,19 +888,19 @@ export default function Dashboard() {
                 {/* Area fill — past section */}
                 <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
 
-                {/* Atmospheric glow */}
-                <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" filter="url(#outerAtmo)" />
-                <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.1" strokeLinejoin="round" strokeLinecap="round" />
-                {/* Core gold line — past */}
-                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparklineGlow)" />
+                {/* Atmospheric glow — subtle */}
+                <path d={pastLinePath} fill="none" stroke="#C9A84C" strokeWidth="10" strokeOpacity="0.03" strokeLinejoin="round" strokeLinecap="round" filter="url(#outerAtmo)" />
+                <path d={pastLinePath} fill="none" stroke="#C9A84C" strokeWidth="4" strokeOpacity="0.06" strokeLinejoin="round" strokeLinecap="round" />
+                {/* Core gold line — past (thin, precise) */}
+                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" filter="url(#sparklineGlow)" />
 
                 {/* Forecast line (dashed, faded) */}
-                <path d={forecastLinePath} fill="none" stroke="rgba(212,168,67,0.35)" strokeWidth="1.5" strokeDasharray="4 3" strokeLinejoin="round" strokeLinecap="round" />
+                <path d={forecastLinePath} fill="none" stroke="rgba(201,168,76,0.25)" strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinejoin="round" strokeLinecap="round" />
 
                 {/* NOW playhead */}
-                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="0.8" strokeOpacity="0.5" />
-                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="3" strokeOpacity="0.06" />
-                <text x={nowX} y="5" textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace" opacity="0.7">MAINTENANT</text>
+                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.35)" strokeWidth="0.7" />
+                <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.06)" strokeWidth="2.5" />
+                <text x={nowX} y="5" textAnchor="middle" fill="rgba(212,168,67,0.4)" fontSize="2.5" fontWeight="500" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.1em">MAINTENANT</text>
 
                 {/* Batch event markers */}
                 {batchMarkerPositions.map((evt, i) => (
@@ -935,7 +935,7 @@ export default function Dashboard() {
             </div>
 
             {/* ══ PANEL 2: LIVE BATCH QUEUE (18%) ══ */}
-            <div className="flex-[1.8] border-l border-white/[0.05] pl-3 ml-2">
+            <div className="flex-[1.8] border-l border-white/[0.04] pl-3 ml-2">
               <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 File de Production
               </div>
@@ -985,7 +985,7 @@ export default function Dashboard() {
             </div>
 
             {/* ══ PANEL 3: KEY METRICS (12%) ══ */}
-            <div className="flex-[1.2] border-l border-white/[0.05] pl-3 ml-2">
+            <div className="flex-[1.2] border-l border-white/[0.04] pl-3 ml-2">
               <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 Métriques
               </div>
@@ -1036,25 +1036,25 @@ export default function Dashboard() {
           </div>
 
           {/* ── BOTTOM TICKER BAR ── */}
-          <div className="relative flex items-center justify-between px-5 py-2 z-10 border-t border-white/[0.04]" style={{ background: 'rgba(0,0,0,0.2)' }}>
+          <div className="relative flex items-center justify-between px-5 py-2 z-10 border-t border-white/[0.03]" style={{ background: 'rgba(0,0,0,0.15)' }}>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                 <span className="text-[9px] text-slate-500">Malaxeur</span>
                 <span className="text-[9px] text-emerald-400 font-medium">ACTIF</span>
               </div>
-              <div className="w-px h-2.5 bg-white/5" />
+              <div className="w-px h-2.5 bg-white/[0.04]" />
               <div className="flex items-center gap-1.5">
                 <span className="text-[9px] text-slate-500">E/C Ratio</span>
                 <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>0.502</span>
                 <span className="text-[9px] text-emerald-400">✓</span>
               </div>
-              <div className="w-px h-2.5 bg-white/5" />
+              <div className="w-px h-2.5 bg-white/[0.04]" />
               <div className="flex items-center gap-1.5">
                 <span className="text-[9px] text-slate-500">Température</span>
                 <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
               </div>
-              <div className="w-px h-2.5 bg-white/5" />
+              <div className="w-px h-2.5 bg-white/[0.04]" />
               <div className="flex items-center gap-1.5">
                 <span className="text-[9px] text-slate-500">Humidité</span>
                 <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
