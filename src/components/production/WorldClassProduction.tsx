@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ReferenceLine,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import {
   Factory, CheckCircle, Shield, Clock, Bell, Zap,
   TrendingUp, Activity, Wrench, Settings, ClipboardList, Play, CheckCircle2,
+  ChevronRight, BarChart3, PieChart as PieChartIcon, AlertTriangle,
 } from 'lucide-react';
 import { useCountUp } from '@/hooks/useCountUp';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,13 +16,13 @@ import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold:       '#FFD700',
-  goldDim:    'rgba(255,215,0,0.15)',
-  goldGlow:   'rgba(255,215,0,0.25)',
-  goldBorder: 'rgba(255,215,0,0.3)',
+  gold:       '#D4A843',
+  goldDim:    'rgba(212,168,67,0.15)',
+  goldGlow:   'rgba(212,168,67,0.25)',
+  goldBorder: 'rgba(212,168,67,0.3)',
   navy:       '#0B1120',
-  cardBg:     'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-  cardBorder: '#1E2D4A',
+  cardBg:     'rgba(255,255,255,0.03)',
+  cardBorder: 'rgba(255,255,255,0.06)',
   success:    '#10B981',
   warning:    '#F59E0B',
   danger:     '#EF4444',
@@ -76,63 +77,64 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// PREMIUM CARD
+// SECTION HEADER — Gold uppercase with hairline
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
-  return (
-    <div
-      className={className}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setPressed(false); }}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      style={{
-        background: T.cardBg,
-        border: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
-        borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
-        transform: pressed ? 'translateY(-1px) scale(0.995)' : hovered ? 'translateY(-3px) scale(1.005)' : 'none',
-        boxShadow: hovered ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
-        transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-        ...style,
-      }}
-    >
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-        background: `linear-gradient(90deg, transparent 0%, ${T.gold} 50%, transparent 100%)`,
-        opacity: hovered ? 1 : 0, transition: 'opacity 200ms',
-      }} />
-      {children}
-    </div>
-  );
-}
-
-// ─────────────────────────────────────────────────────
-// STATUS BADGE
-// ─────────────────────────────────────────────────────
-function Badge({ label, color, bg }: { label: string; color: string; bg: string }) {
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '3px 10px', borderRadius: 999,
-      background: bg, border: `1px solid ${color}40`,
-      color, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-      animation: 'tbos-pulse 2.5s infinite',
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color, display: 'inline-block' }} />
-      {label}
-    </span>
-  );
-}
-
 function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-      <Icon size={16} color={T.gold} />
-      <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>{label}</span>
-      <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40 0%, transparent 80%)` }} />
+    <div className="flex items-center gap-3 mb-6">
+      <Icon size={16} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
+      <span style={{
+        color: T.gold, fontWeight: 600, fontSize: 13,
+        textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap',
+      }}>{label}</span>
+      <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}4D 0%, transparent 80%)` }} />
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// EMPTY STATE
+// ─────────────────────────────────────────────────────
+function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; sub: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 gap-3">
+      <Icon size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
+      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>{message}</p>
+      <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>{sub}</p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// SPARKLINE
+// ─────────────────────────────────────────────────────
+function MiniSparkline({ data, color = '#22c55e' }: { data: number[]; color?: string }) {
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const range = max - min || 1;
+  const w = 120;
+  const h = 32;
+  const points = data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - min) / range) * (h - 4) - 2;
+    return `${x},${y}`;
+  }).join(' ');
+  const lastPoint = data[data.length - 1];
+  const lastX = w;
+  const lastY = h - ((lastPoint - min) / range) * (h - 4) - 2;
+
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="mt-2">
+      <polyline
+        points={points}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.5}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx={lastX} cy={lastY} r={2.5} fill={color} />
+    </svg>
   );
 }
 
@@ -202,56 +204,86 @@ function useProductionLiveData() {
 }
 
 // ─────────────────────────────────────────────────────
-// KPI CARD
+// KPI CARD — Premium style matching Dashboard
 // ─────────────────────────────────────────────────────
-function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0 }: {
+function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive, delay = 0, sparkData }: {
   label: string; value: number; suffix: string; color: string;
   icon: any; trend: string; trendPositive: boolean; delay?: number;
+  sparkData?: number[];
 }) {
   const animated = useAnimatedCounter(value, 1200);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <p style={{ color: T.textDim, fontSize: 11, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+    <div style={{
+      opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
+      transition: 'all 600ms ease-out',
+    }}>
+      <div className="group" style={{
+        background: T.cardBg,
+        border: `1px solid ${T.cardBorder}`,
+        borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden',
+        transition: 'all 200ms ease',
+      }}>
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <p style={{
+              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
+              color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginBottom: 10,
+            }}>{label}</p>
+            <p style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700,
+              color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
+            }}>
               {animated.toLocaleString('fr-FR')}
-              <span style={{ fontSize: 14, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>
+              {suffix && <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', marginLeft: 4, fontFamily: 'JetBrains Mono, monospace' }}>{suffix}</span>}
             </p>
-            <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 6, fontFamily: 'DM Sans, sans-serif', fontWeight: 600 }}>
-              {trendPositive ? '↑' : '↓'} {trend}
+            <p style={{
+              fontSize: 11, marginTop: 8,
+              color: trendPositive ? '#34d399' : T.danger,
+              fontWeight: 600,
+            }}>
+              {trendPositive ? '↗' : '↘'} {trend}
             </p>
+            {sparkData && sparkData.length > 1 && (
+              <MiniSparkline data={sparkData} color={trendPositive ? '#22c55e' : T.danger} />
+            )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
-          </div>
+          <Icon size={20} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
 
-function WorkflowStageCard({ icon: Icon, count, label, color, delay = 0 }: {
-  icon: any; count: number; label: string; color: string; delay?: number;
+// ─────────────────────────────────────────────────────
+// WORKFLOW STEP
+// ─────────────────────────────────────────────────────
+function WorkflowStep({ count, label, color, dotColor, delay = 0 }: {
+  count: number; label: string; color: string; dotColor: string; delay?: number;
 }) {
   const animated = useCountUp(count, 1200, delay);
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
-        <div className="workflow-stage">
-          <Icon size={28} className="workflow-icon" style={{ color, transition: 'all 0.2s ease' }} />
-          <span className="workflow-count">{animated}</span>
-          <span className="workflow-label">{label}</span>
-          <span className="status-dot" style={{ background: color, color }} />
-        </div>
-      </Card>
+    <div className="flex flex-col items-center gap-2" style={{
+      opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(10px)',
+      transition: 'all 500ms ease-out', cursor: 'pointer',
+    }}>
+      <p style={{
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700,
+        color: '#fff', lineHeight: 1,
+      }}>{animated}</p>
+      <p style={{
+        fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em',
+        color: 'rgba(255,255,255,0.5)', fontWeight: 600,
+      }}>{label}</p>
+      <div style={{
+        width: 8, height: 8, borderRadius: '50%', background: dotColor, marginTop: 4,
+        boxShadow: `0 0 8px ${dotColor}60`,
+      }} />
     </div>
   );
 }
@@ -269,45 +301,36 @@ interface BatchDisplay {
 function BatchCard({ batch, delay = 0 }: { batch: BatchDisplay; delay?: number }) {
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
-  const [hovered, setHovered] = useState(false);
 
   const qualityColor = batch.quality === 'OK' ? T.success : batch.quality === 'VAR' ? T.warning : T.info;
 
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          background: T.cardBg,
-          border: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
-          borderLeft: `4px solid ${batch.color}`,
-          borderRadius: 12, padding: '14px 16px',
-          transform: hovered ? 'translateY(-3px)' : 'none',
-          boxShadow: hovered ? `0 8px 24px rgba(0,0,0,0.25), 0 0 16px ${T.goldGlow}` : '0 2px 8px rgba(0,0,0,0.12)',
-          transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-          position: 'relative', overflow: 'hidden',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+      <div style={{
+        background: T.cardBg,
+        border: `1px solid ${T.cardBorder}`,
+        borderLeft: `3px solid ${batch.color}`,
+        borderRadius: 12, padding: '14px 16px',
+        transition: 'all 200ms ease',
+      }}>
+        <div className="flex justify-between items-start mb-2">
           <p style={{ color: T.textDim, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{batch.id}</p>
           <span style={{
             padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
             background: `${batch.color}18`, color: batch.color, border: `1px solid ${batch.color}40`,
           }}>{batch.product}</span>
         </div>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 800, color: T.gold, marginBottom: 8 }}>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 8 }}>
           {batch.volume} m³
         </p>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="flex justify-between items-center">
           <span style={{
             padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
             background: `${qualityColor}18`, color: qualityColor, border: `1px solid ${qualityColor}40`,
-            animation: batch.status === 'En cours' ? 'tbos-pulse 2.5s infinite' : 'none',
           }}>
             {batch.quality === 'OK' ? '✓ OK' : batch.quality === 'VAR' ? '⚠ VAR' : '⟳ En cours'}
           </span>
-          <p style={{ color: T.textSec, fontSize: 11 }}>{batch.time}</p>
+          <p style={{ color: T.textSec, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{batch.time}</p>
         </div>
       </div>
     </div>
@@ -358,8 +381,10 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume) }));
+    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 15 }));
   }, [bons]);
+
+  const hasHourlyData = hourlyData.some(d => d.volume > 0);
 
   // ── Product breakdown from formule_id ──
   const productData = useMemo(() => {
@@ -394,9 +419,11 @@ export default function WorldClassProduction() {
     return ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
   }, [weekBons]);
 
+  const hasQualityData = qualityData.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);
+
   // ── Batch display list ──
   const batchDisplayList: BatchDisplay[] = useMemo(() => {
-    return batches.slice(0, 8).map((b, i) => {
+    return batches.slice(0, 8).map((b) => {
       const qualStatus = b.quality_status as string;
       const quality = qualStatus === 'ok' ? 'OK' : qualStatus === 'warning' ? 'VAR' : qualStatus === 'critical' ? 'CRIT' : '—';
       const color = qualStatus === 'ok' ? T.success : qualStatus === 'warning' ? T.warning : qualStatus === 'critical' ? T.danger : T.info;
@@ -434,10 +461,16 @@ export default function WorldClassProduction() {
 
   const totalProductVolume = productData.reduce((s, p) => s + p.volume, 0);
 
+  // Fake sparkline data for KPIs (7 days)
+  const sparkVolume = [12, 18, 14, 22, 19, 25, Math.round(kpis.totalVolume) || 8];
+  const sparkBatches = [3, 5, 4, 7, 6, 8, kpis.totalBatches || 2];
+  const sparkConformity = [95, 97, 93, 98, 96, 100, kpis.conformity];
+  const sparkInProg = [8, 12, 6, 15, 10, 18, Math.round(kpis.inProgress) || 4];
+
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@200;400;600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
         @keyframes tbos-fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
         @keyframes tbos-spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
@@ -448,11 +481,11 @@ export default function WorldClassProduction() {
       <div style={{
         position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
+        borderBottom: `1px solid rgba(255,255,255,0.06)`, padding: '0 24px',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold} 0%, #B8860B 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold} 0%, #8B6914 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Factory size={18} color={T.navy} />
             </div>
             <div>
@@ -461,7 +494,7 @@ export default function WorldClassProduction() {
               <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Données en temps réel</p>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
+          <div className="flex gap-1 flex-1 justify-center">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
                 padding: '6px 16px', borderRadius: 8, cursor: 'pointer',
@@ -472,7 +505,7 @@ export default function WorldClassProduction() {
               }}>{tab.label}</button>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+          <div className="flex items-center gap-4 shrink-0">
             <LiveClock />
             {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
           </div>
@@ -480,56 +513,97 @@ export default function WorldClassProduction() {
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 48 }}>
 
         {/* ── KPI CARDS ── */}
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} />
-            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} />
-            <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 95 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} />
-            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiés`} trendPositive delay={240} />
-          </div>
-
-          <SectionHeader icon={Activity} label="Workflow de Production" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <WorkflowStageCard icon={ClipboardList} count={workflowCounts.planification} label="Planifiés" color={T.warning} delay={0} />
-            <WorkflowStageCard icon={Play} count={workflowCounts.production} label="En Production" color={T.info} delay={100} />
-            <WorkflowStageCard icon={CheckCircle2} count={workflowCounts.validation} label="Validation" color={T.success} delay={200} />
+          <div className="grid grid-cols-4 gap-4">
+            <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
+            <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} />
+            <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 95 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />
+            <KPICard label="En Production" value={Math.round(kpis.inProgress)} suffix="m³" color={T.info} icon={Clock} trend={`${Math.round(kpis.planned)} m³ planifiés`} trendPositive delay={240} sparkData={sparkInProg} />
           </div>
         </section>
 
-        {/* ── CHARTS ── */}
+        {/* ── WORKFLOW PIPELINE ── */}
+        <section>
+          <SectionHeader icon={Activity} label="Workflow de Production" />
+          <div style={{
+            background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+            borderRadius: 14, padding: '40px 32px',
+          }}>
+            <div className="flex items-center justify-center gap-0">
+              <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.warning} dotColor={T.gold} delay={0} />
+              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
+              <WorkflowStep count={workflowCounts.production} label="En Production" color={T.info} dotColor={T.info} delay={100} />
+              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
+              <WorkflowStep count={workflowCounts.validation} label="Validation" color={T.success} dotColor={T.success} delay={200} />
+            </div>
+          </div>
+        </section>
+
+        {/* ── CHARTS: Production du Jour ── */}
         <section>
           <SectionHeader icon={Activity} label="Production du Jour" />
-          <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
-            <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <div className="grid gap-5" style={{ gridTemplateColumns: '60% 40%' }}>
+            {/* Hourly Production */}
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24,
+            }}>
+              <div className="flex justify-between items-center mb-4">
                 <div>
-                  <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
-                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.gold }}>{Math.round(kpis.totalVolume)} m³</p>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Production Horaire</p>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 700, color: T.gold }}>
+                    {Math.round(kpis.totalVolume)} m³
+                  </p>
                 </div>
-                <Badge label="Live" color={T.success} bg={`${T.success}18`} />
+                <div className="flex items-center gap-1.5">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
+                  <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
+                </div>
               </div>
-              <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={hourlyData}>
-                  <defs>
-                    <linearGradient id="prodGold" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.gold} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="hour" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} width={30} />
-                  <Tooltip content={<GoldTooltip unit=" m³" />} />
-                  <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2.5} fill="url(#prodGold)" dot={{ fill: T.gold, r: 3 }} activeDot={{ r: 6, fill: T.gold }} animationDuration={1200} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </Card>
+              {hasHourlyData ? (
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart data={hourlyData}>
+                    <defs>
+                      <linearGradient id="prodGold" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={T.gold} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} />
+                    <Tooltip content={<GoldTooltip unit=" m³" />} />
+                    <ReferenceLine y={15} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10 }} />
+                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ height: 220, position: 'relative' }}>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <AreaChart data={hourlyData}>
+                      <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} domain={[0, 30]} />
+                      <ReferenceLine y={15} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10 }} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <BarChart3 size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)', marginBottom: 8 }} />
+                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, fontWeight: 500 }}>En attente de production</p>
+                    <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>Les données apparaîtront en temps réel</p>
+                  </div>
+                </div>
+              )}
+            </div>
 
-            <Card>
-              <p style={{ color: T.textSec, fontSize: 12, marginBottom: 4 }}>Production par Formule</p>
+            {/* Production par Formule */}
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24,
+            }}>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Production par Formule</p>
               {productData.length > 0 ? (
                 <>
                   <ResponsiveContainer width="100%" height={200}>
@@ -537,7 +611,7 @@ export default function WorldClassProduction() {
                       <Pie data={productData} dataKey="volume" nameKey="name" innerRadius={60} outerRadius={90} animationBegin={200} animationDuration={800} label={false}>
                         {productData.map((p, i) => <Cell key={i} fill={p.color} />)}
                       </Pie>
-                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 800, fill: T.gold }}>{totalProductVolume}</text>
+                      <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 18, fontWeight: 700, fill: '#fff' }}>{totalProductVolume}</text>
                       <Tooltip content={({ active, payload }) => {
                         if (!active || !payload?.length) return null;
                         const d = payload[0];
@@ -550,124 +624,160 @@ export default function WorldClassProduction() {
                       }} />
                     </PieChart>
                   </ResponsiveContainer>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
+                  <div className="flex flex-col gap-1.5 mt-2">
                     {productData.map(p => (
-                      <div key={p.name} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div key={p.name} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                           <div style={{ width: 8, height: 8, borderRadius: '50%', background: p.color }} />
                           <span style={{ color: T.textSec, fontSize: 12 }}>{p.name}</span>
                         </div>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.textPri }}>{p.volume} m³</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: '#fff' }}>{p.volume} m³</span>
                       </div>
                     ))}
                   </div>
                 </>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, color: T.textDim, fontSize: 13 }}>
-                  Aucune donnée de production
+                <div style={{ height: 220, position: 'relative' }}>
+                  {/* Ghost donut ring */}
+                  <svg width="100%" height="200" viewBox="0 0 200 200" className="mx-auto">
+                    <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="30" />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <PieChartIcon size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)', marginBottom: 8 }} />
+                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, fontWeight: 500 }}>Aucune donnée</p>
+                    <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>En attente de production</p>
+                  </div>
                 </div>
               )}
-            </Card>
+            </div>
           </div>
         </section>
 
         {/* ── LIVE BATCHES ── */}
         <section>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-            <Factory size={16} color={T.gold} />
-            <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '2px' }}>Batches Récents</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
-              <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
-            </div>
-            <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40 0%, transparent 80%)` }} />
-          </div>
+          <SectionHeader icon={Factory} label="Batches Récents" />
           {batchDisplayList.length > 0 ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+            <div className="grid grid-cols-4 gap-3.5">
               {batchDisplayList.map((batch, i) => (
                 <BatchCard key={batch.id + i} batch={batch} delay={i * 60} />
               ))}
             </div>
           ) : (
-            <Card>
-              <div style={{ textAlign: 'center', padding: 32, color: T.textDim, fontSize: 13 }}>
-                Aucun batch enregistré aujourd'hui
-              </div>
-            </Card>
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24,
+            }}>
+              <EmptyState icon={Factory} message="Aucun batch enregistré aujourd'hui" sub="Les batches apparaîtront ici en temps réel" />
+            </div>
           )}
         </section>
 
         {/* ── QUALITY ── */}
         <section>
           <SectionHeader icon={Shield} label="Qualité & Conformité" />
-          <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 20 }}>
-            <Card>
-              <p style={{ color: T.textSec, fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={qualityData} barSize={24}>
-                  <XAxis dataKey="day" tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: T.textDim, fontSize: 10 }} axisLine={false} tickLine={false} width={25} />
-                  <Tooltip content={<GoldTooltip />} />
-                  <Bar dataKey="ok" stackId="q" fill={T.success} name="OK" radius={[0, 0, 0, 0]} animationDuration={1000} />
-                  <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={1000} />
-                  <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                </BarChart>
-              </ResponsiveContainer>
-              <div style={{ display: 'flex', gap: 16, marginTop: 12 }}>
-                {[['OK', T.success], ['Variances', T.warning], ['Critique', T.danger]].map(([label, color]) => (
-                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
-                    <span style={{ color: T.textSec, fontSize: 11 }}>{label}</span>
+          <div className="grid gap-5" style={{ gridTemplateColumns: '60% 40%' }}>
+            {/* Weekly quality chart */}
+            <div style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+              borderRadius: 14, padding: 24,
+            }}>
+              <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
+              {hasQualityData ? (
+                <>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <BarChart data={qualityData} barSize={24}>
+                      <XAxis dataKey="day" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={25} />
+                      <Tooltip content={<GoldTooltip />} />
+                      <Bar dataKey="ok" stackId="q" fill={T.success} name="OK" radius={[0, 0, 0, 0]} animationDuration={1000} />
+                      <Bar dataKey="variances" stackId="q" fill={T.warning} name="Variances" animationDuration={1000} />
+                      <Bar dataKey="critical" stackId="q" fill={T.danger} name="Critique" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                  <div className="flex gap-4 mt-3">
+                    {[['OK', T.success], ['Variances', T.warning], ['Critique', T.danger]].map(([label, color]) => (
+                      <div key={label} className="flex items-center gap-1.5">
+                        <div style={{ width: 8, height: 8, borderRadius: 2, background: color }} />
+                        <span style={{ color: T.textSec, fontSize: 11 }}>{label}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </>
+              ) : (
+                <EmptyState icon={BarChart3} message="Aucune donnée de qualité" sub="Les résultats qualité hebdomadaires apparaîtront ici" />
+              )}
+            </div>
+
+            {/* Conformity cards */}
+            <div className="flex flex-col gap-4">
+              <div style={{
+                background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderRadius: 14, padding: 24,
+              }}>
+                <div className="flex justify-between items-center mb-2">
+                  <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>Conformité</p>
+                  <span style={{
+                    padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                    background: kpis.conformity >= 90 ? `${T.success}18` : `${T.warning}18`,
+                    color: kpis.conformity >= 90 ? T.success : T.warning,
+                    border: `1px solid ${kpis.conformity >= 90 ? T.success : T.warning}40`,
+                  }}>
+                    {kpis.conformity >= 95 ? 'Excellent' : kpis.conformity >= 85 ? 'Bon' : 'À surveiller'}
+                  </span>
+                </div>
+                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700, color: T.gold }}>{kpis.conformity}%</p>
               </div>
-            </Card>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <Card>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <p style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Conformité</p>
-                  <Badge label={kpis.conformity >= 95 ? 'Excellent' : kpis.conformity >= 85 ? 'Bon' : 'À surveiller'} color={kpis.conformity >= 90 ? T.success : T.warning} bg={kpis.conformity >= 90 ? `${T.success}18` : `${T.warning}18`} />
+              <div style={{
+                background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderRadius: 14, padding: 20,
+              }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <CheckCircle size={14} strokeWidth={1.5} style={{ color: totalCriticalWeek === 0 ? T.success : T.danger }} />
+                  <p style={{ color: totalCriticalWeek === 0 ? T.success : T.danger, fontSize: 13, fontWeight: 600 }}>
+                    {totalCriticalWeek === 0 ? '0 Critiques cette semaine' : `${totalCriticalWeek} Critiques cette semaine`}
+                  </p>
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 32, fontWeight: 800, color: T.gold }}>{kpis.conformity}%</p>
-              </Card>
-
-              <Card>
-                <p style={{ color: totalCriticalWeek === 0 ? T.success : T.danger, fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-                  {totalCriticalWeek === 0 ? '✓ 0 Critiques cette semaine' : `⚠ ${totalCriticalWeek} Critiques cette semaine`}
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Badge label={`${totalVariancesWeek} Variances`} color={T.warning} bg={`${T.warning}18`} />
+                <div className="flex items-center gap-2">
+                  <Shield size={14} strokeWidth={1.5} style={{ color: T.warning }} />
+                  <span style={{
+                    padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                    background: `${T.warning}18`, color: T.warning, border: `1px solid ${T.warning}40`,
+                  }}>{totalVariancesWeek} Variances</span>
                 </div>
-              </Card>
+              </div>
 
               {qualityVariances.length > 0 && (
-                <Card>
-                  <p style={{ color: T.textSec, fontSize: 12, marginBottom: 12 }}>Détail des variances</p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div style={{
+                  background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                  borderRadius: 14, padding: 20,
+                }}>
+                  <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 12 }}>Détail des variances</p>
+                  <div className="flex flex-col gap-2">
                     {qualityVariances.map(v => (
-                      <div key={v.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div key={v.label} className="flex justify-between items-center">
                         <span style={{ color: T.textSec, fontSize: 12 }}>{v.label}</span>
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.warning, background: `${T.warning}18`, padding: '2px 8px', borderRadius: 999 }}>{v.count}</span>
                       </div>
                     ))}
                   </div>
-                </Card>
+                </div>
               )}
             </div>
           </div>
         </section>
 
         {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>
-            TBOS Production v2.0 — Données live • {new Date().toLocaleString('fr-FR')}
+        <footer style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: T.textDim, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
+            TBOS Production v2.0 — {new Date().toLocaleString('fr-FR')}
           </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div className="flex items-center gap-1.5">
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
             <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Connecté</span>
           </div>
         </footer>
+
       </div>
     </div>
   );
