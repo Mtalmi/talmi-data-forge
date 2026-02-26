@@ -6,8 +6,8 @@ import type { Language } from './I18nContext';
 // Arabic uses default (English) locale since date-fns ar locale has limited support
 const localeMap: Record<Language, Locale | undefined> = {
   fr,
-  ar: undefined,
-  en: undefined,
+  ar: fr,
+  en: fr,
 };
 
 export function getDateLocale(lang: Language): Locale | undefined {
