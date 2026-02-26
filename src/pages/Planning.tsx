@@ -898,7 +898,7 @@ export default function Planning() {
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
           "mb-3 border-l-4 rounded-xl transition-all duration-200",
-          "bg-white/[0.05] border border-white/[0.08] shadow-lg shadow-black/20",
+          "bg-card border border-border",
           getBorderColor(bon.workflow_status),
           isTouchDevice && "active:scale-[0.98]",
           creditStatus !== 'green' && "ring-1 ring-red-500/30"
@@ -910,8 +910,8 @@ export default function Planning() {
             {/* Credit Status Indicator - Red/Green Light */}
             <CreditIndicator />
             <div>
-              <p className={cn("font-semibold font-mono text-white", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
-              <p className={cn("text-white/[0.70]", isTouchDevice ? "text-sm" : "text-xs")}>
+              <p className={cn("font-semibold font-mono text-foreground", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
+               <p className={cn("text-muted-foreground", isTouchDevice ? "text-sm" : "text-xs")}>
                 {bon.clients?.nom_client || bon.client_id}
               </p>
             </div>
@@ -920,16 +920,16 @@ export default function Planning() {
         </div>
         
         <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-2 mb-3", isTouchDevice ? "text-sm" : "text-xs")}>
-          <div className="flex items-center gap-1 text-white/[0.50]">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Package className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span>{bon.formule_id}</span>
           </div>
-          <div className="flex items-center gap-1 text-white/[0.50]">
+          <div className="flex items-center gap-1 text-muted-foreground">
             <Factory className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span className="font-semibold">{bon.volume_m3} m³</span>
           </div>
           {bon.zones_livraison && (
-            <div className="flex items-center gap-1 text-white/[0.50] col-span-2">
+            <div className="flex items-center gap-1 text-muted-foreground col-span-2">
               <Navigation className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
               <span>Zone {bon.zones_livraison.code_zone}: {bon.zones_livraison.nom_zone}</span>
             </div>
@@ -939,7 +939,7 @@ export default function Planning() {
         {showTimeInput && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-white/[0.30]" />
+              <Clock className="h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
                 inputMode="numeric"
@@ -947,17 +947,17 @@ export default function Planning() {
                 value={timeDraft}
                 onChange={(e) => setTimeDraft(e.target.value)}
                 onBlur={commitTime}
-                className={cn("text-sm bg-white/[0.03] border-white/[0.06] text-white", isTouchDevice ? "h-11 text-base" : "h-8")}
+                className={cn("text-sm bg-input border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}
               />
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-white/[0.30]" />
+                <Truck className="h-4 w-4 text-muted-foreground" />
                 <Select
                   value={bon.camion_assigne || bon.toupie_assignee || 'none'}
                   onValueChange={(value) => assignTruck(bon.bl_id, value === 'none' ? '' : value)}
                 >
-                  <SelectTrigger className={cn("text-sm bg-white/[0.03] border-white/[0.06] text-white", isTouchDevice ? "h-11 text-base" : "h-8")}>
+                  <SelectTrigger className={cn("text-sm bg-input border-border text-foreground", isTouchDevice ? "h-11 text-base" : "h-8")}>
                     <SelectValue placeholder={t.pages.planning.assignTruckPlaceholder} />
                   </SelectTrigger>
                   <SelectContent className="bg-background border shadow-lg z-50">
@@ -1006,11 +1006,12 @@ export default function Planning() {
               {/* Smart Truck Assignment */}
               <Collapsible>
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="w-full h-7 text-xs gap-1 text-white/[0.40] hover:text-white">
+                  <Button variant="ghost" size="sm" className="w-full h-7 text-xs gap-1 text-muted-foreground hover:text-foreground">
                     <Sparkles className="h-3 w-3" />
-                    {t.pages.planning.smartSuggestion}
-                    <ChevronDown className="h-3 w-3" />
-                  </Button>
+                     {t.pages.planning.smartSuggestion}
+                     <ChevronDown className="h-3 w-3" />
+                   </Button>
+
                 </CollapsibleTrigger>
                 <CollapsibleContent className="pt-2">
                   <SmartTruckAssignment
@@ -1115,14 +1116,14 @@ export default function Planning() {
 
         {!showTimeInput && bon.heure_prevue && (
           <div className={cn(
-            "flex items-center gap-2 text-white/[0.40] mt-2",
+            "flex items-center gap-2 text-muted-foreground mt-2",
             isTouchDevice ? "text-sm" : "text-xs"
           )}>
             <Timer className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
             <span className="font-mono">{t.pages.planning.scheduled}: {formatTimeHHmm(bon.heure_prevue) || bon.heure_prevue}</span>
             {(bon.camion_assigne || bon.toupie_assignee) && (
               <>
-                <span className="text-white/[0.20]">•</span>
+                <span className="text-border">•</span>
                 <Truck className={cn(isTouchDevice ? "h-4 w-4" : "h-3 w-3")} />
                 <span>{bon.camion_assigne || bon.toupie_assignee}</span>
               </>
@@ -1147,10 +1148,10 @@ export default function Planning() {
 
         {/* 🆕 PROXY DISPATCH BUTTON - Visible for En Chargement & En Livraison */}
         {['production', 'validation_technique', 'en_livraison'].includes(bon.workflow_status) && (
-          <div className="mt-3 pt-3 border-t border-white/[0.06]">
+            <div className="mt-3 pt-3 border-t border-border">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-white/[0.40] flex items-center gap-1.5">
-                <Phone className="h-3 w-3 text-white/[0.30]" />
+              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+                <Phone className="h-3 w-3 text-muted-foreground" />
                 {t.pages.planning.manualControl}
               </span>
               <DispatcherProxyControls
@@ -1188,7 +1189,7 @@ export default function Planning() {
 
         {/* 🆕 Driver Quick Contact for assigned trucks */}
         {(bon.camion_assigne || bon.toupie_assignee) && (
-          <div className="mt-3 pt-3 border-t border-white/[0.06]">
+          <div className="mt-3 pt-3 border-t border-border">
             {(() => {
               const assignedCamion = camions.find(c => c.id_camion === (bon.camion_assigne || bon.toupie_assignee));
               if (assignedCamion?.chauffeur) {
@@ -1686,7 +1687,7 @@ export default function Planning() {
         {/* Live Dispatch Board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* À Produire */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+          <Card className="bg-card border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <ClipboardList className="h-6 w-6 text-[#D4A843]" strokeWidth={1.5} />
@@ -1697,7 +1698,7 @@ export default function Planning() {
                   {displayAProduire.length}
                 </Badge>
               </CardTitle>
-              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.next2Hours}</p>
+              <p className="text-[11px] text-muted-foreground">{t.pages.planning.next2Hours}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {displayAProduire.length === 0 ? (
@@ -1712,7 +1713,7 @@ export default function Planning() {
           </Card>
 
           {/* En Chargement */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+          <Card className="bg-card border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Loader className="h-6 w-6 text-blue-400" strokeWidth={1.5} />
@@ -1736,7 +1737,7 @@ export default function Planning() {
                   </Button>
                 )}
               </CardTitle>
-              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.productionAndValidation}</p>
+              <p className="text-[11px] text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {displayEnChargement.length === 0 ? (
@@ -1751,7 +1752,7 @@ export default function Planning() {
           </Card>
 
           {/* En Livraison */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+          <Card className="bg-card border border-border rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Truck className="h-6 w-6 text-emerald-400" strokeWidth={1.5} />
@@ -1762,7 +1763,7 @@ export default function Planning() {
                   {displayEnLivraison.length}
                 </Badge>
               </CardTitle>
-              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.trucksOnRoute}</p>
+              <p className="text-[11px] text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {displayEnLivraison.length === 0 ? (
