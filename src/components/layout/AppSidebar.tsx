@@ -150,11 +150,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors"
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
         >
-          <Search className="w-3.5 h-3.5 text-gray-500" strokeWidth={1.5} />
-          <span className="text-[11px] text-gray-500 flex-1">Recherche rapide...</span>
+          <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" strokeWidth={1.5} />
+          <span className="text-[11px] text-gray-500 flex-1">Recherche...</span>
           <div className="flex items-center gap-0.5">
-            <kbd className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono" style={{ background: 'rgba(255,255,255,0.05)' }}>⌘</kbd>
-            <kbd className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono" style={{ background: 'rgba(255,255,255,0.05)' }}>K</kbd>
+            <kbd className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono leading-none" style={{ background: 'rgba(255,255,255,0.06)' }}>⌘</kbd>
+            <kbd className="text-[9px] text-gray-600 px-1 py-0.5 rounded font-mono leading-none" style={{ background: 'rgba(255,255,255,0.06)' }}>K</kbd>
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         {sections.map((section, si) => (
           <div key={section.label}>
             {/* Section header with extending line */}
-            <div className={cn('px-4 pb-1', si === 0 ? 'pt-1' : 'pt-3.5')}>
+            <div className={cn('px-4 pb-1', si === 0 ? 'pt-1' : 'pt-4')}>
               <div className="flex items-center gap-2">
                 <span className="text-[9px] text-gray-600 uppercase tracking-[0.2em] font-semibold whitespace-nowrap">
                   {section.label}
