@@ -1685,7 +1685,7 @@ export default function Planning() {
         />
 
         {/* Live Dispatch Board */}
-        <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-5 overflow-x-auto">
+        <div className="tbos-card rounded-2xl p-5 overflow-x-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:min-w-[960px]">
           {/* À Produire */}
           <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
