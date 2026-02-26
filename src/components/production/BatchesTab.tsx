@@ -150,7 +150,27 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       {/* ═══ 1. ACTION BUTTONS ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 cursor-pointer" style={{
+          <button onClick={() => {
+            const toast = document.createElement('div');
+            toast.innerHTML = `
+              <div style="display:flex;align-items:flex-start;gap:10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <div>
+                  <p style="color:#fff;font-size:13px;font-weight:500;margin:0;">Production lancée avec succès</p>
+                  <p style="color:rgba(255,255,255,0.40);font-size:11px;margin:2px 0 0;">Batch #2602-016 initialisé</p>
+                </div>
+              </div>
+            `;
+            Object.assign(toast.style, {
+              position:'fixed',bottom:'24px',right:'24px',zIndex:'9999',
+              background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.06)',
+              borderRadius:'12px',padding:'12px 20px',backdropFilter:'blur(12px)',
+              boxShadow:'0 8px 32px rgba(0,0,0,0.4)',opacity:'1',transition:'opacity 300ms',
+            });
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; }, 2700);
+            setTimeout(() => { document.body.removeChild(toast); }, 3000);
+          }} className="flex items-center gap-2 cursor-pointer" style={{
             padding: '10px 20px', borderRadius: 8, background: T.gold, color: '#0B1120',
             fontWeight: 500, fontSize: 13, border: 'none', fontFamily: 'DM Sans, sans-serif',
           }}>
@@ -249,14 +269,15 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '14px 14px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
-              gridTemplateColumns: '120px 1fr 100px 80px 65px 130px 110px 90px',
+              gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
               {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => (
                 <span key={h} style={{
-                  fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.15em',
+                  fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
                   color: 'rgba(255,255,255,0.35)', fontWeight: 500,
                   textAlign: ['VOL (M³)', 'HEURE'].includes(h) ? 'right' as const : 'left' as const,
+                  paddingRight: h === 'HEURE' ? 8 : 0,
                 }}>{h}</span>
               ))}
             </div>
@@ -268,7 +289,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               const isInProd = row.status === 'production';
               return (
                 <div key={row.bl_id} className="grid items-center" style={{
-                  gridTemplateColumns: '120px 1fr 100px 80px 65px 130px 110px 90px',
+                  gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
                   padding: '16px 16px',
                   borderBottom: '1px solid rgba(255,255,255,0.04)',
                   borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',

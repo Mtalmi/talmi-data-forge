@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import {
-  Calendar, Clock, ChevronLeft, ChevronRight, Factory, Truck, Plus, Upload,
+  Calendar, Clock, ChevronLeft, ChevronRight, Factory, Truck, Plus, Upload, X,
 } from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isSameDay, isToday, isBefore, startOfDay, isWeekend } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -27,36 +27,35 @@ interface PlanningChip {
 }
 
 interface PlanningDay {
-  dayOffset: number; // offset from week start (Mon=0)
+  dayOffset: number;
   chips: PlanningChip[];
 }
 
-// Demo data seeded relative to current week
 function getDemoData(): PlanningDay[] {
   return [
-    { dayOffset: 0, chips: [ // Lundi
+    { dayOffset: 0, chips: [
       { id: 'p1', bc: 'BC-2024-001', client: 'BTP Maroc', formule: 'F-B25', volume: 45, status: 'planned' },
       { id: 'p2', bc: 'BC-2024-002', client: 'Constructions Modernes', formule: 'F-B30', volume: 80, status: 'planned' },
     ]},
-    { dayOffset: 1, chips: [ // Mardi
+    { dayOffset: 1, chips: [
       { id: 'p3', bc: 'BC-2602-2611', client: 'BTP Maroc', formule: 'F-B25', volume: 20, status: 'planned' },
       { id: 'p4', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 30, status: 'planned' },
     ]},
-    { dayOffset: 2, chips: [ // Mercredi
+    { dayOffset: 2, chips: [
       { id: 'p5', bc: 'BC-2602-2373', client: 'Constructions Modernes', formule: 'F-B20', volume: 80, status: 'completed' },
       { id: 'p6', client: 'BTP Maroc', formule: 'F-B25', volume: 45, status: 'production' },
       { id: 'p7', client: 'Saudi Readymix', formule: 'F-B30', volume: 20, status: 'planned' },
     ]},
-    { dayOffset: 3, chips: [ // Jeudi (today)
+    { dayOffset: 3, chips: [
       { id: 'p8', client: 'Constructions Modernes', formule: 'F-B30', volume: 60, status: 'planned' },
       { id: 'p9', client: 'BTP Maroc', formule: 'F-B25', volume: 35, status: 'planned' },
       { id: 'p10', client: 'Ciments & Béton du Sud', formule: 'F-B20', volume: 30, status: 'urgent' },
     ]},
-    { dayOffset: 4, chips: [ // Vendredi
+    { dayOffset: 4, chips: [
       { id: 'p11', client: 'Saudi Readymix', formule: 'F-B25', volume: 50, status: 'planned' },
       { id: 'p12', client: 'BTP Maroc', formule: 'F-B20', volume: 20, status: 'planned' },
     ]},
-    { dayOffset: 5, chips: [ // Samedi
+    { dayOffset: 5, chips: [
       { id: 'p13', client: 'BTP Maroc', formule: 'F-B25', volume: 35, status: 'planned' },
     ]},
   ];
@@ -84,9 +83,102 @@ function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
   );
 }
 
+/* ── Modal ── */
+function PlanningModal({ onClose }: { onClose: () => void }) {
+  const selectStyle: React.CSSProperties = {
+    width: '100%', padding: '10px 14px', borderRadius: 8,
+    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+    color: 'rgba(255,255,255,0.50)', fontSize: 13, fontFamily: 'DM Sans, sans-serif',
+    outline: 'none', appearance: 'none' as const, cursor: 'pointer',
+  };
+  const labelStyle: React.CSSProperties = {
+    fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.55)', marginBottom: 6, display: 'block',
+  };
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      background: 'rgba(0,0,0,0.60)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#0B1120', border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 16, width: '100%', maxWidth: 480, padding: 0,
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: '20px 24px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <div className="flex items-center gap-3">
+            <Calendar size={18} strokeWidth={1.5} style={{ color: T.gold }} />
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#fff' }}>Nouvelle Planification</span>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+            <X size={18} style={{ color: 'rgba(255,255,255,0.4)' }} />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <label style={labelStyle}>Bon de Commande</label>
+            <select style={selectStyle} defaultValue="">
+              <option value="" disabled>Sélectionner un BC</option>
+              <option>BC-2024-001</option>
+              <option>BC-2024-002</option>
+              <option>BC-2602-2611</option>
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Date de production</label>
+            <input type="date" defaultValue={format(new Date(), 'yyyy-MM-dd')} style={{
+              ...selectStyle, color: 'rgba(255,255,255,0.70)',
+            }} />
+          </div>
+          <div>
+            <label style={labelStyle}>Heure de début</label>
+            <select style={selectStyle} defaultValue="">
+              <option value="" disabled>Sélectionner l'heure</option>
+              <option>06:00</option><option>07:00</option><option>08:00</option>
+              <option>09:00</option><option>10:00</option><option>11:00</option>
+              <option>12:00</option><option>13:00</option><option>14:00</option>
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Priorité</label>
+            <select style={selectStyle} defaultValue="normale">
+              <option value="normale">Normale</option>
+              <option value="haute">Haute</option>
+              <option value="urgente">Urgente</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{
+          padding: '16px 24px 20px', borderTop: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', justifyContent: 'flex-end', gap: 10,
+        }}>
+          <button onClick={onClose} style={{
+            padding: '9px 18px', borderRadius: 8, cursor: 'pointer',
+            background: 'transparent', border: '1px solid rgba(255,255,255,0.08)',
+            color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500,
+          }}>Annuler</button>
+          <button onClick={onClose} style={{
+            padding: '9px 18px', borderRadius: 8, cursor: 'pointer',
+            background: T.gold, border: 'none', color: '#000',
+            fontSize: 13, fontWeight: 600,
+          }}>Planifier</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PlanningTab() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   const baseDate = useMemo(() => addDays(new Date(), weekOffset * 7), [weekOffset]);
   const weekStart = useMemo(() => startOfWeek(baseDate, { weekStartsOn: 1 }), [baseDate]);
@@ -94,31 +186,25 @@ export default function PlanningTab() {
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
   const demoData = useMemo(() => getDemoData(), []);
-
-  // Map chips by day offset
   const chipsByDayOffset = useMemo(() => {
     const map: Record<number, PlanningChip[]> = {};
     demoData.forEach(d => { map[d.dayOffset] = d.chips; });
     return map;
   }, [demoData]);
 
-  // All chips flat
-  const allChips = useMemo(() => demoData.flatMap(d => d.chips), [demoData]);
-
-  // Selected day chips
   const selectedDayChips = useMemo(() => {
     if (!selectedDate) return [];
     const dayIdx = weekDays.findIndex(d => isSameDay(d, selectedDate));
     return chipsByDayOffset[dayIdx] || [];
   }, [selectedDate, weekDays, chipsByDayOffset]);
 
-  // KPI values (hardcoded for demo realism)
   const weekCount = 18;
   const weekVolume = 1240;
   const avgDay = 207;
 
   return (
     <div className="flex flex-col gap-6">
+      {showModal && <PlanningModal onClose={() => setShowModal(false)} />}
 
       {/* Header + Actions */}
       <div className="flex items-start justify-between">
@@ -127,8 +213,7 @@ export default function PlanningTab() {
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Vue hebdomadaire des livraisons planifiées</p>
         </div>
         <div className="flex items-center gap-3">
-          {/* Action buttons */}
-          <button style={{
+          <button onClick={() => setShowModal(true)} style={{
             display: 'flex', alignItems: 'center', gap: 6,
             padding: '8px 16px', borderRadius: 8, cursor: 'pointer',
             background: T.gold, border: 'none', color: '#000',
@@ -145,7 +230,6 @@ export default function PlanningTab() {
             <Upload size={14} /> Importer BC
           </button>
 
-          {/* Nav */}
           <div className="flex items-center gap-2 ml-2">
             <button onClick={() => setWeekOffset(w => w - 1)} style={{
               width: 36, height: 36, borderRadius: 8, cursor: 'pointer',
@@ -198,11 +282,8 @@ export default function PlanningTab() {
       {/* Calendar grid + detail */}
       <SectionHeader icon={Calendar} label="Calendrier Hebdomadaire" />
       <div className="flex gap-5">
-
-        {/* Week grid */}
         <div className="flex-1">
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, overflow: 'hidden' }}>
-            {/* Day headers */}
             <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
               {weekDays.map(day => (
                 <div key={day.toISOString()} style={{
@@ -224,7 +305,6 @@ export default function PlanningTab() {
               ))}
             </div>
 
-            {/* Day cells */}
             <div className="grid grid-cols-7" style={{ minHeight: 280 }}>
               {weekDays.map((day, dayIdx) => {
                 const dayChips = chipsByDayOffset[dayIdx] || [];
