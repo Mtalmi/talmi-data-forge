@@ -185,18 +185,18 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
   }
 
   return (
-    <div className="fixed right-0 top-20 bottom-4 w-64 bg-card border-l border-border shadow-xl z-40 flex flex-col rounded-l-xl overflow-hidden">
+    <div className="fixed right-0 top-20 bottom-4 w-64 bg-[#0d1117] border-l border-white/[0.06] shadow-xl z-40 flex flex-col rounded-l-xl overflow-hidden">
       {/* Header */}
-      <div className="p-3 border-b border-border bg-muted/50 flex items-center justify-between">
+      <div className="p-3 border-b border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Truck className="h-4 w-4 text-primary" />
-          <span className="font-semibold text-sm">{fp.fleet}</span>
+          <Truck className="h-4 w-4" style={{ color: '#D4A843' }} />
+          <span className="text-xs font-bold tracking-[0.15em] uppercase" style={{ color: '#D4A843' }}>{fp.fleet}</span>
         </div>
         <div className="flex items-center gap-1">
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-7 w-7"
+            className="h-7 w-7 text-white/40 hover:text-white/60 hover:bg-white/[0.05]"
             onClick={fetchFleetData}
           >
             <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
@@ -204,7 +204,7 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-7 w-7"
+            className="h-7 w-7 text-white/40 hover:text-white/60 hover:bg-white/[0.05]"
             onClick={() => setIsOpen(false)}
           >
             <ChevronRight className="h-4 w-4" />
@@ -213,23 +213,23 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
       </div>
 
       {/* Summary Stats */}
-      <div className="p-2 border-b border-border grid grid-cols-3 gap-1 text-center text-xs">
-        <div className="p-1.5 rounded bg-success/10">
-          <p className="font-bold text-success text-lg">{availableCount}</p>
-          <p className="text-muted-foreground">{fp.available}</p>
+      <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
+        <div className="p-1.5 rounded bg-emerald-400/10">
+          <p className="font-mono font-normal text-emerald-400 text-lg">{availableCount}</p>
+          <p className="text-white/40 text-[10px]">{fp.available}</p>
         </div>
-        <div className="p-1.5 rounded bg-primary/10">
-          <p className="font-bold text-primary text-lg">{onMissionCount}</p>
-          <p className="text-muted-foreground">{fp.mission}</p>
+        <div className="p-1.5 rounded bg-blue-400/10">
+          <p className="font-mono font-normal text-blue-400 text-lg">{onMissionCount}</p>
+          <p className="text-white/40 text-[10px]">{fp.mission}</p>
         </div>
-        <div className="p-1.5 rounded bg-warning/10">
-          <p className="font-bold text-warning text-lg">{maintenanceCount}</p>
-          <p className="text-muted-foreground">{fp.stopped}</p>
+        <div className="p-1.5 rounded bg-[#D4A843]/10">
+          <p className="font-mono font-normal text-[#D4A843] text-lg">{maintenanceCount}</p>
+          <p className="text-white/40 text-[10px]">{fp.stopped}</p>
         </div>
       </div>
 
       {/* Vehicle List */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-1.5">
+      <div className="flex-1 overflow-y-auto p-2 space-y-1.5 bg-transparent">
         {loading ? (
           <div className="flex items-center justify-center h-20">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -248,16 +248,16 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
                 className={cn(
                   "p-2 rounded-lg border transition-all",
                   isOnDelivery 
-                    ? "bg-primary/5 border-primary/20" 
-                    : "bg-card border-border hover:border-muted-foreground/30"
+                    ? "bg-blue-400/5 border-blue-400/20" 
+                    : "bg-white/[0.02] border-white/[0.06] hover:border-white/[0.12]"
                 )}
               >
                 {/* Truck Info Row */}
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="font-mono font-semibold text-sm truncate">{v.id_camion}</span>
+                    <span className="font-mono font-semibold text-sm text-white/80 truncate">{v.id_camion}</span>
                     {v.capacite_m3 && (
-                      <span className="text-[10px] text-muted-foreground">{v.capacite_m3}m³</span>
+                      <span className="text-[10px] text-white/30">{v.capacite_m3}m³</span>
                     )}
                   </div>
                   <Badge 
@@ -271,19 +271,19 @@ export function FleetPanel({ selectedDate }: FleetPanelProps) {
 
                 {/* Driver */}
                 {v.chauffeur && (
-                  <p className="text-[11px] text-muted-foreground truncate mb-1.5">
+                  <p className="text-[11px] text-white/30 truncate mb-1.5">
                     {v.chauffeur}
                   </p>
                 )}
 
                 {/* Active Delivery Info */}
                 {isOnDelivery && (
-                  <div className="text-[10px] bg-primary/10 rounded px-1.5 py-1 mb-1.5">
+                  <div className="text-[10px] bg-blue-400/10 rounded px-1.5 py-1 mb-1.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1 min-w-0">
-                        <Truck className="h-2.5 w-2.5 animate-pulse text-primary flex-shrink-0" />
-                        <span className="font-medium text-primary font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
-                        <span className="text-muted-foreground">({activeDelivery.volume_m3}m³)</span>
+                        <Truck className="h-2.5 w-2.5 animate-pulse text-blue-400 flex-shrink-0" />
+                        <span className="font-medium text-blue-400 font-mono">{activeDelivery.bc_id || activeDelivery.bl_id}</span>
+                        <span className="text-white/30">({activeDelivery.volume_m3}m³)</span>
                       </div>
                       <div className="flex gap-1">
                         {/* GPS Tracking Button */}

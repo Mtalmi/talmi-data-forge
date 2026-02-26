@@ -180,91 +180,88 @@ export function FleetCapacityOptimizer({
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
-            <Scale className="h-4 w-4 text-primary" />
-            Capacité Flotte
-          </div>
-          <Badge variant="outline" className="font-mono">
-            {summary.totalAssigned}/{summary.totalCapacity} m³
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-[#D4A843]/10">
-            <p className="text-lg font-mono font-normal text-[#D4A843]">{summary.activeCount}</p>
-            <p className="text-xs text-muted-foreground">Actifs</p>
-          </div>
-          <div className="p-2 rounded-lg bg-muted">
-            <p className="text-lg font-mono font-normal">{summary.idleCount}</p>
-            <p className="text-xs text-muted-foreground">Disponibles</p>
-          </div>
-          <div className={cn(
-            "p-2 rounded-lg",
-            summary.overloadedCount > 0 ? "bg-destructive/10" : "bg-muted"
+    <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Scale className="h-4 w-4" style={{ color: '#D4A843' }} />
+          <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#D4A843' }}>Capacité Flotte</span>
+        </div>
+        <span className="font-mono text-xs text-white/40">
+          {summary.totalAssigned}/{summary.totalCapacity} m³
+        </span>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center mb-4">
+        <div className="p-2 rounded-lg bg-[#D4A843]/10">
+          <p className="text-lg font-mono font-normal text-[#D4A843]">{summary.activeCount}</p>
+          <p className="text-[10px] text-white/40 uppercase">Actifs</p>
+        </div>
+        <div className="p-2 rounded-lg bg-white/[0.04]">
+          <p className="text-lg font-mono font-normal text-white/60">{summary.idleCount}</p>
+          <p className="text-[10px] text-white/40 uppercase">Disponibles</p>
+        </div>
+        <div className={cn(
+          "p-2 rounded-lg",
+          summary.overloadedCount > 0 ? "bg-red-400/10" : "bg-white/[0.04]"
+        )}>
+          <p className={cn(
+            "text-lg font-mono font-normal",
+            summary.overloadedCount > 0 ? "text-red-400" : "text-white/60"
           )}>
-            <p className={cn(
-              "text-lg font-mono font-normal",
-              summary.overloadedCount > 0 ? "text-destructive" : ""
-            )}>
-              {summary.overloadedCount}
-            </p>
-            <p className="text-xs text-muted-foreground">Surchargés</p>
-          </div>
+            {summary.overloadedCount}
+          </p>
+          <p className="text-[10px] text-white/40 uppercase">Surchargés</p>
         </div>
+      </div>
 
-        {/* Truck Bars */}
-        <div className="space-y-2">
-          {truckLoads.slice(0, 6).map(({ camion, assignedVolume, utilizationPct, deliveryCount, status }) => (
-            <Tooltip key={camion.id_camion}>
-              <TooltipTrigger asChild>
-                <div className="space-y-1 cursor-default">
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <Truck className={cn("h-3 w-3", getStatusColor(status))} />
-                      <span className="font-mono">{camion.id_camion}</span>
-                    </div>
-                    <span className={cn("font-medium", getStatusColor(status))}>
-                      {Math.round(utilizationPct)}%
-                    </span>
+      {/* Truck Bars */}
+      <div className="space-y-2">
+        {truckLoads.slice(0, 6).map(({ camion, assignedVolume, utilizationPct, deliveryCount, status }) => (
+          <Tooltip key={camion.id_camion}>
+            <TooltipTrigger asChild>
+              <div className="space-y-1 cursor-default">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <Truck className={cn("h-3 w-3", getStatusColor(status))} />
+                    <span className="font-mono text-white/60">{camion.id_camion}</span>
                   </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={cn("h-full transition-all", getProgressColor(utilizationPct))}
-                      style={{ width: `${Math.min(utilizationPct, 100)}%` }}
-                    />
-                  </div>
+                  <span className={cn("font-mono font-normal", getStatusColor(status))}>
+                    {Math.round(utilizationPct)}%
+                  </span>
                 </div>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="space-y-1 text-xs">
-                  <p className="font-semibold">{camion.chauffeur || 'Sans chauffeur'}</p>
-                  <p>Volume: {assignedVolume} / {camion.capacite_m3 || 8} m³</p>
-                  <p>Livraisons: {deliveryCount}</p>
+                <div className="h-2 bg-white/[0.06] rounded-full overflow-hidden">
+                  <div
+                    className={cn("h-full transition-all", getProgressColor(utilizationPct))}
+                    style={{ width: `${Math.min(utilizationPct, 100)}%` }}
+                  />
                 </div>
-              </TooltipContent>
-            </Tooltip>
-          ))}
-        </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-[#111B2E] text-white border-white/10">
+              <div className="space-y-1 text-xs">
+                <p className="font-semibold">{camion.chauffeur || 'Sans chauffeur'}</p>
+                <p>Volume: {assignedVolume} / {camion.capacite_m3 || 8} m³</p>
+                <p>Livraisons: {deliveryCount}</p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        ))}
+      </div>
 
-        {/* Average Utilization */}
-        <div className="pt-2 border-t">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Utilisation moyenne</span>
-            <span className={cn(
-              "font-bold",
-              summary.avgUtilization >= 70 ? "text-success" :
-              summary.avgUtilization >= 40 ? "text-warning" : "text-muted-foreground"
-            )}>
-              {Math.round(summary.avgUtilization)}%
-            </span>
-          </div>
+      {/* Average Utilization */}
+      <div className="pt-3 mt-3 border-t border-white/[0.06]">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-white/40">Utilisation moyenne</span>
+          <span className={cn(
+            "font-mono font-normal",
+            summary.avgUtilization >= 70 ? "text-emerald-400" :
+            summary.avgUtilization >= 40 ? "text-[#D4A843]" : "text-white/40"
+          )}>
+            {Math.round(summary.avgUtilization)}%
+          </span>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
