@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, ChevronUp, Sparkles, Activity, Truck, TrendingUp } from 'lucide-react';
@@ -57,16 +56,14 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card className={cn(
-        "border-0 bg-transparent overflow-hidden transition-all duration-300 shadow-none"
-      )}>
+      <div className="overflow-hidden transition-all duration-300">
         <CollapsibleTrigger asChild>
-          <CardHeader className={cn(
-            "cursor-pointer transition-all duration-200",
+          <div className={cn(
+            "flex flex-col space-y-1.5 p-5 sm:p-6 cursor-pointer transition-all duration-200",
             "hover:bg-primary/5",
             isOpen && "border-b border-primary/10"
           )}>
-            <CardTitle className="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-3">
                   {/* Gold ALL CAPS header matching TBOS pattern */}
@@ -99,12 +96,12 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
               )}>
                 <ChevronDown className="h-5 w-5 text-white/40 transition-transform" />
               </div>
-            </CardTitle>
-          </CardHeader>
+            </div>
+          </div>
         </CollapsibleTrigger>
         
         <CollapsibleContent>
-          <CardContent className="space-y-6 pt-6">
+          <div className="space-y-6 pt-6 p-5 sm:p-6 pt-0">
             {/* Timeline Gantt View */}
             <div className="space-y-2">
               <DailyTimeline 
@@ -160,9 +157,9 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
                 />
               </div>
             </div>
-          </CardContent>
+          </div>
         </CollapsibleContent>
-      </Card>
+      </div>
     </Collapsible>
   );
 }
