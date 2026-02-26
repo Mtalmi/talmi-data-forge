@@ -427,8 +427,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Live Production Feed</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
-                  <span style={{ color: T.success, fontSize: 10, fontWeight: 600 }}>Temps réel</span>
+                  <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+                  <span style={{ color: '#34d399', fontSize: 10, fontWeight: 500 }}>Live</span>
                 </div>
               </div>
             </div>
@@ -454,7 +454,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: '#fff' }}>
                           #{item.batchNum}
                         </span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
                           {item.time}
                         </span>
                       </div>
@@ -503,7 +503,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
             <span style={{ color: T.success, fontWeight: 600 }}>▲ +12% vs hier</span>
           </div>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
             {format(new Date(), 'HH:mm:ss')} UTC
           </span>
         </div>

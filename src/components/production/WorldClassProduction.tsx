@@ -28,14 +28,13 @@ const T = {
   warning:    '#F59E0B',
   danger:     '#EF4444',
   info:       '#3B82F6',
-  purple:     '#8B5CF6',
-  pink:       '#EC4899',
+  // purple/pink removed — not in approved palette
   textPri:    '#F1F5F9',
   textSec:    '#94A3B8',
   textDim:    '#64748B',
 };
 
-const CHART_COLORS = [T.gold, T.info, T.success, T.purple, T.pink, T.warning, T.danger];
+const CHART_COLORS = [T.gold, T.info, T.success, T.warning, T.danger, '#94A3B8', '#64748B'];
 
 // ─────────────────────────────────────────────────────
 // ANIMATED COUNTER HOOK
@@ -143,7 +142,7 @@ function LiveClock() {
   const [time, setTime] = useState(new Date());
   useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
   return (
-    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: T.textSec }}>
+    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.4)' }}>
       {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
     </span>
   );
@@ -261,8 +260,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // WORKFLOW STEP
 // ─────────────────────────────────────────────────────
-function WorkflowStep({ count, label, color, dotColor, delay = 0 }: {
-  count: number; label: string; color: string; dotColor: string; delay?: number;
+function WorkflowStep({ count, label, color, statusLabel, delay = 0 }: {
+  count: number; label: string; color: string; statusLabel: string; delay?: number;
 }) {
   const animated = useCountUp(count, 1200, delay);
   const [visible, setVisible] = useState(false);
@@ -281,10 +280,10 @@ function WorkflowStep({ count, label, color, dotColor, delay = 0 }: {
         fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em',
         color: 'rgba(255,255,255,0.5)', fontWeight: 600,
       }}>{label}</p>
-      <div style={{
-        width: 8, height: 8, borderRadius: '50%', background: dotColor, marginTop: 4,
-        boxShadow: `0 0 8px ${dotColor}60`,
-      }} />
+      <span style={{
+        fontSize: 10, fontWeight: 600, color,
+        textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
+      }}>{statusLabel}</span>
     </div>
   );
 }
@@ -565,11 +564,11 @@ export default function WorldClassProduction() {
             borderRadius: 14, padding: '40px 32px',
           }}>
             <div className="flex items-center justify-center gap-0">
-              <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.warning} dotColor={T.gold} delay={0} />
+              <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.gold} statusLabel="En attente" delay={0} />
               <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
-              <WorkflowStep count={workflowCounts.production} label="En Production" color={T.info} dotColor={T.info} delay={100} />
+              <WorkflowStep count={workflowCounts.production} label="En Production" color={T.info} statusLabel="Actif" delay={100} />
               <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
-              <WorkflowStep count={workflowCounts.validation} label="Validation" color={T.success} dotColor={T.success} delay={200} />
+              <WorkflowStep count={workflowCounts.validation} label="Validation" color={T.success} statusLabel="Terminé" delay={200} />
             </div>
           </div>
         </section>
@@ -591,8 +590,8 @@ export default function WorldClassProduction() {
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
-                  <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
+                  <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+                  <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Live</span>
                 </div>
               </div>
               {hasHourlyData ? (
@@ -804,8 +803,8 @@ export default function WorldClassProduction() {
             TBOS Production v2.0 — {new Date().toLocaleString('fr-FR')}
           </span>
           <div className="flex items-center gap-1.5">
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-live 1.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Connecté</span>
+            <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
+            <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Live</span>
           </div>
         </footer>
 
