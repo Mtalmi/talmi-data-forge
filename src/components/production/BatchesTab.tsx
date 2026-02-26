@@ -1,13 +1,13 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Factory, CheckCircle, Shield, Clock, Search, Filter,
+  Factory, CheckCircle, Shield, Clock, Search, SlidersHorizontal,
   Play, Eye, RefreshCw, Download, BarChart3, Wifi, AlertTriangle,
-  ChevronRight, Zap, Activity,
+  ChevronRight, Zap, Activity, Droplets, TrendingUp, Maximize2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
-// DESIGN TOKENS (shared with WorldClassProduction)
+// DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
   gold:       '#D4A843',
@@ -53,7 +53,7 @@ interface BatchesTabProps {
 // ─────────────────────────────────────────────────────
 function getStatusInfo(status: string, variancePct: number | null) {
   const hasHighVariance = (variancePct || 0) > 5;
-  if (hasHighVariance) return { label: 'Écart > 5%', color: T.danger, dot: T.danger };
+  if (hasHighVariance) return { label: 'Écart', color: T.danger, dot: T.danger };
   switch (status) {
     case 'planification': return { label: 'Planifié', color: T.gold, dot: T.gold };
     case 'production': return { label: 'En Production', color: T.info, dot: T.info };
@@ -74,38 +74,47 @@ function getProgressPercent(status: string) {
 // ─────────────────────────────────────────────────────
 // MINI KPI CARD
 // ─────────────────────────────────────────────────────
-function MiniKPI({ label, value, suffix, icon: Icon }: {
-  label: string; value: string | number; suffix?: string; icon: any;
+function MiniKPI({ label, value, suffix, sub, icon: Icon }: {
+  label: string; value: string | number; suffix?: string; sub?: string; icon: any;
 }) {
   return (
     <div style={{
       background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-      borderRadius: 10, padding: '14px 16px',
+      borderRadius: 12, padding: 16,
     }}>
-      <div className="flex items-center justify-between mb-1">
-        <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{label}</span>
-        <Icon size={14} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.15)' }} />
-      </div>
-      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+      <Icon size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)', marginBottom: 8 }} />
+      <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
         {value}
-        {suffix && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginLeft: 3 }}>{suffix}</span>}
+        {suffix && <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.50)', marginLeft: 3 }}>{suffix}</span>}
       </p>
+      {sub && <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2, fontFamily: 'JetBrains Mono, monospace' }}>{sub}</p>}
+      <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.40)', fontWeight: 500, marginTop: 4 }}>{label}</p>
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────
-// LIVE CLOCK (inline)
+// LIVE CLOCK
 // ─────────────────────────────────────────────────────
 function InlineClock() {
   const [time, setTime] = useState(new Date());
   useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
   return (
-    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>
+    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: 'rgba(255,255,255,0.40)' }}>
       {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
     </span>
   );
 }
+
+// ─────────────────────────────────────────────────────
+// FILTER TAB ICONS
+// ─────────────────────────────────────────────────────
+const tabIcons: Record<string, any> = {
+  planifies: Clock,
+  production: Play,
+  valides: CheckCircle,
+  ecarts: AlertTriangle,
+};
 
 // ─────────────────────────────────────────────────────
 // MAIN BATCHES TAB
@@ -126,12 +135,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   // ── KPI metrics ──
   const metrics = useMemo(() => {
     const totalVol = bons.reduce((s, b) => s + (b.volume_m3 || 0), 0);
-    const inProdVol = bons.filter(b => b.workflow_status === 'production').reduce((s, b) => s + (b.volume_m3 || 0), 0);
+    const inProdCount = bons.filter(b => b.workflow_status === 'production').length;
     const validatedCount = bons.filter(b => b.workflow_status === 'validation_technique').length;
-    const avgCUR = bons.length > 0 ? 0.42 : 0; // Placeholder
-    const syncRate = bons.length > 0 ? 98 : 0;
+    const syncRate = bons.length > 0 ? Math.round((bons.filter(b => b.production_batch_time).length / bons.length) * 100) : 0;
     const alertCount = bons.filter(b => (b.variance_ciment_pct || 0) > 5).length;
-    return { inProdVol, totalVol, avgCUR, validatedCount, syncRate, alertCount };
+    const ecartCount = bons.filter(b => (b.variance_ciment_pct || 0) > 2).length;
+    return { inProdCount, totalVol, validatedCount, syncRate, alertCount, ecartCount };
   }, [bons]);
 
   // ── Filter tabs ──
@@ -146,25 +155,21 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   // ── Filtered rows ──
   const filteredBons = useMemo(() => {
     let result = [...bons];
-
-    // Filter by tab
     switch (activeFilter) {
       case 'planifies': result = result.filter(b => b.workflow_status === 'planification'); break;
       case 'production': result = result.filter(b => b.workflow_status === 'production'); break;
       case 'valides': result = result.filter(b => b.workflow_status === 'validation_technique'); break;
       case 'ecarts': result = result.filter(b => (b.variance_ciment_pct || 0) > 5 || (b.variance_eau_pct || 0) > 5); break;
     }
-
-    // Filter by search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(b =>
         (b.bl_id || '').toLowerCase().includes(q) ||
         (b.formule_id || '').toLowerCase().includes(q) ||
-        (b.chauffeur_nom || '').toLowerCase().includes(q)
+        (b.chauffeur_nom || '').toLowerCase().includes(q) ||
+        (b.bc_id || '').toLowerCase().includes(q)
       );
     }
-
     return result;
   }, [bons, activeFilter, searchQuery]);
 
@@ -177,8 +182,10 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
       quality: b.quality_status,
       time: b.entered_at ? format(new Date(b.entered_at), 'HH:mm') : '—',
       ciment: b.ciment_reel_kg || 0,
+      formula: b.formule_id || '—',
+      volume: b.volume_m3 || 0,
+      client: b.client_name || '—',
       variance: b.variance_ciment_pct || 0,
-      enteredBy: b.entered_by_name || '—',
     }));
   }, [batches]);
 
@@ -187,132 +194,138 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   const batchCount = bons.length;
   const cadence = batchCount > 0 ? Math.round(totalVol / Math.max(1, batchCount) * 4.5) : 0;
 
+  // ── Column definitions ──
+  const columns = ['N° BL', 'CLIENT', 'BC', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'];
+
   return (
     <div className="flex flex-col gap-6">
 
-      {/* ── TAB HEADER ── */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h2 style={{ fontSize: 20, fontWeight: 300, color: '#fff', marginBottom: 4 }}>Batches du Jour</h2>
-          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Suivi des bons de livraison en production</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button style={{
-            padding: '8px 18px', borderRadius: 8, cursor: 'pointer',
-            background: T.gold, color: '#0B1120', fontWeight: 700, fontSize: 13, border: 'none',
-            fontFamily: 'DM Sans, sans-serif',
-          }}>
-            <div className="flex items-center gap-2">
-              <Play size={14} />
-              Lancer Production
-            </div>
-          </button>
-          <button style={{
-            padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', color: T.textSec, fontWeight: 600, fontSize: 13,
-            border: `1px solid ${T.cardBorder}`, fontFamily: 'DM Sans, sans-serif',
-          }}>
-            <div className="flex items-center gap-2">
-              <RefreshCw size={14} />
-              Actualiser
-            </div>
-          </button>
-          <button style={{
-            padding: '8px 14px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', color: T.textSec, fontWeight: 600, fontSize: 13,
-            border: `1px solid ${T.cardBorder}`, fontFamily: 'DM Sans, sans-serif',
-          }}>
-            <div className="flex items-center gap-2">
-              <Download size={14} />
-              Exporter
-            </div>
-          </button>
-        </div>
+      {/* ═══ 1. ACTION BUTTONS ROW ═══ */}
+      <div className="flex items-center gap-3">
+        <button
+          className="flex items-center gap-2 cursor-pointer"
+          style={{
+            padding: '10px 20px', borderRadius: 8,
+            background: T.gold, color: '#0B1120', fontWeight: 500, fontSize: 13,
+            border: 'none', fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          <Play size={16} strokeWidth={1.5} />
+          Lancer Production
+        </button>
+        <button
+          className="flex items-center gap-2 cursor-pointer"
+          style={{
+            padding: '10px 14px', borderRadius: 8,
+            background: 'transparent', color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
+            border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          <Download size={16} strokeWidth={1.5} />
+          Exporter
+        </button>
+        <button
+          className="flex items-center gap-2 cursor-pointer"
+          style={{
+            padding: '10px 14px', borderRadius: 8,
+            background: 'transparent', color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: 13,
+            border: '1px solid rgba(255,255,255,0.12)', fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          <RefreshCw size={16} strokeWidth={1.5} />
+          Actualiser
+        </button>
       </div>
 
-      {/* ── SEARCH + CLOCK ── */}
+      {/* ═══ 2. SEARCH BAR + FILTRES + CLOCK ═══ */}
       <div className="flex items-center gap-3">
         <div className="flex-1 relative">
-          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+          <Search size={16} strokeWidth={1.5} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.30)' }} />
           <input
             type="text"
             placeholder="Rechercher BL, BC, client, formule..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
+            className="w-full outline-none"
             style={{
-              width: '100%', padding: '10px 12px 10px 36px', borderRadius: 8,
-              background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.cardBorder}`,
+              padding: '12px 14px 12px 40px', borderRadius: 8,
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
               color: '#fff', fontSize: 13, fontFamily: 'DM Sans, sans-serif',
-              outline: 'none',
             }}
           />
         </div>
-        <button style={{
-          padding: '10px 14px', borderRadius: 8, cursor: 'pointer',
-          background: 'transparent', border: `1px solid ${T.cardBorder}`,
-          color: T.textSec, fontSize: 13, fontWeight: 600,
-        }}>
-          <div className="flex items-center gap-2">
-            <Filter size={14} />
-            Filtres
-          </div>
+        <button
+          className="flex items-center gap-2 cursor-pointer"
+          style={{
+            padding: '12px 16px', borderRadius: 8,
+            background: 'transparent', border: `1px solid ${T.cardBorder}`,
+            color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: 500,
+            fontFamily: 'DM Sans, sans-serif',
+          }}
+        >
+          <SlidersHorizontal size={14} strokeWidth={1.5} />
+          Filtres
         </button>
         <InlineClock />
       </div>
 
-      {/* ── 6 KPI CARDS ── */}
-      <div className="grid grid-cols-6 gap-3">
-        <MiniKPI label="En Production" value={Math.round(metrics.inProdVol)} suffix="m³" icon={Play} />
-        <MiniKPI label="Volume Total" value={Math.round(metrics.totalVol)} suffix="m³" icon={Activity} />
-        <MiniKPI label="CUR Moyen" value={metrics.avgCUR.toFixed(2)} icon={Zap} />
-        <MiniKPI label="Validés" value={metrics.validatedCount} icon={CheckCircle} />
-        <MiniKPI label="Sync Machine" value={`${metrics.syncRate}%`} icon={Wifi} />
-        <MiniKPI label="Alertes" value={metrics.alertCount} icon={AlertTriangle} />
+      {/* ═══ 3. 6 KPI CARDS ═══ */}
+      <div className="grid grid-cols-6 gap-4">
+        <MiniKPI label="En Production" value={metrics.inProdCount} suffix="bons" icon={Activity} />
+        <MiniKPI label="Volume" value={Math.round(metrics.totalVol)} suffix="m³" icon={Droplets} />
+        <MiniKPI label="CUR Moyen" value={metrics.totalVol > 0 ? '—' : '—'} suffix="DH/m³" icon={TrendingUp} />
+        <MiniKPI label="Validés" value={metrics.validatedCount} sub={`/ ${bons.length}`} icon={CheckCircle} />
+        <MiniKPI label="Sync Machine" value={metrics.syncRate} suffix="%" icon={Wifi} />
+        <MiniKPI label="Alertes" value={metrics.alertCount} sub={`${metrics.ecartCount} écarts`} icon={AlertTriangle} />
       </div>
 
-      {/* ── FILTER TABS ── */}
+      {/* ═══ 4. FILTER TABS ═══ */}
       <div className="flex items-center gap-1" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
-        {filterTabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveFilter(tab.id)}
-            style={{
-              padding: '10px 16px', cursor: 'pointer', background: 'transparent',
-              border: 'none', borderBottom: activeFilter === tab.id ? `2px solid ${T.gold}` : '2px solid transparent',
-              color: activeFilter === tab.id ? '#fff' : 'rgba(255,255,255,0.5)',
-              fontWeight: 600, fontSize: 13, fontFamily: 'DM Sans, sans-serif',
-              transition: 'all 150ms',
-            }}
-          >
-            <div className="flex items-center gap-2">
+        {filterTabs.map(tab => {
+          const isActive = activeFilter === tab.id;
+          const TabIcon = tabIcons[tab.id];
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveFilter(tab.id)}
+              className="flex items-center gap-2 cursor-pointer"
+              style={{
+                padding: '10px 16px', background: 'transparent', border: 'none',
+                borderBottom: isActive ? `2px solid ${T.gold}` : '2px solid transparent',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.45)',
+                fontWeight: isActive ? 500 : 400, fontSize: 13,
+                fontFamily: 'DM Sans, sans-serif', transition: 'all 150ms',
+              }}
+            >
+              {TabIcon && <TabIcon size={14} strokeWidth={1.5} />}
               {tab.label}
               <span style={{
-                padding: '1px 7px', borderRadius: 999, fontSize: 11,
-                background: activeFilter === tab.id ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)',
-                color: activeFilter === tab.id ? '#fff' : 'rgba(255,255,255,0.4)',
-                fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                padding: '1px 8px', borderRadius: 999, fontSize: 11,
+                background: isActive ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.08)',
+                color: isActive ? '#fff' : 'rgba(255,255,255,0.60)',
+                fontFamily: 'JetBrains Mono, monospace', fontWeight: 500,
               }}>{tab.count}</span>
-            </div>
-          </button>
-        ))}
+            </button>
+          );
+        })}
       </div>
 
-      {/* ── MAIN: TABLE + SIDEBAR ── */}
-      <div className="flex gap-5">
+      {/* ═══ 5. MAIN: TABLE + SIDEBAR ═══ */}
+      <div className="flex gap-6">
 
         {/* ── DATA TABLE ── */}
-        <div className="flex-1 min-w-0">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, overflow: 'hidden' }}>
-            {/* Table header */}
-            <div className="grid" style={{
-              gridTemplateColumns: '120px 1fr 90px 110px 80px 70px 120px 100px 80px',
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, overflow: 'hidden', flex: 1 }}>
+            {/* Column headers */}
+            <div className="grid items-center" style={{
+              gridTemplateColumns: '110px 1fr 90px 110px 80px 70px 120px 100px 80px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {['N° BL', 'CLIENT', 'BC', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => (
+              {columns.map(h => (
                 <span key={h} style={{
-                  fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em',
-                  color: 'rgba(255,255,255,0.4)', fontWeight: 500,
-                  textAlign: ['VOL (M³)', 'HEURE'].includes(h) ? 'right' : 'left',
+                  fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.15em',
+                  color: 'rgba(255,255,255,0.35)', fontWeight: 500,
+                  textAlign: ['VOL (M³)', 'HEURE'].includes(h) ? 'right' as const : 'left' as const,
                 }}>{h}</span>
               ))}
             </div>
@@ -326,72 +339,98 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   return (
                     <div
                       key={bon.bl_id + i}
-                      className="grid"
+                      className="grid items-center"
                       style={{
-                        gridTemplateColumns: '120px 1fr 90px 110px 80px 70px 120px 100px 80px',
-                        padding: '12px 16px',
-                        borderBottom: `1px solid ${T.cardBorder}`,
-                        cursor: 'pointer',
-                        transition: 'background 150ms',
+                        gridTemplateColumns: '110px 1fr 90px 110px 80px 70px 120px 100px 80px',
+                        padding: '16px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)',
+                        cursor: 'pointer', transition: 'background 150ms',
                       }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       {/* BL ID */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: '#fff' }}>
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: '#fff' }}>
                         {bon.bl_id}
                       </span>
                       {/* Client */}
-                      <span style={{ fontSize: 12, color: T.textSec, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.80)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {bon.chauffeur_nom || '—'}
                       </span>
                       {/* BC */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textDim }}>
-                        {(bon as any).bc_id || '—'}
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'rgba(255,255,255,0.50)' }}>
+                        {bon.bc_id || '—'}
                       </span>
                       {/* Formule */}
-                      <span style={{ fontSize: 12, color: T.textSec }}>
+                      <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.70)' }}>
                         {bon.formule_id || '—'}
                       </span>
-                      {/* Volume */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: '#fff', textAlign: 'right' }}>
+                      {/* Volume — right-aligned */}
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: '#fff', textAlign: 'right' }}>
                         {(bon.volume_m3 || 0).toFixed(1)}
                       </span>
-                      {/* Heure */}
-                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textDim, textAlign: 'right' }}>
+                      {/* Heure — right-aligned */}
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, color: 'rgba(255,255,255,0.50)', textAlign: 'right' }}>
                         {bon.heure_prevue?.slice(0, 5) || bon.production_batch_time?.slice(0, 5) || '—'}
                       </span>
-                      {/* Statut */}
+                      {/* Statut badge */}
                       <div className="flex items-center gap-2">
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: status.dot, flexShrink: 0, boxShadow: `0 0 6px ${status.dot}40` }} />
-                        <span style={{ fontSize: 11, fontWeight: 600, color: status.color, whiteSpace: 'nowrap' }}>{status.label}</span>
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          padding: '4px 10px', borderRadius: 999,
+                          background: `${status.color}1F`, fontSize: 11, fontWeight: 500,
+                          color: status.color, whiteSpace: 'nowrap',
+                        }}>
+                          <span style={{ width: 5, height: 5, borderRadius: '50%', background: status.dot, flexShrink: 0 }} />
+                          {status.label}
+                        </span>
                       </div>
                       {/* Progression */}
-                      <div className="flex items-center gap-2">
-                        <div style={{ flex: 1, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.06)' }}>
+                      <div className="flex flex-col gap-1">
+                        <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
                           <div style={{
-                            width: `${progress}%`, height: '100%', borderRadius: 2,
-                            background: progress === 100 ? T.success : progress > 30 ? T.info : T.gold,
+                            width: `${progress}%`, height: '100%', borderRadius: 3,
+                            background: progress === 100 ? T.success : T.gold,
                             transition: 'width 300ms ease',
                           }} />
                         </div>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.3)', minWidth: 28, textAlign: 'right' }}>
-                          {progress}%
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.30)' }}>
+                          {progress === 100 ? `${bon.volume_m3}/${bon.volume_m3}m³` : `0/${bon.volume_m3}m³`}
                         </span>
                       </div>
                       {/* Actions */}
                       <div className="flex items-center gap-1">
-                        <button style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: `1px solid ${T.cardBorder}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Eye size={12} style={{ color: T.textSec }} />
+                        <button
+                          className="flex items-center justify-center cursor-pointer"
+                          style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
+                          title="Voir détails"
+                        >
+                          <Eye size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
+                            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.60)')}
+                            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
+                          />
                         </button>
                         {bon.workflow_status === 'planification' && (
-                          <button style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: `1px solid ${T.cardBorder}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Play size={12} style={{ color: T.info }} />
+                          <button
+                            className="flex items-center justify-center cursor-pointer"
+                            style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
+                            title="Lancer"
+                          >
+                            <Play size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
+                              onMouseEnter={e => (e.currentTarget.style.color = T.gold)}
+                              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
+                            />
                           </button>
                         )}
                         {bon.workflow_status === 'production' && (
-                          <button style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: `1px solid ${T.cardBorder}`, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <CheckCircle size={12} style={{ color: T.success }} />
+                          <button
+                            className="flex items-center justify-center cursor-pointer"
+                            style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}
+                            title="Valider"
+                          >
+                            <CheckCircle size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.30)' }}
+                              onMouseEnter={e => (e.currentTarget.style.color = T.success)}
+                              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.30)')}
+                            />
                           </button>
                         )}
                       </div>
@@ -400,109 +439,133 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 })}
               </div>
             ) : (
-              <div style={{ padding: '48px 24px' }}>
-                <div className="flex flex-col items-center justify-center gap-3">
-                  <BarChart3 size={48} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.1)' }} />
-                  <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: 500 }}>Aucun batch enregistré aujourd'hui</p>
-                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Les batches apparaîtront ici dès le lancement de la production</p>
+              /* ── EMPTY STATE ── */
+              <div style={{ padding: '80px 24px' }}>
+                <div className="flex flex-col items-center justify-center">
+                  <BarChart3 size={56} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.06)' }} />
+                  <p style={{ color: 'rgba(255,255,255,0.30)', fontSize: 14, fontWeight: 500, marginTop: 16 }}>
+                    Aucun batch enregistré aujourd'hui
+                  </p>
+                  <p style={{ color: 'rgba(255,255,255,0.20)', fontSize: 12, marginTop: 4 }}>
+                    Les batches apparaîtront ici dès le lancement de la production
+                  </p>
                 </div>
               </div>
             )}
           </div>
+
+          {/* ═══ BOTTOM STATUS BAR ═══ */}
+          <div style={{
+            background: 'rgba(255,255,255,0.02)', borderTop: `1px solid ${T.cardBorder}`,
+            padding: '12px 24px', borderRadius: '0 0 14px 14px',
+            marginTop: -1,
+          }}>
+            <div className="flex items-center justify-between" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
+              <div className="flex items-center gap-3">
+                <span>
+                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{totalVol}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.35)' }}> m³</span>
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span>
+                  <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{batchCount}</span>
+                  <span style={{ color: 'rgba(255,255,255,0.35)' }}> batches</span>
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>
+                  Cadence: <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>{cadence} m³/h</span>
+                </span>
+                <span style={{ color: 'rgba(255,255,255,0.15)' }}>·</span>
+                <span style={{ color: 'rgba(255,255,255,0.35)' }}>— vs hier</span>
+              </div>
+              <InlineClock />
+            </div>
+          </div>
         </div>
 
-        {/* ── LIVE FEED SIDEBAR ── */}
+        {/* ═══ 6. LIVE PRODUCTION FEED SIDEBAR ═══ */}
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
-            background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+            background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`,
             borderRadius: 14, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             {/* Sidebar header */}
-            <div style={{ padding: '16px 16px 12px', borderBottom: `1px solid ${T.cardBorder}` }}>
+            <div style={{ padding: 16, borderBottom: `1px solid ${T.cardBorder}` }}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Live Production Feed</span>
+                  <Zap size={16} strokeWidth={1.5} style={{ color: T.gold }} />
+                  <span style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>Live Production Feed</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
-                  <span style={{ color: '#34d399', fontSize: 10, fontWeight: 500 }}>Live</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="animate-pulse" style={{ width: 7, height: 7, borderRadius: '50%', background: '#34d399' }} />
+                    <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Temps réel</span>
+                  </div>
+                  <button className="cursor-pointer" style={{ background: 'transparent', border: 'none', padding: 4 }}>
+                    <Maximize2 size={14} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.20)' }} />
+                  </button>
                 </div>
               </div>
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>
+                Suivi temps réel des batches
+              </p>
             </div>
 
             {/* Feed items */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }} className="scrollbar-thin">
+            <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }} className="scrollbar-thin">
               {feedItems.length > 0 ? (
                 feedItems.map((item, i) => {
-                  const borderColor = item.quality === 'ok' ? T.success : item.quality === 'pending' ? T.gold : item.quality === 'warning' ? T.warning : 'rgba(255,255,255,0.1)';
+                  const borderColor = item.quality === 'ok' ? T.success : item.quality === 'pending' ? T.gold : 'rgba(255,255,255,0.10)';
                   return (
                     <div
                       key={item.id + i}
                       style={{
-                        padding: '10px 16px', borderLeft: `3px solid ${borderColor}`,
-                        marginLeft: 12, marginRight: 12, marginBottom: 4,
-                        borderRadius: '0 6px 6px 0',
+                        padding: '10px 16px', borderLeft: `2px solid ${borderColor}`,
+                        margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
                         transition: 'background 150ms',
                       }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: '#fff' }}>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: '#fff' }}>
                           #{item.batchNum}
                         </span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
-                          {item.time}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {item.variance > 0 && (
+                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.gold, fontWeight: 500 }}>
+                              {Math.round(item.variance)}%
+                            </span>
+                          )}
+                          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>
+                            {item.time}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span style={{ fontSize: 11, color: T.textSec }}>{item.blId}</span>
-                        <span style={{ fontSize: 10, color: T.textDim }}>•</span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textDim }}>{Math.round(item.ciment)}kg</span>
-                      </div>
-                      {item.variance > 2 && (
-                        <span style={{
-                          fontSize: 10, color: item.variance > 5 ? T.danger : T.warning,
-                          fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                        }}>
-                          Δ {item.variance.toFixed(1)}%
-                        </span>
-                      )}
+                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+                        {item.formula} · {item.volume} m³ · {item.client}
+                      </p>
                     </div>
                   );
                 })
               ) : (
-                <div className="flex flex-col items-center justify-center py-12 gap-3">
-                  <Clock size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)' }} />
-                  <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, fontWeight: 500 }}>Aucun batch enregistré</p>
-                  <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, textAlign: 'center', padding: '0 16px' }}>
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                  <Clock size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.06)' }} />
+                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 14, fontWeight: 500 }}>Aucun batch enregistré</p>
+                  <p style={{ color: 'rgba(255,255,255,0.18)', fontSize: 11, textAlign: 'center', padding: '0 24px' }}>
                     Les batches de production apparaîtront ici en temps réel
                   </p>
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* ── BOTTOM METRICS BAR ── */}
-      <div style={{
-        background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-        borderRadius: 10, padding: '10px 20px',
-      }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}>
-            <span><span style={{ color: '#fff', fontWeight: 600 }}>{totalVol}</span><span style={{ color: 'rgba(255,255,255,0.4)' }}> m³</span></span>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
-            <span><span style={{ color: '#fff', fontWeight: 600 }}>{batchCount}</span><span style={{ color: 'rgba(255,255,255,0.4)' }}> batches</span></span>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
-            <span style={{ color: 'rgba(255,255,255,0.4)' }}>Cadence: <span style={{ color: '#fff', fontWeight: 600 }}>{cadence} m³/h</span></span>
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
-            <span style={{ color: T.success, fontWeight: 600 }}>▲ +12% vs hier</span>
+            {/* Sidebar footer */}
+            <div style={{ padding: 12, borderTop: `1px solid ${T.cardBorder}` }}>
+              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: 'rgba(255,255,255,0.30)' }}>
+                Total file: {Math.round(metrics.totalVol)} m³
+              </span>
+            </div>
           </div>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
-            {format(new Date(), 'HH:mm:ss')} UTC
-          </span>
         </div>
       </div>
     </div>
