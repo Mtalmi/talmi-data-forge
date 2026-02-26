@@ -40,6 +40,26 @@ const SPARKLINE_DATA = [
   { h: '18h', v: 38 },
 ];
 
+// ─── Target curve (planned daily production) ───
+const TARGET_DATA = [
+  { h: '06h', t: 10 }, { h: '07h', t: 25 }, { h: '08h', t: 55 },
+  { h: '09h', t: 80 }, { h: '10h', t: 100 }, { h: '11h', t: 90 },
+  { h: '12h', t: 50 }, { h: '13h', t: 75 }, { h: '14h', t: 105 },
+  { h: '15h', t: 95 }, { h: '16h', t: 80 }, { h: '17h', t: 65 },
+  { h: '18h', t: 35 },
+];
+
+// ─── Batch event markers ───
+const BATCH_EVENTS = [
+  { h: '08h', type: 'batch', label: 'B25 · 8m³' },
+  { h: '10h', type: 'truck', label: '🚛 45m³' },
+  { h: '13h', type: 'truck', label: '🚛 80m³' },
+  { h: '14h', type: 'batch', label: 'B30 · 12m³' },
+];
+
+// NOW hour index (mock: 15h = index 9)
+const NOW_INDEX = 9;
+
 export default function Dashboard() {
   const { t, lang } = useI18n();
   const { user, role, isCeo, isAccounting } = useAuth();
@@ -146,17 +166,63 @@ export default function Dashboard() {
   const linePath = `M${points.join(' L')}`;
   const areaPath = `${linePath} L${svgW},${svgH} L0,${svgH} Z`;
 
-  // Peak & last point
+  // Combine actual + target max for Y scaling
+  const allMax = Math.max(maxV, Math.max(...TARGET_DATA.map(d => d.t)));
+
+  // Target line path
+  const targetPoints = TARGET_DATA.map((d, i) => {
+    const x = (i / (TARGET_DATA.length - 1)) * svgW;
+    const y = svgH - (d.t / allMax) * svgH * 0.85 - 5;
+    return `${x},${y}`;
+  });
+  const targetLinePath = `M${targetPoints.join(' L')}`;
+
+  // NOW playhead X position
+  const nowX = (NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW;
+
+  // Past line path (up to NOW_INDEX, solid)
+  const pastPoints = SPARKLINE_DATA.slice(0, NOW_INDEX + 1).map((d, i) => {
+    const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+    const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+    return `${x},${y}`;
+  });
+  const pastLinePath = `M${pastPoints.join(' L')}`;
+  const pastAreaPath = `${pastLinePath} L${nowX},${svgH} L0,${svgH} Z`;
+
+  // Forecast line path (from NOW_INDEX onward, dashed)
+  const forecastPoints = SPARKLINE_DATA.slice(NOW_INDEX).map((d, i) => {
+    const idx = NOW_INDEX + i;
+    const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
+    const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+    return `${x},${y}`;
+  });
+  const forecastLinePath = `M${forecastPoints.join(' L')}`;
+
+  // Reference line Y positions (scaled to allMax)
+  const refY = (val: number) => svgH - (val / allMax) * svgH * 0.85 - 5;
+  const objectifY = refY(105); // ~320m³ daily mapped to hourly peak scale
+  const seuilY = refY(70);     // ~200m³ daily mapped to hourly
+
+  // Peak & last point (recalculated with allMax)
   const peakIdx = SPARKLINE_DATA.reduce((mi, d, i, arr) => d.v > arr[mi].v ? i : mi, 0);
   const peakX = (peakIdx / (SPARKLINE_DATA.length - 1)) * svgW;
-  const peakY = svgH - (SPARKLINE_DATA[peakIdx].v / maxV) * svgH * 0.85 - 5;
+  const peakY = svgH - (SPARKLINE_DATA[peakIdx].v / allMax) * svgH * 0.85 - 5;
   const lastIdx = SPARKLINE_DATA.length - 1;
   const lastX = (lastIdx / (SPARKLINE_DATA.length - 1)) * svgW;
-  const lastY = svgH - (SPARKLINE_DATA[lastIdx].v / maxV) * svgH * 0.85 - 5;
+  const lastY = svgH - (SPARKLINE_DATA[lastIdx].v / allMax) * svgH * 0.85 - 5;
 
   // Current time
   const now = new Date();
   const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} UTC+1`;
+
+  // Batch event marker positions
+  const batchMarkerPositions = BATCH_EVENTS.map(evt => {
+    const idx = SPARKLINE_DATA.findIndex(d => d.h === evt.h);
+    if (idx === -1) return null;
+    const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
+    const y = svgH - (SPARKLINE_DATA[idx].v / allMax) * svgH * 0.85 - 5;
+    return { ...evt, x, y };
+  }).filter(Boolean) as Array<{ h: string; type: string; label: string; x: number; y: number }>;
 
   return (
     <MainLayout>
@@ -772,21 +838,48 @@ export default function Dashboard() {
             ))}
           </div>
 
-          {/* LIVE indicator — double ripple */}
-          <div className="absolute top-5 left-6 flex items-center gap-2.5 z-10">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-40" />
-              <span className="absolute h-full w-full rounded-full bg-emerald-400 opacity-15 animate-ping" style={{ animationDelay: '0.5s' }} />
-              <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
-            </span>
-            <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
-            <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Total du jour</span>
+          {/* ═══ ENHANCED HEADER — Live Metrics Ticker ═══ */}
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 py-3 z-10">
+            {/* Left: Live badge + title */}
+            <div className="flex items-center gap-2.5">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-40" />
+                <span className="absolute h-full w-full rounded-full bg-emerald-400 opacity-15 animate-ping" style={{ animationDelay: '0.5s' }} />
+                <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
+              </span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
+              <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Total du jour</span>
+            </div>
+
+            {/* Center: Live metrics */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
+                <span className="text-[13px] text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>671</span>
+                <span className="text-[9px] text-slate-500">m³</span>
+              </div>
+              <div className="w-px h-3 bg-white/10" />
+              <div className="flex items-center gap-1">
+                <span className="text-[13px] text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>14</span>
+                <span className="text-[9px] text-slate-500">batches</span>
+              </div>
+              <div className="w-px h-3 bg-white/10" />
+              <div className="flex items-center gap-1">
+                <span className="text-[9px] text-slate-500">Cadence:</span>
+                <span className="text-[13px] text-amber-400 font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47</span>
+                <span className="text-[9px] text-slate-500">m³/h</span>
+              </div>
+              <div className="w-px h-3 bg-white/10" />
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] text-emerald-400">▲ +12%</span>
+                <span className="text-[9px] text-slate-600">vs hier</span>
+              </div>
+            </div>
+
+            {/* Right: Time */}
+            <span className="text-slate-600 z-10 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{timeStr}</span>
           </div>
 
-          {/* Timestamp */}
-          <div className="absolute top-5 right-6 text-slate-600 z-10 tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{timeStr}</div>
-
-          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none">
+          <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[1]" preserveAspectRatio="none" style={{ marginTop: '12px' }}>
             <defs>
               {/* Golden River gradient — prominent, eye-catching fill */}
               <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
@@ -795,6 +888,11 @@ export default function Dashboard() {
                 <stop offset="50%" stopColor="#D4AF37" stopOpacity={0.06} />
                 <stop offset="80%" stopColor="#D4AF37" stopOpacity={0.015} />
                 <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+              </linearGradient>
+              {/* Faded forecast fill */}
+              <linearGradient id="forecastFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FDB913" stopOpacity={0.08} />
+                <stop offset="100%" stopColor="#FDB913" stopOpacity={0} />
               </linearGradient>
               {/* Horizontal gradient along the line — warm to cool platinum */}
               <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
@@ -815,25 +913,60 @@ export default function Dashboard() {
                 <feGaussianBlur stdDeviation="6" />
               </filter>
             </defs>
-            {/* Area fill — PROMINENT golden river */}
-            <path d={areaPath} fill="url(#sparkGlow)" className="area-fill" />
-            {/* Outermost atmospheric haze */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.05" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
-            {/* Soft warm glow — thicker for prominence */}
-            <path d={linePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.12" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
-            {/* Core line — golden, slightly thicker for river feel */}
-            <path d={linePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
-            {/* Peak whisker — architectural */}
-            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 14} stroke="rgba(212,175,55,0.12)" strokeWidth="0.5" strokeDasharray="1.5 2" />
-            <circle cx={peakX} cy={peakY - 14} r="0.8" fill="rgba(212,175,55,0.2)" />
+
+            {/* ── ELEMENT 5: Reference lines ── */}
+            {/* Objectif line */}
+            <line x1="0" y1={objectifY} x2={svgW} y2={objectifY} stroke="rgba(34,197,94,0.15)" strokeWidth="0.5" strokeDasharray="3 2" />
+            <text x={svgW - 2} y={objectifY - 2} textAnchor="end" fill="rgba(34,197,94,0.35)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Objectif</text>
+            {/* Seuil min line */}
+            <line x1="0" y1={seuilY} x2={svgW} y2={seuilY} stroke="rgba(239,68,68,0.1)" strokeWidth="0.5" strokeDasharray="2 3" />
+            <text x={svgW - 2} y={seuilY - 2} textAnchor="end" fill="rgba(239,68,68,0.25)" fontSize="3" fontFamily="'JetBrains Mono', monospace">Seuil min</text>
+
+            {/* ── ELEMENT 1: Target line (dashed white ghost) ── */}
+            <path d={targetLinePath} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1" strokeDasharray="3 2" strokeLinejoin="round" strokeLinecap="round" />
+
+            {/* ── Area fill — past section only ── */}
+            <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
+
+            {/* ── Atmospheric glow on past line ── */}
+            <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="14" strokeOpacity="0.04" strokeLinejoin="round" strokeLinecap="round" className="glow-line" filter="url(#outerAtmo)" />
+            <path d={pastLinePath} fill="none" stroke="#FDB913" strokeWidth="6" strokeOpacity="0.1" strokeLinejoin="round" strokeLinecap="round" className="glow-line" />
+            {/* Core gold line — past (solid) */}
+            <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" className="main-line" filter="url(#sparklineGlow)" />
+
+            {/* ── ELEMENT 3: Forecast line (dashed, faded) ── */}
+            <path d={forecastLinePath} fill="none" stroke="rgba(212,168,67,0.35)" strokeWidth="1.5" strokeDasharray="4 3" strokeLinejoin="round" strokeLinecap="round" />
+
+            {/* ── ELEMENT 3: NOW playhead ── */}
+            <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="0.8" strokeOpacity="0.5" />
+            <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="#D4A843" strokeWidth="3" strokeOpacity="0.06" />
+            <text x={nowX} y="5" textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace" opacity="0.7">MAINTENANT</text>
+
+            {/* ── ELEMENT 2: Batch event markers ── */}
+            {batchMarkerPositions.map((evt, i) => (
+              <g key={i}>
+                <line x1={evt.x} y1={evt.y} x2={evt.x} y2={evt.y + 12} stroke="rgba(212,168,67,0.15)" strokeWidth="0.5" strokeDasharray="1 1.5" />
+                <circle cx={evt.x} cy={evt.y} r="1.8" fill="#D4A843" opacity="0.7" />
+                <circle cx={evt.x} cy={evt.y} r="3.5" fill="none" stroke="rgba(212,168,67,0.2)" strokeWidth="0.5" />
+              </g>
+            ))}
+
+            {/* ── ELEMENT 6: Peak annotation ── */}
+            <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 16} stroke="rgba(212,175,55,0.15)" strokeWidth="0.5" strokeDasharray="1.5 2" />
+            <rect x={peakX - 14} y={peakY - 22} width="28" height="7" rx="1.5" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.2)" strokeWidth="0.3" />
+            <text x={peakX} y={peakY - 17} textAnchor="middle" fill="#D4A843" fontSize="3" fontWeight="600" fontFamily="'JetBrains Mono', monospace">
+              PEAK 14h
+            </text>
+
             {/* Minimal data markers — every other point */}
             {SPARKLINE_DATA.map((d, i) => {
               if (i % 2 !== 0 && i !== lastIdx) return null;
               const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
-              const y = svgH - (d.v / maxV) * svgH * 0.85 - 5;
+              const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
               return <circle key={i} cx={x} cy={y} r="0.8" fill="rgba(212,175,55,0.15)" className="area-fill" />;
             })}
-            {/* Live endpoint — refined single pulse, no neon */}
+
+            {/* Live endpoint — refined single pulse */}
             <circle cx={lastX} cy={lastY} r="2.5" fill="#D4AF37" opacity="0.9">
               <animate attributeName="r" values="2.5;4;2.5" dur="3s" repeatCount="indefinite" />
               <animate attributeName="opacity" values="0.9;0.5;0.9" dur="3s" repeatCount="indefinite" />
