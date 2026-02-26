@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { format, subDays } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
+import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — Dark Luxury
@@ -708,6 +709,9 @@ export function WorldClassDashboard() {
               </div>
             </Card>
 
+            {/* Live Batch Progress */}
+            <LiveBatchProgress />
+
             {/* Batch Timeline */}
             <Card className="tbos-card-enter tbos-stagger-2">
               {/* Category accent — teal for production */}
@@ -737,6 +741,50 @@ export function WorldClassDashboard() {
                 {stockData.slice(0, 6).map((s, i) => (
                   <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
                 ))}
+              </div>
+
+              {/* ── Predictive Stock Alerts ── */}
+              <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className="text-[9px] uppercase tracking-[0.12em] font-medium" style={{ color: 'rgba(148,163,184,0.5)' }}>
+                    Prévision de Rupture
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  {[
+                    { name: 'Adjuvant', dailyRate: 5.0, daysLeft: 1 },
+                    { name: 'Eau', dailyRate: 3.5, daysLeft: 2 },
+                    { name: 'Gravette', dailyRate: 2.1, daysLeft: 3 },
+                    { name: 'Ciment', dailyRate: 1.8, daysLeft: 5 },
+                    { name: 'Sable', dailyRate: 0.9, daysLeft: 8 },
+                  ].map((item) => (
+                    <div key={item.name} className="flex items-center gap-2 text-[9px]">
+                      <span className="w-14 truncate" style={{ color: 'rgba(148,163,184,0.5)' }}>{item.name}</span>
+                      <span style={{ color: 'rgba(148,163,184,0.35)' }}>▼ {item.dailyRate}%/j</span>
+                      <span className="flex-1" />
+                      <span
+                        className="font-medium"
+                        style={{
+                          color: item.daysLeft <= 1 ? '#F87171' : item.daysLeft <= 3 ? '#FBBF24' : 'rgba(148,163,184,0.4)',
+                        }}
+                      >
+                        {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
+                      </span>
+                      {item.daysLeft <= 3 && (
+                        <button
+                          className="px-1.5 py-0.5 rounded text-[8px] font-medium"
+                          style={{
+                            background: 'rgba(212,175,55,0.08)',
+                            border: '1px solid rgba(212,175,55,0.2)',
+                            color: '#D4AF37',
+                          }}
+                        >
+                          Commander
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </Card>
 

@@ -20,6 +20,7 @@ import { RefreshCw, Maximize2, Wallet } from 'lucide-react';
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
 const ExecutiveSummaryView = lazy(() => import('@/components/dashboard/ExecutiveSummaryView').then(m => ({ default: m.ExecutiveSummaryView })));
+const PlantFlowSchematic = lazy(() => import('@/components/dashboard/PlantFlowSchematic'));
 
 // Finance zone lazy widgets
 const CircularBudgetGauge = lazy(() => import('@/components/dashboard/CircularBudgetGauge').then(m => ({ default: m.CircularBudgetGauge })));
@@ -523,6 +524,7 @@ export default function Dashboard() {
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,16 12,18 24,14 36,12 48,10 60,8 72,6 80,4',
               sparkStroke: '#22c55e',
+              revenueGauge: { current: ca || 76, target: 250, pct: Math.round(((ca || 76) / 250) * 100) },
             },
             {
               label: 'MARGE',
@@ -627,9 +629,38 @@ export default function Dashboard() {
                     points={kpi.sparkline}
                   />
                 </svg>
-              )}
+               )}
 
-              {/* Monthly Target Progress Ring */}
+              {/* Revenue Target Gauge */}
+              {kpi.revenueGauge && (
+                <div className="flex flex-col items-center mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                  <svg width="90" height="50" viewBox="0 0 100 55">
+                    {/* Background arc */}
+                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round" />
+                    {/* Red zone */}
+                    <path d="M 10 50 A 40 40 0 0 1 36.3 14.2" fill="none" stroke="rgba(239,68,68,0.25)" strokeWidth="5" strokeLinecap="round" />
+                    {/* Yellow zone */}
+                    <path d="M 36.3 14.2 A 40 40 0 0 1 63.7 14.2" fill="none" stroke="rgba(234,179,8,0.25)" strokeWidth="5" strokeLinecap="round" />
+                    {/* Green zone */}
+                    <path d="M 63.7 14.2 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(34,197,94,0.25)" strokeWidth="5" strokeLinecap="round" />
+                    {/* Progress arc */}
+                    <path
+                      d={`M 10 50 A 40 40 0 0 1 ${10 + Math.min(kpi.revenueGauge.pct / 100, 1) * 80} ${50 - Math.sin(Math.min(kpi.revenueGauge.pct / 100, 1) * Math.PI) * 40}`}
+                      fill="none"
+                      stroke={kpi.revenueGauge.pct < 33 ? '#ef4444' : kpi.revenueGauge.pct < 66 ? '#eab308' : '#22c55e'}
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                    <text x="50" y="44" textAnchor="middle" fill="white" fontSize="10" fontWeight="500" style={{ fontFamily: "'JetBrains Mono'" }}>
+                      {kpi.revenueGauge.pct}%
+                    </text>
+                    <text x="50" y="53" textAnchor="middle" fill="rgba(148,163,184,0.4)" fontSize="6">de l'objectif</text>
+                  </svg>
+                  <div className="text-[9px] mt-0.5" style={{ color: 'rgba(148,163,184,0.4)' }}>
+                    Objectif: <span className="text-white/60">{kpi.revenueGauge.target}K DH</span>
+                  </div>
+                </div>
+              )}
               {kpi.monthlyTarget && (
                 <div className="flex items-center gap-2.5 mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                   <svg width="36" height="36" viewBox="0 0 36 36" className="shrink-0">
@@ -855,6 +886,11 @@ export default function Dashboard() {
           }))}
           onDismiss={dismissAlert}
         />
+
+        {/* ═══ PLANT FLOW SCHEMATIC — Real-time value chain ═══ */}
+        <Suspense fallback={<div className="h-32 rounded-xl bg-white/[0.02] animate-pulse mt-6" />}>
+          <PlantFlowSchematic />
+        </Suspense>
 
         {/* Section Divider — Opérations */}
         <div className="relative mt-10 mb-8 flex items-center gap-4">
