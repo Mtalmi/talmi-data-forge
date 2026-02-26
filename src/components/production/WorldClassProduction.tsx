@@ -83,13 +83,13 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
 // ─────────────────────────────────────────────────────
 function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <div className="flex items-center gap-3 mb-6">
+    <div className="flex items-center gap-2.5 mb-4">
       <Icon size={16} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
       <span style={{
         color: T.gold, fontWeight: 600, fontSize: 13,
         textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap',
       }}>{label}</span>
-      <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}4D 0%, transparent 80%)` }} />
+      <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}33 0%, transparent 80%)` }} />
     </div>
   );
 }
@@ -110,7 +110,7 @@ function EmptyState({ icon: Icon, message, sub }: { icon: any; message: string; 
 // ─────────────────────────────────────────────────────
 // SPARKLINE
 // ─────────────────────────────────────────────────────
-function MiniSparkline({ data, color = '#22c55e' }: { data: number[]; color?: string }) {
+function MiniSparkline({ data, color = T.gold }: { data: number[]; color?: string }) {
   const max = Math.max(...data, 1);
   const min = Math.min(...data, 0);
   const range = max - min || 1;
@@ -124,9 +124,11 @@ function MiniSparkline({ data, color = '#22c55e' }: { data: number[]; color?: st
   const lastPoint = data[data.length - 1];
   const lastX = w;
   const lastY = h - ((lastPoint - min) / range) * (h - 4) - 2;
+  const areaPoints = `0,${h} ${points} ${w},${h}`;
 
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="mt-2">
+      <polygon points={areaPoints} fill="rgba(212,168,67,0.1)" />
       <polyline
         points={points}
         fill="none"
@@ -249,10 +251,10 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               {trendPositive ? '↗' : '↘'} {trend}
             </p>
             {sparkData && sparkData.length > 1 && (
-              <MiniSparkline data={sparkData} color={trendPositive ? '#22c55e' : T.danger} />
+              <MiniSparkline data={sparkData} color={T.gold} />
             )}
           </div>
-          <Icon size={20} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.2)', flexShrink: 0 }} />
+          <Icon size={20} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
         </div>
       </div>
     </div>
@@ -275,15 +277,15 @@ function WorkflowStep({ count, label, color, statusLabel, delay = 0 }: {
       transition: 'all 500ms ease-out', cursor: 'pointer',
     }}>
       <p style={{
-        fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700,
-        color: '#fff', lineHeight: 1,
+        fontFamily: 'JetBrains Mono, monospace', fontSize: 42, fontWeight: 700,
+        color: '#fff', lineHeight: 1, letterSpacing: '-0.02em',
       }}>{animated}</p>
       <p style={{
         fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.2em',
-        color: 'rgba(255,255,255,0.5)', fontWeight: 600,
+        color: 'rgba(255,255,255,0.45)', fontWeight: 500,
       }}>{label}</p>
       <span style={{
-        fontSize: 10, fontWeight: 600, color,
+        fontSize: 11, fontWeight: 500, color,
         textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: 2,
       }}>{statusLabel}</span>
     </div>
@@ -515,7 +517,7 @@ export default function WorldClassProduction() {
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ── BATCHES TAB ── */}
         {activeTab === 'batches' && (
@@ -551,9 +553,9 @@ export default function WorldClassProduction() {
           }}>
             <div className="flex items-center justify-center gap-0">
               <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.gold} statusLabel="En attente" delay={0} />
-              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
+              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
               <WorkflowStep count={workflowCounts.production} label="En Production" color={T.info} statusLabel="Actif" delay={100} />
-              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.2)', margin: '0 32px', marginBottom: 24 }} />
+              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
               <WorkflowStep count={workflowCounts.validation} label="Validation" color={T.success} statusLabel="Terminé" delay={200} />
             </div>
           </div>
@@ -589,10 +591,10 @@ export default function WorldClassProduction() {
                         <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.30)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} ticks={[0, 10, 20, 30]} domain={[0, 30]} />
                     <Tooltip content={<GoldTooltip unit=" m³" />} />
-                    <ReferenceLine y={15} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10 }} />
+                    <ReferenceLine y={15} stroke={`${T.gold}33`} strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: `${T.gold}66`, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
                     <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={2} fill="url(#prodGold)" dot={false} activeDot={{ r: 5, fill: T.gold }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -600,15 +602,14 @@ export default function WorldClassProduction() {
                 <div style={{ height: 220, position: 'relative' }}>
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={hourlyData}>
-                      <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} domain={[0, 30]} />
-                      <ReferenceLine y={15} stroke="rgba(255,255,255,0.15)" strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: 'rgba(255,255,255,0.25)', fontSize: 10 }} />
+                      <XAxis dataKey="hour" tick={{ fill: 'rgba(255,255,255,0.30)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(255,255,255,0.25)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} width={30} ticks={[0, 10, 20, 30]} domain={[0, 30]} />
+                      <ReferenceLine y={15} stroke={`${T.gold}33`} strokeDasharray="6 4" label={{ value: 'Objectif', position: 'right', fill: `${T.gold}66`, fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
                     </AreaChart>
                   </ResponsiveContainer>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <BarChart3 size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)', marginBottom: 8 }} />
-                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, fontWeight: 500 }}>En attente de production</p>
-                    <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>Les données apparaîtront en temps réel</p>
+                    <p style={{ color: 'rgba(255,255,255,0.30)', fontSize: 14, fontWeight: 500 }}>En attente de production</p>
+                    <p style={{ color: 'rgba(255,255,255,0.20)', fontSize: 12, marginTop: 4 }}>Les données apparaîtront en temps réel</p>
                   </div>
                 </div>
               )}
@@ -653,39 +654,17 @@ export default function WorldClassProduction() {
                   </div>
                 </>
               ) : (
-                <div style={{ height: 220, position: 'relative' }}>
+                <div className="flex flex-col items-center justify-center" style={{ height: 260 }}>
                   {/* Ghost donut ring */}
-                  <svg width="100%" height="200" viewBox="0 0 200 200" className="mx-auto">
-                    <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="30" />
+                  <svg width="180" height="180" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="20" />
                   </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <PieChartIcon size={40} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.08)', marginBottom: 8 }} />
-                    <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, fontWeight: 500 }}>Aucune donnée</p>
-                    <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>En attente de production</p>
-                  </div>
+                  <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 24, color: 'rgba(255,255,255,0.15)', marginTop: -110, marginBottom: 80 }}>—</p>
+                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12 }}>Aucune donnée</p>
                 </div>
               )}
             </div>
           </div>
-        </section>
-
-        {/* ── LIVE BATCHES ── */}
-        <section>
-          <SectionHeader icon={Factory} label="Batches Récents" />
-          {batchDisplayList.length > 0 ? (
-            <div className="grid grid-cols-4 gap-3.5">
-              {batchDisplayList.map((batch, i) => (
-                <BatchCard key={batch.id + i} batch={batch} delay={i * 60} />
-              ))}
-            </div>
-          ) : (
-            <div style={{
-              background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-              borderRadius: 14, padding: 24,
-            }}>
-              <EmptyState icon={Factory} message="Aucun batch enregistré aujourd'hui" sub="Les batches apparaîtront ici en temps réel" />
-            </div>
-          )}
         </section>
 
         {/* ── QUALITY ── */}
@@ -731,17 +710,16 @@ export default function WorldClassProduction() {
                 borderRadius: 14, padding: 24,
               }}>
                 <div className="flex justify-between items-center mb-2">
-                  <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>Conformité</p>
+                  <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>Conformité</p>
                   <span style={{
-                    padding: '3px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                    background: kpis.conformity >= 90 ? `${T.success}18` : `${T.warning}18`,
-                    color: kpis.conformity >= 90 ? T.success : T.warning,
-                    border: `1px solid ${kpis.conformity >= 90 ? T.success : T.warning}40`,
+                    padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
+                    background: 'rgba(16,185,129,0.15)',
+                    color: '#34d399',
                   }}>
                     {kpis.conformity >= 95 ? 'Excellent' : kpis.conformity >= 85 ? 'Bon' : 'À surveiller'}
                   </span>
                 </div>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 700, color: T.gold }}>{kpis.conformity}%</p>
+                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 48, fontWeight: 700, color: '#fff' }}>{kpis.conformity}%</p>
               </div>
 
               <div style={{
@@ -749,16 +727,15 @@ export default function WorldClassProduction() {
                 borderRadius: 14, padding: 20,
               }}>
                 <div className="flex items-center gap-2 mb-3">
-                  <CheckCircle size={14} strokeWidth={1.5} style={{ color: totalCriticalWeek === 0 ? T.success : T.danger }} />
-                  <p style={{ color: totalCriticalWeek === 0 ? T.success : T.danger, fontSize: 13, fontWeight: 600 }}>
+                  <CheckCircle size={16} strokeWidth={1.5} style={{ color: '#34d399' }} />
+                  <p style={{ color: totalCriticalWeek === 0 ? '#34d399' : T.danger, fontSize: 13, fontWeight: 600 }}>
                     {totalCriticalWeek === 0 ? '0 Critiques cette semaine' : `${totalCriticalWeek} Critiques cette semaine`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Shield size={14} strokeWidth={1.5} style={{ color: T.warning }} />
                   <span style={{
-                    padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                    background: `${T.warning}18`, color: T.warning, border: `1px solid ${T.warning}40`,
+                    padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 500,
+                    background: 'rgba(16,185,129,0.10)', color: '#34d399',
                   }}>{totalVariancesWeek} Variances</span>
                 </div>
               </div>
@@ -784,14 +761,10 @@ export default function WorldClassProduction() {
         </section>
 
         {/* ── FOOTER ── */}
-        <footer style={{ borderTop: `1px solid rgba(255,255,255,0.06)`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
+        <footer style={{ padding: '24px 0', textAlign: 'center' }}>
+          <span style={{ color: 'rgba(255,255,255,0.15)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
             TBOS Production v2.0 — {new Date().toLocaleString('fr-FR')}
           </span>
-          <div className="flex items-center gap-1.5">
-            <div className="animate-pulse" style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399' }} />
-            <span style={{ color: '#34d399', fontSize: 11, fontWeight: 500 }}>Live</span>
-          </div>
         </footer>
 
         </>}
