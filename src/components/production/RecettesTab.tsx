@@ -128,6 +128,17 @@ function CompositionChart() {
               itemStyle={{ color: '#fff' }}
               labelStyle={{ color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}
               cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+              content={({ active, payload, label }) => {
+                if (!active || !payload?.length) return null;
+                return (
+                  <div style={{ background: '#111827', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }}>
+                    <p style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>{label}</p>
+                    {payload.map((p: any) => (
+                      <p key={p.dataKey} style={{ color: p.color || '#fff' }}>{p.dataKey}: {p.value}</p>
+                    ))}
+                  </div>
+                );
+              }}
             />
             <Bar dataKey="F-B25" fill={T.gold} radius={[0, 3, 3, 0]} barSize={10} />
             <Bar dataKey="F-B30" fill={T.goldDark} radius={[0, 3, 3, 0]} barSize={10} />

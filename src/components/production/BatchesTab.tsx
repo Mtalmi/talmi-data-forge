@@ -46,6 +46,7 @@ const FALLBACK_ROWS: FallbackRow[] = [
   { bl_id: 'BL-2602-012', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 20, heure: '15:00', status: 'planifie', progress: 0 },
   { bl_id: 'BL-2602-013', client: 'Saudi Readymix Co.', formule: 'F-B20', volume: 10, heure: '15:30', status: 'planifie', progress: 0 },
   { bl_id: 'BL-2602-014', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 20, heure: '16:00', status: 'planifie', progress: 0 },
+  { bl_id: 'BL-2602-015', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 12, heure: '16:30', status: 'ecart', progress: 88 },
 ];
 
 const FEED_ITEMS = [
