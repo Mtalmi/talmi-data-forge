@@ -57,10 +57,8 @@ export function CommandCenterSection({ bons, camions }: CommandCenterSectionProp
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card className={cn(
-        "border-2 overflow-hidden transition-all duration-300",
-        isOpen 
-          ? "border-primary/30 bg-gradient-to-br from-primary/5 via-background to-accent/5" 
-          : "border-primary/20 bg-gradient-to-r from-primary/5 to-accent/5"
+        "border border-white/[0.06] overflow-hidden transition-all duration-300",
+        "bg-white/[0.02]"
       )}>
         <CollapsibleTrigger asChild>
           <CardHeader className={cn(
@@ -69,45 +67,37 @@ export function CommandCenterSection({ bons, camions }: CommandCenterSectionProp
             isOpen && "border-b border-primary/10"
           )}>
             <CardTitle className="flex items-center gap-3">
-              <div className={cn(
-                "p-2.5 rounded-xl transition-all duration-300",
-                isOpen 
-                  ? "bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25" 
-                  : "bg-primary/20"
-              )}>
-                <Sparkles className={cn("h-5 w-5", isOpen && "animate-pulse")} />
-              </div>
-              
               <div className="flex-1">
                 <div className="flex items-center gap-3">
-                  <span className="font-bold text-lg">Centre de Commande</span>
+                  {/* Gold ALL CAPS header matching TBOS pattern */}
+                  <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: '#D4A843' }}>CENTRE DE COMMANDE</span>
                   {!isOpen && (
-                    <div className="flex items-center gap-2">
-                      <Badge variant="secondary" className="gap-1 bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+                    <div className="flex items-center gap-2 ml-4">
+                      <Badge variant="secondary" className="gap-1 bg-emerald-400/10 text-emerald-400 border-emerald-400/20">
                         <Activity className="h-3 w-3" />
                         {totalActive} actifs
                       </Badge>
-                      <Badge variant="secondary" className="gap-1 bg-blue-500/10 text-blue-600 border-blue-500/20">
+                      <Badge variant="secondary" className="gap-1 bg-blue-400/10 text-blue-400 border-blue-400/20">
                         <Truck className="h-3 w-3" />
-                        {assignedTrucks} camions
+                        {assignedTrucks} toupies
                       </Badge>
-                      <Badge variant="secondary" className="gap-1 bg-success/10 text-success border-success/20">
+                      <Badge variant="secondary" className="gap-1 bg-emerald-500/10 text-emerald-500 border-emerald-500/20">
                         <TrendingUp className="h-3 w-3" />
                         {totalDelivered} livrés
                       </Badge>
                     </div>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground font-normal mt-1">
-                  Timeline, Capacité Flotte & Performance KPIs
-                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(212,168,67,0.4), transparent 80%)' }} />
+                </div>
               </div>
               
               <div className={cn(
                 "p-2 rounded-lg transition-all",
-                isOpen ? "bg-primary/10 rotate-180" : "bg-muted"
+                isOpen ? "bg-white/[0.05] rotate-180" : "bg-white/[0.03]"
               )}>
-                <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform" />
+                <ChevronDown className="h-5 w-5 text-white/40 transition-transform" />
               </div>
             </CardTitle>
           </CardHeader>

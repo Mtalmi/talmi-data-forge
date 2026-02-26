@@ -802,27 +802,27 @@ export default function Planning() {
       production: { 
         label: t.pages.planning.statusLoading, 
         variant: 'secondary', 
-        className: 'bg-gradient-to-r from-violet-500/20 to-purple-500/20 text-violet-700 dark:text-violet-300 border border-violet-400/30' 
+        className: 'bg-blue-400/20 text-blue-400 border border-blue-400/30' 
       },
       validation_technique: { 
         label: t.pages.planning.statusToValidate, 
         variant: 'secondary', 
-        className: 'bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-700 dark:text-amber-300 border border-amber-400/30' 
+        className: 'bg-[#D4A843]/20 text-[#D4A843] border border-[#D4A843]/30' 
       },
       en_livraison: { 
         label: t.pages.planning.statusEnRoute, 
         variant: 'default', 
-        className: 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-md shadow-rose-500/25 border-0' 
+        className: 'bg-emerald-500 text-white shadow-md shadow-emerald-500/25 border-0' 
       },
       livre: { 
         label: t.pages.planning.statusDelivered, 
         variant: 'default', 
-        className: 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/25 border-0' 
+        className: 'bg-emerald-600 text-white shadow-md shadow-emerald-600/25 border-0' 
       },
       facture: { 
         label: t.pages.planning.statusInvoiced, 
         variant: 'default', 
-        className: 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-md shadow-emerald-600/25 border-0' 
+        className: 'bg-emerald-700 text-white shadow-md shadow-emerald-700/25 border-0' 
       },
     };
     const config = statusConfig[status] || { label: status, variant: 'outline' as const };
@@ -858,13 +858,13 @@ export default function Planning() {
     // Get dynamic border color based on status
     const getBorderColor = (status: string) => {
       const colors: Record<string, string> = {
-        en_attente_validation: 'border-l-amber-400',
+        en_attente_validation: 'border-l-[#D4A843]',
         planification: 'border-l-blue-400',
-        production: 'border-l-violet-500',
-        validation_technique: 'border-l-amber-500',
-        en_livraison: 'border-l-rose-500',
-        livre: 'border-l-emerald-500',
-        facture: 'border-l-emerald-600',
+        production: 'border-l-blue-400',
+        validation_technique: 'border-l-[#D4A843]',
+        en_livraison: 'border-l-emerald-500',
+        livre: 'border-l-emerald-600',
+        facture: 'border-l-emerald-700',
       };
       return colors[status] || 'border-l-primary/50';
     };
@@ -1136,7 +1136,7 @@ export default function Planning() {
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full mt-3 gap-2 border-violet-500/50 text-violet-600 hover:bg-violet-500/10"
+            className="w-full mt-3 gap-2 border-blue-400/50 text-blue-400 hover:bg-blue-400/10"
             data-testid={`view-in-production-${bon.bl_id}`}
             onClick={() => viewInProduction(bon)}
           >
@@ -1284,67 +1284,63 @@ export default function Planning() {
           </div>
         )}
 
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">{t.pages.planning.title}</h1>
-            <p className="text-muted-foreground">{t.pages.planning.subtitle}</p>
-          </div>
-          <div className="flex items-center gap-3">
-            {/* GPS Tracking Link */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10"
-              onClick={() => navigate('/logistique')}
-            >
-              <Crosshair className="h-4 w-4" />
-              {t.pages.planning.gpsTracking}
-              {enLivraison.length > 0 && (
-                <Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>
-              )}
-            </Button>
-            
-            {pendingBLCount > 0 && pendingEarliestDate && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-2 border-amber-500/50 text-amber-600 hover:bg-amber-500/10 relative"
-                onClick={() => {
-                  setFocusPending(true);
-                }}
-              >
-                <BellRing className="h-4 w-4" />
-                {t.pages.planning.toConfirm}
-                <Badge className="bg-amber-500 text-white ml-1">{pendingBLCount}</Badge>
-              </Button>
+        {/* Action Buttons */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* GPS Tracking Link */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 border-white/[0.08] text-white/60 hover:bg-white/[0.05]"
+            onClick={() => navigate('/logistique')}
+          >
+            <Crosshair className="h-4 w-4" style={{ color: '#D4A843' }} />
+            {t.pages.planning.gpsTracking}
+            {enLivraison.length > 0 && (
+              <Badge className="bg-emerald-500 text-white ml-1">{enLivraison.length}</Badge>
             )}
-            <DailyPlanningReport
-              date={parseISO(selectedDate)}
-              stats={{
-                totalDeliveries: bons.length,
-                pendingCount: pendingValidation.length + aProduire.length,
-                trucksAvailable: availableCamions,
-                trucksTotal: camions.length,
-                enRouteCount: enLivraison.length,
-                totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
-                deliveredCount: aFacturer.length + facturesAujourdhui.length,
+          </Button>
+          
+          <DailyPlanningReport
+            date={parseISO(selectedDate)}
+            stats={{
+              totalDeliveries: bons.length,
+              pendingCount: pendingValidation.length + aProduire.length,
+              trucksAvailable: availableCamions,
+              trucksTotal: camions.length,
+              enRouteCount: enLivraison.length,
+              totalVolume: bons.reduce((sum, b) => sum + b.volume_m3, 0),
+              deliveredCount: aFacturer.length + facturesAujourdhui.length,
+            }}
+            deliveries={bons.map(b => ({
+              bl_id: b.bl_id,
+              client_name: b.clients?.nom_client || b.client_id,
+              formule_id: b.formule_id,
+              volume_m3: b.volume_m3,
+              heure_prevue: b.heure_prevue,
+              toupie_assignee: b.toupie_assignee || b.camion_assigne,
+              workflow_status: b.workflow_status,
+            }))}
+          />
+          
+          {pendingBLCount > 0 && pendingEarliestDate && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="gap-2 border-[#D4A843]/50 text-[#D4A843] hover:bg-[#D4A843]/10 relative"
+              onClick={() => {
+                setFocusPending(true);
               }}
-              deliveries={bons.map(b => ({
-                bl_id: b.bl_id,
-                client_name: b.clients?.nom_client || b.client_id,
-                formule_id: b.formule_id,
-                volume_m3: b.volume_m3,
-                heure_prevue: b.heure_prevue,
-                toupie_assignee: b.toupie_assignee || b.camion_assigne,
-                workflow_status: b.workflow_status,
-              }))}
-            />
-            <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
-              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              {t.pages.planning.refresh}
+            >
+              <BellRing className="h-4 w-4" />
+              {t.pages.planning.toConfirm}
+              <Badge className="bg-[#D4A843] text-black ml-1">{pendingBLCount}</Badge>
             </Button>
-          </div>
+          )}
+          
+          <Button variant="outline" size="sm" onClick={fetchData} disabled={loading} className="border-white/[0.08] text-white/60 hover:bg-white/[0.05]">
+            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+            {t.pages.planning.refresh}
+          </Button>
         </div>
 
         {/* Collapsible Calendar Header */}
@@ -1485,7 +1481,7 @@ export default function Planning() {
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{totalBonsToday}</p>
+                <p className="text-2xl font-mono font-normal">{totalBonsToday}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.deliveriesToday}</p>
               </div>
             </CardContent>
@@ -1496,7 +1492,7 @@ export default function Planning() {
                 <Clock className="h-5 w-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{pendingBons}</p>
+                <p className="text-2xl font-mono font-normal">{pendingBons}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.waitingLabel}</p>
               </div>
             </CardContent>
@@ -1507,7 +1503,7 @@ export default function Planning() {
                 <Truck className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{availableCamions}/{camions.length}</p>
+                <p className="text-2xl font-mono font-normal">{availableCamions}/{camions.length}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.trucksAvailable}</p>
               </div>
             </CardContent>
@@ -1518,7 +1514,7 @@ export default function Planning() {
                 <Navigation className="h-5 w-5 text-accent" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{enLivraison.length}</p>
+                <p className="text-2xl font-mono font-normal">{enLivraison.length}</p>
                 <p className="text-xs text-muted-foreground">{t.pages.planning.onRoute}</p>
               </div>
             </CardContent>
@@ -1533,27 +1529,27 @@ export default function Planning() {
 
         {/* Live Dispatch Board */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* À Produire - Premium styling */}
-          <Card className="border-amber-200/50 dark:border-amber-900/30 bg-gradient-to-b from-amber-50/30 to-card dark:from-amber-950/10">
+          {/* À Produire */}
+          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
-                  <Factory className="h-4 w-4 text-white" />
+                <div className="p-2 rounded-xl" style={{ background: 'rgba(212,168,67,0.12)' }}>
+                  <ClipboardCheck className="h-5 w-5" style={{ color: '#D4A843' }} />
                 </div>
-                <span className="bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent dark:from-amber-400 dark:to-orange-400">
+                <span className="text-lg font-medium text-white">
                   {t.pages.planning.toProduce}
                 </span>
-                <Badge className="ml-auto bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-md shadow-amber-500/20">
+                <Badge className="ml-auto text-xs" style={{ background: 'rgba(212,168,67,0.2)', color: '#D4A843', border: 'none' }}>
                   {aProduire.length}
                 </Badge>
               </CardTitle>
-              <p className="text-xs text-muted-foreground">{t.pages.planning.next2Hours}</p>
+              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.next2Hours}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {aProduire.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                    <Factory className="h-8 w-8 text-amber-300 dark:text-amber-700" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'rgba(212,168,67,0.08)' }}>
+                    <ClipboardCheck className="h-12 w-12" style={{ color: 'rgba(212,168,67,0.2)' }} />
                   </div>
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noPlannedDelivery}</p>
                 </div>
@@ -1563,24 +1559,24 @@ export default function Planning() {
             </CardContent>
           </Card>
 
-          {/* En Chargement - Premium styling */}
-          <Card className="border-violet-200/50 dark:border-violet-900/30 bg-gradient-to-b from-violet-50/30 to-card dark:from-violet-950/10">
+          {/* En Chargement */}
+          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 shadow-lg shadow-violet-500/20">
-                  <Package className="h-4 w-4 text-white" />
+                <div className="p-2 rounded-xl bg-blue-400/[0.12]">
+                  <Package className="h-5 w-5 text-blue-400" />
                 </div>
-                <span className="bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-purple-400">
+                <span className="text-lg font-medium text-white">
                   {t.pages.planning.enChargement}
                 </span>
-                <Badge className="bg-gradient-to-r from-violet-500 to-purple-500 text-white border-0 shadow-md shadow-violet-500/20">
+                <Badge className="bg-blue-400/[0.2] text-blue-400 border-0">
                   {enChargement.length}
                 </Badge>
                 {enChargement.length > 0 && (
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="ml-auto gap-1.5 text-violet-600 hover:bg-violet-500/10 h-7 text-xs"
+                    className="ml-auto gap-1.5 text-blue-400 hover:bg-blue-400/10 h-7 text-xs"
                     data-testid="centre-production-link"
                     onClick={() => navigate(`/production?date=${selectedDate}`)}
                   >
@@ -1590,13 +1586,13 @@ export default function Planning() {
                   </Button>
                 )}
               </CardTitle>
-              <p className="text-xs text-muted-foreground">{t.pages.planning.productionAndValidation}</p>
+              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.productionAndValidation}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enChargement.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                    <Package className="h-8 w-8 text-violet-300 dark:text-violet-700" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-400/[0.08] flex items-center justify-center">
+                    <Package className="h-12 w-12 text-blue-400/20" />
                   </div>
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noLoadingInProgress}</p>
                 </div>
@@ -1606,27 +1602,27 @@ export default function Planning() {
             </CardContent>
           </Card>
 
-          {/* En Livraison - Premium styling */}
-          <Card className="border-rose-200/50 dark:border-rose-900/30 bg-gradient-to-b from-rose-50/30 to-card dark:from-rose-950/10">
+          {/* En Livraison */}
+          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-base">
-                <div className="p-2 rounded-xl bg-gradient-to-br from-rose-500 to-pink-500 shadow-lg shadow-rose-500/20">
-                  <Navigation className="h-4 w-4 text-white" />
+                <div className="p-2 rounded-xl bg-emerald-400/[0.12]">
+                  <Truck className="h-5 w-5 text-emerald-400" />
                 </div>
-                <span className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent dark:from-rose-400 dark:to-pink-400">
+                <span className="text-lg font-medium text-white">
                   {t.pages.planning.enLivraison}
                 </span>
-                <Badge className="ml-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white border-0 shadow-md shadow-rose-500/20">
+                <Badge className="ml-auto bg-emerald-400/[0.2] text-emerald-400 border-0">
                   {enLivraison.length}
                 </Badge>
               </CardTitle>
-              <p className="text-xs text-muted-foreground">{t.pages.planning.trucksOnRoute}</p>
+              <p className="text-[11px] text-white/[0.40]">{t.pages.planning.trucksOnRoute}</p>
             </CardHeader>
             <CardContent className="max-h-[500px] overflow-y-auto space-y-3">
               {enLivraison.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center">
-                    <Navigation className="h-8 w-8 text-rose-300 dark:text-rose-700" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-400/[0.08] flex items-center justify-center">
+                    <Truck className="h-12 w-12 text-emerald-400/20" />
                   </div>
                   <p className="text-sm text-muted-foreground">{t.pages.planning.noTruckOnDelivery}</p>
                 </div>

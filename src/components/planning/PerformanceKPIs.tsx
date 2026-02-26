@@ -166,7 +166,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-success/10 cursor-default">
-                <p className="text-xl font-bold text-success">{overallStats.totalDelivered}</p>
+                <p className="text-xl font-mono font-normal text-success">{overallStats.totalDelivered}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">Livrés</p>
               </div>
             </TooltipTrigger>
@@ -176,7 +176,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-primary/10 cursor-default">
-                <p className="text-xl font-bold text-primary">{overallStats.totalInProgress}</p>
+                <p className="text-xl font-mono font-normal text-primary">{overallStats.totalInProgress}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">En cours</p>
               </div>
             </TooltipTrigger>
@@ -186,7 +186,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-warning/10 cursor-default">
-                <p className="text-xl font-bold text-warning">{overallStats.totalPending}</p>
+                <p className="text-xl font-mono font-normal text-warning">{overallStats.totalPending}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">Attente</p>
               </div>
             </TooltipTrigger>
@@ -196,7 +196,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-muted cursor-default">
-                <p className="text-xl font-bold">{overallStats.onTimeRate}%</p>
+                <p className="text-xl font-mono font-normal">{overallStats.onTimeRate}%</p>
                 <p className="text-[10px] text-muted-foreground uppercase">À l'heure</p>
               </div>
             </TooltipTrigger>
@@ -211,7 +211,7 @@ export function PerformanceKPIs({
               <RotateCcw className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm">Temps rotation moyen</span>
             </div>
-            <span className="font-mono font-bold">
+            <span className="font-mono font-normal">
               {formatMinutes(overallStats.avgRotation)}
             </span>
           </div>
