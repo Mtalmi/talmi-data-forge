@@ -39,7 +39,7 @@ export function TiltCard({ children, className, style }: TiltCardProps) {
       onMouseLeave={handleMouseLeave}
     >
       <div
-        className="w-full h-full"
+        className="w-full h-full flex flex-col"
         style={{
           transform: tilt.active
             ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale(1.02)`
