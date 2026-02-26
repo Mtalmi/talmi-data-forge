@@ -1,7 +1,7 @@
 import { useState, forwardRef } from 'react';
 import { Bot, X, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AIChatPanel } from './AIChatPanel';
 import { useAIChat } from '@/hooks/useAIChat';
 
@@ -18,7 +18,13 @@ MotionChatPanel.displayName = 'MotionChatPanel';
 export function AIFloatingBubble() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const chat = useAIChat();
+
+  // Hide on dashboard to keep CEO demo clean
+  if (location.pathname === '/' || location.pathname === '/dashboard') {
+    return null;
+  }
 
   return (
     <>
