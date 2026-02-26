@@ -349,7 +349,7 @@ function AIAnalystBrief() {
                 transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
               }}
             >
-              <span className="w-1 h-1 rounded-full mt-[7px] shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}40` }} />
+              <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
               <span className="text-[11px] leading-relaxed" style={{ color: 'rgba(148,163,184,0.8)' }}>{insight.text}</span>
             </div>
           );
@@ -369,10 +369,10 @@ function AIAnalystBrief() {
 // ═══════════════════════════════════════════════════════
 function PipelineFunnel() {
   const stages = [
-    { label: 'Devis', value: 3, pct: 100 },
-    { label: 'BC Validés', value: 2, pct: 65 },
-    { label: 'Production', value: 1, pct: 35 },
-    { label: 'Facturé', value: 1, pct: 30 },
+    { label: 'Devis', value: 6, pct: 100 },
+    { label: 'BC Validés', value: 3, pct: 50 },
+    { label: 'Production', value: 0, pct: 0 },
+    { label: 'Facturé', value: 1, pct: 17 },
   ];
 
   return (
@@ -381,12 +381,12 @@ function PipelineFunnel() {
       <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
       <div className="flex justify-between items-center mb-5">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', color: 'white', textShadow: '0 0 25px rgba(253,185,19,0.15)' }}>67<span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>%</span></span>
+        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', color: 'white', textShadow: '0 0 25px rgba(253,185,19,0.15)' }}>50<span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>%</span></span>
       </div>
       
       <div className="flex items-end gap-1" style={{ height: 80 }}>
         {stages.map((s, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+          <div key={i} className="flex-1 flex flex-col items-center gap-1.5" style={{ opacity: s.value === 0 ? 0.25 : 1, transition: 'opacity 0.3s ease' }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 300, fontSize: '1.5rem', color: 'white' }}>{s.value}</span>
             <div
               className="w-full rounded-sm transition-all duration-1000"
@@ -760,8 +760,7 @@ export function WorldClassDashboard() {
                   <div className="text-[11px] text-slate-600">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K</span>
-                  <span className="text-[10px] text-slate-500 ml-1">DH</span>
+                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K DH</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
@@ -812,9 +811,9 @@ export function WorldClassDashboard() {
                     textShadow: '0 0 30px rgba(253,185,19,0.2), 0 0 60px rgba(253,185,19,0.08)',
                     letterSpacing: '-0.03em',
                   }}>
-                    +18.4K
+                    +18.4K DH
                   </div>
-                  <div className="text-[10px] text-slate-500 mt-2">DH · marge nette estimée</div>
+                  <div className="text-[10px] text-slate-500 mt-2">marge nette estimée</div>
                   <div className="flex items-center justify-center gap-1.5 mt-3">
                     <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(52,211,153,0.6)' }} />
                     <span className="text-[10px]" style={{ color: 'rgb(148,163,184)' }}>+12% vs hier</span>
