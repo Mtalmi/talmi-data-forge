@@ -37,6 +37,7 @@ interface PerformanceKPIsProps {
   bons: BonLivraison[];
   camions: Camion[];
   historicalBons?: BonLivraison[]; // Previous day for comparison
+  overrideStats?: { totalDelivered: number; totalInProgress: number; totalPending: number; onTimeRate: number };
 }
 
 interface DriverStats {
@@ -53,6 +54,7 @@ export function PerformanceKPIs({
   bons,
   camions,
   historicalBons = [],
+  overrideStats,
 }: PerformanceKPIsProps) {
   const { driverStats, overallStats } = useMemo(() => {
     const statsMap = new Map<string, DriverStats>();
@@ -129,6 +131,8 @@ export function PerformanceKPIs({
     };
   }, [bons, camions, historicalBons]);
 
+  const finalOverallStats = overrideStats ? { ...overallStats, ...overrideStats } : overallStats;
+
   const formatMinutes = (mins: number): string => {
     const hours = Math.floor(mins / 60);
     const minutes = Math.round(mins % 60);
@@ -143,19 +147,19 @@ export function PerformanceKPIs({
             <TrendingUp className="h-4 w-4 text-primary" />
             Performance du Jour
           </div>
-          {overallStats.deliveryChange !== 0 && (
+          {finalOverallStats.deliveryChange !== 0 && (
             <Badge 
               variant="outline" 
               className={cn(
-                overallStats.deliveryChange > 0 ? "border-success text-success" : "border-destructive text-destructive"
+                finalOverallStats.deliveryChange > 0 ? "border-success text-success" : "border-destructive text-destructive"
               )}
             >
-              {overallStats.deliveryChange > 0 ? (
+              {finalOverallStats.deliveryChange > 0 ? (
                 <TrendingUp className="h-3 w-3 mr-1" />
               ) : (
                 <TrendingDown className="h-3 w-3 mr-1" />
               )}
-              {Math.abs(Math.round(overallStats.deliveryChange))}% vs hier
+              {Math.abs(Math.round(finalOverallStats.deliveryChange))}% vs hier
             </Badge>
           )}
         </CardTitle>
@@ -166,7 +170,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-success/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-success">{overallStats.totalDelivered}</p>
+                <p className="text-xl font-mono font-normal text-success">{finalOverallStats.totalDelivered}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">Livrés</p>
               </div>
             </TooltipTrigger>
@@ -176,7 +180,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-primary/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-primary">{overallStats.totalInProgress}</p>
+                <p className="text-xl font-mono font-normal text-primary">{finalOverallStats.totalInProgress}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">En cours</p>
               </div>
             </TooltipTrigger>
@@ -186,7 +190,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-warning/10 cursor-default">
-                <p className="text-xl font-mono font-normal text-warning">{overallStats.totalPending}</p>
+                <p className="text-xl font-mono font-normal text-warning">{finalOverallStats.totalPending}</p>
                 <p className="text-[10px] text-muted-foreground uppercase">Attente</p>
               </div>
             </TooltipTrigger>
@@ -196,7 +200,7 @@ export function PerformanceKPIs({
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="p-2 rounded-lg bg-muted cursor-default">
-                <p className="text-xl font-mono font-normal">{overallStats.onTimeRate}%</p>
+                <p className="text-xl font-mono font-normal">{finalOverallStats.onTimeRate}%</p>
                 <p className="text-[10px] text-muted-foreground uppercase">À l'heure</p>
               </div>
             </TooltipTrigger>

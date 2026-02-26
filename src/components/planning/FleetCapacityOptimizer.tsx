@@ -36,6 +36,7 @@ interface FleetCapacityOptimizerProps {
   camions: Camion[];
   bons: BonLivraison[];
   compact?: boolean;
+  demoPreset?: 'planning';
 }
 
 interface TruckLoad {
@@ -50,8 +51,45 @@ export function FleetCapacityOptimizer({
   camions,
   bons,
   compact = false,
+  demoPreset,
 }: FleetCapacityOptimizerProps) {
   const { truckLoads, summary } = useMemo(() => {
+    if (demoPreset === 'planning') {
+      return {
+        truckLoads: [
+          {
+            camion: { id_camion: 'TOU-01', immatriculation: 'TOU-01', chauffeur: 'Hassan Amrani', statut: 'En Livraison', capacite_m3: 100 },
+            assignedVolume: 75,
+            utilizationPct: 75,
+            deliveryCount: 2,
+            status: 'optimal' as const,
+          },
+          {
+            camion: { id_camion: 'TOU-02', immatriculation: 'TOU-02', chauffeur: 'Youssef Bakkali', statut: 'Disponible', capacite_m3: 100 },
+            assignedVolume: 60,
+            utilizationPct: 60,
+            deliveryCount: 2,
+            status: 'optimal' as const,
+          },
+          {
+            camion: { id_camion: 'TOU-03', immatriculation: 'TOU-03', chauffeur: 'Omar Tahiri', statut: 'Maintenance', capacite_m3: 100 },
+            assignedVolume: 45,
+            utilizationPct: 45,
+            deliveryCount: 1,
+            status: 'underutilized' as const,
+          },
+        ],
+        summary: {
+          totalCapacity: 300,
+          totalAssigned: 180,
+          avgUtilization: 60,
+          activeCount: 2,
+          idleCount: 1,
+          overloadedCount: 0,
+        },
+      };
+    }
+
     const loads: TruckLoad[] = camions.map(camion => {
       const assignedBons = bons.filter(b => 
         b.toupie_assignee === camion.id_camion &&
@@ -100,7 +138,7 @@ export function FleetCapacityOptimizer({
         overloadedCount: loads.filter(l => l.status === 'overloaded').length,
       },
     };
-  }, [camions, bons]);
+  }, [camions, bons, demoPreset]);
 
   const getStatusColor = (status: TruckLoad['status']) => {
     switch (status) {
@@ -157,12 +195,12 @@ export function FleetCapacityOptimizer({
       <CardContent className="space-y-3">
         {/* Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center">
-          <div className="p-2 rounded-lg bg-success/10">
-            <p className="text-lg font-bold text-success">{summary.activeCount}</p>
+          <div className="p-2 rounded-lg bg-[#D4A843]/10">
+            <p className="text-lg font-mono font-normal text-[#D4A843]">{summary.activeCount}</p>
             <p className="text-xs text-muted-foreground">Actifs</p>
           </div>
           <div className="p-2 rounded-lg bg-muted">
-            <p className="text-lg font-bold">{summary.idleCount}</p>
+            <p className="text-lg font-mono font-normal">{summary.idleCount}</p>
             <p className="text-xs text-muted-foreground">Disponibles</p>
           </div>
           <div className={cn(
@@ -170,7 +208,7 @@ export function FleetCapacityOptimizer({
             summary.overloadedCount > 0 ? "bg-destructive/10" : "bg-muted"
           )}>
             <p className={cn(
-              "text-lg font-bold",
+              "text-lg font-mono font-normal",
               summary.overloadedCount > 0 ? "text-destructive" : ""
             )}>
               {summary.overloadedCount}

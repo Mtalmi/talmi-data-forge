@@ -37,9 +37,10 @@ interface Camion {
 interface CommandCenterSectionProps {
   bons: BonLivraison[];
   camions: Camion[];
+  demoMode?: boolean;
 }
 
-export function CommandCenterSection({ bons, camions }: CommandCenterSectionProps) {
+export function CommandCenterSection({ bons, camions, demoMode = false }: CommandCenterSectionProps) {
   const [isOpen, setIsOpen] = useState(true);
   
   // Calculate summary stats for the header
@@ -145,6 +146,7 @@ export function CommandCenterSection({ bons, camions }: CommandCenterSectionProp
                     toupie_assignee: b.camion_assigne || b.toupie_assignee,
                     workflow_status: b.workflow_status,
                   }))}
+                  demoPreset={demoMode ? 'planning' : undefined}
                 />
               </div>
               
@@ -167,6 +169,7 @@ export function CommandCenterSection({ bons, camions }: CommandCenterSectionProp
                     id_camion: c.id_camion,
                     chauffeur: c.chauffeur,
                   }))}
+                  overrideStats={demoMode ? { totalDelivered: 3, totalInProgress: 2, totalPending: 1, onTimeRate: 83 } : undefined}
                 />
               </div>
             </div>
