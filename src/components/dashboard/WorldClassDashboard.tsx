@@ -303,6 +303,7 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
 // ═══════════════════════════════════════════════════════
 function AIAnalystBrief() {
   const [visibleLines, setVisibleLines] = useState(0);
+  const [showReco, setShowReco] = useState(false);
   const insights = [
     { icon: '◆', text: 'Recouvrement à 91% — seuil d\'excellence maintenu.', tone: 'positive' as const },
     { icon: '◆', text: 'Marge brute 49.9% malgré CA modéré — pricing sain.', tone: 'positive' as const },
@@ -314,7 +315,8 @@ function AIAnalystBrief() {
     const timers = insights.map((_, i) =>
       setTimeout(() => setVisibleLines(i + 1), 800 + i * 600)
     );
-    return () => timers.forEach(clearTimeout);
+    const recoTimer = setTimeout(() => setShowReco(true), 800 + insights.length * 600 + 400);
+    return () => { timers.forEach(clearTimeout); clearTimeout(recoTimer); };
   }, []);
 
   return (
@@ -356,6 +358,26 @@ function AIAnalystBrief() {
         })}
       </div>
       
+      {/* Recommendation — AI Advisor */}
+      <div
+        className="mt-4 pt-3 transition-all duration-700"
+        style={{
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          opacity: showReco ? 1 : 0,
+          transform: showReco ? 'translateY(0)' : 'translateY(8px)',
+        }}
+      >
+        <div className="flex items-start gap-2">
+          <span className="text-sm mt-0.5">💡</span>
+          <div>
+            <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
+            <p className="text-[11px] leading-relaxed mt-1" style={{ color: 'rgba(148,163,184,0.7)' }}>
+              Relancez les devis DEV-2602-316 et DEV-2602-895 pour diversifier le portefeuille client avant fin de mois.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Blinking cursor at end */}
       {visibleLines < insights.length && (
         <div className="ml-4 mt-1 w-[6px] h-[14px] rounded-sm" style={{ background: T.gold, opacity: 0.6, animation: 'blink 1s step-end infinite' }} />
