@@ -160,16 +160,16 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ── NAVIGATION ── */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-1 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-1 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent" style={{ scrollbarWidth: 'thin' }}>
         {sections.map((section, si) => (
           <div key={section.label}>
             {/* Section header with extending line */}
-            <div className={cn('px-4 pb-1.5', si === 0 ? 'pt-1' : 'pt-5')}>
+            <div className={cn('px-4 pb-1', si === 0 ? 'pt-1' : 'pt-3.5')}>
               <div className="flex items-center gap-2">
                 <span className="text-[9px] text-gray-600 uppercase tracking-[0.2em] font-semibold whitespace-nowrap">
                   {section.label}
                 </span>
-                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.04)' }} />
+                <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
               </div>
             </div>
 

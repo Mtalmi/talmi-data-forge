@@ -680,30 +680,15 @@ export function WorldClassDashboard() {
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="prodGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.25} />
-                        <stop offset="40%" stopColor={T.gold} stopOpacity={0.12} />
+                        <stop offset="0%" stopColor={T.gold} stopOpacity={0.12} />
+                        <stop offset="40%" stopColor={T.gold} stopOpacity={0.04} />
                         <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
-                      <linearGradient id="prodGradDeep" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={T.goldBright} stopOpacity={0.08} />
-                        <stop offset="100%" stopColor={T.goldBright} stopOpacity={0} />
-                      </linearGradient>
-                      <filter id="sparkGlow">
-                        <feGaussianBlur stdDeviation="3" result="blur" />
-                        <feMerge>
-                          <feMergeNode in="blur" />
-                          <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                      </filter>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.25)', fontSize: 9, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.2)', fontSize: 8, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <RichTooltip {...p} unit=" m³" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
-                    {/* Layer 1: Deep glow */}
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={8} strokeOpacity={0.03} fill="url(#prodGradDeep)" dot={false} activeDot={false} animationDuration={1500} />
-                    {/* Layer 2: Mid glow */}
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={4} strokeOpacity={0.08} fill="none" dot={false} activeDot={false} animationDuration={1300} filter="url(#sparkGlow)" />
-                    {/* Layer 3: Crisp line + fill */}
-                    <Area type="monotone" dataKey="volume" stroke={T.gold} strokeWidth={1.5} fill="url(#prodGrad)" dot={false} activeDot={{ r: 3, fill: T.gold, stroke: `${T.gold}40`, strokeWidth: 6 }} animationDuration={1200} />
+                    {/* Single crisp line — no glow layers */}
+                    <Area type="monotone" dataKey="volume" stroke="#C9A84C" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 2, fill: '#C9A84C', stroke: 'none' }} animationDuration={1200} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -830,7 +815,7 @@ export function WorldClassDashboard() {
                   <div className="text-[11px] text-slate-600">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight text-white tabular-nums font-mono">{totalAR}K DH</span>
+                  <span className="text-xl font-extralight text-white tabular-nums font-mono whitespace-nowrap">{totalAR} K DH</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">

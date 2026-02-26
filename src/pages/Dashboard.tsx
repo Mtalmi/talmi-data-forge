@@ -597,7 +597,7 @@ export default function Dashboard() {
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'}K DH costs`,
+              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'} K DH costs`,
               healthy: true,
               healthyGlow: true,
               accentColor: '#FDB913',

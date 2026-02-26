@@ -89,7 +89,7 @@ export function HourlyProductionChart() {
               strokeWidth={2}
               fill="url(#goldGradient)"
               dot={false}
-              activeDot={{ r: 3, fill: 'rgb(234, 179, 8)', stroke: 'none' }}
+              activeDot={false}
               isAnimationActive={true}
               animationDuration={1500}
               animationEasing="ease-out"
