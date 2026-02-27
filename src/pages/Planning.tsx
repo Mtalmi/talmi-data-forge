@@ -1639,7 +1639,7 @@ export default function Planning() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <div className="p-2 rounded-lg bg-blue-400/10">
               <Calendar className="h-5 w-5 text-blue-400" />
             </div>
@@ -1648,7 +1648,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.deliveriesToday}</p>
             </div>
           </div>
-          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <div className="p-2 rounded-lg bg-[#D4A843]/10">
               <Clock className="h-5 w-5 text-[#D4A843]" />
             </div>
@@ -1657,7 +1657,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.waitingLabel}</p>
             </div>
           </div>
-          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <div className="p-2 rounded-lg bg-emerald-400/10">
               <Truck className="h-5 w-5 text-emerald-400" />
             </div>
@@ -1666,7 +1666,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.trucksAvailable}</p>
             </div>
           </div>
-          <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4 flex items-center gap-3">
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <div className="p-2 rounded-lg bg-blue-400/10">
               <Navigation className="h-5 w-5 text-blue-400" />
             </div>
@@ -1685,10 +1685,10 @@ export default function Planning() {
         />
 
         {/* Live Dispatch Board */}
-        <div className="tbos-card rounded-2xl p-5 overflow-x-auto">
+        <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:min-w-[960px]">
           {/* À Produire */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+           <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <ClipboardList className="h-6 w-6 text-[#D4A843]" strokeWidth={1.5} />
@@ -1714,7 +1714,7 @@ export default function Planning() {
           </Card>
 
           {/* En Chargement */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+           <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Loader className="h-6 w-6 text-blue-400" strokeWidth={1.5} />
@@ -1753,7 +1753,7 @@ export default function Planning() {
           </Card>
 
           {/* En Livraison */}
-          <Card className="bg-white/[0.03] border border-white/[0.06] rounded-xl">
+          <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
                 <Truck className="h-6 w-6 text-emerald-400" strokeWidth={1.5} />
