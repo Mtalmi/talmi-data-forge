@@ -157,7 +157,7 @@ export function PerformanceKPIs({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-4 gap-1.5 text-center mb-4">
+      <div className="grid grid-cols-2 gap-2 text-center mb-4">
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="px-1.5 py-2 rounded-lg bg-emerald-400/10 cursor-default">
