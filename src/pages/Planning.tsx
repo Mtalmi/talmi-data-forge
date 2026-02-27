@@ -1686,13 +1686,13 @@ export default function Planning() {
 
         {/* Live Dispatch Board */}
         <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:min-w-[960px]">
+        <div className="flex flex-col md:flex-row gap-6 md:min-w-[960px]">
           {/* À Produire */}
-           <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+           <Card className="rounded-xl flex-1 min-w-[280px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
-                <ClipboardList className="h-6 w-6 text-[#D4A843]" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white">
+                <ClipboardList className="h-6 w-6 text-[#D4A843] flex-shrink-0" strokeWidth={1.5} />
+                <span className="text-lg font-medium text-white whitespace-nowrap">
                   {t.pages.planning.toProduce}
                 </span>
                 <Badge className="ml-auto text-xs bg-[#D4A843]/20 text-[#D4A843] border-0">
@@ -1714,11 +1714,11 @@ export default function Planning() {
           </Card>
 
           {/* En Chargement */}
-           <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+           <Card className="rounded-xl flex-1 min-w-[280px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
-                <Loader className="h-6 w-6 text-blue-400" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white">
+                <Loader className="h-6 w-6 text-blue-400 flex-shrink-0" strokeWidth={1.5} />
+                <span className="text-lg font-medium text-white whitespace-nowrap">
                   {t.pages.planning.enChargement}
                 </span>
                 <Badge className="ml-auto bg-blue-400/20 text-blue-400 border-0">
@@ -1753,11 +1753,11 @@ export default function Planning() {
           </Card>
 
           {/* En Livraison */}
-          <Card className="rounded-xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+           <Card className="rounded-xl flex-1 min-w-[280px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-base">
-                <Truck className="h-6 w-6 text-emerald-400" strokeWidth={1.5} />
-                <span className="text-lg font-medium text-white">
+                <Truck className="h-6 w-6 text-emerald-400 flex-shrink-0" strokeWidth={1.5} />
+                <span className="text-lg font-medium text-white whitespace-nowrap">
                   {t.pages.planning.enLivraison}
                 </span>
                 <Badge className="ml-auto bg-emerald-400/20 text-emerald-400 border-0">
