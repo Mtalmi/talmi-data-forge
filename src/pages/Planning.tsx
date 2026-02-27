@@ -1433,7 +1433,7 @@ export default function Planning() {
   return (
     <MainLayout>
       <WorldClassPlanning />
-      <div className="space-y-6 pr-[272px]">
+      <div className="space-y-6">
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
