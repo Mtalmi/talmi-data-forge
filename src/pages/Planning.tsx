@@ -1149,10 +1149,10 @@ export default function Planning() {
         {/* 🆕 PROXY DISPATCH BUTTON - Visible for En Chargement & En Livraison */}
         {['production', 'validation_technique', 'en_livraison'].includes(bon.workflow_status) && (
             <div className="mt-3 pt-3 border-t border-border">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Phone className="h-3 w-3 text-muted-foreground" />
-                {t.pages.planning.manualControl}
+            <div className="flex items-center justify-between gap-2 mb-2">
+              <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 min-w-0">
+                <Phone className="h-3 w-3 text-muted-foreground shrink-0" />
+                <span className="break-words">{t.pages.planning.manualControl}</span>
               </span>
               <DispatcherProxyControls
                 blId={bon.bl_id}

@@ -102,7 +102,7 @@ export function DriverDispatchCard({
         <div className="flex justify-between items-start gap-3 mb-4">
           <div className="flex-1 min-w-0">
             <p className="font-bold text-lg text-white truncate">{bon.bl_id}</p>
-            <p className="text-base text-white/40 truncate">
+            <p className="text-base text-white/40 break-words">
               {bon.clients?.nom_client || bon.client_id}
             </p>
           </div>
