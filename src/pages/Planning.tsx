@@ -1638,41 +1638,41 @@ export default function Planning() {
         )}
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-2 rounded-lg bg-blue-400/10">
-              <Calendar className="h-5 w-5 text-blue-400" />
+        <div className="grid grid-cols-4 gap-2">
+          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+            <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0">
+              <Calendar className="h-4 w-4 text-blue-400" />
             </div>
-            <div>
-              <p className="text-2xl font-mono font-normal text-white/80">{displayTotalBonsToday}</p>
-              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.deliveriesToday}</p>
-            </div>
-          </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-2 rounded-lg bg-[#D4A843]/10">
-              <Clock className="h-5 w-5 text-[#D4A843]" />
-            </div>
-            <div>
-              <p className="text-2xl font-mono font-normal text-white/80">{displayPendingBons}</p>
-              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.waitingLabel}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-mono font-normal text-white/80">{displayTotalBonsToday}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.deliveriesToday}</p>
             </div>
           </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-2 rounded-lg bg-emerald-400/10">
-              <Truck className="h-5 w-5 text-emerald-400" />
+          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+            <div className="p-1.5 rounded-lg bg-[#D4A843]/10 shrink-0">
+              <Clock className="h-4 w-4 text-[#D4A843]" />
             </div>
-            <div>
-              <p className="text-2xl font-mono font-normal text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
-              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.trucksAvailable}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-mono font-normal text-white/80">{displayPendingBons}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.waitingLabel}</p>
             </div>
           </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
-            <div className="p-2 rounded-lg bg-blue-400/10">
-              <Navigation className="h-5 w-5 text-blue-400" />
+          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+            <div className="p-1.5 rounded-lg bg-emerald-400/10 shrink-0">
+              <Truck className="h-4 w-4 text-emerald-400" />
             </div>
-            <div>
-              <p className="text-2xl font-mono font-normal text-white/80">{displayEnLivraison.length}</p>
-              <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.onRoute}</p>
+            <div className="min-w-0">
+              <p className="text-xl font-mono font-normal text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.trucksAvailable}</p>
+            </div>
+          </div>
+          <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
+            <div className="p-1.5 rounded-lg bg-blue-400/10 shrink-0">
+              <Navigation className="h-4 w-4 text-blue-400" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-xl font-mono font-normal text-white/80">{displayEnLivraison.length}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.onRoute}</p>
             </div>
           </div>
         </div>
