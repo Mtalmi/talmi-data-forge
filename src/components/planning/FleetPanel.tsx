@@ -173,7 +173,7 @@ export function FleetPanel({ selectedDate, onOpenChange }: FleetPanelProps) {
 
   if (!isOpen) {
     return (
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 animate-in fade-in duration-300">
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 animate-in fade-in duration-300">
         <button
           onClick={() => setIsOpen(true)}
           className="flex flex-col items-center justify-center gap-1.5 w-10 h-20 rounded-l-lg bg-slate-800/90 backdrop-blur-sm border border-r-0 border-amber-500/30 shadow-lg hover:bg-slate-700/90 hover:border-amber-500/50 transition-colors cursor-pointer"
