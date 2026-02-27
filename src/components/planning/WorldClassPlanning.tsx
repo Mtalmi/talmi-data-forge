@@ -473,7 +473,7 @@ export default function WorldClassPlanning() {
         <section>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Commandes cette semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs semaine dernière" trendPositive delay={0} />
+            <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs semaine dernière" trendPositive delay={0} />
             <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs semaine dernière" trendPositive delay={80} />
             <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs semaine dernière" trendPositive delay={160} />
             <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.info} icon={Truck} trend="stable" trendPositive delay={240} />
