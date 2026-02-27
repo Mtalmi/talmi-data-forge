@@ -1644,7 +1644,7 @@ export default function Planning() {
               <Calendar className="h-4 w-4 text-blue-400" />
             </div>
             <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayTotalBonsToday}</p>
               <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.deliveriesToday}</p>
             </div>
           </div>
@@ -1653,7 +1653,7 @@ export default function Planning() {
               <Clock className="h-4 w-4 text-[#D4A843]" />
             </div>
             <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayPendingBons}</p>
               <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.waitingLabel}</p>
             </div>
           </div>
@@ -1662,7 +1662,7 @@ export default function Planning() {
               <Truck className="h-4 w-4 text-emerald-400" />
             </div>
             <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
               <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.trucksAvailable}</p>
             </div>
           </div>
@@ -1671,7 +1671,7 @@ export default function Planning() {
               <Navigation className="h-4 w-4 text-blue-400" />
             </div>
             <div className="min-w-0">
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }} className="text-white/80">{displayEnLivraison.length}</p>
               <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.onRoute}</p>
             </div>
           </div>
@@ -1728,7 +1728,7 @@ export default function Planning() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="ml-auto gap-1 text-blue-400 hover:bg-blue-400/10 h-7 text-[10px] px-2 whitespace-nowrap"
+                    className="ml-auto gap-1 text-blue-400 hover:bg-blue-400/10 h-7 text-[9px] px-1.5 whitespace-nowrap"
                     data-testid="centre-production-link"
                     onClick={() => navigate(`/production?date=${selectedDate}`)}
                   >
