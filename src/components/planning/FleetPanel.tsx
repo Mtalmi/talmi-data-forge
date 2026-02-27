@@ -173,19 +173,14 @@ export function FleetPanel({ selectedDate, onOpenChange }: FleetPanelProps) {
 
   if (!isOpen) {
     return (
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40">
-        <Button
-          variant="outline"
-          size="sm"
+      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-40 animate-in fade-in duration-300">
+        <button
           onClick={() => setIsOpen(true)}
-          className="rounded-l-lg rounded-r-none h-24 px-1 bg-card border-r-0 shadow-lg hover:bg-muted"
+          className="flex flex-col items-center justify-center gap-1.5 w-10 h-20 rounded-l-lg bg-slate-800/90 backdrop-blur-sm border border-r-0 border-amber-500/30 shadow-lg hover:bg-slate-700/90 hover:border-amber-500/50 transition-colors cursor-pointer"
         >
-          <div className="flex flex-col items-center gap-1">
-            <ChevronLeft className="h-4 w-4" />
-            <Truck className="h-4 w-4" />
-            <span className="text-xs font-bold">{availableCount}</span>
-          </div>
-        </Button>
+          <Truck className="h-4 w-4 text-amber-400" />
+          <ChevronLeft className="h-3.5 w-3.5 text-slate-400" />
+        </button>
       </div>
     );
   }
