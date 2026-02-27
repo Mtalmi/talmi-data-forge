@@ -143,7 +143,7 @@ export function DailyTimeline({
               </div>
 
               {/* Timeline bar */}
-              <div className="relative h-10 bg-white/[0.03] rounded-lg border border-white/[0.06] overflow-visible">
+              <div className="relative h-10 bg-white/[0.03] rounded-lg border border-white/[0.06] overflow-hidden">
                 {/* Hour grid lines */}
                 {hours.map((hour, i) => (
                   <div
@@ -171,7 +171,7 @@ export function DailyTimeline({
                         className={cn(
                           "absolute top-1 bottom-1 rounded-md cursor-pointer transition-all hover:scale-105 hover:z-10 shadow-sm hover:shadow-md",
                           STATUS_GRADIENTS[bon.workflow_status] || 'bg-white/20',
-                          "min-w-[60px] ring-1 ring-white/20"
+                          "min-w-[60px] max-w-full ring-1 ring-white/20"
                         )}
                         style={{ 
                           left: `${bon.position}%`,
