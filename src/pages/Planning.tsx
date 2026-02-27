@@ -1433,7 +1433,7 @@ export default function Planning() {
   // Desktop view
   return (
     <MainLayout>
-      <WorldClassPlanning />
+      <WorldClassPlanning fleetPanelOpen={fleetPanelOpen && !isMobile} />
       <div className={cn("space-y-6 transition-all duration-300", fleetPanelOpen && !isMobile ? "pr-[272px]" : "pr-0")}>
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
