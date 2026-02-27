@@ -292,12 +292,12 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               {animated.toLocaleString('fr-FR')}
-              <span style={{ fontSize: 13, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>
             </p>
-            <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 6, fontWeight: 600 }}>
+            <p style={{ fontSize: 10, color: trendPositive ? T.success : T.danger, marginTop: 5, fontWeight: 600, whiteSpace: 'nowrap' }}>
               {trendPositive ? '↑' : '↓'} {trend}
             </p>
           </div>
