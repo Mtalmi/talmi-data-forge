@@ -1639,7 +1639,7 @@ export default function Planning() {
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
             <div className="p-2 rounded-lg bg-blue-400/10">
               <Calendar className="h-5 w-5 text-blue-400" />
             </div>
@@ -1648,7 +1648,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.deliveriesToday}</p>
             </div>
           </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
             <div className="p-2 rounded-lg bg-[#D4A843]/10">
               <Clock className="h-5 w-5 text-[#D4A843]" />
             </div>
@@ -1657,7 +1657,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.waitingLabel}</p>
             </div>
           </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
             <div className="p-2 rounded-lg bg-emerald-400/10">
               <Truck className="h-5 w-5 text-emerald-400" />
             </div>
@@ -1666,7 +1666,7 @@ export default function Planning() {
               <p className="text-[10px] text-white/40 uppercase">{t.pages.planning.trucksAvailable}</p>
             </div>
           </div>
-          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+          <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
             <div className="p-2 rounded-lg bg-blue-400/10">
               <Navigation className="h-5 w-5 text-blue-400" />
             </div>
