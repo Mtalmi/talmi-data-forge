@@ -293,7 +293,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: T.textDim, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400, color, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
               {animated.toLocaleString('fr-FR')}
               <span style={{ fontSize: 13, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>
             </p>
