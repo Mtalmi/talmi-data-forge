@@ -41,13 +41,19 @@ type ActiveDeliveriesMap = Record<string, ActiveDelivery>;
 
 interface FleetPanelProps {
   selectedDate: string;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
-export function FleetPanel({ selectedDate }: FleetPanelProps) {
+export function FleetPanel({ selectedDate, onOpenChange }: FleetPanelProps) {
   const { t } = useI18n();
   const fp = t.fleetPanel;
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
+  
+  // Notify parent of open/close changes
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
   const [vehicles, setVehicles] = useState<FleetVehicle[]>([]);
   const [activeDeliveries, setActiveDeliveries] = useState<ActiveDeliveriesMap>({});
   const [loading, setLoading] = useState(true);

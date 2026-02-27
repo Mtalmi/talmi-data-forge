@@ -116,6 +116,7 @@ export default function Planning() {
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
   const { isDirecteurOperations, isCeo, isAgentAdministratif, isSuperviseur, user, canEditPlanning, canOverrideCreditBlock, role } = useAuth();
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
+  const [fleetPanelOpen, setFleetPanelOpen] = useState(true);
   const [bons, setBons] = useState<BonLivraison[]>([]);
   const [camions, setCamions] = useState<Camion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1433,7 +1434,7 @@ export default function Planning() {
   return (
     <MainLayout>
       <WorldClassPlanning />
-      <div className="space-y-6">
+      <div className={cn("space-y-6 transition-all duration-300", fleetPanelOpen && !isMobile ? "pr-[272px]" : "pr-0")}>
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
@@ -2001,7 +2002,7 @@ export default function Planning() {
 
         {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
         {!isMobile && (
-          <FleetPanel selectedDate={selectedDate} />
+          <FleetPanel selectedDate={selectedDate} onOpenChange={setFleetPanelOpen} />
         )}
       </div>
     </MainLayout>
