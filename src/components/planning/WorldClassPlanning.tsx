@@ -292,12 +292,12 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <p style={{ color: T.textDim, fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
+            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '1.875rem', fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.025em' }}>
               {animated.toLocaleString('fr-FR')}
-              <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>
+              {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
             </p>
-            <p style={{ fontSize: 10, color: trendPositive ? T.success : T.danger, marginTop: 5, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 5, fontWeight: 600, whiteSpace: 'nowrap' }}>
               {trendPositive ? '↑' : '↓'} {trend}
             </p>
           </div>
@@ -473,9 +473,9 @@ export default function WorldClassPlanning() {
         <section>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs semaine dernière" trendPositive delay={0} />
-            <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs semaine dernière" trendPositive delay={80} />
-            <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs semaine dernière" trendPositive delay={160} />
+            <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
+            <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
+            <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
             <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.info} icon={Truck} trend="stable" trendPositive delay={240} />
           </div>
         </section>
