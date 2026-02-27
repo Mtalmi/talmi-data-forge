@@ -56,7 +56,7 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className="overflow-hidden transition-all duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+      <div className="transition-all duration-300 rounded-2xl" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
         <CollapsibleTrigger asChild>
           <div className={cn(
             "flex flex-col space-y-1.5 p-5 sm:p-6 cursor-pointer transition-all duration-200",

@@ -1433,7 +1433,7 @@ export default function Planning() {
   return (
     <MainLayout>
       <WorldClassPlanning />
-      <div className="space-y-6">
+      <div className="space-y-6 pr-[272px]">
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
@@ -1865,7 +1865,7 @@ export default function Planning() {
         </div>
 
         {/* Full Day Schedule */}
-        <div className="rounded-xl bg-white/[0.02] border border-white/[0.06] overflow-hidden">
+        <div className="rounded-xl bg-white/[0.02] border border-white/[0.06]">
           <div className="p-5 pb-3 border-b border-white/[0.06]">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" style={{ color: '#D4A843' }} />
@@ -1883,7 +1883,7 @@ export default function Planning() {
             ) : (
               <div className="space-y-0">
                 {/* Column Headers */}
-                <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_120px] gap-4 px-3 pb-3 mb-2 border-b border-white/[0.06]">
+                <div className="grid grid-cols-[60px_1fr_1fr_1fr_100px_90px] gap-3 px-3 pb-3 mb-2 border-b border-white/[0.06]">
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Heure</span>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">BL</span>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Client</span>
@@ -1903,7 +1903,7 @@ export default function Planning() {
                   .map(bon => (
                     <div 
                       key={bon.bl_id}
-                      className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_120px] gap-4 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                      className="grid grid-cols-[60px_1fr_1fr_1fr_100px_90px] gap-3 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                     >
                       <span className="font-mono font-normal text-lg text-white/50">
                         {formatTimeHHmm(bon.heure_prevue) || '--:--'}
