@@ -911,7 +911,7 @@ export default function Planning() {
             <CreditIndicator />
             <div>
               <p className={cn("font-semibold font-mono text-foreground", isTouchDevice ? "text-base" : "text-sm")}>{bon.bl_id}</p>
-               <p className={cn("text-muted-foreground", isTouchDevice ? "text-sm" : "text-xs")}>
+               <p className={cn("text-muted-foreground whitespace-normal break-words", isTouchDevice ? "text-sm" : "text-xs")}>
                 {bon.clients?.nom_client || bon.client_id}
               </p>
             </div>
@@ -1645,7 +1645,7 @@ export default function Planning() {
             </div>
             <div className="min-w-0">
               <p className="text-xl font-mono font-normal text-white/80">{displayTotalBonsToday}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.deliveriesToday}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.deliveriesToday}</p>
             </div>
           </div>
           <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
@@ -1654,7 +1654,7 @@ export default function Planning() {
             </div>
             <div className="min-w-0">
               <p className="text-xl font-mono font-normal text-white/80">{displayPendingBons}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.waitingLabel}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.waitingLabel}</p>
             </div>
           </div>
           <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
@@ -1663,7 +1663,7 @@ export default function Planning() {
             </div>
             <div className="min-w-0">
               <p className="text-xl font-mono font-normal text-white/80">{displayAvailableCamions}/{displayTotalCamions}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.trucksAvailable}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.trucksAvailable}</p>
             </div>
           </div>
           <div className="rounded-xl p-3 flex items-center gap-2" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid rgba(255,215,0,0.15)', boxShadow: '0 0 12px rgba(255,215,0,0.06)' }}>
@@ -1672,7 +1672,7 @@ export default function Planning() {
             </div>
             <div className="min-w-0">
               <p className="text-xl font-mono font-normal text-white/80">{displayEnLivraison.length}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight truncate">{t.pages.planning.onRoute}</p>
+              <p className="text-[9px] text-white/40 uppercase leading-tight whitespace-normal">{t.pages.planning.onRoute}</p>
             </div>
           </div>
         </div>
@@ -1883,7 +1883,7 @@ export default function Planning() {
             ) : (
               <div className="space-y-0">
                 {/* Column Headers */}
-                <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_auto] gap-4 px-3 pb-3 mb-2 border-b border-white/[0.06]">
+                <div className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_120px] gap-4 px-3 pb-3 mb-2 border-b border-white/[0.06]">
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Heure</span>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">BL</span>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Client</span>
@@ -1903,7 +1903,7 @@ export default function Planning() {
                   .map(bon => (
                     <div 
                       key={bon.bl_id}
-                      className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_auto] gap-4 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                      className="grid grid-cols-[80px_1fr_1fr_1fr_1fr_120px] gap-4 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                     >
                       <span className="font-mono font-normal text-lg text-white/50">
                         {formatTimeHHmm(bon.heure_prevue) || '--:--'}

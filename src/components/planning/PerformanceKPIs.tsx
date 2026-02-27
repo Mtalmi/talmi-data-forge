@@ -157,12 +157,12 @@ export function PerformanceKPIs({
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-2 gap-2 text-center mb-4">
+      <div className="grid grid-cols-2 gap-1.5 text-center mb-4">
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="px-1.5 py-2 rounded-lg bg-emerald-400/10 cursor-default">
-              <p className="text-lg font-mono font-normal text-emerald-400">{finalOverallStats.totalDelivered}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight">Livrés</p>
+            <div className="px-1 py-1.5 rounded-lg bg-emerald-400/10 cursor-default">
+              <p className="text-base font-mono font-normal text-emerald-400">{finalOverallStats.totalDelivered}</p>
+              <p className="text-[8px] text-white/40 uppercase leading-tight">Livrés</p>
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons complétées aujourd'hui</TooltipContent>
@@ -170,9 +170,9 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="px-1.5 py-2 rounded-lg bg-blue-400/10 cursor-default">
-              <p className="text-lg font-mono font-normal text-blue-400">{finalOverallStats.totalInProgress}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight">En cours</p>
+            <div className="px-1 py-1.5 rounded-lg bg-blue-400/10 cursor-default">
+              <p className="text-base font-mono font-normal text-blue-400">{finalOverallStats.totalInProgress}</p>
+              <p className="text-[8px] text-white/40 uppercase leading-tight">En cours</p>
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons en production ou en route</TooltipContent>
@@ -180,9 +180,9 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="px-1.5 py-2 rounded-lg bg-[#D4A843]/10 cursor-default">
-              <p className="text-lg font-mono font-normal text-[#D4A843]">{finalOverallStats.totalPending}</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight">Attente</p>
+            <div className="px-1 py-1.5 rounded-lg bg-[#D4A843]/10 cursor-default">
+              <p className="text-base font-mono font-normal text-[#D4A843]">{finalOverallStats.totalPending}</p>
+              <p className="text-[8px] text-white/40 uppercase leading-tight">Attente</p>
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-[#111B2E] text-white border-white/10">Livraisons en attente de démarrage</TooltipContent>
@@ -190,9 +190,9 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="px-1.5 py-2 rounded-lg bg-white/[0.04] cursor-default">
-              <p className="text-lg font-mono font-normal text-white/70">{finalOverallStats.onTimeRate}%</p>
-              <p className="text-[9px] text-white/40 uppercase leading-tight">À l'heure</p>
+            <div className="px-1 py-1.5 rounded-lg bg-white/[0.04] cursor-default">
+              <p className="text-base font-mono font-normal text-white/70">{finalOverallStats.onTimeRate}%</p>
+              <p className="text-[8px] text-white/40 uppercase leading-tight">À l'heure</p>
             </div>
           </TooltipTrigger>
           <TooltipContent className="bg-[#111B2E] text-white border-white/10">Taux de livraison dans les temps</TooltipContent>
