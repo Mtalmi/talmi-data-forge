@@ -467,7 +467,7 @@ export default function WorldClassPlanning() {
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: 'calc(24px + 272px)', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
         {/* ── SECTION 1: KPIs ── */}
         <section>
