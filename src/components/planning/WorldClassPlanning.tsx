@@ -399,7 +399,7 @@ function DeliveryCard({ d, delay = 0 }: { d: typeof deliveries[0]; delay?: numbe
 // ─────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
-export default function WorldClassPlanning() {
+export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
   const [activeTab, setActiveTab] = useState('semaine');
   const { kpis: pKpis, liveDeliveries } = usePlanningLiveData();
   const tabs = [
@@ -421,7 +421,7 @@ export default function WorldClassPlanning() {
         background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)',
         borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
       }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div style={{ margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20, paddingRight: fleetPanelOpen ? 272 : 0, transition: 'padding-right 300ms ease-in-out' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -467,7 +467,7 @@ export default function WorldClassPlanning() {
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ margin: '0 auto', padding: '32px 24px', paddingRight: 'calc(24px + 272px)', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div style={{ margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
 
         {/* ── SECTION 1: KPIs ── */}
         <section>
