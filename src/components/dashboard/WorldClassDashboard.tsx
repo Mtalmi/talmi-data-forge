@@ -644,7 +644,7 @@ export function WorldClassDashboard() {
         }
       `}</style>
 
-      <div style={{ maxWidth: 1600, margin: '0 auto' }} className="relative">
+      <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
         {/* Ops zone ambient atmosphere — extends the hero warmth */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
           <div className="absolute -top-40 left-[20%] w-[700px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.01) 40%, transparent 65%)', filter: 'blur(80px)', animation: 'opsGlow 12s ease-in-out infinite' }} />
@@ -654,7 +654,7 @@ export function WorldClassDashboard() {
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 relative z-[1]" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
-          <div className="space-y-5">
+          <div className="space-y-5 min-w-0">
             {/* Daily Production Chart */}
             <Card className="tbos-card-enter tbos-stagger-1" style={{ height: 280 }}>
               {/* Category accent — teal for production */}
@@ -716,7 +716,7 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
-          <div className="space-y-5">
+          <div className="space-y-5 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
             <Card className="tbos-card-enter tbos-stagger-4">
               {/* Category accent — teal for production */}
@@ -804,7 +804,7 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 3: Créances & Deliveries ─── */}
-          <div className="space-y-5">
+          <div className="space-y-5 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             <Card className="tbos-card-enter tbos-stagger-7">
               {/* Category accent — gold for financial */}
