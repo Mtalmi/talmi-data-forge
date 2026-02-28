@@ -309,8 +309,8 @@ function AIAnalystBrief() {
 
   return (
     <Card className="ops-enter ops-surface-card">
-      {/* Category accent — amber */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))' }}>
@@ -387,8 +387,8 @@ function PipelineFunnel() {
 
   return (
     <Card className="ops-enter ops-surface-card">
-      {/* Category accent — gold for financial */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
       <div className="flex justify-between items-center mb-5">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
         <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', color: 'white', textShadow: '0 0 25px rgba(253,185,19,0.15)' }}>50<span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>%</span></span>
@@ -638,8 +638,8 @@ export function WorldClassDashboard() {
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280 }}>
-              {/* Category accent — amber for production */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
@@ -680,8 +680,8 @@ export function WorldClassDashboard() {
 
             {/* Batch Timeline */}
             <Card className="ops-enter ops-surface-card tbos-stagger-2">
-              {/* Category accent — amber for production */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: T.dotOk }} />
@@ -700,8 +700,8 @@ export function WorldClassDashboard() {
           <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
             <Card className="ops-enter ops-surface-card tbos-stagger-4">
-              {/* Category accent — amber for stock */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
               <div className="flex flex-col">
                 {stockData.slice(0, 6).map((s, i) => (
@@ -762,8 +762,8 @@ export function WorldClassDashboard() {
 
             {/* Quality feed — Compact */}
             <Card className="ops-enter ops-surface-card tbos-stagger-6">
-              {/* Category accent — amber for quality */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
@@ -791,8 +791,8 @@ export function WorldClassDashboard() {
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             <Card className="ops-enter ops-surface-card tbos-stagger-7">
-              {/* Category accent — gold for financial */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
@@ -837,8 +837,8 @@ export function WorldClassDashboard() {
 
             {/* Daily P&L Signature Metric */}
             <Card className="ops-enter ops-surface-card tbos-stagger-9">
-              {/* Category accent — gold for financial */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
               <div className="text-center py-4 relative">
                 {/* Golden ambient behind number */}
                 
