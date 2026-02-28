@@ -248,19 +248,15 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 12px 36px rgba(0,0,0,0.25) !important;
 }
 
-/* ─── Operations surface hard-lock (prevents shape drift) ─── */
+/* ─── Operations surface card — dashboard-specific ─── */
 .ops-surface-card {
   border-radius: 12px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-image: none !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
   box-shadow: none !important;
   overflow: hidden !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  mask-image: none !important;
-  -webkit-mask-image: none !important;
-  transform: none !important;
 }
 .ops-surface-card::before,
 .ops-surface-card::after {
@@ -269,25 +265,6 @@
 }
 .ops-surface-card:hover {
   border-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: none !important;
-}
-
-/* ─── Nuclear: force 12px on ALL Card components in dashboard ─── */
-.tbos-card,
-.tbos-card-hero,
-.tbos-card-recessed {
-  border-radius: 12px !important;
-}
-
-/* Force all rounded-xl cards within dashboard to 12px */
-[class*="rounded-xl"] {
-  border-radius: 12px !important;
-}
-
-/* Override any stray rounded-2xl or rounded-3xl */
-[class*="rounded-2xl"],
-[class*="rounded-3xl"] {
-  border-radius: 12px !important;
 }
 
 /* ─── Link hover — gold underline animation ─── */
@@ -496,7 +473,8 @@
 @layer components {
   /* ===== OBSIDIAN VAULT SYSTEM ===== */
   .glass-panel {
-    @apply relative overflow-hidden rounded-xl;
+    @apply relative overflow-hidden;
+    border-radius: 12px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
@@ -536,7 +514,8 @@
 
   /* Vault Header — Bloomberg command bar */
   .dashboard-header {
-    @apply relative overflow-hidden rounded-2xl;
+    @apply relative overflow-hidden;
+    border-radius: 12px;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow:
@@ -810,7 +789,8 @@
 
   /* ===== BLOOMBERG-GRADE INDUSTRIAL CARDS ===== */
   .card-industrial {
-    @apply relative overflow-hidden rounded-xl;
+    @apply relative overflow-hidden;
+    border-radius: 12px !important;
     background: hsl(var(--card));
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -1070,15 +1050,16 @@
 
   /* ===== OBSIDIAN GLASS CARDS ===== */
   .glass-card {
-    @apply relative overflow-hidden rounded-xl;
+    @apply relative overflow-hidden;
+    border-radius: 12px;
     background: transparent;
-    border: 1px solid hsl(51 100% 50% / 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.4s ease;
   }
 
   .glass-card:hover {
-    border-color: hsl(51 100% 50% / 0.25);
-    box-shadow: 0 0 40px hsl(51 100% 50% / 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }
 
   .glass-premium {
@@ -2927,12 +2908,11 @@
 .tbos-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
+  border-radius: 12px !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  will-change: transform;
 }
 .tbos-card:hover {
   background: rgba(255, 255, 255, 0.05);
@@ -2940,37 +2920,27 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 32px rgba(0, 0, 0, 0.5);
 }
-.tbos-card:active {
-  transform: translateY(0) scale(0.995);
-}
 
-/* ─── Hero Card — most important data per page ─── */
+/* ─── Hero Card ─── */
 .tbos-card-hero {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    0 4px 24px rgba(0, 0, 0, 0.4),
-    0 0 48px rgba(234, 179, 8, 0.03);
+  border-radius: 12px !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 .tbos-card-hero:hover {
   border-color: rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.08),
-    0 8px 32px rgba(0, 0, 0, 0.5),
-    0 0 64px rgba(234, 179, 8, 0.05);
   transform: translateY(-1px);
 }
 
-/* ─── Recessed Card — secondary/supporting info ─── */
+/* ─── Recessed Card ─── */
 .tbos-card-recessed {
   background: rgba(255, 255, 255, 0.015);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  border-radius: 12px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -4735,7 +4705,7 @@ hr,
 
   /* ─── Cards ─── */
   .tbos-card {
-    border-radius: 10px !important;
+    border-radius: 12px !important;
   }
 
   /* ─── Touch targets ─── */
