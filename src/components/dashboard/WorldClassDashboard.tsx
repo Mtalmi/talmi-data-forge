@@ -627,6 +627,13 @@ export function WorldClassDashboard() {
         .tbos-stagger-7 { animation-delay: 150ms; }
         .tbos-stagger-8 { animation-delay: 250ms; }
         .tbos-stagger-9 { animation-delay: 350ms; }
+        /* Nuclear radius lock for ALL ops cards */
+        div.ops-surface-card,
+        div.ops-surface-card.bg-card,
+        .ops-surface-card[class] {
+          border-radius: 8px !important;
+          overflow: hidden !important;
+        }
         @media (max-width: 768px) {
           .tbos-grid-3col { grid-template-columns: 1fr !important; }
         }
@@ -762,9 +769,7 @@ export function WorldClassDashboard() {
             <PipelineFunnel />
 
             {/* Quality feed — Compact */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-6">
-
-
+            <Card className="ops-enter ops-surface-card tbos-stagger-6" style={{ borderRadius: 8, padding: 16 }}>
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
