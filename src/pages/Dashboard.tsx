@@ -256,43 +256,15 @@ export default function Dashboard() {
             transform: translateY(-4px);
           }
           .tbos-hero-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 5%;
-            right: 5%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+            display: none !important;
+            content: none !important;
           }
           .tbos-hero-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1px;
-            height: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+            display: none !important;
+            content: none !important;
           }
-          /* Scanline effect on hero cards */
           .tbos-hero-card .scanline-overlay {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.5s;
-          }
-          .tbos-hero-card:hover .scanline-overlay {
-            opacity: 1;
-          }
-          .tbos-hero-card .scanline-overlay::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(180deg, transparent, rgba(253,185,19,0.02), transparent);
-            animation: scanline 3s ease-in-out infinite;
+            display: none !important;
           }
         `}</style>
 
