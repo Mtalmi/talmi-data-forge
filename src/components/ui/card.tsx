@@ -18,9 +18,9 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant =
     className={cn(
       cardVariantClasses[variant],
       "rounded-xl text-card-foreground",
-      "backdrop-blur-sm relative overflow-hidden",
+      "relative overflow-hidden",
       className
-    )} 
+    )}
     {...props} 
   />
 ));
