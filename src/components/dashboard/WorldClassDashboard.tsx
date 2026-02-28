@@ -322,8 +322,8 @@ function AIAnalystBrief() {
 
   return (
     <Card className="tbos-card-enter">
-      {/* Category accent — purple for AI */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #8B5CF6, transparent)' }} />
+      {/* Category accent — amber */}
+      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))' }}>
@@ -657,8 +657,8 @@ export function WorldClassDashboard() {
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             <Card className="tbos-card-enter tbos-stagger-1" style={{ height: 280 }}>
-              {/* Category accent — teal for production */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
+              {/* Category accent — amber for production */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <div>
                   <div className="text-[14px] font-medium text-white/90">Production Journalière</div>
@@ -699,8 +699,8 @@ export function WorldClassDashboard() {
 
             {/* Batch Timeline */}
             <Card className="tbos-card-enter tbos-stagger-2">
-              {/* Category accent — teal for production */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
+              {/* Category accent — amber for production */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5" style={{ background: T.dotOk }} />
@@ -719,8 +719,8 @@ export function WorldClassDashboard() {
           <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
             <Card className="tbos-card-enter tbos-stagger-4">
-              {/* Category accent — teal for production */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
+              {/* Category accent — amber for stock */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
               <div className="flex flex-col">
                 {stockData.slice(0, 6).map((s, i) => (
@@ -781,8 +781,8 @@ export function WorldClassDashboard() {
 
             {/* Quality feed — Compact */}
             <Card className="tbos-card-enter tbos-stagger-6">
-              {/* Category accent — emerald for quality */}
-              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #10B981, transparent)' }} />
+              {/* Category accent — amber for quality */}
+              <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
