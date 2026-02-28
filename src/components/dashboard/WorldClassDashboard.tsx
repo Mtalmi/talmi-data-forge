@@ -93,12 +93,6 @@ const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?:
           el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
         }}
       >
-        {/* Top highlight edge */}
-        <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
-        {/* Gradient border glow on hover */}
-        <div className="absolute inset-0 rounded-[16px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.04) 0%, transparent 70%)' }} />
-        {/* Breathing ambient glow */}
-        <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.03) 0%, transparent 70%)', animation: 'breathe 4s ease-in-out infinite' }} />
         {children}
       </div>
     );
@@ -157,9 +151,6 @@ function EmptyState({ title, subtitle, icon }: { title: string; subtitle: string
         }}>
           <span className="text-2xl" style={{ filter: 'grayscale(0.3)' }}>{icon}</span>
         </div>
-        {/* Decorative orbital rings */}
-        <div className="absolute -inset-3 rounded-full border border-dashed pointer-events-none" style={{ borderColor: 'rgba(212,175,55,0.06)', animation: 'spin 20s linear infinite' }} />
-        <div className="absolute -inset-6 rounded-full border border-dashed pointer-events-none" style={{ borderColor: 'rgba(212,175,55,0.03)', animation: 'spin 30s linear infinite reverse' }} />
       </div>
       <span className="text-[12px] font-medium text-white/60 mb-1">{title}</span>
       <span className="text-[10px] text-slate-600 text-center max-w-[200px]">{subtitle}</span>
@@ -645,12 +636,6 @@ export function WorldClassDashboard() {
       `}</style>
 
       <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
-        {/* Ops zone ambient atmosphere — extends the hero warmth */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-          <div className="absolute -top-40 left-[20%] w-[700px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.01) 40%, transparent 65%)', filter: 'blur(80px)', animation: 'opsGlow 12s ease-in-out infinite' }} />
-          <div className="absolute top-[40%] right-[10%] w-[500px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.025) 0%, transparent 55%)', filter: 'blur(100px)', animation: 'opsGlow 16s ease-in-out infinite 4s' }} />
-          <div className="absolute bottom-0 left-[40%] w-[600px] h-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.025) 0%, transparent 50%)', filter: 'blur(90px)', animation: 'opsGlow 14s ease-in-out infinite 8s' }} />
-        </div>
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
@@ -860,7 +845,7 @@ export function WorldClassDashboard() {
               <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
               <div className="text-center py-4 relative">
                 {/* Golden ambient behind number */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.06) 0%, transparent 70%)', filter: 'blur(30px)' }} />
+                
                 <div className="relative z-[1]">
                   <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-3 font-medium">P&L du jour</div>
                   <div className="text-[2.5rem] font-extralight font-mono text-white tabular-nums leading-none" style={{
