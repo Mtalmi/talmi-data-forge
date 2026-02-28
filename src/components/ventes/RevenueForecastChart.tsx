@@ -150,49 +150,36 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         }}
       >
         {/* Summary Stats — uniform glass cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           {/* Confirmed */}
-          <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 12,
-            padding: '16px 20px',
-            textAlign: 'center',
-          }}>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
-              <AnimatedKDH value={totalConfirmed} />
-            </p>
-            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.confirmed}</p>
+          <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+            <div>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+                <AnimatedKDH value={totalConfirmed} />
+              </span>
+            </div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">{rf.confirmed}</p>
             {totalConfirmed === 0 && (
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic', marginTop: 4 }}>{vt.noConfirmedOrders}</p>
+              <p className="text-[11px] text-muted-foreground whitespace-nowrap mt-0.5" style={{ fontStyle: 'italic' }}>{vt.noConfirmedOrders}</p>
             )}
           </div>
           {/* Potential */}
-          <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 12,
-            padding: '16px 20px',
-            textAlign: 'center',
-          }}>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
-              <AnimatedKDH value={totalPotential} />
-            </p>
-            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.potential}</p>
+          <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+            <div>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+                <AnimatedKDH value={totalPotential} />
+              </span>
+            </div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">{rf.potential}</p>
           </div>
           {/* Total Forecast */}
-          <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderBottom: '2px solid rgba(253,185,19,0.3)',
-            borderRadius: 12,
-            padding: '16px 20px',
-            textAlign: 'center',
-          }}>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '1.25rem', color: 'white' }}>
-              <AnimatedKDH value={totalForecast} />
-            </p>
-            <p style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 4 }}>{rf.forecast}</p>
+          <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+            <div>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+                <AnimatedKDH value={totalForecast} />
+              </span>
+            </div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">{rf.forecast}</p>
           </div>
         </div>
 
