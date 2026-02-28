@@ -1000,7 +1000,7 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="flex items-center gap-3 pt-5 mb-3">
+        <div className="flex items-center gap-3 pt-5 mb-5">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
           <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
