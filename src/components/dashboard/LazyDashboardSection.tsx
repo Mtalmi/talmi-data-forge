@@ -53,13 +53,10 @@ export function LazyDashboardSection({
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center gap-3 py-4 px-5 rounded-[14px] group cursor-pointer select-none transition-all duration-500 hover:scale-[1.005]"
           style={{
-            background: open 
-              ? 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.015) 100%)'
-              : 'linear-gradient(135deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.008) 100%)',
-            border: '1px solid',
-            borderColor: open ? 'rgba(212,175,55,0.12)' : 'rgba(255,255,255,0.05)',
-            backdropFilter: 'blur(16px)',
-            boxShadow: open ? '0 4px 24px rgba(0,0,0,0.15), 0 0 40px rgba(212,175,55,0.02)' : 'none',
+            background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            backdropFilter: 'none',
+            boxShadow: 'none',
           }}
         >
           <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{
