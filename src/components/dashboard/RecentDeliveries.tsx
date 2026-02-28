@@ -121,7 +121,7 @@ export default function RecentDeliveries() {
           border: '1px solid rgba(245, 158, 11, 0.2)',
         }}
       >
-        <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
+        
         <h3 className="text-sm font-medium text-white/90 mb-4">{t.widgets.recentDeliveries.title}</h3>
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
