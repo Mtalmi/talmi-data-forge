@@ -2287,19 +2287,8 @@
 }
 
 /* ── Global card hover shimmer system ────────────────────── */
-/* Gold top line shimmer on cards EXCEPT operations surfaces */
-.card::after,
-[class*="card"]:not(.ops-surface-card)::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, hsl(51 100% 50%), transparent);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-  z-index: 2;
-}
+/* Gold top line shimmer ONLY on god-tier-card KPI cards */
+/* REMOVED: [class*="card"] catch-all — it injected pseudo-elements into dashboard cards */
 
 /* EXCEPTION: god-tier-card already has its own ::before shimmer sweep — keep that working */
 .god-tier-card::after {
