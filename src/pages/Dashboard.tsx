@@ -210,7 +210,7 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div
-        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden w-[calc(100%+1.5rem*2)] sm:w-[calc(100%+2rem*2)] md:w-[calc(100%+3rem*2)] lg:w-[calc(100%+4rem*2)] -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 -mt-3 sm:-mt-4 md:-mt-6 lg:-mt-8 -mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8"
+        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-[calc(100%+1.5rem*2)] sm:w-[calc(100%+2rem*2)] md:w-[calc(100%+3rem*2)] lg:w-[calc(100%+4rem*2)] -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 -mt-3 sm:-mt-4 md:-mt-6 lg:-mt-8 -mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
         style={{
           background: 'linear-gradient(170deg, #0D1220 0%, #0F172A 40%, #131B2E 100%)',
         }}
@@ -420,7 +420,7 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions Command Bar */}
-          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1] overflow-hidden" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
+          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1] overflow-hidden min-w-0 max-w-full" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
             <button
               onClick={() => navigate('/ventes')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-[1.03]"
@@ -470,7 +470,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch" style={{ alignItems: 'stretch' }}>
+          <div className="grid grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
           {[
             {
               label: 'VOLUME',
@@ -529,7 +529,7 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <TiltCard
               key={i}
-              className="tbos-hero-card group cursor-default shimmer-effect h-full flex flex-col"
+              className="tbos-hero-card group cursor-default shimmer-effect h-full flex flex-col min-w-0"
               style={{
                 height: '100%',
                 display: 'flex',
@@ -763,10 +763,10 @@ export default function Dashboard() {
           </div>
 
           {/* ── MAIN 3-PANEL LAYOUT ── */}
-          <div className="relative flex gap-0 px-4 pb-3 z-10" style={{ minHeight: '220px' }}>
+          <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0" style={{ minHeight: '220px' }}>
 
             {/* ══ PANEL 1: PRODUCTION CHART (70%) ══ */}
-            <div className="flex-[7] relative">
+            <div className="flex-[7] relative min-w-0">
               {/* Batching Plant silhouette */}
               {/* Plant silhouette — removed for editorial cleanliness */}
 
@@ -830,7 +830,7 @@ export default function Dashboard() {
             </div>
 
             {/* ══ PANEL 2: LIVE BATCH QUEUE (18%) ══ */}
-            <div className="flex-[1.8] border-l border-white/[0.04] pl-3 ml-2">
+            <div className="flex-[1.8] border-l border-white/[0.04] pl-3 ml-2 min-w-0">
               <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 File de Production
               </div>
@@ -880,7 +880,7 @@ export default function Dashboard() {
             </div>
 
             {/* ══ PANEL 3: KEY METRICS (12%) ══ */}
-            <div className="flex-[1.2] border-l border-white/[0.04] pl-3 ml-2">
+            <div className="flex-[1.2] border-l border-white/[0.04] pl-3 ml-2 min-w-0">
               <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                 Métriques
               </div>
