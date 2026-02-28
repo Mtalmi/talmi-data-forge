@@ -179,9 +179,9 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
   }
 
   return (
-    <div className="fixed right-0 top-20 bottom-4 w-64 bg-[#0d1117] border-l border-white/[0.06] shadow-xl z-40 flex flex-col rounded-l-xl overflow-hidden">
+    <div className="fixed right-0 top-20 bottom-4 w-64 z-40 flex flex-col overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12 }}>
       {/* Header */}
-      <div className="p-3 border-b border-white/[0.06] bg-white/[0.02] flex items-center justify-between">
+      <div className="p-3 border-b border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Truck className="h-4 w-4" style={{ color: '#D4A843' }} />
           <span className="text-xs font-bold tracking-[0.15em] uppercase" style={{ color: '#D4A843' }}>{fp.fleet}</span>
@@ -208,15 +208,15 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
 
       {/* Summary Stats */}
       <div className="p-2 border-b border-white/[0.06] grid grid-cols-3 gap-1 text-center text-xs">
-        <div className="p-1.5 rounded bg-emerald-400/10">
+        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className="font-mono font-normal text-emerald-400 text-lg">{availableCount}</p>
           <p className="text-white/40 text-[10px]">{fp.available}</p>
         </div>
-        <div className="p-1.5 rounded bg-blue-400/10">
+        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className="font-mono font-normal text-blue-400 text-lg">{onMissionCount}</p>
           <p className="text-white/40 text-[10px]">{fp.mission}</p>
         </div>
-        <div className="p-1.5 rounded bg-[#D4A843]/10">
+        <div className="p-1.5 rounded" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className="font-mono font-normal text-[#D4A843] text-lg">{maintenanceCount}</p>
           <p className="text-white/40 text-[10px]">{fp.stopped}</p>
         </div>
@@ -240,11 +240,14 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
               <div 
                 key={v.id_camion}
                 className={cn(
-                  "p-2 rounded-lg border transition-all",
-                  isOnDelivery 
-                    ? "bg-blue-400/5 border-blue-400/20" 
-                    : "bg-white/[0.02] border-white/[0.06] hover:border-white/[0.12]"
+                  "p-2 rounded-lg transition-all",
+                  isOnDelivery && "border-blue-400/30"
                 )}
+                style={{
+                  background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+                  border: isOnDelivery ? '1px solid rgba(96, 165, 250, 0.2)' : '1px solid rgba(245, 158, 11, 0.15)',
+                  borderRadius: 12,
+                }}
               >
                 {/* Truck Info Row */}
                 <div className="flex items-center justify-between mb-1.5">

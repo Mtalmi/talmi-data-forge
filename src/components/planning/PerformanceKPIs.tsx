@@ -140,7 +140,7 @@ export function PerformanceKPIs({
   };
 
   return (
-    <div className="rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+    <div className="p-4" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12 }}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-4 w-4" style={{ color: '#D4A843' }} />
@@ -160,7 +160,7 @@ export function PerformanceKPIs({
       <div className="space-y-1.5 mb-4">
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-emerald-400/10 cursor-default">
+            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg cursor-default" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <p className="text-lg font-mono font-normal text-emerald-400">{finalOverallStats.totalDelivered}</p>
               <p className="text-[9px] text-white/40 uppercase tracking-wide">Livrés</p>
             </div>
@@ -170,7 +170,7 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-blue-400/10 cursor-default">
+            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg cursor-default" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <p className="text-lg font-mono font-normal text-blue-400">{finalOverallStats.totalInProgress}</p>
               <p className="text-[9px] text-white/40 uppercase tracking-wide">En cours</p>
             </div>
@@ -180,7 +180,7 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-[#D4A843]/10 cursor-default">
+            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg cursor-default" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <p className="text-lg font-mono font-normal text-[#D4A843]">{finalOverallStats.totalPending}</p>
               <p className="text-[9px] text-white/40 uppercase tracking-wide">Attente</p>
             </div>
@@ -190,7 +190,7 @@ export function PerformanceKPIs({
         
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-white/[0.04] cursor-default">
+            <div className="flex items-center justify-between px-2 py-1.5 rounded-lg cursor-default" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <p className="text-lg font-mono font-normal text-white/70">{finalOverallStats.onTimeRate}%</p>
               <p className="text-[9px] text-white/40 uppercase tracking-wide">À l'heure</p>
             </div>
@@ -219,10 +219,12 @@ export function PerformanceKPIs({
           {driverStats.slice(0, 4).map((driver, index) => (
             <div 
               key={driver.id}
-              className={cn(
-                "flex items-center justify-between p-2 rounded-lg",
-                index === 0 ? "bg-emerald-400/10 border border-emerald-400/20" : "bg-white/[0.03]"
-              )}
+              className="flex items-center justify-between p-2 rounded-lg"
+              style={{
+                background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+                border: index === 0 ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(245, 158, 11, 0.15)',
+                borderRadius: 12,
+              }}
             >
               <div className="flex items-center gap-2">
                 {index === 0 && <Zap className="h-4 w-4 text-emerald-400" />}

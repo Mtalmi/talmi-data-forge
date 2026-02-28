@@ -92,10 +92,15 @@ export function DriverDispatchCard({
   return (
     <div 
       className={cn(
-        'border-l-4 rounded-xl transition-all active:scale-[0.98] bg-white/[0.03] border border-white/[0.06]',
+        'border-l-4 rounded-xl transition-all active:scale-[0.98]',
         getStatusColor(bon.workflow_status),
         'touch-manipulation cursor-pointer'
       )}
+      style={{
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
+        borderRadius: 12,
+      }}
       onClick={onOpenDetails}
     >
       <div className="p-4 sm:p-5">

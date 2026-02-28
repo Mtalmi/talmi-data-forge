@@ -107,7 +107,7 @@ export function DailyTimeline({
   };
 
   return (
-    <div className="rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+    <div className="p-4" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12 }}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2 text-sm">
           <Clock className="h-4 w-4" style={{ color: '#D4A843' }} />
