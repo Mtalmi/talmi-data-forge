@@ -218,8 +218,8 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
   
   return (
     <div className="relative">
-      {/* Timeline line */}
-      <div className="absolute top-[11px] left-4 right-4 h-px" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.2), rgba(212,175,55,0.06))' }} />
+
+
       
       <div className="flex items-start justify-between px-2 relative z-10">
         {batches.slice(0, 6).map((b, i) => {
