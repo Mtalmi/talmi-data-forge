@@ -743,30 +743,33 @@ export function WorldClassDashboard() {
                     { name: 'Ciment', dailyRate: 1.8, daysLeft: 5 },
                     { name: 'Sable', dailyRate: 0.9, daysLeft: 8 },
                   ].map((item) => (
-                    <div key={item.name} className="flex items-center gap-2 text-[9px]">
-                      <span className="w-14 truncate" style={{ color: 'rgba(148,163,184,0.5)' }}>{item.name}</span>
-                      <span style={{ color: 'rgba(148,163,184,0.35)' }}>▼ {item.dailyRate}%/j</span>
-                      <span className="flex-1" />
-                      <span
-                        className="font-medium"
-                        style={{
-                          color: item.daysLeft <= 1 ? '#F87171' : item.daysLeft <= 3 ? '#FBBF24' : 'rgba(148,163,184,0.4)',
-                        }}
-                      >
-                        {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
-                      </span>
-                      {item.daysLeft <= 3 && (
-                        <button
-                          className="px-1.5 py-0.5 rounded text-[8px] font-medium"
+                    <div key={item.name} className="flex items-center justify-between gap-2 w-full min-w-0 text-[9px]">
+                      <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                        <span className="w-14 truncate" style={{ color: 'rgba(148,163,184,0.5)' }}>{item.name}</span>
+                        <span className="truncate" style={{ color: 'rgba(148,163,184,0.35)' }}>▼ {item.dailyRate}%/j</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap">
+                        <span
+                          className="font-medium"
                           style={{
-                            background: 'rgba(212,175,55,0.08)',
-                            border: '1px solid rgba(212,175,55,0.2)',
-                            color: '#D4AF37',
+                            color: item.daysLeft <= 1 ? '#F87171' : item.daysLeft <= 3 ? '#FBBF24' : 'rgba(148,163,184,0.4)',
                           }}
                         >
-                          Commander
-                        </button>
-                      )}
+                          {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
+                        </span>
+                        {item.daysLeft <= 3 && (
+                          <button
+                            className="px-1.5 py-0.5 rounded text-[8px] font-medium whitespace-nowrap flex-shrink-0"
+                            style={{
+                              background: 'rgba(212,175,55,0.08)',
+                              border: '1px solid rgba(212,175,55,0.2)',
+                              color: '#D4AF37',
+                            }}
+                          >
+                            Commander
+                          </button>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
