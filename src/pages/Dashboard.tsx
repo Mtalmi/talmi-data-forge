@@ -575,7 +575,7 @@ export default function Dashboard() {
 
                   {/* Cost breakdown mini-stat for MARGE */}
                   {kpi.costBreakdown && (
-                    <div className="flex items-end gap-5 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div className="flex items-end gap-6 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                       <div>
                         <div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Matières</div>
                         <div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>28.1%</div>
@@ -593,7 +593,7 @@ export default function Dashboard() {
 
                   {/* Cash flow mini-stat for TRÉSORERIE */}
                   {kpi.cashFlow && (
-                    <div className="flex items-end gap-5 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <div className="flex items-end gap-6 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                       <div>
                         <div className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Entrées</div>
                         <div className="text-[11px] font-mono mt-0.5" style={{ color: 'rgba(52,211,153,0.7)' }}>+92K</div>

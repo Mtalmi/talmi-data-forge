@@ -139,7 +139,7 @@ export default function RecentDeliveries() {
       style={{
         borderRadius: 8,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
         backdropFilter: 'none',
         WebkitBackdropFilter: 'none',
         boxShadow: 'none',

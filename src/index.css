@@ -4781,3 +4781,11 @@ div.bg-card.ops-surface-card {
   border-radius: 8px !important;
   overflow: hidden !important;
 }
+
+/* ═══ HIDE LOVABLE BADGE ═══ */
+#lovable-badge, aside[aria-label="Edit with Lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
