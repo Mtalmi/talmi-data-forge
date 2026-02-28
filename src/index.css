@@ -232,16 +232,16 @@
 
 /* ─── Operations surface hard-lock (prevents shape drift) ─── */
 .ops-surface-card {
-  border-radius: 16px !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(245, 158, 11, 0.2) !important;
   border-image: none !important;
-  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%) !important;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.15) !important;
+  background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
+  box-shadow: none !important;
   overflow: hidden !important;
   isolation: isolate;
   transform: translateZ(0);
   backface-visibility: hidden;
-  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  -webkit-mask-image: none !important;
 }
 .ops-surface-card::before,
 .ops-surface-card::after {
@@ -249,8 +249,8 @@
   content: none !important;
 }
 .ops-surface-card:hover {
-  border-color: rgba(212,175,55,0.15) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+  box-shadow: none !important;
 }
 
 /* ─── Link hover — gold underline animation ─── */
