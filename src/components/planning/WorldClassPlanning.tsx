@@ -113,20 +113,13 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
       onMouseDown={() => setPress(true)}
       onMouseUp={() => setPress(false)}
       style={{
-        background: T.cardBg,
-        border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
-        borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
-        transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
-        boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
+        borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
         ...style,
       }}
     >
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 2,
-        background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`,
-        opacity: hov ? 1 : 0, transition: 'opacity 200ms',
-      }} />
       {children}
     </div>
   );
@@ -301,7 +294,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               {trendPositive ? '↑' : '↓'} {trend}
             </p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={18} color={color} />
           </div>
         </div>
@@ -322,7 +315,7 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
     return (
       <div style={{
         opacity: visible ? 1 : 0, transition: 'opacity 500ms ease-out',
-        border: `1px dashed ${T.cardBorder}`, borderRadius: 8, padding: '10px 12px',
+        border: '1px dashed rgba(245, 158, 11, 0.1)', borderRadius: 8, padding: '10px 12px',
         display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 58,
       }}>
         <span style={{ color: T.textDim, fontSize: 10 }}>Disponible</span>
@@ -339,11 +332,10 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(12px)',
         transition: 'opacity 500ms ease-out, transform 500ms ease-out, box-shadow 200ms, border-color 200ms',
-        background: `${color}12`,
-        border: `1px solid ${hov ? color : `${color}30`}`,
+        background: 'rgba(245, 158, 11, 0.08)',
+        border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`,
         borderLeft: `3px solid ${color}`,
         borderRadius: 8, padding: '8px 10px',
-        boxShadow: hov ? `0 4px 16px ${color}30` : 'none',
         cursor: 'default', minHeight: 58,
       }}
     >
@@ -472,11 +464,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── SECTION 1: KPIs ── */}
         <section>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
             <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
-            <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.warning} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
-            <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.info} icon={Truck} trend="stable" trendPositive delay={240} />
+            <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
+            <KPICard label="Livraisons Prévues" value={pKpis.livraisons} suffix="" color={T.gold} icon={Truck} trend="stable" trendPositive delay={240} />
           </div>
         </section>
 

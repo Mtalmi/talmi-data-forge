@@ -901,11 +901,15 @@ export default function Planning() {
         data-testid={`planning-bon-card-${bon.bl_id}`}
         className={cn(
           "mb-3 border-l-4 rounded-xl transition-all duration-200",
-          "bg-white/[0.03] border border-white/[0.06]",
           getBorderColor(bon.workflow_status),
           isTouchDevice && "active:scale-[0.98]",
           creditStatus !== 'green' && "ring-1 ring-red-500/30"
         )}
+        style={{
+          background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          borderRadius: 12,
+        }}
       >
         <div className={cn("p-4", isTouchDevice && "p-5")}>
         <div className="flex justify-between items-start mb-2">

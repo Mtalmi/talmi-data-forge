@@ -180,7 +180,7 @@ export function FleetCapacityOptimizer({
   }
 
   return (
-    <div className="rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
+    <div className="p-4" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12 }}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Scale className="h-4 w-4" style={{ color: '#D4A843' }} />
@@ -193,18 +193,15 @@ export function FleetCapacityOptimizer({
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-center mb-4">
-        <div className="p-2 rounded-lg bg-[#D4A843]/10">
+        <div className="p-2 rounded-lg" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className="text-lg font-mono font-normal text-[#D4A843]">{summary.activeCount}</p>
           <p className="text-[10px] text-white/40 uppercase">Actifs</p>
         </div>
-        <div className="p-2 rounded-lg bg-white/[0.04]">
+        <div className="p-2 rounded-lg" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className="text-lg font-mono font-normal text-white/60">{summary.idleCount}</p>
           <p className="text-[10px] text-white/40 uppercase">Disponibles</p>
         </div>
-        <div className={cn(
-          "p-2 rounded-lg",
-          summary.overloadedCount > 0 ? "bg-red-400/10" : "bg-white/[0.04]"
-        )}>
+        <div className="p-2 rounded-lg" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
           <p className={cn(
             "text-lg font-mono font-normal",
             summary.overloadedCount > 0 ? "text-red-400" : "text-white/60"
