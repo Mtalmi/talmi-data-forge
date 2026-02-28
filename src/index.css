@@ -2287,9 +2287,9 @@
 }
 
 /* ── Global card hover shimmer system ────────────────────── */
-/* Gold top line shimmer on ALL cards on hover */
+/* Gold top line shimmer on cards EXCEPT operations surfaces */
 .card::after,
-[class*="card"]::after {
+[class*="card"]:not(.ops-surface-card)::after {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -2307,6 +2307,14 @@
   background: radial-gradient(ellipse at top right, hsl(51 100% 50% / 0.04), transparent 70%);
   height: auto;
   inset: 0;
+}
+
+/* Hard override: no pseudo decorative layers on operations cards */
+.ops-surface-card::before,
+.ops-surface-card::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
 }
 
 /* ── Press / active feedback for all interactive cards ───── */
