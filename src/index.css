@@ -2435,13 +2435,7 @@
 /* Gold top line shimmer ONLY on god-tier-card KPI cards */
 /* REMOVED: [class*="card"] catch-all — it injected pseudo-elements into dashboard cards */
 
-/* EXCEPTION: god-tier-card already has its own ::before shimmer sweep — keep that working */
-.god-tier-card::after {
-  /* override: god-tier uses radial glow overlay, not top shimmer */
-  background: radial-gradient(ellipse at top right, hsl(51 100% 50% / 0.04), transparent 70%);
-  height: auto;
-  inset: 0;
-}
+/* god-tier-card pseudo-elements fully neutralized */
 
 /* Hard override: no pseudo decorative layers on operations cards */
 .ops-surface-card::before,
@@ -2721,45 +2715,24 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Gold shimmer sweep line top */
-.god-tier-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, hsl(51 100% 50%), transparent);
-  transition: left 0.5s ease;
-  z-index: 1;
-}
-
-/* Radial glow overlay */
+/* Gold shimmer & glow — fully neutralized */
+.god-tier-card::before,
 .god-tier-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(ellipse at top right, hsl(51 100% 50% / 0.04), transparent 70%);
-  transition: opacity 0.3s ease;
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
 }
 
-.god-tier-card:hover {
-  border-color: hsl(51 100% 50% / 0.4);
-  transform: translateY(-4px);
-  box-shadow:
-    0 20px 60px hsl(0 0% 0% / 0.45),
-    0 0 0 1px hsl(51 100% 50% / 0.12),
-    0 8px 32px hsl(51 100% 50% / 0.1),
-    0 0 40px hsl(51 100% 50% / 0.06);
-}
-
-.god-tier-card:hover::before {
-  left: 100%;
-}
+.god-tier-card:hover::before,
 .god-tier-card:hover::after {
-  opacity: 1;
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
 }
 
 /* ── Active / pressed state ── */
