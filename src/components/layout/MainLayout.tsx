@@ -33,7 +33,10 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
   }, [isMobile]);
 
   return (
-    <div className="relative min-h-[100dvh] bg-background flex w-full">
+    <div
+      className="relative flex h-screen w-full overflow-hidden"
+      style={{ background: 'linear-gradient(145deg, #11182E, #162036)' }}
+    >
       {/* Mobile overlay */}
       {isMobile && sidebarOpen && (
         <div
@@ -49,7 +52,10 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       />
 
       {/* Content Layer — offset by sidebar width on desktop */}
-        <div className={`relative z-10 flex flex-col min-h-[100dvh] flex-1 overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-56' : 'lg:ml-0'}`}>
+        <div
+          className={`relative z-10 flex flex-col h-screen flex-1 min-w-0 overflow-y-auto overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-56' : 'lg:ml-0'}`}
+          style={{ background: 'linear-gradient(145deg, #11182E, #162036)' }}
+        >
         {/* Preview Mode Banner */}
         {previewRole && (
           <RolePreviewBanner
@@ -75,8 +81,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         </div>
 
         {/* Main Content Area */}
-        <main className={`flex-1 overflow-y-auto overflow-x-hidden scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-          <div className="p-3 sm:p-4 md:p-6 lg:p-8 max-w-[1900px] mx-auto mobile-content safe-area-bottom overflow-x-hidden w-full">
+        <main className={`flex-1 min-w-0 overflow-x-hidden scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
+          <div className="p-3 sm:p-4 md:p-6 lg:p-8 mobile-content safe-area-bottom overflow-x-hidden w-full max-w-full min-w-0">
             <PageTransition>
               {children}
             </PageTransition>
