@@ -17,10 +17,11 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant =
     ref={ref} 
     className={cn(
       cardVariantClasses[variant],
-      "rounded-xl text-card-foreground",
+      "text-card-foreground",
       "relative overflow-hidden",
       className
     )}
+    style={{ borderRadius: 12, ...props.style }}
     {...props} 
   />
 ));
