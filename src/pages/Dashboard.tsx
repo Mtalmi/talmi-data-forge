@@ -840,7 +840,7 @@ export default function Dashboard() {
             <span className="text-muted-foreground text-[11px]">
               Casablanca · UTC+1
             </span>
-            <div className="flex-1 h-px bg-amber-500/40" />
+            <div className="flex-1 h-[2px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.7), rgba(212,175,55,0.2))' }} />
           </div>
           {/* Metrics row */}
           <div className="relative flex items-center justify-end gap-3 px-5 pb-2 z-10">
@@ -1123,7 +1123,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 mt-6 mb-6">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
-          <div className="flex-1 h-px bg-amber-500/40" />
+          <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
         </div>
 
         {/* ══════════════════════════════════════════════════
