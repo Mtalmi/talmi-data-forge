@@ -12,7 +12,7 @@ const cardVariantClasses = {
   recessed: "tbos-card-recessed",
 };
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant = "default", ...props }, ref) => (
+const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant = "default", style, ...props }, ref) => (
   <div 
     ref={ref} 
     className={cn(
@@ -21,7 +21,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, variant =
       "relative overflow-hidden",
       className
     )}
-    style={{ borderRadius: 12, ...props.style }}
+    style={{ borderRadius: 12, ...style }}
     {...props} 
   />
 ));
