@@ -128,16 +128,11 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
   return (
     <div>
       {/* Section header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(253,185,19,0.25), rgba(253,185,19,0.05), transparent)' }} />
-        <span style={{
-          fontSize: 10, fontWeight: 600, letterSpacing: '0.25em',
-          color: 'rgba(253,185,19,0.45)', textTransform: 'uppercase' as const,
-          whiteSpace: 'nowrap' as const,
-        }}>
+      <div className="flex items-center gap-3 mb-6">
+        <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">
           {rf.title}
         </span>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.05), rgba(253,185,19,0.25))' }} />
+        <div className="flex-1 border-t border-amber-500/30" />
       </div>
 
       <div

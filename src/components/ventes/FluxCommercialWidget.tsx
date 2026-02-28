@@ -136,12 +136,8 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <span style={{
-            fontSize: 11, fontWeight: 600, letterSpacing: '0.2em',
-            color: 'rgba(226,232,240,0.6)', textTransform: 'uppercase',
-          }}>{ vt.salesFeed }</span>
+        <div className="flex items-center gap-3 mb-5">
+          <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">{ vt.salesFeed }</span>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '2px 8px', borderRadius: 6,
@@ -155,8 +151,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
             }} />
             <span style={{ fontSize: 9, fontWeight: 600, color: '#10B981', letterSpacing: '0.1em' }}>{vt.live}</span>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
+          <div className="flex-1 border-t border-amber-500/30" />
           {pipelineValue > 0 && (
             <span style={{
               padding: '4px 12px', borderRadius: 8,
@@ -177,7 +172,6 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
             }}>{conversionRate}% {vt.conv}</span>
           )}
         </div>
-      </div>
 
       {/* Pipeline container */}
       <div style={{
