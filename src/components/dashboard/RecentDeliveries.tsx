@@ -115,8 +115,9 @@ export default function RecentDeliveries() {
   if (loading) {
     return (
         <div
-          className="relative overflow-hidden rounded-xl p-6"
+          className="relative overflow-hidden p-6"
           style={{
+          borderRadius: 8,
           background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
         }}
@@ -134,8 +135,9 @@ export default function RecentDeliveries() {
 
   return (
     <div
-      className="relative overflow-hidden rounded-xl p-6 transition-all duration-500"
+      className="relative overflow-hidden p-6 transition-all duration-500"
       style={{
+        borderRadius: 8,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         backdropFilter: 'none',

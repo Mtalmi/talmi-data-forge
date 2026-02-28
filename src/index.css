@@ -250,7 +250,7 @@
 
 /* ─── Operations surface card — dashboard-specific ─── */
 .ops-surface-card {
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
   box-shadow: none !important;
@@ -474,7 +474,7 @@
   /* ===== OBSIDIAN VAULT SYSTEM ===== */
   .glass-panel {
     @apply relative overflow-hidden;
-    border-radius: 12px;
+    border-radius: 8px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow:
@@ -515,7 +515,7 @@
   /* Vault Header — Bloomberg command bar */
   .dashboard-header {
     @apply relative overflow-hidden;
-    border-radius: 12px;
+    border-radius: 8px;
     background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
     box-shadow:
@@ -790,7 +790,7 @@
   /* ===== BLOOMBERG-GRADE INDUSTRIAL CARDS ===== */
   .card-industrial {
     @apply relative overflow-hidden;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
     background: hsl(var(--card));
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -1051,7 +1051,7 @@
   /* ===== OBSIDIAN GLASS CARDS ===== */
   .glass-card {
     @apply relative overflow-hidden;
-    border-radius: 12px;
+    border-radius: 8px;
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.08);
     transition: all 0.4s ease;
@@ -2542,7 +2542,7 @@
 .pipeline-stage-card {
   background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--muted)));
   border: 1px solid hsl(var(--border));
-  border-radius: 12px;
+  border-radius: 8px;
   transition: all 0.2s ease;
   position: relative;
 }
@@ -2561,7 +2561,7 @@
 .workflow-card {
   background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted)) 100%);
   border: 1px solid hsl(var(--border));
-  border-radius: 12px;
+  border-radius: 8px;
   min-height: 120px;
   display: flex;
   flex-direction: column;
@@ -2698,7 +2698,7 @@
 .god-tier-card {
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 8px;
   background: hsl(var(--card));
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2908,7 +2908,7 @@
 .tbos-card {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -2925,7 +2925,7 @@
 .tbos-card-hero {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -2940,7 +2940,7 @@
 .tbos-card-recessed {
   background: rgba(255, 255, 255, 0.015);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -4218,7 +4218,7 @@ textarea.valid {
 .period-selector-premium {
   background: hsl(var(--muted)) !important;
   border: 1px solid hsl(var(--primary) / 0.1) !important;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 .period-btn {
   border-radius: 8px;
@@ -4422,7 +4422,7 @@ textarea.valid {
 [role="menu"] {
   background: #1e293b !important;
   border: 1px solid #334155 !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -4705,7 +4705,7 @@ hr,
 
   /* ─── Cards ─── */
   .tbos-card {
-    border-radius: 12px !important;
+    border-radius: 8px !important;
   }
 
   /* ─── Touch targets ─── */

@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 // Enforced card radius — single source of truth
-const CARD_RADIUS = 12;
+const CARD_RADIUS = 8;
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "hero" | "recessed";

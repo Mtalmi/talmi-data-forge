@@ -53,7 +53,7 @@ export default function KPICard({
     <div
       className={cn(
         'kpi-card god-tier-card tbos-card tbos-card-stagger animate-fade-in group card-magnetic press-feedback ripple-container',
-        'relative overflow-hidden rounded-xl border p-4 sm:p-5',
+        'relative overflow-hidden border p-4 sm:p-5',
         'transition-all duration-300 ease-out',
         'hover:-translate-y-1',
         variant === 'positive' && 'bg-primary/[0.03]',
@@ -62,6 +62,7 @@ export default function KPICard({
         variant === 'default' && 'bg-card',
       )}
       style={{
+        borderRadius: 8,
         ['--hover-glow' as string]: `0 8px 32px ${accentColor}22`,
       }}
     >
