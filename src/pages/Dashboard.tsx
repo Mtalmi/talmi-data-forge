@@ -830,19 +830,17 @@ export default function Dashboard() {
           {/* ── HEADER BAR ── */}
           {/* Section header with golden divider */}
           <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-              </span>
-              <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">
-                Live Production du Jour
-              </span>
-              <span className="text-muted-foreground text-[11px]">
-                Casablanca · UTC+1
-              </span>
-            </div>
-            <div className="flex-1 border-t border-amber-500/30" />
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">
+              LIVE PRODUCTION DU JOUR
+            </span>
+            <span className="text-muted-foreground text-[11px]">
+              Casablanca · UTC+1
+            </span>
+            <div className="flex-1 h-px bg-amber-500/40" />
           </div>
           {/* Metrics row */}
           <div className="relative flex items-center justify-end gap-3 px-5 pb-2 z-10">
@@ -1125,7 +1123,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 mt-6 mb-6">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
-          <div className="flex-1 border-t border-amber-500/30" />
+          <div className="flex-1 h-px bg-amber-500/40" />
         </div>
 
         {/* ══════════════════════════════════════════════════
