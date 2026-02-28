@@ -18,15 +18,30 @@ const phases = [
 export default function LiveBatchProgress() {
   return (
     <div
-      className="relative overflow-hidden rounded-[16px] p-5"
+      className="group/card relative overflow-hidden rounded-[16px] p-5"
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.08)',
         backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+        transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.4s ease',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(-3px) scale(1.008)';
+        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04)';
+        el.style.borderColor = 'rgba(212,175,55,0.15)';
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(0) scale(1)';
+        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+        el.style.borderColor = 'rgba(255,255,255,0.08)';
       }}
     >
-      {/* Teal accent */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #00D9FF, transparent)' }} />
+      {/* Category accent — amber */}
+      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
 
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
