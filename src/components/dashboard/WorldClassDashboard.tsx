@@ -72,8 +72,7 @@ const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?:
         className={`group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
         style={{
           background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-          border: '1px solid transparent',
-          borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
+          border: '1px solid rgba(255,255,255,0.08)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
@@ -83,14 +82,14 @@ const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?:
         onMouseEnter={e => {
           const el = e.currentTarget as HTMLElement;
           el.style.transform = 'translateY(-3px) scale(1.008)';
-          el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
-          el.style.borderImage = 'linear-gradient(135deg, rgba(212,175,55,0.2), rgba(255,255,255,0.1), rgba(212,175,55,0.15)) 1';
+          el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04)';
+          el.style.borderColor = 'rgba(212,175,55,0.15)';
         }}
         onMouseLeave={e => {
           const el = e.currentTarget as HTMLElement;
           el.style.transform = 'translateY(0) scale(1)';
           el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
-          el.style.borderImage = 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1';
+          el.style.borderColor = 'rgba(255,255,255,0.08)';
         }}
       >
         {children}

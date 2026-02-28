@@ -137,8 +137,7 @@ export default function RecentDeliveries() {
       className="group/card relative overflow-hidden rounded-[16px] p-6 transition-all duration-500"
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid transparent',
-        borderImage: 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(212,175,55,0.06), rgba(255,255,255,0.04)) 1',
+        border: '1px solid rgba(255,255,255,0.08)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
@@ -146,12 +145,14 @@ export default function RecentDeliveries() {
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
         el.style.transform = 'translateY(-3px) scale(1.008)';
-        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 0 1px rgba(212,175,55,0.12), 0 0 60px rgba(212,175,55,0.04)';
+        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04)';
+        el.style.borderColor = 'rgba(212,175,55,0.15)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
         el.style.transform = 'translateY(0) scale(1)';
         el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
+        el.style.borderColor = 'rgba(255,255,255,0.08)';
       }}
     >
       {/* Category accent — emerald for logistics */}
