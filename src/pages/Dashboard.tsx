@@ -1000,7 +1000,7 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="flex items-center gap-3 pt-5 mb-0">
+        <div className="flex items-center gap-3 pt-5 pb-6 mb-0">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
           <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
@@ -1009,7 +1009,7 @@ export default function Dashboard() {
         {/* ══════════════════════════════════════════════════
             ZONE 2 — OPERATIONS (always visible)
         ══════════════════════════════════════════════════ */}
-        <div className="mt-5">
+        <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
             <WorldClassDashboard />
           </Suspense>
