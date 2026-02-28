@@ -135,14 +135,13 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
 
   return (
     <div>
-      {/* Header with golden divider */}
+      {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <span style={{
             fontSize: 11, fontWeight: 600, letterSpacing: '0.2em',
-            color: 'rgba(253,185,19,0.6)', textTransform: 'uppercase',
+            color: 'rgba(226,232,240,0.6)', textTransform: 'uppercase',
           }}>{ vt.salesFeed }</span>
-          <div style={{ flex: 1, minWidth: 40, height: 1, background: 'linear-gradient(90deg, rgba(253,185,19,0.25), transparent)' }} />
           <div style={{
             display: 'flex', alignItems: 'center', gap: 5,
             padding: '2px 8px', borderRadius: 6,
