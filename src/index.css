@@ -4773,3 +4773,11 @@ hr,
     height: calc(64px + env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* ═══ ABSOLUTE FINAL OVERRIDE — 8px card radius ═══ */
+div.ops-surface-card,
+.ops-surface-card[class],
+div.bg-card.ops-surface-card {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
