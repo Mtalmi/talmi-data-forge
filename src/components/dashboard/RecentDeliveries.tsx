@@ -115,10 +115,10 @@ export default function RecentDeliveries() {
   if (loading) {
     return (
         <div
-          className="ops-surface-card relative overflow-hidden rounded-[14px] p-6"
+          className="relative overflow-hidden rounded-xl p-6"
           style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
-          border: '1px solid rgba(255,255,255,0.05)',
+          background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+          border: '1px solid rgba(245, 158, 11, 0.2)',
         }}
       >
         <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)' }} />
@@ -134,25 +134,23 @@ export default function RecentDeliveries() {
 
   return (
     <div
-      className="ops-surface-card group/card relative overflow-hidden rounded-[16px] p-6 transition-all duration-500"
+      className="relative overflow-hidden rounded-xl p-6 transition-all duration-500"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.2)',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        boxShadow: 'none',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(-3px) scale(1.008)';
-        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04)';
-        el.style.borderColor = 'rgba(212,175,55,0.15)';
+        el.style.transform = 'translateY(-2px)';
+        el.style.borderColor = 'rgba(212,175,55,0.35)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(0) scale(1)';
-        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
-        el.style.borderColor = 'rgba(255,255,255,0.08)';
+        el.style.transform = 'translateY(0)';
+        el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
       }}
     >
       {/* Category accent — amber */}
