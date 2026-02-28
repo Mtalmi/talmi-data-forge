@@ -72,7 +72,7 @@ export default function PlantFlowSchematic() {
             <MiniBar label="Eau" pct={30} />
           </div>
           <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.3)' }}>Stocks</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">Stocks</span>
           </div>
         </div>
 
@@ -92,7 +92,7 @@ export default function PlantFlowSchematic() {
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Temps <span className="font-mono" style={{ color: T.dotWarn }}>02:47</span></div>
           </div>
           <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.3)' }}>Production</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">Production</span>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ export default function PlantFlowSchematic() {
             </div>
           </div>
           <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.3)' }}>Logistique</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">Logistique</span>
           </div>
         </div>
 
@@ -143,7 +143,7 @@ export default function PlantFlowSchematic() {
             </div>
           </div>
           <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.3)' }}>Livraisons</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">Livraisons</span>
           </div>
         </div>
 
@@ -171,7 +171,7 @@ export default function PlantFlowSchematic() {
             <span className="text-[9px] font-mono" style={{ color: T.dotOk }}>0.502</span>
           </div>
           <div className="mt-1.5 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <span className="text-[8px] uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.3)' }}>Contrôle</span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-500">Contrôle</span>
           </div>
         </div>
       </div>

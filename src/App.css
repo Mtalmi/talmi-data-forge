@@ -60,3 +60,19 @@
   border-radius: 50%;
   pointer-events: none;
 }
+
+/* Hide Lovable deployment badge */
+[data-lovable-badge],
+.lovable-badge,
+a[href*="lovable.dev"],
+div[class*="lovable"],
+iframe[src*="lovable"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: fixed !important;
+  bottom: -9999px !important;
+}

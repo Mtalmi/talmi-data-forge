@@ -185,10 +185,10 @@ export default function RecentDeliveries() {
           >
             <span className="text-[10px] text-slate-500 w-10 font-mono tabular-nums shrink-0">{d.time}</span>
             <span className="text-xs shrink-0">{statusIcons[d.status]}</span>
-            <span className="text-[11px] text-white/80 flex-1 truncate">{d.client}</span>
-            <span className="text-[10px] text-slate-400 font-mono tabular-nums shrink-0">{d.volume} m³</span>
+            <span className="text-[11px] text-white/80 flex-1 truncate min-w-0">{d.client}</span>
+            <span className="text-[10px] text-slate-400 font-mono tabular-nums shrink-0 whitespace-nowrap">{d.volume} m³</span>
             <span
-              className="text-[10px] font-medium shrink-0 w-16 text-right"
+              className="text-[10px] font-medium shrink-0 min-w-[60px] text-right whitespace-nowrap"
               style={{ color: statusColors[d.status] }}
             >
               {d.statusLabel}
