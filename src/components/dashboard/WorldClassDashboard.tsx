@@ -158,7 +158,7 @@ function EmptyState({ title, subtitle, icon }: { title: string; subtitle: string
 function SkeletonCard({ height = 200 }: { height?: number }) {
   return (
     <div
-      className="relative overflow-hidden rounded-[16px]"
+      className="relative overflow-hidden rounded-xl"
       style={{
         height,
         background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',

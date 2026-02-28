@@ -52,7 +52,7 @@ export function TiltCard({ children, className, style }: TiltCardProps) {
       >
         {/* Specular highlight — moves with cursor */}
         <div
-          className="absolute inset-0 rounded-[20px] pointer-events-none z-10 transition-opacity duration-300"
+          className="absolute inset-0 rounded-xl pointer-events-none z-10 transition-opacity duration-300"
           style={{
             background: tilt.active
               ? `radial-gradient(circle at ${((tilt.y / 12) + 0.5) * 100}% ${((-tilt.x / 12) + 0.5) * 100}%, rgba(255,255,255,0.08) 0%, transparent 60%)`
