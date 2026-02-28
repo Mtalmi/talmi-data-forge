@@ -703,7 +703,7 @@ export default function Dashboard() {
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div
-          className="mb-3 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
+          className="mb-5 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
         >
           {/* Grid removed for clean editorial look */}
 
@@ -957,7 +957,7 @@ export default function Dashboard() {
         {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
           <div
-            className="flex items-center justify-between px-4 py-2 rounded-xl mt-3 mb-3"
+            className="flex items-center justify-between px-4 py-2 rounded-xl mt-5 mb-5"
             style={{
               background: 'linear-gradient(90deg, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 50%, rgba(234,179,8,0.06) 100%)',
               border: '1px solid rgba(234,179,8,0.1)',
@@ -1000,7 +1000,7 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="flex items-center gap-3 mt-3 mb-3">
+        <div className="flex items-center gap-3 mt-0 mb-3">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
           <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
