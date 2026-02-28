@@ -18,26 +18,23 @@ const phases = [
 export default function LiveBatchProgress() {
   return (
     <div
-      className="ops-surface-card group/card relative overflow-hidden rounded-[16px] p-5"
+      className="relative overflow-hidden rounded-xl p-5 transition-all duration-500"
       style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-        transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.4s ease',
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.2)',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        boxShadow: 'none',
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(-3px) scale(1.008)';
-        el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04)';
-        el.style.borderColor = 'rgba(212,175,55,0.15)';
+        el.style.transform = 'translateY(-2px)';
+        el.style.borderColor = 'rgba(212,175,55,0.35)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(0) scale(1)';
-        el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.15)';
-        el.style.borderColor = 'rgba(255,255,255,0.08)';
+        el.style.transform = 'translateY(0)';
+        el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
       }}
     >
       {/* Category accent — amber */}
