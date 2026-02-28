@@ -1,6 +1,4 @@
 import { useEffect, useState, useRef, lazy, Suspense, useCallback, useMemo } from 'react';
-import batchingPlantBg from '@/assets/batching-plant-backdrop.jpg';
-import heroPlantCinematic from '@/assets/hero-plant-cinematic.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { AnimatePresence } from 'framer-motion';
@@ -76,9 +74,7 @@ export default function Dashboard() {
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
 
-  // ─── Mouse parallax state ───
   const heroRef = useRef<HTMLDivElement>(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   // Extract user first name (needed before typewriter)
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Max';
@@ -110,19 +106,6 @@ export default function Dashboard() {
     return () => clearTimeout(delay);
   }, [firstName]);
 
-  // ─── Mouse parallax tracking ───
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current) return;
-      const rect = heroRef.current.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-      setMouseOffset({ x, y });
-    };
-    const el = heroRef.current;
-    el?.addEventListener('mousemove', handleMouseMove);
-    return () => el?.removeEventListener('mousemove', handleMouseMove);
-  }, []);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -232,23 +215,6 @@ export default function Dashboard() {
           background: 'linear-gradient(170deg, #0D1220 0%, #0F172A 40%, #131B2E 100%)',
         }}
       >
-        {/* BACKGROUND LAYER: Hexagonal geometric pattern */}
-        <div
-          className="fixed inset-0 pointer-events-none z-0"
-          style={{
-            opacity: 0.012,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='52' viewBox='0 0 60 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 15v22L30 52 0 37V15z' fill='none' stroke='%23E8B84B' stroke-width='0.5'/%3E%3C/svg%3E")`,
-            backgroundSize: '60px 52px',
-          }}
-        />
-        {/* BACKGROUND LAYER: Diagonal accent lines */}
-        <div
-          className="fixed inset-0 pointer-events-none z-0"
-          style={{
-            opacity: 0.008,
-            backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 80px, rgba(232,184,75,0.15) 80px, rgba(232,184,75,0.15) 81px)`,
-          }}
-        />
 
         {/* Dashboard luxury styles */}
         <style>{`
@@ -262,17 +228,6 @@ export default function Dashboard() {
           @keyframes scanline {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(100%); }
-          }
-          @keyframes kenBurns {
-            0% { transform: scale(1.05) translate(0%, 0%); }
-            25% { transform: scale(1.12) translate(-1%, -0.5%); }
-            50% { transform: scale(1.08) translate(0.5%, -1%); }
-            75% { transform: scale(1.15) translate(-0.5%, 0.5%); }
-            100% { transform: scale(1.05) translate(0%, 0%); }
-          }
-          @keyframes vignettePulse {
-            0%, 100% { opacity: 0.85; }
-            50% { opacity: 0.75; }
           }
           .tbos-hero-card {
             background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%);
@@ -371,41 +326,6 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Construction Crane Silhouette — top-right hero accent */}
-        <div className="absolute top-4 right-16 opacity-[0.05] pointer-events-none" style={{ zIndex: 0 }}>
-          <svg width="120" height="100" viewBox="0 0 120 100" fill="none">
-            {/* Crane mast */}
-            <rect x="25" y="10" width="4" height="90" fill="rgba(232,184,75,0.6)" />
-            {/* Mast cross-bracing */}
-            <line x1="25" y1="20" x2="29" y2="30" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="29" y1="20" x2="25" y2="30" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="25" y1="35" x2="29" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="29" y1="35" x2="25" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="25" y1="50" x2="29" y2="60" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="29" y1="50" x2="25" y2="60" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="25" y1="65" x2="29" y2="75" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            <line x1="29" y1="65" x2="25" y2="75" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            {/* Jib (horizontal arm) */}
-            <rect x="29" y="10" width="80" height="2.5" fill="rgba(232,184,75,0.5)" />
-            {/* Counter-jib */}
-            <rect x="5" y="10" width="20" height="2.5" fill="rgba(232,184,75,0.4)" />
-            <rect x="5" y="8" width="8" height="6" fill="rgba(232,184,75,0.35)" />
-            {/* Jib support cables */}
-            <line x1="27" y1="5" x2="109" y2="10" stroke="rgba(232,184,75,0.35)" strokeWidth="0.5" />
-            <line x1="27" y1="5" x2="5" y2="10" stroke="rgba(232,184,75,0.35)" strokeWidth="0.5" />
-            <line x1="27" y1="5" x2="27" y2="10" stroke="rgba(232,184,75,0.5)" strokeWidth="1" />
-            <line x1="27" y1="5" x2="70" y2="10" stroke="rgba(232,184,75,0.3)" strokeWidth="0.5" />
-            {/* Hook cable */}
-            <line x1="95" y1="12.5" x2="95" y2="45" stroke="rgba(232,184,75,0.4)" strokeWidth="0.5" />
-            {/* Hook */}
-            <path d="M93,45 Q93,50 95,50 Q97,50 97,45" fill="none" stroke="rgba(232,184,75,0.5)" strokeWidth="0.8" />
-            <rect x="93" y="43" width="4" height="3" fill="rgba(232,184,75,0.4)" />
-            {/* Counterweight */}
-            <rect x="5" y="14" width="10" height="8" fill="rgba(232,184,75,0.3)" />
-            {/* Base */}
-            <rect x="15" y="95" width="24" height="5" rx="1" fill="rgba(232,184,75,0.35)" />
-          </svg>
-        </div>
 
         {/* ══════════════════════════════════════════════════
             ZONE 1 — THE PULSE: COMMAND CENTER
@@ -413,34 +333,6 @@ export default function Dashboard() {
 
         {/* Hero zone wrapper with cinematic backdrop */}
         <div className="relative" ref={heroRef}>
-          {/* ═══ CINEMATIC HERO IMAGE — Ken Burns + Mouse Parallax ═══ */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-            <img
-              src={heroPlantCinematic}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out"
-              style={{
-                opacity: 0.3,
-                filter: 'saturate(0.5) brightness(0.5) contrast(1.2)',
-                animation: 'kenBurns 45s ease-in-out infinite',
-                transformOrigin: 'center center',
-                transform: `translate(${mouseOffset.x * -12}px, ${mouseOffset.y * -8}px) scale(1.08)`,
-              }}
-            />
-            {/* Cinematic vignette — darkens edges, focuses center */}
-            <div className="absolute inset-0" style={{
-              background: `radial-gradient(ellipse 75% 65% at 50% 30%, transparent 0%, rgba(11,15,26,0.25) 40%, rgba(11,15,26,0.8) 100%)`,
-              animation: 'vignettePulse 20s ease-in-out infinite',
-            }} />
-            {/* Bottom fade to seamless transition */}
-            <div className="absolute bottom-0 left-0 right-0 h-[40%]" style={{
-              background: 'linear-gradient(to top, #0B0F1A 0%, transparent 100%)',
-            }} />
-            {/* Top darkening for text readability */}
-            <div className="absolute top-0 left-0 right-0 h-[25%]" style={{
-              background: 'linear-gradient(to bottom, rgba(11,15,26,0.4) 0%, transparent 100%)',
-            }} />
-          </div>
 
           {/* Ambient Light Pools — visible warm golden depth */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 1 }}>
