@@ -15,7 +15,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity } from 'lucide-react';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -471,8 +471,22 @@ export default function Dashboard() {
           {/* Grid fade-out */}
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
+          {/* Branded Header */}
+          <div className="pt-6 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+            <div className="flex items-center gap-3 mb-1">
+              <LayoutDashboard size={24} className="text-amber-400" />
+              <div>
+                <h2 className="text-xl font-bold">
+                  <span className="text-white">TBOS</span>{' '}
+                  <span className="text-amber-400">Tableau de Bord</span>
+                </h2>
+                <p className="text-sm text-muted-foreground">Données en temps réel</p>
+              </div>
+            </div>
+          </div>
+
           {/* Greeting — Cinematic Hero Moment */}
-          <div className="pt-6 pb-8 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+          <div className="pb-8 relative z-[1]">
             <div className="flex items-end justify-between">
               <div>
             <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ lineHeight: 1 }}>
@@ -831,6 +845,7 @@ export default function Dashboard() {
               <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Production du Jour</span>
               <div className="w-px h-3 bg-white/10 mx-1" />
               <span className="text-[9px] text-slate-700 font-mono">Casablanca · UTC+1</span>
+              <div className="flex-1 border-t border-amber-500/30" />
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -1108,10 +1123,10 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="relative mt-6 mb-6 flex items-center gap-4">
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(253,185,19,0.15))' }} />
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: 'rgb(148,163,184)' }}>Opérations</span>
-          <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(253,185,19,0.15), transparent)' }} />
+        <div className="flex items-center gap-3 mt-6 mb-6">
+          <Activity size={16} className="text-amber-400" />
+          <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
+          <div className="flex-1 border-t border-amber-500/30" />
         </div>
 
         {/* ══════════════════════════════════════════════════
