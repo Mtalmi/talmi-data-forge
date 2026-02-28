@@ -69,10 +69,11 @@ const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?:
     return (
       <div
         ref={ref}
-        className={`group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
+        className={`ops-surface-card group/card relative overflow-hidden rounded-[16px] p-6 ${className}`}
         style={{
           background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
           border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 16,
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           boxShadow: '0 4px 24px rgba(0,0,0,0.15)',

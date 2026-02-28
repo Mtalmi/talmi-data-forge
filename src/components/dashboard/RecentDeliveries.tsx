@@ -114,9 +114,9 @@ export default function RecentDeliveries() {
 
   if (loading) {
     return (
-      <div
-        className="relative overflow-hidden rounded-[14px] p-6"
-        style={{
+        <div
+          className="ops-surface-card relative overflow-hidden rounded-[14px] p-6"
+          style={{
           background: 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%)',
           border: '1px solid rgba(255,255,255,0.05)',
         }}
@@ -134,7 +134,7 @@ export default function RecentDeliveries() {
 
   return (
     <div
-      className="group/card relative overflow-hidden rounded-[16px] p-6 transition-all duration-500"
+      className="ops-surface-card group/card relative overflow-hidden rounded-[16px] p-6 transition-all duration-500"
       style={{
         background: 'linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)',
         border: '1px solid rgba(255,255,255,0.08)',

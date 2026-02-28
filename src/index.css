@@ -220,7 +220,7 @@
 /* ─── Gold-Tinted Selection ─── */
 ::selection { background: rgba(253,185,19,0.25); color: white; }
 
-/* ─── Global Card Hover ─── */
+/* ─── Global Card Hover ───
 .card-hover {
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -228,6 +228,20 @@
   transform: translateY(-2px);
   border-color: rgba(255,255,255,0.1) !important;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2), 0 12px 36px rgba(0,0,0,0.25) !important;
+}
+
+/* ─── Operations surface hard-lock (prevents shape drift) ─── */
+.ops-surface-card {
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-image: none !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15) !important;
+  overflow: hidden !important;
+}
+.ops-surface-card:hover {
+  border-color: rgba(212,175,55,0.15) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25), 0 0 60px rgba(212,175,55,0.04) !important;
 }
 
 /* ─── Link hover — gold underline animation ─── */
