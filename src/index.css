@@ -272,6 +272,24 @@
   box-shadow: none !important;
 }
 
+/* ─── Nuclear: force 12px on ALL Card components in dashboard ─── */
+.tbos-card,
+.tbos-card-hero,
+.tbos-card-recessed {
+  border-radius: 12px !important;
+}
+
+/* Force all rounded-xl cards within dashboard to 12px */
+[class*="rounded-xl"] {
+  border-radius: 12px !important;
+}
+
+/* Override any stray rounded-2xl or rounded-3xl */
+[class*="rounded-2xl"],
+[class*="rounded-3xl"] {
+  border-radius: 12px !important;
+}
+
 /* ─── Link hover — gold underline animation ─── */
 .link-gold {
   position: relative;
