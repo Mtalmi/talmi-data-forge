@@ -163,7 +163,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       )}
       style={{
         background: '#0f1520',
-        borderRight: '1px solid rgba(212, 168, 67, 0.1)',
+        
       }}
     >
       {/* ── BRAND HEADER ── */}
