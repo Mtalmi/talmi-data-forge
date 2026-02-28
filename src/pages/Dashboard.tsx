@@ -828,18 +828,24 @@ export default function Dashboard() {
           {/* Grid removed for clean editorial look */}
 
           {/* ── HEADER BAR ── */}
-          <div className="relative flex items-center justify-between px-5 pt-4 pb-2 z-10">
-            <div className="flex items-center gap-2.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-40" />
-                <span className="relative rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.5)' }} />
+          {/* Section header with golden divider */}
+          <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
               </span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-emerald-400/60">Live</span>
-              <span className="text-[9px] uppercase tracking-[0.2em] text-slate-600 font-mono">Production du Jour</span>
-              <div className="w-px h-3 bg-white/10 mx-1" />
-              <span className="text-[9px] text-slate-700 font-mono">Casablanca · UTC+1</span>
-              <div className="flex-1 border-t border-amber-500/30" />
+              <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">
+                Live Production du Jour
+              </span>
+              <span className="text-muted-foreground text-[11px]">
+                Casablanca · UTC+1
+              </span>
             </div>
+            <div className="flex-1 border-t border-amber-500/30" />
+          </div>
+          {/* Metrics row */}
+          <div className="relative flex items-center justify-end gap-3 px-5 pb-2 z-10">
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
                 <span className="text-[13px] text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>671</span>
