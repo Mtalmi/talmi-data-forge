@@ -43,7 +43,7 @@ function MiniBar({ label, pct, warn }: { label: string; pct: number; warn?: bool
 
 export default function PlantFlowSchematic() {
   return (
-    <div className="mx-auto mt-0 mb-5">
+    <div className="mx-auto mt-2 mb-5">
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
         <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">
