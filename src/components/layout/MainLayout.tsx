@@ -62,10 +62,9 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         <div className="flex items-center shrink-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20"
+            className="ml-3 p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/[0.04] transition-all z-20 lg:hidden"
           >
-            {sidebarOpen ? <X className="h-4 w-4 lg:hidden" /> : null}
-            <Menu className={`h-4 w-4 ${sidebarOpen ? 'hidden lg:block' : ''}`} />
+            {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
           <div className="flex-1">
             <TopNavBar
