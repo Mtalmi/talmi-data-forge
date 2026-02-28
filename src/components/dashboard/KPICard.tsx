@@ -56,10 +56,10 @@ export default function KPICard({
         'relative overflow-hidden rounded-xl border p-4 sm:p-5',
         'transition-all duration-300 ease-out',
         'hover:-translate-y-1',
-        variant === 'positive' && 'bg-primary/[0.03] border-primary/20',
-        variant === 'negative' && 'bg-destructive/[0.03] border-destructive/20',
-        variant === 'warning' && 'bg-warning/[0.03] border-warning/20',
-        variant === 'default' && 'bg-card border-border/40',
+        variant === 'positive' && 'bg-primary/[0.03]',
+        variant === 'negative' && 'bg-destructive/[0.03]',
+        variant === 'warning' && 'bg-warning/[0.03]',
+        variant === 'default' && 'bg-card',
       )}
       style={{
         ['--hover-glow' as string]: `0 8px 32px ${accentColor}22`,
