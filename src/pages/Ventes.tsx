@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown, TrendingUp, BarChart3 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -444,9 +444,19 @@ export default function Ventes() {
             {/* Title + Primary CTA */}
             <div className="px-1 py-2">
               <div className="flex items-center justify-between">
-                <div>
-                  <h1 style={{ fontSize: 22, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
-                  <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+                <div className="flex items-center gap-3">
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 12,
+                    background: 'rgba(253,185,19,0.08)',
+                    border: '1px solid rgba(253,185,19,0.15)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <BarChart3 className="h-5 w-5" style={{ color: '#FDB913' }} />
+                  </div>
+                  <div>
+                    <h1 style={{ fontSize: 22, fontWeight: 700, color: 'white', letterSpacing: '-0.01em' }}>TBOS {t.pages.ventes.title}</h1>
+                    <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+                  </div>
                 </div>
                 <SmartQuoteCalculator variant="prominent" />
               </div>
@@ -496,9 +506,19 @@ export default function Ventes() {
 
           {/* DESKTOP HEADER (md+) */}
           <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2">
-            <div>
-              <h1 style={{ fontSize: 24, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
-              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+            <div className="flex items-center gap-3">
+              <div style={{
+                width: 44, height: 44, borderRadius: 12,
+                background: 'rgba(253,185,19,0.08)',
+                border: '1px solid rgba(253,185,19,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <BarChart3 className="h-5 w-5" style={{ color: '#FDB913' }} />
+              </div>
+              <div>
+                <h1 style={{ fontSize: 24, fontWeight: 700, color: 'white', letterSpacing: '-0.01em' }}>TBOS {t.pages.ventes.title}</h1>
+                <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {/* Primary — Gold gradient */}
@@ -546,7 +566,115 @@ export default function Ventes() {
             </div>
           </div>
 
-          {/* Expiring Quotes Alert */}
+          {/* ── PIPELINE COMMERCIAL — Section Header + KPI Row ── */}
+          <div>
+            {/* Section header with golden divider */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+              <TrendingUp className="h-4 w-4 flex-shrink-0" style={{ color: 'rgba(253,185,19,0.6)' }} />
+              <span style={{
+                fontSize: 11, fontWeight: 600, letterSpacing: '0.2em',
+                color: 'rgba(253,185,19,0.6)', textTransform: 'uppercase' as const,
+                whiteSpace: 'nowrap' as const,
+              }}>
+                {t.pages.ventes.salesPipeline}
+              </span>
+              <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(253,185,19,0.25), rgba(253,185,19,0.05), transparent)' }} />
+            </div>
+
+            {/* 4 KPI cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { 
+                  label: t.pages.ventes.pipelineTotal, 
+                  value: Math.round(stats.totalDevisHT / 1000), 
+                  suffix: 'K DH', 
+                  trend: '↑ 12%', 
+                  trendSub: t.pages.ventes.vsLastMonth,
+                  trendColor: '#10B981' 
+                },
+                { 
+                  label: t.pages.ventes.conversionRateLabel, 
+                  value: (() => {
+                    const totalDevis = stats.devisEnAttente + (stats.devisConverti || 0) + (stats.devisRefuses || 0) + (stats.devisAcceptes || 0);
+                    if (totalDevis === 0) return 0;
+                    return Math.round(((stats.devisConverti || 0) / totalDevis) * 100);
+                  })(),
+                  suffix: '%', 
+                  trend: '→', 
+                  trendSub: 'stable',
+                  trendColor: 'rgba(255,255,255,0.4)' 
+                },
+                { 
+                  label: t.pages.ventes.averageDealSize, 
+                  value: (() => {
+                    const totalBc = stats.bcPretProduction + stats.bcEnProduction + stats.bcLivre;
+                    if (totalBc === 0) return 0;
+                    return Math.round((stats.totalBcHT || 0) / totalBc / 1000);
+                  })(),
+                  suffix: 'K DH', 
+                  trend: '↑ 5%', 
+                  trendSub: '',
+                  trendColor: '#10B981' 
+                },
+                { 
+                  label: t.pages.ventes.salesCycle, 
+                  value: 28, 
+                  suffix: ` ${t.pages.ventes.days}`, 
+                  trend: `↓ 3 ${t.pages.ventes.days}`, 
+                  trendSub: '',
+                  trendColor: '#10B981' 
+                },
+              ].map((kpi, i) => (
+                <div 
+                  key={kpi.label}
+                  className="rounded-xl p-5"
+                  style={{
+                    background: 'linear-gradient(135deg, #1a1f2e, #141824)',
+                    border: '1px solid rgba(253,185,19,0.2)',
+                  }}
+                >
+                  <div className="flex items-baseline gap-1">
+                    <span style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '1.875rem',
+                      fontWeight: 800,
+                      letterSpacing: '-0.02em',
+                      color: 'white',
+                      lineHeight: 1,
+                    }}>
+                      {kpi.value}
+                    </span>
+                    <span style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '1.125rem',
+                      color: 'rgba(148,163,184,0.5)',
+                    }}>
+                      {kpi.suffix}
+                    </span>
+                  </div>
+                  <p style={{
+                    fontSize: 11, fontWeight: 500,
+                    textTransform: 'uppercase', letterSpacing: '0.05em',
+                    color: 'rgba(148,163,184,0.5)',
+                    whiteSpace: 'nowrap',
+                    marginTop: 4,
+                  }}>
+                    {kpi.label}
+                  </p>
+                  <p style={{
+                    fontSize: 11,
+                    color: kpi.trendColor,
+                    whiteSpace: 'nowrap',
+                    marginTop: 2,
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}>
+                    {kpi.trend}{kpi.trendSub ? ` ${kpi.trendSub}` : ''}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {showExpiringAlert && expiringDevisCount > 0 && (
             <ExpiringQuotesAlert
               devisList={devisList}
