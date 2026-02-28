@@ -162,8 +162,8 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         open ? 'translate-x-0' : '-translate-x-full'
       )}
       style={{
-        background: 'linear-gradient(180deg, rgba(10, 13, 23, 0.99) 0%, rgba(8, 11, 20, 1) 100%)',
-        borderRight: '1px solid rgba(255, 255, 255, 0.04)',
+        background: '#0f1520',
+        borderRight: '1px solid rgba(212, 168, 67, 0.1)',
       }}
     >
       {/* ── BRAND HEADER ── */}
@@ -299,11 +299,11 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </nav>
 
       {/* ── USER PROFILE CARD ── */}
-      <div className="shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+      <div className="shrink-0" style={{ borderTop: '1px solid rgba(212, 168, 67, 0.1)' }}>
         <div
           className="mx-3 my-3 p-3 rounded-xl cursor-pointer transition-colors"
           style={{
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: '#111a2b',
             border: '1px solid rgba(255, 255, 255, 0.04)',
           }}
         >
@@ -319,10 +319,10 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
               >
                 {userInitials}
               </div>
-              <div
-                className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full"
-                style={{ border: '2px solid rgb(10, 13, 23)' }}
-              />
+               <div
+                 className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full"
+                 style={{ border: '2px solid #0f1520' }}
+               />
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xs text-white font-semibold truncate">{userName} Talmi</div>
