@@ -711,11 +711,7 @@ export default function Dashboard() {
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div
-          className="mt-6 mb-4 relative z-[1] rounded-[20px] overflow-hidden animated-border"
-          style={{
-            background: 'linear-gradient(180deg, rgba(10,14,26,0.98) 0%, rgba(6,10,20,1) 100%)',
-            border: '1px solid rgba(255,255,255,0.03)',
-          }}
+          className="mt-6 mb-4 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
         >
           {/* Grid removed for clean editorial look */}
 
