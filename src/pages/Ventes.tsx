@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown, BarChart3, TrendingUp } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -445,8 +445,15 @@ export default function Ventes() {
             <div className="px-1 py-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 style={{ fontSize: 22, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
-                  <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+                   <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-lg" style={{ background: 'rgba(212,168,67,0.12)' }}>
+                      <BarChart3 className="h-5 w-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-xl font-bold text-white tracking-tight">TBOS Ventes</h1>
+                      <p className="text-sm text-muted-foreground">{t.pages.ventes.subtitle}</p>
+                    </div>
+                  </div>
                 </div>
                 <SmartQuoteCalculator variant="prominent" />
               </div>
@@ -497,8 +504,15 @@ export default function Ventes() {
           {/* DESKTOP HEADER (md+) */}
           <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2">
             <div>
-              <h1 style={{ fontSize: 24, fontWeight: 300, color: 'white', letterSpacing: '-0.01em' }}>{t.pages.ventes.title}</h1>
-              <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.5)', marginTop: 2 }}>{t.pages.ventes.subtitle}</p>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl" style={{ background: 'rgba(212,168,67,0.12)' }}>
+                  <BarChart3 className="h-6 w-6 text-amber-400" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-white tracking-tight">TBOS Ventes</h1>
+                  <p className="text-sm text-muted-foreground">{t.pages.ventes.subtitle}</p>
+                </div>
+              </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               {/* Primary — Gold gradient */}
@@ -557,6 +571,59 @@ export default function Ventes() {
               onDismiss={() => setShowExpiringAlert(false)}
             />
           )}
+
+          {/* ── PIPELINE COMMERCIAL Section Header + KPI Row ── */}
+          <div className="space-y-4">
+            {/* Section Header */}
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-4 w-4 text-amber-400 flex-shrink-0" />
+              <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Pipeline Commercial</span>
+              <div className="flex-1 border-t border-amber-500/30" />
+            </div>
+
+            {/* 4 KPI Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Pipeline Total */}
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>847K</span>
+                  <span className="text-lg font-mono text-muted-foreground ml-1">DH</span>
+                </div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Pipeline Total</p>
+                <p className="text-[11px] text-emerald-400 whitespace-nowrap mt-0.5">↑ 12% vs mois dernier</p>
+              </div>
+
+              {/* Taux de Conversion */}
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>34</span>
+                  <span className="text-lg font-mono text-muted-foreground ml-1">%</span>
+                </div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Taux de Conversion</p>
+                <p className="text-[11px] text-muted-foreground whitespace-nowrap mt-0.5">~ stable</p>
+              </div>
+
+              {/* Taille Moyenne */}
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>42K</span>
+                  <span className="text-lg font-mono text-muted-foreground ml-1">DH</span>
+                </div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Taille Moyenne</p>
+                <p className="text-[11px] text-emerald-400 whitespace-nowrap mt-0.5">↑ 5%</p>
+              </div>
+
+              {/* Cycle de Vente */}
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>28</span>
+                  <span className="text-lg font-mono text-muted-foreground ml-1">jours</span>
+                </div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Cycle de Vente</p>
+                <p className="text-[11px] text-red-400 whitespace-nowrap mt-0.5">↓ 3 jours</p>
+              </div>
+            </div>
+          </div>
 
           {/* Filters & Saved Views */}
           <div className="flex flex-col sm:flex-row gap-4">
