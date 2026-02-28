@@ -578,7 +578,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch" style={{ alignItems: 'stretch' }}>
+          <div className="grid grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch" style={{ alignItems: 'stretch' }}>
           {[
             {
               label: 'VOLUME',
@@ -672,23 +672,16 @@ export default function Dashboard() {
 
                   {/* Main number with count-up — JetBrains Mono luminescent gauge */}
                   <div className="flex items-baseline gap-2 leading-none">
-                    <span style={{
+                    <span className="text-3xl font-mono font-extrabold tracking-tight text-white" style={{
                       fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
-                      fontWeight: 200,
-                      fontSize: '3rem',
-                      color: 'white',
-                      letterSpacing: '-0.03em',
+                      fontWeight: 800,
                       lineHeight: 1,
                       textShadow: '0 0 35px rgba(253,185,19,0.2), 0 0 70px rgba(253,185,19,0.07)',
                     }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
-                    <span style={{
+                    <span className="text-lg font-mono text-muted-foreground ml-1" style={{
                       fontFamily: "'JetBrains Mono', monospace",
-                      fontWeight: 300,
-                      fontSize: '14px',
-                      color: 'rgba(255,255,255,0.3)',
-                      marginLeft: '4px',
                     }}>{kpi.unit}</span>
                   </div>
 
