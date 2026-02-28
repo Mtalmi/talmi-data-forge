@@ -60,10 +60,10 @@ export default function PlantFlowSchematic() {
       </div>
 
       {/* Flow Strip */}
-      <div className="flex items-stretch relative overflow-x-auto">
+      <div className="flex items-stretch relative overflow-x-auto max-w-full">
 
         {/* ── STAGE 1: SILOS ── */}
-        <div className="flex-1 min-w-[140px] p-3 rounded-l-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="flex-1 min-w-0 p-3 rounded-l-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}>
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Silos</div>
           <div className="space-y-1">
             <MiniBar label="Ciment" pct={53} />
@@ -79,7 +79,7 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 2: MALAXEUR ── */}
-        <div className="flex-1 min-w-[130px] p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
@@ -99,7 +99,7 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 3: CAMIONS ── */}
-        <div className="flex-1 min-w-[130px] p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Camions</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -123,7 +123,7 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 4: CHANTIERS ── */}
-        <div className="flex-1 min-w-[140px] p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Chantiers</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -150,7 +150,7 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 5: QUALITÉ ── */}
-        <div className="flex-1 min-w-[120px] p-3 rounded-r-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div className="flex-1 min-w-0 p-3 rounded-r-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Qualité</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
