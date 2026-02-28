@@ -232,7 +232,7 @@ export default function Dashboard() {
           .tbos-hero-card {
             background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 20px;
+            border-radius: 8px;
             padding: 28px 28px 24px;
             position: relative;
             overflow: hidden;
@@ -703,7 +703,7 @@ export default function Dashboard() {
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div
-          className="mb-5 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
+          className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
         >
           {/* Grid removed for clean editorial look */}
 
@@ -995,7 +995,7 @@ export default function Dashboard() {
         />
 
         {/* ═══ PLANT FLOW SCHEMATIC — Real-time value chain ═══ */}
-        <Suspense fallback={<div className="h-32 rounded-xl bg-white/[0.02] animate-pulse mt-2" />}>
+        <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" />}>
           <PlantFlowSchematic />
         </Suspense>
 
@@ -1010,7 +1010,7 @@ export default function Dashboard() {
             ZONE 2 — OPERATIONS (always visible)
         ══════════════════════════════════════════════════ */}
         <div className="mt-0">
-          <Suspense fallback={<div className="h-[600px] rounded-xl bg-white/[0.02] animate-pulse" />}>
+          <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
             <WorldClassDashboard />
           </Suspense>
         </div>

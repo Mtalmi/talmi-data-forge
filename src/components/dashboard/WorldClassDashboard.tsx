@@ -69,8 +69,9 @@ const Card = forwardRef<HTMLDivElement, { children: React.ReactNode; className?:
     return (
       <div
         ref={ref}
-        className={`relative overflow-hidden rounded-xl p-5 transition-all duration-500 ${className}`}
+        className={`relative overflow-hidden p-5 transition-all duration-500 ${className}`}
         style={{
+          borderRadius: 8,
           background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
           border: '1px solid rgba(255, 255, 255, 0.08)',
           backdropFilter: 'none',
