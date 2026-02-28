@@ -45,13 +45,18 @@ export default function PlantFlowSchematic() {
   return (
     <div className="mx-auto mt-6 mb-2">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-3 mb-3">
         <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">
           Flux Usine
         </span>
-        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotOk }} />
-        <span className="text-[10px] font-medium" style={{ color: T.dotOk }}>Temps réel</span>
+        <span className="relative flex h-2 w-2">
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        </span>
+        <span className="text-emerald-400 text-[11px]">Temps réel</span>
         <div className="flex-1 border-t border-amber-500/30" />
+        <span className="text-amber-400/70 text-[11px] uppercase tracking-wider hover:text-amber-400 transition-colors cursor-pointer">
+          VOIR TOUT →
+        </span>
       </div>
 
       {/* Flow Strip */}
