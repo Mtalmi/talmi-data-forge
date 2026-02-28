@@ -118,7 +118,7 @@ export default function RecentDeliveries() {
           className="relative overflow-hidden rounded-xl p-6"
           style={{
           background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-          border: '1px solid rgba(245, 158, 11, 0.2)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
         
@@ -137,7 +137,7 @@ export default function RecentDeliveries() {
       className="relative overflow-hidden rounded-xl p-6 transition-all duration-500"
       style={{
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-        border: '1px solid rgba(245, 158, 11, 0.2)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
         backdropFilter: 'none',
         WebkitBackdropFilter: 'none',
         boxShadow: 'none',
@@ -145,12 +145,12 @@ export default function RecentDeliveries() {
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
         el.style.transform = 'translateY(-2px)';
-        el.style.borderColor = 'rgba(212,175,55,0.35)';
+        el.style.borderColor = 'rgba(255, 255, 255, 0.15)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
         el.style.transform = 'translateY(0)';
-        el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
+        el.style.borderColor = 'rgba(255, 255, 255, 0.08)';
       }}
     >
 

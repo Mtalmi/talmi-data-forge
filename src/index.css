@@ -251,7 +251,7 @@
 /* ─── Operations surface hard-lock (prevents shape drift) ─── */
 .ops-surface-card {
   border-radius: 12px !important;
-  border: 1px solid rgba(245, 158, 11, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-image: none !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
   box-shadow: none !important;
@@ -270,7 +270,7 @@
   content: none !important;
 }
 .ops-surface-card:hover {
-  border-color: rgba(245, 158, 11, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
   box-shadow: none !important;
 }
 
