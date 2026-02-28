@@ -37,8 +37,8 @@ export default function LiveBatchProgress() {
         el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
       }}
     >
-      {/* Category accent — amber */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
+
+
 
       {/* Header */}
       <div className="flex items-center justify-between mb-3">

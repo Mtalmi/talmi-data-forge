@@ -153,10 +153,8 @@ export default function RecentDeliveries() {
         el.style.borderColor = 'rgba(245, 158, 11, 0.2)';
       }}
     >
-      {/* Category accent — amber */}
-      <div className="absolute top-0 left-4 right-4 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, transparent, #FDB913, transparent)' }} />
-      <div className="absolute top-0 left-[8%] right-[8%] h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)' }} />
-      <div className="absolute inset-0 rounded-xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(253,185,19,0.04) 0%, transparent 70%)' }} />
+
+
 
       <div className="flex items-center justify-between mb-4">
         <div>
