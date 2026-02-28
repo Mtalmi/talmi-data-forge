@@ -49,7 +49,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       />
 
       {/* Content Layer — offset by sidebar width on desktop */}
-      <div className={`relative z-10 flex flex-col min-h-[100dvh] flex-1 overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-56' : 'lg:ml-0'}`}>
+        <div className={`relative z-10 flex flex-col min-h-[100dvh] flex-1 overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-56' : 'lg:ml-0'}`}>
         {/* Preview Mode Banner */}
         {previewRole && (
           <RolePreviewBanner
