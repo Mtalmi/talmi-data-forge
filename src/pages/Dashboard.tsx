@@ -210,9 +210,9 @@ export default function Dashboard() {
   return (
     <MainLayout>
       <div
-        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-[calc(100%+1.5rem*2)] sm:w-[calc(100%+2rem*2)] md:w-[calc(100%+3rem*2)] lg:w-[calc(100%+4rem*2)] -mx-3 sm:-mx-4 md:-mx-6 lg:-mx-8 -mt-3 sm:-mt-4 md:-mt-6 lg:-mt-8 -mb-3 sm:-mb-4 md:-mb-6 lg:-mb-8 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
+        className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full min-w-0 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
         style={{
-          background: 'linear-gradient(170deg, #0D1220 0%, #0F172A 40%, #131B2E 100%)',
+          background: 'linear-gradient(145deg, #11182E, #162036)',
         }}
       >
 
@@ -763,7 +763,7 @@ export default function Dashboard() {
           </div>
 
           {/* ── MAIN 3-PANEL LAYOUT ── */}
-          <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0" style={{ minHeight: '220px' }}>
+          <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0 w-full" style={{ minHeight: '220px' }}>
 
             {/* ══ PANEL 1: PRODUCTION CHART (70%) ══ */}
             <div className="flex-[7] relative min-w-0">

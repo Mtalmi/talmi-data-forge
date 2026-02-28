@@ -588,19 +588,19 @@ export function WorldClassDashboard() {
         <style>{`
           @keyframes shimmer-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
         `}</style>
-        <div style={{ maxWidth: 1600, margin: '0 auto' }}>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            <div className="space-y-5">
+        <div style={{ maxWidth: '100%', margin: '0 auto' }} className="w-full min-w-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 w-full">
+            <div className="space-y-5 min-w-0">
               <SkeletonCard height={280} />
               <SkeletonCard height={140} />
               <SkeletonCard height={180} />
             </div>
-            <div className="space-y-5">
+            <div className="space-y-5 min-w-0">
               <SkeletonCard height={240} />
               <SkeletonCard height={200} />
               <SkeletonCard height={160} />
             </div>
-            <div className="space-y-5">
+            <div className="space-y-5 min-w-0">
               <SkeletonCard height={200} />
               <SkeletonCard height={300} />
               <SkeletonCard height={120} />
@@ -651,7 +651,7 @@ export function WorldClassDashboard() {
           <div className="absolute top-[40%] right-[10%] w-[500px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.025) 0%, transparent 55%)', filter: 'blur(100px)', animation: 'opsGlow 16s ease-in-out infinite 4s' }} />
           <div className="absolute bottom-0 left-[40%] w-[600px] h-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.025) 0%, transparent 50%)', filter: 'blur(90px)', animation: 'opsGlow 14s ease-in-out infinite 8s' }} />
         </div>
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 relative z-[1]" style={{ alignItems: 'start' }}>
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
           <div className="space-y-5 min-w-0">
