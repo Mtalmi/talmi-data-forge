@@ -53,7 +53,7 @@ export default function PlantFlowSchematic() {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
         <span className="text-emerald-400 text-[11px]">Temps réel</span>
-        <div className="flex-1 h-px bg-amber-500/40" />
+        <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
         <span className="text-amber-400/70 text-[11px] uppercase tracking-wider hover:text-amber-400 transition-colors cursor-pointer">
           VOIR TOUT →
         </span>
