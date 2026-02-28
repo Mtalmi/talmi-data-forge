@@ -651,10 +651,10 @@ export function WorldClassDashboard() {
           <div className="absolute top-[40%] right-[10%] w-[500px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.025) 0%, transparent 55%)', filter: 'blur(100px)', animation: 'opsGlow 16s ease-in-out infinite 4s' }} />
           <div className="absolute bottom-0 left-[40%] w-[600px] h-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.025) 0%, transparent 50%)', filter: 'blur(90px)', animation: 'opsGlow 14s ease-in-out infinite 8s' }} />
         </div>
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
-          <div className="space-y-5 min-w-0">
+            <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             <Card className="tbos-card-enter tbos-stagger-1" style={{ height: 280 }}>
               {/* Category accent — teal for production */}
@@ -716,7 +716,7 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
-          <div className="space-y-5 min-w-0">
+          <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
             <Card className="tbos-card-enter tbos-stagger-4">
               {/* Category accent — teal for production */}
@@ -807,7 +807,7 @@ export function WorldClassDashboard() {
           </div>
 
           {/* ─── Col 3: Créances & Deliveries ─── */}
-          <div className="space-y-5 min-w-0">
+          <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             <Card className="tbos-card-enter tbos-stagger-7">
               {/* Category accent — gold for financial */}

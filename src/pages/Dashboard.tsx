@@ -364,7 +364,7 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Branded Header */}
-          <div className="pt-6 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+          <div className="pt-4 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
             <div className="flex items-center gap-3 mb-1">
               <LayoutDashboard size={24} className="text-amber-400" />
               <div>
@@ -378,7 +378,7 @@ export default function Dashboard() {
           </div>
 
           {/* Greeting — Cinematic Hero Moment */}
-          <div className="pb-8 relative z-[1]">
+          <div className="pb-4 relative z-[1]">
             <div className="flex items-end justify-between">
               <div>
             <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ lineHeight: 1 }}>
@@ -420,7 +420,7 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions Command Bar */}
-          <div className="flex flex-wrap items-center gap-2 mt-1 mb-5 relative z-[1] overflow-hidden min-w-0 max-w-full" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
+          <div className="flex flex-wrap items-center gap-2 mt-2 mb-5 relative z-[1] overflow-hidden min-w-0 max-w-full" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s both' }}>
             <button
               onClick={() => navigate('/ventes')}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-[1.03]"
@@ -470,7 +470,7 @@ export default function Dashboard() {
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}
-          <div className="grid grid-cols-4 gap-5 mb-6 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
+          <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
           {[
             {
               label: 'VOLUME',
@@ -711,7 +711,7 @@ export default function Dashboard() {
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
         <div
-          className="mt-6 mb-4 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
+          className="mb-3 relative z-[1] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
         >
           {/* Grid removed for clean editorial look */}
 
@@ -965,7 +965,7 @@ export default function Dashboard() {
         {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && (
           <div
-            className="flex items-center justify-between px-5 py-3 rounded-xl mt-3 mb-2"
+            className="flex items-center justify-between px-4 py-2 rounded-xl mt-3 mb-3"
             style={{
               background: 'linear-gradient(90deg, rgba(234,179,8,0.06) 0%, rgba(234,179,8,0.02) 50%, rgba(234,179,8,0.06) 100%)',
               border: '1px solid rgba(234,179,8,0.1)',
@@ -1008,7 +1008,7 @@ export default function Dashboard() {
         </Suspense>
 
         {/* Section Divider — Opérations */}
-        <div className="flex items-center gap-3 mt-6 mb-6">
+        <div className="flex items-center gap-3 mt-5 mb-3">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
           <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
