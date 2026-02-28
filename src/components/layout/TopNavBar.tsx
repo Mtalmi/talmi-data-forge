@@ -42,9 +42,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
       <div
         className="flex items-center justify-between h-12 px-4 lg:px-6"
         style={{
-          background: 'linear-gradient(90deg, rgba(7,11,18,0.95) 0%, rgba(10,15,25,0.9) 50%, rgba(7,11,18,0.95) 100%)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
+          background: '#0f1520',
         }}
       >
         {/* Search — refined capsule */}
