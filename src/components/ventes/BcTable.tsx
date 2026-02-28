@@ -282,7 +282,7 @@ export function BcTable({
     
     return (
       <span className={cn(
-        "text-sm",
+        "text-sm font-mono",
         priority.isUrgent && bc.statut === 'pret_production' && "text-destructive font-medium"
       )}>
         {isToday(date) ? (
@@ -383,7 +383,7 @@ export function BcTable({
                 <div className="flex flex-col items-end">
                   <span className="font-mono">{bc.volume_m3}</span>
                   {bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (
-                    <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[10px] text-muted-foreground font-mono">
                       {bc.volume_livre || 0}/{bc.volume_m3} livré
                     </span>
                   )}
