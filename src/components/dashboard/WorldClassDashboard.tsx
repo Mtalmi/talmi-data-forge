@@ -309,7 +309,7 @@ function AIAnalystBrief() {
   }, []);
 
   return (
-    <Card className="ops-enter ops-surface-card">
+      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
       <div className="flex items-center justify-between mb-4">
@@ -387,7 +387,7 @@ function PipelineFunnel() {
   ];
 
   return (
-    <Card className="ops-enter ops-surface-card">
+    <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
       <div className="flex justify-between items-center mb-5">
@@ -645,7 +645,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 1: Production + Batch Timeline ─── */}
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280 }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -687,7 +687,7 @@ export function WorldClassDashboard() {
             <LiveBatchProgress />
 
             {/* Batch Timeline */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-2">
+            <Card className="ops-enter ops-surface-card tbos-stagger-2" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div className="flex items-center gap-2 mb-4">
@@ -707,7 +707,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
           <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-4">
+            <Card className="ops-enter ops-surface-card tbos-stagger-4" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
@@ -769,7 +769,7 @@ export function WorldClassDashboard() {
             <PipelineFunnel />
 
             {/* Quality feed — Compact */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-6" style={{ borderRadius: 8, padding: 16 }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-6" style={{ borderRadius: 8, padding: 20, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[
@@ -796,7 +796,7 @@ export function WorldClassDashboard() {
           {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-7">
+            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div className="flex justify-between items-start mb-4">
@@ -842,7 +842,7 @@ export function WorldClassDashboard() {
             <RecentDeliveries />
 
             {/* Daily P&L Signature Metric */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-9">
+            <Card className="ops-enter ops-surface-card tbos-stagger-9" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div className="text-center py-4 relative">
