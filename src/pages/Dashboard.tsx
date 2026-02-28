@@ -339,9 +339,9 @@ export default function Dashboard() {
             {/* Primary golden pool — top left, large and warm */}
             <div className="absolute -top-20 left-[15%] w-[1000px] h-[800px] rounded-full" 
                  style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.09) 0%, rgba(253,185,19,0.04) 25%, rgba(253,185,19,0.01) 45%, transparent 65%)', filter: 'blur(100px)', animation: 'heroGlow 8s ease-in-out infinite' }} />
-            {/* Cool blue accent — top right, complementary */}
+            {/* Secondary warm accent — top right */}
             <div className="absolute -top-10 right-[5%] w-[700px] h-[600px] rounded-full" 
-                 style={{ background: 'radial-gradient(circle, rgba(0,217,255,0.05) 0%, rgba(0,217,255,0.02) 30%, transparent 55%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
+                 style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.04) 0%, rgba(253,185,19,0.015) 30%, transparent 55%)', filter: 'blur(120px)', animation: 'heroGlow 10s ease-in-out infinite 2s' }} />
             {/* Secondary golden pool — mid-right */}
             <div className="absolute top-[35%] left-[55%] w-[500px] h-[500px] rounded-full" 
                  style={{ background: 'radial-gradient(circle, rgba(253,185,19,0.05) 0%, rgba(253,185,19,0.015) 40%, transparent 60%)', filter: 'blur(90px)', animation: 'heroGlow 12s ease-in-out infinite 4s' }} />
@@ -479,8 +479,8 @@ export default function Dashboard() {
               watermark: 'm³',
               sub: 'Total du jour',
               trend: '↗ +12%',
-              accentColor: '#00D9FF',
-              labelColor: 'rgba(0,217,255,0.6)',
+              accentColor: '#FDB913',
+              labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,28 60,18 80,14 100,8 120,4',
               sparkStroke: '#22c55e',
               monthlyTarget: { current: 671, target: 3200, daysLeft: 5 },
@@ -545,14 +545,6 @@ export default function Dashboard() {
               <div className="scanline-overlay" />
               {/* Category accent — refined thin line */}
               <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: `linear-gradient(90deg, transparent, ${kpi.accentColor}50, transparent)` }} />
-              {/* Corner accent — luxury watch detail */}
-              <div className="absolute top-0 right-0 w-12 h-12 pointer-events-none" style={{
-                background: `radial-gradient(circle at 100% 0%, ${kpi.accentColor}08 0%, transparent 70%)`,
-              }} />
-              {/* Giant unit watermark — subtler */}
-              <div className="absolute bottom-[-8px] right-3 text-[72px] font-extralight leading-none pointer-events-none select-none" style={{ color: `${kpi.accentColor}06`, fontFamily: 'Inter, system-ui' }}>
-                {kpi.watermark}
-              </div>
 
               {/* Content wrapper for equal height */}
               <div className="relative z-[1] flex flex-col flex-1" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
