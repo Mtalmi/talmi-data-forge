@@ -41,19 +41,22 @@ type ActiveDeliveriesMap = Record<string, ActiveDelivery>;
 
 interface FleetPanelProps {
   selectedDate: string;
+  isOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
 }
 
-export function FleetPanel({ selectedDate, onOpenChange }: FleetPanelProps) {
+export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChange }: FleetPanelProps) {
   const { t } = useI18n();
   const fp = t.fleetPanel;
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
-  
-  // Notify parent of open/close changes
-  useEffect(() => {
-    onOpenChange?.(isOpen);
-  }, [isOpen, onOpenChange]);
+  const [internalIsOpen, setInternalIsOpen] = useState(true);
+  const isOpen = controlledIsOpen ?? internalIsOpen;
+  const setIsOpen = useCallback((nextOpen: boolean) => {
+    if (controlledIsOpen === undefined) {
+      setInternalIsOpen(nextOpen);
+    }
+    onOpenChange?.(nextOpen);
+  }, [controlledIsOpen, onOpenChange]);
   const [vehicles, setVehicles] = useState<FleetVehicle[]>([]);
   const [activeDeliveries, setActiveDeliveries] = useState<ActiveDeliveriesMap>({});
   const [loading, setLoading] = useState(true);
@@ -172,17 +175,7 @@ export function FleetPanel({ selectedDate, onOpenChange }: FleetPanelProps) {
   const maintenanceCount = vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length;
 
   if (!isOpen) {
-    return (
-      <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 animate-in fade-in duration-300">
-        <button
-          onClick={() => setIsOpen(true)}
-          className="flex flex-col items-center justify-center gap-1.5 w-10 h-20 rounded-l-lg bg-slate-800/90 backdrop-blur-sm border border-r-0 border-amber-500/30 shadow-lg hover:bg-slate-700/90 hover:border-amber-500/50 transition-colors cursor-pointer"
-        >
-          <Truck className="h-4 w-4 text-amber-400" />
-          <ChevronLeft className="h-3.5 w-3.5 text-slate-400" />
-        </button>
-      </div>
-    );
+    return null;
   }
 
   return (

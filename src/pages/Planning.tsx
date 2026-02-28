@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import WorldClassPlanning from '@/components/planning/WorldClassPlanning';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
@@ -32,6 +33,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
   Sparkles,
   BellRing,
   ExternalLink,
@@ -2002,7 +2004,18 @@ export default function Planning() {
 
         {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
         {!isMobile && (
-          <FleetPanel selectedDate={selectedDate} onOpenChange={setFleetPanelOpen} />
+          <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} />
+        )}
+
+        {!isMobile && !fleetPanelOpen && createPortal(
+          <button
+            onClick={() => setFleetPanelOpen(true)}
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] w-10 h-20 bg-slate-800/90 backdrop-blur-sm border border-amber-500/30 rounded-l-lg shadow-lg hover:bg-slate-700/90 hover:border-amber-500/50 transition-all duration-200 flex flex-col items-center justify-center gap-1"
+          >
+            <Truck className="w-4 h-4 text-amber-400" />
+            <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />
+          </button>,
+          document.body
         )}
       </div>
     </MainLayout>
