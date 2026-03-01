@@ -502,7 +502,7 @@ export default function Ventes() {
           </div>
 
           {/* DESKTOP HEADER (md+) */}
-          <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2">
+          <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2" style={{ background: 'transparent', border: 'none' }}>
             <div>
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl" style={{ background: 'rgba(212,168,67,0.12)' }}>
@@ -514,7 +514,7 @@ export default function Ventes() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2">
               {/* Primary — Gold gradient */}
               <SmartQuoteCalculator variant="prominent" />
               {/* Secondary — Glass */}
@@ -542,21 +542,82 @@ export default function Ventes() {
                   {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
                 </Button>
               )}
-              {/* Tertiary — Ghost */}
-              <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
-              <Button 
-                onClick={() => setBatchReminderOpen(true)}
-                variant="ghost"
-                size="sm"
-                className="gap-1.5"
-                style={{ color: 'rgba(148,163,184,0.5)', fontSize: 12 }}
-              >
-                <Mail className="h-3.5 w-3.5" />
-                {t.pages.ventes.reminders}
-              </Button>
-              <CommunicationLogDrawer />
-              <ActivityHistoryDrawer />
-              
+              {/* More dropdown for secondary actions */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    style={{
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                      borderRadius: 8,
+                      padding: '8px 12px',
+                      background: 'transparent',
+                      color: '#9CA3AF',
+                      fontSize: 12,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      transition: 'all 150ms',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.4)'; e.currentTarget.style.color = '#F59E0B'; }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.2)'; e.currentTarget.style.color = '#9CA3AF'; }}
+                  >
+                    <span style={{ fontSize: 16, lineHeight: 1 }}>⋯</span>
+                    Plus
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  style={{
+                    background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+                    border: '1px solid rgba(245, 158, 11, 0.15)',
+                    borderRadius: 8,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                    padding: 4,
+                    minWidth: 200,
+                  }}
+                >
+                  <DropdownMenuItem
+                    className="cursor-pointer rounded-md"
+                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
+                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-scheduled-reminders]')?.click()}
+                  >
+                    <Receipt className="h-4 w-4 mr-3 text-muted-foreground" />
+                    Rappels Auto
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer rounded-md"
+                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
+                    onSelect={() => setBatchReminderOpen(true)}
+                  >
+                    <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
+                    {t.pages.ventes.reminders}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer rounded-md"
+                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
+                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-communication-log]')?.click()}
+                  >
+                    <Zap className="h-4 w-4 mr-3 text-muted-foreground" />
+                    Communications
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer rounded-md"
+                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
+                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-activity-history]')?.click()}
+                  >
+                    <Calendar className="h-4 w-4 mr-3 text-muted-foreground" />
+                    Historique
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              {/* Hidden trigger buttons for dropdown actions */}
+              <div className="hidden">
+                <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
+                <CommunicationLogDrawer />
+                <ActivityHistoryDrawer />
+              </div>
             </div>
           </div>
 

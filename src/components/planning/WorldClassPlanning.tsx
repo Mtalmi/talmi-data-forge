@@ -411,7 +411,8 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
         padding: '0 24px',
-        borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
+        background: 'transparent',
+        border: 'none',
       }}>
         <div style={{ margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20, paddingRight: fleetPanelOpen ? 272 : 0, transition: 'padding-right 300ms ease-in-out' }}>
           {/* Logo */}
