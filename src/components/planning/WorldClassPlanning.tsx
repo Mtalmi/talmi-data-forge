@@ -460,7 +460,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
 
         {/* ── SECTION 1: KPIs ── */}
         <section>

@@ -437,7 +437,7 @@ export default function Ventes() {
             filter: 'blur(60px)',
           }}/>
         </div>
-        <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px' }}>
+        <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
           {/* ── Premium Page Header ── */}
           {/* MOBILE HEADER (< md) */}
            <div className="md:hidden space-y-3">
