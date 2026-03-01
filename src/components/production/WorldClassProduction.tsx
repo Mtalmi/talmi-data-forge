@@ -597,7 +597,7 @@ export default function WorldClassProduction() {
       />
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 32 }} className="sm:!px-6">
 
         {/* ── BATCHES TAB ── */}
         {activeTab === 'batches' && (
@@ -616,7 +616,7 @@ export default function WorldClassProduction() {
         {/* ── KPI CARDS ── */}
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
-          <div className="grid grid-cols-4 gap-4 items-stretch">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
             <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
             <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} />
             <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />
@@ -629,13 +629,13 @@ export default function WorldClassProduction() {
           <SectionHeader icon={Activity} label="Workflow de Production" />
           <div style={{
             background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-            borderRadius: 14, padding: '40px 32px',
+            borderRadius: 14, padding: '24px 16px',
           }}>
-            <div className="flex items-center justify-center gap-0">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0">
               <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.gold} statusLabel="En attente" delay={0} />
-              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
+              <ChevronRight size={24} strokeWidth={1} className="hidden sm:block" style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
               <WorkflowStep count={workflowCounts.production} label="En Production" color={T.info} statusLabel="Actif" delay={100} />
-              <ChevronRight size={24} strokeWidth={1} style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
+              <ChevronRight size={24} strokeWidth={1} className="hidden sm:block" style={{ color: 'rgba(255,255,255,0.15)', margin: '0 32px', marginBottom: 24 }} />
               <WorkflowStep count={workflowCounts.validation} label="Validation" color={T.success} statusLabel="Terminé" delay={200} />
             </div>
           </div>
@@ -644,7 +644,8 @@ export default function WorldClassProduction() {
         {/* ── CHARTS: Production du Jour ── */}
         <section>
           <SectionHeader icon={Activity} label="Production du Jour" />
-          <div className="grid gap-5" style={{ gridTemplateColumns: '3fr 2fr' }}>
+          <div className="tbos-prod-charts grid gap-5" style={{ gridTemplateColumns: 'minmax(0, 3fr) minmax(0, 2fr)' }}>
+            <style>{`@media (max-width: 768px) { .tbos-prod-charts { grid-template-columns: 1fr !important; } .tbos-quality-grid { grid-template-columns: 1fr !important; } }`}</style>
             {/* Hourly Production */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
@@ -751,7 +752,7 @@ export default function WorldClassProduction() {
         {/* ── QUALITY ── */}
         <section>
           <SectionHeader icon={Shield} label="Qualité & Conformité" />
-          <div className="grid gap-5" style={{ gridTemplateColumns: '60% 40%' }}>
+          <div className="tbos-quality-grid grid gap-5" style={{ gridTemplateColumns: '60% 40%' }}>
             {/* Weekly quality chart */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,

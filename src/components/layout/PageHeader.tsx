@@ -71,7 +71,7 @@ export function PageHeader({
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        padding: '0 24px',
+        padding: '0 16px',
         background: 'transparent',
         border: 'none',
       }}
@@ -80,10 +80,13 @@ export function PageHeader({
         style={{
           maxWidth: 1400,
           margin: '0 auto',
-          height: 60,
+          minHeight: 60,
           display: 'flex',
           alignItems: 'center',
-          gap: 20,
+          gap: 12,
+          flexWrap: 'wrap',
+          paddingTop: 8,
+          paddingBottom: 8,
         }}
       >
         {/* ── Branding ── */}
@@ -97,6 +100,7 @@ export function PageHeader({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             <Icon size={18} color={T.navy} />
@@ -104,19 +108,19 @@ export function PageHeader({
           <div>
             <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
             <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>{title}</span>
-            <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>{subtitle}</p>
+            <p className="hidden sm:block" style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>{subtitle}</p>
           </div>
         </div>
 
         {/* ── Tabs (centered) ── */}
         {tabs && tabs.length > 0 ? (
-          <div className="flex gap-1 flex-1 justify-center">
+          <div className="flex gap-1 flex-1 justify-center overflow-x-auto scrollbar-hide" style={{ minWidth: 0 }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => onTabChange?.(tab.id)}
                 style={{
-                  padding: '6px 16px',
+                  padding: '6px 12px',
                   borderRadius: 8,
                   cursor: 'pointer',
                   background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
@@ -126,6 +130,8 @@ export function PageHeader({
                   fontWeight: 600,
                   fontSize: 13,
                   transition: 'all 200ms',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                 }}
               >
                 {tab.label}
@@ -139,13 +145,13 @@ export function PageHeader({
 
         {/* ── Actions slot ── */}
         {actions && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+          <div className="hidden sm:flex items-center gap-8 flex-shrink-0">
             {actions}
           </div>
         )}
 
         {/* ── Utilities: clock, bell, spinner ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+        <div className="hidden sm:flex items-center gap-16 flex-shrink-0">
           <span
             style={{
               fontFamily: 'JetBrains Mono, monospace',

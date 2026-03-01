@@ -460,12 +460,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       />
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }} className="sm:!px-6 lg:!pr-[calc(24px+272px)]">
 
         {/* ── SECTION 1: KPIs ── */}
         <section ref={kpisRef}>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={{ alignItems: 'stretch' }}>
             <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
             <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
             <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />
@@ -476,9 +476,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── SECTION 2: WEEKLY SCHEDULE ── */}
         <section ref={semaineRef}>
           <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
-          <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <Card style={{ padding: 0, overflow: 'hidden', overflowX: 'auto' }}>
             {/* Header row */}
-            <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, 1fr)', gap: 0 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, minWidth: 800 }}>
               <div style={{ padding: '10px 14px', background: `${T.cardBorder}40`, borderBottom: `1px solid ${T.cardBorder}` }} />
               {weekDays.map(d => (
                 <div key={d} style={{
@@ -491,7 +491,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
 
             {/* Time rows */}
             {schedule.map((row, ri) => (
-              <div key={row.time} style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, 1fr)', gap: 0, borderTop: `1px solid ${T.cardBorder}` }}>
+              <div key={row.time} style={{ display: 'grid', gridTemplateColumns: '80px repeat(6, minmax(120px, 1fr))', gap: 0, borderTop: `1px solid ${T.cardBorder}`, minWidth: 800 }}>
                 {/* Time label */}
                 <div style={{
                   padding: '12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -513,7 +513,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── SECTION 3+4: GAUGE + DELIVERIES ── */}
         <section ref={capaciteRef}>
           <SectionHeader icon={Truck} label="Capacité & Livraisons" />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             {/* Capacity Gauge */}
             <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
