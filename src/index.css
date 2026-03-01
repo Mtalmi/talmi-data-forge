@@ -4836,3 +4836,13 @@ header button[role="combobox"]:focus {
   border-color: rgba(245, 158, 11, 0.25) !important;
   background: rgba(245, 158, 11, 0.06) !important;
 }
+
+/* ═══ PLANNING HEADER SEAMLESS FIX ═══ */
+/* Force the sticky planning header to be transparent like Dashboard */
+div[style*="sticky"][style*="blur"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.04) !important;
+}
