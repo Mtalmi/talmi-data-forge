@@ -146,9 +146,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       {/* ── Revenue by Product ── */}
       <div style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 16,
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
+        borderRadius: 12,
         padding: 24,
         overflow: 'hidden',
       }}>
@@ -211,9 +211,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
       {/* ── Revenue by Status (bar) ── */}
       <div style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 16,
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
+        borderRadius: 12,
         padding: 24,
         overflow: 'hidden',
       }}>
@@ -257,9 +257,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
       {/* ── Win / Loss Analysis ── */}
       <div style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 16,
+        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+        border: '1px solid rgba(245, 158, 11, 0.15)',
+        borderRadius: 12,
         padding: 24,
         overflow: 'hidden',
       }}>
