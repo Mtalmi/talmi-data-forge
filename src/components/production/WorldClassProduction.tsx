@@ -783,10 +783,10 @@ export default function WorldClassProduction() {
             </div>
 
             {/* Conformity cards */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4" style={{ minHeight: '100%' }}>
               <div style={{
                 background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-                borderRadius: 14, padding: 24,
+                borderRadius: 14, padding: 24, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
               }}>
                 <div className="flex justify-between items-center mb-2">
                   <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>Conformité</p>
