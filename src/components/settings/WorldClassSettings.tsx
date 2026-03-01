@@ -5,6 +5,7 @@ import {
   CheckCircle, XCircle, AlertTriangle, Calendar, Upload,
   Pencil, Code, MessageSquare, Award,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─── Design Tokens ──────────────────────────────────────────────────────────
 const BG     = '#0B1120';
@@ -400,45 +401,38 @@ export default function WorldClassSettings() {
         .stgs-day:hover { opacity: 0.85; }
       `}</style>
 
-      {/* ── PAGE HEADER ──────────────────────────────────────────────── */}
-      <div style={{
-        borderBottom: `1px solid ${BORDER}`,
-        padding: '20px 32px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 0,
-      }}>
-        <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: TEXT1, fontFamily: SANS, margin: 0, lineHeight: 1.2 }}>Paramètres</h1>
-          <p style={{ fontSize: 13, color: TEXT2, margin: 0, fontFamily: SANS }}>Configuration du système TBOS</p>
-        </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: 8, padding: '8px 20px',
-            borderRadius: 10, border: `1px solid ${BORDER}`,
-            background: 'transparent', color: TEXT2, fontSize: 13, fontWeight: 600,
-            cursor: 'pointer', fontFamily: SANS,
-          }}>
-            <Download size={16} />
-            Exporter
-          </button>
-          <button
-            className="stgs-save"
-            disabled={!hasChanges}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 8, padding: '8px 20px',
-              borderRadius: 10, border: 'none',
-              background: hasChanges ? GOLD : 'rgba(255,215,0,0.2)',
-              color: hasChanges ? '#0B1120' : 'rgba(255,215,0,0.4)',
-              fontSize: 13, fontWeight: 700,
-              cursor: hasChanges ? 'pointer' : 'not-allowed',
-              fontFamily: SANS, transition: 'all 0.2s ease',
-            }}
-          >
-            <Save size={16} />
-            Sauvegarder
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        icon={Settings}
+        title="Paramètres"
+        subtitle="Configuration du système TBOS"
+        actions={
+          <>
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '7px 16px',
+              borderRadius: 8, border: '1px solid rgba(255,255,255,0.12)',
+              background: 'transparent', color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: 600,
+              cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
+            }}>
+              <Download size={14} /> Exporter
+            </button>
+            <button
+              className="stgs-save"
+              disabled={!hasChanges}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '7px 16px',
+                borderRadius: 8, border: 'none',
+                background: hasChanges ? '#D4A843' : 'rgba(212,168,67,0.2)',
+                color: hasChanges ? '#0B1120' : 'rgba(212,168,67,0.4)',
+                fontSize: 12, fontWeight: 700,
+                cursor: hasChanges ? 'pointer' : 'not-allowed',
+                fontFamily: 'DM Sans, sans-serif', transition: 'all 0.2s ease',
+              }}
+            >
+              <Save size={14} /> Sauvegarder
+            </button>
+          </>
+        }
+      />
 
       {/* ── MAIN LAYOUT ──────────────────────────────────────────────── */}
       <div style={{ display: 'flex', gap: 0, padding: '32px 0' }}>

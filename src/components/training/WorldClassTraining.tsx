@@ -4,6 +4,7 @@ import {
   TrendingUp, RefreshCw, Shield, Clock, Star, AlertTriangle,
   CheckCircle, ChevronRight,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const BG      = '#0B1120';
@@ -212,36 +213,23 @@ export default function WorldClassTraining() {
   return (
     <div style={{ fontFamily: SANS, color: TEXT1, minHeight: '100vh' }}>
 
-      {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${BORDER}`, padding: '14px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-        opacity: v0 ? 1 : 0, transition: 'opacity 0.4s ease',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ padding: 8, borderRadius: 10, background: GOLD_D, border: `1px solid rgba(255,215,0,0.2)` }}>
-            <BookOpen size={20} color={GOLD} />
+      <PageHeader
+        icon={BookOpen}
+        title="Mode Formation"
+        subtitle="Environnement de pratique et d'apprentissage"
+        actions={
+          <div style={{
+            padding: '6px 14px', borderRadius: 99, fontSize: 12, fontWeight: 700,
+            background: trainingOn ? 'rgba(245,158,11,0.12)' : 'rgba(16,185,129,0.12)',
+            border: `1px solid ${trainingOn ? 'rgba(245,158,11,0.25)' : 'rgba(16,185,129,0.25)'}`,
+            color: trainingOn ? '#F59E0B' : '#10B981',
+            display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.3s ease',
+          }}>
+            {trainingOn ? <BookOpen size={12} /> : <Shield size={12} />}
+            {trainingOn ? 'Formation' : 'Production'}
           </div>
-          <div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: TEXT1, margin: 0 }}>Mode Formation</h1>
-            <p style={{ fontSize: 12, color: TEXT3, margin: 0 }}>Environnement de pratique et d'apprentissage</p>
-          </div>
-        </div>
-        {/* Mode badge */}
-        <div style={{
-          padding: '6px 14px', borderRadius: 99, fontSize: 12, fontWeight: 700,
-          background: trainingOn ? YELLOW_D : GREEN_D,
-          border: `1px solid ${trainingOn ? `${YELLOW}44` : `${GREEN}44`}`,
-          color: trainingOn ? YELLOW : GREEN,
-          display: 'flex', alignItems: 'center', gap: 6,
-          transition: 'all 0.3s ease',
-        }}>
-          {trainingOn ? <BookOpen size={12} /> : <Shield size={12} />}
-          {trainingOn ? 'Formation' : 'Production'}
-        </div>
-      </div>
+        }
+      />
 
       <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 

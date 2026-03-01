@@ -9,6 +9,7 @@ import {
   FileText, Banknote, AlertTriangle, RefreshCw,
   CheckCircle, Star, Phone, Plus, Calendar,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -513,56 +514,22 @@ export default function WorldClassContracts() {
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
       `}</style>
 
-      {/* ══════════════════════════════════════════════
-          PAGE HEADER
-      ══════════════════════════════════════════════ */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        background: `linear-gradient(180deg, ${T.navy} 80%, transparent)`,
-        backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`,
-        padding: '20px 32px 0',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-              <FileText size={22} color={T.gold} />
-              <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: 26, color: T.textPri, margin: 0 }}>Contrats</h1>
-            </div>
-            <p style={{ color: T.textDim, fontSize: 13, margin: 0 }}>Gestion des contrats clients</p>
-          </div>
-          <button
-            onMouseEnter={() => setHoverNew(true)}
-            onMouseLeave={() => setHoverNew(false)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '10px 20px',
-              background: hoverNew ? '#FFE033' : T.gold, color: T.navy,
-              border: 'none', borderRadius: 10, fontWeight: 800, fontSize: 13,
-              cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
-              transform: hoverNew ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: hoverNew ? `0 6px 20px ${T.goldGlow}` : 'none',
-            }}
-          >
-            <Plus size={15} /> Nouveau Contrat
-          </button>
-        </div>
-        <div style={{ display: 'flex', gap: 0 }}>
-          {tabs.map(tab => {
-            const active = activeTab === tab;
-            return (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: '8px 20px', background: 'transparent', border: 'none',
-                borderBottom: active ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: active ? T.gold : T.textDim,
-                fontWeight: active ? 700 : 400, fontSize: 13, cursor: 'pointer',
-                transition: 'all 200ms', fontFamily: 'DM Sans, sans-serif',
-              }}>
-                {tab}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title="Contrats"
+        subtitle="Gestion des contrats clients"
+        tabs={tabs.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <button onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)} style={{
+            display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
+            background: hoverNew ? '#FFE033' : T.gold, color: T.navy,
+            border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
+            cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
+          }}><Plus size={14} /> Nouveau Contrat</button>
+        }
+      />
 
       {/* PAGE BODY */}
       <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>

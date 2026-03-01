@@ -5,6 +5,7 @@ import {
   ChevronRight, Phone, MessageSquare, AlertCircle, CheckCircle,
   Play, Star, Download, Trash2, BookOpen,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
 const BG     = '#0B1120';
@@ -178,58 +179,35 @@ export default function WorldClassManual() {
   return (
     <div style={{ fontFamily: SANS, color: TEXT1, minHeight: '100vh' }}>
 
-      {/* ── PAGE HEADER ─────────────────────────────────────────────────── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 40,
-        background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${BORDER}`, padding: '14px 24px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-        opacity: v0 ? 1 : 0, transition: 'opacity 0.4s ease',
-      }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ padding: 8, borderRadius: 10, background: GOLD_D, border: `1px solid rgba(255,215,0,0.2)` }}>
-              <BookOpen size={20} color={GOLD} />
+      <PageHeader
+        icon={BookOpen}
+        title="Manuel Système"
+        subtitle="Documentation et guide d'utilisation TBOS"
+        actions={
+          <>
+            <div style={{ position: 'relative' }}>
+              <Search size={14} color="#64748B" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Rechercher..."
+                style={{
+                  background: '#0F172A', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '6px 12px 6px 32px',
+                  color: '#F1F5F9', fontSize: 12, fontFamily: 'DM Sans, sans-serif', outline: 'none', width: 200,
+                }}
+              />
             </div>
-            <div>
-              <h1 style={{ fontSize: 20, fontWeight: 800, color: TEXT1, margin: 0 }}>Manuel Système</h1>
-              <p style={{ fontSize: 12, color: TEXT3, margin: 0 }}>Documentation et guide d'utilisation TBOS</p>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Search */}
-          <div style={{ position: 'relative' }}>
-            <Search size={14} color={TEXT3} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Rechercher dans la documentation..."
+            <button
+              onClick={() => window.print()}
               style={{
-                background: FIELD, border: `1px solid #1E293B`, borderRadius: 10, padding: '8px 12px 8px 32px',
-                color: TEXT1, fontSize: 13, fontFamily: SANS, outline: 'none', width: 260,
+                display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+                background: 'transparent', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8,
+                color: '#D4A843', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, sans-serif', cursor: 'pointer',
               }}
-              onFocus={e => { e.target.style.borderColor = GOLD; e.target.style.boxShadow = `0 0 0 3px rgba(255,215,0,0.12)`; }}
-              onBlur={e => { e.target.style.borderColor = '#1E293B'; e.target.style.boxShadow = 'none'; }}
-            />
-          </div>
-          {/* Print button */}
-          <button
-            onClick={() => window.print()}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px',
-              background: 'transparent', border: `1px solid rgba(255,215,0,0.35)`, borderRadius: 10,
-              color: GOLD, fontSize: 13, fontWeight: 600, fontFamily: SANS, cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = GOLD_D; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-          >
-            <FileText size={14} />
-            Imprimer
-          </button>
-        </div>
-      </div>
+            ><FileText size={14} /> Imprimer</button>
+          </>
+        }
+      />
 
       <div style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 

@@ -7,6 +7,7 @@ import {
   Shield, CheckCircle, BookOpen, AlertTriangle, Phone, Star, Settings,
   ArrowUp, Truck, Package, Droplets, FileText, Calendar,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 // ─── Design tokens ────────────────────────────────────────────────
@@ -363,27 +364,21 @@ export default function WorldClassSecurite() {
         @keyframes tbSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
       `}</style>
 
-      {/* ── PAGE HEADER ── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.96)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.border}`,
-        padding: '0 32px',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-          <div>
-            <h1 style={{ fontFamily: SANS, fontWeight: 800, fontSize: 22, color: T.textPri, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Shield size={20} color={T.gold} /> Sécurité
-            </h1>
-            <div style={{ fontFamily: SANS, fontSize: 11, color: T.textDim, marginTop: 1 }}>Sécurité du travail et conformité HSE</div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <PageHeader
+        icon={Shield}
+        title="Sécurité"
+        subtitle="Sécurité du travail et conformité HSE"
+        tabs={TABS.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <>
             <button
               onMouseEnter={() => setHoverAudit(true)} onMouseLeave={() => setHoverAudit(false)}
               style={{
-                background: hoverAudit ? T.goldDim : 'transparent',
-                color: T.gold, border: `1px solid ${T.gold}`, borderRadius: 12,
-                padding: '9px 18px', fontFamily: SANS, fontWeight: 700, fontSize: 13,
+                background: hoverAudit ? 'rgba(255,215,0,0.12)' : 'transparent',
+                color: '#D4A843', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8,
+                padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
                 transition: 'all 0.15s ease',
               }}
@@ -391,34 +386,15 @@ export default function WorldClassSecurite() {
             <button
               onMouseEnter={() => setHoverIncident(true)} onMouseLeave={() => setHoverIncident(false)}
               style={{
-                background: hoverIncident ? '#DC2626' : T.red,
-                color: '#fff', border: 'none', borderRadius: 12,
-                padding: '10px 20px', fontFamily: SANS, fontWeight: 700, fontSize: 13,
+                background: '#EF4444', color: '#fff', border: 'none', borderRadius: 8,
+                padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7,
-                transform: hoverIncident ? 'scale(0.97)' : 'scale(1)',
                 transition: 'all 0.15s ease',
-                boxShadow: '0 4px 20px rgba(239,68,68,0.3)',
               }}
             ><AlertTriangle size={13} /> Déclarer Incident</button>
-          </div>
-        </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderTop: `1px solid ${T.border}` }}>
-          {TABS.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                background: 'transparent', border: 'none',
-                borderBottom: activeTab === tab ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: activeTab === tab ? T.gold : T.textDim,
-                padding: '12px 20px', fontFamily: SANS, fontWeight: 600, fontSize: 13,
-                cursor: 'pointer', transition: 'all 0.2s ease',
-              }}
-            >{tab}</button>
-          ))}
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* ── CONTENT ── */}
       <div style={{ padding: '28px 32px', maxWidth: 1600, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>

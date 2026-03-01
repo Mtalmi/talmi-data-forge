@@ -8,6 +8,7 @@ import {
   Download, UserPlus, Pencil, XCircle, Search, Calendar,
   AlertTriangle,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 // ─── Tokens ────────────────────────────────────────────────────────────────
@@ -555,45 +556,26 @@ export default function WorldClassUsers() {
         * { box-sizing: border-box; }
       `}</style>
 
-      {/* ━━━ STICKY HEADER ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.97)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${BORDER2}`,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 64 }}>
-          <div>
-            <h1 style={{ fontFamily: SANS, fontWeight: 800, fontSize: 21, color: TEXT1, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Users size={19} color={GOLD} /> Utilisateurs
-            </h1>
-            <div style={{ fontFamily: SANS, fontSize: 11, color: TEXT3, marginTop: 1 }}>Gestion des accès et permissions</div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 10 }}>
+      <PageHeader
+        icon={Users}
+        title="Utilisateurs"
+        subtitle="Gestion des accès et permissions"
+        tabs={TABS.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <>
             <button
               onMouseEnter={() => setHovExp(true)} onMouseLeave={() => setHovExp(false)}
-              style={{ background: hovExp ? GOLD_D : 'transparent', color: GOLD, border: `1px solid ${GOLD}55`, borderRadius: 11, padding: '9px 17px', fontFamily: SANS, fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
+              style={{ background: hovExp ? 'rgba(212,168,67,0.12)' : 'transparent', color: '#D4A843', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8, padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
             ><Download size={13} /> Exporter</button>
-
             <button
               onMouseEnter={() => setHovNew(true)} onMouseLeave={() => setHovNew(false)}
-              style={{ background: hovNew ? '#FFE84D' : GOLD, color: BG, border: 'none', borderRadius: 11, padding: '10px 19px', fontFamily: SANS, fontWeight: 700, fontSize: 13, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transform: hovNew ? 'scale(0.97)' : 'scale(1)', transition: 'all 0.15s', boxShadow: '0 4px 20px rgba(255,215,0,0.28)' }}
+              style={{ background: hovNew ? '#FFE84D' : '#D4A843', color: '#0B1120', border: 'none', borderRadius: 8, padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all 0.15s' }}
             ><UserPlus size={13} /> Nouvel Utilisateur</button>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ display: 'flex', padding: '0 32px', borderTop: `1px solid ${BORDER2}` }}>
-          {TABS.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} style={{
-              background: 'transparent', border: 'none',
-              borderBottom: activeTab === tab ? `2px solid ${GOLD}` : '2px solid transparent',
-              color: activeTab === tab ? GOLD : TEXT3,
-              padding: '11px 20px', fontFamily: SANS, fontWeight: 600, fontSize: 13, cursor: 'pointer', transition: 'all 0.2s',
-            }}>{tab}</button>
-          ))}
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* ━━━ PAGE CONTENT ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <div style={{ padding: '28px 32px', maxWidth: 1700, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 36 }}>

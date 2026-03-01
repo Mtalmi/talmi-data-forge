@@ -10,6 +10,7 @@ import {
   MapPin, Calendar, ChevronRight, Briefcase, Eye,
   RefreshCw, UserPlus, Award, Plus,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -491,53 +492,23 @@ export default function WorldClassContractors() {
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
       `}</style>
 
-      {/* ══════════════════════════ PAGE HEADER ══════════════════════════ */}
-      <div style={{
-        borderBottom: `1px solid ${T.cardBorder}`,
-        padding: '20px 32px 0',
-        marginBottom: 4,
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-          <div>
-            <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 28, color: T.textPri, margin: 0, lineHeight: 1.2 }}>
-              Sous-Traitants
-            </h1>
-            <p style={{ color: T.textSec, fontSize: 14, margin: '6px 0 0' }}>
-              Gestion des sous-traitants et missions
-            </p>
-          </div>
-          <button
-            style={{
-              background: T.gold, color: T.navy, border: 'none', borderRadius: 10,
-              padding: '10px 20px', fontWeight: 700, fontSize: 14, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', gap: 8,
-              transition: 'all 0.2s ease',
-              fontFamily: "'DM Sans', sans-serif",
-            }}
-            onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.97)')}
-            onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            <Plus size={16} /> Nouveau Sous-Traitant
-          </button>
-        </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 0 }}>
-          {tabs.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: '10px 20px', fontSize: 14, fontWeight: activeTab === tab ? 700 : 500,
-                color: activeTab === tab ? T.gold : T.textSec,
-                borderBottom: `2px solid ${activeTab === tab ? T.gold : 'transparent'}`,
-                transition: 'all 0.2s ease',
-                fontFamily: "'DM Sans', sans-serif",
-              }}
-            >{tab}</button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        icon={Briefcase}
+        title="Sous-Traitants"
+        subtitle="Gestion des sous-traitants et missions"
+        tabs={tabs.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <button style={{
+            background: T.gold, color: T.navy, border: 'none', borderRadius: 8,
+            padding: '7px 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'DM Sans, sans-serif',
+          }}><Plus size={14} /> Nouveau Sous-Traitant</button>
+        }
+      />
+
+
 
       <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 

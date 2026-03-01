@@ -10,6 +10,7 @@ import {
   TrendingUp, Banknote, Shield, Truck, Users,
   Eye, Bell,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -665,66 +666,14 @@ export default function WorldClassReports() {
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.8} }
       `}</style>
 
-      {/* ══════════════════════════════════════════════
-          STICKY HEADER
-      ══════════════════════════════════════════════ */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.93)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 16 }}>
-          {/* Branding */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: `linear-gradient(135deg, ${T.gold}, #B8860B)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <FileText size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Rapports</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>
-                Centre de reporting et analyse
-              </p>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {TABS.map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
-                  background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
-                  border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                  color: activeTab === tab.id ? T.gold : T.textSec,
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13,
-                  transition: 'all 200ms',
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-            <div style={{ position: 'relative' }}>
-              <Bell size={18} color={T.textSec} />
-              <div style={{
-                position: 'absolute', top: -4, right: -4,
-                width: 8, height: 8, borderRadius: '50%', background: T.danger,
-              }} />
-            </div>
-            <GenerateBtn />
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={FileText}
+        title="Rapports"
+        subtitle="Centre de reporting et analyse"
+        tabs={TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
       {/* ══════════════════════════════════════════════
           CONTENT
