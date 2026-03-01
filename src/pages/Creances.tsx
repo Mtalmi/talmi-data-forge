@@ -389,11 +389,11 @@ export default function Creances() {
                     <TableRow>
                        <TableHead>{t.pages.creances.client}</TableHead>
                        <TableHead>{t.pages.creances.invoice}</TableHead>
-                       <TableHead>{t.pages.creances.dueDate}</TableHead>
+                       <TableHead className="text-center">{t.pages.creances.dueDate}</TableHead>
                        <TableHead className="text-right">{t.pages.creances.amount}</TableHead>
-                       <TableHead>{t.pages.creances.delay}</TableHead>
-                       <TableHead>{t.pages.creances.status}</TableHead>
-                       {canManageReceivables && <TableHead>{t.pages.creances.actions}</TableHead>}
+                       <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
+                       <TableHead className="text-center">{t.pages.creances.status}</TableHead>
+                       {canManageReceivables && <TableHead className="text-center">{t.pages.creances.actions}</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -426,13 +426,13 @@ export default function Creances() {
                           <TableCell className="font-mono text-sm">
                             {receivable.invoice_number}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center font-mono">
                             {format(parseISO(receivable.due_date), 'dd MMM yyyy', { locale: getDateLocale(lang) })}
                           </TableCell>
                           <TableCell className="text-right font-medium">
                             {formatCurrency(receivable.amount_due)}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="text-center">
                             {receivable.days_overdue > 0 ? (
                               <span className="text-destructive font-medium">
                                 +{receivable.days_overdue}j
@@ -441,15 +441,15 @@ export default function Creances() {
                               <span className="text-success">{t.pages.creances.upToDate}</span>
                             )}
                           </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
                               {statusConfig.icon}
                               {statusConfig.label}
                             </Badge>
                           </TableCell>
                           {canManageReceivables && (
-                            <TableCell>
-                              <div className="flex gap-1">
+                            <TableCell className="text-center">
+                              <div className="flex gap-1 justify-center">
                                 {receivable.status !== 'paid' && (
                                   <>
                                     <Button

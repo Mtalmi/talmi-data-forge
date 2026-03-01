@@ -297,13 +297,13 @@ export function FacturesTable({
               <TableHead>{ft.invoiceNumber}</TableHead>
               <TableHead>{c.client}</TableHead>
               <TableHead>{ft.blBc}</TableHead>
-              <TableHead>{c.date}</TableHead>
+              <TableHead className="text-center">{c.date}</TableHead>
               <TableHead className="text-right">{c.volume} (m³)</TableHead>
               <TableHead className="text-right">{c.totalHT} (DH)</TableHead>
               <TableHead className="text-right">{ft.totalTtc || 'Total TTC'} (DH)</TableHead>
-              <TableHead>{ft.margin}</TableHead>
-              <TableHead>{c.status}</TableHead>
-              <TableHead>{ft.actions}</TableHead>
+              <TableHead className="text-center">{ft.margin}</TableHead>
+              <TableHead className="text-center">{c.status}</TableHead>
+              <TableHead className="text-center">{ft.actions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -379,7 +379,7 @@ export function FacturesTable({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm text-center font-mono">
                     {format(parseISO(facture.date_facture), 'dd/MM/yyyy', { locale: dateLocale || undefined })}
                   </TableCell>
                   <TableCell className="text-right font-mono">{facture.volume_m3}</TableCell>
@@ -389,7 +389,7 @@ export function FacturesTable({
                   <TableCell className="text-right font-mono text-muted-foreground">
                     {Number(facture.total_ttc).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {facture.marge_brute_pct !== null ? (
                       <span
                         className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold font-mono"
@@ -406,14 +406,14 @@ export function FacturesTable({
                       '—'
                     )}
                   </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                  <TableCell className="text-center">
+                    <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
                       {statusConfig.icon}
                       {statusConfig.label}
                     </Badge>
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center gap-1">
+                  <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-1 justify-center">
                       <FacturePdfProGenerator facture={pdfFacture} compact />
                       <Tooltip>
                         <TooltipTrigger asChild>

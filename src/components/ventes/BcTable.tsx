@@ -445,12 +445,12 @@ export function BcTable({
             <TableHead style={{ width: 130 }}>{bt.bcNumber}</TableHead>
             <TableHead style={{ width: 140 }}>{bt.client}</TableHead>
             <TableHead style={{ width: 70 }} className="text-center">{bt.formula}</TableHead>
-            <TableHead style={{ width: 100 }}>{bt.deliveryDate}</TableHead>
+            <TableHead style={{ width: 100 }} className="text-center">{bt.deliveryDate}</TableHead>
             <TableHead style={{ width: 80 }} className="text-right">{bt.volume}</TableHead>
             <TableHead style={{ width: 100 }} className="text-right">{bt.totalHt}</TableHead>
-            <TableHead style={{ width: 110 }}>{bt.status}</TableHead>
-            <TableHead style={{ width: 120 }}>Suivi</TableHead>
-            <TableHead style={{ width: 44 }}></TableHead>
+            <TableHead style={{ width: 110 }} className="text-center">{bt.status}</TableHead>
+            <TableHead style={{ width: 120 }} className="text-center">Suivi</TableHead>
+            <TableHead style={{ width: 44 }} className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -524,7 +524,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* DELIVERY DATE */}
-                <TableCell style={{ width: 100 }}>{renderDeliveryDate(bc)}</TableCell>
+                <TableCell style={{ width: 100 }} className="text-center">{renderDeliveryDate(bc)}</TableCell>
                 
                 {/* VOLUME */}
                 <TableCell style={{ width: 80 }} className="text-right">
@@ -539,8 +539,8 @@ export function BcTable({
                 </TableCell>
                 
                 {/* STATUS */}
-                <TableCell style={{ width: 110 }}>
-                  <div className="flex flex-col gap-1">
+                <TableCell style={{ width: 110 }} className="text-center">
+                  <div className="flex flex-col gap-1 items-center">
                     <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
                       {statusConfig.icon}
                       {statusConfig.label}
@@ -574,12 +574,12 @@ export function BcTable({
                 </TableCell>
                 
                 {/* SUIVI (merged Invoice + Progress) */}
-                <TableCell style={{ width: 120 }}>
+                <TableCell style={{ width: 120 }} className="text-center">
                   {renderSuivi(bc)}
                 </TableCell>
                 
                 {/* ACTIONS (kebab) */}
-                <TableCell style={{ width: 44 }} onClick={(e) => e.stopPropagation()}>
+                <TableCell style={{ width: 44 }} className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
                 </TableCell>
               </TableRow>

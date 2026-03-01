@@ -359,12 +359,12 @@ export function DevisTable({
             </TableHead>
             <TableHead>N° Devis</TableHead>
             <TableHead>Client</TableHead>
-            <TableHead>Formule</TableHead>
+            <TableHead className="text-center">Formule</TableHead>
             <TableHead className="text-right">Volume (m³)</TableHead>
             <TableHead className="text-right">Total HT (DH)</TableHead>
-            <TableHead>Statut</TableHead>
-            <TableHead>Priorité</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="text-center">Statut</TableHead>
+            <TableHead className="text-center">Priorité</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -399,15 +399,15 @@ export function DevisTable({
                     <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">{dt.unassigned}</span>
                   )}
                 </TableCell>
-                <TableCell>
-                  <span className="text-xs">{devis.formule_id}</span>
+                <TableCell className="text-center">
+                  <span className="text-xs font-mono">{devis.formule_id}</span>
                 </TableCell>
                 <TableCell className="text-right font-mono">{devis.volume_m3}</TableCell>
                 <TableCell className="text-right font-mono font-semibold">
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-1 flex-wrap">
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-1 flex-wrap justify-center">
                     {/* Clickable Status Dropdown - only for non-locked statuses */}
                     {statusConfig.isLocked ? (
                       <Badge variant="outline" className={cn("gap-1", statusConfig.color)} title={statusConfig.label}>
@@ -468,11 +468,11 @@ export function DevisTable({
                     {expirationBadge}
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-center">
                   {priorityIndicator}
                 </TableCell>
-                <TableCell onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-1.5 flex-nowrap">
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center gap-1.5 flex-nowrap justify-center">
                     {/* Quick Send + PDF - primary actions for pending devis */}
                     {devis.statut === 'en_attente' && devis.client_id && (
                       <DevisSendDialog devis={devis} />
