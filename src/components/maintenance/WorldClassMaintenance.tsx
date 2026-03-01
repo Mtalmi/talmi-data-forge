@@ -10,6 +10,7 @@ import {
   MapPin, RefreshCw, AlertTriangle, Shield, TrendingDown,
   Eye, Plus, ChevronRight, Wrench,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -860,43 +861,21 @@ export default function WorldClassMaintenance() {
         ::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 3px; }
       `}</style>
 
-      {/* ── PAGE HEADER ── */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(16px)', borderBottom: `1px solid #1E2D4A`, padding: '16px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <div>
-            <h1 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 800, fontSize: 22, color: T.textPri, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-              <Wrench size={20} color={T.gold} /> Maintenance
-            </h1>
-            <p style={{ color: T.textDim, fontSize: 13, margin: '2px 0 0 0' }}>Gestion des équipements et maintenance préventive</p>
-          </div>
-          {/* Tabs + Button */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', background: '#111B2E', borderRadius: 10, padding: 4, border: `1px solid #1E2D4A` }}>
-              {TABS.map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  style={{
-                    padding: '6px 14px', borderRadius: 7, border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                    fontFamily: "'DM Sans', sans-serif",
-                    background: activeTab === tab ? T.gold : 'transparent',
-                    color: activeTab === tab ? T.navy : T.textSec,
-                    transition: 'all 0.2s',
-                  }}>
-                  {tab}
-                </button>
-              ))}
-            </div>
-            <button
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', background: T.gold, color: T.navy, border: 'none', borderRadius: 9, fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, cursor: 'pointer', transition: 'all 0.2s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#FFE033'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = T.gold; }}
-              onMouseDown={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(0.97)'; }}
-              onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)'; }}
-            >
-              <Plus size={14} /> Nouvelle Intervention
-            </button>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={Wrench}
+        title="Maintenance"
+        subtitle="Gestion des équipements et maintenance préventive"
+        tabs={TABS.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '7px 16px',
+            background: '#D4A843', color: '#0B1120', border: 'none', borderRadius: 8,
+            fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+          }}><Plus size={14} /> Nouvelle Intervention</button>
+        }
+      />
 
       {/* ── CONTENT ── */}
       <div style={{ padding: '28px 24px', maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>

@@ -7,6 +7,7 @@ import {
   Users, CheckCircle, AlertTriangle, Clock, Calendar,
   Heart, Phone, Flag, TrendingUp,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 
 // ─── Design tokens ───────────────────────────────────────────────
@@ -353,66 +354,25 @@ export default function WorldClassAttendance() {
         .abs-card { transition: all 0.3s ease; }
       `}</style>
 
-      {/* ── PAGE HEADER ── */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.95)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.border}`,
-        padding: '0 32px',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64 }}>
-          <div>
-            <h1 style={{ fontFamily: SANS, fontWeight: 800, fontSize: 22, color: T.textPri, margin: 0 }}>Présence</h1>
-            <div style={{ fontFamily: SANS, fontSize: 11, color: T.textDim, marginTop: 1 }}>Suivi de la présence et pointage</div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            {/* Live Clock */}
-            <div style={{
-              background: T.goldDim, border: `1px solid rgba(255,215,0,0.2)`,
-              borderRadius: 10, padding: '6px 14px',
-              display: 'flex', alignItems: 'center', gap: 8,
-            }}>
-              <Clock size={13} color={T.gold} />
-              <span style={{ fontFamily: MONO, fontSize: 14, fontWeight: 700, color: T.gold }}>{clock}</span>
-            </div>
-            {/* Pointer Arrivée */}
-            <button
-              onMouseEnter={() => setHoverBtn(true)}
-              onMouseLeave={() => setHoverBtn(false)}
-              style={{
-                background: hoverBtn ? '#FFE44D' : T.gold,
-                color: T.bg, border: 'none', borderRadius: 12,
-                padding: '10px 20px',
-                fontFamily: SANS, fontWeight: 700, fontSize: 13,
-                cursor: 'pointer',
-                display: 'flex', alignItems: 'center', gap: 8,
-                transform: hoverBtn ? 'scale(0.97)' : 'scale(1)',
-                transition: 'all 0.15s ease',
-                boxShadow: '0 4px 20px rgba(255,215,0,0.3)',
-              }}
-            >
-              <CheckCircle size={14} /> Pointer Arrivée
-            </button>
-          </div>
-        </div>
-        {/* Tabs */}
-        <div style={{ display: 'flex', borderTop: `1px solid ${T.border}` }}>
-          {TABS.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                background: 'transparent', border: 'none',
-                borderBottom: activeTab === tab ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: activeTab === tab ? T.gold : T.textDim,
-                padding: '12px 20px',
-                fontFamily: SANS, fontWeight: 600, fontSize: 13,
-                cursor: 'pointer', transition: 'all 0.2s ease',
-              }}
-            >{tab}</button>
-          ))}
-        </div>
-      </div>
+      <PageHeader
+        icon={Clock}
+        title="Présence"
+        subtitle="Suivi de la présence et pointage"
+        tabs={TABS.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <button
+            onMouseEnter={() => setHoverBtn(true)}
+            onMouseLeave={() => setHoverBtn(false)}
+            style={{
+              background: hoverBtn ? '#FFE44D' : '#D4A843', color: '#0B1120', border: 'none', borderRadius: 8,
+              padding: '7px 16px', fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'all 0.15s ease',
+            }}
+          ><CheckCircle size={14} /> Pointer Arrivée</button>
+        }
+      />
 
       {/* ── CONTENT ── */}
       <div style={{ padding: '28px 32px', maxWidth: 1600, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>

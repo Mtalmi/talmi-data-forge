@@ -9,6 +9,7 @@ import {
   CheckCircle, ArrowRightLeft, FileText,
   Plus, Bell,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 
 // ─────────────────────────────────────────────────────
@@ -554,45 +555,16 @@ export default function WorldClassPayments() {
         @keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
       `}</style>
 
-      {/* STICKY HEADER */}
-      <div style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.94)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Banknote size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Paiements</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Suivi des paiements et encaissements</p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {TABS.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
-                  background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
-                  border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                  color: activeTab === tab.id ? T.gold : T.textSec,
-                  fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13, transition: 'all 200ms',
-                }}
-              >{tab.label}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-            <div style={{ position: 'relative' }}>
-              <Bell size={18} color={T.textSec} />
-              {live.enRetard > 0 && <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />}
-            </div>
-            <NewPaymentBtn />
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={Banknote}
+        title="Paiements"
+        subtitle="Suivi des paiements et encaissements"
+        tabs={TABS}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
+
+
 
       {/* CONTENT */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 44 }}>

@@ -6,6 +6,7 @@ import {
 import {
   FileText, BarChart3, Truck, Bell, CalendarDays, Clock,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -407,59 +408,14 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
       `}</style>
 
-      {/* ── STICKY HEADER ── */}
-      <div data-seamless-header style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 24px',
-        background: 'transparent',
-        border: 'none',
-      }}>
-        <div style={{ margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20, paddingRight: fleetPanelOpen ? 272 : 0, transition: 'padding-right 300ms ease-in-out' }}>
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <CalendarDays size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Planning & Expédition</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Planification & dispatch des livraisons</p>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
-                background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
-                border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                color: activeTab === tab.id ? T.gold : T.textSec,
-                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13,
-                transition: 'all 200ms',
-              }}>{tab.label}</button>
-            ))}
-          </div>
-
-          {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280', letterSpacing: '0.02em' }}>
-              <LiveClock />
-            </span>
-            <div style={{ position: 'relative', cursor: 'pointer' }}>
-              <Bell size={18} color={T.textSec} />
-              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
-            </div>
-            <button style={{
-              padding: '7px 16px', borderRadius: 8, background: T.gold, color: T.navy,
-              fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
-              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
-            }}>
-              + Nouvelle Commande
-            </button>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={CalendarDays}
+        title="Planning & Expédition"
+        subtitle="Planification & dispatch des livraisons"
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
       {/* ── PAGE CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
