@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, ReferenceLine,
   XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -355,7 +356,9 @@ function BatchCard({ batch, delay = 0 }: { batch: BatchDisplay; delay?: number }
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassProduction() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [openPlanningModal, setOpenPlanningModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
 
@@ -548,6 +551,7 @@ export default function WorldClassProduction() {
         actions={
           <>
             <button
+              onClick={() => { setActiveTab('planning'); setOpenPlanningModal(prev => !prev); }}
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
@@ -568,6 +572,7 @@ export default function WorldClassProduction() {
               Nouvelle Planification
             </button>
             <button
+              onClick={() => navigate('/bons')}
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
@@ -603,7 +608,7 @@ export default function WorldClassProduction() {
         {activeTab === 'recettes' && <RecettesTab />}
 
         {/* ── PLANNING TAB ── */}
-        {activeTab === 'planning' && <PlanningTab />}
+        {activeTab === 'planning' && <PlanningTab openModal={openPlanningModal} />}
 
         {/* ── VUE D'ENSEMBLE ── */}
         {activeTab === 'overview' && <>

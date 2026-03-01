@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Calendar, Clock, ChevronLeft, ChevronRight, Factory, Truck, Plus, Upload, X,
 } from 'lucide-react';
@@ -175,10 +175,15 @@ function PlanningModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function PlanningTab() {
+export default function PlanningTab({ openModal }: { openModal?: boolean }) {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showModal, setShowModal] = useState(false);
+
+  // Allow parent to trigger modal open
+  useEffect(() => {
+    if (openModal) setShowModal(true);
+  }, [openModal]);
 
   const baseDate = useMemo(() => addDays(new Date(), weekOffset * 7), [weekOffset]);
   const weekStart = useMemo(() => startOfWeek(baseDate, { weekStartsOn: 1 }), [baseDate]);
