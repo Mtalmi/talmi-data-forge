@@ -2014,21 +2014,22 @@ export default function Planning() {
         {!isMobile && !fleetPanelOpen && createPortal(
           <button
             onClick={() => setFleetPanelOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col items-center justify-center gap-1 cursor-pointer"
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col items-center justify-center gap-1.5 cursor-pointer"
             style={{
               width: 40, height: 80,
-              background: 'transparent',
+              background: 'rgba(245, 158, 11, 0.1)',
               border: '1px solid rgba(245, 158, 11, 0.15)',
               borderRight: 'none',
               borderRadius: '8px 0 0 8px',
-              padding: 4,
+              padding: 8,
               transition: 'all 150ms ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.2)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
           >
-            <Truck className="w-5 h-5" style={{ color: '#F59E0B' }} />
-            <ChevronLeft className="w-6 h-6" style={{ color: '#F59E0B' }} />
+            <Truck className="w-4 h-4" style={{ color: '#F59E0B' }} />
+            <ChevronLeft className="w-4 h-4" style={{ color: '#F59E0B' }} />
           </button>,
           document.body
         )}
