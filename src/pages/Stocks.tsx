@@ -11,7 +11,6 @@ import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
 import { QualityStockEntryDialog } from '@/components/stocks/QualityStockEntryDialog';
 import { PendingReceptionsWidget } from '@/components/stocks/PendingReceptionsWidget';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -32,9 +31,39 @@ import {
   TrendingDown,
   Shield,
   Lock,
+  Activity,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+
+// ─── DESIGN TOKENS (unified) ───
+const T = {
+  gold: '#FFD700',
+  cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+  cardBorder: '#1E2D4A',
+  textSec: '#94A3B8',
+  textDim: '#64748B',
+};
+
+// ─── SECTION HEADER ───
+function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
+  return (
+    <div className="flex items-center gap-2.5 mb-4">
+      <Icon size={16} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
+      <span style={{
+        color: T.gold, fontWeight: 700, fontSize: 12,
+        textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap',
+      }}>{label}</span>
+      <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}33 0%, transparent 80%)` }} />
+    </div>
+  );
+}
+
+// ─── TABLE HEADER CELL STYLE ───
+const thStyle: React.CSSProperties = {
+  fontSize: 11, fontWeight: 600, textTransform: 'uppercase',
+  letterSpacing: '0.1em', color: T.textSec,
+};
 
 export default function Stocks() {
   const { t, lang } = useI18n();
@@ -50,13 +79,9 @@ export default function Stocks() {
     getCriticalStocks,
   } = useStocks();
 
-  // =====================================================
-  // ZERO-TRUST SEPARATION OF POWERS:
-  // - Centraliste: ZERO manual access (read-only)
-  // - Resp. Technique: Can create Quality Entry (Step 1 of Double-Lock)
-  // - Agent Admin: Can validate Quality Entry (Step 2) or direct reception
-  // - CEO/Superviseur: Full access including manual adjustments
-  // =====================================================
+  const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isCentraliste || isResponsableTechnique;
+  const canCreateStockReception = isCeo || isSuperviseur || isAgentAdministratif;
+  const canCreateStockAdjustment = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateQualityEntry = isCeo || isSuperviseur || isResponsableTechnique;
   const canValidatePendingReception = isCeo || isSuperviseur || isAgentAdministratif;
   const isReadOnly = isCentraliste && !isCeo && !isSuperviseur;
@@ -95,14 +120,12 @@ export default function Stocks() {
     return stat?.days_remaining;
   };
 
-  // Display autonomy: show "—" for unrealistic values (999+)
   const formatDaysRemaining = (days: number | undefined): string => {
     if (days === undefined) return '—';
     if (days > 365) return '—';
     return `${days}j`;
   };
 
-  // Truncate UUID references
   const truncateRef = (ref: string | null | undefined): string => {
     if (!ref) return '—';
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}/i;
@@ -112,49 +135,51 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <div className="space-y-4 sm:space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="text-lg sm:text-2xl font-bold tracking-tight flex items-center gap-2 sm:gap-3">
-              <Warehouse className="h-5 w-5 sm:h-7 sm:w-7 text-primary flex-shrink-0" />
-              <span className="truncate">{t.pages.stocks.title}</span>
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-1 hidden sm:block">
-              {t.pages.stocks.subtitle}
-            </p>
+      <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
+
+        {/* ── HEADER — transparent, no card wrapper ── */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Warehouse size={18} color="#0B1120" strokeWidth={2.5} />
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS</span>
+                <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>{t.pages.stocks.title}</span>
+              </div>
+              <p style={{ color: T.textDim, fontSize: 10 }}>{t.pages.stocks.subtitle}</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <Button variant="outline" size="sm" onClick={handleRefresh} className="min-h-[40px]">
-              <RefreshCw className="h-4 w-4 sm:mr-2" />
+
+          {/* Action buttons — floating in header row */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              style={{
+                padding: '6px 16px', borderRadius: 8,
+                background: 'transparent', border: '1px solid rgba(255,255,255,0.12)',
+                color: T.textSec, fontSize: 13, fontWeight: 600,
+                display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer',
+              }}
+            >
+              <RefreshCw size={14} />
               <span className="hidden sm:inline">{t.common.refresh}</span>
-            </Button>
-            
-            {/* =====================================================
-                STOCK ACTION BUTTONS - Role-Based Visibility
-                Quality Entry: CEO, SUPERVISEUR, RESP_TECHNIQUE
-                Direct Reception: CEO, SUPERVISEUR, AGENT_ADMIN
-                Manual Adjustment: CEO, SUPERVISEUR ONLY
-                Shows skeleton while auth is loading
-            ===================================================== */}
+            </button>
+
             {authLoading ? (
               <>
-                <Skeleton className="w-32 h-10 rounded-md" />
-                <Skeleton className="w-32 h-10 rounded-md" />
-                <Skeleton className="w-32 h-10 rounded-md" />
+                <Skeleton className="w-32 h-9 rounded-md" />
+                <Skeleton className="w-32 h-9 rounded-md" />
               </>
             ) : (
               <>
-                {/* Quality Entry Button - Resp. Technique (Double-Lock Step 1) */}
                 {canCreateQualityEntry && (
                   <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
                 )}
-                
-                {/* Direct Reception Button - CEO/Superviseur/Agent Admin only */}
                 {canAddStockReception && (
                   <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
                 )}
-                
-                {/* Manual Adjustment - CEO/Superviseur ONLY */}
                 {canAdjustStockManually && (
                   <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
                 )}
@@ -165,23 +190,23 @@ export default function Stocks() {
 
         {/* Read-Only Warning for Centraliste */}
         {isReadOnly && (
-          <div className="p-4 rounded-lg bg-muted/50 border border-border flex items-center gap-4">
-            <div className="p-2 rounded-full bg-primary/10">
-              <Lock className="h-5 w-5 text-primary" />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Lock size={16} color={T.gold} />
             </div>
             <div>
-              <h3 className="font-semibold flex items-center gap-2">
+              <h3 className="font-semibold flex items-center gap-2" style={{ color: T.textSec, fontSize: 13 }}>
                 <Shield className="h-4 w-4" />
                 {t.pages.stocks.readOnlyMode}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p style={{ color: T.textDim, fontSize: 11 }}>
                 {t.pages.stocks.readOnlyDescription}
               </p>
             </div>
           </div>
         )}
 
-        {/* Pending Receptions Queue - Admin Financial Gate (Double-Lock Step 2) */}
+        {/* Pending Receptions Queue */}
         {canValidatePendingReception && (
           <PendingReceptionsWidget onRefresh={handleRefresh} />
         )}
@@ -191,15 +216,15 @@ export default function Stocks() {
 
         {/* Critical Alerts Banner */}
         {criticalStocks.length > 0 && (
-          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/50 flex items-center gap-4">
-            <div className="p-2 rounded-full bg-destructive/20 animate-pulse">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
+          <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="animate-pulse" style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AlertTriangle size={20} color="#EF4444" />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-destructive uppercase tracking-wide">
+              <h3 style={{ fontWeight: 700, color: '#EF4444', textTransform: 'uppercase', letterSpacing: '0.1em', fontSize: 12 }}>
                 {t.pages.stocks.criticalOrderRequired}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p style={{ fontSize: 11, color: T.textDim, marginTop: 4 }}>
                 {criticalStocks.map(s => s.materiau).join(', ')} - {t.pages.stocks.belowAlertThreshold}
               </p>
             </div>
@@ -207,9 +232,9 @@ export default function Stocks() {
               {criticalStocks.map(s => {
                 const days = getDaysRemaining(s.materiau);
                 return (
-                  <div key={s.materiau} className="text-center px-3 py-1 rounded bg-destructive/20">
-                    <p className="text-xs text-muted-foreground">{s.materiau}</p>
-                    <p className="font-mono font-bold text-destructive">
+                  <div key={s.materiau} style={{ textAlign: 'center', padding: '4px 12px', borderRadius: 8, background: 'rgba(239,68,68,0.15)' }}>
+                    <p style={{ fontSize: 10, color: T.textDim }}>{s.materiau}</p>
+                    <p style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, color: '#EF4444', fontSize: 13 }}>
                       {formatDaysRemaining(days)}
                     </p>
                   </div>
@@ -219,163 +244,161 @@ export default function Stocks() {
           </div>
         )}
 
-        {/* Silo Dashboard */}
+        {/* ── SILO DASHBOARD ── */}
         {loading ? (
           <div className="p-12 text-center">
-            <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
+            <Loader2 className="h-8 w-8 mx-auto animate-spin" style={{ color: T.textDim }} />
           </div>
         ) : (
-          <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, padding: 20 }}>
-            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-amber-400" />
-              {t.pages.stocks.siloLevels}
-            </h2>
-            <div className="flex flex-wrap justify-center gap-12">
-              {stocks.map((stock) => (
-                <SiloVisual
-                  key={stock.materiau}
-                  materiau={stock.materiau}
-                  quantite={stock.quantite_actuelle}
-                  capacite={stock.capacite_max || stock.quantite_actuelle * 2}
-                  seuil={stock.seuil_alerte}
-                  unite={stock.unite}
-                  daysRemaining={getDaysRemaining(stock.materiau)}
-                />
-              ))}
+          <section>
+            <SectionHeader icon={TrendingDown} label={t.pages.stocks.siloLevels} />
+            <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
+              <div className="flex flex-wrap justify-center gap-12">
+                {stocks.map((stock) => (
+                  <SiloVisual
+                    key={stock.materiau}
+                    materiau={stock.materiau}
+                    quantite={stock.quantite_actuelle}
+                    capacite={stock.capacite_max || stock.quantite_actuelle * 2}
+                    seuil={stock.seuil_alerte}
+                    unite={stock.unite}
+                    daysRemaining={getDaysRemaining(stock.materiau)}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Stock Table Summary */}
-        <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
-          <div className="p-4 border-b" style={{ borderColor: 'rgba(245, 158, 11, 0.08)' }}>
-            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">{t.pages.stocks.stockSummary}</h2>
-          </div>
-          <Table className="data-table-industrial">
-            <TableHeader>
-              <TableRow>
-                <TableHead>{t.pages.stocks.material}</TableHead>
-                <TableHead className="text-right">{t.pages.stocks.currentStock}</TableHead>
-                <TableHead className="text-right">{t.pages.stocks.alertThreshold}</TableHead>
-                <TableHead className="text-right">{t.pages.stocks.maxCapacity}</TableHead>
-                <TableHead className="text-right">{t.pages.stocks.daysRemaining}</TableHead>
-                <TableHead>{t.pages.stocks.lastReception}</TableHead>
-                <TableHead>{t.common.status}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {stocks.map((stock) => {
-                const days = getDaysRemaining(stock.materiau);
-                const isCritical = stock.quantite_actuelle <= stock.seuil_alerte;
-                
-                return (
-                  <TableRow key={stock.materiau} className={cn(isCritical && 'bg-destructive/5')}>
-                    <TableCell className="font-medium">{stock.materiau}</TableCell>
-                    <TableCell className="text-right font-mono">
-                      {stock.quantite_actuelle.toLocaleString()} {stock.unite}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-warning">
-                      {stock.seuil_alerte.toLocaleString()} {stock.unite}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-muted-foreground">
-                      {stock.capacite_max?.toLocaleString() || '—'} {stock.unite}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <span className={cn(
-                        'font-mono font-semibold',
-                        days !== undefined && days <= 3 ? 'text-destructive' :
-                        days !== undefined && days <= 7 ? 'text-warning' :
-                        'text-muted-foreground'
-                      )}>
-                        {formatDaysRemaining(days)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {stock.derniere_reception_at
-                        ? format(new Date(stock.derniere_reception_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })
-                        : '—'}
-                    </TableCell>
-                    <TableCell>
-                      {isCritical ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-destructive/20 text-destructive animate-pulse">
-                          <AlertTriangle className="h-3 w-3" />
-                          {t.pages.stocks.critical}
-                        </span>
-                      ) : stock.quantite_actuelle <= stock.seuil_alerte * 1.5 ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-warning/20 text-warning">
-                          {t.pages.stocks.low}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-success/20 text-success">
-                          {t.pages.stocks.ok}
-                        </span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Recent Movements */}
-        <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
-          <div className="p-4 border-b" style={{ borderColor: 'rgba(245, 158, 11, 0.08)' }}>
-            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">{t.pages.stocks.recentMovements}</h2>
-          </div>
-          {mouvements.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">
-              {t.pages.stocks.noMovements}
-            </div>
-          ) : (
+        {/* ── STOCK SUMMARY TABLE ── */}
+        <section>
+          <SectionHeader icon={Activity} label={t.pages.stocks.stockSummary} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
             <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
-                  <TableHead>{t.common.date}</TableHead>
-                  <TableHead>{t.pages.stocks.type}</TableHead>
-                  <TableHead>{t.pages.stocks.material}</TableHead>
-                  <TableHead className="text-right">{t.pages.stocks.quantity}</TableHead>
-                  <TableHead className="text-right">{t.pages.stocks.before}</TableHead>
-                  <TableHead className="text-right">{t.pages.stocks.after}</TableHead>
-                  <TableHead>{t.pages.stocks.reference}</TableHead>
+                  <TableHead style={thStyle}>{t.pages.stocks.material}</TableHead>
+                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.currentStock}</TableHead>
+                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.alertThreshold}</TableHead>
+                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.maxCapacity}</TableHead>
+                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.daysRemaining}</TableHead>
+                  <TableHead style={thStyle}>{t.pages.stocks.lastReception}</TableHead>
+                  <TableHead style={thStyle}>{t.common.status}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mouvements.slice(0, 20).map((m) => (
-                  <TableRow key={m.id}>
-                    <TableCell className="text-muted-foreground">
-                      {format(new Date(m.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })}
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center gap-1">
-                        {getMovementIcon(m.type_mouvement)}
-                        <span className="text-sm">{getMovementLabel(m.type_mouvement)}</span>
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-medium">{m.materiau}</TableCell>
-                    <TableCell className={cn(
-                      'text-right font-mono font-semibold',
-                      m.type_mouvement === 'reception' ? 'text-success' : 'text-destructive'
-                    )}>
-                      {m.type_mouvement === 'reception' ? '+' : '-'}{Math.abs(m.quantite).toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right font-mono text-muted-foreground">
-                      {m.quantite_avant.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-right font-mono">
-                      {m.quantite_apres.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {truncateRef(m.fournisseur || m.reference_id)}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {stocks.map((stock) => {
+                  const days = getDaysRemaining(stock.materiau);
+                  const isCritical = stock.quantite_actuelle <= stock.seuil_alerte;
+                  
+                  return (
+                    <TableRow key={stock.materiau} className="table-row-hover" style={isCritical ? { background: 'rgba(239,68,68,0.04)' } : undefined}>
+                      <TableCell className="font-medium">{stock.materiau}</TableCell>
+                      <TableCell className="text-right font-mono">
+                        {stock.quantite_actuelle.toLocaleString()} {stock.unite}
+                      </TableCell>
+                      <TableCell className="text-right font-mono" style={{ color: T.gold }}>
+                        {stock.seuil_alerte.toLocaleString()} {stock.unite}
+                      </TableCell>
+                      <TableCell className="text-right font-mono" style={{ color: T.textDim }}>
+                        {stock.capacite_max?.toLocaleString() || '—'} {stock.unite}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="font-mono font-semibold" style={{
+                          color: days !== undefined && days <= 3 ? '#EF4444' :
+                                 days !== undefined && days <= 7 ? T.gold : T.textDim
+                        }}>
+                          {formatDaysRemaining(days)}
+                        </span>
+                      </TableCell>
+                      <TableCell style={{ color: T.textDim }}>
+                        {stock.derniere_reception_at
+                          ? format(new Date(stock.derniere_reception_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })
+                          : '—'}
+                      </TableCell>
+                      <TableCell>
+                        {isCritical ? (
+                          <span className="animate-pulse" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
+                            <AlertTriangle size={10} />
+                            {t.pages.stocks.critical}
+                          </span>
+                        ) : stock.quantite_actuelle <= stock.seuil_alerte * 1.5 ? (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(255,215,0,0.12)', border: `1px solid rgba(255,215,0,0.3)`, color: T.gold, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
+                            {t.pages.stocks.low}
+                          </span>
+                        ) : (
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', color: '#10B981', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
+                            {t.pages.stocks.ok}
+                          </span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
-          )}
-        </div>
+          </div>
+        </section>
+
+        {/* ── RECENT MOVEMENTS TABLE ── */}
+        <section>
+          <SectionHeader icon={Activity} label={t.pages.stocks.recentMovements} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
+            {mouvements.length === 0 ? (
+              <div style={{ padding: 48, textAlign: 'center', color: T.textDim, fontSize: 13 }}>
+                {t.pages.stocks.noMovements}
+              </div>
+            ) : (
+              <Table className="data-table-industrial">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead style={thStyle}>{t.common.date}</TableHead>
+                    <TableHead style={thStyle}>{t.pages.stocks.type}</TableHead>
+                    <TableHead style={thStyle}>{t.pages.stocks.material}</TableHead>
+                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.quantity}</TableHead>
+                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.before}</TableHead>
+                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.after}</TableHead>
+                    <TableHead style={thStyle}>{t.pages.stocks.reference}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mouvements.slice(0, 20).map((m) => (
+                    <TableRow key={m.id} className="table-row-hover">
+                      <TableCell style={{ color: T.textDim }}>
+                        {format(new Date(m.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })}
+                      </TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center gap-1">
+                          {getMovementIcon(m.type_mouvement)}
+                          <span style={{ fontSize: 12 }}>{getMovementLabel(m.type_mouvement)}</span>
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">{m.materiau}</TableCell>
+                      <TableCell className="text-right font-mono font-semibold" style={{
+                        color: m.type_mouvement === 'reception' ? '#10B981' : '#EF4444'
+                      }}>
+                        {m.type_mouvement === 'reception' ? '+' : '-'}{Math.abs(m.quantite).toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-right font-mono" style={{ color: T.textDim }}>
+                        {m.quantite_avant.toLocaleString()}
+                      </TableCell>
+                      <TableCell className="text-right font-mono">
+                        {m.quantite_apres.toLocaleString()}
+                      </TableCell>
+                      <TableCell style={{ color: T.textDim, fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
+                        {truncateRef(m.fournisseur || m.reference_id)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+        </section>
+
       </div>
       <WorldClassStocks />
     </MainLayout>
   );
 }
+
