@@ -32,52 +32,44 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   const initials = user?.email?.charAt(0).toUpperCase() || 'U';
 
   return (
-    <header className="w-full relative">
-      {/* Bottom gold hairline */}
+    <header className="w-full">
       <div
-        className="absolute bottom-0 left-0 right-0 h-px z-10"
-        style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(232,184,75,0.15) 20%, rgba(232,184,75,0.08) 80%, transparent 100%)' }}
-      />
-
-      <div
-        className="flex items-center justify-between h-12 px-4 lg:px-6"
+        className="flex items-center justify-between h-14 px-6"
         style={{
-          background: '#0f1520',
+          background: 'transparent',
+          borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
         }}
       >
-        {/* Search — refined capsule */}
-        <div className="relative hidden md:block">
+        {/* Left — Search */}
+        <div className="relative hidden md:block flex-shrink-0 max-w-[280px]">
           <GlobalSearch />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
             <kbd
-              className="text-[8px] px-1.5 py-0.5 rounded font-mono"
+              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
               style={{
-                color: 'rgba(232,184,75,0.5)',
-                background: 'rgba(232,184,75,0.06)',
-                border: '1px solid rgba(232,184,75,0.1)',
+                color: '#4B5563',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.08)',
               }}
             >⌘</kbd>
             <kbd
-              className="text-[8px] px-1.5 py-0.5 rounded font-mono"
+              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
               style={{
-                color: 'rgba(232,184,75,0.5)',
-                background: 'rgba(232,184,75,0.06)',
-                border: '1px solid rgba(232,184,75,0.1)',
+                color: '#4B5563',
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.08)',
               }}
             >K</kbd>
           </div>
         </div>
 
-        {/* Right side actions — refined pill cluster */}
-        <div className="flex items-center gap-1 ml-auto">
-          {/* Action cluster in a subtle capsule */}
-          <div
-            className="flex items-center gap-0.5 px-1 py-0.5 rounded-full"
-            style={{
-              background: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.04)',
-            }}
-          >
+        {/* Center — breathing room */}
+        <div className="flex-1" />
+
+        {/* Right — tools + identity */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Tool icons cluster */}
+          <div className="flex items-center gap-1">
             <LanguageSwitcher variant="compact" />
             <div className="hidden md:flex"><SoundToggle /></div>
             <div className="hidden md:flex"><ThemeToggle /></div>
@@ -85,11 +77,11 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
           </div>
 
           {/* Divider */}
-          <div className="w-px h-5 mx-1.5" style={{ background: 'rgba(255,255,255,0.06)' }} />
+          <div className="w-px h-5" style={{ background: 'rgba(255,255,255,0.05)' }} />
 
           {/* Role Preview Switcher - CEO Only */}
           {onPreviewRoleChange && (
-            <div className="hidden md:flex mr-1">
+            <div className="hidden md:flex">
               <RolePreviewSwitcher
                 previewRole={previewRole || null}
                 onPreviewRoleChange={onPreviewRoleChange}
@@ -97,39 +89,34 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
             </div>
           )}
 
-          {/* User avatar — gold ring */}
+          {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="relative w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold cursor-pointer transition-all duration-300 hover:scale-110 group"
+                className="relative w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold cursor-pointer transition-all duration-200"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(232,184,75,0.2), rgba(232,184,75,0.05))',
-                  color: 'rgba(232,184,75,0.85)',
-                  boxShadow: '0 0 0 1.5px rgba(232,184,75,0.2), 0 0 12px rgba(232,184,75,0.08)',
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  color: '#F59E0B',
+                  border: '1px solid rgba(245, 158, 11, 0.25)',
                 }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.4)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.25)')}
               >
                 {initials}
-                {/* Pulse ring on hover */}
-                <span
-                  className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  style={{
-                    boxShadow: '0 0 0 3px rgba(232,184,75,0.1), 0 0 20px rgba(232,184,75,0.1)',
-                  }}
-                />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
               className="w-56"
               style={{
-                background: 'rgba(10,15,25,0.95)',
-                backdropFilter: 'blur(24px)',
-                border: '1px solid rgba(232,184,75,0.1)',
+                background: '#1a1f2e',
+                border: '1px solid rgba(245, 158, 11, 0.15)',
+                borderRadius: 8,
               }}
             >
               <DropdownMenuLabel className="font-normal">
                 <p className="text-sm font-medium truncate text-white/80">{user?.email}</p>
-                <p className="text-[10px] uppercase tracking-[0.2em] mt-0.5" style={{ color: 'rgba(232,184,75,0.5)' }}>
+                <p className="text-[10px] uppercase tracking-[0.2em] mt-0.5 text-amber-500/50">
                   {effectiveRole?.replace('_', ' ')}
                 </p>
               </DropdownMenuLabel>
