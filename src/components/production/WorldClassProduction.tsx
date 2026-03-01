@@ -7,7 +7,9 @@ import {
   Factory, CheckCircle, Shield, Clock, Bell, Zap,
   TrendingUp, Activity, Wrench, Settings, ClipboardList, Play, CheckCircle2,
   ChevronRight, BarChart3, PieChart as PieChartIcon, AlertTriangle,
+  Plus, Upload,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { useCountUp } from '@/hooks/useCountUp';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
@@ -543,6 +545,18 @@ export default function WorldClassProduction() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         loading={loading}
+        actions={
+          <>
+            <Button size="sm" className="gap-2">
+              <Plus size={14} />
+              Nouvelle Planification
+            </Button>
+            <Button variant="outline" size="sm" className="gap-2">
+              <Upload size={14} />
+              Importer BC
+            </Button>
+          </>
+        }
       />
 
       {/* ── PAGE CONTENT ── */}
