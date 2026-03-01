@@ -179,7 +179,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
   }
 
   return (
-    <div className="fixed right-0 top-20 bottom-4 w-64 z-40 flex flex-col overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12 }}>
+    <div className="fixed right-0 top-20 bottom-4 w-64 z-40 flex flex-col overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderLeft: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: 12 }}>
       {/* Header */}
       <div className="p-3 border-b border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
           <Button 
             variant="ghost" 
             size="icon" 
-            className="h-7 w-7 text-white/40 hover:text-white/60 hover:bg-white/[0.05]"
+            className="h-7 w-7 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
             onClick={() => setIsOpen(false)}
           >
             <ChevronRight className="h-4 w-4" />

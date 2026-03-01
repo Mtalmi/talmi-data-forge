@@ -276,8 +276,8 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 <span key={h} style={{
                   fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
                   color: 'rgba(255,255,255,0.35)', fontWeight: 500,
-                  textAlign: ['VOL (M³)', 'HEURE'].includes(h) ? 'right' as const : 'left' as const,
-                  paddingRight: h === 'HEURE' ? 8 : 0,
+                  textAlign: ['VOL (M³)', 'HEURE', 'FORMULE', 'STATUT'].includes(h) ? 'center' as const : ['VOL (M³)'].includes(h) ? 'right' as const : 'left' as const,
+                  paddingRight: 0,
                 }}>{h}</span>
               ))}
             </div>
@@ -300,14 +300,15 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 >
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)' }}>{row.formule}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', textAlign: 'center' }}>{row.formule}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'right' }}>{row.volume}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', textAlign: 'right' }}>{row.heure}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', textAlign: 'center' }}>{row.heure}</span>
                   {/* Status badge */}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
                     padding: '4px 10px', borderRadius: 999, background: st.bg,
                     fontSize: 11, fontWeight: 500, color: st.color, whiteSpace: 'nowrap',
+                    margin: '0 auto',
                   }}>
                     <span style={{ width: 5, height: 5, borderRadius: '50%', background: st.dot, flexShrink: 0 }} />
                     {st.label}

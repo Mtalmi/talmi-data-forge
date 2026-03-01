@@ -539,8 +539,8 @@ export default function WorldClassProduction() {
         padding: '0 24px',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold} 0%, #8B6914 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #8B6914)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Factory size={18} color={T.navy} />
             </div>
             <div>

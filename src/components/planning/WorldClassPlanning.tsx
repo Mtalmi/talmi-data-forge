@@ -442,9 +442,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           </div>
 
           {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
             <LiveClock />
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', cursor: 'pointer' }}>
               <Bell size={18} color={T.textSec} />
               <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
             </div>
@@ -513,7 +513,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── SECTION 3+4: GAUGE + DELIVERIES ── */}
         <section>
           <SectionHeader icon={Truck} label="Capacité & Livraisons" />
-          <div style={{ display: 'grid', gridTemplateColumns: '40% 60%', gap: 24, borderRadius: '12px', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
 
             {/* Capacity Gauge */}
             <Card className="tbos-card-stagger" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: '12px', padding: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'none' }}>
