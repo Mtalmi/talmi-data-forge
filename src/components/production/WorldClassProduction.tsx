@@ -522,7 +522,7 @@ export default function WorldClassProduction() {
   const sparkInProg = [3, 5, 2, 4, 3, 6, Math.round(kpis.inProgress)];
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
+    <div className="tbos-production-root" style={{ fontFamily: 'DM Sans, sans-serif', background: 'transparent', minHeight: '100vh', color: T.textPri }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@200;400;600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.08);opacity:0.85} }
@@ -535,7 +535,6 @@ export default function WorldClassProduction() {
       <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
         padding: '0 24px',
-        borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           <div className="flex items-center gap-2.5 shrink-0">
