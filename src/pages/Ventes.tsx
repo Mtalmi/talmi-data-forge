@@ -825,7 +825,8 @@ export default function Ventes() {
             <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
           </div>
 
-          {/* WorldClassVentes removed — duplicate Pipeline Commercial KPIs */}
+          {/* ══ World-Class Sales Dashboard ══ */}
+          <WorldClassVentes />
         </div>
 
         {/* Convert to BC Dialog */}
