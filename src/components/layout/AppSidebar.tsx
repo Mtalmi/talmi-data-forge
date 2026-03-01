@@ -185,9 +185,9 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </div>
 
       {/* ── SEARCH SHORTCUT (display-only) ── */}
-      <div className="flex items-center gap-2 mx-3 my-2 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/[0.06] cursor-default select-none shrink-0">
-        <Search className="w-3.5 h-3.5 text-white/20 flex-shrink-0" strokeWidth={1.5} />
-        <span className="text-white/30 text-xs">Recherche...</span>
+      <div className="flex items-center gap-2 mx-3 my-2 px-3 py-1.5 rounded-lg cursor-default select-none shrink-0" style={{ background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)' }}>
+        <Search className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" strokeWidth={1.5} />
+        <span className="text-gray-500 text-xs">Recherche...</span>
       </div>
 
       {/* ── NAVIGATION ── */}
