@@ -10,6 +10,7 @@ import {
   FileText, Bell, Zap, Droplets, Activity, CloudRain,
   TrendingUp, BookOpen, ChevronDown, ChevronUp, User,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -456,47 +457,27 @@ export default function WorldClassLaboratory() {
       `}</style>
 
       {/* ══════════════════════════ PAGE HEADER ══════════════════════════ */}
-      <div style={{
-        borderBottom: `1px solid ${T.cardBorder}`,
-        padding: '20px 32px 0',
-        marginBottom: 4,
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-              <FlaskConical size={22} color={T.gold} />
-              <h1 style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 800, fontSize: 26, color: T.textPri, margin: 0 }}>Laboratoire</h1>
-            </div>
-            <p style={{ color: T.textDim, fontSize: 13, margin: 0 }}>Contrôle qualité et essais</p>
-          </div>
+      <PageHeader
+        icon={FlaskConical}
+        title="Laboratoire"
+        subtitle="Contrôle qualité et essais"
+        tabs={tabs.map(t => ({ id: t, label: t }))}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
           <button
             onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 7, padding: '10px 20px',
-              background: hoverNew ? '#FFE033' : T.gold, color: T.navy,
-              border: 'none', borderRadius: 10, fontWeight: 800, fontSize: 13,
-              cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
-              transform: hoverNew ? 'scale(1.03)' : 'scale(1)',
+              display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
+              background: '#F59E0B', color: '#000',
+              border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
+              cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
             }}
           >
-            <Plus size={15} /> Nouveau Test
+            <Plus size={14} /> Nouveau Test
           </button>
-        </div>
-        <div style={{ display: 'flex' }}>
-          {tabs.map(tab => {
-            const active = activeTab === tab;
-            return (
-              <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                padding: '8px 20px', background: 'transparent', border: 'none',
-                borderBottom: active ? `2px solid ${T.gold}` : '2px solid transparent',
-                color: active ? T.gold : T.textDim,
-                fontWeight: active ? 700 : 400, fontSize: 13, cursor: 'pointer',
-                transition: 'all 200ms', fontFamily: 'DM Sans, sans-serif',
-              }}>{tab}</button>
-            );
-          })}
-        </div>
-      </div>
+        }
+      />
 
       {/* PAGE BODY */}
       <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>

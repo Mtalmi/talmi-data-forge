@@ -8,6 +8,7 @@ import {
   Users, UserCheck, Banknote, Heart, Bell,
   AlertTriangle, UserX, ChevronRight, Search,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subMonths, subDays } from 'date-fns';
 
@@ -341,37 +342,21 @@ export default function WorldClassClients() {
       `}</style>
 
       {/* ── STICKY HEADER ── */}
-      <div data-seamless-header style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 24px',
-        background: 'transparent',
-        border: 'none',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #F59E0B, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={18} color="#0D1220" />
-            </div>
-            <div>
-              <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Clients</span>
-              <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Données en temps réel</p>
-            </div>
+      <PageHeader
+        icon={Users}
+        title="Clients"
+        subtitle="Données en temps réel"
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        loading={loading}
+        actions={
+          <div style={{ position: 'relative' }}>
+            <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '7px 12px 7px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 12, width: 200 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
           </div>
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '6px 16px', borderRadius: 8, cursor: 'pointer', background: activeTab === tab.id ? 'rgba(245, 158, 11, 0.15)' : 'transparent', border: activeTab === tab.id ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent', color: activeTab === tab.id ? '#F59E0B' : '#9CA3AF', fontWeight: 600, fontSize: 13, transition: 'all 200ms' }}>{tab.label}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-            <div style={{ position: 'relative' }}>
-              <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '7px 12px 7px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 12, width: 200 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
-            </div>
-            {loading && <div style={{ width: 14, height: 14, border: '2px solid #F59E0B', borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* ── CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>

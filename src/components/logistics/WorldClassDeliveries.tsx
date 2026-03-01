@@ -7,6 +7,7 @@ import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
   Bell, TrendingUp,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 import { supabase } from '@/integrations/supabase/client';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
@@ -286,29 +287,15 @@ export default function WorldClassDeliveries() {
       `}</style>
 
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(11,17,32,0.9)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Truck size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Livraisons</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Données en temps réel</p>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '6px 18px', borderRadius: 8, cursor: 'pointer', background: activeTab === tab.id ? `${T.gold}18` : 'transparent', border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent', color: activeTab === tab.id ? T.gold : T.textSec, fontWeight: 600, fontSize: 13, transition: 'all 200ms' }}>{tab.label}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-            <LiveClock />
-            {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={Truck}
+        title="Livraisons"
+        subtitle="Données en temps réel"
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        loading={loading}
+      />
 
       {/* Content */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
