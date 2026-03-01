@@ -272,14 +272,18 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => (
-                <span key={h} style={{
-                  fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
-                  color: 'rgba(255,255,255,0.35)', fontWeight: 500,
-                  textAlign: ['VOL (M³)', 'HEURE', 'FORMULE', 'STATUT'].includes(h) ? 'center' as const : ['VOL (M³)'].includes(h) ? 'right' as const : 'left' as const,
-                  paddingRight: 0,
-                }}>{h}</span>
-              ))}
+              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
+                const align: 'left' | 'center' | 'right' =
+                  h === 'VOL (M³)' ? 'right' :
+                  ['FORMULE', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                return (
+                  <span key={h} style={{
+                    fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
+                    color: 'rgba(255,255,255,0.35)', fontWeight: 500,
+                    textAlign: align,
+                  }}>{h}</span>
+                );
+              })}
             </div>
 
             {/* Rows */}
@@ -314,7 +318,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     {st.label}
                   </span>
                   {/* Progress */}
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 items-center">
                     <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', width: 80 }}>
                       <div style={{
                         width: `${row.progress}%`, height: '100%', borderRadius: 3,
@@ -327,7 +331,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     </span>
                   </div>
                   {/* Actions */}
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center justify-center gap-1">
                     <button className="flex items-center justify-center cursor-pointer" style={{ width: 28, height: 28, borderRadius: 6, background: 'transparent', border: 'none' }}>
                       <Eye size={16} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.25)' }} />
                     </button>
