@@ -332,7 +332,7 @@ export default function WorldClassClients() {
   const totalNewCA = trendData.reduce((s, t) => s + t.ca, 0);
 
   return (
-    <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
+    <div style={{ fontFamily: 'DM Sans, sans-serif', background: 'transparent', minHeight: '100vh', color: T.textPri }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
@@ -341,7 +341,7 @@ export default function WorldClassClients() {
       `}</style>
 
       {/* ── HEADER ── */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(16px)', borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px' }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(17,24,46,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(245, 158, 11, 0.15)', padding: '0 24px' }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
