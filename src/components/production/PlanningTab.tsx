@@ -6,9 +6,9 @@ import { format, addDays, startOfWeek, endOfWeek, isSameDay, isToday, isBefore, 
 import { fr } from 'date-fns/locale';
 
 const T = {
-  gold:       '#D4A843',
-  cardBg:     'rgba(255,255,255,0.03)',
-  cardBorder: 'rgba(255,255,255,0.06)',
+  gold:       '#FFD700',
+  cardBg:     'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+  cardBorder: '#1E2D4A',
   success:    '#10B981',
   warning:    '#F59E0B',
   info:       '#3B82F6',
@@ -288,7 +288,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
       <SectionHeader icon={Calendar} label="Calendrier Hebdomadaire" />
       <div className="flex gap-5">
         <div className="flex-1">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, overflow: 'hidden' }}>
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
             <div className="grid grid-cols-7" style={{ borderBottom: `1px solid ${T.cardBorder}` }}>
               {weekDays.map(day => (
                 <div key={day.toISOString()} style={{
@@ -375,7 +375,7 @@ export default function PlanningTab({ openModal }: { openModal?: boolean }) {
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
             background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-            borderRadius: 14, height: '100%', display: 'flex', flexDirection: 'column',
+            borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             <div style={{ padding: '16px 16px 12px', borderBottom: `1px solid ${T.cardBorder}` }}>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>

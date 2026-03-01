@@ -9,9 +9,9 @@ import {
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold: '#D4A843',
-  cardBg: 'rgba(255,255,255,0.03)',
-  cardBorder: 'rgba(255,255,255,0.06)',
+  gold: '#FFD700',
+  cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+  cardBorder: '#1E2D4A',
   success: '#10B981',
   danger: '#EF4444',
   info: '#3B82F6',
@@ -266,7 +266,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
 
         {/* ── TABLE ── */}
         <div className="flex-1 min-w-0 flex flex-col">
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '14px 14px 0 0', overflow: 'hidden' }}>
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
               gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
@@ -369,7 +369,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           {/* ═══ BOTTOM STATUS BAR ═══ */}
           <div style={{
             background: 'rgba(255,255,255,0.02)', borderTop: `1px solid ${T.cardBorder}`,
-            padding: '12px 24px', borderRadius: '0 0 14px 14px',
+            padding: '12px 24px', borderRadius: '0 0 12px 12px',
           }}>
             <div className="flex items-center justify-between" style={{ fontFamily: mono, fontSize: 12 }}>
               <div className="flex items-center gap-3">
@@ -390,7 +390,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
         <div style={{ width: 320, flexShrink: 0 }}>
           <div style={{
             background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`,
-            borderRadius: 14, height: '100%', display: 'flex', flexDirection: 'column',
+            borderRadius: 12, height: '100%', display: 'flex', flexDirection: 'column',
           }}>
             {/* Header */}
             <div style={{ padding: 16, borderBottom: `1px solid ${T.cardBorder}` }}>
