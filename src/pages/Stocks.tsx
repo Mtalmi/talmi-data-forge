@@ -112,7 +112,6 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <WorldClassStocks />
       <div className="space-y-4 sm:space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -376,6 +375,7 @@ export default function Stocks() {
           )}
         </div>
       </div>
+      <WorldClassStocks />
     </MainLayout>
   );
 }
