@@ -408,10 +408,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       `}</style>
 
       {/* ── STICKY HEADER ── */}
-      <div style={{
+      <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid ${T.cardBorder}`, padding: '0 24px',
+        padding: '0 24px',
+        borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
       }}>
         <div style={{ margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20, paddingRight: fleetPanelOpen ? 272 : 0, transition: 'padding-right 300ms ease-in-out' }}>
           {/* Logo */}
