@@ -340,17 +340,22 @@ export default function WorldClassClients() {
         input { outline: none; }
       `}</style>
 
-      {/* ── HEADER ── */}
-      <div style={{ background: 'transparent', padding: '0 24px', marginBottom: 8 }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', paddingTop: 4, display: 'flex', alignItems: 'center', gap: 16 }}>
+      {/* ── STICKY HEADER ── */}
+      <div data-seamless-header style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        padding: '0 24px',
+        background: 'transparent',
+        border: 'none',
+      }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={18} color="#F59E0B" />
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #F59E0B, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Users size={18} color="#0D1220" />
             </div>
             <div>
               <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
               <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Clients</span>
-              <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1, marginTop: 1 }}>Données en temps réel</p>
+              <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Données en temps réel</p>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
