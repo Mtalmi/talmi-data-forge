@@ -1440,7 +1440,7 @@ export default function Planning() {
   return (
     <MainLayout>
       <WorldClassPlanning fleetPanelOpen={fleetPanelOpen && !isMobile} />
-      <div className="space-y-6 transition-all duration-300 px-6" style={{ paddingRight: fleetPanelOpen && !isMobile ? 'calc(24px + 272px)' : '24px', transition: 'padding-right 300ms ease-in-out' }}>
+      <div className="space-y-6 transition-all duration-300" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px', paddingRight: fleetPanelOpen && !isMobile ? 'calc(24px + 272px)' : '24px', transition: 'padding-right 300ms ease-in-out' }}>
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
