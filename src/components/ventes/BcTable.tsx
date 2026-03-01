@@ -16,6 +16,12 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   ShoppingCart,
   CheckCircle,
   Truck,
@@ -30,6 +36,9 @@ import {
   Receipt,
   Send,
   Shield,
+  MoreHorizontal,
+  MessageCircle,
+  FileText,
 } from 'lucide-react';
 import { format, isToday, isTomorrow, isPast, parseISO } from 'date-fns';
 
@@ -43,6 +52,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { Progress } from '@/components/ui/progress';
 
 // Status configs use static colors but labels are resolved dynamically via i18n
 const BC_STATUS_COLORS: Record<string, { color: string; icon: React.ReactNode }> = {
@@ -95,7 +105,6 @@ interface BcTableProps {
 
 // Helper to determine BC priority
 const getBcPriority = (bc: BonCommande): { isPriority: boolean; isUrgent: boolean; reason: string } => {
-  // Check if delivery is today or past due
   if (bc.date_livraison_souhaitee && bc.statut === 'pret_production') {
     const deliveryDate = parseISO(bc.date_livraison_souhaitee);
     if (isPast(deliveryDate) && !isToday(deliveryDate)) {
@@ -108,17 +117,12 @@ const getBcPriority = (bc: BonCommande): { isPriority: boolean; isUrgent: boolea
       return { isPriority: true, isUrgent: false, reason: 'Livraison demain' };
     }
   }
-  
-  // High value order
   if (bc.total_ht >= HIGH_VALUE_THRESHOLD) {
     return { isPriority: true, isUrgent: false, reason: `Valeur élevée (${bc.total_ht.toLocaleString()} DH)` };
   }
-  
-  // High volume order
   if (bc.volume_m3 >= HIGH_VOLUME_THRESHOLD) {
     return { isPriority: true, isUrgent: false, reason: `Volume important (${bc.volume_m3} m³)` };
   }
-  
   return { isPriority: false, isUrgent: false, reason: '' };
 };
 
@@ -139,7 +143,6 @@ export function BcTable({
   const { t } = useI18n();
   const bt = t.bcTable;
 
-  // Build label maps using i18n keys
   const BC_STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
     en_attente_validation: { label: bt.statusWaitingAdmin, ...BC_STATUS_COLORS.en_attente_validation },
     pret_production: { label: bt.statusReadyProd, ...BC_STATUS_COLORS.pret_production },
@@ -177,14 +180,10 @@ export function BcTable({
     setGeneratingInvoice(null);
   };
 
-  // Check if BC is an emergency bypass
   const isEmergencyBc = (bc: BonCommande) => bc.notes?.includes('[URGENCE/EMERGENCY');
 
-  // Determine if current user can launch production for this BC
   const canLaunchProduction = (bc: BonCommande) => {
-    // CEO and Superviseur can always launch
     if (isCeo || isSuperviseur || isAgentAdministratif) return true;
-    // Dir Ops can only launch if it's already validated or in emergency window with bypass
     if (isDirecteurOperations) {
       return bc.prix_verrouille || isEmergencyBc(bc);
     }
@@ -228,46 +227,25 @@ export function BcTable({
     );
   }
 
-  const renderPriorityBadge = (bc: BonCommande) => {
+  // Priority dot for PO number
+  const renderPriorityDot = (bc: BonCommande) => {
     const priority = getBcPriority(bc);
     if (!priority.isPriority) return null;
-    
-    if (priority.isUrgent) {
-      return (
-        <Tooltip>
-          <TooltipTrigger>
-            <span 
-              className="inline-flex items-center gap-1 animate-pulse"
-              style={{ color: '#FF6B6B', background: 'rgba(255,107,107,0.08)', border: 'none', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '4px' }}
-            >
-              <AlertCircle className="h-3 w-3" />
-              Urgent
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="flex items-center gap-1">
-              <Zap className="h-3 w-3" />
-              {priority.reason}
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      );
-    }
     
     return (
       <Tooltip>
         <TooltipTrigger>
           <span 
-            className="inline-flex items-center gap-1"
-            style={{ color: '#FDB913', background: 'rgba(253,185,19,0.08)', border: 'none', fontSize: '10px', fontWeight: 500, padding: '3px 8px', borderRadius: '4px' }}
-          >
-            <Star className="h-3 w-3 fill-current" />
-          </span>
+            className={cn(
+              "inline-block h-2 w-2 rounded-full shrink-0",
+              priority.isUrgent ? "bg-red-500 animate-pulse" : "bg-amber-500"
+            )}
+          />
         </TooltipTrigger>
         <TooltipContent>
           <div className="flex items-center gap-1">
             <Zap className="h-3 w-3" />
-            Priorité: {priority.reason}
+            {priority.reason}
           </div>
         </TooltipContent>
       </Tooltip>
@@ -279,322 +257,336 @@ export function BcTable({
     
     const date = parseISO(bc.date_livraison_souhaitee);
     const priority = getBcPriority(bc);
+    const isOverdue = isPast(date) && !isToday(date) && bc.statut === 'pret_production';
     
     return (
       <span className={cn(
-        "text-sm font-mono",
-        priority.isUrgent && bc.statut === 'pret_production' && "text-destructive font-medium"
+        "text-xs font-mono",
+        isOverdue && "text-red-400 font-medium",
+        priority.isUrgent && bc.statut === 'pret_production' && "font-medium"
       )}>
         {isToday(date) ? (
           <span className="flex items-center gap-1 text-[#D4A843] font-medium">
-            <span className="h-2 w-2 rounded-full bg-[#D4A843] animate-pulse" />
-            Aujourd'hui
+            <span className="h-1.5 w-1.5 rounded-full bg-[#D4A843] animate-pulse" />
+            Auj.
           </span>
         ) : isTomorrow(date) ? (
           <span className="text-warning">Demain</span>
         ) : (
-          format(date, 'dd/MM/yyyy')
+          format(date, 'dd/MM/yy')
         )}
       </span>
     );
   };
 
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-10">
-            <Checkbox 
-              checked={allSelected}
-              onCheckedChange={handleSelectAll}
-              aria-label={bt.selectAll}
-              className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
-            />
-          </TableHead>
-          <TableHead>{bt.bcNumber}</TableHead>
-          <TableHead>{bt.client}</TableHead>
-          <TableHead>{bt.formula}</TableHead>
-          <TableHead>{bt.deliveryDate}</TableHead>
-          <TableHead className="text-right">{bt.volume} (m³)</TableHead>
-          <TableHead className="text-right">{bt.totalHt} (DH)</TableHead>
-          <TableHead>{bt.status}</TableHead>
-          <TableHead>{bt.invoice}</TableHead>
-          <TableHead>{bt.progress}</TableHead>
-          <TableHead>{bt.priority}</TableHead>
-          <TableHead>{bt.actions}</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {bcList.map((bc) => {
-          const statusConfig = BC_STATUS_CONFIG[bc.statut] || BC_STATUS_CONFIG.pret_production;
-          const isSelected = selectedIds.includes(bc.id);
-          const priorityBadge = renderPriorityBadge(bc);
-          const bcIsEmergency = isEmergencyBc(bc);
-          const bcCanLaunch = canLaunchProduction(bc);
-          
-          // Get the most advanced BL workflow status for display
-          const linkedBls = bc.linkedBls || [];
-          const blStatusOrder = ['facture', 'livre', 'en_livraison', 'validation_technique', 'production', 'planification', 'en_attente_validation'];
-          const getBlRank = (status: string) => {
-            const idx = blStatusOrder.indexOf(status);
-            return idx === -1 ? blStatusOrder.length : idx;
-          };
-          const mostAdvancedBl = linkedBls.length > 0 
-            ? linkedBls.reduce((best, bl) => {
-                const bestIndex = getBlRank(best.workflow_status);
-                const currentIndex = getBlRank(bl.workflow_status);
-                return currentIndex < bestIndex ? bl : best;
-              })
-            : null;
-          
-          return (
-            <TableRow 
-              key={bc.id} 
-              className={cn(
-                "hover:bg-white/[0.03] transition-colors duration-150 cursor-pointer",
-                isSelected && "bg-primary/5",
-                // Emergency BC red pulse glow
-                bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
-                // Pending validation orange glow
-                bc.statut === 'en_attente_validation' && "bg-amber-500/5 border-l-2 border-l-amber-500"
-              )}
-              onClick={() => onOpenDetail(bc)}
+  // Merged Suivi column: progress bar + invoice badge
+  const renderSuivi = (bc: BonCommande) => {
+    const volumeLivre = bc.volume_livre || 0;
+    const volumeTotal = bc.volume_m3;
+    const progressPct = volumeTotal > 0 ? Math.min(100, (volumeLivre / volumeTotal) * 100) : 0;
+    
+    // Invoice status
+    let invoiceBadge: React.ReactNode = null;
+    if (bc.facture_consolidee_id) {
+      invoiceBadge = (
+        <span className="inline-flex items-center gap-0.5 text-[10px] text-emerald-400">
+          <Receipt className="h-2.5 w-2.5" />
+          Facturé
+        </span>
+      );
+    } else if (bc.statut === 'livre' || bc.statut === 'termine') {
+      invoiceBadge = (
+        <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
+          <Clock className="h-2.5 w-2.5" />
+          {bt.toInvoice}
+        </span>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5">
+          <Progress 
+            value={progressPct} 
+            className="h-1.5 flex-1 bg-white/[0.06]"
+            indicatorClassName={cn(
+              progressPct >= 100 ? "bg-emerald-500" : progressPct > 0 ? "bg-amber-500" : "bg-white/10"
+            )}
+          />
+          <span className="text-[10px] font-mono text-muted-foreground whitespace-nowrap">
+            {volumeLivre}/{volumeTotal}
+          </span>
+        </div>
+        {invoiceBadge}
+      </div>
+    );
+  };
+
+  // Kebab menu actions
+  const renderKebabMenu = (bc: BonCommande) => {
+    const bcIsEmergency = isEmergencyBc(bc);
+    const bcCanLaunch = canLaunchProduction(bc);
+    
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className="flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-amber-400 transition-colors duration-150"
+            style={{ background: 'transparent' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+            onClick={e => e.stopPropagation()}
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent 
+          align="end" 
+          className="min-w-[180px] p-1"
+          style={{ 
+            background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', 
+            border: '1px solid rgba(245, 158, 11, 0.15)', 
+            borderRadius: '8px' 
+          }}
+        >
+          {/* Launch Production */}
+          {bc.statut === 'pret_production' && bcCanLaunch && (
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onLaunchProduction(bc); }}
+              disabled={launchingProduction === bc.bc_id}
+              className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
             >
-              <TableCell onClick={(e) => e.stopPropagation()}>
-                <Checkbox 
-                  checked={isSelected}
-                  onCheckedChange={(checked) => handleSelectOne(bc.id, !!checked)}
-                  aria-label={`${bt.select} ${bc.bc_id}`}
-                />
-              </TableCell>
-              <TableCell className="font-mono font-medium whitespace-nowrap">{bc.bc_id}</TableCell>
-              <TableCell>
-                {bc.client ? (
-                  <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />
-                ) : (
-                  '—'
+              {launchingProduction === bc.bc_id ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <span>🚀</span>
+              )}
+              {bt.launch || 'Lancer Production'}
+            </DropdownMenuItem>
+          )}
+          
+          {/* Submit for validation */}
+          {bc.statut === 'pret_production' && !bcCanLaunch && isDirecteurOperations && onSubmitForValidation && (
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onSubmitForValidation(bc); }}
+              className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
+            >
+              <Send className="h-3.5 w-3.5" />
+              {bt.submit || 'Soumettre'}
+            </DropdownMenuItem>
+          )}
+          
+          {/* Add Delivery */}
+          {(() => {
+            const hasRemainingVolume = bc.statut === 'en_production' && 
+              bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && 
+              (bc.volume_m3 - (bc.volume_livre || 0)) > 0;
+            if (!hasRemainingVolume) return null;
+            const linkedBls = bc.linkedBls || [];
+            const validatedStatuses = ['validation_technique', 'en_livraison', 'livre', 'facture', 'annule'];
+            const allBlsValidated = linkedBls.length === 0 || 
+              linkedBls.every(bl => validatedStatuses.includes(bl.workflow_status) || bl.validation_technique === true);
+            return (
+              <DropdownMenuItem 
+                onClick={(e) => { e.stopPropagation(); onOpenDetail(bc); }}
+                disabled={!allBlsValidated}
+                className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
+              >
+                <Truck className="h-3.5 w-3.5" />
+                +BL ({(bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1)} m³)
+              </DropdownMenuItem>
+            );
+          })()}
+
+          {/* WhatsApp / Message Client */}
+          <DropdownMenuItem 
+            className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span>💬</span>
+            <span className="flex-1">Message Client</span>
+          </DropdownMenuItem>
+
+          {/* Copy */}
+          <DropdownMenuItem 
+            onClick={(e) => { e.stopPropagation(); onCopyBc(bc); }}
+            className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
+          >
+            <span>📋</span>
+            Dupliquer
+          </DropdownMenuItem>
+
+          {/* PDF */}
+          <DropdownMenuItem 
+            className="gap-2 text-[13px] cursor-pointer rounded-md px-3 py-2 hover:bg-white/[0.06]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span>📄</span>
+            <BcPdfGenerator bc={bc} compact />
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
+  return (
+    <div className="w-full overflow-x-auto">
+      <Table style={{ tableLayout: 'fixed', width: '100%', minWidth: '900px' }}>
+        <TableHeader>
+          <TableRow>
+            <TableHead style={{ width: 40 }}>
+              <Checkbox 
+                checked={allSelected}
+                onCheckedChange={handleSelectAll}
+                aria-label={bt.selectAll}
+                className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
+              />
+            </TableHead>
+            <TableHead style={{ width: 130 }}>{bt.bcNumber}</TableHead>
+            <TableHead style={{ width: 140 }}>{bt.client}</TableHead>
+            <TableHead style={{ width: 70 }} className="text-center">{bt.formula}</TableHead>
+            <TableHead style={{ width: 100 }}>{bt.deliveryDate}</TableHead>
+            <TableHead style={{ width: 80 }} className="text-right">{bt.volume}</TableHead>
+            <TableHead style={{ width: 100 }} className="text-right">{bt.totalHt}</TableHead>
+            <TableHead style={{ width: 110 }}>{bt.status}</TableHead>
+            <TableHead style={{ width: 120 }}>Suivi</TableHead>
+            <TableHead style={{ width: 44 }}></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {bcList.map((bc) => {
+            const statusConfig = BC_STATUS_CONFIG[bc.statut] || BC_STATUS_CONFIG.pret_production;
+            const isSelected = selectedIds.includes(bc.id);
+            const bcIsEmergency = isEmergencyBc(bc);
+            
+            // Get the most advanced BL workflow status for display
+            const linkedBls = bc.linkedBls || [];
+            const blStatusOrder = ['facture', 'livre', 'en_livraison', 'validation_technique', 'production', 'planification', 'en_attente_validation'];
+            const getBlRank = (status: string) => {
+              const idx = blStatusOrder.indexOf(status);
+              return idx === -1 ? blStatusOrder.length : idx;
+            };
+            const mostAdvancedBl = linkedBls.length > 0 
+              ? linkedBls.reduce((best, bl) => {
+                  const bestIndex = getBlRank(best.workflow_status);
+                  const currentIndex = getBlRank(bl.workflow_status);
+                  return currentIndex < bestIndex ? bl : best;
+                })
+              : null;
+            
+            return (
+              <TableRow 
+                key={bc.id} 
+                className={cn(
+                  "transition-colors duration-150 cursor-pointer",
+                  isSelected && "bg-primary/5",
+                  bcIsEmergency && bc.statut === 'pret_production' && "bg-red-500/5 animate-pulse border-l-2 border-l-red-500",
+                  bc.statut === 'en_attente_validation' && "bg-amber-500/5 border-l-2 border-l-amber-500"
                 )}
-              </TableCell>
-              <TableCell>
-                <span className="text-xs">{bc.formule_id}</span>
-              </TableCell>
-              <TableCell>{renderDeliveryDate(bc)}</TableCell>
-              <TableCell className="text-right">
-                <div className="flex flex-col items-end">
-                  <span className="font-mono">{bc.volume_m3}</span>
-                  {bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && (
-                  <span className="text-[10px] text-muted-foreground font-mono">
-                      {bc.volume_livre || 0}/{bc.volume_m3} livré
-                    </span>
+                style={{ background: undefined }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = 'rgba(245, 158, 11, 0.04)'; }}
+                onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
+                onClick={() => onOpenDetail(bc)}
+              >
+                <TableCell onClick={(e) => e.stopPropagation()} style={{ width: 40 }}>
+                  <Checkbox 
+                    checked={isSelected}
+                    onCheckedChange={(checked) => handleSelectOne(bc.id, !!checked)}
+                    aria-label={`${bt.select} ${bc.bc_id}`}
+                  />
+                </TableCell>
+                
+                {/* PO NO with priority dot */}
+                <TableCell style={{ width: 130 }}>
+                  <div className="flex items-center gap-1.5">
+                    {renderPriorityDot(bc)}
+                    <span className="font-mono text-xs font-medium whitespace-nowrap">{bc.bc_id}</span>
+                    {bcIsEmergency && (
+                      <Zap className="h-3 w-3 text-red-500 shrink-0" />
+                    )}
+                  </div>
+                </TableCell>
+                
+                {/* CLIENT - truncate */}
+                <TableCell style={{ width: 140 }}>
+                  {bc.client ? (
+                    <div className="truncate text-sm">
+                      <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />
+                    </div>
+                  ) : (
+                    '—'
                   )}
-                </div>
-              </TableCell>
-              <TableCell className="text-right font-mono font-medium">
-                {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col gap-1">
-                  {/* Emergency Badge */}
-                  {bcIsEmergency && (
-                    <Badge variant="destructive" className="gap-1 text-[10px]">
-                      <Zap className="h-3 w-3" />
-                      URGENCE
-                    </Badge>
-                  )}
-                  <span className={cn("inline-flex items-center gap-1 rounded-md px-3 py-1 text-[11px] font-medium", statusConfig.color)}>
-                    {statusConfig.icon}
-                    {statusConfig.label}
+                </TableCell>
+                
+                {/* FORMULA */}
+                <TableCell style={{ width: 70 }} className="text-center">
+                  <span className="text-xs font-mono">{bc.formule_id}</span>
+                </TableCell>
+                
+                {/* DELIVERY DATE */}
+                <TableCell style={{ width: 100 }}>{renderDeliveryDate(bc)}</TableCell>
+                
+                {/* VOLUME */}
+                <TableCell style={{ width: 80 }} className="text-right">
+                  <span className="text-xs font-mono">{bc.volume_m3}</span>
+                </TableCell>
+                
+                {/* TOTAL HT */}
+                <TableCell style={{ width: 100 }} className="text-right">
+                  <span className="text-sm font-mono font-medium">
+                    {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </span>
-                  {/* Show linked BL status if in production */}
-                  {mostAdvancedBl && bc.statut === 'en_production' && (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Badge 
-                          variant="outline" 
-                          className={cn("gap-1 text-[10px]", BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.color || '')}
-                        >
-                          BL: {BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.label || mostAdvancedBl.workflow_status}
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <div className="text-xs space-y-1">
-                          <p className="font-medium">{linkedBls.length} BL(s) liés</p>
-                          {linkedBls.slice(0, 3).map(bl => (
-                            <p key={bl.bl_id} className="text-muted-foreground">
-                              {bl.bl_id}: {BL_WORKFLOW_STATUS[bl.workflow_status]?.label || bl.workflow_status}
-                            </p>
-                          ))}
-                        </div>
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                {/* Invoice Status */}
-                {bc.facture_consolidee_id ? (
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Badge variant="outline" className={cn("gap-1", BC_INVOICE_STATUS.invoiced.color)}>
-                        {BC_INVOICE_STATUS.invoiced.icon}
-                        {BC_INVOICE_STATUS.invoiced.label}
-                      </Badge>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {bt.invoice}: {bc.facture_consolidee_id}
-                    </TooltipContent>
-                  </Tooltip>
-                ) : bc.statut === 'livre' || bc.statut === 'termine' ? (
-                  <Badge variant="outline" className={cn("gap-1", BC_INVOICE_STATUS.pending.color)}>
-                    {BC_INVOICE_STATUS.pending.icon}
-                    {bt.toInvoice}
-                  </Badge>
-                ) : (
-                  <span className="text-muted-foreground text-xs">—</span>
-                )}
-              </TableCell>
-              <TableCell>
-                <OrderStatusTimeline bc={bc} compact showDeliveryProgress />
-              </TableCell>
-              <TableCell>
-                {priorityBadge || <span className="text-muted-foreground">—</span>}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  {/* Role-Adaptive Action Buttons */}
-                  {bc.statut === 'pret_production' && (
-                    <>
-                      {bcCanLaunch ? (
-                         <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => onLaunchProduction(bc)}
-                          disabled={launchingProduction === bc.bc_id}
-                          className="gap-1"
-                          style={{ color: '#FDB913', background: 'rgba(253,185,19,0.08)', border: '1px solid rgba(253,185,19,0.15)', fontSize: '11px', fontWeight: 500, padding: '5px 14px', borderRadius: '6px' }}
-                        >
-                          {launchingProduction === bc.bc_id ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <Factory className="h-3 w-3" />
-                          )}
-                          {bt.launch || 'Launch'}
-                        </Button>
-                      ) : isDirecteurOperations && onSubmitForValidation ? (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => onSubmitForValidation(bc)}
-                              className="gap-1 text-amber-600 border-amber-500 hover:bg-amber-50"
-                            >
-                              <Send className="h-3 w-3" />
-                              {bt.submit || 'Submit'}
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Soumettre pour validation prix par l'Agent Admin
-                          </TooltipContent>
-                        </Tooltip>
-                      ) : null}
-                    </>
-                  )}
-                  
-                  {/* Pending Validation - show for Dir Ops */}
-                  {bc.statut === 'en_attente_validation' && isDirecteurOperations && (
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Badge variant="outline" className="gap-1 bg-amber-500/10 text-amber-600 border-amber-500/30">
-                          <Clock className="h-3 w-3" />
-                          En attente Admin
-                        </Badge>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        Prix en attente de validation par l'Agent Administratif
-                      </TooltipContent>
-                    </Tooltip>
-                  )}
-                  
-                  {/* Add Delivery - only show when ALL linked BLs are validated or past production */}
-                  {(() => {
-                    const hasRemainingVolume = bc.statut === 'en_production' && 
-                      bc.volume_m3 > MULTI_DELIVERY_THRESHOLD && 
-                      (bc.volume_m3 - (bc.volume_livre || 0)) > 0;
-                    
-                    if (!hasRemainingVolume) return null;
-                    
-                    // Check if all linked BLs are validated (past production phase)
-                    const linkedBls = bc.linkedBls || [];
-                    const validatedStatuses = ['validation_technique', 'en_livraison', 'livre', 'facture', 'annule'];
-                    const allBlsValidated = linkedBls.length === 0 || 
-                      linkedBls.every(bl => validatedStatuses.includes(bl.workflow_status) || bl.validation_technique === true);
-                    
-                    if (!allBlsValidated) {
-                      // Show disabled state with explanation
-                      return (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              disabled
-                              className="gap-1 opacity-50"
-                            >
-                              <Truck className="h-3 w-3" />
-                              +BL
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="font-medium">{bt.waitingValidation}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {bt.waitingValidationDesc}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      );
-                    }
-                    
-                    return (
+                </TableCell>
+                
+                {/* STATUS */}
+                <TableCell style={{ width: 110 }}>
+                  <div className="flex flex-col gap-1">
+                    <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
+                      {statusConfig.icon}
+                      {statusConfig.label}
+                    </span>
+                    {mostAdvancedBl && bc.statut === 'en_production' && (
                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            onClick={() => onOpenDetail(bc)}
-                            className="gap-1"
+                        <TooltipTrigger>
+                          <Badge 
+                            variant="outline" 
+                            className={cn("gap-0.5 text-[9px] px-1.5 py-0", BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.color || '')}
                           >
-                            <Truck className="h-3 w-3" />
-                            +BL
-                          </Button>
+                            BL: {BL_WORKFLOW_STATUS[mostAdvancedBl.workflow_status]?.label || mostAdvancedBl.workflow_status}
+                          </Badge>
                         </TooltipTrigger>
                         <TooltipContent>
-                          {bt.addDelivery.replace('{remaining}', (bc.volume_m3 - (bc.volume_livre || 0)).toFixed(1))}
+                          <div className="text-xs space-y-1">
+                            <p className="font-medium">{linkedBls.length} BL(s) liés</p>
+                            {linkedBls.slice(0, 3).map(bl => (
+                              <p key={bl.bl_id} className="text-muted-foreground">
+                                {bl.bl_id}: {BL_WORKFLOW_STATUS[bl.workflow_status]?.label || bl.workflow_status}
+                              </p>
+                            ))}
+                          </div>
                         </TooltipContent>
                       </Tooltip>
-                    );
-                  })()}
-                  <WhatsAppShareButton bc={bc} compact />
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onCopyBc(bc)}
-                        className="gap-1"
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Dupliquer cette commande</TooltipContent>
-                  </Tooltip>
-                  <BcPdfGenerator bc={bc} compact />
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+                    )}
+                    {bc.statut === 'en_attente_validation' && isDirecteurOperations && (
+                      <span className="text-[9px] text-amber-500">En attente Admin</span>
+                    )}
+                  </div>
+                </TableCell>
+                
+                {/* SUIVI (merged Invoice + Progress) */}
+                <TableCell style={{ width: 120 }}>
+                  {renderSuivi(bc)}
+                </TableCell>
+                
+                {/* ACTIONS (kebab) */}
+                <TableCell style={{ width: 44 }} onClick={(e) => e.stopPropagation()}>
+                  {renderKebabMenu(bc)}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
