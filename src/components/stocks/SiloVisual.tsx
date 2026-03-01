@@ -31,25 +31,10 @@ export function SiloVisual({
   const isCritical = quantite <= seuil;
   const isLow = quantite <= seuil * 1.5 && !isCritical;
 
-  // Material-specific colors
-  const getMaterialColor = (mat: string) => {
-    switch (mat) {
-      case 'Ciment':
-        return { bg: 'bg-slate-400', fill: 'from-slate-500 to-slate-600', border: 'border-slate-500' };
-      case 'Sable':
-        return { bg: 'bg-amber-400', fill: 'from-amber-400 to-amber-500', border: 'border-amber-500' };
-      case 'Gravette':
-        return { bg: 'bg-stone-400', fill: 'from-stone-400 to-stone-500', border: 'border-stone-500' };
-      case 'Adjuvant':
-        return { bg: 'bg-blue-400', fill: 'from-blue-400 to-blue-500', border: 'border-blue-500' };
-      case 'Eau':
-        return { bg: 'bg-cyan-400', fill: 'from-cyan-400 to-cyan-500', border: 'border-cyan-500' };
-      default:
-        return { bg: 'bg-gray-400', fill: 'from-gray-400 to-gray-500', border: 'border-gray-500' };
-    }
-  };
-
-  const colors = getMaterialColor(materiau);
+  // Amber-unified colors — critical uses red (semantic)
+  const colors = isCritical
+    ? { border: 'border-red-500', fill: 'from-red-500 to-red-600' }
+    : { border: 'border-amber-500', fill: 'from-amber-500 to-amber-600' };
 
   const formatQuantity = (qty: number) => {
     if (qty >= 1000) {
@@ -57,6 +42,13 @@ export function SiloVisual({
     }
     return qty.toFixed(0);
   };
+
+  // Show real autonomy or "—" instead of 999j
+  const displayAutonomy = (() => {
+    if (daysRemaining === undefined) return null;
+    if (daysRemaining > 365) return '—';
+    return `${daysRemaining}j${hoursRemaining !== undefined ? ` ${hoursRemaining % 24}h` : ''}`;
+  })();
 
   return (
     <div className={cn('flex flex-col items-center', className)}>
@@ -108,8 +100,7 @@ export function SiloVisual({
           {/* Percentage text */}
           <div className="absolute inset-0 flex items-center justify-center">
             <span className={cn(
-              'text-2xl font-bold',
-              percentage > 50 ? 'text-background' : 'text-foreground'
+              'text-2xl font-bold font-mono text-white',
             )}>
               {percentage.toFixed(0)}%
             </span>
@@ -155,27 +146,27 @@ export function SiloVisual({
 
       {/* Material Info */}
       <div className="mt-4 text-center">
-        <h3 className="font-bold text-lg">{materiau}</h3>
+        <h3 className="font-bold text-sm text-white">{materiau}</h3>
         <p className={cn(
-          'font-mono text-lg',
-          isCritical && 'text-destructive font-bold'
+          'font-mono text-sm',
+          isCritical ? 'text-destructive font-bold' : 'text-gray-300'
         )}>
-          {formatQuantity(quantite)} <span className="text-sm text-muted-foreground">{unite}</span>
+          {formatQuantity(quantite)} <span className="text-xs text-gray-500">{unite}</span>
         </p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-gray-500 font-mono">
           / {formatQuantity(capacite)} {unite}
         </p>
       </div>
 
-      {/* Oracle Autonomy - Estimated Autonomy */}
-      {(daysRemaining !== undefined || hoursRemaining !== undefined) && (
+      {/* Autonomy */}
+      {displayAutonomy !== null && (
         <div className={cn(
-          'mt-3 p-2 rounded-lg oracle-badge',
+          'mt-3 p-2 rounded-lg',
           daysRemaining !== undefined && daysRemaining <= 3 
-            ? 'border-destructive/50 bg-destructive/10' 
+            ? 'border border-destructive/50 bg-destructive/10' 
             : daysRemaining !== undefined && daysRemaining <= 7 
-              ? 'border-warning/50 bg-warning/10' 
-              : ''
+              ? 'border border-warning/50 bg-warning/10' 
+              : 'border border-amber-500/20 bg-amber-500/5'
         )}>
           <div className="flex items-center gap-1.5 justify-center">
             <Gauge className={cn(
@@ -184,9 +175,9 @@ export function SiloVisual({
                 ? 'text-destructive animate-pulse' 
                 : daysRemaining !== undefined && daysRemaining <= 7 
                   ? 'text-warning' 
-                  : 'text-primary'
+                  : 'text-amber-400'
             )} />
-            <span className="text-xs font-medium">
+            <span className="text-xs text-gray-400">
               {t.pages.stocks.estimatedAutonomy}
             </span>
           </div>
@@ -196,11 +187,9 @@ export function SiloVisual({
               ? 'text-destructive' 
               : daysRemaining !== undefined && daysRemaining <= 7 
                 ? 'text-warning' 
-                : 'text-primary'
+                : 'text-amber-400'
           )}>
-            {daysRemaining !== undefined && daysRemaining <= 999 
-              ? `${daysRemaining}j ${hoursRemaining !== undefined ? `${hoursRemaining % 24}h` : ''}`
-              : '∞'}
+            {displayAutonomy}
           </div>
           {avgDailyUsage !== undefined && avgDailyUsage > 0 && (
             <div className="mt-1 text-[10px] text-muted-foreground text-center flex items-center justify-center gap-1">
@@ -211,7 +200,7 @@ export function SiloVisual({
         </div>
       )}
 
-      {/* Legacy Days Remaining (backward compat) */}
+      {/* Legacy fallback */}
       {daysRemaining === undefined && hoursRemaining === undefined && (
         <div className={cn(
           'mt-2 flex items-center gap-1 px-2 py-1 rounded text-xs font-medium',
@@ -227,7 +216,7 @@ export function SiloVisual({
         'mt-2 h-2 w-2 rounded-full',
         isCritical ? 'bg-destructive animate-ping' :
         isLow ? 'bg-warning' :
-        'bg-success'
+        'bg-emerald-400'
       )} />
     </div>
   );

@@ -95,6 +95,21 @@ export default function Stocks() {
     return stat?.days_remaining;
   };
 
+  // Display autonomy: show "—" for unrealistic values (999+)
+  const formatDaysRemaining = (days: number | undefined): string => {
+    if (days === undefined) return '—';
+    if (days > 365) return '—';
+    return `${days}j`;
+  };
+
+  // Truncate UUID references
+  const truncateRef = (ref: string | null | undefined): string => {
+    if (!ref) return '—';
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}/i;
+    if (uuidPattern.test(ref)) return ref.substring(0, 8) + '…';
+    return ref.length > 16 ? ref.substring(0, 16) + '…' : ref;
+  };
+
   return (
     <MainLayout>
       <WorldClassStocks />
@@ -196,7 +211,7 @@ export default function Stocks() {
                   <div key={s.materiau} className="text-center px-3 py-1 rounded bg-destructive/20">
                     <p className="text-xs text-muted-foreground">{s.materiau}</p>
                     <p className="font-mono font-bold text-destructive">
-                      {days !== undefined && days <= 999 ? `${days}j` : '—'}
+                      {formatDaysRemaining(days)}
                     </p>
                   </div>
                 );
@@ -211,9 +226,9 @@ export default function Stocks() {
             <Loader2 className="h-8 w-8 mx-auto animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="card-industrial p-8">
-            <h2 className="text-lg font-semibold mb-6 flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-muted-foreground" />
+          <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, padding: 20 }}>
+            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-amber-400" />
               {t.pages.stocks.siloLevels}
             </h2>
             <div className="flex flex-wrap justify-center gap-12">
@@ -233,9 +248,9 @@ export default function Stocks() {
         )}
 
         {/* Stock Table Summary */}
-        <div className="card-industrial overflow-x-auto">
-          <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">{t.pages.stocks.stockSummary}</h2>
+        <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
+          <div className="p-4 border-b" style={{ borderColor: 'rgba(245, 158, 11, 0.08)' }}>
+            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">{t.pages.stocks.stockSummary}</h2>
           </div>
           <Table className="data-table-industrial">
             <TableHeader>
@@ -273,7 +288,7 @@ export default function Stocks() {
                         days !== undefined && days <= 7 ? 'text-warning' :
                         'text-muted-foreground'
                       )}>
-                        {days !== undefined && days <= 999 ? `${days}j` : '∞'}
+                        {formatDaysRemaining(days)}
                       </span>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
@@ -305,9 +320,9 @@ export default function Stocks() {
         </div>
 
         {/* Recent Movements */}
-        <div className="card-industrial overflow-x-auto">
-          <div className="p-4 border-b border-border">
-            <h2 className="font-semibold">{t.pages.stocks.recentMovements}</h2>
+        <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, overflow: 'hidden' }}>
+          <div className="p-4 border-b" style={{ borderColor: 'rgba(245, 158, 11, 0.08)' }}>
+            <h2 className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">{t.pages.stocks.recentMovements}</h2>
           </div>
           {mouvements.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
@@ -352,7 +367,7 @@ export default function Stocks() {
                       {m.quantite_apres.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {m.fournisseur || m.reference_id || '—'}
+                      {truncateRef(m.fournisseur || m.reference_id)}
                     </TableCell>
                   </TableRow>
                 ))}
