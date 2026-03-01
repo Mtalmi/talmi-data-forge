@@ -31,10 +31,10 @@ export function SiloVisual({
   const isCritical = quantite <= seuil;
   const isLow = quantite <= seuil * 1.5 && !isCritical;
 
-  // Amber-unified colors — critical uses red (semantic)
+  // Gold-unified colors — critical uses red (semantic)
   const colors = isCritical
     ? { border: 'border-red-500', fill: 'from-red-500 to-red-600' }
-    : { border: 'border-amber-500', fill: 'from-amber-500 to-amber-600' };
+    : { border: 'border-[#FFD700]', fill: 'from-[#FFD700] to-[#B8860B]' };
 
   const formatQuantity = (qty: number) => {
     if (qty >= 1000) {
@@ -166,7 +166,7 @@ export function SiloVisual({
             ? 'border border-destructive/50 bg-destructive/10' 
             : daysRemaining !== undefined && daysRemaining <= 7 
               ? 'border border-warning/50 bg-warning/10' 
-              : 'border border-amber-500/20 bg-amber-500/5'
+              : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
         )}>
           <div className="flex items-center gap-1.5 justify-center">
             <Gauge className={cn(
@@ -175,7 +175,7 @@ export function SiloVisual({
                 ? 'text-destructive animate-pulse' 
                 : daysRemaining !== undefined && daysRemaining <= 7 
                   ? 'text-warning' 
-                  : 'text-amber-400'
+                  : 'text-[#FFD700]'
             )} />
             <span className="text-xs text-gray-400">
               {t.pages.stocks.estimatedAutonomy}
@@ -187,7 +187,7 @@ export function SiloVisual({
               ? 'text-destructive' 
               : daysRemaining !== undefined && daysRemaining <= 7 
                 ? 'text-warning' 
-                : 'text-amber-400'
+                : 'text-[#FFD700]'
           )}>
             {displayAutonomy}
           </div>
