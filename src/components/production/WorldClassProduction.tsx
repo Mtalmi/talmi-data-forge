@@ -623,7 +623,7 @@ export default function WorldClassProduction() {
         {/* ── CHARTS: Production du Jour ── */}
         <section>
           <SectionHeader icon={Activity} label="Production du Jour" />
-          <div className="grid gap-5" style={{ gridTemplateColumns: '60% 40%' }}>
+          <div className="grid gap-5" style={{ gridTemplateColumns: '3fr 2fr' }}>
             {/* Hourly Production */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
