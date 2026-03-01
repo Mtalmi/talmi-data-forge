@@ -28,8 +28,8 @@ const T = {
   success:    '#10B981',
   danger:     '#EF4444',
   textPri:    '#F1F5F9',
-  textSec:    '#9CA3AF',
-  textDim:    '#6B7280',
+  textSec:    '#94A3B8',
+  textDim:    '#64748B',
 };
 
 // ─────────────────────────────────────────────────────

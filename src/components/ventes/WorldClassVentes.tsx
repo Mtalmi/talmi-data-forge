@@ -13,10 +13,10 @@ import {
 
 /* ─── DESIGN TOKENS ─── */
 const T = {
-  gold:       '#FDB913',
-  goldDim:    'rgba(253,185,19,0.15)',
-  goldGlow:   'rgba(253,185,19,0.25)',
-  goldBorder: 'rgba(253,185,19,0.2)',
+  gold:       '#FFD700',
+  goldDim:    'rgba(255, 215, 0, 0.15)',
+  goldGlow:   'rgba(255, 215, 0, 0.25)',
+  goldBorder: 'rgba(255, 215, 0, 0.3)',
   navy:       '#0D1220',
   success:    '#10B981',
   warning:    '#FB923C',
@@ -30,11 +30,11 @@ const T = {
 
 /* ─── GLASS CARD CONSTANTS ─── */
 const GLASS = {
-  bg: 'rgba(255,255,255,0.02)',
-  border: 'rgba(255,255,255,0.08)',
-  hoverBg: 'rgba(255,255,255,0.03)',
-  hoverBorder: 'rgba(255,255,255,0.08)',
-  radius: 16,
+  bg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+  border: '#1E2D4A',
+  hoverBg: 'linear-gradient(145deg, #131D30 0%, #182238 100%)',
+  hoverBorder: '#1E2D4A',
+  radius: 12,
 };
 
 /* ─── LIVE CLOCK ─── */
@@ -66,7 +66,7 @@ function useAnimatedCounter(target: number, duration = 800) {
 function GoldTooltip({ active, payload, label, unit = '' }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: 'rgba(13,18,32,0.95)', border: `1px solid rgba(253,185,19,0.2)`, borderRadius: 10, padding: '8px 14px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
+    <div style={{ background: 'rgba(13,18,32,0.95)', border: `1px solid rgba(255,215,0,0.2)`, borderRadius: 10, padding: '8px 14px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)' }}>
       <p style={{ color: T.textSec, fontSize: 11, marginBottom: 4 }}>{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.color || T.gold, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 13 }}>
@@ -93,7 +93,7 @@ function GCard({ children, className = '', style = {}, delay = 0, interactive = 
         background: hovered && interactive ? GLASS.hoverBg : GLASS.bg,
         border: `1px solid ${hovered && interactive ? GLASS.hoverBorder : GLASS.border}`,
         borderRadius: GLASS.radius,
-        padding: 24,
+        padding: 20,
         position: 'relative',
         overflow: 'hidden',
         cursor: 'default',
@@ -125,7 +125,7 @@ function Metric({ value, suffix = '', prefix = '', size = 30, color = T.gold }: 
   const animated = useAnimatedCounter(value);
   return (
     <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontWeight: 200, fontSize: size, color, lineHeight: 1, letterSpacing: '-0.02em' }}>
-      {prefix}{animated.toLocaleString('fr-FR')}{suffix}
+      {prefix}{animated.toLocaleString('fr-FR')}{suffix && <span style={{ fontWeight: 400, fontSize: size * 0.65, color: '#9CA3AF' }}>{suffix}</span>}
     </span>
   );
 }
@@ -147,7 +147,7 @@ const donutBase = [
   { nameKey: 'activePOs' as const, value: 504 },
   { nameKey: 'closedDeals' as const, value: 338 },
 ];
-const DONUT_COLORS = ['#D4A843', '#E8C860', '#B8860B', '#6B7280'];
+const DONUT_COLORS = ['#FFD700', '#E8C860', '#B8860B', '#6B7280'];
 
 function PipelineSection() {
   const { t } = useI18n();
@@ -459,7 +459,7 @@ function DealPipelineSection() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <Metric value={k.value} suffix={k.suffix} color={k.color} />
               <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <k.icon size={20} color="#F59E0B" />
+                <k.icon size={18} color="#FFD700" />
               </div>
             </div>
             <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 8, display: 'block' }}>{k.label}</span>
@@ -750,7 +750,7 @@ function ActivitiesSection() {
                 background: 'rgba(245, 158, 11, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <k.icon size={20} color="#F59E0B" />
+                <k.icon size={18} color="#FFD700" />
               </div>
               <span style={{ fontSize: 10, fontWeight: 600, color: k.trend.includes('↑') ? T.success : T.danger }}>{k.trend}</span>
             </div>

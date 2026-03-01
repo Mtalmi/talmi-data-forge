@@ -528,11 +528,11 @@ export default function Dashboard() {
 
                   {/* Main number with count-up — JetBrains Mono luminescent gauge */}
                   <div className="flex items-baseline gap-2 leading-none">
-                    <span className="text-3xl font-mono font-extrabold tracking-tight text-white" style={{
-                      fontFamily: "'JetBrains Mono', 'SF Mono', monospace",
-                      fontWeight: 800,
+                    <span className="text-3xl font-mono tracking-tight text-white" style={{
+                      fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+                      fontWeight: 200,
                       lineHeight: 1,
-                      textShadow: '0 0 35px rgba(253,185,19,0.2), 0 0 70px rgba(253,185,19,0.07)',
+                      textShadow: '0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
                     }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>

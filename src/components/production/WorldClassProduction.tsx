@@ -23,13 +23,13 @@ import { PageHeader } from '@/components/layout/PageHeader';
 // DESIGN TOKENS
 // ─────────────────────────────────────────────────────
 const T = {
-  gold:       '#D4A843',
-  goldDim:    'rgba(212,168,67,0.15)',
-  goldGlow:   'rgba(212,168,67,0.25)',
-  goldBorder: 'rgba(212,168,67,0.3)',
+  gold:       '#FFD700',
+  goldDim:    'rgba(255, 215, 0, 0.15)',
+  goldGlow:   'rgba(255, 215, 0, 0.25)',
+  goldBorder: 'rgba(255, 215, 0, 0.3)',
   navy:       '#0B1120',
-  cardBg:     'rgba(255,255,255,0.03)',
-  cardBorder: 'rgba(255,255,255,0.06)',
+  cardBg:     'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+  cardBorder: '#1E2D4A',
   success:    '#10B981',
   warning:    '#F59E0B',
   danger:     '#EF4444',
@@ -236,7 +236,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <div className="group" style={{
         background: T.cardBg,
         border: `1px solid ${T.cardBorder}`,
-        borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden', height: '100%',
+        borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden', height: '100%',
         transition: 'all 200ms ease',
       }}>
         <div className="flex justify-between items-start">
@@ -629,7 +629,7 @@ export default function WorldClassProduction() {
           <SectionHeader icon={Activity} label="Workflow de Production" />
           <div style={{
             background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-            borderRadius: 14, padding: '24px 16px',
+            borderRadius: 12, padding: '20px 16px',
           }}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0">
               <WorkflowStep count={workflowCounts.planification} label="Planifiés" color={T.gold} statusLabel="En attente" delay={0} />
@@ -649,7 +649,7 @@ export default function WorldClassProduction() {
             {/* Hourly Production */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-              borderRadius: 14, padding: 24,
+              borderRadius: 12, padding: 20,
             }}>
               <div className="flex justify-between items-center mb-4">
                 <div>
@@ -699,7 +699,7 @@ export default function WorldClassProduction() {
             {/* Production par Formule */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-              borderRadius: 14, padding: 24,
+              borderRadius: 12, padding: 20,
             }}>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Production par Formule</p>
               {productData.length > 0 ? (
@@ -756,7 +756,7 @@ export default function WorldClassProduction() {
             {/* Weekly quality chart */}
             <div style={{
               background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-              borderRadius: 14, padding: 24,
+              borderRadius: 12, padding: 20,
             }}>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 16 }}>Qualité Hebdomadaire</p>
               {hasQualityData ? (
@@ -792,7 +792,7 @@ export default function WorldClassProduction() {
             <div className="flex flex-col gap-4" style={{ minHeight: '100%' }}>
               <div style={{
                 background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-                borderRadius: 14, padding: 24, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                borderRadius: 12, padding: 20, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
               }}>
                 <div className="flex justify-between items-center mb-2">
                   <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.45)', fontWeight: 500 }}>Conformité</p>
@@ -807,7 +807,7 @@ export default function WorldClassProduction() {
 
               <div style={{
                 background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-                borderRadius: 14, padding: 20,
+                borderRadius: 12, padding: 20,
               }}>
                 <div className="flex items-center gap-2 mb-3">
                   <CheckCircle size={16} strokeWidth={1.5} style={{ color: '#34d399' }} />
@@ -826,7 +826,7 @@ export default function WorldClassProduction() {
               {qualityVariances.length > 0 && (
                 <div style={{
                   background: T.cardBg, border: `1px solid ${T.cardBorder}`,
-                  borderRadius: 14, padding: 20,
+                  borderRadius: 12, padding: 20,
                 }}>
                   <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 12 }}>Détail des variances</p>
                   <div className="flex flex-col gap-2">
