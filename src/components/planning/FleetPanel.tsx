@@ -183,13 +183,13 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
       {/* Floating close toggle — always visible on screen edge */}
       <button
         onClick={() => setIsOpen(false)}
-        className="fixed z-50 cursor-pointer flex items-center justify-center"
+        className="fixed z-[9999] cursor-pointer flex flex-col items-center justify-center gap-1"
         style={{
           right: 260,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: 24,
-          height: 48,
+          width: 28,
+          height: 56,
           background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
           border: '1px solid rgba(245, 158, 11, 0.2)',
           borderRight: 'none',
@@ -200,7 +200,8 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
         onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
         onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(to bottom right, #1a1f2e, #141824)'; }}
       >
-        <ChevronRight size={16} />
+        <Truck size={12} />
+        <ChevronRight size={14} />
       </button>
     <div className="fixed right-0 top-20 bottom-4 w-64 z-40 flex flex-col overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderLeft: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: 12 }}>
       {/* Header */}
