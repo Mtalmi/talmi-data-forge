@@ -4903,3 +4903,32 @@ table tbody tr:hover {
   transition: background-color 150ms ease !important;
 }
 
+/* ═══ KPI NUMERAL WEIGHT ENFORCEMENT ═══ */
+/* Guarantees all KPI numerals across every page match Dashboard weight */
+/* Planning, Stocks, Clients, Ventes, Production — all reinforced */
+[style*="fontSize: 36"],
+[style*="fontSize:36"],
+p[style*="font-size: 36px"],
+p[style*="fontSize"] {
+  font-weight: 700 !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+/* Target KPI value containers rendered with inline mono font */
+p[style*="ui-monospace"],
+span[style*="ui-monospace"],
+p[style*="JetBrains Mono"] {
+  font-weight: 700 !important;
+  -webkit-font-smoothing: antialiased !important;
+}
+
+/* Reinforce font-mono elements inside Card components at KPI sizes */
+.font-mono.text-4xl,
+.font-mono.text-3xl,
+.font-mono.text-5xl {
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: #FFFFFF !important;
+  -webkit-font-smoothing: antialiased !important;
+}
