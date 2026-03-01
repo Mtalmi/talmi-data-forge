@@ -335,9 +335,9 @@ function KPICard({
     <div style={{
       opacity: visible ? 1 : 0,
       transform: visible ? 'translateY(0)' : 'translateY(20px)',
-      transition: 'all 600ms ease-out',
+      transition: 'all 600ms ease-out', height: '100%',
     }}>
-      <Card>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{
@@ -734,7 +734,7 @@ export default function WorldClassReports() {
         {/* ── SECTION 1: KPIs ── */}
         <section>
           <SectionHeader icon={FileText} label="Indicateurs Rapports" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Rapports ce mois"   value={liveData.totalReports} color={T.gold}    icon={FileText}  trend="+3 vs mois dernier" delay={0} />
             <KPICard label="Dernier Rapport"     value="Aujourd'hui" isText color={T.success} icon={Clock} delay={80} />
             <KPICard label="Exports"             value={liveData.exports} color={T.info}    icon={Download}  trend="+12 ce mois" delay={160} />

@@ -143,8 +143,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const animated = useAnimatedCounter(value, 1200);
   const visible = useFadeIn(delay);
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
@@ -374,7 +374,7 @@ export default function WorldClassClients() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={Users} label="Indicateurs CRM" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Total Clients" value={totalClients} suffix="" color="#F59E0B" icon={Users} trend={`${activeClients} actifs`} trendPositive delay={0} />
             <KPICard label="Clients Actifs" value={activeClients} suffix="" color="#F59E0B" icon={UserCheck} trend={`${totalClients - activeClients} inactifs`} trendPositive delay={80} />
             <KPICard label="CA Moyen / Client" value={avgCA} suffix="K DH" color="#F59E0B" icon={Banknote} trend={`Total: ${Math.round(totalCA / 1000)}K`} trendPositive delay={160} />

@@ -424,7 +424,7 @@ export default function WorldClassSecurite() {
       <div style={{ padding: '28px 32px', maxWidth: 1600, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ── SECTION 1: KPIs ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
           {/* Jours sans Incident — CELEBRATION */}
           <div style={{
             background: 'linear-gradient(135deg, rgba(17,27,46,0.9) 0%, rgba(255,215,0,0.06) 100%)',

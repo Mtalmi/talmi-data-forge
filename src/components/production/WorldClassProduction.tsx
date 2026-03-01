@@ -227,12 +227,12 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   return (
     <div style={{
       opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)',
-      transition: 'all 600ms ease-out',
+      transition: 'all 600ms ease-out', height: '100%',
     }}>
       <div className="group" style={{
         background: T.cardBg,
         border: `1px solid ${T.cardBorder}`,
-        borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden',
+        borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden', height: '100%',
         transition: 'all 200ms ease',
       }}>
         <div className="flex justify-between items-start">
@@ -587,7 +587,7 @@ export default function WorldClassProduction() {
         {/* ── KPI CARDS ── */}
         <section>
           <SectionHeader icon={Zap} label="Production KPIs" />
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 items-stretch">
             <KPICard label="Production Aujourd'hui" value={Math.round(kpis.totalVolume)} suffix="m³" color={T.gold} icon={Factory} trend={`${Math.round(kpis.produced)} m³ livrés`} trendPositive delay={0} sparkData={sparkVolume} />
             <KPICard label="Batches Enregistrés" value={kpis.totalBatches} suffix="" color={T.success} icon={CheckCircle} trend={`${kpis.completedBatches} conformes`} trendPositive delay={80} sparkData={sparkBatches} />
             <KPICard label="Taux de Conformité" value={kpis.conformity} suffix="%" color={kpis.conformity >= 90 ? T.success : T.warning} icon={Shield} trend={kpis.conformity >= 90 ? 'Excellent' : 'À surveiller'} trendPositive={kpis.conformity >= 90} delay={160} sparkData={sparkConformity} />

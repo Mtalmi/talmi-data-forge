@@ -254,23 +254,23 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const animated = useAnimatedCounter(value, 1200, decimals);
   const visible = useFadeIn(delay);
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {decimals > 0 ? animated.toFixed(1) : animated.toLocaleString('fr-MA')}
-              {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
+              {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
             {trend && (
-              <p style={{ fontSize: 10, fontWeight: 600, marginTop: 6, color: trendPositive ? T.success : T.warning }}>
+              <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: trendPositive ? '#10B981' : '#EF4444' }}>
                 {trendPositive ? '↑' : '→'} {trend}
               </p>
             )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#F59E0B" />
           </div>
         </div>
       </Card>
@@ -572,7 +572,7 @@ export default function WorldClassContracts() {
         ══════════════════════════════════════════════ */}
         <section>
           <SectionHeader icon={FileText} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Contrats Actifs"       value={ctKpis.actifs}  color={T.gold}    icon={FileText}     trend="+2 ce trimestre"  trendPositive delay={0}   />
             <KPICard label="Valeur Totale"         value={ctKpis.valeurTotale} suffix="M DH"     color={T.gold}    icon={Banknote}     trend="+18% vs an dernier" trendPositive delay={80}  decimals={1} />
             <KPICard label="Expirent Bientôt"      value={ctKpis.expirentBientot}   color={T.warning} icon={AlertTriangle} trend="dans 30 jours"  trendPositive={false} delay={160} />

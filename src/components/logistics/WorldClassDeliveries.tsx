@@ -128,8 +128,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const [visible, setVisible] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
@@ -316,7 +316,7 @@ export default function WorldClassDeliveries() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Livraisons Aujourd'hui" value={totalDeliveries} suffix="" color={T.gold} icon={Truck} trend={`${delivered} livrées`} trendPositive delay={0} />
             <KPICard label="Volume Livré" value={totalVolume} suffix="m³" color={T.gold} icon={Package} trend={`${enRoute} en route`} trendPositive delay={80} />
             <KPICard label="Taux Livraison" value={punctuality} suffix="%" color={punctuality >= 80 ? T.success : T.warning} icon={Clock} trend={punctuality >= 80 ? 'Bon' : 'À améliorer'} trendPositive={punctuality >= 80} delay={160} />
