@@ -7,7 +7,7 @@ import {
 
 const T = {
   gold: '#FFD700',
-  goldDark: '#D4A843',
+  goldDark: '#B8860B',
   goldDeep: '#8B6914',
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
@@ -49,7 +49,7 @@ function SectionHeader({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
       <Beaker size={15} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
-      <span style={{ color: T.gold, fontWeight: 600, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.18em', whiteSpace: 'nowrap' }}>{label}</span>
+      <span style={{ color: T.gold, fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap' }}>{label}</span>
       <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}4D 0%, transparent 80%)` }} />
     </div>
   );

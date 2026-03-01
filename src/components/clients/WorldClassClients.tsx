@@ -93,7 +93,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
   const [press, setPress] = useState(false);
   return (
     <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
-      style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
         boxShadow: 'none',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>

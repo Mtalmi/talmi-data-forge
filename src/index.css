@@ -407,7 +407,7 @@
 [class*="kpi"] [class*="value"],
 [class*="kpi"] [class*="number"] {
   font-family: "JetBrains Mono", monospace !important;
-  font-weight: 600 !important;
+  font-weight: 200 !important;
   color: var(--gold) !important;
   font-variant-numeric: tabular-nums;
 }

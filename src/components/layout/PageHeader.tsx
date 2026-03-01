@@ -41,7 +41,7 @@ export interface PageHeaderProps {
 }
 
 const T = {
-  gold: '#D4A843',
+  gold: '#FFD700',
   goldBorder: 'rgba(245, 158, 11, 0.25)',
   navy: '#0B1120',
   textSec: '#94A3B8',
