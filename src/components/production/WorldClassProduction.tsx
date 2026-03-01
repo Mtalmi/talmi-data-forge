@@ -562,8 +562,14 @@ export default function WorldClassProduction() {
               }}>{tab.label}</button>
             ))}
           </div>
-          <div className="flex items-center gap-4 shrink-0">
-            <LiveClock />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280', letterSpacing: '0.02em' }}>
+              <LiveClock />
+            </span>
+            <div style={{ position: 'relative', cursor: 'pointer' }}>
+              <Bell size={18} color={T.textSec} />
+              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
+            </div>
             {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
           </div>
         </div>
