@@ -162,7 +162,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         open ? 'translate-x-0' : '-translate-x-full'
       )}
       style={{
-        background: 'linear-gradient(180deg, #141824, #11182E)',
+        background: 'linear-gradient(180deg, #0f1520, #111827)',
       }}
     >
       {/* ── BRAND HEADER ── */}
@@ -298,7 +298,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       </nav>
 
       {/* ── USER PROFILE CARD ── */}
-      <div className="shrink-0" style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)' }}>
+      <div className="shrink-0" style={{ borderTop: '1px solid rgba(245, 158, 11, 0.06)' }}>
         <div
           className="mx-3 my-3 p-3 rounded-xl cursor-pointer transition-colors"
           style={{
