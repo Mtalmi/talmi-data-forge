@@ -390,7 +390,7 @@ export default function Laboratoire() {
                       <TableHead className="text-center">{t.pages.laboratoire.slump}</TableHead>
                       <TableHead className="text-center">{t.pages.laboratoire.res7d}</TableHead>
                       <TableHead className="text-center">{t.pages.laboratoire.res28d}</TableHead>
-                      <TableHead>{t.pages.laboratoire.status}</TableHead>
+                      <TableHead className="text-center">{t.pages.laboratoire.status}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -429,7 +429,7 @@ export default function Laboratoire() {
                             )}
                           </span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           {test.alerte_qualite ? (
                             <Badge variant="destructive" className="animate-pulse">
                              <AlertTriangle className="h-3 w-3 mr-1" />

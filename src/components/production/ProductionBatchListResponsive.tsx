@@ -84,13 +84,13 @@ export function ProductionBatchListResponsive({
         <TableHeader>
           <TableRow>
             <TableHead>{pb.blId}</TableHead>
-            <TableHead>{pb.date}</TableHead>
+            <TableHead className="text-center">{pb.date}</TableHead>
             <TableHead>{pb.client}</TableHead>
-            <TableHead>{pb.formula}</TableHead>
+            <TableHead className="text-center">{pb.formula}</TableHead>
             <TableHead className="text-right">{pb.volume}</TableHead>
-            <TableHead>{pb.status}</TableHead>
-            <TableHead>{pb.validation}</TableHead>
-            <TableHead className="text-right">{pb.actions}</TableHead>
+            <TableHead className="text-center">{pb.status}</TableHead>
+            <TableHead className="text-center">{pb.validation}</TableHead>
+            <TableHead className="text-center">{pb.actions}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -116,32 +116,32 @@ export function ProductionBatchListResponsive({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center font-mono">
                     {format(new Date(batch.date_livraison), 'dd/MM/yyyy')}
                   </TableCell>
                   <TableCell>{batch.client_nom || '-'}</TableCell>
-                  <TableCell>{batch.formule_nom || '-'}</TableCell>
-                  <TableCell className="text-right font-semibold">
+                  <TableCell className="text-center font-mono">{batch.formule_nom || '-'}</TableCell>
+                  <TableCell className="text-right font-mono font-semibold">
                     {batch.volume_m3} m³
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     <Badge 
                       variant="secondary" 
-                      className={cn("flex items-center gap-1 w-fit", statusConfig.color, "text-white")}
+                      className={cn("flex items-center gap-1 w-fit mx-auto", statusConfig.color, "text-white")}
                     >
                       <StatusIcon className="h-3 w-3" />
                       <span className="text-xs">{statusConfig.label}</span>
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     {batch.validation_technique !== null && (
-                      <Badge variant={batch.validation_technique ? "secondary" : "destructive"} className={batch.validation_technique ? "bg-success/10 text-success border-success/30" : ""}>
+                      <Badge variant={batch.validation_technique ? "secondary" : "destructive"} className={cn(batch.validation_technique ? "bg-success/10 text-success border-success/30" : "", "mx-auto")}>
                       {batch.validation_technique ? pb.validated : pb.pending}
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-2">
                       <Button 
                         onClick={() => onViewDetails(batch)}
                         size="sm"

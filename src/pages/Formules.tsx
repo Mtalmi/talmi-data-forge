@@ -448,7 +448,7 @@ export default function Formules() {
                       </span>
                     </TableHead>
                   )}
-                  {canManageFormules && <TableHead className="w-24">{t.pages.formulas.actions}</TableHead>}
+                  {canManageFormules && <TableHead className="text-center w-24">{t.pages.formulas.actions}</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -482,16 +482,16 @@ export default function Formules() {
                         Shows skeleton while auth is loading
                     ===================================================== */}
                     {authLoading ? (
-                      <TableCell>
-                        <div className="flex items-center gap-1">
+                      <TableCell className="text-center">
+                        <div className="flex items-center gap-1 justify-center">
                           <Skeleton className="h-8 w-8 rounded-md" />
                           <Skeleton className="h-8 w-8 rounded-md" />
                         </div>
                       </TableCell>
                     ) : (
                       canManageFormules && (
-                        <TableCell>
-                          <div className="flex items-center gap-1">
+                        <TableCell className="text-center">
+                          <div className="flex items-center gap-1 justify-center">
                             <Button 
                               variant="ghost" 
                               size="sm" 

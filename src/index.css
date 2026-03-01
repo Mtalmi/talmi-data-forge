@@ -4869,3 +4869,37 @@ header button[role="combobox"]:focus {
   border-bottom-color: rgba(245, 158, 11, 0.04) !important;
 }
 
+/* ═══ GLOBAL TABLE ALIGNMENT CONSISTENCY ═══ */
+table th,
+table td {
+  vertical-align: middle !important;
+}
+
+table th {
+  padding: 12px 16px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+}
+
+table td {
+  padding: 12px 16px !important;
+}
+
+table th:first-child,
+table td:first-child {
+  padding-left: 20px !important;
+}
+
+table th:last-child,
+table td:last-child {
+  padding-right: 20px !important;
+}
+
+/* Row hover — amber accent */
+table tbody tr:hover {
+  background: rgba(245, 158, 11, 0.04) !important;
+  transition: background-color 150ms ease !important;
+}
+
