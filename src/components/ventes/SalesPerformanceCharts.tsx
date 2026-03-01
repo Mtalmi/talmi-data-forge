@@ -291,10 +291,10 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
         {/* Pie chart */}
         {winLossPie.length > 0 ? (
-          <div style={{ width: 140, height: 140, margin: '0 auto', overflow: 'hidden' }}>
+          <div style={{ width: 120, height: 120, margin: '0 auto', overflow: 'hidden' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={winLossPie} cx="50%" cy="50%" outerRadius={60} innerRadius={30} paddingAngle={4} dataKey="value" animationBegin={0} animationDuration={900}>
+              <PieChart margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
+                <Pie data={winLossPie} cx="50%" cy="50%" outerRadius={48} innerRadius={24} paddingAngle={4} dataKey="value" animationBegin={0} animationDuration={900}>
                   {winLossPie.map((entry, i) => (
                     <Cell key={i} fill={entry.color} stroke="transparent" />
                   ))}
