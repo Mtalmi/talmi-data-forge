@@ -542,7 +542,7 @@ export default function WorldClassContractors() {
       <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ══════════════════════════ SECTION 1: KPIs ══════════════════════════ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
           <KPICard label="Sous-Traitants Actifs" value={cKpis.actifs}  suffix=""  color={T.gold}    icon={Users}    trend="stable"           delay={0}   />
           <KPICard label="Missions en Cours"      value={cKpis.enMission}  suffix=""  color={T.info}    icon={FileText} trend="+1 cette semaine"  delay={80}  />
           <KPICard label="Coût MTD"               value={cKpis.coutMTD} suffix="K DH" color={T.warning} icon={Banknote} trend="+5% ↑"         delay={160} />

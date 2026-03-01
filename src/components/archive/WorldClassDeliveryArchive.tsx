@@ -284,8 +284,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay = 0 }: 
   const animated = useAnimatedCounter(value);
   const vis = useFadeIn(delay);
   return (
-    <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 550ms ease-out' }}>
-      <Card>
+    <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 550ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
@@ -518,7 +518,7 @@ export default function WorldClassDeliveryArchive() {
         {/* ══════ SECTION 1 — KPIs ══════ */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Total Livraisons"       value={archKpis.totalLivraisons}  color={T.gold}    icon={Truck}    trend="+18% vs mois dernier" delay={0}   />
             <KPICard label="Volume Total"           value={archKpis.volumeTotal} suffix="m³"       color={T.gold}    icon={Package}  trend="+12% ↑"               delay={80}  />
             <KPICard label="Ponctualité Moyenne"   value={archKpis.ponctualite}   suffix="%"        color={T.success} icon={Clock}    trend="+2%"                  delay={160} />

@@ -281,7 +281,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
 
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
@@ -465,7 +465,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         {/* ── SECTION 1: KPIs ── */}
         <section>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
             <KPICard label="Volume Planifié" value={pKpis.volumePlanifie} suffix="m³" color={T.gold} icon={BarChart3} trend="+8% vs sem. dern." trendPositive delay={80} />
             <KPICard label="Capacité Utilisée" value={pKpis.capaciteUsed} suffix="%" color={T.gold} icon={BarChart3} trend="+5% vs sem. dern." trendPositive delay={160} />

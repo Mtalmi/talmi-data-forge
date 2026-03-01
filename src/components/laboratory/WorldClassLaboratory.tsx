@@ -355,8 +355,8 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
   const animated = useAnimatedCounter(value);
   const vis = useFadeIn(delay);
   return (
-    <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 550ms ease-out' }}>
-      <Card>
+    <div style={{ opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(20px)', transition: 'all 550ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.15em', margin: 0, marginBottom: 8 }}>{label}</p>
@@ -504,7 +504,7 @@ export default function WorldClassLaboratory() {
         {/* ══════ SECTION 1 — KPIs ══════ */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs du Jour" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Tests Aujourd'hui"      value={labKpis.testsToday} color={T.gold}    icon={FlaskConical}   trend="+3 vs hier"       delay={0}   />
             <KPICard label="Conformes"               value={labKpis.conformes} color={T.success} icon={CheckCircle}    trend={`${labKpis.testsToday > 0 ? Math.round((labKpis.conformes / labKpis.testsToday) * 100) : 0}% taux`}       delay={80}  />
             <KPICard label="Non-Conformes"           value={labKpis.nonConformes} color={T.danger}  icon={AlertTriangle}  trend="-1 vs hier"       delay={160} />

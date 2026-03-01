@@ -599,7 +599,7 @@ export default function WorldClassUsers() {
       <div style={{ padding: '28px 32px', maxWidth: 1700, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 36 }}>
 
         {/* ── SECTION 1: KPIs ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
           <KPICard label="Utilisateurs"       value={cnt16} color={GOLD}  iconBg={GOLD_D}  Icon={Users}       trend="+2 ce trimestre" trendColor={TEXT3} delay={0}   />
           <KPICard label="Actifs Aujourd'hui" value={cnt14} color={GREEN} iconBg={GREEN_D} Icon={CheckCircle} trend="87.5% connectés" trendColor={GREEN} delay={80}  />
           <KPICard label="Rôles Définis"      value={cnt5}  color={BLUE}  iconBg={BLUE_D}  Icon={Shield}                                                  delay={160} />

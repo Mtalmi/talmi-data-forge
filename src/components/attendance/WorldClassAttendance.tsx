@@ -155,26 +155,25 @@ function KPICard({ label, value, decimals = 0, suffix, color, iconBg, Icon, tren
       style={{
         background: T.card,
         border: `1px solid ${hov ? 'rgba(255,215,0,0.25)' : T.cardBorder}`,
-        borderRadius: 16, padding: '20px 22px',
-        backdropFilter: 'blur(12px)',
+        borderRadius: 16, padding: '20px 22px', backdropFilter: 'blur(12px)',
         transition: 'all 0.3s ease',
         transform: vis ? (hov ? 'translateY(-4px)' : 'translateY(0)') : 'translateY(16px)',
         opacity: vis ? 1 : 0,
         boxShadow: hov ? '0 12px 40px rgba(255,215,0,0.10)' : '0 2px 12px rgba(0,0,0,0.3)',
-        cursor: 'default',
+        cursor: 'default', height: '100%',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-        <div style={{ background: iconBg, borderRadius: 10, width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon size={18} color={color} />
+        <div style={{ background: 'rgba(245, 158, 11, 0.15)', borderRadius: 10, width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon size={18} color="#F59E0B" />
         </div>
-        {trend && <span style={{ fontFamily: SANS, fontSize: 11, fontWeight: 700, color: trend.color }}>{trend.label}</span>}
+        {trend && <span style={{ fontFamily: SANS, fontSize: 12, fontWeight: 500, color: trend.color }}>{trend.label}</span>}
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-        <span style={{ fontFamily: MONO, fontSize: 28, fontWeight: 800, color }}>{count}</span>
-        {suffix && <span style={{ fontFamily: MONO, fontSize: 14, color: T.textDim }}>{suffix}</span>}
+        <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>{count}</span>
+        {suffix && <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>{suffix}</span>}
       </div>
-      <div style={{ fontFamily: SANS, fontSize: 12, color: T.textDim, marginTop: 4 }}>{label}</div>
+      <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', marginTop: 6, textTransform: 'uppercase', letterSpacing: '0.15em' }}>{label}</div>
     </div>
   );
 }
@@ -419,7 +418,7 @@ export default function WorldClassAttendance() {
       <div style={{ padding: '28px 32px', maxWidth: 1600, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ── SECTION 1: KPIs ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, alignItems: 'stretch' }}>
           <KPICard label="Présents Aujourd'hui" value={14} suffix="/16"
             color={T.gold} iconBg={T.goldDim} Icon={Users}
             trend={{ label: '87.5% taux', color: T.green }} delay={80} />
