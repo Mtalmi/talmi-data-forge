@@ -4,8 +4,9 @@ import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
 import {
-  FileText, BarChart3, Truck, Bell, CalendarDays, Clock,
+  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
@@ -415,6 +416,12 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         tabs={tabs}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+        actions={
+          <Button size="sm" className="gap-2">
+            <Plus size={14} />
+            Nouvelle Commande
+          </Button>
+        }
       />
 
       {/* ── PAGE CONTENT ── */}
