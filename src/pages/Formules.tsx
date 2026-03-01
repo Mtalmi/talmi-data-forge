@@ -267,7 +267,7 @@ export default function Formules() {
 
   return (
     <MainLayout>
-      <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px' }}>
+      <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
