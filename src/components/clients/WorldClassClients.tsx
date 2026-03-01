@@ -375,10 +375,10 @@ export default function WorldClassClients() {
         <section>
           <SectionHeader icon={Users} label="Indicateurs CRM" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Total Clients" value={totalClients} suffix="" color={T.gold} icon={Users} trend={`${activeClients} actifs`} trendPositive delay={0} />
-            <KPICard label="Clients Actifs" value={activeClients} suffix="" color={T.success} icon={UserCheck} trend={`${totalClients - activeClients} inactifs`} trendPositive delay={80} />
-            <KPICard label="CA Moyen / Client" value={avgCA} suffix="K DH" color={T.gold} icon={Banknote} trend={`Total: ${Math.round(totalCA / 1000)}K`} trendPositive delay={160} />
-            <KPICard label="Taux de Rétention" value={totalClients > 0 ? Math.round((loyal / totalClients) * 100) : 0} suffix="%" color={T.success} icon={Heart} trend={`${atRisk} à risque`} trendPositive={atRisk < 5} delay={240} />
+            <KPICard label="Total Clients" value={totalClients} suffix="" color="#F59E0B" icon={Users} trend={`${activeClients} actifs`} trendPositive delay={0} />
+            <KPICard label="Clients Actifs" value={activeClients} suffix="" color="#F59E0B" icon={UserCheck} trend={`${totalClients - activeClients} inactifs`} trendPositive delay={80} />
+            <KPICard label="CA Moyen / Client" value={avgCA} suffix="K DH" color="#F59E0B" icon={Banknote} trend={`Total: ${Math.round(totalCA / 1000)}K`} trendPositive delay={160} />
+            <KPICard label="Taux de Rétention" value={totalClients > 0 ? Math.round((loyal / totalClients) * 100) : 0} suffix="%" color="#F59E0B" icon={Heart} trend={`${atRisk} à risque`} trendPositive={atRisk < 5} delay={240} />
           </div>
         </section>
 
@@ -401,7 +401,7 @@ export default function WorldClassClients() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ height: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 200, maxHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
 
@@ -429,7 +429,7 @@ export default function WorldClassClients() {
                   </div>
                 </>
               ) : (
-                <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 200, maxHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
           </div>
@@ -445,15 +445,15 @@ export default function WorldClassClients() {
               <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={T.gold} stopOpacity={0.3} />
-                    <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
+                    <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#F59E0B" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
                 <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
-                <Area dataKey="ca" name="CA" type="monotone" stroke={T.gold} strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: T.gold, r: 4 }} />
+                <Area dataKey="ca" name="CA" type="monotone" stroke="#F59E0B" strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: '#F59E0B', r: 4 }} />
                 <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
               </AreaChart>
             </ResponsiveContainer>
