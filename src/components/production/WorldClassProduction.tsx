@@ -242,7 +242,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
             }}>{label}</p>
             <p style={{
-              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
             }}>
               {animated.toLocaleString('fr-FR')}
@@ -568,7 +568,7 @@ export default function WorldClassProduction() {
       </div>
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ── BATCHES TAB ── */}
         {activeTab === 'batches' && (

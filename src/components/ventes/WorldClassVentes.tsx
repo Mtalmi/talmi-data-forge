@@ -112,12 +112,12 @@ function SectionHeader({ title }: { title: string }) {
 }
 
 /* ─── ANIMATED METRIC ─── */
-function Metric({ value, suffix = '', prefix = '', size = 28, color = T.gold }: {
+function Metric({ value, suffix = '', prefix = '', size = 30, color = T.gold }: {
   value: number; suffix?: string; prefix?: string; size?: number; color?: string;
 }) {
   const animated = useAnimatedCounter(value);
   return (
-    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 200, fontSize: size, color, lineHeight: 1 }}>
+    <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontWeight: 200, fontSize: size, color, lineHeight: 1, letterSpacing: '-0.02em' }}>
       {prefix}{animated.toLocaleString('fr-FR')}{suffix}
     </span>
   );
@@ -178,10 +178,18 @@ function PipelineSection() {
     <section>
       <SectionHeader title={vt.salesPipeline} />
       {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 items-stretch">
         {kpiLabels.map((k, i) => (
           <GCard key={k.label} delay={i * 80} style={{ padding: 20 }}>
-            <Metric value={k.value} suffix={k.suffix} size={32} color="white" />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+              <Metric value={k.value} suffix={k.suffix} color="white" />
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                {i === 0 && <TrendingUp size={20} color="#F59E0B" />}
+                {i === 1 && <Activity size={20} color="#F59E0B" />}
+                {i === 2 && <BarChart3 size={20} color="#F59E0B" />}
+                {i === 3 && <Clock size={20} color="#F59E0B" />}
+              </div>
+            </div>
             <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 8, display: 'block' }}>{k.label}</span>
             <span style={{ fontSize: 11, color: k.trendColor, marginTop: 6, display: 'block', fontFamily: 'JetBrains Mono, monospace' }}>
               {k.trend}{k.trendLabel ? ` ${k.trendLabel}` : ''}
@@ -433,15 +441,20 @@ function DealPipelineSection() {
     <section>
       <SectionHeader title="Deals Actifs" />
       {/* Summary Cards — no icons, just numbers */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 items-stretch">
         {[
-          { label: 'Deals Actifs', value: 18, suffix: '', color: 'white' },
-          { label: 'Valeur Totale', value: 504, suffix: 'K DH', color: 'white' },
-          { label: 'Âge Moyen', value: 22, suffix: ' jours', color: 'white' },
-          { label: 'Taux de Gain', value: 67, suffix: '%', color: T.gold },
+          { label: 'Deals Actifs', value: 18, suffix: '', color: 'white', icon: Briefcase },
+          { label: 'Valeur Totale', value: 504, suffix: 'K DH', color: 'white', icon: Banknote },
+          { label: 'Âge Moyen', value: 22, suffix: ' jours', color: 'white', icon: Clock },
+          { label: 'Taux de Gain', value: 67, suffix: '%', color: T.gold, icon: CheckCircle },
         ].map((k, i) => (
           <GCard key={k.label} delay={i * 80}>
-            <Metric value={k.value} suffix={k.suffix} size={32} color={k.color} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+              <Metric value={k.value} suffix={k.suffix} color={k.color} />
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <k.icon size={20} color="#F59E0B" />
+              </div>
+            </div>
             <span style={{ fontSize: 11, color: 'rgba(148,163,184,0.4)', marginTop: 8, display: 'block' }}>{k.label}</span>
           </GCard>
         ))}
@@ -716,7 +729,7 @@ function ActivitiesSection() {
     <section>
       <SectionHeader title="Activités Commerciales" />
       {/* KPI — monochrome icons */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 items-stretch">
         {[
           { label: 'Appels', value: 34, icon: Phone, trend: '+12% ↑', sub: 'cette semaine' },
           { label: 'Emails', value: 67, icon: Mail, trend: '+8% ↑', sub: 'cette semaine' },
@@ -726,18 +739,15 @@ function ActivitiesSection() {
           <GCard key={k.label} delay={i * 80} style={{ minHeight: 100 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div style={{
-                width: 36, height: 36, borderRadius: 10,
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.05)',
+                width: 40, height: 40, borderRadius: 10,
+                background: 'rgba(245, 158, 11, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <k.icon size={16} style={{ color: 'rgba(148,163,184,0.4)' }} />
+                <k.icon size={20} color="#F59E0B" />
               </div>
               <span style={{ fontSize: 10, fontWeight: 600, color: k.trend.includes('↑') ? T.success : T.danger }}>{k.trend}</span>
             </div>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 300, fontSize: '2rem', color: 'white', lineHeight: 1 }}>
-              {k.value}
-            </span>
+            <Metric value={k.value} color="white" />
             <div style={{ fontSize: 13, color: 'rgba(226,232,240,0.6)', marginTop: 4 }}>{k.label}</div>
             <div style={{ fontSize: 10, color: 'rgba(148,163,184,0.3)' }}>{k.sub}</div>
           </GCard>
