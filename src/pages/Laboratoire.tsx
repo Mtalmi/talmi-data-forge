@@ -174,8 +174,8 @@ export default function Laboratoire() {
       {/* ══ Premium Lab UI ══ */}
       <WorldClassLaboratory />
       {/* ══ Divider ══ */}
-      <div style={{ margin: '0 32px', borderTop: '1px solid #1E2D4A', paddingTop: 24 }} />
-      <div className="space-y-4 sm:space-y-6" style={{ padding: '0 32px 60px' }}>
+      <div style={{ margin: '0 24px', borderTop: '1px solid #1E2D4A', paddingTop: 24 }} />
+      <div className="space-y-4 sm:space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px 60px' }}>
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
