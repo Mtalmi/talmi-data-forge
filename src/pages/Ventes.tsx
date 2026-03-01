@@ -504,8 +504,8 @@ export default function Ventes() {
           {/* DESKTOP HEADER (md+) */}
           <div className="hidden md:flex items-center gap-4 md:justify-between px-1 py-2" style={{ background: 'transparent', border: 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BarChart3 size={18} color="#F59E0B" />
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BarChart3 size={18} color="#0B1120" />
               </div>
               <div>
                 <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
@@ -513,10 +513,8 @@ export default function Ventes() {
                 <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              {/* Primary — Gold gradient */}
-              <SmartQuoteCalculator variant="prominent" />
-              {/* Secondary — Glass */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+              {/* Secondary — Glass buttons */}
               <ExportReportsDialog 
                 devisList={devisList}
                 bcList={bcList}
@@ -524,44 +522,54 @@ export default function Ventes() {
                 selectedBcIds={selectedBcIds}
               />
               {(canCreateBcDirect || isDirecteurOperations) && (
-                <Button 
+                <button 
                   onClick={() => setEmergencyBcOpen(true)}
-                  variant="outline"
-                  className="gap-2"
                   style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'rgba(226,232,240,0.7)',
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    color: 'rgba(255,255,255,0.7)',
                     fontSize: 12,
-                    padding: '8px 14px',
+                    padding: '7px 16px',
                     borderRadius: 8,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontFamily: 'DM Sans, sans-serif',
+                    fontWeight: 500,
+                    transition: 'all 150ms',
+                    whiteSpace: 'nowrap' as const,
                   }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <ShoppingCart className="h-4 w-4" />
+                  <ShoppingCart size={14} />
                   {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
-                </Button>
+                </button>
               )}
-              {/* More dropdown for secondary actions */}
+              {/* More dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     style={{
-                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                      border: '1px solid rgba(255,255,255,0.12)',
                       borderRadius: 8,
-                      padding: '8px 12px',
+                      padding: '7px 12px',
                       background: 'transparent',
-                      color: '#9CA3AF',
+                      color: 'rgba(255,255,255,0.5)',
                       fontSize: 12,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 6,
+                      fontFamily: 'DM Sans, sans-serif',
+                      fontWeight: 500,
                       transition: 'all 150ms',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.4)'; e.currentTarget.style.color = '#F59E0B'; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.2)'; e.currentTarget.style.color = '#9CA3AF'; }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <span style={{ fontSize: 16, lineHeight: 1 }}>⋯</span>
+                    <span style={{ fontSize: 14, lineHeight: 1 }}>⋯</span>
                     Plus
                     <ChevronDown className="h-3 w-3" />
                   </button>
@@ -570,7 +578,7 @@ export default function Ventes() {
                   align="end"
                   style={{
                     background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-                    border: '1px solid rgba(245, 158, 11, 0.15)',
+                    border: '1px solid rgba(255,255,255,0.08)',
                     borderRadius: 8,
                     boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
                     padding: 4,
@@ -611,6 +619,8 @@ export default function Ventes() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              {/* Primary — Gold-bordered CTA */}
+              <SmartQuoteCalculator variant="prominent" />
               {/* Hidden trigger buttons for dropdown actions */}
               <div className="hidden">
                 <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
