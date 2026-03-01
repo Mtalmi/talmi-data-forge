@@ -4792,3 +4792,17 @@ div.bg-card.ops-surface-card {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* ═══ TBOS CARD STAGGER — FINAL RADIUS OVERRIDE ═══ */
+.tbos-card-stagger,
+.tbos-card-stagger > *,
+section .tbos-card-stagger {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+[class*="Card"][class*="tbos-card-stagger"],
+div.tbos-card-stagger {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
