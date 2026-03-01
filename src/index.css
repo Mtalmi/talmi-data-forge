@@ -4897,9 +4897,11 @@ table td:last-child {
   padding-right: 20px !important;
 }
 
-/* Row hover — amber accent */
-table tbody tr:hover {
-  background: rgba(245, 158, 11, 0.04) !important;
+/* Global table row hover — unified gold tint */
+table tbody tr:hover,
+[data-table-industrial] tbody tr:hover,
+.table-row-hover:hover {
+  background: rgba(255, 215, 0, 0.04) !important;
   transition: background-color 150ms ease !important;
 }
 

@@ -174,7 +174,7 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
 
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? `${T.cardBorder}50` : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
+      style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
       <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${segColor}, ${segColor}99)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: T.navy, boxShadow: `0 0 10px ${segColor}40` }}>{initial}</div>
       <div style={{ minWidth: 170, flexShrink: 0 }}>
         <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
