@@ -195,14 +195,23 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
           >
             <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-7 w-7 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+          <button
             onClick={() => setIsOpen(false)}
+            className="cursor-pointer flex items-center justify-center"
+            style={{
+              width: 28, height: 28,
+              background: 'transparent',
+              border: '1px solid rgba(245, 158, 11, 0.15)',
+              borderRadius: 8,
+              padding: 4,
+              transition: 'all 150ms ease',
+              color: '#F59E0B',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
           >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            <ChevronRight className="h-6 w-6" />
+          </button>
         </div>
       </div>
 
