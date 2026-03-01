@@ -367,7 +367,7 @@ export function BcTable({
                   aria-label={`${bt.select} ${bc.bc_id}`}
                 />
               </TableCell>
-              <TableCell className="font-mono font-medium">{bc.bc_id}</TableCell>
+              <TableCell className="font-mono font-medium whitespace-nowrap">{bc.bc_id}</TableCell>
               <TableCell>
                 {bc.client ? (
                   <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />

@@ -168,7 +168,7 @@ export function OrderCalendarView({ bcList, onSelectBc }: OrderCalendarViewProps
                     minHeight: 80,
                     padding: 8,
                     borderRadius: 8,
-                    border: `1px solid ${isSelected ? 'rgba(253,185,19,0.15)' : 'rgba(255,255,255,0.03)'}`,
+                    border: `1px solid ${isSelected ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.08)'}`,
                     background: isSelected ? 'rgba(253,185,19,0.06)' : isDayToday ? 'rgba(253,185,19,0.04)' : isWeekend ? 'rgba(255,255,255,0.02)' : 'transparent',
                     opacity: isCurrentMonth ? 1 : 0.3,
                   }}
