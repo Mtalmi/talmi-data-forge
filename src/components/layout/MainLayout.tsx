@@ -81,8 +81,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
         </div>
 
         {/* Main Content Area */}
-        <main className={`flex-1 min-w-0 overflow-x-hidden scroll-smooth ${previewRole ? 'pt-2' : ''}`}>
-          <div className="p-3 sm:p-4 md:p-6 lg:p-8 mobile-content safe-area-bottom overflow-x-hidden w-full max-w-full min-w-0">
+        <main className={`flex-1 min-w-0 overflow-x-hidden scroll-smooth ${previewRole ? 'pt-1' : ''}`}>
+          <div className="p-0 m-0 mobile-content safe-area-bottom overflow-x-hidden w-full min-w-0">
             <PageTransition>
               {children}
             </PageTransition>
