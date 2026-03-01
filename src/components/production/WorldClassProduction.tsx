@@ -537,6 +537,8 @@ export default function WorldClassProduction() {
       <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
         padding: '0 24px',
+        background: 'transparent',
+        border: 'none',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
