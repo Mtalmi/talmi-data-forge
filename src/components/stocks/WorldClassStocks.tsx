@@ -268,18 +268,18 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {decimals > 0 ? animated.toFixed(decimals) : animated.toLocaleString('fr-FR')}
-              <span style={{ fontSize: 13, fontWeight: 600, color: T.textSec, marginLeft: 5 }}>{suffix}</span>
+              <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
             </p>
             {trend && (
-              <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 6, fontWeight: 600 }}>
+              <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>
                 {trendPositive ? '↑' : '↓'} {trend}
               </p>
             )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={18} color={iconColor} />
           </div>
         </div>

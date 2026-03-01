@@ -239,19 +239,19 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
           <div className="flex-1">
             <p style={{
               fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.15em',
-              color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginBottom: 10,
+              color: '#9CA3AF', fontWeight: 600, marginBottom: 10,
             }}>{label}</p>
             <p style={{
-              fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 400,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700,
               color: '#fff', letterSpacing: '-0.02em', lineHeight: 1,
             }}>
               {animated.toLocaleString('fr-FR')}
-              {suffix && <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.6)', marginLeft: 4, fontFamily: 'JetBrains Mono, monospace' }}>{suffix}</span>}
+              {suffix && <span style={{ fontSize: 20, color: '#9CA3AF', marginLeft: 4, fontWeight: 400, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
             <p style={{
-              fontSize: 11, marginTop: 8,
-              color: trendPositive ? '#34d399' : T.danger,
-              fontWeight: 600,
+              fontSize: 12, marginTop: 8,
+              color: trendPositive ? '#10B981' : '#EF4444',
+              fontWeight: 500,
             }}>
               {trendPositive ? '↗' : '↘'} {trend}
             </p>
@@ -259,7 +259,9 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               <MiniSparkline data={sparkData} color={T.gold} />
             )}
           </div>
-          <Icon size={20} strokeWidth={1.5} style={{ color: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#F59E0B" />
+          </div>
         </div>
       </div>
     </div>

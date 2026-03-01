@@ -647,41 +647,41 @@ export default function Ventes() {
               {/* Pipeline Total */}
               <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
                 <div>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>847K</span>
-                  <span className="text-lg font-mono text-muted-foreground ml-1">DH</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>847K</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
                 </div>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Pipeline Total</p>
-                <p className="text-[11px] text-emerald-400 whitespace-nowrap mt-0.5">↑ 12% vs mois dernier</p>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6, whiteSpace: 'nowrap' }}>Pipeline Total</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', whiteSpace: 'nowrap', marginTop: 4 }}>↑ 12% vs mois dernier</p>
               </div>
 
               {/* Taux de Conversion */}
               <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
                 <div>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>34</span>
-                  <span className="text-lg font-mono text-muted-foreground ml-1">%</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>34</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>%</span>
                 </div>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Taux de Conversion</p>
-                <p className="text-[11px] text-muted-foreground whitespace-nowrap mt-0.5">~ stable</p>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6, whiteSpace: 'nowrap' }}>Taux de Conversion</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#9CA3AF', whiteSpace: 'nowrap', marginTop: 4 }}>~ stable</p>
               </div>
 
               {/* Taille Moyenne */}
               <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
                 <div>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>42K</span>
-                  <span className="text-lg font-mono text-muted-foreground ml-1">DH</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>42K</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
                 </div>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Taille Moyenne</p>
-                <p className="text-[11px] text-emerald-400 whitespace-nowrap mt-0.5">↑ 5%</p>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6, whiteSpace: 'nowrap' }}>Taille Moyenne</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', whiteSpace: 'nowrap', marginTop: 4 }}>↑ 5%</p>
               </div>
 
               {/* Cycle de Vente */}
               <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
                 <div>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.025em', color: 'white' }}>28</span>
-                  <span className="text-lg font-mono text-muted-foreground ml-1">jours</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>28</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>jours</span>
                 </div>
-                <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">Cycle de Vente</p>
-                <p className="text-[11px] text-red-400 whitespace-nowrap mt-0.5">↓ 3 jours</p>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6, whiteSpace: 'nowrap' }}>Cycle de Vente</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#EF4444', whiteSpace: 'nowrap', marginTop: 4 }}>↓ 3 jours</p>
               </div>
             </div>
           </div>
