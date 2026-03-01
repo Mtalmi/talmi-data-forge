@@ -118,7 +118,7 @@ export function CommandCenterSection({ bons, camions, demoMode = false }: Comman
             </div>
 
             {/* Fleet & KPIs Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-10">
               <div>
                 <FleetCapacityOptimizer 
                   camions={camions.map(c => ({
