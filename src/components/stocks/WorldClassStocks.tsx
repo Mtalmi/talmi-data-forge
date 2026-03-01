@@ -529,7 +529,8 @@ export default function WorldClassStocks() {
       <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
         padding: '0 24px',
-        borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
+        background: 'transparent',
+        border: 'none',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Logo */}
