@@ -26,18 +26,22 @@ export function LanguageSwitcher({ variant = 'compact', className }: LanguageSwi
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          className={`gap-1.5 border-primary/30 hover:border-primary/60 hover:bg-primary/10 ${className ?? ''}`}
+        <button
+          className="flex items-center gap-1.5 h-8 px-2.5 text-xs font-medium transition-all duration-150 rounded-md"
+          style={{
+            background: 'rgba(245, 158, 11, 0.08)',
+            border: '1px solid rgba(245, 158, 11, 0.15)',
+            borderRadius: 6,
+            color: '#F59E0B',
+          }}
           aria-label="Switch language"
         >
-          <span className="text-lg leading-none">{current.flag}</span>
+          <span className="text-base leading-none">{current.flag}</span>
           <span className="text-xs font-bold tracking-wide">{current.shortLabel}</span>
           {variant === 'full' && (
             <span className="ml-1 text-xs font-medium hidden sm:inline">{current.nativeLabel}</span>
           )}
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-[180px]">
         {LANGUAGES.map((language) => (
