@@ -1693,7 +1693,7 @@ export default function Planning() {
 
         {/* Live Dispatch Board */}
         <div className="rounded-2xl p-5 overflow-x-auto" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
-        <div className="flex flex-col md:flex-row gap-6 md:min-w-[960px]">
+        <div className="flex flex-col md:flex-row gap-8 lg:gap-10 md:min-w-[980px]">
           {/* À Produire */}
            <Card className="rounded-xl flex-1 min-w-[320px]" style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A' }}>
             <CardHeader className="pb-3">
@@ -1890,13 +1890,13 @@ export default function Planning() {
             ) : (
               <div className="space-y-0">
                 {/* Column Headers */}
-                <div className="grid grid-cols-[60px_1fr_1fr_1fr_100px_90px] gap-3 px-3 pb-3 mb-2 border-b border-white/[0.06]">
+                <div className="grid grid-cols-[80px_190px_1.2fr_1fr_150px_120px] gap-4 px-4 pb-3 mb-2 border-b border-white/[0.06]">
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Heure</span>
                   <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">BL</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Client</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Formule</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Toupie</span>
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25">Statut</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Client</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Formule</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Toupie</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/25 text-center">Statut</span>
                 </div>
                 {displayChronologicalBons
                   .sort((a, b) => {
@@ -1910,19 +1910,19 @@ export default function Planning() {
                   .map(bon => (
                     <div 
                       key={bon.bl_id}
-                      className="grid grid-cols-[60px_1fr_1fr_1fr_100px_90px] gap-3 items-center px-3 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                      className="grid grid-cols-[80px_190px_1.2fr_1fr_150px_120px] gap-4 items-center px-4 py-3 border-b border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                     >
                       <span className="font-mono font-normal text-lg text-white/50">
                         {formatTimeHHmm(bon.heure_prevue) || '--:--'}
                       </span>
                       <span className="font-mono font-medium text-white/80">{bon.bl_id}</span>
-                      <span className="text-sm text-white/50">{bon.clients?.nom_client || bon.client_id}</span>
-                      <span className="text-sm text-white/60">{bon.formule_id} · {bon.volume_m3}m³</span>
-                      <div className="flex items-center gap-2">
+                      <span className="text-sm text-white/50 text-center">{bon.clients?.nom_client || bon.client_id}</span>
+                      <span className="text-sm text-white/60 text-center">{bon.formule_id} · {bon.volume_m3}m³</span>
+                      <div className="flex items-center justify-center gap-2">
                         <Truck className="h-3.5 w-3.5 text-white/25" />
                         <span className="text-sm font-mono text-white/50">{bon.camion_assigne || bon.toupie_assignee || t.pages.planning.notAssigned}</span>
                       </div>
-                      {getStatusBadge(bon.workflow_status)}
+                      <div className="flex justify-center">{getStatusBadge(bon.workflow_status)}</div>
                     </div>
                   ))}
               </div>
