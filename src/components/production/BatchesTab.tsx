@@ -281,6 +281,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                     color: 'rgba(255,255,255,0.35)', fontWeight: 500,
                     textAlign: align,
                     display: 'flex',
+                    width: '100%',
                     justifyContent: align === 'center' ? 'center' : 'flex-start',
                   }}>{h}</span>
                 );
@@ -305,9 +306,9 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                 >
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', justifyContent: 'center' }}>{row.formule}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', justifyContent: 'center' }}>{row.volume}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', justifyContent: 'center' }}>{row.heure}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.formule}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.volume}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', display: 'flex', width: '100%', justifyContent: 'center' }}>{row.heure}</span>
                   {/* Status badge */}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6, width: 'fit-content',
