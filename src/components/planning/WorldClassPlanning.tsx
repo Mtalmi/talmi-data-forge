@@ -285,17 +285,17 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '1.875rem', fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.025em' }}>
+            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6, whiteSpace: 'nowrap' }}>{label}</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
               {animated.toLocaleString('fr-FR')}
-              {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
+              {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
-            <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 5, fontWeight: 600, whiteSpace: 'nowrap' }}>
+            <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 5, fontWeight: 500, whiteSpace: 'nowrap' }}>
               {trendPositive ? '↑' : '↓'} {trend}
             </p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#F59E0B" />
           </div>
         </div>
       </Card>

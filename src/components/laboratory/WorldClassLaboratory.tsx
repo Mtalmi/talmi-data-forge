@@ -359,12 +359,12 @@ function KPICard({ label, value, color, icon: Icon, trend, delay = 0 }: {
       <Card>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.1em', margin: 0, marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1, margin: 0 }}>{animated}</p>
-            {trend && <p style={{ fontSize: 10, fontWeight: 600, marginTop: 6, color: T.success, margin: '6px 0 0' }}>↑ {trend}</p>}
+            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.15em', margin: 0, marginBottom: 8 }}>{label}</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em', margin: 0 }}>{animated}</p>
+            {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: '#10B981', margin: '6px 0 0' }}>↑ {trend}</p>}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#F59E0B" />
           </div>
         </div>
       </Card>

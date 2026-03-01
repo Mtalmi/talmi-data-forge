@@ -242,16 +242,16 @@ function KPICard({ label, value, suffix = '', color, icon: Icon, trend, delay = 
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: `${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon size={18} color={color} />
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon size={18} color="#F59E0B" />
         </div>
-        <span style={{ color: T.textDim, fontSize: 11, background: '#1E2D4A', padding: '3px 8px', borderRadius: 100 }}>{trend}</span>
+        <span style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 500 }}>{trend}</span>
       </div>
       <div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: 800, color }}>
-          {count}{suffix}
+        <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 36, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1 }}>
+          {count}{suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>{suffix}</span>}
         </div>
-        <div style={{ color: T.textSec, fontSize: 13, marginTop: 2 }}>{label}</div>
+        <div style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 6 }}>{label}</div>
       </div>
     </div>
   );
