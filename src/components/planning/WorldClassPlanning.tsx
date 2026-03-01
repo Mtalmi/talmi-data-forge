@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { useNavigate } from 'react-router-dom';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -394,13 +395,30 @@ function DeliveryCard({ d, delay = 0 }: { d: typeof deliveries[0]; delay?: numbe
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('semaine');
+  const kpisRef = useRef<HTMLElement | null>(null);
+  const semaineRef = useRef<HTMLElement | null>(null);
+  const capaciteRef = useRef<HTMLElement | null>(null);
   const { kpis: pKpis, liveDeliveries } = usePlanningLiveData();
   const tabs = [
     { id: 'semaine', label: 'Semaine' },
     { id: 'mois', label: 'Mois' },
     { id: 'capacite', label: 'Capacité' },
   ];
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    const refMap: Record<string, React.RefObject<HTMLElement | null>> = {
+      semaine: semaineRef,
+      mois: kpisRef,
+      capacite: capaciteRef,
+    };
+    const target = refMap[tabId]?.current;
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.textPri }}>
@@ -415,9 +433,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         subtitle="Planification & dispatch des livraisons"
         tabs={tabs}
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         actions={
           <button
+            onClick={() => navigate('/bons')}
             style={{
               padding: '6px 16px',
               borderRadius: 8,
@@ -444,7 +463,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen ? 'calc(24px + 272px)' : '24px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }}>
 
         {/* ── SECTION 1: KPIs ── */}
-        <section>
+        <section ref={kpisRef}>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Commandes Semaine" value={pKpis.commandes} suffix="" color={T.gold} icon={FileText} trend="+3 vs sem. dern." trendPositive delay={0} />
@@ -455,7 +474,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         </section>
 
         {/* ── SECTION 2: WEEKLY SCHEDULE ── */}
-        <section>
+        <section ref={semaineRef}>
           <SectionHeader icon={CalendarDays} label="Planning Hebdomadaire" />
           <Card style={{ padding: 0, overflow: 'hidden' }}>
             {/* Header row */}
@@ -492,7 +511,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         </section>
 
         {/* ── SECTION 3+4: GAUGE + DELIVERIES ── */}
-        <section>
+        <section ref={capaciteRef}>
           <SectionHeader icon={Truck} label="Capacité & Livraisons" />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
 
