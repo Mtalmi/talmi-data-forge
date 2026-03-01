@@ -4806,3 +4806,33 @@ div.tbos-card-stagger {
   border-radius: 12px !important;
   overflow: hidden !important;
 }
+
+/* ═══ GLOBAL CHROME SEAMLESS FIX ═══ */
+
+/* Force top navbar fully transparent */
+header {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Force main content area transparent so page gradient shows through */
+main {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Navbar search input — subtle amber tint */
+header input,
+header button[role="combobox"] {
+  background: rgba(245, 158, 11, 0.04) !important;
+  border: 1px solid rgba(245, 158, 11, 0.08) !important;
+  border-radius: 8px !important;
+}
+
+header input:focus,
+header button[role="combobox"]:focus {
+  border-color: rgba(245, 158, 11, 0.25) !important;
+  background: rgba(245, 158, 11, 0.06) !important;
+}
