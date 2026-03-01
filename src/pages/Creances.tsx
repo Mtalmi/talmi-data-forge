@@ -173,7 +173,7 @@ export default function Creances() {
 
   return (
     <MainLayout>
-      <div className="space-y-6">
+      <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px' }}>
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
