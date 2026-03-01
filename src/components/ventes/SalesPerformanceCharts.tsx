@@ -136,9 +136,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
   }, [bcList, vt]);
 
   const STATUS_COLORS: Record<string, string> = {
-    [vt.validated]: 'rgb(245, 158, 11)',
-    [vt.statusLivre]: 'rgb(217, 139, 10)',
-    [vt.other]: 'rgb(120, 113, 108)',
+    [vt.validated]: '#F59E0B',
+    [vt.statusLivre]: '#D97706',
+    [vt.other]: '#78716C',
     Production: '#B8860B',
   };
 
@@ -291,10 +291,10 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
         {/* Pie chart */}
         {winLossPie.length > 0 ? (
-          <div style={{ height: 150, maxWidth: 150, margin: '0 auto', overflow: 'hidden' }}>
+          <div style={{ width: 140, height: 140, margin: '0 auto', overflow: 'hidden' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={winLossPie} cx="50%" cy="50%" outerRadius={50} paddingAngle={4} dataKey="value" animationBegin={0} animationDuration={900}>
+                <Pie data={winLossPie} cx="50%" cy="50%" outerRadius={60} innerRadius={30} paddingAngle={4} dataKey="value" animationBegin={0} animationDuration={900}>
                   {winLossPie.map((entry, i) => (
                     <Cell key={i} fill={entry.color} stroke="transparent" />
                   ))}
@@ -304,7 +304,7 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
             </ResponsiveContainer>
           </div>
         ) : (
-          <div style={{ height: 150, maxWidth: 150, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ width: 140, height: 140, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 style={{ width: 32, height: 32, color: 'rgba(148,163,184,0.2)' }} />
             <p style={{ fontSize: 12, color: 'rgba(148,163,184,0.4)', textAlign: 'center' }}>Aucun devis enregistré</p>
           </div>
