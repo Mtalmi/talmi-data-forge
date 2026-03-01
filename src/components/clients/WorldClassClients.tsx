@@ -348,9 +348,9 @@ export default function WorldClassClients() {
               <Users size={18} color="#F59E0B" />
             </div>
             <div>
-              <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+              <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
               <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Clients</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Données en temps réel</p>
+              <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1, marginTop: 1 }}>Données en temps réel</p>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>

@@ -543,7 +543,7 @@ export default function WorldClassStocks() {
               <Package size={18} color={T.navy} />
             </div>
             <div>
-              <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+              <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
               <span style={{ color: T.amber, fontWeight: 800, fontSize: 13 }}>Stocks</span>
               <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Gestion des stocks et inventaire</p>
             </div>

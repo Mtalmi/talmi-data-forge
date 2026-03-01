@@ -438,21 +438,21 @@ export default function Ventes() {
           }}/>
         </div>
         <div className="space-y-6 overflow-x-hidden max-w-full w-full relative z-[1]" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
+
           {/* ── Premium Page Header ── */}
           {/* MOBILE HEADER (< md) */}
            <div className="md:hidden space-y-3">
             {/* Title + Primary CTA */}
             <div className="px-1 py-2">
               <div className="flex items-center justify-between">
-                <div>
-                   <div className="flex items-center gap-2.5">
-                    <div className="p-1.5 rounded-lg" style={{ background: 'rgba(212,168,67,0.12)' }}>
-                      <BarChart3 className="h-5 w-5 text-amber-400" />
-                    </div>
-                    <div>
-                      <h1 className="text-xl font-bold text-white tracking-tight">TBOS Ventes</h1>
-                      <p className="text-sm text-muted-foreground">{t.pages.ventes.subtitle}</p>
-                    </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <BarChart3 size={18} color="#F59E0B" />
+                  </div>
+                  <div>
+                    <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+                    <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Ventes</span>
+                    <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
                   </div>
                 </div>
                 <SmartQuoteCalculator variant="prominent" />
@@ -502,16 +502,15 @@ export default function Ventes() {
           </div>
 
           {/* DESKTOP HEADER (md+) */}
-          <div className="hidden md:flex flex-col gap-4 md:flex-row md:items-center md:justify-between px-1 py-2" style={{ background: 'transparent', border: 'none' }}>
-            <div>
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl" style={{ background: 'rgba(212,168,67,0.12)' }}>
-                  <BarChart3 className="h-6 w-6 text-amber-400" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-white tracking-tight">TBOS Ventes</h1>
-                  <p className="text-sm text-muted-foreground">{t.pages.ventes.subtitle}</p>
-                </div>
+          <div className="hidden md:flex items-center gap-4 md:justify-between px-1 py-2" style={{ background: 'transparent', border: 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <BarChart3 size={18} color="#F59E0B" />
+              </div>
+              <div>
+                <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+                <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Ventes</span>
+                <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
