@@ -2014,10 +2014,21 @@ export default function Planning() {
         {!isMobile && !fleetPanelOpen && createPortal(
           <button
             onClick={() => setFleetPanelOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] w-10 h-20 bg-slate-800/90 backdrop-blur-sm border border-amber-500/30 rounded-l-lg shadow-lg hover:bg-slate-700/90 hover:border-amber-500/50 transition-all duration-200 flex flex-col items-center justify-center gap-1"
+            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col items-center justify-center gap-1 cursor-pointer"
+            style={{
+              width: 40, height: 80,
+              background: 'transparent',
+              border: '1px solid rgba(245, 158, 11, 0.15)',
+              borderRight: 'none',
+              borderRadius: '8px 0 0 8px',
+              padding: 4,
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
           >
-            <Truck className="w-4 h-4 text-amber-400" />
-            <ChevronLeft className="w-3.5 h-3.5 text-slate-400" />
+            <Truck className="w-5 h-5" style={{ color: '#F59E0B' }} />
+            <ChevronLeft className="w-6 h-6" style={{ color: '#F59E0B' }} />
           </button>,
           document.body
         )}
