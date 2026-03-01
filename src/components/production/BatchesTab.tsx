@@ -274,8 +274,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
             }}>
               {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
                 const align: 'left' | 'center' | 'right' =
-                  h === 'VOL (M³)' ? 'right' :
-                  ['FORMULE', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                  ['FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
@@ -305,7 +304,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.client}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.60)', textAlign: 'center' }}>{row.formule}</span>
-                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'right' }}>{row.volume}</span>
+                  <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 400, color: '#fff', textAlign: 'center' }}>{row.volume}</span>
                   <span style={{ fontFamily: mono, fontSize: 13, color: 'rgba(255,255,255,0.45)', textAlign: 'center' }}>{row.heure}</span>
                   {/* Status badge */}
                   <span style={{
