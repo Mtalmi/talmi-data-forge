@@ -3024,6 +3024,9 @@
 .tbos-card-stagger {
   animation: cardReveal 0.5s ease forwards;
   opacity: 0;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
 }
 .tbos-card-stagger:nth-child(1) {
   animation-delay: 0ms;
