@@ -389,7 +389,7 @@ export default function WorldClassClients() {
 
         {/* Top clients + Segments */}
         <section>
-          <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
             <Card>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>Top Clients par CA</p>
