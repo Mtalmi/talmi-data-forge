@@ -15,7 +15,7 @@ import { format, subDays } from 'date-fns';
 // DESIGN TOKENS — TBOS Amber Design System
 // ─────────────────────────────────────────────────────
 const T = {
-  amber:      '#F59E0B',
+  amber:      '#FFD700',
   amberDark:  '#D97706',
   amberDeep:  '#B45309',
   amberHover: 'rgba(245, 158, 11, 0.15)',
