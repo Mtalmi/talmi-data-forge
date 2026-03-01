@@ -547,14 +547,46 @@ export default function WorldClassProduction() {
         loading={loading}
         actions={
           <>
-            <Button size="sm" className="gap-2">
-              <Plus size={14} />
+            <button
+              style={{
+                padding: '6px 16px',
+                borderRadius: 8,
+                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                color: '#0F172A',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all 200ms',
+              }}
+            >
+              <Plus size={13} />
               Nouvelle Planification
-            </Button>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Upload size={14} />
+            </button>
+            <button
+              style={{
+                padding: '6px 16px',
+                borderRadius: 8,
+                background: 'transparent',
+                border: '1px solid rgba(255,255,255,0.12)',
+                color: 'rgba(255,255,255,0.7)',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all 200ms',
+              }}
+            >
+              <Upload size={13} />
               Importer BC
-            </Button>
+            </button>
           </>
         }
       />
