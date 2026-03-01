@@ -153,8 +153,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
             </p>
             {trend && <p style={{ fontSize: 11, color: trendPositive ? T.success : T.danger, marginTop: 6, fontWeight: 600 }}>{trendPositive ? '↑' : '↓'} {trend}</p>}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#F59E0B" />
           </div>
         </div>
       </Card>
@@ -401,7 +401,7 @@ export default function WorldClassClients() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ minHeight: 200, maxHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 200, maxHeight: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
 
@@ -429,7 +429,7 @@ export default function WorldClassClients() {
                   </div>
                 </>
               ) : (
-                <div style={{ minHeight: 200, maxHeight: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 200, maxHeight: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
           </div>
@@ -449,7 +449,7 @@ export default function WorldClassClients() {
                     <stop offset="100%" stopColor="#F59E0B" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(245, 158, 11, 0.08)" vertical={false} />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
                 <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
