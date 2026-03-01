@@ -90,7 +90,7 @@ function SectionHeader({ icon: Icon, label }: { icon: any; label: string }) {
     <div className="flex items-center gap-2.5 mb-4">
       <Icon size={16} strokeWidth={1.5} style={{ color: T.gold, flexShrink: 0 }} />
       <span style={{
-        color: T.gold, fontWeight: 600, fontSize: 13,
+        color: T.gold, fontWeight: 700, fontSize: 12,
         textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap',
       }}>{label}</span>
       <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${T.gold}33 0%, transparent 80%)` }} />
