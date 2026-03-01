@@ -30,7 +30,7 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
 
   return (
     <header className="w-full tbos-top-navbar">
-      <div className="tbos-top-navbar-inner flex items-center justify-between h-14 px-6 border-b border-amber-500/[0.04]">
+      <div className="tbos-top-navbar-inner flex items-center justify-between h-14 px-6">
         {/* Left — Search */}
         <div className="relative hidden md:block flex-shrink-0 max-w-[280px]">
           <GlobalSearch />
