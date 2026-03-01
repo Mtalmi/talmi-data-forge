@@ -1,5 +1,3 @@
-import { useLocation } from 'react-router-dom';
-import { useState } from 'react';
 import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -16,8 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 
 interface TopNavBarProps {
   previewRole?: string | null;
@@ -32,14 +29,8 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
   const initials = user?.email?.charAt(0).toUpperCase() || 'U';
 
   return (
-    <header className="w-full">
-      <div
-        className="flex items-center justify-between h-14 px-6"
-        style={{
-          background: 'transparent',
-          borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
-        }}
-      >
+    <header className="w-full tbos-top-navbar">
+      <div className="tbos-top-navbar-inner flex items-center justify-between h-14 px-6 border-b border-amber-500/[0.04]">
         {/* Left — Search */}
         <div className="relative hidden md:block flex-shrink-0 max-w-[280px]">
           <GlobalSearch />
