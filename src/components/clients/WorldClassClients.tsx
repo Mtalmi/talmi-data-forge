@@ -92,7 +92,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
   const [press, setPress] = useState(false);
   return (
     <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
-      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
+      style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
         boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
@@ -125,11 +125,11 @@ function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string;
 function DarkTooltip({ active, payload, label, suffix = '' }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#162036', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-      <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6 }}>{label}</p>
+    <div style={{ background: '#1a1f2e', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 8, padding: '10px 14px', boxShadow: 'none' }}>
+      <p style={{ color: '#FFFFFF', fontWeight: 700, marginBottom: 6 }}>{label}</p>
       {payload.map((p: any) => (
-        <p key={p.dataKey} style={{ color: p.color || p.fill, fontSize: 12, marginBottom: 2 }}>
-          {p.name}: <strong>{Number(p.value).toLocaleString('fr-FR')}{suffix}</strong>
+        <p key={p.dataKey} style={{ color: '#FFFFFF', fontSize: 12, marginBottom: 2 }}>
+          {p.name}: <strong style={{ color: '#F59E0B' }}>{Number(p.value).toLocaleString('fr-FR')}{suffix}</strong>
         </p>
       ))}
     </div>
@@ -401,7 +401,7 @@ export default function WorldClassClients() {
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
-                <div style={{ minHeight: 200, maxHeight: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
 
@@ -429,7 +429,7 @@ export default function WorldClassClients() {
                   </div>
                 </>
               ) : (
-                <div style={{ minHeight: 200, maxHeight: 240, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
+                <div style={{ minHeight: 180, maxHeight: 220, display: 'flex', alignItems: 'center', justifyContent: 'center', color: T.textDim }}>Aucune donnée</div>
               )}
             </Card>
           </div>
@@ -466,7 +466,7 @@ export default function WorldClassClients() {
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} />)}
-              {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 32, color: T.textDim }}>Aucun client trouvé</div>}
+              {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#9CA3AF', fontSize: 14 }}>Aucun client trouvé</div>}
             </div>
           </Card>
         </section>
