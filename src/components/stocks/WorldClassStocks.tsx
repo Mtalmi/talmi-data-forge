@@ -7,6 +7,7 @@ import {
   Package, AlertTriangle, ArrowUpDown, RefreshCw,
   Droplets, Bell, ArrowUp, ArrowDown, TrendingUp,
 } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { format, subDays } from 'date-fns';
 
@@ -530,59 +531,27 @@ export default function WorldClassStocks() {
       `}</style>
 
       {/* ── SEAMLESS HEADER ── */}
-      <div data-seamless-header style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 24px',
-        background: 'transparent',
-        border: 'none',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-          {/* Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.amber}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Package size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.amber, fontWeight: 800, fontSize: 13 }}>Stocks</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Gestion des stocks et inventaire</p>
-            </div>
-          </div>
-
-          {/* Tabs */}
-          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
-                background: activeTab === tab.id ? 'rgba(245, 158, 11, 0.15)' : 'transparent',
-                border: activeTab === tab.id ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent',
-                color: activeTab === tab.id ? '#F59E0B' : '#9CA3AF',
-                fontWeight: 600, fontSize: 13,
-                transition: 'all 200ms',
-              }}>{tab.label}</button>
-            ))}
-          </div>
-
-          {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-            <div style={{ position: 'relative' }}>
-              <Bell size={18} color={T.textSec} />
-              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
-            </div>
-            <button style={{
-              padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
-              fontWeight: 700, fontSize: 12,
-              border: 'none', cursor: 'pointer',
-              transition: 'background 150ms',
-            }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
-            >
-              + Nouveau Mouvement
-            </button>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={Package}
+        title="Stocks"
+        subtitle="Gestion des stocks et inventaire"
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        actions={
+          <button style={{
+            padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
+            fontWeight: 700, fontSize: 12,
+            border: 'none', cursor: 'pointer',
+            transition: 'background 150ms',
+          }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
+          >
+            + Nouveau Mouvement
+          </button>
+        }
+      />
 
       {/* ── CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>

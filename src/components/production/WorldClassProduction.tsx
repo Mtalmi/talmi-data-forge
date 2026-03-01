@@ -14,6 +14,7 @@ import { format, startOfDay, endOfDay, startOfWeek, endOfWeek } from 'date-fns';
 import BatchesTab from './BatchesTab';
 import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -534,46 +535,15 @@ export default function WorldClassProduction() {
       `}</style>
 
       {/* ── STICKY HEADER ── */}
-      <div data-seamless-header style={{
-        position: 'sticky', top: 0, zIndex: 100,
-        padding: '0 24px',
-        background: 'transparent',
-        border: 'none',
-      }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Factory size={18} color={T.navy} />
-            </div>
-            <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Production</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Données en temps réel</p>
-            </div>
-          </div>
-          <div className="flex gap-1 flex-1 justify-center">
-            {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
-                padding: '6px 16px', borderRadius: 8, cursor: 'pointer',
-                background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
-                border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
-                color: activeTab === tab.id ? T.gold : T.textSec,
-                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13, transition: 'all 200ms',
-              }}>{tab.label}</button>
-            ))}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280', letterSpacing: '0.02em' }}>
-              <LiveClock />
-            </span>
-            <div style={{ position: 'relative', cursor: 'pointer' }}>
-              <Bell size={18} color={T.textSec} />
-              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
-            </div>
-            {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        icon={Factory}
+        title="Production"
+        subtitle="Données en temps réel"
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        loading={loading}
+      />
 
       {/* ── PAGE CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>

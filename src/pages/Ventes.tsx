@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useI18n } from '@/i18n/I18nContext';
@@ -502,132 +503,105 @@ export default function Ventes() {
           </div>
 
           {/* DESKTOP HEADER (md+) */}
-          <div className="hidden md:flex items-center gap-4 md:justify-between px-1 py-2" style={{ background: 'transparent', border: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BarChart3 size={18} color="#0B1120" />
-              </div>
-              <div>
-                <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
-                <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Ventes</span>
-                <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-              {/* Secondary — Glass buttons */}
-              <ExportReportsDialog 
-                devisList={devisList}
-                bcList={bcList}
-                selectedDevisIds={selectedDevisIds}
-                selectedBcIds={selectedBcIds}
-              />
-              {(canCreateBcDirect || isDirecteurOperations) && (
-                <button 
-                  onClick={() => setEmergencyBcOpen(true)}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    color: 'rgba(255,255,255,0.7)',
-                    fontSize: 12,
-                    padding: '7px 16px',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontWeight: 500,
-                    transition: 'all 150ms',
-                    whiteSpace: 'nowrap' as const,
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <ShoppingCart size={14} />
-                  {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
-                </button>
-              )}
-              {/* More dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    style={{
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      borderRadius: 8,
-                      padding: '7px 12px',
-                      background: 'transparent',
-                      color: 'rgba(255,255,255,0.5)',
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      fontFamily: 'DM Sans, sans-serif',
-                      fontWeight: 500,
-                      transition: 'all 150ms',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span style={{ fontSize: 14, lineHeight: 1 }}>⋯</span>
-                    Plus
-                    <ChevronDown className="h-3 w-3" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  style={{
-                    background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 8,
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                    padding: 4,
-                    minWidth: 200,
-                  }}
-                >
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md"
-                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
-                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-scheduled-reminders]')?.click()}
-                  >
-                    <Receipt className="h-4 w-4 mr-3 text-muted-foreground" />
-                    Rappels Auto
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md"
-                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
-                    onSelect={() => setBatchReminderOpen(true)}
-                  >
-                    <Mail className="h-4 w-4 mr-3 text-muted-foreground" />
-                    {t.pages.ventes.reminders}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md"
-                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
-                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-communication-log]')?.click()}
-                  >
-                    <Zap className="h-4 w-4 mr-3 text-muted-foreground" />
-                    Communications
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="cursor-pointer rounded-md"
-                    style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }}
-                    onSelect={() => document.querySelector<HTMLButtonElement>('[data-activity-history]')?.click()}
-                  >
-                    <Calendar className="h-4 w-4 mr-3 text-muted-foreground" />
-                    Historique
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              {/* Primary — Gold-bordered CTA */}
-              <SmartQuoteCalculator variant="prominent" />
-              {/* Hidden trigger buttons for dropdown actions */}
-              <div className="hidden">
-                <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
-                <CommunicationLogDrawer />
-                <ActivityHistoryDrawer />
-              </div>
-            </div>
+          <div className="hidden md:block">
+            <PageHeader
+              icon={BarChart3}
+              title="Ventes"
+              subtitle="Gestion des devis et bons de commande"
+              actions={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <ExportReportsDialog 
+                    devisList={devisList}
+                    bcList={bcList}
+                    selectedDevisIds={selectedDevisIds}
+                    selectedBcIds={selectedBcIds}
+                  />
+                  {(canCreateBcDirect || isDirecteurOperations) && (
+                    <button 
+                      onClick={() => setEmergencyBcOpen(true)}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        color: 'rgba(255,255,255,0.7)',
+                        fontSize: 12,
+                        padding: '7px 16px',
+                        borderRadius: 8,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        fontFamily: 'DM Sans, sans-serif',
+                        fontWeight: 500,
+                        transition: 'all 150ms',
+                        whiteSpace: 'nowrap' as const,
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <ShoppingCart size={14} />
+                      {isDirecteurOperations && !canCreateBcDirect ? t.pages.ventes.newOrder : t.pages.ventes.directOrder}
+                    </button>
+                  )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        style={{
+                          border: '1px solid rgba(255,255,255,0.12)',
+                          borderRadius: 8,
+                          padding: '7px 12px',
+                          background: 'transparent',
+                          color: 'rgba(255,255,255,0.5)',
+                          fontSize: 12,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontFamily: 'DM Sans, sans-serif',
+                          fontWeight: 500,
+                          transition: 'all 150ms',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        <span style={{ fontSize: 14, lineHeight: 1 }}>⋯</span>
+                        Plus
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      style={{
+                        background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: 8,
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+                        padding: 4,
+                        minWidth: 200,
+                      }}
+                    >
+                      <DropdownMenuItem className="cursor-pointer rounded-md" style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }} onSelect={() => document.querySelector<HTMLButtonElement>('[data-scheduled-reminders]')?.click()}>
+                        <Receipt className="h-4 w-4 mr-3 text-muted-foreground" />Rappels Auto
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer rounded-md" style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }} onSelect={() => setBatchReminderOpen(true)}>
+                        <Mail className="h-4 w-4 mr-3 text-muted-foreground" />{t.pages.ventes.reminders}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer rounded-md" style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }} onSelect={() => document.querySelector<HTMLButtonElement>('[data-communication-log]')?.click()}>
+                        <Zap className="h-4 w-4 mr-3 text-muted-foreground" />Communications
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer rounded-md" style={{ padding: '10px 16px', fontSize: 13, color: '#D1D5DB' }} onSelect={() => document.querySelector<HTMLButtonElement>('[data-activity-history]')?.click()}>
+                        <Calendar className="h-4 w-4 mr-3 text-muted-foreground" />Historique
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  <SmartQuoteCalculator variant="prominent" />
+                  <div className="hidden">
+                    <ScheduledRemindersDialog devisList={devisList} onRefresh={fetchData} />
+                    <CommunicationLogDrawer />
+                    <ActivityHistoryDrawer />
+                  </div>
+                </div>
+              }
+            />
           </div>
 
           {/* Expiring Quotes Alert */}
