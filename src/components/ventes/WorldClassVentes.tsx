@@ -536,7 +536,7 @@ function DealRow({ deal, delay }: { deal: typeof deals[0]; delay: number }) {
       style={{
         display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
         borderRadius: 8, cursor: 'default',
-        background: hovered ? 'rgba(255,255,255,0.04)' : 'transparent',
+        background: hovered ? 'rgba(255,215,0,0.04)' : 'transparent',
         borderLeft: `3px solid ${deal.stageColor}`,
         transform: hovered ? 'translateX(4px)' : 'translateX(0)',
         transition: 'all 150ms',
@@ -799,7 +799,7 @@ function TimelineRow({ item, delay }: { item: typeof timeline[0]; delay: number 
       onMouseLeave={() => setHovered(false)}
       style={{
         display: 'flex', gap: 10, padding: '6px 8px', borderRadius: 8,
-        background: hovered ? 'rgba(255,255,255,0.04)' : 'transparent',
+        background: hovered ? 'rgba(255,215,0,0.04)' : 'transparent',
         transform: hovered ? 'translateX(4px)' : 'translateX(0)',
         transition: 'all 150ms',
         opacity: visible ? 1 : 0,
@@ -838,7 +838,7 @@ function NextActionRow({ action, delay }: { action: typeof nextActions[0]; delay
       style={{
         display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
         borderRadius: 8, cursor: 'default',
-        background: hovered ? 'rgba(255,255,255,0.04)' : GLASS.bg,
+        background: hovered ? 'rgba(255,215,0,0.04)' : GLASS.bg,
         border: `1px solid ${hovered ? action.pColor + '30' : GLASS.border}`,
         borderLeft: `3px solid ${action.pColor}`,
         transform: hovered ? 'translateX(2px)' : 'translateX(0)',

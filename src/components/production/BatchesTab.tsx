@@ -301,7 +301,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   borderLeft: isInProd ? '2px solid rgba(96,165,250,0.50)' : '2px solid transparent',
                   cursor: 'pointer', transition: 'background 150ms',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
                   <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{row.bl_id}</span>
@@ -421,7 +421,7 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
                   margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
                   transition: 'background 150ms',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.02)')}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
                   <div className="flex items-center justify-between mb-1">

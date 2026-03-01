@@ -20,7 +20,7 @@ const T = {
   amberDeep:  '#B45309',
   amberHover: 'rgba(245, 158, 11, 0.15)',
   amberBorder:'rgba(245, 158, 11, 0.15)',
-  amberSubtle:'rgba(245, 158, 11, 0.04)',
+  amberSubtle:'rgba(255, 215, 0, 0.04)',
   amberGrid:  'rgba(245, 158, 11, 0.08)',
   navy:       '#0B1120',
   cardBg:     'linear-gradient(to bottom right, #1a1f2e, #141824)',
