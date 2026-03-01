@@ -532,10 +532,10 @@ export default function WorldClassProduction() {
       `}</style>
 
       {/* ── STICKY HEADER ── */}
-      <div style={{
+      <div data-seamless-header style={{
         position: 'sticky', top: 0, zIndex: 100,
-        background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)',
-        borderBottom: `1px solid rgba(255,255,255,0.06)`, padding: '0 24px',
+        padding: '0 24px',
+        borderBottom: '1px solid rgba(245, 158, 11, 0.04)',
       }}>
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           <div className="flex items-center gap-2.5 shrink-0">
