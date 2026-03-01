@@ -3214,7 +3214,7 @@ nav,
 .workflow-count {
   font-family: "JetBrains Mono", monospace;
   font-size: 56px;
-  font-weight: 700;
+  font-weight: 200;
   color: #ffd700;
   line-height: 1;
 }
@@ -3246,7 +3246,7 @@ nav,
 .pipeline-count {
   font-family: "JetBrains Mono", monospace;
   font-size: 52px;
-  font-weight: 700;
+  font-weight: 200;
   line-height: 1;
 }
 
@@ -3695,7 +3695,7 @@ textarea.valid {
 .metric-value {
   font-family: "JetBrains Mono", monospace;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 200;
   color: hsl(var(--primary));
   line-height: 1;
   letter-spacing: -0.02em;

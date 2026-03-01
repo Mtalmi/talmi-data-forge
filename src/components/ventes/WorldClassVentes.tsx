@@ -112,8 +112,8 @@ function GCard({ children, className = '', style = {}, delay = 0, interactive = 
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
-      <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">{title}</span>
-      <div className="flex-1 border-t border-amber-500/30" />
+      <span style={{ color: '#FFD700', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap' }}>{title}</span>
+      <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,215,0,0.3), transparent 80%)' }} />
     </div>
   );
 }
@@ -897,13 +897,13 @@ export function WorldClassVentes() {
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Briefcase size={18} color={T.navy} />
             </div>
             <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Ventes</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
+              <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+              <span style={{ color: '#FFD700', fontWeight: 800, fontSize: 13 }}>Ventes</span>
+              <p style={{ color: '#64748B', fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
             </div>
           </div>
 
