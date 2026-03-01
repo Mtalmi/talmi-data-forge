@@ -539,13 +539,13 @@ export default function WorldClassStocks() {
         <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.amber}, #B45309)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.amber}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Package size={18} color={T.navy} />
             </div>
             <div>
               <span style={{ color: '#94A3B8', fontWeight: 700, fontSize: 13 }}>TBOS </span>
               <span style={{ color: T.amber, fontWeight: 800, fontSize: 13 }}>Stocks</span>
-              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Gestion des stocks et inventaire</p>
+              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Gestion des stocks et inventaire</p>
             </div>
           </div>
 

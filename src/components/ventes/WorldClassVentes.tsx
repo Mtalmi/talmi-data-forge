@@ -880,64 +880,57 @@ export function WorldClassVentes() {
         .wc-tab-btn.active { color:#FDB913; border-color:rgba(253,185,19,0.3); background:rgba(253,185,19,0.06); }
       `}</style>
 
-      {/* ── Header — just tabs + Nouveau Deal ── */}
-      <div style={{ marginBottom: 24 }}>
-        {/* MOBILE */}
-        <div className="md:hidden p-3">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              display: 'flex', gap: 2, padding: 3,
-              background: 'rgba(255,255,255,0.02)', borderRadius: 10,
-              border: '1px solid rgba(255,255,255,0.04)', flex: 1, overflow: 'auto',
-            }}>
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab.id as any)}
-                >
-                  {tab.label}
-                </button>
-              ))}
+      {/* ── STICKY HEADER ── */}
+      <div data-seamless-header style={{
+        position: 'sticky', top: 0, zIndex: 100,
+        padding: '0 24px',
+        background: 'transparent',
+        border: 'none',
+      }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Briefcase size={18} color={T.navy} />
+            </div>
+            <div>
+              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
+              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Ventes</span>
+              <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1 }}>Gestion des devis et bons de commande</p>
             </div>
           </div>
-        </div>
 
-        {/* DESKTOP */}
-        <div className="hidden md:block" style={{ padding: '10px 0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              display: 'flex', gap: 2, padding: 3,
-              background: 'rgba(255,255,255,0.02)', borderRadius: 10,
-              border: '1px solid rgba(255,255,255,0.04)',
-            }}>
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`wc-tab-btn shrink-0 ${activeTab === tab.id ? ' active' : ''}`}
-                  onClick={() => setActiveTab(tab.id as any)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <div style={{ marginLeft: 'auto' }}>
-              <button style={{
-                background: 'transparent',
-                border: '1px solid rgba(253,185,19,0.2)',
-                color: '#FDB913',
-                fontSize: 12, padding: '6px 14px', borderRadius: 8,
-                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
-                fontWeight: 600,
-                transition: 'all 150ms',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                <Plus size={14} />
-                {vt.newDeal}
-              </button>
-            </div>
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
+            {tabs.map(tab => (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id as any)} style={{
+                padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
+                background: activeTab === tab.id ? `${T.gold}18` : 'transparent',
+                border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent',
+                color: activeTab === tab.id ? T.gold : T.textSec,
+                fontFamily: 'DM Sans, sans-serif', fontWeight: 600, fontSize: 13,
+                transition: 'all 200ms',
+              }}>{tab.label}</button>
+            ))}
+          </div>
+
+          {/* Right */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+            <button style={{
+              background: 'transparent',
+              border: `1px solid ${T.goldBorder}`,
+              color: T.gold,
+              fontSize: 12, padding: '7px 16px', borderRadius: 8,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+              fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+              transition: 'all 150ms',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              <Plus size={14} />
+              {vt.newDeal}
+            </button>
           </div>
         </div>
       </div>
