@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   Users, UserCheck, Banknote, Heart, Bell,
-  AlertTriangle, UserX, ChevronRight, Search,
+  AlertTriangle, UserX, ChevronRight, Search, Plus,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -351,10 +351,32 @@ export default function WorldClassClients() {
         onTabChange={setActiveTab}
         loading={loading}
         actions={
-          <div style={{ position: 'relative' }}>
-            <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '7px 12px 7px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 12, width: 200 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
-          </div>
+          <>
+            <button
+              style={{
+                padding: '6px 16px',
+                borderRadius: 8,
+                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                color: '#0F172A',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all 200ms',
+              }}
+            >
+              <Plus size={13} />
+              Add new client
+            </button>
+            <div style={{ position: 'relative' }}>
+              <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '6px 12px 6px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 13, fontFamily: 'DM Sans, sans-serif', width: 180 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
+            </div>
+          </>
         }
       />
 
