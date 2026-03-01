@@ -442,8 +442,10 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           </div>
 
           {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-            <LiveClock />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280', letterSpacing: '0.02em' }}>
+              <LiveClock />
+            </span>
             <div style={{ position: 'relative', cursor: 'pointer' }}>
               <Bell size={18} color={T.textSec} />
               <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
@@ -451,7 +453,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
             <button style={{
               padding: '7px 16px', borderRadius: 8, background: T.gold, color: T.navy,
               fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12,
-              border: 'none', cursor: 'pointer',
+              border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
             }}>
               + Nouvelle Commande
             </button>

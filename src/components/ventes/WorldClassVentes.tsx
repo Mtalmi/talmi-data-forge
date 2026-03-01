@@ -37,6 +37,13 @@ const GLASS = {
   radius: 16,
 };
 
+/* ─── LIVE CLOCK ─── */
+function LiveClock() {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => { const id = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(id); }, []);
+  return <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280' }}>{time.toLocaleTimeString('fr-MA', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>;
+}
+
 /* ─── HOOKS ─── */
 function useAnimatedCounter(target: number, duration = 800) {
   const [value, setValue] = useState(0);
@@ -915,7 +922,14 @@ export function WorldClassVentes() {
           </div>
 
           {/* Right */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: '#6B7280', letterSpacing: '0.02em' }}>
+              <LiveClock />
+            </span>
+            <div style={{ position: 'relative', cursor: 'pointer' }}>
+              <Bell size={18} color={T.textSec} />
+              <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
+            </div>
             <button style={{
               background: 'transparent',
               border: `1px solid ${T.goldBorder}`,
@@ -923,7 +937,7 @@ export function WorldClassVentes() {
               fontSize: 12, padding: '7px 16px', borderRadius: 8,
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
               fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
-              transition: 'all 150ms',
+              transition: 'all 150ms', whiteSpace: 'nowrap',
             }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(253,185,19,0.08)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
