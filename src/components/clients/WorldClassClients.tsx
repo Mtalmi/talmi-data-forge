@@ -94,9 +94,9 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
     <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
       style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: `1px solid ${hov ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.15)'}`, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
-        boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
+        boxShadow: 'none',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'transparent', opacity: 0 }} />
       {children}
     </div>
   );
@@ -341,29 +341,29 @@ export default function WorldClassClients() {
       `}</style>
 
       {/* ── HEADER ── */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(17,24,46,0.92)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(245, 158, 11, 0.15)', padding: '0 24px' }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ background: 'transparent', padding: '0 24px', marginBottom: 8 }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', paddingTop: 4, display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${T.gold}, #B8860B)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={18} color={T.navy} />
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Users size={18} color="#F59E0B" />
             </div>
             <div>
-              <span style={{ color: T.textSec, fontWeight: 700, fontSize: 13 }}>TBOS </span>
-              <span style={{ color: T.gold, fontWeight: 800, fontSize: 13 }}>Clients</span>
+              <span style={{ color: '#FFFFFF', fontWeight: 700, fontSize: 13 }}>TBOS </span>
+              <span style={{ color: '#F59E0B', fontWeight: 800, fontSize: 13 }}>Clients</span>
               <p style={{ color: T.textDim, fontSize: 10, lineHeight: 1, marginTop: 1 }}>Données en temps réel</p>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4, flex: 1, justifyContent: 'center' }}>
             {tabs.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '6px 16px', borderRadius: 8, cursor: 'pointer', background: activeTab === tab.id ? `${T.gold}18` : 'transparent', border: activeTab === tab.id ? `1px solid ${T.goldBorder}` : '1px solid transparent', color: activeTab === tab.id ? T.gold : T.textSec, fontWeight: 600, fontSize: 13, transition: 'all 200ms' }}>{tab.label}</button>
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: '6px 16px', borderRadius: 8, cursor: 'pointer', background: activeTab === tab.id ? 'rgba(245, 158, 11, 0.15)' : 'transparent', border: activeTab === tab.id ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent', color: activeTab === tab.id ? '#F59E0B' : '#9CA3AF', fontWeight: 600, fontSize: 13, transition: 'all 200ms' }}>{tab.label}</button>
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
             <div style={{ position: 'relative' }}>
-              <Search size={14} color={T.textDim} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '7px 12px 7px 30px', borderRadius: 8, background: `${T.cardBorder}60`, border: `1px solid ${T.cardBorder}`, color: T.textPri, fontSize: 12, width: 200 }} />
+              <Search size={14} color="#6B7280" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }} />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher..." style={{ padding: '7px 12px 7px 30px', borderRadius: 8, background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', color: T.textPri, fontSize: 12, width: 200 }} onFocus={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.3)'} onBlur={e => e.currentTarget.style.borderColor = 'rgba(245, 158, 11, 0.1)'} />
             </div>
-            {loading && <div style={{ width: 14, height: 14, border: `2px solid ${T.gold}`, borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
+            {loading && <div style={{ width: 14, height: 14, border: '2px solid #F59E0B', borderTopColor: 'transparent', borderRadius: '50%', animation: 'tbos-spin 0.6s linear infinite' }} />}
           </div>
         </div>
       </div>
@@ -450,8 +450,8 @@ export default function WorldClassClients() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(245, 158, 11, 0.08)" vertical={false} />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} tickFormatter={v => `${v}K`} />
                 <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
                 <Area dataKey="ca" name="CA" type="monotone" stroke="#F59E0B" strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: '#F59E0B', r: 4 }} />
                 <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
@@ -462,11 +462,11 @@ export default function WorldClassClients() {
 
         {/* Client List */}
         <section>
-          <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: T.textDim, fontSize: 11 }}>{filteredClients.length} résultats</span>} />
+          <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{filteredClients.length} résultats</span>} />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} />)}
-              {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#9CA3AF', fontSize: 14 }}>Aucun client trouvé</div>}
+              {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#6B7280', fontSize: 14, minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Aucun client trouvé</div>}
             </div>
           </Card>
         </section>
@@ -482,12 +482,8 @@ export default function WorldClassClients() {
         </section>
 
         {/* Footer */}
-        <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Clients v2.0 — Données live • {new Date().toLocaleString('fr-FR')}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Connecté</span>
-          </div>
+        <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <span style={{ color: '#4B5563', fontSize: 12 }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
         </footer>
       </div>
     </div>
