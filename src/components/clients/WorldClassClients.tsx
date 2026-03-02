@@ -211,7 +211,33 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
         <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${segColor}, ${segColor}99)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: T.navy, boxShadow: `0 0 10px ${segColor}40` }}>{initial}</div>
         <div style={{ minWidth: 170, flexShrink: 0 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
-          <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
+            {(() => {
+              const RISK_DATA: Record<string, { level: 'high' | 'moderate' | 'low'; label: string; detail: string }> = {
+                'Atlas Construction': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 17j | 3 impayés' },
+                'Nexus BTP': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 2j | 0 impayés' },
+                'Omega Immobilier': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 8j | 1 impayé' },
+                'Delta Construct': { level: 'low', label: 'Fiable', detail: 'Retard moyen: 0j | 0 impayés' },
+                'Sigma Bâtiment': { level: 'high', label: 'Risque Élevé', detail: 'Retard moyen: 23j | 4 impayés' },
+                'Alpha Travaux': { level: 'moderate', label: 'Risque Modéré', detail: 'Retard moyen: 11j | 1 impayé' },
+              };
+              const risk = RISK_DATA[client.name];
+              if (!risk) return null;
+              const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
+              const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
+              return (
+                <span title={risk.detail} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
+                  background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
+                  cursor: 'help',
+                }}>
+                  {emoji} {risk.label}
+                </span>
+              );
+            })()}
+          </div>
         </div>
         <div style={{ minWidth: 90, flexShrink: 0 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>

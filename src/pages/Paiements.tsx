@@ -1,5 +1,6 @@
 import WorldClassPayments from '@/components/payments/WorldClassPayments';
 import { CashFlowForecasterCard } from '@/components/payments/CashFlowForecasterCard';
+import { PaymentRiskScorerCard } from '@/components/payments/PaymentRiskScorerCard';
 import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -171,6 +172,10 @@ export default function Paiements() {
       {/* 🧠 AI Cash Flow Forecaster */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
         <CashFlowForecasterCard />
+      </div>
+      {/* 🛡️ AI Payment Risk Scorer */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+        <PaymentRiskScorerCard />
       </div>
       <div className="space-y-6" style={{ display: 'none' }}>
         {/* Header */}
