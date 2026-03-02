@@ -5193,3 +5193,9 @@ table tbody tr:hover,
 .tbos-nav-item:hover {
   text-shadow: 0 0 8px rgba(255, 215, 0, 0.1);
 }
+
+/* Live Production ticker scroll */
+@keyframes tbos-ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
