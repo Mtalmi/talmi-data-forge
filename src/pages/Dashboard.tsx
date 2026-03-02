@@ -861,8 +861,8 @@ export default function Dashboard() {
           {/* ── MAIN 4-PANEL LAYOUT ── */}
           <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0 w-full" style={{ minHeight: '240px' }}>
 
-            {/* ══ PANEL 1: PRODUCTION CHART (50%) ══ */}
-            <div className="flex-[5] relative min-w-0">
+            {/* ══ PANEL 1: PRODUCTION CHART (35%) ══ */}
+            <div className="flex-[3.5] relative min-w-0">
               {/* Peak annotation overlay */}
               <div className="absolute z-[5]" style={{ right: '35%', top: '8px' }}>
                 <div className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -973,8 +973,8 @@ export default function Dashboard() {
               </svg>
             </div>
 
-            {/* ══ PANEL 2: LIVE CAMERA FEED (25%) ══ */}
-            <div className="flex-[2.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+            {/* ══ PANEL 2: LIVE CAMERA FEED (35%) ══ */}
+            <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                   Caméra Centrale
@@ -991,8 +991,9 @@ export default function Dashboard() {
                 style={{
                   background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)',
                   border: '1px solid rgba(255,255,255,0.04)',
-                  minHeight: '140px',
+                  minHeight: '200px',
                 }}
+                onClick={() => window.location.href = '/surveillance'}
               >
                 {/* Simulated feed scan lines */}
                 <div className="absolute inset-0 z-[1]" style={{
@@ -1000,43 +1001,62 @@ export default function Dashboard() {
                 }} />
 
                 {/* Camera icon placeholder */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-2">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,215,0,0.06)', border: '1px solid rgba(255,215,0,0.1)' }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-3">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,215,0,0.06)', border: '1px solid rgba(255,215,0,0.1)' }}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
                       <rect x="2" y="6" width="14" height="12" rx="2"/>
                     </svg>
                   </div>
-                  <span className="text-[9px] text-slate-600" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  <span className="text-[10px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     Feed en attente
                   </span>
+
+                  {/* PTZ Control hints */}
+                  <div className="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex items-center gap-1 px-2 py-1 rounded" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.12)' }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.5)" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+                      <span className="text-[8px] text-amber-500/60" style={{ fontFamily: "'JetBrains Mono', monospace" }}>PTZ</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-2 py-1 rounded" style={{ background: 'rgba(255,215,0,0.08)', border: '1px solid rgba(255,215,0,0.12)' }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.5)" strokeWidth="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                      <span className="text-[8px] text-amber-500/60" style={{ fontFamily: "'JetBrains Mono', monospace" }}>FULL</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Overlay metrics — always visible */}
-                <div className="absolute bottom-0 left-0 right-0 z-[3] p-2" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+                <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] text-white/70 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
-                      <span className="w-px h-2.5 bg-white/10" />
-                      <span className="text-[9px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                      <span className="w-px h-3 bg-white/10" />
+                      <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
+                      <span className="w-px h-3 bg-white/10" />
+                      <span className="text-[9px] text-amber-400/60" style={{ fontFamily: "'JetBrains Mono', monospace" }}>REC</span>
                     </div>
-                    <span className="text-[8px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
+                    <span className="text-[9px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
                   </div>
                 </div>
 
                 {/* Fullscreen hint on hover */}
                 <div className="absolute top-2 right-2 z-[4] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <div className="w-7 h-7 rounded flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                     </svg>
                   </div>
                 </div>
+
+                {/* Camera label */}
+                <div className="absolute top-2 left-2 z-[4] px-2 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                  <span className="text-[8px] text-white/60 uppercase tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace" }}>CAM-01 · Centrale</span>
+                </div>
               </div>
             </div>
 
-            {/* ══ PANEL 3: BATCH QUEUE + METRICS (25%) ══ */}
-            <div className="flex-[2.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+            {/* ══ PANEL 3: BATCH QUEUE + METRICS (30%) ══ */}
+            <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
               {/* Batch Queue */}
               <div className="mb-3">
                 <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
