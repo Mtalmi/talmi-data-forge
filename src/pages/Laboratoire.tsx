@@ -3,6 +3,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import WorldClassLaboratory from '@/components/laboratory/WorldClassLaboratory';
 import { AIAnalysisSection } from '@/components/laboratory/AIAnalysisSection';
 import { FormulaOptimizationCard } from '@/components/laboratory/FormulaOptimizationCard';
+import { RegulatoryComplianceCard } from '@/components/laboratory/RegulatoryComplianceCard';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useLabTests } from '@/hooks/useLabTests';
@@ -182,6 +183,10 @@ export default function Laboratoire() {
       {/* 🧪 AI Formula Optimization */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
         <FormulaOptimizationCard />
+      </div>
+      {/* 🛡️ AI Regulatory Compliance */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+        <RegulatoryComplianceCard />
       </div>
       {/* ══ Divider ══ */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px' }}><div style={{ borderTop: '1px solid #1E2D4A' }} /></div>

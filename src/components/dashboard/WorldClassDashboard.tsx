@@ -8,6 +8,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { format, subDays } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
+import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — Dark Luxury
@@ -702,6 +703,9 @@ export function WorldClassDashboard() {
 
             {/* AI Analyst Brief */}
             <AIAnalystBrief />
+
+            {/* Compliance Widget */}
+            <ComplianceWidget />
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
