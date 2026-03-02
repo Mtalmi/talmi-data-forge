@@ -4919,3 +4919,249 @@ table tbody tr:hover,
 }
 
 /* KPI numeral smoothing — weight controlled at component level */
+
+/* ═══════════════════════════════════════════════════════
+   WORLD-CLASS IMMERSIVE ENHANCEMENTS v2
+   Metallic sheen · Breathing trends · Cinematic modals
+   Data particles · Enhanced glass surfaces
+═══════════════════════════════════════════════════════ */
+
+/* ─── Metallic Sheen Sweep for KPI Cards ─── */
+@keyframes tbos-metallic-sweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.tbos-metallic-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.tbos-metallic-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 215, 0, 0.03) 42%,
+    rgba(255, 215, 0, 0.07) 48%,
+    rgba(255, 215, 0, 0.03) 54%,
+    transparent 65%
+  );
+  background-size: 200% 100%;
+  animation: tbos-metallic-sweep 12s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Breathing Trend Arrows ─── */
+@keyframes tbos-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.tbos-trend-breathe {
+  animation: tbos-breathe 2.5s ease-in-out infinite;
+  display: inline-flex;
+}
+
+/* ─── KPI Card Hover Rise ─── */
+.tbos-kpi-rise {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease;
+}
+
+.tbos-kpi-rise:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 215, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 215, 0, 0.2) !important;
+}
+
+/* ─── Odometer Value Transition ─── */
+@keyframes tbos-odometer-tick {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.tbos-odometer {
+  display: inline-block;
+  animation: tbos-odometer-tick 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ─── Gold Data Particle Trail ─── */
+@keyframes tbos-particle-rise {
+  0% {
+    opacity: 0.8;
+    transform: translate(0, 0) scale(1);
+  }
+  60% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--particle-dx, 15px), var(--particle-dy, -40px)) scale(0.3);
+  }
+}
+
+.tbos-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #FFD700;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: tbos-particle-rise 1.2s ease-out forwards;
+  box-shadow: 0 0 4px rgba(255, 215, 0, 0.6);
+}
+
+/* ─── Cinematic Modal Entrance ─── */
+@keyframes tbos-modal-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes tbos-modal-exit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+    filter: blur(4px);
+  }
+}
+
+[data-state="open"][role="dialog"],
+[data-state="open"][role="alertdialog"] {
+  animation: tbos-modal-enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+[data-state="closed"][role="dialog"],
+[data-state="closed"][role="alertdialog"] {
+  animation: tbos-modal-exit 0.25s ease-in both !important;
+}
+
+/* ─── Enhanced Glass Table Surface ─── */
+.tbos-glass-table {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 215, 0, 0.06);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+.tbos-glass-table th {
+  background: rgba(255, 215, 0, 0.03) !important;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.08) !important;
+}
+
+.tbos-glass-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+}
+
+.tbos-glass-table tbody tr {
+  transition: all 0.25s ease;
+}
+
+.tbos-glass-table tbody tr:hover {
+  background: rgba(255, 215, 0, 0.04) !important;
+  box-shadow: inset 0 0 30px rgba(255, 215, 0, 0.02);
+}
+
+/* ─── Row Update Fade Animation ─── */
+@keyframes tbos-row-update {
+  0% { background: rgba(255, 215, 0, 0.08); }
+  100% { background: transparent; }
+}
+
+.tbos-row-updated {
+  animation: tbos-row-update 1.5s ease-out;
+}
+
+/* ─── Premium Tooltip Styling ─── */
+[data-state="delayed-open"][data-side] {
+  animation: tbos-modal-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+[role="tooltip"] {
+  background: rgba(17, 24, 46, 0.95) !important;
+  border: 1px solid rgba(255, 215, 0, 0.1) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 215, 0, 0.05) !important;
+}
+
+/* ─── Ambient Data Flow Lines ─── */
+@keyframes tbos-data-flow {
+  0% { stroke-dashoffset: 100; opacity: 0; }
+  20% { opacity: 0.4; }
+  80% { opacity: 0.4; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* ─── Card Magnetic Hover ─── */
+.card-magnetic {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Press Feedback ─── */
+.press-feedback:active {
+  transform: scale(0.98) !important;
+  transition: transform 0.1s ease !important;
+}
+
+/* ─── Ripple Container ─── */
+@keyframes tbos-ripple {
+  0% { transform: scale(0); opacity: 0.3; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.ripple-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Staggered Card Entrance ─── */
+.tbos-card-stagger:nth-child(1) { animation-delay: 0ms; }
+.tbos-card-stagger:nth-child(2) { animation-delay: 60ms; }
+.tbos-card-stagger:nth-child(3) { animation-delay: 120ms; }
+.tbos-card-stagger:nth-child(4) { animation-delay: 180ms; }
+.tbos-card-stagger:nth-child(5) { animation-delay: 240ms; }
+.tbos-card-stagger:nth-child(6) { animation-delay: 300ms; }
+
+/* ─── Ambient Soundscape Visual Indicator ─── */
+@keyframes tbos-sound-wave {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+
+.tbos-sound-indicator span {
+  display: inline-block;
+  width: 2px;
+  background: rgba(255, 215, 0, 0.5);
+  border-radius: 1px;
+  animation: tbos-sound-wave 1.2s ease-in-out infinite;
+}
+
+.tbos-sound-indicator span:nth-child(2) { animation-delay: 0.15s; }
+.tbos-sound-indicator span:nth-child(3) { animation-delay: 0.3s; }
+.tbos-sound-indicator span:nth-child(4) { animation-delay: 0.45s; }
+.tbos-sound-indicator span:nth-child(5) { animation-delay: 0.6s; }
