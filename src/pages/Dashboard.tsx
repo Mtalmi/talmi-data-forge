@@ -693,6 +693,21 @@ export default function Dashboard() {
               Casablanca · UTC+1
             </span>
             <div className="flex-1 h-[2px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.7), rgba(212,175,55,0.2))' }} />
+            {/* Pace Legend */}
+            <div className="flex items-center gap-3 ml-2">
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[8px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>En rythme</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                <span className="text-[8px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Attention</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                <span className="text-[8px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Retard</span>
+              </div>
+            </div>
           </div>
           {/* Metrics row */}
           <div className="relative flex items-center justify-end gap-3 px-5 pb-2 z-10">

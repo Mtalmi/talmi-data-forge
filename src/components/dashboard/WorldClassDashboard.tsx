@@ -360,7 +360,7 @@ function AIAnalystBrief() {
           <span className="text-sm mt-0.5">💡</span>
           <div>
             <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
-            <p className="text-[11px] leading-relaxed mt-1" style={{ color: 'rgba(148,163,184,0.7)' }}>
+            <p className="mt-1" style={{ color: 'rgba(148,163,184,0.7)', fontSize: '12.5px', lineHeight: 1.5 }}>
               Relancez les devis DEV-2602-316 et DEV-2602-895 pour diversifier le portefeuille client avant fin de mois.
             </p>
           </div>
