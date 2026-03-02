@@ -68,6 +68,7 @@ export default function Dashboard() {
   const { checkPaymentDelays } = usePaymentDelays();
   const [refreshing, setRefreshing] = useState(false);
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
+  const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
 
   // ─── Typewriter effect for greeting ───
@@ -206,6 +207,30 @@ export default function Dashboard() {
     const y = svgH - (SPARKLINE_DATA[idx].v / allMax) * svgH * 0.85 - 5;
     return { ...evt, x, y };
   }).filter(Boolean) as Array<{ h: string; type: string; label: string; x: number; y: number }>;
+
+  // Hover point computation
+  const hoveredPoint = hoveredChartIdx !== null ? (() => {
+    const d = SPARKLINE_DATA[hoveredChartIdx];
+    const x = (hoveredChartIdx / (SPARKLINE_DATA.length - 1)) * svgW;
+    const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+    const hourNum = parseInt(d.h);
+    const timeLabel = `${hourNum.toString().padStart(2, '0')}:00`;
+    return { x, y, v: d.v, h: d.h, time: timeLabel };
+  })() : null;
+
+  const handleChartMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
+    const svg = e.currentTarget;
+    const rect = svg.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width * svgW;
+    const closest = SPARKLINE_DATA.reduce((best, _, i) => {
+      const px = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+      const dist = Math.abs(px - relX);
+      return dist < best.dist ? { idx: i, dist } : best;
+    }, { idx: 0, dist: Infinity });
+    setHoveredChartIdx(closest.idx);
+  }, [svgW, allMax]);
+
+  const handleChartMouseLeave = useCallback(() => setHoveredChartIdx(null), []);
 
   return (
     <MainLayout>
@@ -846,7 +871,7 @@ export default function Dashboard() {
               </div>
 
               {/* The Golden River SVG chart */}
-              <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[3]" preserveAspectRatio="none">
+              <svg viewBox={`0 0 ${svgW} ${svgH}`} className="w-full h-full sparkline-draw relative z-[3]" preserveAspectRatio="none" onMouseMove={handleChartMouseMove} onMouseLeave={handleChartMouseLeave} style={{ cursor: 'crosshair' }}>
                 <defs>
                   <linearGradient id="sparkGlow" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#C9A84C" stopOpacity={0.12} />
@@ -890,6 +915,61 @@ export default function Dashboard() {
                   <animate attributeName="r" values="2;3;2" dur="3s" repeatCount="indefinite" />
                   <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3s" repeatCount="indefinite" />
                 </circle>
+
+                {/* ── HOVER INTERACTION ── */}
+                {hoveredPoint && (
+                  <g>
+                    {/* Vertical dashed guide line */}
+                    <line
+                      x1={hoveredPoint.x} y1={hoveredPoint.y}
+                      x2={hoveredPoint.x} y2={svgH}
+                      stroke="rgba(255,215,0,0.5)"
+                      strokeWidth="0.5"
+                      strokeDasharray="2 2"
+                    />
+                    {/* Enlarged hover point */}
+                    <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#FFD700" opacity="1" />
+                    <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="5" fill="none" stroke="rgba(255,215,0,0.3)" strokeWidth="0.5" />
+
+                    {/* Tooltip background */}
+                    <rect
+                      x={hoveredPoint.x > svgW * 0.7 ? hoveredPoint.x - 32 : hoveredPoint.x + 4}
+                      y={Math.max(2, hoveredPoint.y - 22)}
+                      width="28" height="20" rx="1.5"
+                      fill="#1a1f2e" stroke="rgba(255,215,0,0.15)" strokeWidth="0.5"
+                    />
+                    {/* Peak Name */}
+                    <text
+                      x={hoveredPoint.x > svgW * 0.7 ? hoveredPoint.x - 18 : hoveredPoint.x + 18}
+                      y={Math.max(2, hoveredPoint.y - 22) + 6}
+                      textAnchor="middle" fill="#FFFFFF" fontSize="2.8" fontWeight="700"
+                      fontFamily="'JetBrains Mono', monospace"
+                    >
+                      PEAK {hoveredPoint.h.toUpperCase()}
+                    </text>
+                    {/* Volume */}
+                    <text
+                      x={hoveredPoint.x > svgW * 0.7 ? hoveredPoint.x - 18 : hoveredPoint.x + 18}
+                      y={Math.max(2, hoveredPoint.y - 22) + 12}
+                      textAnchor="middle" fill="#FFD700" fontSize="2.5"
+                      fontFamily="'JetBrains Mono', monospace"
+                    >
+                      {hoveredPoint.v} m³
+                    </text>
+                    {/* Time */}
+                    <text
+                      x={hoveredPoint.x > svgW * 0.7 ? hoveredPoint.x - 18 : hoveredPoint.x + 18}
+                      y={Math.max(2, hoveredPoint.y - 22) + 17}
+                      textAnchor="middle" fill="#FFD700" fontSize="2.2"
+                      fontFamily="'JetBrains Mono', monospace"
+                    >
+                      {hoveredPoint.time}
+                    </text>
+                  </g>
+                )}
+
+                {/* Invisible hover target rect */}
+                <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
               </svg>
             </div>
 
