@@ -99,6 +99,7 @@ const RealitySculptor = lazy(() => import("./pages/RealitySculptor"));
 const EmpathicInnovator = lazy(() => import("./pages/EmpathicInnovator"));
 const Dreamweaver = lazy(() => import("./pages/Dreamweaver"));
 const OmniversalCreator = lazy(() => import("./pages/OmniversalCreator"));
+const SynesthesiaSavant = lazy(() => import("./pages/SynesthesiaSavant"));
 
 const queryClient = new QueryClient();
 
@@ -207,6 +208,7 @@ const App = () => (
                      <Route path="/empathic-innovator" element={<EmpathicInnovator />} />
                      <Route path="/dreamweaver" element={<Dreamweaver />} />
                      <Route path="/omniversal-creator" element={<OmniversalCreator />} />
+                     <Route path="/synesthesia-savant" element={<SynesthesiaSavant />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
