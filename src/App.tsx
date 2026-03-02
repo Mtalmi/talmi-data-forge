@@ -120,6 +120,7 @@ const CognitiveCrucible = lazy(() => import("./pages/CognitiveCrucible"));
 const EmpathicGauntlet = lazy(() => import("./pages/EmpathicGauntlet"));
 const RealityRazor = lazy(() => import("./pages/RealityRazor"));
 const ContextualChameleon = lazy(() => import("./pages/ContextualChameleon"));
+const FailureFiesta = lazy(() => import("./pages/FailureFiesta"));
 
 const queryClient = new QueryClient();
 
@@ -249,6 +250,7 @@ const App = () => (
                      <Route path="/empathic-gauntlet" element={<EmpathicGauntlet />} />
                      <Route path="/reality-razor" element={<RealityRazor />} />
                      <Route path="/contextual-chameleon" element={<ContextualChameleon />} />
+                     <Route path="/failure-fiesta" element={<FailureFiesta />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
