@@ -97,6 +97,7 @@ const InnovationFusionReactor = lazy(() => import("./pages/InnovationFusionReact
 const EmergentInnovator = lazy(() => import("./pages/EmergentInnovator"));
 const RealitySculptor = lazy(() => import("./pages/RealitySculptor"));
 const EmpathicInnovator = lazy(() => import("./pages/EmpathicInnovator"));
+const Dreamweaver = lazy(() => import("./pages/Dreamweaver"));
 
 const queryClient = new QueryClient();
 
@@ -203,6 +204,7 @@ const App = () => (
                      <Route path="/emergent-innovator" element={<EmergentInnovator />} />
                      <Route path="/reality-sculptor" element={<RealitySculptor />} />
                      <Route path="/empathic-innovator" element={<EmpathicInnovator />} />
+                     <Route path="/dreamweaver" element={<Dreamweaver />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
