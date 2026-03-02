@@ -3010,6 +3010,19 @@
   }
 }
 
+/* ─── TBOS Header Gradient Shift ─── */
+@keyframes tbos-gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── TBOS Concentric Ring Expand ─── */
+@keyframes tbos-ring-expand {
+  0% { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
 /* ─── Stagger animation on page load ─── */
 @keyframes cardReveal {
   from {

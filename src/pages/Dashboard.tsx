@@ -335,24 +335,58 @@ export default function Dashboard() {
           {/* Grid fade-out */}
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
-          {/* Branded Header */}
-          <div className="relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both', paddingTop: 20, paddingBottom: 20 }}>
+          {/* Branded Header — World-Class */}
+          <div className="relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both', padding: '24px 0' }}>
             <div className="flex items-center justify-center gap-4">
-              <LayoutDashboard size={28} style={{ color: '#FFD700' }} />
-              <div className="text-center">
-                <h2 className="flex items-center gap-2 justify-center" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", fontWeight: 900, fontSize: '1.5rem', color: '#FFD700', letterSpacing: '0.05em' }}>
+              <LayoutDashboard size={30} style={{ color: '#FFD700', filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.3))' }} />
+              <div className="flex items-baseline gap-3 flex-wrap justify-center">
+                {/* Animated gradient title */}
+                <h2 style={{
+                  fontFamily: "'Inter', 'DM Sans', sans-serif",
+                  fontWeight: 900,
+                  fontSize: 'clamp(1.4rem, 2.2vw, 1.95rem)',
+                  letterSpacing: '0.06em',
+                  background: 'linear-gradient(135deg, #FFD700 0%, #B87333 40%, #FFD700 80%, #B87333 100%)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'tbos-gradient-shift 6s ease-in-out infinite',
+                  lineHeight: 1.1,
+                }}>
                   TBOS Tableau de Bord
-                  {/* Pulsing real-time dot */}
-                  <span className="relative flex items-center justify-center" style={{ width: 8, height: 8 }}>
-                    <span className="absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#1E90FF', animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
-                    <span className="relative inline-flex rounded-full" style={{ width: 8, height: 8, backgroundColor: '#1E90FF' }} />
-                  </span>
                 </h2>
-                <p style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.75rem', color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
-                  Données en temps réel
-                </p>
+                {/* Subtitle with data pulse */}
+                <span className="flex items-center gap-1.5" style={{
+                  fontFamily: "'Inter', 'DM Sans', sans-serif",
+                  fontWeight: 500,
+                  fontStyle: 'italic',
+                  fontSize: 'clamp(0.7rem, 1.1vw, 0.95rem)',
+                  color: 'rgba(148,163,184,0.6)',
+                  letterSpacing: '0.08em',
+                }}>
+                  Données en temps r
+                  {/* Pulsing dot replacing é */}
+                  <span className="relative inline-flex items-center justify-center" style={{ width: 10, height: 10, marginBottom: -1 }}>
+                    {/* Concentric ring */}
+                    <span className="absolute rounded-full" style={{
+                      width: 18, height: 18,
+                      border: '1px solid rgba(30,144,255,0.3)',
+                      animation: 'tbos-ring-expand 2s ease-out infinite',
+                    }} />
+                    {/* Ping */}
+                    <span className="absolute inline-flex h-full w-full rounded-full" style={{
+                      backgroundColor: 'rgba(30,144,255,0.5)',
+                      animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
+                    }} />
+                    {/* Core dot */}
+                    <span className="relative inline-flex rounded-full" style={{ width: 6, height: 6, backgroundColor: '#1E90FF', boxShadow: '0 0 8px rgba(30,144,255,0.6)' }} />
+                  </span>
+                  el
+                </span>
               </div>
             </div>
+            {/* Subtle gold hairline */}
+            <div className="mx-auto mt-3" style={{ maxWidth: 320, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)' }} />
           </div>
 
           {/* Greeting — Cinematic Hero Moment */}
