@@ -108,6 +108,7 @@ const NeuroNomad = lazy(() => import("./pages/NeuroNomad"));
 const CosmicComedian = lazy(() => import("./pages/CosmicComedian"));
 const EmpathicEvolutioneer = lazy(() => import("./pages/EmpathicEvolutioneer"));
 const SymbioticStoryteller = lazy(() => import("./pages/SymbioticStoryteller"));
+const QuantumQualiaQuaestor = lazy(() => import("./pages/QuantumQualiaQuaestor"));
 
 const queryClient = new QueryClient();
 
@@ -225,6 +226,7 @@ const App = () => (
                      <Route path="/cosmic-comedian" element={<CosmicComedian />} />
                      <Route path="/empathic-evolutioneer" element={<EmpathicEvolutioneer />} />
                      <Route path="/symbiotic-storyteller" element={<SymbioticStoryteller />} />
+                     <Route path="/quantum-qualia-quaestor" element={<QuantumQualiaQuaestor />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
