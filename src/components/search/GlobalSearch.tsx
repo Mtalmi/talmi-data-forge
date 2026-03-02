@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
@@ -145,50 +144,121 @@ export function GlobalSearch() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="ghost"
+        <button
           role="combobox"
           aria-expanded={open}
-          className="w-full md:w-80 justify-start text-gray-600 min-h-[36px] h-9 hover:bg-transparent"
+          className="tbos-search-trigger group flex items-center gap-2.5 w-full md:w-[340px] h-10 px-4 rounded-lg cursor-pointer transition-all duration-250"
           style={{
-            background: 'rgba(245, 158, 11, 0.04)',
-            border: '1px solid rgba(245, 158, 11, 0.08)',
+            background: 'rgba(0,0,0,0.45)',
+            border: '1.5px solid rgba(255, 215, 0, 0.15)',
             borderRadius: 8,
           }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.4)';
+            (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.6)';
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.15)';
+            (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.45)';
+          }}
         >
-          <Search className="mr-2 h-4 w-4 shrink-0 text-gray-600" />
-          <span className="hidden sm:inline text-sm text-gray-600">{gs.quickSearch}</span>
-          <span className="sm:hidden text-sm text-gray-600">{gs.search}</span>
-        </Button>
+          {/* Search icon */}
+          <Search
+            className="h-[18px] w-[18px] flex-shrink-0 transition-all duration-200 group-hover:scale-110"
+            style={{ color: '#FFD700' }}
+            strokeWidth={1.8}
+          />
+          {/* Placeholder */}
+          <span
+            className="hidden sm:inline text-[14px] flex-1 text-left truncate"
+            style={{
+              fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+              fontWeight: 400,
+              color: 'rgba(160, 160, 160, 0.7)',
+              letterSpacing: '0.01em',
+            }}
+          >
+            Search metrics, KPIs, reports...
+          </span>
+          <span
+            className="sm:hidden text-[14px]"
+            style={{ color: 'rgba(160, 160, 160, 0.7)' }}
+          >
+            {gs.search}
+          </span>
+
+          {/* Keyboard shortcut badges */}
+          <div className="flex items-center gap-0.5 flex-shrink-0">
+            <kbd
+              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
+              style={{
+                color: 'rgba(255, 215, 0, 0.4)',
+                background: 'rgba(255, 215, 0, 0.06)',
+                border: '1px solid rgba(255, 215, 0, 0.1)',
+              }}
+            >⌘</kbd>
+            <kbd
+              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
+              style={{
+                color: 'rgba(255, 215, 0, 0.4)',
+                background: 'rgba(255, 215, 0, 0.06)',
+                border: '1px solid rgba(255, 215, 0, 0.1)',
+              }}
+            >K</kbd>
+          </div>
+        </button>
       </PopoverTrigger>
-      <PopoverContent className="w-[350px] md:w-[500px] p-0" align="start">
+      <PopoverContent
+        className="w-[380px] md:w-[520px] p-0"
+        align="start"
+        style={{
+          background: '#0d1220',
+          border: '1.5px solid rgba(255, 215, 0, 0.2)',
+          borderRadius: 10,
+          boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.05)',
+        }}
+      >
         <Command shouldFilter={false}>
-          <div className="flex items-center border-b px-3">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+          <div
+            className="flex items-center px-4"
+            style={{ borderBottom: '1px solid rgba(255, 215, 0, 0.08)' }}
+          >
+            <Search className="mr-3 h-[18px] w-[18px] shrink-0" style={{ color: '#FFD700' }} strokeWidth={1.8} />
             <input
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={gs.searchPlaceholder}
-              className="flex h-12 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-12 w-full bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              style={{
+                fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+                fontSize: '14px',
+                color: 'rgba(255,255,255,0.9)',
+              }}
             />
             {query && (
-              <Button variant="ghost" size="sm" onClick={() => setQuery('')} className="h-8 w-8 p-0">
+              <button
+                onClick={() => setQuery('')}
+                className="h-7 w-7 flex items-center justify-center rounded-md transition-colors duration-150"
+                style={{ color: 'rgba(255,255,255,0.4)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#FFD700'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; }}
+              >
                 <X className="h-4 w-4" />
-              </Button>
+              </button>
             )}
           </div>
           <CommandList className="max-h-[400px]">
             {loading && (
               <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#FFD700' }} />
               </div>
             )}
             {!loading && query.length >= 2 && results.length === 0 && (
               <CommandEmpty>{gs.noResultsFound}</CommandEmpty>
             )}
             {!loading && query.length < 2 && (
-              <div className="py-6 text-center text-sm text-muted-foreground">
+              <div className="py-6 text-center text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
                 {gs.typeMinChars}
               </div>
             )}
