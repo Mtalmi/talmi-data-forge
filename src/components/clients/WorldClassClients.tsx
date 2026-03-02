@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { ClientChurnPredictorCard } from '@/components/clients/ClientChurnPredictorCard';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
 import { toast } from 'sonner';
 import {
@@ -234,6 +235,28 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
                   cursor: 'help',
                 }}>
                   {emoji} {risk.label}
+                </span>
+              );
+            })()}
+            {(() => {
+              const CHURN_DATA: Record<string, { icon: string; label: string; color: string; detail: string }> = {
+                'Atlas Construction': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'volume ↓40% sur 3 mois' },
+                'Nexus BTP': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'volume stable, commandes régulières' },
+                'Omega Immobilier': { icon: '⚠️', label: 'À Surveiller', color: T.warning, detail: 'volume ↓15% sur 2 mois' },
+                'Delta Construct': { icon: '📈', label: 'Croissance', color: T.info, detail: 'volume ↑22% sur 3 mois' },
+                'Sigma Bâtiment': { icon: '📉', label: 'Risque Perte', color: T.danger, detail: 'aucune commande depuis 28j' },
+                'Alpha Travaux': { icon: '📈', label: 'Fidèle', color: T.success, detail: 'commandes hebdomadaires stables' },
+              };
+              const churn = CHURN_DATA[client.name];
+              if (!churn) return null;
+              return (
+                <span title={churn.detail} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 3,
+                  padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
+                  background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
+                  cursor: 'help',
+                }}>
+                  {churn.icon} {churn.label}
                 </span>
               );
             })()}
@@ -506,6 +529,10 @@ export default function WorldClassClients() {
       {/* ── CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
+        {/* AI Churn Predictor */}
+        <section>
+          <ClientChurnPredictorCard />
+        </section>
         {/* KPIs */}
         <section>
           <SectionHeader icon={Users} label="Indicateurs CRM" />
