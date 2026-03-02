@@ -53,7 +53,7 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
 
       {/* Content Layer — offset by sidebar width on desktop */}
         <div
-          className={`relative z-10 flex flex-col h-screen flex-1 min-w-0 overflow-y-auto overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-56' : 'lg:ml-0'}`}
+          className={`relative z-10 flex flex-col h-screen flex-1 min-w-0 overflow-y-auto overflow-x-hidden max-w-full transition-[margin] duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'}`}
           style={{ background: 'transparent' }}
         >
         {/* Preview Mode Banner */}
