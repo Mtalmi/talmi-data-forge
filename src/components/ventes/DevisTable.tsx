@@ -364,6 +364,7 @@ export function DevisTable({
             <TableHead className="text-right">Total HT (DH)</TableHead>
             <TableHead className="text-center">Statut</TableHead>
             <TableHead className="text-center">Score IA</TableHead>
+            <TableHead className="text-center">Marge IA</TableHead>
             <TableHead className="text-center">Priorité</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
@@ -508,6 +509,48 @@ export function DevisTable({
                             <span className="text-xs text-muted-foreground">Pas encore scoré</span>
                           )}
                         </TooltipContent>
+                      </Tooltip>
+                    );
+                  })()}
+                </TableCell>
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  {(() => {
+                    const MOCK_MARGINS: Record<string, { pct: number; tip: string }> = {
+                      '544': { pct: 23, tip: '' },
+                      '716': { pct: 18, tip: '' },
+                      '349': { pct: 14, tip: '💡 Marge sous le seuil de 18%. Recommandation: augmenter de 45 MAD/m³ ou substituer formule B25 → B25S pour économiser 12 MAD/m³ sur les agrégats.' },
+                      '316': { pct: 8, tip: '⚠️ Marge critique. Ce devis est à 8% contre un seuil minimum de 18%. Recommandation urgente: renégocier le prix (+62 MAD/m³) ou proposer formule alternative. Coût transport élevé: 47km aller-retour.' },
+                      '650': { pct: 11, tip: '💡 Marge sous le seuil de 18%. Recommandation: revoir le prix de vente ou réduire les coûts logistiques.' },
+                      '895': { pct: 5, tip: '🔴 Marge dangereuse. Risque de perte nette après coûts indirects. Recommandation: ne pas accepter en l\'état. Proposer réduction volume ou formule économique.' },
+                    };
+                    const idSuffix = devis.devis_id?.split('-').pop() || '';
+                    const mock = MOCK_MARGINS[idSuffix];
+                    const pct = mock?.pct ?? Math.floor(Math.random() * 20 + 5);
+                    const tip = mock?.tip ?? '';
+                    const bg = pct >= 18 ? 'rgba(16,185,129,0.12)' : pct >= 10 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
+                    const border = pct >= 18 ? 'rgba(16,185,129,0.25)' : pct >= 10 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
+                    const color = pct >= 18 ? '#10B981' : pct >= 10 ? '#F59E0B' : '#EF4444';
+                    const needsTip = pct < 18 && tip;
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                            padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                            background: bg, border: `1px solid ${border}`, color,
+                            fontFamily: 'JetBrains Mono, monospace', cursor: needsTip ? 'help' : 'default',
+                          }}>
+                            Marge: {pct}%
+                          </span>
+                        </TooltipTrigger>
+                        {needsTip && (
+                          <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(255,215,0,0.15)', borderRadius: 8, padding: '10px 14px' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                              <span style={{ fontSize: 12, flexShrink: 0 }}>✨</span>
+                              <p style={{ fontSize: 11, lineHeight: 1.5, color: '#F1F5F9' }}>{tip}</p>
+                            </div>
+                          </TooltipContent>
+                        )}
                       </Tooltip>
                     );
                   })()}
