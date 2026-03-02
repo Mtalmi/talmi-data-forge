@@ -106,6 +106,7 @@ const ChronosCatalyst = lazy(() => import("./pages/ChronosCatalyst"));
 const HyperdimensionalHelmsman = lazy(() => import("./pages/HyperdimensionalHelmsman"));
 const NeuroNomad = lazy(() => import("./pages/NeuroNomad"));
 const CosmicComedian = lazy(() => import("./pages/CosmicComedian"));
+const EmpathicEvolutioneer = lazy(() => import("./pages/EmpathicEvolutioneer"));
 
 const queryClient = new QueryClient();
 
@@ -221,6 +222,7 @@ const App = () => (
                      <Route path="/hyperdimensional-helmsman" element={<HyperdimensionalHelmsman />} />
                      <Route path="/neuro-nomad" element={<NeuroNomad />} />
                      <Route path="/cosmic-comedian" element={<CosmicComedian />} />
+                     <Route path="/empathic-evolutioneer" element={<EmpathicEvolutioneer />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
