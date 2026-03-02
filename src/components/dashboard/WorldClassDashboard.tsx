@@ -10,6 +10,7 @@ import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
 import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget';
 import { EnergyCostAnomalyWidget } from '@/components/dashboard/EnergyCostAnomalyWidget';
+import { SeasonalDemandForecasterCard } from '@/components/dashboard/SeasonalDemandForecasterCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — Dark Luxury
@@ -875,6 +876,11 @@ export function WorldClassDashboard() {
               </div>
             </Card>
           </div>
+        </div>
+
+        {/* ── Seasonal Demand Forecaster ── */}
+        <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
+          <SeasonalDemandForecasterCard />
         </div>
       </div>
     </div>
