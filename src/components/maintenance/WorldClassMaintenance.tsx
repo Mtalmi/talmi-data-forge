@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -261,13 +261,17 @@ function KPICard({ label, value, suffix = '', color, icon: Icon, trend, delay = 
 // ─────────────────────────────────────────────────────
 // SECTION 2: EQUIPMENT CARD
 // ─────────────────────────────────────────────────────
-function EquipmentCard({ eq, delay }: { eq: typeof EQUIPMENT[0]; delay: number }) {
+function EquipmentCard({ eq, delay, prediction }: { eq: typeof EQUIPMENT[0]; delay: number; prediction?: any }) {
   const [hov, setHov] = useState(false);
+  const [showPrediction, setShowPrediction] = useState(false);
   const vis = useFadeIn(delay);
   const uptime = useProgressBar(eq.uptime, 1200);
   const isMaint = eq.status === 'maint';
   const uptimeColor = eq.uptime >= 95 ? T.success : eq.uptime >= 90 ? T.warning : T.danger;
   const uptimeCount = useAnimatedCounter(Math.round(eq.uptime * 10), 1200);
+
+  const prob = prediction?.prediction?.failure_probability ?? 0;
+  const daysUntil = prediction?.prediction?.days_until_failure;
 
   return (
     <div
@@ -288,6 +292,21 @@ function EquipmentCard({ eq, delay }: { eq: typeof EQUIPMENT[0]; delay: number }
           <eq.Icon size={22} color={eq.iconColor} />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          {/* AI Prediction Badge */}
+          {prob > 0.6 && daysUntil != null && (
+            <span
+              onClick={(e) => { e.stopPropagation(); setShowPrediction(!showPrediction); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, background: `${T.danger}22`, color: T.danger, border: `1px solid ${T.danger}44`, borderRadius: 100, padding: '3px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer', animation: 'pulse 1.5s infinite' }}>
+              ⚠️ Panne dans {daysUntil}j
+            </span>
+          )}
+          {prob >= 0.3 && prob <= 0.6 && daysUntil != null && (
+            <span
+              onClick={(e) => { e.stopPropagation(); setShowPrediction(!showPrediction); }}
+              style={{ display: 'flex', alignItems: 'center', gap: 4, background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`, borderRadius: 100, padding: '3px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+              🔧 Attention {daysUntil}j
+            </span>
+          )}
           {isMaint ? (
             <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`, borderRadius: 100, padding: '3px 8px', fontSize: 11, fontWeight: 700 }}>
               <span style={{ display: 'inline-block', width: 6, height: 6, borderRadius: '50%', background: T.warning, animation: 'pulse 1.5s infinite' }} />
@@ -334,6 +353,23 @@ function EquipmentCard({ eq, delay }: { eq: typeof EQUIPMENT[0]; delay: number }
           <div style={{ color: eq.daysUntil < 7 ? T.warning : T.textDim }}>Proch.: {eq.prochaine}</div>
         </div>
       </div>
+
+      {/* AI Prediction Expanded */}
+      {showPrediction && prediction && (
+        <div style={{ background: '#111', border: '1px solid #333', borderRadius: 8, padding: 12, marginTop: 4 }}>
+          <p style={{ fontSize: 11, color: T.gold, fontWeight: 700, marginBottom: 6 }}>🤖 Prédiction IA</p>
+          <p style={{ fontSize: 12, color: T.textSec, marginBottom: 4 }}>{prediction.prediction?.failure_type}</p>
+          <p style={{ fontSize: 11, color: T.textPri, marginBottom: 4 }}>{prediction.recommended_action}</p>
+          {prediction.estimated_cost && (
+            <p style={{ fontSize: 11, color: T.warning, marginBottom: 8 }}>Coût estimé: {prediction.estimated_cost.toLocaleString('fr-FR')} DH</p>
+          )}
+          <button
+            onClick={() => { import('sonner').then(m => m.toast.success('Maintenance planifiée')); }}
+            style={{ padding: '4px 12px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+            Planifier
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -851,6 +887,40 @@ const TABS = ['Équipements', 'Planification', 'Historique', 'Pièces'];
 export default function WorldClassMaintenance() {
   const [activeTab, setActiveTab] = useState('Équipements');
   const { kpis: maintKpis } = useMaintenanceLiveData();
+
+  // AI predictions from n8n
+  const [predictions, setPredictions] = React.useState<Record<string, any>>({});
+  React.useEffect(() => {
+    const channel = supabase.channel('maint-predictions')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'n8n_workflow_results' }, (payload) => {
+        const row = payload.new as any;
+        if (row?.agent_type === 'maintenance_prediction' && row?.response_payload?.equipment_name) {
+          setPredictions(prev => ({
+            ...prev,
+            [row.response_payload.equipment_name.toLowerCase().replace(/\s+/g, '-')]: row.response_payload,
+          }));
+        }
+      })
+      .subscribe();
+    // Also fetch existing
+    supabase.from('n8n_workflow_results')
+      .select('response_payload')
+      .eq('agent_type', 'maintenance_prediction')
+      .order('created_at', { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        if (data) {
+          const map: Record<string, any> = {};
+          data.forEach((r: any) => {
+            const name = r.response_payload?.equipment_name;
+            if (name) map[name.toLowerCase().replace(/\s+/g, '-')] = r.response_payload;
+          });
+          setPredictions(map);
+        }
+      });
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
   return (
     <div style={{ background: T.navy, minHeight: '100vh', fontFamily: "'DM Sans', sans-serif" }}>
       <style>{`
@@ -893,7 +963,7 @@ export default function WorldClassMaintenance() {
           <SectionHeader title="État des Équipements" badge="11 opérationnels" badge2="1 en maintenance" badgeColor={T.success} badge2Color={T.warning} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {EQUIPMENT.map((eq, i) => (
-              <EquipmentCard key={eq.id} eq={eq} delay={i * 100} />
+              <EquipmentCard key={eq.id} eq={eq} delay={i * 100} prediction={predictions[eq.name.toLowerCase().replace(/\s+/g, '-')]} />
             ))}
           </div>
         </div>
