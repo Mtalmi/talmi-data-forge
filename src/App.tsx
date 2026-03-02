@@ -114,6 +114,7 @@ const TransDimensionalTranslator = lazy(() => import("./pages/TransDimensionalTr
 const NeuroFractalNavigator = lazy(() => import("./pages/NeuroFractalNavigator"));
 const ChronoSynergeticSymbiont = lazy(() => import("./pages/ChronoSynergeticSymbiont"));
 const XenoEmpathicXenoformer = lazy(() => import("./pages/XenoEmpathicXenoformer"));
+const PsychoSemanticSynesthete = lazy(() => import("./pages/PsychoSemanticSynesthete"));
 
 const queryClient = new QueryClient();
 
@@ -237,6 +238,7 @@ const App = () => (
                      <Route path="/neuro-fractal-navigator" element={<NeuroFractalNavigator />} />
                      <Route path="/chrono-synergetic-symbiont" element={<ChronoSynergeticSymbiont />} />
                      <Route path="/xeno-empathic-xenoformer" element={<XenoEmpathicXenoformer />} />
+                     <Route path="/psycho-semantic-synesthete" element={<PsychoSemanticSynesthete />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
