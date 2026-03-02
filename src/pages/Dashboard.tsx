@@ -808,16 +808,36 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── MAIN 3-PANEL LAYOUT ── */}
-          <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0 w-full" style={{ minHeight: '220px' }}>
+          {/* ── LIVE ALERT TICKER ── */}
+          <div className="relative mx-5 mb-3 z-10 overflow-hidden rounded-md" style={{ background: 'rgba(234,179,8,0.04)', border: '1px solid rgba(234,179,8,0.1)', height: 28 }}>
+            <div className="flex items-center h-full px-3 gap-2" style={{ animation: 'tbos-ticker-scroll 20s linear infinite' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" style={{ animation: 'pulse-alert 2s ease-in-out infinite' }} />
+              <span className="text-[10px] text-slate-400 whitespace-nowrap" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                ✓ Batch #403-068 malaxage terminé · 94% efficacité
+              </span>
+              <span className="w-px h-3 bg-white/[0.06] flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+              <span className="text-[10px] text-amber-400/80 whitespace-nowrap" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                ⚠ Silo 2 ciment: 18% restant — commande auto déclenchée
+              </span>
+              <span className="w-px h-3 bg-white/[0.06] flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-[10px] text-slate-400 whitespace-nowrap" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                ✓ BL-2026-0312 livré · BTP Maroc · 8 m³ F-B25
+              </span>
+              <span className="w-px h-3 bg-white/[0.06] flex-shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+              <span className="text-[10px] text-slate-400 whitespace-nowrap" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                ✓ Qualité: Test R28 conforme — 32.4 MPa
+              </span>
+            </div>
+          </div>
 
-            {/* ══ PANEL 1: PRODUCTION CHART (70%) ══ */}
-            <div className="flex-[7] relative min-w-0">
-              {/* Batching Plant silhouette */}
-              {/* Plant silhouette — removed for editorial cleanliness */}
+          {/* ── MAIN 4-PANEL LAYOUT ── */}
+          <div className="relative flex gap-0 px-4 pb-3 z-10 min-w-0 w-full" style={{ minHeight: '240px' }}>
 
-              {/* Embers removed for editorial cleanliness */}
-
+            {/* ══ PANEL 1: PRODUCTION CHART (50%) ══ */}
+            <div className="flex-[5] relative min-w-0">
               {/* Peak annotation overlay */}
               <div className="absolute z-[5]" style={{ right: '35%', top: '8px' }}>
                 <div className="px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -862,8 +882,6 @@ export default function Dashboard() {
                 <line x1={nowX} y1="0" x2={nowX} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2 2" />
                 <text x={nowX} y="5" textAnchor="middle" fill="rgba(212,168,67,0.3)" fontSize="2" fontWeight="500" fontFamily="'JetBrains Mono', monospace" letterSpacing="0.15em">MAINTENANT</text>
 
-                {/* Batch event markers removed for editorial cleanliness */}
-
                 {/* Peak annotation line */}
                 <line x1={peakX} y1={peakY} x2={peakX} y2={peakY - 12} stroke="rgba(255,255,255,0.08)" strokeWidth="0.3" strokeDasharray="1 1.5" />
 
@@ -875,102 +893,149 @@ export default function Dashboard() {
               </svg>
             </div>
 
-            {/* ══ PANEL 2: LIVE BATCH QUEUE (18%) ══ */}
-            <div className="flex-[1.8] border-l border-white/[0.04] pl-3 ml-2 min-w-0">
-              <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                File de Production
+            {/* ══ PANEL 2: LIVE CAMERA FEED (25%) ══ */}
+            <div className="flex-[2.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  Caméra Centrale
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                  <span className="text-[8px] text-red-400/80 font-medium uppercase tracking-wider">LIVE</span>
+                </div>
               </div>
 
-              {/* Current batch — highlighted */}
-              <div className="mb-2 p-2.5 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.12)' }}>
-                <div className="flex items-center gap-1.5 mb-1">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                </div>
-                <div className="text-[9px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: '72%', background: 'linear-gradient(90deg, #f59e0b, #22c55e)' }} />
+              {/* Video placeholder — ready for HLS/RTSP integration */}
+              <div
+                className="flex-1 rounded-lg relative overflow-hidden cursor-pointer group"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)',
+                  border: '1px solid rgba(255,255,255,0.04)',
+                  minHeight: '140px',
+                }}
+              >
+                {/* Simulated feed scan lines */}
+                <div className="absolute inset-0 z-[1]" style={{
+                  background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px)',
+                }} />
+
+                {/* Camera icon placeholder */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-2">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,215,0,0.06)', border: '1px solid rgba(255,215,0,0.1)' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
+                      <rect x="2" y="6" width="14" height="12" rx="2"/>
+                    </svg>
                   </div>
-                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
+                  <span className="text-[9px] text-slate-600" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    Feed en attente
+                  </span>
                 </div>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-[9px] text-amber-400/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>⏱ 01:47</span>
-                  <span className="text-[8px] text-emerald-400/60">Déchargement</span>
-                </div>
-              </div>
 
-              {/* Queued batches */}
-              <div className="space-y-1">
-                {[
-                  { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
-                  { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
-                  { id: '#403-071', formula: 'F-B25 · 10 m³', client: 'Immob. Prestige' },
-                ].map((batch) => (
-                  <div key={batch.id} className="flex items-center gap-1.5 p-1.5 rounded hover:bg-white/[0.02] transition-colors">
-                    <span className="w-1 h-1 bg-slate-600 rounded-full" />
-                    <div className="min-w-0">
-                      <div className="text-[9px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
-                      <div className="text-[8px] text-slate-600 truncate">{batch.formula} · {batch.client}</div>
+                {/* Overlay metrics — always visible */}
+                <div className="absolute bottom-0 left-0 right-0 z-[3] p-2" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] text-white/70 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                      <span className="w-px h-2.5 bg-white/10" />
+                      <span className="text-[9px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
                     </div>
+                    <span className="text-[8px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              {/* Queue footer */}
-              <div className="mt-2 pt-2 border-t border-white/[0.04]">
-                <div className="text-[8px] text-slate-600">
-                  Total file: <span className="text-slate-400 font-medium">38 m³</span>
+                {/* Fullscreen hint on hover */}
+                <div className="absolute top-2 right-2 z-[4] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* ══ PANEL 3: KEY METRICS (12%) ══ */}
-            <div className="flex-[1.2] border-l border-white/[0.04] pl-3 ml-2 min-w-0">
-              <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                Métriques
+            {/* ══ PANEL 3: BATCH QUEUE + METRICS (25%) ══ */}
+            <div className="flex-[2.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+              {/* Batch Queue */}
+              <div className="mb-3">
+                <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  File de Production
+                </div>
+
+                {/* Current batch — highlighted */}
+                <div className="mb-2 p-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.12)' }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
+                    <span className="ml-auto text-[8px] text-emerald-400/60">Déchargement</span>
+                  </div>
+                  <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: '72%', background: 'linear-gradient(90deg, #f59e0b, #22c55e)', transition: 'width 1s ease-out' }} />
+                    </div>
+                    <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="text-[9px] text-amber-400/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>⏱ 01:47</span>
+                  </div>
+                </div>
+
+                {/* Queued batches */}
+                <div className="space-y-0.5">
+                  {[
+                    { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
+                    { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
+                  ].map((batch) => (
+                    <div key={batch.id} className="flex items-center gap-1.5 p-1 rounded hover:bg-white/[0.02] transition-colors">
+                      <span className="w-1 h-1 bg-slate-600 rounded-full" />
+                      <div className="min-w-0">
+                        <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
+                        <div className="text-[7px] text-slate-600 truncate">{batch.formula} · {batch.client}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="space-y-3">
-                {/* Cadence */}
-                <div>
-                  <div className="text-2xl text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>47</div>
-                  <div className="text-[9px] text-slate-500 mt-0.5">m³/heure</div>
-                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Au-dessus cible</div>
+              {/* Compact Metrics */}
+              <div className="border-t border-white/[0.04] pt-2 space-y-2">
+                <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  Métriques
                 </div>
-
-                {/* Efficiency */}
-                <div>
-                  <div className="flex items-baseline">
-                    <span className="text-2xl text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>94</span>
-                    <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>%</span>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <div className="text-lg text-white leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>47</div>
+                    <div className="text-[8px] text-slate-500 mt-0.5">m³/h</div>
+                    <div className="text-[8px] text-emerald-400/70">● Cible</div>
                   </div>
-                  <div className="text-[9px] text-slate-500 mt-0.5">Efficacité</div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '94%' }} />
+                  <div>
+                    <div className="flex items-baseline">
+                      <span className="text-lg text-white leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>94</span>
+                      <span className="text-[10px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>%</span>
+                    </div>
+                    <div className="text-[8px] text-slate-500 mt-0.5">Efficacité</div>
+                    <div className="w-full h-0.5 bg-slate-800 rounded-full mt-1 overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full" style={{ width: '94%', transition: 'width 1.5s ease-out' }} />
                     </div>
                   </div>
-                </div>
-
-                {/* Downtime */}
-                <div>
-                  <div className="flex items-baseline gap-0.5">
-                    <span className="text-lg text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>12</span>
-                    <span className="text-[10px] text-slate-500">min</span>
+                  <div>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-lg text-white leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>12</span>
+                      <span className="text-[9px] text-slate-500">min</span>
+                    </div>
+                    <div className="text-[8px] text-slate-500 mt-0.5">Arrêt</div>
+                    <div className="text-[8px] text-emerald-400/70">● OK</div>
                   </div>
-                  <div className="text-[9px] text-slate-500 mt-0.5">Arrêt cumulé</div>
-                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Excellent</div>
-                </div>
-
-                {/* Waste */}
-                <div>
-                  <div className="flex items-baseline gap-0.5">
-                    <span className="text-lg text-white font-bold leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>1.2</span>
-                    <span className="text-[10px] text-slate-500">%</span>
+                  <div>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-lg text-white leading-none" style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200 }}>1.2</span>
+                      <span className="text-[9px] text-slate-500">%</span>
+                    </div>
+                    <div className="text-[8px] text-slate-500 mt-0.5">Perte</div>
+                    <div className="text-[8px] text-emerald-400/70">● OK</div>
                   </div>
-                  <div className="text-[9px] text-slate-500 mt-0.5">Perte matière</div>
-                  <div className="text-[9px] text-emerald-400/70 mt-0.5">● Sous seuil</div>
                 </div>
               </div>
             </div>
