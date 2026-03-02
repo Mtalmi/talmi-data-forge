@@ -82,15 +82,21 @@ function usePaymentsLiveData() {
     const allFactures = factures || [];
     const thisMonthFactures = allFactures.filter((f: any) => f.date_facture >= startOfMonth && f.date_facture <= endOfMonth);
 
+    // Normalize status to handle both 'Payé'/'payee' formats
+    const isPaid = (f: any) => ['Payé', 'Payée', 'payee', 'paye', 'payé', 'payée'].includes(f.statut);
+    const isPending = (f: any) => ['Envoyée', 'En attente', 'emise', 'envoyee', 'en_attente', 'brouillon'].includes(f.statut);
+    const isOverdue = (f: any) => ['En retard', 'Impayée', 'impayee', 'en_retard'].includes(f.statut);
+    const isCancelled = (f: any) => ['Annulée', 'annulee'].includes(f.statut);
+
     // KPIs
-    const paye = allFactures.filter((f: any) => f.statut === 'Payé' || f.statut === 'Payée');
+    const paye = allFactures.filter(isPaid);
     const payeThisMonth = paye.filter((f: any) => f.date_facture >= startOfMonth);
     const encaisseThisMonth = Math.round(payeThisMonth.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
 
-    const attente = allFactures.filter((f: any) => f.statut === 'Envoyée' || f.statut === 'En attente');
+    const attente = allFactures.filter(isPending);
     const enAttente = Math.round(attente.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
 
-    const retard = allFactures.filter((f: any) => f.statut === 'En retard' || f.statut === 'Impayée');
+    const retard = allFactures.filter(isOverdue);
     const enRetard = Math.round(retard.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
 
     const totalFacture = Math.round(thisMonthFactures.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
@@ -104,7 +110,7 @@ function usePaymentsLiveData() {
       const mStart = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
       const mEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0).toISOString().split('T')[0];
       const mFactures = allFactures.filter((f: any) => f.date_facture >= mStart && f.date_facture <= mEnd);
-      const mPaye = mFactures.filter((f: any) => f.statut === 'Payé' || f.statut === 'Payée');
+      const mPaye = mFactures.filter(isPaid);
       trendData.push({
         month: monthNames[d.getMonth()],
         encaisse: Math.round(mPaye.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000),
@@ -113,7 +119,7 @@ function usePaymentsLiveData() {
     }
 
     // Aging data
-    const unpaid = allFactures.filter((f: any) => f.statut !== 'Payé' && f.statut !== 'Payée' && f.statut !== 'Annulée');
+    const unpaid = allFactures.filter((f: any) => !isPaid(f) && !isCancelled(f));
     const agingBuckets = { current: 0, '1-30': 0, '31-60': 0, '61-90': 0, '>90': 0 };
     unpaid.forEach((f: any) => {
       const days = Math.floor((now.getTime() - new Date(f.date_facture).getTime()) / (1000 * 60 * 60 * 24));
@@ -133,12 +139,10 @@ function usePaymentsLiveData() {
     const totalAR = agingData.reduce((s, a) => s + a.amount, 0);
 
     // Recent payments
-    const recentPaid = allFactures.filter((f: any) => f.statut === 'Payé' || f.statut === 'Payée' || f.statut === 'Envoyée' || f.statut === 'En attente' || f.statut === 'En retard' || f.statut === 'Impayée')
+    const recentPaid = allFactures
       .slice(0, 8);
     const payments = recentPaid.map((f: any) => {
-      let status = 'Reçu';
-      if (f.statut === 'Envoyée' || f.statut === 'En attente') status = 'En attente';
-      if (f.statut === 'En retard' || f.statut === 'Impayée') status = 'En retard';
+      let status = isPaid(f) ? 'Reçu' : isPending(f) ? 'En attente' : isOverdue(f) ? 'En retard' : 'Reçu';
       return {
         date: new Date(f.date_facture).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
         client: clientMap[f.client_id] || 'Client',
