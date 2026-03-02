@@ -32,26 +32,8 @@ export function TopNavBar({ previewRole, onPreviewRoleChange }: TopNavBarProps) 
     <header className="w-full tbos-top-navbar">
       <div className="tbos-top-navbar-inner flex items-center justify-between h-14 px-6">
         {/* Left — Search */}
-        <div className="relative hidden md:block flex-shrink-0 max-w-[280px]">
+        <div className="relative hidden md:block flex-shrink-0">
           <GlobalSearch />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-0.5 pointer-events-none">
-            <kbd
-              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
-              style={{
-                color: '#4B5563',
-                background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >⌘</kbd>
-            <kbd
-              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
-              style={{
-                color: '#4B5563',
-                background: 'transparent',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}
-            >K</kbd>
-          </div>
         </div>
 
         {/* Center — breathing room */}
