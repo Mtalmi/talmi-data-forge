@@ -11,6 +11,8 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
 import { toast } from 'sonner';
+import { WeatherAlertBanner } from './WeatherAlertBanner';
+import { WeatherForecastCard } from './WeatherForecastCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -265,6 +267,16 @@ const schedule: Array<{ time: string; slots: Array<{ product: string; volume: nu
   },
 ];
 
+// Weather mock data per delivery index
+const WEATHER_BADGES: Array<{ icon: string; temp: string; dot: string; bg: string; label: string }> = [
+  { icon: '☀️', temp: '34°C', dot: '#10B981', bg: 'rgba(16,185,129,0.10)', label: 'OK' },
+  { icon: '🌡️', temp: '38°C', dot: '#F59E0B', bg: 'rgba(245,158,11,0.10)', label: 'modéré' },
+  { icon: '🌧️', temp: '22°C', dot: '#EF4444', bg: 'rgba(239,68,68,0.10)', label: 'élevé' },
+  { icon: '☀️', temp: '29°C', dot: '#10B981', bg: 'rgba(16,185,129,0.10)', label: 'OK' },
+  { icon: '⛅', temp: '31°C', dot: '#EAB308', bg: 'rgba(234,179,8,0.10)', label: 'surveiller' },
+  { icon: '☀️', temp: '27°C', dot: '#10B981', bg: 'rgba(16,185,129,0.10)', label: 'OK' },
+];
+
 const deliveries = [
   { date: "Aujourd'hui 14:00", client: 'Ciments du Maroc', product: 'B25', volume: 12.5, truck: 'TK-03', status: 'En route', statusColor: T.success },
   { date: "Aujourd'hui 16:30", client: 'ONCF', product: 'B30', volume: 8.0, truck: 'TK-01', status: 'Planifié', statusColor: T.info },
@@ -354,7 +366,7 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
 // ─────────────────────────────────────────────────────
 // DELIVERY CARD
 // ─────────────────────────────────────────────────────
-function DeliveryCard({ d, delay = 0, routeData }: { d: typeof deliveries[0]; delay?: number; routeData?: any }) {
+function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof deliveries[0]; delay?: number; routeData?: any; weatherIndex?: number }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -403,6 +415,19 @@ function DeliveryCard({ d, delay = 0, routeData }: { d: typeof deliveries[0]; de
                   📍 {km} km · {min} min
                 </span>
               ) : null;
+            })()}
+            {(() => {
+              const wb = WEATHER_BADGES[weatherIndex % WEATHER_BADGES.length];
+              return (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 4,
+                  padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
+                  background: wb.bg, border: `1px solid ${wb.dot}30`,
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: wb.dot, flexShrink: 0 }} />
+                  {wb.icon} {wb.temp}
+                </span>
+              );
             })()}
             {routeData?.whatsapp_sent && (
               <span style={{ fontSize: 10, color: T.success }}>WhatsApp ✓</span>
@@ -534,6 +559,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       {/* ── PAGE CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }} className="sm:!px-6 lg:!pr-[calc(24px+272px)]">
 
+        {/* ── WEATHER ALERT BANNER ── */}
+        <WeatherAlertBanner />
+
         {/* ── SECTION 1: KPIs ── */}
         <section ref={kpisRef}>
           <SectionHeader icon={BarChart3} label="Planning KPIs" />
@@ -618,14 +646,19 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
-                  <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} />
+                  <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} weatherIndex={i} />
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── FOOTER ── */}
+        {/* ── SECTION: WEATHER FORECAST ── */}
+        <section>
+          <WeatherForecastCard />
+        </section>
+
+
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Planning & Expédition v2.0 — Dernière mise à jour: {new Date().toLocaleString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
