@@ -474,12 +474,12 @@ export function DevisTable({
                   {(() => {
                     // Mock scores by devis_id pattern for demo
                     const MOCK_SCORES: Record<string, { score: number; reasons: { factor: string; impact: string }[] }> = {
-                      '650': { score: 45, reasons: [{ factor: 'Volume faible', impact: '-20' }, { factor: 'Client récurrent', impact: '+15' }] },
-                      '716': { score: 82, reasons: [{ factor: 'Client fidèle', impact: '+25' }, { factor: 'Volume élevé', impact: '+20' }] },
-                      '349': { score: 78, reasons: [{ factor: 'Historique positif', impact: '+20' }, { factor: 'Délai court', impact: '+15' }] },
+                      '650': { score: 62, reasons: [{ factor: 'Volume faible', impact: '-20' }, { factor: 'Client récurrent', impact: '+15' }] },
+                      '716': { score: 78, reasons: [{ factor: 'Client fidèle', impact: '+25' }, { factor: 'Volume élevé', impact: '+20' }] },
+                      '349': { score: 75, reasons: [{ factor: 'Historique positif', impact: '+20' }, { factor: 'Délai court', impact: '+15' }] },
                       '544': { score: 91, reasons: [{ factor: 'Gros volume', impact: '+30' }, { factor: 'Client stratégique', impact: '+25' }] },
-                      '316': { score: 63, reasons: [{ factor: 'Client moyen', impact: '+10' }, { factor: 'Marge correcte', impact: '+12' }] },
-                      '895': { score: 38, reasons: [{ factor: 'Petit montant', impact: '-15' }, { factor: 'Client nouveau', impact: '-10' }] },
+                      '316': { score: 55, reasons: [{ factor: 'Client moyen', impact: '+10' }, { factor: 'Marge correcte', impact: '+12' }] },
+                      '895': { score: 42, reasons: [{ factor: 'Petit montant', impact: '-15' }, { factor: 'Client nouveau', impact: '-10' }] },
                     };
                     const realScore = (devis as any).ai_score;
                     const realReasons = (devis as any).ai_score_reasons;

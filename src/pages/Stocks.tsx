@@ -147,14 +147,14 @@ export default function Stocks() {
 
   // Mock autonomy fallbacks when no consumption data exists
   const MOCK_AUTONOMY: Record<string, number> = {
-    'Adjuvant': 1, 'Ciment': 8, 'Eau': 4, 'Gravette': 5, 'Sable': 6,
+    'Adjuvant': 1, 'Ciment': 5, 'Eau': 3, 'Gravette': 6, 'Sable': 8,
   };
 
   const getDaysRemaining = (materiau: string): number | undefined => {
     const auto = getAutonomyForMaterial(materiau);
-    if (auto && auto.daysRemaining < 9999) return auto.daysRemaining;
+    if (auto && auto.daysRemaining > 0 && auto.daysRemaining < 365) return auto.daysRemaining;
     const stat = consumptionStats.find(s => s.materiau === materiau);
-    if (stat?.days_remaining) return stat.days_remaining;
+    if (stat?.days_remaining && stat.days_remaining > 0 && stat.days_remaining < 365) return stat.days_remaining;
     // Fallback to mock data for demo
     return MOCK_AUTONOMY[materiau];
   };
