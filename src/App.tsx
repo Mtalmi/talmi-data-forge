@@ -78,6 +78,7 @@ const CommunityForum = lazy(() => import("./pages/CommunityForum"));
 const OperationsAgent = lazy(() => import("./pages/OperationsAgent"));
 const ArchiveLivraisons = lazy(() => import("./pages/ArchiveLivraisons"));
 const TestGuide = lazy(() => import("./pages/TestGuide"));
+const DesignGuardian = lazy(() => import("./pages/DesignGuardian"));
 const CyberSecurity = lazy(() => import("./pages/CyberSecurity"));
 const Platform = lazy(() => import("./pages/Platform"));
 const InnovationHub = lazy(() => import("./pages/InnovationHub"));
@@ -209,6 +210,7 @@ const App = () => (
                      <Route path="/operations-agent" element={<OperationsAgent />} />
                      <Route path="/settings" element={<Settings />} />
                      <Route path="/archive-livraisons" element={<ArchiveLivraisons />} />
+                     <Route path="/design-guardian" element={<DesignGuardian />} />
                      <Route path="/cyber-security" element={<CyberSecurity />} />
                      <Route path="/platform" element={<Platform />} />
                      <Route path="/innovation" element={<InnovationHub />} />

@@ -99,6 +99,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         { title: nav.analytics || 'Analytics', url: '/analytics', icon: TrendingUp },
         { title: nav.alerts || 'Alertes', url: '/alertes', icon: Bell },
         { title: nav.reports || 'Rapports', url: '/rapports', icon: BarChart3 },
+        { title: 'Design Guardian', url: '/design-guardian', icon: Shield },
       ],
     },
     {
