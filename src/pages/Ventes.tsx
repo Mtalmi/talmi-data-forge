@@ -44,6 +44,7 @@ import { FacturesTable } from '@/components/ventes/FacturesTable';
 
 // World-Class Premium Layer
 import { WorldClassVentes } from '@/components/ventes/WorldClassVentes';
+import { MarginOverviewCard } from '@/components/ventes/MarginOverviewCard';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -868,6 +869,9 @@ export default function Ventes() {
           <div className="mb-8">
             <SalesPerformanceCharts bcList={bcList} devisList={devisList} />
           </div>
+
+          {/* ══ Margin Optimizer AI ══ */}
+          <MarginOverviewCard />
 
           {/* ══ World-Class Sales Dashboard ══ */}
           <WorldClassVentes />
