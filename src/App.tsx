@@ -121,6 +121,7 @@ const EmpathicGauntlet = lazy(() => import("./pages/EmpathicGauntlet"));
 const RealityRazor = lazy(() => import("./pages/RealityRazor"));
 const ContextualChameleon = lazy(() => import("./pages/ContextualChameleon"));
 const FailureFiesta = lazy(() => import("./pages/FailureFiesta"));
+const BoundaryBreaker = lazy(() => import("./pages/BoundaryBreaker"));
 
 const queryClient = new QueryClient();
 
@@ -251,6 +252,7 @@ const App = () => (
                      <Route path="/reality-razor" element={<RealityRazor />} />
                      <Route path="/contextual-chameleon" element={<ContextualChameleon />} />
                      <Route path="/failure-fiesta" element={<FailureFiesta />} />
+                     <Route path="/boundary-breaker" element={<BoundaryBreaker />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
