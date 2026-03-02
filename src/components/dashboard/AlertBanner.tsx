@@ -26,13 +26,13 @@ export default function AlertBanner({ alerts, onDismiss }: AlertBannerProps) {
         <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5 pulse-alert" />
           <div className="flex-1">
-            <p className="font-semibold text-destructive">
+            <p className="font-semibold text-destructive tracking-wide">
               {criticalAlerts.length} Alerte{criticalAlerts.length > 1 ? 's' : ''} Critique{criticalAlerts.length > 1 ? 's' : ''}
             </p>
             <ul className="mt-1 space-y-1">
               {criticalAlerts.map((alert) => (
-                <li key={alert.id} className="text-sm text-foreground flex items-center justify-between">
-                  <span>{alert.message}</span>
+                <li key={alert.id} className="text-sm text-foreground flex items-center justify-between gap-2">
+                  <span>— {alert.message}</span>
                   {onDismiss && (
                     <Button
                       variant="ghost"
@@ -54,13 +54,13 @@ export default function AlertBanner({ alerts, onDismiss }: AlertBannerProps) {
         <div className="p-4 rounded-lg bg-warning/10 border border-warning/30 flex items-start gap-3">
           <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="font-semibold text-warning">
+            <p className="font-semibold text-warning tracking-wide">
               {warningAlerts.length} Avertissement{warningAlerts.length > 1 ? 's' : ''}
             </p>
             <ul className="mt-1 space-y-1">
               {warningAlerts.map((alert) => (
-                <li key={alert.id} className="text-sm text-foreground flex items-center justify-between">
-                  <span>{alert.message}</span>
+                <li key={alert.id} className="text-sm text-foreground flex items-center justify-between gap-2">
+                  <span>— {alert.message}</span>
                   {onDismiss && (
                     <Button
                       variant="ghost"
