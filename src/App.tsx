@@ -104,6 +104,7 @@ const QuantumQuester = lazy(() => import("./pages/QuantumQuester"));
 const OracleOrganicity = lazy(() => import("./pages/OracleOrganicity"));
 const ChronosCatalyst = lazy(() => import("./pages/ChronosCatalyst"));
 const HyperdimensionalHelmsman = lazy(() => import("./pages/HyperdimensionalHelmsman"));
+const NeuroNomad = lazy(() => import("./pages/NeuroNomad"));
 
 const queryClient = new QueryClient();
 
@@ -217,6 +218,7 @@ const App = () => (
                      <Route path="/oracle-organicity" element={<OracleOrganicity />} />
                      <Route path="/chronos-catalyst" element={<ChronosCatalyst />} />
                      <Route path="/hyperdimensional-helmsman" element={<HyperdimensionalHelmsman />} />
+                     <Route path="/neuro-nomad" element={<NeuroNomad />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
