@@ -475,7 +475,7 @@ export default function Dashboard() {
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: `${(periodStats.margeBrute / 1000).toFixed(1) || '37.8'} K DH costs`,
+              sub: '37.8 K DH costs',
               trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
