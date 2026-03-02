@@ -112,6 +112,7 @@ const QuantumQualiaQuaestor = lazy(() => import("./pages/QuantumQualiaQuaestor")
 const AstroArchetypalArchitect = lazy(() => import("./pages/AstroArchetypalArchitect"));
 const TransDimensionalTranslator = lazy(() => import("./pages/TransDimensionalTranslator"));
 const NeuroFractalNavigator = lazy(() => import("./pages/NeuroFractalNavigator"));
+const ChronoSynergeticSymbiont = lazy(() => import("./pages/ChronoSynergeticSymbiont"));
 
 const queryClient = new QueryClient();
 
@@ -233,6 +234,7 @@ const App = () => (
                      <Route path="/astro-archetypal-architect" element={<AstroArchetypalArchitect />} />
                      <Route path="/trans-dimensional-translator" element={<TransDimensionalTranslator />} />
                      <Route path="/neuro-fractal-navigator" element={<NeuroFractalNavigator />} />
+                     <Route path="/chrono-synergetic-symbiont" element={<ChronoSynergeticSymbiont />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
