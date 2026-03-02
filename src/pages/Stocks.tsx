@@ -2,9 +2,11 @@ import MainLayout from '@/components/layout/MainLayout';
 import WorldClassStocks from '@/components/stocks/WorldClassStocks';
 import { useAuth } from '@/hooks/useAuth';
 import { useStocks } from '@/hooks/useStocks';
+import { useStockAutonomy } from '@/hooks/useStockAutonomy';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { SiloVisual } from '@/components/stocks/SiloVisual';
+import { SmartReorderBanner } from '@/components/stocks/SmartReorderBanner';
 import { TwoStepReceptionWizard } from '@/components/stocks/TwoStepReceptionWizard';
 import { StockAdjustmentDialog } from '@/components/stocks/StockAdjustmentDialog';
 import { RecentReceptionsCard } from '@/components/stocks/RecentReceptionsCard';
@@ -78,6 +80,7 @@ export default function Stocks() {
     fetchMouvements,
     getCriticalStocks,
   } = useStocks();
+  const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
   const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isCentraliste || isResponsableTechnique;
   const canCreateStockReception = isCeo || isSuperviseur || isAgentAdministratif;
@@ -87,6 +90,19 @@ export default function Stocks() {
   const isReadOnly = isCentraliste && !isCeo && !isSuperviseur;
   
   const criticalStocks = getCriticalStocks();
+  
+  // Smart reorder: materials with < 3 days autonomy
+  const criticalAutonomyMaterials = getCriticalMaterials().map(a => {
+    const stock = stocks.find(s => s.materiau === a.materiau);
+    return {
+      materiau: a.materiau,
+      daysRemaining: a.daysRemaining,
+      quantite_actuelle: a.quantite_actuelle,
+      seuil_alerte: a.seuil_alerte,
+      unite: a.unite,
+      capacite_max: stock?.capacite_max || null,
+    };
+  });
 
   const handleRefresh = () => {
     fetchStocks();
@@ -116,8 +132,20 @@ export default function Stocks() {
   };
 
   const getDaysRemaining = (materiau: string): number | undefined => {
+    const auto = getAutonomyForMaterial(materiau);
+    if (auto) return auto.daysRemaining;
     const stat = consumptionStats.find(s => s.materiau === materiau);
     return stat?.days_remaining;
+  };
+
+  const getHoursRemaining = (materiau: string): number | undefined => {
+    const auto = getAutonomyForMaterial(materiau);
+    return auto?.hoursRemaining;
+  };
+
+  const getAvgDailyUsage = (materiau: string): number | undefined => {
+    const auto = getAutonomyForMaterial(materiau);
+    return auto?.avgDailyUsage;
   };
 
   const formatDaysRemaining = (days: number | undefined): string => {
@@ -263,12 +291,17 @@ export default function Stocks() {
                     seuil={stock.seuil_alerte}
                     unite={stock.unite}
                     daysRemaining={getDaysRemaining(stock.materiau)}
+                    hoursRemaining={getHoursRemaining(stock.materiau)}
+                    avgDailyUsage={getAvgDailyUsage(stock.materiau)}
                   />
                 ))}
               </div>
             </div>
           </section>
         )}
+
+        {/* ── SMART REORDER BANNER (AI) ── */}
+        <SmartReorderBanner criticalMaterials={criticalAutonomyMaterials} />
 
         {/* ── STOCK SUMMARY TABLE ── */}
         <section>
