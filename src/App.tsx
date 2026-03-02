@@ -118,6 +118,7 @@ const PsychoSemanticSynesthete = lazy(() => import("./pages/PsychoSemanticSynest
 const GeoTemporalTerraformer = lazy(() => import("./pages/GeoTemporalTerraformer"));
 const CognitiveCrucible = lazy(() => import("./pages/CognitiveCrucible"));
 const EmpathicGauntlet = lazy(() => import("./pages/EmpathicGauntlet"));
+const RealityRazor = lazy(() => import("./pages/RealityRazor"));
 
 const queryClient = new QueryClient();
 
@@ -245,6 +246,7 @@ const App = () => (
                      <Route path="/geo-temporal-terraformer" element={<GeoTemporalTerraformer />} />
                      <Route path="/cognitive-crucible" element={<CognitiveCrucible />} />
                      <Route path="/empathic-gauntlet" element={<EmpathicGauntlet />} />
+                     <Route path="/reality-razor" element={<RealityRazor />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
