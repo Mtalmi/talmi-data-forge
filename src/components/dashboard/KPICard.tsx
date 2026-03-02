@@ -92,7 +92,7 @@ export default function KPICard({
             )}
             style={{ fontFamily: 'JetBrains Mono, monospace' }}
           >
-            {isNumeric ? animated.toLocaleString('fr-MA') : value}
+            {isNumeric ? animated.toLocaleString('fr-FR') : value}
           </p>
           {subtitle && (
             <p className="text-xs text-muted-foreground truncate">{subtitle}</p>

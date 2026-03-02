@@ -305,7 +305,7 @@ function DarkTooltip({ active, payload, label }: any) {
       <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6, fontSize: 12 }}>{label}</p>
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ color: p.fill || T.gold, fontSize: 12, marginBottom: 2 }}>
-          {p.name}: <strong>{Number(p.value).toLocaleString('fr-MA')} K DH</strong>
+          {p.name}: <strong>{Number(p.value).toLocaleString('fr-FR')} K DH</strong>
         </p>
       ))}
       {payload.length === 2 && (
@@ -360,7 +360,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
             <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {isNegative ? '-' : ''}{animated.toLocaleString('fr-MA')}
+              {isNegative ? '-' : ''}{animated.toLocaleString('fr-FR')}
               {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
             </p>
             {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: trendPositive ? '#10B981' : '#EF4444' }}>{trendPositive ? '↑' : '↓'} {trend}</p>}
@@ -448,7 +448,7 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
       <div style={{ flex: 1, minWidth: 140 }}><p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p></div>
       <div style={{ minWidth: 120, flexShrink: 0 }}><Bdg label={e.cat} color={e.catColor} bg={`${e.catColor}15`} /></div>
       <div style={{ minWidth: 110, flexShrink: 0 }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{e.amount.toLocaleString('fr-MA')} DH</p>
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{e.amount.toLocaleString('fr-FR')} DH</p>
       </div>
       <div style={{ minWidth: 90, flexShrink: 0 }}><p style={{ fontSize: 11, color: approverColor, fontWeight: 600 }}>{e.approver}</p></div>
       <div style={{ minWidth: 100, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>

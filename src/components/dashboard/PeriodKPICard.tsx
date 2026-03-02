@@ -55,8 +55,8 @@ export function PeriodKPICard({
   const formatAnimated = () => {
     if (!parsed) return value;
     const formatted = parsed.decimals > 0
-      ? animatedNum.toLocaleString('fr-MA', { minimumFractionDigits: parsed.decimals, maximumFractionDigits: parsed.decimals })
-      : animatedNum.toLocaleString('fr-MA');
+      ? animatedNum.toLocaleString('fr-FR', { minimumFractionDigits: parsed.decimals, maximumFractionDigits: parsed.decimals })
+      : animatedNum.toLocaleString('fr-FR');
     return `${parsed.prefix}${formatted}${parsed.suffix}`;
   };
 

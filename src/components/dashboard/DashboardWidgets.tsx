@@ -156,7 +156,7 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
       }}>
         <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
         <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
-          {payload[0].value.toLocaleString('fr-MA')} DH
+          {payload[0].value.toLocaleString('fr-FR')} DH
         </p>
       </div>
     );
@@ -219,7 +219,7 @@ export function ARAgingWidget() {
       ) : (
         <>
           <p className="text-xl font-bold mb-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: 'hsl(51 100% 50%)' }}>
-            {data.total.toLocaleString('fr-MA')} <span className="text-sm font-normal text-muted-foreground">DH</span>
+            {data.total.toLocaleString('fr-FR')} <span className="text-sm font-normal text-muted-foreground">DH</span>
           </p>
           <div className="h-[120px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -306,7 +306,7 @@ export function StockLevelsWidget() {
         }}>
           <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
           <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
-            {Number(payload[0]?.value).toLocaleString('fr-MA')}
+            {Number(payload[0]?.value).toLocaleString('fr-FR')}
           </p>
         </div>
       );

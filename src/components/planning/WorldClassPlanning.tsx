@@ -137,16 +137,33 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
 // BADGE
 // ─────────────────────────────────────────────────────
 function Badge({ label, color, bg, pulse = false }: { label: string; color: string; bg: string; pulse?: boolean }) {
+  // Standardized status badge colors
+  const statusStyles: Record<string, { bg: string; color: string; border: string; filled: boolean }> = {
+    'En route': { bg: `${T.success}20`, color: T.success, border: `${T.success}40`, filled: true },
+    'En Chargement': { bg: `${T.info}20`, color: T.info, border: `${T.info}40`, filled: true },
+    'Planifié': { bg: 'rgba(148,163,184,0.08)', color: T.textDim, border: 'rgba(148,163,184,0.2)', filled: false },
+    'Livré': { bg: `${T.success}20`, color: T.success, border: `${T.success}40`, filled: true },
+  };
+  const s = statusStyles[label];
+  const finalBg = s?.bg || bg;
+  const finalColor = s?.color || color;
+  const finalBorder = s?.border || `${color}40`;
+
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 5,
       padding: '3px 10px', borderRadius: 999,
-      background: bg, border: `1px solid ${color}40`,
-      color, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-      animation: pulse ? 'tbos-pulse 2.5s infinite' : 'none',
+      background: finalBg, border: `1px solid ${finalBorder}`,
+      color: finalColor, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
     }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: color }} />
-      {label}
+      <span style={{
+        width: 6, height: 6, borderRadius: '50%', background: finalColor,
+        animation: pulse ? 'tbos-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' : 'none',
+        position: 'relative',
+      }}>
+        {pulse && <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: finalColor, animation: 'tbos-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite' }} />}
+      </span>
+      {label === 'Livré' && '✓ '}{label}
     </span>
   );
 }
@@ -280,11 +297,11 @@ const WEATHER_BADGES: Array<{ icon: string; temp: string; dot: string; bg: strin
 
 const deliveries = [
   { date: "Aujourd'hui 14:00", client: 'Ciments du Maroc', product: 'B25', volume: 12.5, truck: 'TK-03', status: 'En route', statusColor: T.success },
-  { date: "Aujourd'hui 16:30", client: 'ONCF', product: 'B30', volume: 8.0, truck: 'TK-01', status: 'Planifié', statusColor: T.info },
-  { date: 'Demain 07:00', client: 'Addoha Group', product: 'B25', volume: 15.0, truck: 'TK-02', status: 'Planifié', statusColor: T.info },
-  { date: 'Demain 09:30', client: 'Tgcc', product: 'B35', volume: 10.0, truck: 'TK-03', status: 'Planifié', statusColor: T.info },
-  { date: 'Demain 13:00', client: 'Alliances', product: 'B30', volume: 8.5, truck: 'TK-01', status: 'Planifié', statusColor: T.info },
-  { date: '23 Fév 08:00', client: 'Jet Contractors', product: 'B40', volume: 6.0, truck: 'TK-02', status: 'Planifié', statusColor: T.info },
+  { date: "Aujourd'hui 16:30", client: 'ONCF', product: 'B30', volume: 8.0, truck: 'TK-01', status: 'En Chargement', statusColor: T.info },
+  { date: 'Demain 07:00', client: 'Addoha Group', product: 'B25', volume: 15.0, truck: 'TK-02', status: 'Planifié', statusColor: T.textDim },
+  { date: 'Demain 09:30', client: 'TGCC', product: 'B35', volume: 10.0, truck: 'TK-03', status: 'Planifié', statusColor: T.textDim },
+  { date: 'Demain 13:00', client: 'Alliances', product: 'B30', volume: 8.5, truck: 'TK-01', status: 'Planifié', statusColor: T.textDim },
+  { date: 'Après-demain 08:00', client: 'Jet Contractors', product: 'B40', volume: 6.0, truck: 'TK-02', status: 'Planifié', statusColor: T.textDim },
 ];
 
 // ─────────────────────────────────────────────────────
