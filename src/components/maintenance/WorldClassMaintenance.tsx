@@ -11,6 +11,7 @@ import {
   Eye, Plus, ChevronRight, Wrench,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { EnergyCostAnomalyCard } from '@/components/maintenance/EnergyCostAnomalyCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -1043,7 +1044,12 @@ export default function WorldClassMaintenance() {
           </div>
         </div>
 
-        {/* ── SECTION 8: METRICS ── */}
+        {/* ── SECTION 8: ENERGY & COST ANOMALY AI ── */}
+        <div>
+          <EnergyCostAnomalyCard />
+        </div>
+
+        {/* ── SECTION 9: METRICS ── */}
         <div>
           <SectionHeader title="Métriques Maintenance" badge="KPIs clés" badgeColor={T.gold} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
