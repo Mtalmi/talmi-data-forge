@@ -336,15 +336,21 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Branded Header */}
-          <div className="pt-4 relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
-            <div className="flex items-center gap-3 mb-1">
-              <LayoutDashboard size={24} className="text-amber-400" />
-              <div>
-                <h2 className="text-xl font-bold">
-                  <span className="text-white">TBOS</span>{' '}
-                  <span className="text-amber-400">Tableau de Bord</span>
+          <div className="relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both', paddingTop: 20, paddingBottom: 20 }}>
+            <div className="flex items-center justify-center gap-4">
+              <LayoutDashboard size={28} style={{ color: '#FFD700' }} />
+              <div className="text-center">
+                <h2 className="flex items-center gap-2 justify-center" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", fontWeight: 900, fontSize: '1.5rem', color: '#FFD700', letterSpacing: '0.05em' }}>
+                  TBOS Tableau de Bord
+                  {/* Pulsing real-time dot */}
+                  <span className="relative flex items-center justify-center" style={{ width: 8, height: 8 }}>
+                    <span className="absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: '#1E90FF', animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
+                    <span className="relative inline-flex rounded-full" style={{ width: 8, height: 8, backgroundColor: '#1E90FF' }} />
+                  </span>
                 </h2>
-                <p className="text-sm text-muted-foreground">Données en temps réel</p>
+                <p style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", fontWeight: 300, fontSize: '0.75rem', color: '#333', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>
+                  Données en temps réel
+                </p>
               </div>
             </div>
           </div>
