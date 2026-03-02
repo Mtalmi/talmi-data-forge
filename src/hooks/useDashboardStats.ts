@@ -205,7 +205,7 @@ export function useDashboardStats() {
           id: 'payments-overdue',
           type: 'critical',
           title: 'Retards de Paiement Critiques',
-          message: `Total des paiements en retard: ${pendingPaymentsTotal.toLocaleString()} DH`,
+          message: `Total des paiements en retard : ${pendingPaymentsTotal.toLocaleString()} DH`,
           timestamp: new Date().toISOString(),
         });
       }
@@ -227,7 +227,7 @@ export function useDashboardStats() {
           id: 'ec-ratio-high',
           type: 'warning',
           title: 'Taux E/C Élevé',
-          message: `Le taux E/C moyen (${tauxECMoyen.toFixed(3)}) dépasse 0.55 - possible dilution`,
+          message: `Le taux E/C moyen (${tauxECMoyen.toFixed(3)}) dépasse 0.55 — possible dilution`,
           timestamp: new Date().toISOString(),
         });
       }
@@ -238,7 +238,7 @@ export function useDashboardStats() {
           id: 'margin-alerts',
           type: 'critical',
           title: 'Alertes Marge (Fuite)',
-          message: `${marginAlerts} bon(s) avec écart de marge > 5%`,
+          message: `${marginAlerts} bon(s) avec écart de marge > 5 %`,
           timestamp: new Date().toISOString(),
         });
       }
