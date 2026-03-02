@@ -116,6 +116,7 @@ const ChronoSynergeticSymbiont = lazy(() => import("./pages/ChronoSynergeticSymb
 const XenoEmpathicXenoformer = lazy(() => import("./pages/XenoEmpathicXenoformer"));
 const PsychoSemanticSynesthete = lazy(() => import("./pages/PsychoSemanticSynesthete"));
 const GeoTemporalTerraformer = lazy(() => import("./pages/GeoTemporalTerraformer"));
+const CognitiveCrucible = lazy(() => import("./pages/CognitiveCrucible"));
 
 const queryClient = new QueryClient();
 
@@ -241,6 +242,7 @@ const App = () => (
                      <Route path="/xeno-empathic-xenoformer" element={<XenoEmpathicXenoformer />} />
                      <Route path="/psycho-semantic-synesthete" element={<PsychoSemanticSynesthete />} />
                      <Route path="/geo-temporal-terraformer" element={<GeoTemporalTerraformer />} />
+                     <Route path="/cognitive-crucible" element={<CognitiveCrucible />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
