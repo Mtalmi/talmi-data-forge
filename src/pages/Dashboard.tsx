@@ -390,25 +390,24 @@ export default function Dashboard() {
                   letterSpacing: '0.06em',
                   marginLeft: 8,
                 }}>
-                  Données en temps r
-                  {/* Pulsing dot replacing é */}
-                  <span className="relative inline-flex items-center justify-center" style={{ width: 8, height: 8, marginBottom: -1, marginLeft: -1, marginRight: -1 }}>
+                  Données en temps réel
+                  {/* Live pulse indicator — after text */}
+                  <span className="relative inline-flex items-center justify-center" style={{ width: 10, height: 10, marginLeft: 6 }}>
                     {/* Concentric ring */}
                     <span className="absolute rounded-full" style={{
-                      width: 12, height: 12,
+                      width: 14, height: 14,
                       border: '1px solid rgba(30,144,255,0.25)',
                       animation: 'tbos-ring-expand 2s ease-out infinite',
                     }} />
                     {/* Ping */}
                     <span className="absolute inline-flex rounded-full" style={{
-                      width: 6, height: 6,
+                      width: 7, height: 7,
                       backgroundColor: 'rgba(30,144,255,0.4)',
                       animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
                     }} />
                     {/* Core dot */}
-                    <span className="relative inline-flex rounded-full" style={{ width: 4, height: 4, backgroundColor: '#1E90FF', boxShadow: '0 0 6px rgba(30,144,255,0.5)' }} />
+                    <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#1E90FF', boxShadow: '0 0 6px rgba(30,144,255,0.5)' }} />
                   </span>
-                  el
                 </span>
               </div>
             </div>
