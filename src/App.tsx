@@ -89,6 +89,7 @@ const CreativeCoPilot = lazy(() => import("./pages/CreativeCoPilot"));
 const SimulationSage = lazy(() => import("./pages/SimulationSage"));
 const VisionaryStrategist = lazy(() => import("./pages/VisionaryStrategist"));
 const MasterInventor = lazy(() => import("./pages/MasterInventor"));
+const InnovationCoach = lazy(() => import("./pages/InnovationCoach"));
 
 const queryClient = new QueryClient();
 
@@ -187,6 +188,7 @@ const App = () => (
                      <Route path="/simulation-sage" element={<SimulationSage />} />
                      <Route path="/visionary-strategist" element={<VisionaryStrategist />} />
                      <Route path="/master-inventor" element={<MasterInventor />} />
+                     <Route path="/innovation-coach" element={<InnovationCoach />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
