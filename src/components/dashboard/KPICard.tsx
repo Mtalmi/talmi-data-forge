@@ -52,10 +52,10 @@ export default function KPICard({
   return (
     <div
       className={cn(
-        'kpi-card god-tier-card tbos-card tbos-card-stagger animate-fade-in group card-magnetic press-feedback ripple-container',
+        'kpi-card god-tier-card tbos-card tbos-card-stagger animate-fade-in group',
+        'tbos-metallic-sheen tbos-kpi-rise',
         'relative overflow-hidden border p-4 sm:p-5',
         'transition-all duration-300 ease-out',
-        'hover:-translate-y-1',
         variant === 'positive' && 'bg-primary/[0.03]',
         variant === 'negative' && 'bg-destructive/[0.03]',
         variant === 'warning' && 'bg-warning/[0.03]',
@@ -120,7 +120,9 @@ export default function KPICard({
               trend === 'neutral' && 'bg-muted/50',
             )}
           >
-            <TrendIcon className={cn('h-3.5 w-3.5', trendColors[trend])} />
+            <span className="tbos-trend-breathe">
+              <TrendIcon className={cn('h-3.5 w-3.5', trendColors[trend])} />
+            </span>
             <span className={trendColors[trend]}>{trendValue}</span>
           </div>
           <span className="text-xs text-muted-foreground">{t.common.vs}. {t.common.yesterday}</span>
