@@ -390,43 +390,51 @@ export default function Dashboard() {
           </div>
 
           {/* Greeting — Cinematic Hero Moment */}
-          <div className="pb-4 relative z-[1]">
-            <div className="flex items-end justify-between">
-              <div>
-            <h1 className="text-2xl font-light text-white/80 tracking-tight" style={{ lineHeight: 1 }}>
-                  <span style={{ color: 'rgba(148,163,184,0.5)', fontWeight: 300 }}>Bonjour </span>{typedName || '\u00A0'}<span className="text-2xl font-light" style={{ color: 'rgba(253,185,19,0.4)' }}>{typedName.length === firstName.length ? '.' : ''}</span>
-                  {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
-                </h1>
-                {/* Dynamic CEO briefing line */}
-                <p className="text-[11px] mt-2 leading-relaxed" style={{ color: 'rgba(148,163,184,0.5)' }}>
-                  Votre centrale tourne à <span className="text-white/80 font-medium">87%</span> de capacité.{" "}
-                  <span style={{ color: 'rgba(251,191,36,0.8)' }}>2 livraisons urgentes</span> · {" "}
-                  <span className="text-white/70">{prodVolume} m³ produits</span> · {" "}
-                  Marge <span style={{ color: 'rgba(52,211,153,0.8)' }}>{marge}%</span>
-                </p>
-                <div className="flex flex-wrap items-center gap-3 mt-3">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
-                  </span>
-                  <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-emerald-400/50">Operational</span>
-                  <span className="w-px h-3 bg-slate-700/40" />
-                  <span className="text-[9px] text-slate-600/50 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-                  <span className="w-px h-3 bg-slate-700/40" />
-                  <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
-                  <span className="w-px h-3 bg-slate-700/40" />
-                  {/* Weather widget */}
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm">☀️</span>
-                    <span className="text-[10px] text-white/70 font-mono tabular-nums">22°C</span>
-                    <span className="text-[9px] text-slate-600/50">Ensoleillé · 45%</span>
-                    <span className="text-[9px] font-medium" style={{ color: 'rgba(52,211,153,0.6)' }}>● Optimal</span>
+          <div className="relative z-[1]" style={{ marginTop: 30, marginBottom: 20 }}>
+            <div
+              className="rounded-[10px]"
+              style={{
+                background: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                padding: 20,
+              }}
+            >
+              <div className="flex items-end justify-between">
+                <div>
+                  <h1 className="tracking-tight" style={{ fontSize: '1.5625rem', fontWeight: 700, color: '#FFD700', lineHeight: 1, marginBottom: 5 }}>
+                    Bonjour {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
+                    {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
+                  </h1>
+                  {/* Dynamic CEO briefing line */}
+                  <p style={{ fontSize: '0.9rem', fontWeight: 400, color: '#C0C0C0', lineHeight: 1.4, paddingLeft: 5 }}>
+                    Votre centrale tourne à <span className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>87%</span> de capacité.{" "}
+                    <span style={{ color: 'rgba(251,191,36,0.8)' }}>2 livraisons urgentes</span> · {" "}
+                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>{prodVolume} m³ produits</span> · {" "}
+                    Marge <span style={{ color: 'rgba(52,211,153,0.8)' }}>{marge}%</span>
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 mt-3" style={{ paddingLeft: 5 }}>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+                    </span>
+                    <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-emerald-400/50">Operational</span>
+                    <span className="w-px h-3 bg-slate-700/40" />
+                    <span className="text-[9px] text-slate-600/50 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                    <span className="w-px h-3 bg-slate-700/40" />
+                    <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
+                    <span className="w-px h-3 bg-slate-700/40" />
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm">☀️</span>
+                      <span className="text-[10px] text-white/70 font-mono tabular-nums">22°C</span>
+                      <span className="text-[9px] text-slate-600/50">Ensoleillé · 45%</span>
+                      <span className="text-[9px] font-medium" style={{ color: 'rgba(52,211,153,0.6)' }}>● Optimal</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* Live clock — tiny reference */}
-              <div className="hidden md:flex flex-col items-end">
-                <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
+                {/* Live clock — tiny reference */}
+                <div className="hidden md:flex flex-col items-end">
+                  <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
+                </div>
               </div>
             </div>
           </div>
