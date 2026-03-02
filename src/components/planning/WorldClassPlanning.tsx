@@ -13,6 +13,7 @@ import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
 import { toast } from 'sonner';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { WeatherForecastCard } from './WeatherForecastCard';
+import { DeliveryOrchestrationPanel } from './DeliveryOrchestrationPanel';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -651,6 +652,11 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </div>
             </div>
           </div>
+        </section>
+
+        {/* ── SECTION: DELIVERY ORCHESTRATION AI ── */}
+        <section>
+          <DeliveryOrchestrationPanel />
         </section>
 
         {/* ── SECTION: WEATHER FORECAST ── */}
