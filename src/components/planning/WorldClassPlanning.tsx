@@ -385,13 +385,30 @@ function DeliveryCard({ d, delay = 0, routeData }: { d: typeof deliveries[0]; de
             <span style={{ color: T.textDim, fontSize: 11 }}>{d.date}</span>
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.gold }}>{d.volume} m³</span>
             <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: `${T.info}18`, color: T.info, border: `1px solid ${T.info}30` }}>{d.truck}</span>
-            {routeData?.optimized_route && (
-              <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: '#1a1a1a', color: T.gold, border: '1px solid #333' }}>
-                🛣️ {routeData.optimized_route.distance_km}km · {routeData.optimized_route.estimated_duration_min}min · {routeData.optimized_route.traffic_status}
-              </span>
-            )}
+            {(() => {
+              const mockRoutes: Record<string, { km: number; min: number }> = {
+                'BTP Maroc': { km: 8, min: 18 }, 'Ciments & Béton du Sud': { km: 15, min: 32 },
+                'Constructions Modernes': { km: 22, min: 40 }, 'Saudi Readymix': { km: 35, min: 55 },
+                'ONCF': { km: 12, min: 25 }, 'Addoha Group': { km: 18, min: 35 }, 'Addoha': { km: 18, min: 35 },
+                'TGCC': { km: 28, min: 45 }, 'Tgcc': { km: 28, min: 45 },
+                'Ciments du Maroc': { km: 10, min: 22 }, 'Alliances': { km: 14, min: 28 },
+                'Jet Contractors': { km: 20, min: 38 }, 'Jet Con.': { km: 20, min: 38 },
+              };
+              const route = routeData?.optimized_route;
+              const mock = mockRoutes[d.client];
+              const km = route?.distance_km ?? mock?.km;
+              const min = route?.estimated_duration_min ?? mock?.min;
+              return km != null ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: 'rgba(148,163,184,0.08)', color: T.textSec, border: '1px solid rgba(148,163,184,0.15)' }}>
+                  📍 {km} km · {min} min
+                </span>
+              ) : null;
+            })()}
             {routeData?.whatsapp_sent && (
               <span style={{ fontSize: 10, color: T.success }}>WhatsApp ✓</span>
+            )}
+            {isEnRoute && (
+              <span style={{ fontSize: 10, color: T.success, fontWeight: 600 }}>🚛 En route · ETA {new Date(Date.now() + 25 * 60000).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</span>
             )}
           </div>
         </div>

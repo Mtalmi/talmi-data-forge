@@ -342,6 +342,27 @@ function EquipmentCard({ eq, delay, prediction }: { eq: typeof EQUIPMENT[0]; del
         </div>
       </div>
 
+      {/* AI Prediction inline badge */}
+      {prediction && (() => {
+        const p = prediction.prediction?.failure_probability ?? 0;
+        const d = prediction.prediction?.days_until_failure;
+        if (p > 0.6 && d != null) return (
+          <div style={{ padding: '4px 8px', borderRadius: 6, background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', fontSize: 11, color: T.danger, fontWeight: 600 }}>
+            🤖 Défaillance prédite dans {d}j
+          </div>
+        );
+        if (p >= 0.3 && d != null) return (
+          <div style={{ padding: '4px 8px', borderRadius: 6, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', fontSize: 11, color: T.warning, fontWeight: 600 }}>
+            🤖 Maintenance suggérée dans {d}j
+          </div>
+        );
+        return (
+          <div style={{ padding: '4px 8px', borderRadius: 6, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', fontSize: 11, color: T.success, fontWeight: 600 }}>
+            🤖 Aucun risque détecté
+          </div>
+        );
+      })()}
+
       {/* Hours + dates */}
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: T.textDim }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -888,8 +909,17 @@ export default function WorldClassMaintenance() {
   const [activeTab, setActiveTab] = useState('Équipements');
   const { kpis: maintKpis } = useMaintenanceLiveData();
 
-  // AI predictions from n8n
-  const [predictions, setPredictions] = React.useState<Record<string, any>>({});
+  // AI predictions from n8n + mock fallbacks
+  const MOCK_PREDICTIONS: Record<string, any> = {
+    'centrale-1': { equipment_name: 'Centrale 1', prediction: { failure_probability: 0.12, days_until_failure: 45, failure_type: 'Aucun risque détecté', confidence: 0.92 }, recommended_action: 'Aucune action requise', estimated_cost: 0 },
+    'malaxeur-a': { equipment_name: 'Malaxeur A', prediction: { failure_probability: 0.42, days_until_failure: 18, failure_type: 'Usure pales — vibration anormale possible', confidence: 0.78 }, recommended_action: 'Planifier remplacement pales avant le 20 mars', estimated_cost: 4500 },
+    'pompe-bp-01': { equipment_name: 'Pompe BP-01', prediction: { failure_probability: 0.72, days_until_failure: 5, failure_type: 'Usure joints — fuite probable', confidence: 0.85 }, recommended_action: 'Planifier remplacement joints avant le 5 mars', estimated_cost: 3250 },
+    'convoyeur-c': { equipment_name: 'Convoyeur C', prediction: { failure_probability: 0.08, days_until_failure: 60, failure_type: 'Aucun risque détecté', confidence: 0.95 }, recommended_action: 'Aucune action requise', estimated_cost: 0 },
+    'compresseur': { equipment_name: 'Compresseur', prediction: { failure_probability: 0.38, days_until_failure: 22, failure_type: 'Filtre encrassé — perte de pression', confidence: 0.72 }, recommended_action: 'Planifier changement filtre dans les 2 semaines', estimated_cost: 680 },
+    'silo-ciment': { equipment_name: 'Silo Ciment', prediction: { failure_probability: 0.05, days_until_failure: 90, failure_type: 'Aucun risque détecté', confidence: 0.97 }, recommended_action: 'Aucune action requise', estimated_cost: 0 },
+  };
+
+  const [predictions, setPredictions] = React.useState<Record<string, any>>(MOCK_PREDICTIONS);
   React.useEffect(() => {
     const channel = supabase.channel('maint-predictions')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'n8n_workflow_results' }, (payload) => {
@@ -902,15 +932,15 @@ export default function WorldClassMaintenance() {
         }
       })
       .subscribe();
-    // Also fetch existing
+    // Also fetch existing (overrides mocks if real data exists)
     supabase.from('n8n_workflow_results')
       .select('response_payload')
       .eq('agent_type', 'maintenance_prediction')
       .order('created_at', { ascending: false })
       .limit(20)
       .then(({ data }) => {
-        if (data) {
-          const map: Record<string, any> = {};
+        if (data?.length) {
+          const map: Record<string, any> = { ...MOCK_PREDICTIONS };
           data.forEach((r: any) => {
             const name = r.response_payload?.equipment_name;
             if (name) map[name.toLowerCase().replace(/\s+/g, '-')] = r.response_payload;

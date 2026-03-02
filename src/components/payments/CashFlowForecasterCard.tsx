@@ -49,11 +49,49 @@ export function CashFlowForecasterCard() {
     </div>
   );
 
+  // Mock data fallback for demo
+  const mockForecasts = [
+    { period: '7 jours', inflows: 85000, outflows: 62000, balance: 23000, confidence: 87 },
+    { period: '14 jours', inflows: 156000, outflows: 118000, balance: 38000, confidence: 74 },
+    { period: '30 jours', inflows: 310000, outflows: 245000, balance: 65000, confidence: 61 },
+  ];
+
   if (!forecast) return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Brain size={16} style={{ color: T.textDim }} />
-        <span style={{ color: T.textDim, fontSize: 13 }}>Aucune prévision disponible. L'agent IA génère les prévisions quotidiennement.</span>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24, boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Brain size={18} color={T.gold} />
+          <span style={{ fontWeight: 700, fontSize: 16, color: T.textPri }}>⚡ PRÉVISION TRÉSORERIE IA</span>
+        </div>
+        <span style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic' }}>Données de démonstration</span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {mockForecasts.map(f => (
+          <div key={f.period} style={{ background: 'rgba(255,255,255,0.02)', border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 16, textAlign: 'center' }}>
+            <p style={{ color: T.gold, fontWeight: 700, fontSize: 12, marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{f.period}</p>
+            <div style={{ marginBottom: 8 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.success }}>↑ {(f.inflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ color: T.textDim, fontSize: 10 }}>Entrées prévues</p>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.danger }}>↓ {(f.outflows / 1000).toFixed(0)}K DH</p>
+              <p style={{ color: T.textDim, fontSize: 10 }}>Sorties prévues</p>
+            </div>
+            <div style={{ marginBottom: 8 }}>
+              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 20, fontWeight: 800, color: f.balance >= 0 ? T.success : T.danger }}>+{(f.balance / 1000).toFixed(0)}K DH</p>
+              <p style={{ color: T.textDim, fontSize: 10 }}>Solde estimé</p>
+            </div>
+            <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 10, fontWeight: 700, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: T.success }}>
+              {f.confidence}%
+            </span>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: T.textDim }}>Généré le {new Date().toLocaleDateString('fr-FR')}</span>
+        <button onClick={fetchForecast} style={{ padding: '4px 12px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: T.gold, fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <RefreshCw size={10} /> 🔄 Recalculer
+        </button>
       </div>
     </div>
   );
