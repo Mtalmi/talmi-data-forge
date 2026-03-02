@@ -93,6 +93,7 @@ const InnovationCoach = lazy(() => import("./pages/InnovationCoach"));
 const OmniscientMarketMaven = lazy(() => import("./pages/OmniscientMarketMaven"));
 const InnovationPortfolioMastermind = lazy(() => import("./pages/InnovationPortfolioMastermind"));
 const IPAlchemist = lazy(() => import("./pages/IPAlchemist"));
+const InnovationFusionReactor = lazy(() => import("./pages/InnovationFusionReactor"));
 
 const queryClient = new QueryClient();
 
@@ -195,6 +196,7 @@ const App = () => (
                      <Route path="/market-maven" element={<OmniscientMarketMaven />} />
                      <Route path="/portfolio-mastermind" element={<InnovationPortfolioMastermind />} />
                      <Route path="/ip-alchemist" element={<IPAlchemist />} />
+                     <Route path="/fusion-reactor" element={<InnovationFusionReactor />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
