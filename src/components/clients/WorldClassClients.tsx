@@ -240,40 +240,48 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
           <p style={{ color: T.gold, fontWeight: 700, fontSize: 13, marginBottom: 10 }}>🧠 Intelligence Client</p>
           {loadingBrief ? (
             <p style={{ color: T.textDim, fontSize: 12 }}>Chargement...</p>
-          ) : brief ? (
-            <div>
-              <p style={{ color: '#d1d5db', fontSize: 13, marginBottom: 10, lineHeight: 1.5 }}>{brief.summary}</p>
-              {brief.patterns && (
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
-                  {brief.patterns.avg_order_frequency_days != null && (
-                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {brief.patterns.avg_order_frequency_days}j</span>
-                  )}
-                  {brief.patterns.preferred_formula && (
-                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {brief.patterns.preferred_formula}</span>
-                  )}
-                  {brief.patterns.avg_volume_per_order != null && (
-                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {brief.patterns.avg_volume_per_order}m³</span>
-                  )}
-                </div>
+          ) : (() => {
+            const displayBrief = brief || {
+              summary: "Client fidèle avec commandes régulières. Volume en hausse de 15% sur les 3 derniers mois. Aucun retard de paiement.",
+              patterns: { avg_order_frequency_days: 7, preferred_formula: 'B25/B30', avg_volume_per_order: 45 },
+              risk_level: 'low',
+              generated_at: new Date().toISOString(),
+            };
+            return (
+            <div style={{ borderLeft: `2px solid ${T.gold}`, paddingLeft: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ color: T.gold, fontWeight: 700, fontSize: 12 }}>Résumé</span>
+                <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                  background: displayBrief.risk_level === 'low' ? `${T.success}22` : displayBrief.risk_level === 'medium' ? `${T.warning}22` : `${T.danger}22`,
+                  color: displayBrief.risk_level === 'low' ? T.success : displayBrief.risk_level === 'medium' ? T.warning : T.danger,
+                  border: `1px solid ${displayBrief.risk_level === 'low' ? T.success : displayBrief.risk_level === 'medium' ? T.warning : T.danger}44`,
+                }}>{displayBrief.risk_level === 'low' ? 'Risque Faible' : displayBrief.risk_level === 'medium' ? 'Risque Modéré' : 'Risque Élevé'}</span>
+              </div>
+              <p style={{ color: '#d1d5db', fontSize: 13, marginBottom: 10, lineHeight: 1.5 }}>{displayBrief.summary}</p>
+              {displayBrief.patterns && (
+                <>
+                  <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>Tendances</p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                    {displayBrief.patterns.avg_order_frequency_days != null && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {displayBrief.patterns.avg_order_frequency_days}j</span>
+                    )}
+                    {displayBrief.patterns.preferred_formula && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {displayBrief.patterns.preferred_formula}</span>
+                    )}
+                    {displayBrief.patterns.avg_volume_per_order != null && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {displayBrief.patterns.avg_volume_per_order}m³</span>
+                    )}
+                  </div>
+                </>
               )}
-              {brief.risk_level && (
-                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-                  background: brief.risk_level === 'low' ? `${T.success}22` : brief.risk_level === 'medium' ? `${T.warning}22` : `${T.danger}22`,
-                  color: brief.risk_level === 'low' ? T.success : brief.risk_level === 'medium' ? T.warning : T.danger,
-                  border: `1px solid ${brief.risk_level === 'low' ? T.success : brief.risk_level === 'medium' ? T.warning : T.danger}44`,
-                }}>Risque: {brief.risk_level}</span>
-              )}
+              {!brief && <p style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic', marginBottom: 6 }}>Données de démonstration — cliquez Actualiser pour générer un vrai brief</p>}
               <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#6B7280', fontSize: 10 }}>Généré le {brief.generated_at ? new Date(brief.generated_at).toLocaleDateString('fr-FR') : '—'}</span>
-                <button onClick={handleGenerate} style={{ padding: '3px 10px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Régénérer</button>
+                <span style={{ color: '#6B7280', fontSize: 10 }}>Dernière analyse: {displayBrief.generated_at ? new Date(displayBrief.generated_at).toLocaleDateString('fr-FR') : '—'}</span>
+                <button onClick={handleGenerate} style={{ padding: '3px 10px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Actualiser</button>
               </div>
             </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ color: T.textDim, fontSize: 12 }}>Aucun brief disponible</span>
-              <button onClick={handleGenerate} style={{ padding: '4px 12px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>Générer</button>
-            </div>
-          )}
+            );
+          })()}
         </div>
       )}
     </div>
