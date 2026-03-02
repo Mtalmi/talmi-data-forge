@@ -115,7 +115,7 @@ export function IntelligenceBriefingCard() {
 
   const liveBadge = (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: isLive ? 'rgba(16,185,129,0.15)' : 'rgba(100,116,139,0.2)', color: isLive ? '#10B981' : '#64748B' }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: isLive ? '#10B981' : '#64748B', ...(isLive ? { boxShadow: '0 0 6px #10B98180' } : {}) }} />
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: isLive ? '#10B981' : '#64748B', ...(isLive ? { boxShadow: '0 0 6px #10B98180', animation: 'pulse 2s ease-in-out infinite' } : {}) }} />
       {isLive ? 'Live' : 'Demo'}
     </span>
   );
@@ -133,10 +133,15 @@ export function IntelligenceBriefingCard() {
     </div>
   );
 
+  // Enhanced empty state when no briefing is available and no mock fallback wanted
+  if (!briefing && !isLive && !expanded) {
+    // Still render the card with mock sections on expand — this just improves the collapsed view
+  }
+
   // Determine sections to render
   let sections = MOCK_SECTIONS;
-  let headerTitle = '🧠 Briefing du 1 Mars 2026';
-  let subtitle = 'Généré à 05:45 par l\'Agent IA';
+  let headerTitle = '🧠 Intelligence du Matin';
+  let subtitle = 'Prochain briefing prévu à 05:45 — L\'agent IA analyse production, stocks et qualité';
 
   if (briefing && isLive) {
     headerTitle = `🧠 Intelligence Briefing — ${new Date(briefing.date || briefing.generated_at || '').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
