@@ -86,6 +86,7 @@ const AutonomousInnovator = lazy(() => import("./pages/AutonomousInnovator"));
 const IndustrialOracle = lazy(() => import("./pages/IndustrialOracle"));
 const OmniscientOptimizer = lazy(() => import("./pages/OmniscientOptimizer"));
 const CreativeCoPilot = lazy(() => import("./pages/CreativeCoPilot"));
+const SimulationSage = lazy(() => import("./pages/SimulationSage"));
 
 const queryClient = new QueryClient();
 
@@ -181,6 +182,7 @@ const App = () => (
                      <Route path="/industrial-oracle" element={<IndustrialOracle />} />
                      <Route path="/omniscient-optimizer" element={<OmniscientOptimizer />} />
                      <Route path="/creative-copilot" element={<CreativeCoPilot />} />
+                     <Route path="/simulation-sage" element={<SimulationSage />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
