@@ -356,30 +356,32 @@ export default function Dashboard() {
                   TBOS Tableau de Bord
                 </h2>
                 {/* Subtitle with data pulse */}
-                <span className="flex items-center gap-1.5" style={{
+                <span className="flex items-center gap-1" style={{
                   fontFamily: "'Inter', 'DM Sans', sans-serif",
                   fontWeight: 500,
                   fontStyle: 'italic',
-                  fontSize: 'clamp(0.7rem, 1.1vw, 0.95rem)',
-                  color: 'rgba(148,163,184,0.6)',
-                  letterSpacing: '0.08em',
+                  fontSize: 'clamp(0.65rem, 1vw, 0.85rem)',
+                  color: 'rgba(148,163,184,0.55)',
+                  letterSpacing: '0.06em',
+                  marginLeft: 8,
                 }}>
                   Données en temps r
                   {/* Pulsing dot replacing é */}
-                  <span className="relative inline-flex items-center justify-center" style={{ width: 10, height: 10, marginBottom: -1 }}>
+                  <span className="relative inline-flex items-center justify-center" style={{ width: 8, height: 8, marginBottom: -1, marginLeft: -1, marginRight: -1 }}>
                     {/* Concentric ring */}
                     <span className="absolute rounded-full" style={{
-                      width: 18, height: 18,
-                      border: '1px solid rgba(30,144,255,0.3)',
+                      width: 12, height: 12,
+                      border: '1px solid rgba(30,144,255,0.25)',
                       animation: 'tbos-ring-expand 2s ease-out infinite',
                     }} />
                     {/* Ping */}
-                    <span className="absolute inline-flex h-full w-full rounded-full" style={{
-                      backgroundColor: 'rgba(30,144,255,0.5)',
+                    <span className="absolute inline-flex rounded-full" style={{
+                      width: 6, height: 6,
+                      backgroundColor: 'rgba(30,144,255,0.4)',
                       animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
                     }} />
                     {/* Core dot */}
-                    <span className="relative inline-flex rounded-full" style={{ width: 6, height: 6, backgroundColor: '#1E90FF', boxShadow: '0 0 8px rgba(30,144,255,0.6)' }} />
+                    <span className="relative inline-flex rounded-full" style={{ width: 4, height: 4, backgroundColor: '#1E90FF', boxShadow: '0 0 6px rgba(30,144,255,0.5)' }} />
                   </span>
                   el
                 </span>
@@ -433,22 +435,22 @@ export default function Dashboard() {
                       <span style={{ color: 'rgba(52,211,153,0.5)' }}>margin</span>
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3 mt-3" style={{ paddingLeft: 5 }}>
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ boxShadow: '0 0 8px rgba(52,211,153,0.4)' }} />
+                  <div className="flex flex-wrap items-center gap-3 mt-4" style={{ paddingLeft: 5 }}>
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ boxShadow: '0 0 10px rgba(52,211,153,0.5)' }} />
                     </span>
-                    <span className="text-[9px] font-medium uppercase tracking-[0.3em] text-emerald-400/50">Operational</span>
-                    <span className="w-px h-3 bg-slate-700/40" />
-                    <span className="text-[9px] text-slate-600/50 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-                    <span className="w-px h-3 bg-slate-700/40" />
-                    <span className="text-[9px] text-slate-600/50 tracking-wider">Casablanca</span>
-                    <span className="w-px h-3 bg-slate-700/40" />
-                    <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-400/80">Operational</span>
+                    <span className="w-px h-3.5 bg-slate-600/50" />
+                    <span className="text-[11px] text-slate-400/70 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+                    <span className="w-px h-3.5 bg-slate-600/50" />
+                    <span className="text-[11px] text-slate-400/70 tracking-wider">Casablanca</span>
+                    <span className="w-px h-3.5 bg-slate-600/50" />
+                    <div className="flex items-center gap-2">
                       <span className="text-sm">☀️</span>
-                      <span className="text-[10px] text-white/70 font-mono tabular-nums">22°C</span>
-                      <span className="text-[9px] text-slate-600/50">Ensoleillé · 45%</span>
-                      <span className="text-[9px] font-medium" style={{ color: 'rgba(52,211,153,0.6)' }}>● Optimal</span>
+                      <span className="text-[11px] text-white/80 font-mono tabular-nums font-medium">22°C</span>
+                      <span className="text-[11px] text-slate-400/60">Ensoleillé · 45%</span>
+                      <span className="text-[11px] font-semibold" style={{ color: 'rgba(52,211,153,0.8)' }}>● Optimal</span>
                     </div>
                   </div>
                 </div>
