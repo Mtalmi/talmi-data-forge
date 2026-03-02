@@ -37,10 +37,42 @@ export function IntelligenceBriefingCard() {
   );
 
   if (!briefing) return (
-    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 12, padding: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Brain size={16} style={{ color: '#64748B' }} />
-        <span style={{ color: '#64748B', fontSize: 13 }}>Aucun briefing disponible. L'agent IA génère le prochain à 05:45.</span>
+    <div style={{
+      background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
+      border: '1px solid rgba(255,215,0,0.15)', borderLeft: '4px solid #FFD700',
+      borderRadius: 12, padding: 20,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Brain size={18} style={{ color: '#FFD700' }} />
+          <span style={{ fontWeight: 700, fontSize: 14, color: '#F1F5F9' }}>🧠 Briefing du 1 Mars 2026</span>
+        </div>
+        <span style={{ color: '#64748B', fontSize: 10, fontStyle: 'italic' }}>Données de démonstration</span>
+      </div>
+      <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 10 }}>Généré à 05:45 par l'Agent IA</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#F1F5F9', marginBottom: 3 }}>📊 Production</p>
+          <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.6 }}>Objectif: 850 m³ aujourd'hui. 14 batches planifiés. Capacité à 87%. Formule principale: F-B25 (45% du volume).</p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 3 }}>⚠️ Alertes</p>
+          <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.6 }}>Adjuvant à 10% — commande urgente recommandée. Pompe BP-01 en maintenance, fin estimée 12:00. 2 devis en attente de validation {'>'} 48h.</p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#10B981', marginBottom: 3 }}>💰 Commercial</p>
+          <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.6 }}>Pipeline: 847K DH. 3 BCs validés prêts production. Marge brute 49.9% — pricing sain. Relancer DEV-2602-316 et DEV-2602-895.</p>
+        </div>
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 700, color: '#FFD700', marginBottom: 3 }}>🎯 Priorités du jour</p>
+          <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.6 }}>1. Valider production BL-2602-014 (Saudi Readymix, 50m³). 2. Suivre livraison Constructions Modernes (80m³ en route). 3. Relancer devis en attente.</p>
+        </div>
+      </div>
+      <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 10 }}>
+        <span style={{ fontSize: 10, color: '#64748B' }}>Prochain briefing: demain 05:45</span>
+        <button onClick={() => {}} style={{ padding: '3px 10px', borderRadius: 6, background: 'transparent', border: '1px solid rgba(255,215,0,0.3)', color: '#FFD700', fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+          🔄 Rafraîchir
+        </button>
       </div>
     </div>
   );

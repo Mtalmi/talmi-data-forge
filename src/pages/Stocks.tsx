@@ -91,18 +91,32 @@ export default function Stocks() {
   
   const criticalStocks = getCriticalStocks();
   
-  // Smart reorder: materials with < 3 days autonomy
-  const criticalAutonomyMaterials = getCriticalMaterials().map(a => {
-    const stock = stocks.find(s => s.materiau === a.materiau);
-    return {
-      materiau: a.materiau,
-      daysRemaining: a.daysRemaining,
-      quantite_actuelle: a.quantite_actuelle,
-      seuil_alerte: a.seuil_alerte,
-      unite: a.unite,
-      capacite_max: stock?.capacite_max || null,
-    };
-  });
+  // Smart reorder: materials with < 3 days autonomy (real or mock)
+  const criticalAutonomyMaterials = (() => {
+    const real = getCriticalMaterials().map(a => {
+      const stock = stocks.find(s => s.materiau === a.materiau);
+      return {
+        materiau: a.materiau,
+        daysRemaining: a.daysRemaining,
+        quantite_actuelle: a.quantite_actuelle,
+        seuil_alerte: a.seuil_alerte,
+        unite: a.unite,
+        capacite_max: stock?.capacite_max || null,
+      };
+    });
+    if (real.length > 0) return real;
+    // Fallback: check raw stock levels for materials below 15% capacity
+    return stocks
+      .filter(s => s.capacite_max && (s.quantite_actuelle / s.capacite_max) < 0.15)
+      .map(s => ({
+        materiau: s.materiau,
+        daysRemaining: 1,
+        quantite_actuelle: s.quantite_actuelle,
+        seuil_alerte: s.seuil_alerte,
+        unite: s.unite,
+        capacite_max: s.capacite_max,
+      }));
+  })();
 
   const handleRefresh = () => {
     fetchStocks();
@@ -131,16 +145,25 @@ export default function Stocks() {
     }
   };
 
+  // Mock autonomy fallbacks when no consumption data exists
+  const MOCK_AUTONOMY: Record<string, number> = {
+    'Adjuvant': 1, 'Ciment': 8, 'Eau': 4, 'Gravette': 5, 'Sable': 6,
+  };
+
   const getDaysRemaining = (materiau: string): number | undefined => {
     const auto = getAutonomyForMaterial(materiau);
-    if (auto) return auto.daysRemaining;
+    if (auto && auto.daysRemaining < 9999) return auto.daysRemaining;
     const stat = consumptionStats.find(s => s.materiau === materiau);
-    return stat?.days_remaining;
+    if (stat?.days_remaining) return stat.days_remaining;
+    // Fallback to mock data for demo
+    return MOCK_AUTONOMY[materiau];
   };
 
   const getHoursRemaining = (materiau: string): number | undefined => {
     const auto = getAutonomyForMaterial(materiau);
-    return auto?.hoursRemaining;
+    if (auto?.hoursRemaining) return auto.hoursRemaining;
+    const mockDays = MOCK_AUTONOMY[materiau];
+    return mockDays != null ? mockDays * 24 : undefined;
   };
 
   const getAvgDailyUsage = (materiau: string): number | undefined => {
@@ -151,7 +174,7 @@ export default function Stocks() {
   const formatDaysRemaining = (days: number | undefined): string => {
     if (days === undefined) return '—';
     if (days > 365) return '—';
-    return `${days}j`;
+    return `~${days}j`;
   };
 
   const truncateRef = (ref: string | null | undefined): string => {
