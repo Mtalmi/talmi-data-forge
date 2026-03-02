@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
+import { toast as sonnerToast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -868,6 +870,7 @@ function NextActionRow({ action, delay }: { action: typeof nextActions[0]; delay
 export function WorldClassVentes() {
   const [activeTab, setActiveTab] = useState<'pipeline' | 'performance' | 'previsions' | 'activites'>('pipeline');
   const { t } = useI18n();
+  const { triggerWorkflow, isSubmitting: isScoring } = useN8nWorkflow();
   const vt = t.pages.ventes;
 
   const tabs = [
@@ -930,6 +933,25 @@ export function WorldClassVentes() {
               <Bell size={18} color={T.textSec} />
               <div style={{ position: 'absolute', top: -4, right: -4, width: 8, height: 8, borderRadius: '50%', background: T.danger }} />
             </div>
+            <button style={{
+              background: 'transparent',
+              border: `1px solid ${T.goldBorder}`,
+              color: T.gold,
+              fontSize: 12, padding: '7px 16px', borderRadius: 8,
+              cursor: isScoring ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+              fontFamily: 'DM Sans, sans-serif', fontWeight: 700,
+              transition: 'all 150ms', whiteSpace: 'nowrap',
+              opacity: isScoring ? 0.6 : 1,
+            }}
+            onClick={async () => {
+              try {
+                await triggerWorkflow('deal_scoring', {});
+                sonnerToast.success('Scoring IA en cours...');
+              } catch (e: any) { sonnerToast.error(e.message); }
+            }}
+            >
+              🧠 Scorer
+            </button>
             <button style={{
               background: 'transparent',
               border: `1px solid ${T.goldBorder}`,

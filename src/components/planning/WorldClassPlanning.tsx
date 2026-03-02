@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import {
   RadialBarChart, RadialBar, ResponsiveContainer,
@@ -9,6 +9,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate } from 'react-router-dom';
+import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
+import { toast } from 'sonner';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -352,7 +354,7 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
 // ─────────────────────────────────────────────────────
 // DELIVERY CARD
 // ─────────────────────────────────────────────────────
-function DeliveryCard({ d, delay = 0 }: { d: typeof deliveries[0]; delay?: number }) {
+function DeliveryCard({ d, delay = 0, routeData }: { d: typeof deliveries[0]; delay?: number; routeData?: any }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -379,10 +381,18 @@ function DeliveryCard({ d, delay = 0 }: { d: typeof deliveries[0]; delay?: numbe
             <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 13, color: T.textPri }}>{d.client}</p>
             <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: `${PRODUCT_COLORS[d.product] || T.gold}18`, color: PRODUCT_COLORS[d.product] || T.gold, border: `1px solid ${PRODUCT_COLORS[d.product] || T.gold}40` }}>{d.product}</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span style={{ color: T.textDim, fontSize: 11 }}>{d.date}</span>
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.gold }}>{d.volume} m³</span>
             <span style={{ padding: '1px 7px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: `${T.info}18`, color: T.info, border: `1px solid ${T.info}30` }}>{d.truck}</span>
+            {routeData?.optimized_route && (
+              <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600, background: '#1a1a1a', color: T.gold, border: '1px solid #333' }}>
+                🛣️ {routeData.optimized_route.distance_km}km · {routeData.optimized_route.estimated_duration_min}min · {routeData.optimized_route.traffic_status}
+              </span>
+            )}
+            {routeData?.whatsapp_sent && (
+              <span style={{ fontSize: 10, color: T.success }}>WhatsApp ✓</span>
+            )}
           </div>
         </div>
         <Badge label={d.status} color={d.statusColor} bg={`${d.statusColor}18`} pulse={isEnRoute} />
@@ -401,6 +411,27 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
   const semaineRef = useRef<HTMLElement | null>(null);
   const capaciteRef = useRef<HTMLElement | null>(null);
   const { kpis: pKpis, liveDeliveries } = usePlanningLiveData();
+  const { results: n8nResults, triggerWorkflow, isSubmitting: isOptimizing } = useN8nWorkflow();
+
+  // Route data from n8n results keyed by delivery_id
+  const routeDataMap = React.useMemo(() => {
+    const map: Record<string, any> = {};
+    n8nResults.forEach(r => {
+      if (r.agent_type === 'delivery_orchestration' && r.response_payload?.delivery_id) {
+        map[r.response_payload.delivery_id] = r.response_payload;
+      }
+    });
+    return map;
+  }, [n8nResults]);
+
+  const handleOptimizeRoutes = async () => {
+    try {
+      await triggerWorkflow('delivery_orchestration', { date: new Date().toISOString() });
+      toast.success('Optimisation des routes lancée...');
+    } catch (e: any) {
+      toast.error(e.message || 'Erreur d\'optimisation');
+    }
+  };
   const tabs = [
     { id: 'semaine', label: 'Semaine' },
     { id: 'mois', label: 'Mois' },
@@ -435,27 +466,51 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
         activeTab={activeTab}
         onTabChange={handleTabChange}
         actions={
-          <button
-            onClick={() => navigate('/bons')}
-            style={{
-              padding: '6px 16px',
-              borderRadius: 8,
-              background: 'linear-gradient(135deg, #C4933B, #FDB913)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-              color: '#0F172A',
-              fontFamily: 'DM Sans, sans-serif',
-              fontWeight: 600,
-              fontSize: 13,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6,
-              transition: 'all 200ms',
-            }}
-          >
-            <Plus size={13} />
-            Nouvelle Commande
-          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={handleOptimizeRoutes}
+              disabled={isOptimizing}
+              style={{
+                padding: '6px 16px',
+                borderRadius: 8,
+                background: 'transparent',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                color: T.gold,
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: isOptimizing ? 'wait' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all 200ms',
+                opacity: isOptimizing ? 0.6 : 1,
+              }}
+            >
+              📍 Optimiser Routes
+            </button>
+            <button
+              onClick={() => navigate('/bons')}
+              style={{
+                padding: '6px 16px',
+                borderRadius: 8,
+                background: 'linear-gradient(135deg, #C4933B, #FDB913)',
+                border: '1px solid rgba(245, 158, 11, 0.25)',
+                color: '#0F172A',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 600,
+                fontSize: 13,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                transition: 'all 200ms',
+              }}
+            >
+              <Plus size={13} />
+              Nouvelle Commande
+            </button>
+          </div>
         }
       />
 
@@ -546,7 +601,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {(liveDeliveries.length > 0 ? liveDeliveries : deliveries).map((d, i) => (
-                  <DeliveryCard key={i} d={d} delay={i * 70} />
+                  <DeliveryCard key={i} d={d} delay={i * 70} routeData={routeDataMap[(d as any).bl_id || '']} />
                 ))}
               </div>
             </div>

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
+import { useN8nWorkflow } from '@/hooks/useN8nWorkflow';
+import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, AreaChart, Area,
@@ -163,42 +165,117 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   );
 }
 
-interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number }
+interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string }
 
 function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: number }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [brief, setBrief] = useState<any>(null);
+  const [loadingBrief, setLoadingBrief] = useState(false);
+  const { triggerWorkflow } = useN8nWorkflow();
   const segColor = SEGMENT_COLORS[client.segment] || T.gold;
   const initial = client.name.charAt(0).toUpperCase();
   const isInactif = client.status === 'Inactif';
 
+  const fetchBrief = useCallback(async () => {
+    if (!client.clientId) return;
+    setLoadingBrief(true);
+    try {
+      const { data } = await supabase.from('ai_client_briefs')
+        .select('*')
+        .eq('client_id', client.clientId)
+        .order('generated_at', { ascending: false })
+        .limit(1);
+      if (data?.length) setBrief(data[0]);
+    } catch (e) { console.error(e); }
+    finally { setLoadingBrief(false); }
+  }, [client.clientId]);
+
+  const handleExpand = () => {
+    setExpanded(!expanded);
+    if (!expanded && !brief) fetchBrief();
+  };
+
+  const handleGenerate = async () => {
+    try {
+      await triggerWorkflow('client_intelligence', { client_id: client.clientId });
+      toast.success('Génération du brief en cours...');
+    } catch (e: any) { toast.error(e.message); }
+  };
+
   return (
-    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
-      <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${segColor}, ${segColor}99)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: T.navy, boxShadow: `0 0 10px ${segColor}40` }}>{initial}</div>
-      <div style={{ minWidth: 170, flexShrink: 0 }}>
-        <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
-        <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
+    <div>
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleExpand}
+        style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${segColor}, ${segColor}99)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: T.navy, boxShadow: `0 0 10px ${segColor}40` }}>{initial}</div>
+        <div style={{ minWidth: 170, flexShrink: 0 }}>
+          <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
+          <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
+        </div>
+        <div style={{ minWidth: 90, flexShrink: 0 }}>
+          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
+        </div>
+        <div style={{ minWidth: 100, flexShrink: 0 }}>
+          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Dernière cmd</p>
+          <p style={{ color: T.textSec, fontSize: 12 }}>{client.lastOrder}</p>
+        </div>
+        <div style={{ minWidth: 80, flexShrink: 0 }}>
+          <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
+        </div>
+        <div style={{ minWidth: 90, flexShrink: 0 }}>
+          <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Solde</p>
+          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
+            {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
+          </p>
+        </div>
+        <div style={{ flex: 1 }} />
+        <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
       </div>
-      <div style={{ minWidth: 90, flexShrink: 0 }}>
-        <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
-      </div>
-      <div style={{ minWidth: 100, flexShrink: 0 }}>
-        <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Dernière cmd</p>
-        <p style={{ color: T.textSec, fontSize: 12 }}>{client.lastOrder}</p>
-      </div>
-      <div style={{ minWidth: 80, flexShrink: 0 }}>
-        <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
-      </div>
-      <div style={{ minWidth: 90, flexShrink: 0 }}>
-        <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Solde</p>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
-          {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
-        </p>
-      </div>
-      <div style={{ flex: 1 }} />
-      <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
+
+      {/* AI Intelligence Brief */}
+      {expanded && (
+        <div style={{ background: '#111', border: '1px solid #333', borderRadius: 10, padding: 16, margin: '4px 16px 8px 16px' }}>
+          <p style={{ color: T.gold, fontWeight: 700, fontSize: 13, marginBottom: 10 }}>🧠 Intelligence Client</p>
+          {loadingBrief ? (
+            <p style={{ color: T.textDim, fontSize: 12 }}>Chargement...</p>
+          ) : brief ? (
+            <div>
+              <p style={{ color: '#d1d5db', fontSize: 13, marginBottom: 10, lineHeight: 1.5 }}>{brief.summary}</p>
+              {brief.patterns && (
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                  {brief.patterns.avg_order_frequency_days != null && (
+                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {brief.patterns.avg_order_frequency_days}j</span>
+                  )}
+                  {brief.patterns.preferred_formula && (
+                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {brief.patterns.preferred_formula}</span>
+                  )}
+                  {brief.patterns.avg_volume_per_order != null && (
+                    <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {brief.patterns.avg_volume_per_order}m³</span>
+                  )}
+                </div>
+              )}
+              {brief.risk_level && (
+                <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
+                  background: brief.risk_level === 'low' ? `${T.success}22` : brief.risk_level === 'medium' ? `${T.warning}22` : `${T.danger}22`,
+                  color: brief.risk_level === 'low' ? T.success : brief.risk_level === 'medium' ? T.warning : T.danger,
+                  border: `1px solid ${brief.risk_level === 'low' ? T.success : brief.risk_level === 'medium' ? T.warning : T.danger}44`,
+                }}>Risque: {brief.risk_level}</span>
+              )}
+              <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: '#6B7280', fontSize: 10 }}>Généré le {brief.generated_at ? new Date(brief.generated_at).toLocaleDateString('fr-FR') : '—'}</span>
+                <button onClick={handleGenerate} style={{ padding: '3px 10px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Régénérer</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{ color: T.textDim, fontSize: 12 }}>Aucun brief disponible</span>
+              <button onClick={handleGenerate} style={{ padding: '4px 12px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>Générer</button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -303,6 +380,7 @@ export default function WorldClassClients() {
         lastOrder: lastDate ? format(new Date(lastDate), 'dd MMM') : '—',
         status: isActive ? 'Actif' : 'Inactif',
         solde: c.solde_du || 0,
+        clientId: c.client_id,
       };
     }).sort((a, b) => {
       const aVal = parseFloat(a.ca.replace(/[^\d]/g, '')) || 0;

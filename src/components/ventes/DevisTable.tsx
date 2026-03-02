@@ -363,6 +363,7 @@ export function DevisTable({
             <TableHead className="text-right">Volume (m³)</TableHead>
             <TableHead className="text-right">Total HT (DH)</TableHead>
             <TableHead className="text-center">Statut</TableHead>
+            <TableHead className="text-center">Score IA</TableHead>
             <TableHead className="text-center">Priorité</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
@@ -467,6 +468,33 @@ export function DevisTable({
                     />
                     {expirationBadge}
                   </div>
+                </TableCell>
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  {(() => {
+                    const score = (devis as any).ai_score;
+                    const reasons = (devis as any).ai_score_reasons;
+                    const bg = score == null ? '#64748B' : score > 70 ? '#16a34a' : score >= 40 ? '#ca8a04' : '#dc2626';
+                    return (
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mx-auto" style={{ background: bg }}>
+                            {score != null ? score : '—'}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="left" className="max-w-xs">
+                          {reasons && Array.isArray(reasons) ? (
+                            <div className="space-y-1 text-xs">
+                              {reasons.map((r: any, i: number) => (
+                                <div key={i}>{r.factor}: <span className="font-mono">{r.impact}</span></div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Pas encore scoré</span>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })()}
                 </TableCell>
                 <TableCell className="text-center">
                   {priorityIndicator}
