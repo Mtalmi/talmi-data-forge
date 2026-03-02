@@ -139,6 +139,18 @@ const WORKFLOWS = [
     webhookPath: "n8n-inventory-alert",
     taskType: "supply_chain",
   },
+  {
+    id: "whatsapp_command",
+    name: "WhatsApp Command Bot",
+    description: "CEO queries TBOS via WhatsApp: 'Stock ciment?', 'CA ce mois?' — réponse IA instantanée",
+    schedule: "On WhatsApp message",
+    icon: Bell,
+    color: "text-emerald-400",
+    borderColor: "border-emerald-400/30",
+    bgColor: "bg-emerald-400/5",
+    webhookPath: "n8n-whatsapp-command",
+    taskType: "whatsapp_command",
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -304,7 +316,7 @@ export default function OperationsAgent() {
               <h1 className="text-xl font-bold" style={{ fontFamily: "Poppins, sans-serif" }}>
                 TBOS <span style={{ color: "#FFD700" }}>OPERATIONS AGENT</span>
               </h1>
-              <p className="text-xs text-muted-foreground">6 autonomous AI workflows · n8n orchestration</p>
+              <p className="text-xs text-muted-foreground">7 autonomous AI workflows · n8n orchestration</p>
             </div>
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -748,6 +760,7 @@ export default function OperationsAgent() {
                     { label: "Workflow 4 — Delivery Orchestrator", path: "n8n-delivery-event", desc: "n8n calls this for delivery_created / delivery_delayed events" },
                     { label: "Workflow 6 — Smart Reorder Agent", path: "n8n-inventory-alert", desc: "n8n calls this with AI reorder recommendations" },
                     { label: "Workflows 1 & 5 — Save Briefing", path: "n8n-save-briefing", desc: "n8n calls this to store AI-generated briefings in TBOS" },
+                    { label: "Workflow 7 — WhatsApp Command Bot", path: "n8n-whatsapp-command", desc: "n8n calls this to process CEO WhatsApp queries" },
                     { label: "Master Orchestrator (trigger from TBOS)", path: "n8n-orchestrator", desc: "TBOS uses this to trigger any n8n workflow manually" },
                   ].map((item) => (
                     <div key={item.path} className="rounded-lg border border-border bg-card p-3 flex items-center gap-3">
@@ -779,6 +792,7 @@ TBOS_MAINTENANCE_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-maintenance-alert
 TBOS_DELIVERY_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-delivery-event
 TBOS_REORDER_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-inventory-alert
 TBOS_BRIEFING_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-save-briefing
+TBOS_WHATSAPP_WEBHOOK=${SUPABASE_URL}/functions/v1/n8n-whatsapp-command
 
 # Communications
 TWILIO_ACCOUNT_SID=AC...
@@ -816,6 +830,7 @@ SUPPLIER_EMAIL=supplier@vendor.ma`}</pre>
                     "Import Workflow 4 (Delivery Orchestrator) → paste TBOS_DELIVERY_WEBHOOK → activate",
                     "Import Workflow 5 (Daily Report) → paste TBOS_BRIEFING_WEBHOOK → activate",
                     "Import Workflow 6 (Smart Reorder) → paste TBOS_REORDER_WEBHOOK → activate",
+                    "Import Workflow 7 (WhatsApp Command Bot) → paste TBOS_WHATSAPP_WEBHOOK → activate",
                   ].map((step, i) => (
                     <div key={i} className="flex items-start gap-3 text-sm">
                       <span className="w-6 h-6 rounded-full flex items-center justify-center bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 font-mono text-xs flex-shrink-0">{i + 1}</span>

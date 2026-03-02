@@ -14,6 +14,7 @@ import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
 import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp } from 'lucide-react';
+import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -534,6 +535,11 @@ export default function Dashboard() {
               <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums flex-shrink-0">47 min</span>
               <span className="text-[10px] text-slate-600 truncate">→ C. Modernes · 20 m³</span>
             </div>
+          </div>
+
+          {/* 🧠 AI Intelligence Briefing */}
+          <div className="relative z-[1] mb-5" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}>
+            <IntelligenceBriefingCard />
           </div>
 
           {/* Hero KPI Cards — Premium Data Monuments */}

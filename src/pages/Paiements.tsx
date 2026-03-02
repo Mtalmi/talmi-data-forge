@@ -1,4 +1,5 @@
 import WorldClassPayments from '@/components/payments/WorldClassPayments';
+import { CashFlowForecasterCard } from '@/components/payments/CashFlowForecasterCard';
 import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -167,6 +168,10 @@ export default function Paiements() {
   return (
     <MainLayout>
       <WorldClassPayments />
+      {/* 🧠 AI Cash Flow Forecaster */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+        <CashFlowForecasterCard />
+      </div>
       <div className="space-y-6" style={{ display: 'none' }}>
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
