@@ -101,6 +101,7 @@ const Dreamweaver = lazy(() => import("./pages/Dreamweaver"));
 const OmniversalCreator = lazy(() => import("./pages/OmniversalCreator"));
 const SynesthesiaSavant = lazy(() => import("./pages/SynesthesiaSavant"));
 const QuantumQuester = lazy(() => import("./pages/QuantumQuester"));
+const OracleOrganicity = lazy(() => import("./pages/OracleOrganicity"));
 
 const queryClient = new QueryClient();
 
@@ -211,6 +212,7 @@ const App = () => (
                      <Route path="/omniversal-creator" element={<OmniversalCreator />} />
                      <Route path="/synesthesia-savant" element={<SynesthesiaSavant />} />
                      <Route path="/quantum-quester" element={<QuantumQuester />} />
+                     <Route path="/oracle-organicity" element={<OracleOrganicity />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
