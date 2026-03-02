@@ -79,6 +79,7 @@ const OperationsAgent = lazy(() => import("./pages/OperationsAgent"));
 const ArchiveLivraisons = lazy(() => import("./pages/ArchiveLivraisons"));
 const TestGuide = lazy(() => import("./pages/TestGuide"));
 const CyberSecurity = lazy(() => import("./pages/CyberSecurity"));
+const Platform = lazy(() => import("./pages/Platform"));
 
 const queryClient = new QueryClient();
 
@@ -167,6 +168,7 @@ const App = () => (
                      <Route path="/settings" element={<Settings />} />
                      <Route path="/archive-livraisons" element={<ArchiveLivraisons />} />
                      <Route path="/cyber-security" element={<CyberSecurity />} />
+                     <Route path="/platform" element={<Platform />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
