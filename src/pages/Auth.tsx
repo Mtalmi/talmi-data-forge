@@ -56,12 +56,22 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 function AnimatedStat({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
+  const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    let start = 0;
+    // Use IntersectionObserver to trigger animation when visible
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && !hasStarted) setHasStarted(true); },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!hasStarted) return;
     const duration = 2000;
     const startTime = performance.now();
-
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -69,14 +79,12 @@ function AnimatedStat({ value, label, suffix = '' }: { value: number; label: str
       setCount(Math.round(eased * value));
       if (progress < 1) requestAnimationFrame(animate);
     };
-
-    const timer = setTimeout(() => requestAnimationFrame(animate), 500);
-    return () => clearTimeout(timer);
-  }, [value]);
+    requestAnimationFrame(animate);
+  }, [value, hasStarted]);
 
   return (
     <div ref={ref} className="text-center">
-      <div className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+      <div className="text-2xl sm:text-3xl font-black tracking-tight text-foreground" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
         {count.toLocaleString()}{suffix}
       </div>
       <div className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">{label}</div>
