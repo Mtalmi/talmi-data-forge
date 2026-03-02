@@ -107,6 +107,69 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_cashflow_forecasts: {
+        Row: {
+          confidence_pct: number | null
+          details: Json | null
+          forecast_date: string
+          generated_at: string | null
+          id: string
+          period_days: number | null
+          predicted_balance: number | null
+          predicted_inflows: number | null
+          predicted_outflows: number | null
+        }
+        Insert: {
+          confidence_pct?: number | null
+          details?: Json | null
+          forecast_date: string
+          generated_at?: string | null
+          id?: string
+          period_days?: number | null
+          predicted_balance?: number | null
+          predicted_inflows?: number | null
+          predicted_outflows?: number | null
+        }
+        Update: {
+          confidence_pct?: number | null
+          details?: Json | null
+          forecast_date?: string
+          generated_at?: string | null
+          id?: string
+          period_days?: number | null
+          predicted_balance?: number | null
+          predicted_inflows?: number | null
+          predicted_outflows?: number | null
+        }
+        Relationships: []
+      }
+      ai_client_briefs: {
+        Row: {
+          client_id: string
+          generated_at: string | null
+          id: string
+          patterns: Json | null
+          risk_level: string | null
+          summary: string
+        }
+        Insert: {
+          client_id: string
+          generated_at?: string | null
+          id?: string
+          patterns?: Json | null
+          risk_level?: string | null
+          summary: string
+        }
+        Update: {
+          client_id?: string
+          generated_at?: string | null
+          id?: string
+          patterns?: Json | null
+          risk_level?: string | null
+          summary?: string
+        }
+        Relationships: []
+      }
       alertes_reapprovisionnement: {
         Row: {
           actif: boolean | null
@@ -2663,6 +2726,9 @@ export type Database = {
           admin_approval_by_name: string | null
           admin_approval_notes: string | null
           admin_approval_status: string | null
+          ai_score: number | null
+          ai_score_reasons: Json | null
+          ai_scored_at: string | null
           approval_chain_complete: boolean | null
           blocking_reason: string | null
           client_id: string | null
@@ -2711,6 +2777,9 @@ export type Database = {
           admin_approval_by_name?: string | null
           admin_approval_notes?: string | null
           admin_approval_status?: string | null
+          ai_score?: number | null
+          ai_score_reasons?: Json | null
+          ai_scored_at?: string | null
           approval_chain_complete?: boolean | null
           blocking_reason?: string | null
           client_id?: string | null
@@ -2759,6 +2828,9 @@ export type Database = {
           admin_approval_by_name?: string | null
           admin_approval_notes?: string | null
           admin_approval_status?: string | null
+          ai_score?: number | null
+          ai_score_reasons?: Json | null
+          ai_scored_at?: string | null
           approval_chain_complete?: boolean | null
           blocking_reason?: string | null
           client_id?: string | null
@@ -6454,6 +6526,36 @@ export type Database = {
           is_active?: boolean
           name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      stock_autonomy_cache: {
+        Row: {
+          avg_daily_consumption: number
+          current_qty: number
+          days_remaining: number | null
+          id: string
+          last_calculated_at: string | null
+          materiau: string
+          updated_at: string | null
+        }
+        Insert: {
+          avg_daily_consumption?: number
+          current_qty?: number
+          days_remaining?: number | null
+          id?: string
+          last_calculated_at?: string | null
+          materiau: string
+          updated_at?: string | null
+        }
+        Update: {
+          avg_daily_consumption?: number
+          current_qty?: number
+          days_remaining?: number | null
+          id?: string
+          last_calculated_at?: string | null
+          materiau?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
