@@ -64,8 +64,8 @@ function useClientsLiveData() {
     try {
       const sixMonthsAgo = format(subMonths(new Date(), 6), 'yyyy-MM-dd');
       const [clientsRes, facturesRes] = await Promise.all([
-        supabase.from('clients').select('client_id, nom, telephone, email, ville, created_at, statut_client, categorie_client, solde_courant').limit(200),
-        supabase.from('factures').select('facture_id, client_id, montant_ttc, date_facture, statut').gte('date_facture', sixMonthsAgo),
+        supabase.from('clients').select('client_id, nom_client, telephone, email, ville, created_at, credit_bloque, solde_du, limite_credit_dh').limit(200),
+        supabase.from('factures').select('facture_id, client_id, total_ttc, date_facture, statut').gte('date_facture', sixMonthsAgo),
       ]);
       setClients(clientsRes.data || []);
       setFactures(facturesRes.data || []);
@@ -236,12 +236,12 @@ export default function WorldClassClients() {
 
   // Derived data
   const totalClients = clients.length;
-  const activeClients = clients.filter(c => c.statut_client === 'actif').length;
+  const activeClients = clients.filter(c => !c.credit_bloque).length;
 
   // CA per client
   const caByClient = useMemo(() => {
     const map: Record<string, number> = {};
-    factures.forEach(f => { map[f.client_id] = (map[f.client_id] || 0) + (f.montant_ttc || 0); });
+    factures.forEach(f => { map[f.client_id] = (map[f.client_id] || 0) + (f.total_ttc || 0); });
     return map;
   }, [factures]);
 
@@ -255,7 +255,7 @@ export default function WorldClassClients() {
       .slice(0, 5)
       .map(([id, ca]) => {
         const cl = clients.find(c => c.client_id === id);
-        return { client: cl?.nom || id, ca: Math.round(ca / 1000) };
+        return { client: cl?.nom_client || id, ca: Math.round(ca / 1000) };
       });
   }, [caByClient, clients]);
 
@@ -263,12 +263,13 @@ export default function WorldClassClients() {
   const segments = useMemo(() => {
     const map: Record<string, number> = {};
     clients.forEach(c => {
-      const cat = c.categorie_client || 'Autre';
+      const ca = caByClient[c.client_id] || 0;
+      const cat = ca > 1500000 ? 'Enterprise' : ca > 500000 ? 'Mid-Market' : ca > 100000 ? 'PME' : 'Startup';
       map[cat] = (map[cat] || 0) + 1;
     });
     const colors = [T.gold, T.info, T.success, T.purple, T.textSec];
     return Object.entries(map).map(([name, value], i) => ({ name, value, color: SEGMENT_COLORS[name] || colors[i % colors.length] }));
-  }, [clients]);
+  }, [clients, caByClient]);
 
   // Monthly trend
   const trendData = useMemo(() => {
@@ -279,7 +280,7 @@ export default function WorldClassClients() {
       const yy = format(d, 'yyyy-MM');
       const ca = factures
         .filter(f => f.date_facture?.startsWith(yy))
-        .reduce((s, f) => s + (f.montant_ttc || 0), 0);
+        .reduce((s, f) => s + (f.total_ttc || 0), 0);
       const nouveaux = clients.filter(c => c.created_at?.startsWith(yy)).length;
       months.push({ month: m, ca: Math.round(ca / 1000), nouveaux });
     }
@@ -293,14 +294,15 @@ export default function WorldClassClients() {
       const ca = caByClient[c.client_id] || 0;
       const clientFactures = factures.filter(f => f.client_id === c.client_id);
       const lastDate = clientFactures.sort((a, b) => (b.date_facture || '').localeCompare(a.date_facture || ''))[0]?.date_facture;
-      const isActive = c.statut_client === 'actif';
+      const isActive = !c.credit_bloque;
+      const segment = ca > 1500000 ? 'Enterprise' : ca > 500000 ? 'Mid-Market' : ca > 100000 ? 'PME' : 'Startup';
       return {
-        name: c.nom || 'N/A',
-        segment: c.categorie_client || 'Autre',
+        name: c.nom_client || 'N/A',
+        segment,
         ca: ca > 1000 ? `${Math.round(ca / 1000)}K DH` : `${Math.round(ca)} DH`,
         lastOrder: lastDate ? format(new Date(lastDate), 'dd MMM') : '—',
         status: isActive ? 'Actif' : 'Inactif',
-        solde: c.solde_courant || 0,
+        solde: c.solde_du || 0,
       };
     }).sort((a, b) => {
       const aVal = parseFloat(a.ca.replace(/[^\d]/g, '')) || 0;
