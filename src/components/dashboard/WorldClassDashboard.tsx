@@ -9,6 +9,7 @@ import { format, subDays } from 'date-fns';
 import RecentDeliveries from '@/components/dashboard/RecentDeliveries';
 import LiveBatchProgress from '@/components/dashboard/LiveBatchProgress';
 import { ComplianceWidget } from '@/components/dashboard/ComplianceWidget';
+import { EnergyCostAnomalyWidget } from '@/components/dashboard/EnergyCostAnomalyWidget';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — Dark Luxury
@@ -706,6 +707,9 @@ export function WorldClassDashboard() {
 
             {/* Compliance Widget */}
             <ComplianceWidget />
+
+            {/* Energy & Cost Anomaly Widget */}
+            <EnergyCostAnomalyWidget />
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
