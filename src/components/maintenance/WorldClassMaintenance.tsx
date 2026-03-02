@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { EnergyCostAnomalyCard } from '@/components/maintenance/EnergyCostAnomalyCard';
+import { SafetyIncidentCard } from '@/components/maintenance/SafetyIncidentCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -1047,6 +1048,11 @@ export default function WorldClassMaintenance() {
         {/* ── SECTION 8: ENERGY & COST ANOMALY AI ── */}
         <div>
           <EnergyCostAnomalyCard />
+        </div>
+
+        {/* ── SECTION 8b: SAFETY & INCIDENTS AI ── */}
+        <div>
+          <SafetyIncidentCard />
         </div>
 
         {/* ── SECTION 9: METRICS ── */}
