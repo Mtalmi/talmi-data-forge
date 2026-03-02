@@ -91,6 +91,7 @@ const VisionaryStrategist = lazy(() => import("./pages/VisionaryStrategist"));
 const MasterInventor = lazy(() => import("./pages/MasterInventor"));
 const InnovationCoach = lazy(() => import("./pages/InnovationCoach"));
 const OmniscientMarketMaven = lazy(() => import("./pages/OmniscientMarketMaven"));
+const InnovationPortfolioMastermind = lazy(() => import("./pages/InnovationPortfolioMastermind"));
 
 const queryClient = new QueryClient();
 
@@ -191,6 +192,7 @@ const App = () => (
                      <Route path="/master-inventor" element={<MasterInventor />} />
                      <Route path="/innovation-coach" element={<InnovationCoach />} />
                      <Route path="/market-maven" element={<OmniscientMarketMaven />} />
+                     <Route path="/portfolio-mastermind" element={<InnovationPortfolioMastermind />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
