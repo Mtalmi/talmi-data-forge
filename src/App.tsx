@@ -82,6 +82,7 @@ const CyberSecurity = lazy(() => import("./pages/CyberSecurity"));
 const Platform = lazy(() => import("./pages/Platform"));
 const InnovationHub = lazy(() => import("./pages/InnovationHub"));
 const AIInnovationEngine = lazy(() => import("./pages/AIInnovationEngine"));
+const AutonomousInnovator = lazy(() => import("./pages/AutonomousInnovator"));
 
 const queryClient = new QueryClient();
 
@@ -173,6 +174,7 @@ const App = () => (
                      <Route path="/platform" element={<Platform />} />
                      <Route path="/innovation" element={<InnovationHub />} />
                      <Route path="/ai-engine" element={<AIInnovationEngine />} />
+                     <Route path="/autonomous-innovator" element={<AutonomousInnovator />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
