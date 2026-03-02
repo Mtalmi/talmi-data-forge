@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp } from 'lucide-react';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
@@ -405,13 +405,34 @@ export default function Dashboard() {
                     Bonjour {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
                     {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
-                  {/* Dynamic CEO briefing line */}
-                  <p style={{ fontSize: '0.9rem', fontWeight: 400, color: '#C0C0C0', lineHeight: 1.4, paddingLeft: 5 }}>
-                    Votre centrale tourne à <span className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>87%</span> de capacité.{" "}
-                    <span style={{ color: 'rgba(251,191,36,0.8)' }}>2 livraisons urgentes</span> · {" "}
-                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>{prodVolume} m³ produits</span> · {" "}
-                    Marge <span style={{ color: 'rgba(52,211,153,0.8)' }}>{marge}%</span>
-                  </p>
+                  {/* Divider */}
+                  <div className="mt-3 mb-2.5" style={{ height: '1px', background: 'linear-gradient(90deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.04) 70%, transparent 100%)' }} />
+                  {/* CEO briefing subheader */}
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1" style={{ paddingLeft: 5, paddingRight: 5 }}>
+                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
+                      <Factory className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,215,0,0.5)' }} strokeWidth={1.5} />
+                      <span className="font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>87%</span>
+                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>capacity</span>
+                    </span>
+                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
+                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
+                      <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(251,191,36,0.6)' }} strokeWidth={1.5} />
+                      <span className="font-medium" style={{ color: 'rgba(251,191,36,0.85)' }}>2</span>
+                      <span style={{ color: 'rgba(251,191,36,0.6)' }}>urgent</span>
+                    </span>
+                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
+                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
+                      <Package className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} strokeWidth={1.5} />
+                      <span className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{prodVolume} m³</span>
+                      <span style={{ color: 'rgba(255,255,255,0.45)' }}>output</span>
+                    </span>
+                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
+                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
+                      <TrendingUp className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(52,211,153,0.6)' }} strokeWidth={1.5} />
+                      <span className="font-medium" style={{ color: 'rgba(52,211,153,0.85)' }}>{marge}%</span>
+                      <span style={{ color: 'rgba(52,211,153,0.5)' }}>margin</span>
+                    </span>
+                  </div>
                   <div className="flex flex-wrap items-center gap-3 mt-3" style={{ paddingLeft: 5 }}>
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/40" />
