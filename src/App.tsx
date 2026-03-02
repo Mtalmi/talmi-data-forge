@@ -110,6 +110,7 @@ const EmpathicEvolutioneer = lazy(() => import("./pages/EmpathicEvolutioneer"));
 const SymbioticStoryteller = lazy(() => import("./pages/SymbioticStoryteller"));
 const QuantumQualiaQuaestor = lazy(() => import("./pages/QuantumQualiaQuaestor"));
 const AstroArchetypalArchitect = lazy(() => import("./pages/AstroArchetypalArchitect"));
+const TransDimensionalTranslator = lazy(() => import("./pages/TransDimensionalTranslator"));
 
 const queryClient = new QueryClient();
 
@@ -229,6 +230,7 @@ const App = () => (
                      <Route path="/symbiotic-storyteller" element={<SymbioticStoryteller />} />
                      <Route path="/quantum-qualia-quaestor" element={<QuantumQualiaQuaestor />} />
                      <Route path="/astro-archetypal-architect" element={<AstroArchetypalArchitect />} />
+                     <Route path="/trans-dimensional-translator" element={<TransDimensionalTranslator />} />
                      <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
