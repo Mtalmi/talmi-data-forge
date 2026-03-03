@@ -57,6 +57,18 @@
         <div class="lcp-skeleton-bar" style="height:18rem;"></div>
       </div>
     </div>
+    <script>
+      // Global recovery for stale Vite dependency chunks (e.g. after deploy)
+      window.addEventListener('error', function(e) {
+        if (e.message && e.message.includes('Importing a module script failed')) {
+          var key = 'tbos-module-reload';
+          if (!sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, '1');
+            window.location.reload();
+          }
+        }
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
