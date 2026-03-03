@@ -348,9 +348,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // BC Price Validation: CEO/Supervisor/FrontDesk
   const canValidateBcPrice = isCeo || isSuperviseur || isAgentAdministratif;
   
-  // Emergency Window Check: 18:00 - 00:00 (Midnight Emergency Protocol)
+  // Emergency Window Check: 18:00 - 06:00 (Midnight Emergency Protocol)
   const currentHour = new Date().getHours();
-  const isInEmergencyWindow = currentHour >= 18 || currentHour < 0;
+  const isInEmergencyWindow = currentHour >= 18 || currentHour < 6;
   
   // Emergency Bypass: Dir Ops can use emergency bypass ONLY during 18:00-00:00
   // Requires CEO approval

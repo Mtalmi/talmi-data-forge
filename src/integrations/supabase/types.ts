@@ -8350,6 +8350,7 @@ export type Database = {
       is_finance_role: { Args: never; Returns: boolean }
       is_management_role: { Args: never; Returns: boolean }
       is_master_admin: { Args: never; Returns: boolean }
+      is_operations_role: { Args: never; Returns: boolean }
       is_operator: { Args: { _user_id: string }; Returns: boolean }
       is_responsable_technique: { Args: { _user_id: string }; Returns: boolean }
       is_superviseur: { Args: { _user_id: string }; Returns: boolean }
