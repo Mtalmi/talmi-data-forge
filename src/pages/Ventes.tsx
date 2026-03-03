@@ -75,30 +75,6 @@ export default function Ventes() {
     canCreateBcDirect, canValidateBcPrice, isInEmergencyWindow 
   } = useAuth();
   
-  // =====================================================
-  // HARD PERMISSION WALL - Centraliste TOTAL BLOCK
-  // Centraliste has ZERO access to Ventes module
-  // =====================================================
-  if (isCentraliste && !isCeo && !isSuperviseur) {
-    return (
-      <MainLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <div className="p-6 rounded-full bg-destructive/10">
-            <Lock className="h-12 w-12 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold text-destructive">{t.pages.accessDenied}</h1>
-          <p className="text-muted-foreground text-center max-w-md">
-             {t.pages.moduleNotAccessible}<br />
-             {t.pages.contactAdmin}
-          </p>
-          <Button variant="outline" onClick={() => navigate('/production')}>
-            {t.pages.backToProduction}
-          </Button>
-        </div>
-      </MainLayout>
-    );
-  }
-  
   const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, generateConsolidatedInvoice } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
   
@@ -422,6 +398,29 @@ export default function Ventes() {
     setDirectOrderOpen(false);
     resetFormState();
   };
+
+  // =====================================================
+  // HARD PERMISSION WALL - Centraliste TOTAL BLOCK
+  // =====================================================
+  if (isCentraliste && !isCeo && !isSuperviseur) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+          <div className="p-6 rounded-full bg-destructive/10">
+            <Lock className="h-12 w-12 text-destructive" />
+          </div>
+          <h1 className="text-2xl font-bold text-destructive">{t.pages.accessDenied}</h1>
+          <p className="text-muted-foreground text-center max-w-md">
+             {t.pages.moduleNotAccessible}<br />
+             {t.pages.contactAdmin}
+          </p>
+          <Button variant="outline" onClick={() => navigate('/production')}>
+            {t.pages.backToProduction}
+          </Button>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <TooltipProvider>
