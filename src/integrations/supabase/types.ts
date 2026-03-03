@@ -82,27 +82,33 @@ export type Database = {
       }
       ai_briefings: {
         Row: {
+          briefing_type: string | null
           content: string
           date: string
           generated_at: string | null
           id: string
           plant_name: string | null
+          score_journee: string | null
           type: string
         }
         Insert: {
+          briefing_type?: string | null
           content: string
           date: string
           generated_at?: string | null
           id?: string
           plant_name?: string | null
+          score_journee?: string | null
           type: string
         }
         Update: {
+          briefing_type?: string | null
           content?: string
           date?: string
           generated_at?: string | null
           id?: string
           plant_name?: string | null
+          score_journee?: string | null
           type?: string
         }
         Relationships: []
@@ -1775,6 +1781,57 @@ export type Database = {
           },
         ]
       }
+      cash_flow_forecasts: {
+        Row: {
+          actions_urgentes: string | null
+          created_at: string | null
+          forecast_type: string | null
+          generated_at: string | null
+          id: string
+          prevision_30j: string | null
+          prevision_90j: string | null
+          recommandations: string | null
+          resume: string | null
+          risques: string | null
+          score_sante: string | null
+          solde_impaye: number | null
+          taux_recouvrement: string | null
+          total_facture: number | null
+        }
+        Insert: {
+          actions_urgentes?: string | null
+          created_at?: string | null
+          forecast_type?: string | null
+          generated_at?: string | null
+          id?: string
+          prevision_30j?: string | null
+          prevision_90j?: string | null
+          recommandations?: string | null
+          resume?: string | null
+          risques?: string | null
+          score_sante?: string | null
+          solde_impaye?: number | null
+          taux_recouvrement?: string | null
+          total_facture?: number | null
+        }
+        Update: {
+          actions_urgentes?: string | null
+          created_at?: string | null
+          forecast_type?: string | null
+          generated_at?: string | null
+          id?: string
+          prevision_30j?: string | null
+          prevision_90j?: string | null
+          recommandations?: string | null
+          resume?: string | null
+          risques?: string | null
+          score_sante?: string | null
+          solde_impaye?: number | null
+          taux_recouvrement?: string | null
+          total_facture?: number | null
+        }
+        Relationships: []
+      }
       cash_payment_audit: {
         Row: {
           amount: number
@@ -1992,6 +2049,51 @@ export type Database = {
           token?: string
           used_at?: string | null
           used_for_record_id?: string | null
+        }
+        Relationships: []
+      }
+      client_intelligence: {
+        Row: {
+          actions: string | null
+          client_id: string | null
+          created_at: string | null
+          generated_at: string | null
+          id: string
+          intelligence_brief: string | null
+          nom_client: string | null
+          opportunites: string | null
+          resume: string | null
+          risques: string | null
+          score_sante: string | null
+          valeur_potentielle: string | null
+        }
+        Insert: {
+          actions?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          intelligence_brief?: string | null
+          nom_client?: string | null
+          opportunites?: string | null
+          resume?: string | null
+          risques?: string | null
+          score_sante?: string | null
+          valeur_potentielle?: string | null
+        }
+        Update: {
+          actions?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          intelligence_brief?: string | null
+          nom_client?: string | null
+          opportunites?: string | null
+          resume?: string | null
+          risques?: string | null
+          score_sante?: string | null
+          valeur_potentielle?: string | null
         }
         Relationships: []
       }
@@ -2726,6 +2828,7 @@ export type Database = {
           admin_approval_by_name: string | null
           admin_approval_notes: string | null
           admin_approval_status: string | null
+          ai_recommandation: string | null
           ai_score: number | null
           ai_score_reasons: Json | null
           ai_scored_at: string | null
@@ -2747,11 +2850,15 @@ export type Database = {
           locked_at: string | null
           locked_by: string | null
           margin_pct: number
+          niveau_score: string | null
           notes: string | null
           prix_livraison_m3: number | null
           prix_vente_m3: number
+          probabilite_conversion: string | null
           requires_technical_approval: boolean | null
           rollback_count: number
+          score_ia: number | null
+          scored_at: string | null
           statut: string
           tech_approval_notes: string | null
           tech_approval_status: string | null
@@ -2777,6 +2884,7 @@ export type Database = {
           admin_approval_by_name?: string | null
           admin_approval_notes?: string | null
           admin_approval_status?: string | null
+          ai_recommandation?: string | null
           ai_score?: number | null
           ai_score_reasons?: Json | null
           ai_scored_at?: string | null
@@ -2798,11 +2906,15 @@ export type Database = {
           locked_at?: string | null
           locked_by?: string | null
           margin_pct?: number
+          niveau_score?: string | null
           notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3: number
+          probabilite_conversion?: string | null
           requires_technical_approval?: boolean | null
           rollback_count?: number
+          score_ia?: number | null
+          scored_at?: string | null
           statut?: string
           tech_approval_notes?: string | null
           tech_approval_status?: string | null
@@ -2828,6 +2940,7 @@ export type Database = {
           admin_approval_by_name?: string | null
           admin_approval_notes?: string | null
           admin_approval_status?: string | null
+          ai_recommandation?: string | null
           ai_score?: number | null
           ai_score_reasons?: Json | null
           ai_scored_at?: string | null
@@ -2849,11 +2962,15 @@ export type Database = {
           locked_at?: string | null
           locked_by?: string | null
           margin_pct?: number
+          niveau_score?: string | null
           notes?: string | null
           prix_livraison_m3?: number | null
           prix_vente_m3?: number
+          probabilite_conversion?: string | null
           requires_technical_approval?: boolean | null
           rollback_count?: number
+          score_ia?: number | null
+          scored_at?: string | null
           statut?: string
           tech_approval_notes?: string | null
           tech_approval_status?: string | null
