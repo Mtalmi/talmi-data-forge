@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PasswordStrengthMeter } from '@/components/auth/PasswordStrengthMeter';
 import { useAuth } from '@/hooks/useAuth';
@@ -53,13 +53,13 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 }
 
 // Animated counter component
-function AnimatedStat({ value, label, suffix = '' }: { value: number; label: string; suffix?: string }) {
+const AnimatedStat = forwardRef<HTMLDivElement, { value: number; label: string; suffix?: string }>(
+  function AnimatedStat({ value, label, suffix = '' }, _forwardedRef) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
-    // Use IntersectionObserver to trigger animation when visible
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting && !hasStarted) setHasStarted(true); },
       { threshold: 0.3 }
@@ -90,7 +90,8 @@ function AnimatedStat({ value, label, suffix = '' }: { value: number; label: str
       <div className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">{label}</div>
     </div>
   );
-}
+});
+AnimatedStat.displayName = 'AnimatedStat';
 
 export default function Auth() {
   const navigate = useNavigate();
