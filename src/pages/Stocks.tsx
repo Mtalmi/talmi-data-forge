@@ -1,6 +1,7 @@
 import MainLayout from '@/components/layout/MainLayout';
 import WorldClassStocks from '@/components/stocks/WorldClassStocks';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { useStocks } from '@/hooks/useStocks';
 import { useStockAutonomy } from '@/hooks/useStockAutonomy';
 import { useI18n } from '@/i18n/I18nContext';
@@ -71,6 +72,8 @@ export default function Stocks() {
   const { t, lang } = useI18n();
   const dateLocale = getDateLocale(lang);
   const { isCeo, isSuperviseur, isAgentAdministratif, isCentraliste, isResponsableTechnique, canAddStockReception, canAdjustStockManually, loading: authLoading } = useAuth();
+  const { previewRole } = usePreviewRole();
+  const effectiveCentraliste = isCentraliste || previewRole === 'centraliste';
   const {
     stocks,
     mouvements,
@@ -82,12 +85,30 @@ export default function Stocks() {
   } = useStocks();
   const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
-  const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isCentraliste || isResponsableTechnique;
+  // SECURITY: Centraliste is BLOCKED from Stocks module (separation of powers / anti-fraud)
+  const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isResponsableTechnique;
   const canCreateStockReception = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateStockAdjustment = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateQualityEntry = isCeo || isSuperviseur || isResponsableTechnique;
   const canValidatePendingReception = isCeo || isSuperviseur || isAgentAdministratif;
-  const isReadOnly = isCentraliste && !isCeo && !isSuperviseur;
+  const isReadOnly = false; // No read-only mode needed — blocked users simply can't access
+
+  // Hard redirect if Centraliste tries to access Stocks
+  if (!authLoading && effectiveCentraliste) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center space-y-4">
+            <div className="text-6xl">🚫</div>
+            <h2 className="text-xl font-bold text-destructive">Accès Interdit</h2>
+            <p className="text-muted-foreground max-w-md">
+              Le module Stocks est interdit aux Centralistes pour garantir la séparation des pouvoirs et prévenir la fraude matière.
+            </p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
   
   const criticalStocks = getCriticalStocks();
   
