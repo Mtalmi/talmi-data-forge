@@ -5,6 +5,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
+import { AccessDenied } from '@/components/layout/AccessDenied';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -116,7 +118,12 @@ export default function Planning() {
   const { t, lang } = useI18n();
   const dateLocale = getDateLocale(lang);
   const { isMobile, isTablet, isTouchDevice } = useDeviceType();
-  const { isDirecteurOperations, isCeo, isAgentAdministratif, isSuperviseur, user, canEditPlanning, canOverrideCreditBlock, role } = useAuth();
+  const { isDirecteurOperations, isCeo, isAgentAdministratif, isSuperviseur, isResponsableTechnique, isCentraliste, user, canEditPlanning, canOverrideCreditBlock, role, loading: authLoading } = useAuth();
+  const { previewRole } = usePreviewRole();
+  
+  // SECURITY: Resp. Technique is BLOCKED from Planning (check applied in render below)
+  const effectiveRespTech = isResponsableTechnique || previewRole === 'responsable_technique';
+
   const { count: pendingBLCount, earliestDate: pendingEarliestDate } = usePendingBLCount();
   const [fleetPanelOpen, setFleetPanelOpen] = useState(true);
   const [bons, setBons] = useState<BonLivraison[]>([]);
@@ -1405,6 +1412,11 @@ export default function Planning() {
       toast.error(t.pages.planning.confirmDeliveryError);
     }
   };
+
+  // SECURITY: Block Resp. Technique from Planning
+  if (!authLoading && effectiveRespTech) {
+    return <AccessDenied module="Planning" reason="Le module Planning est interdit au Responsable Technique. Contactez le Directeur des Opérations." />;
+  }
 
   // Tablet/Mobile optimized view
   if (isMobile || isTablet) {

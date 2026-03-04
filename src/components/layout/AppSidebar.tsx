@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { useI18n } from '@/i18n/I18nContext';
 import {
   LayoutDashboard, Factory, CalendarDays, ShoppingCart, Users,
@@ -43,9 +44,30 @@ const DEFAULT_OPEN: Record<string, boolean> = {
 export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isCentraliste, isResponsableTechnique, isAuditeur, isCeo, isSuperviseur } = useAuth();
+  const { previewRole } = usePreviewRole();
   const { t } = useI18n();
   const nav = t.nav as Record<string, string>;
+  
+  // Effective role checks (real role OR preview mode)
+  const effCentraliste = isCentraliste || previewRole === 'centraliste';
+  const effRespTech = isResponsableTechnique || previewRole === 'responsable_technique';
+  const effAuditeur = isAuditeur || previewRole === 'auditeur';
+  
+  // Routes blocked per role
+  const blockedRoutes = useMemo(() => {
+    const blocked = new Set<string>();
+    if (effCentraliste) {
+      blocked.add('/stocks');
+      blocked.add('/ventes');
+      blocked.add('/clients');
+    }
+    if (effRespTech) {
+      blocked.add('/ventes');
+      blocked.add('/planning');
+    }
+    return blocked;
+  }, [effCentraliste, effRespTech]);
 
   const sections: NavSection[] = useMemo(() => [
     {
@@ -116,10 +138,19 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
     },
   ], [nav]);
 
+  // Filter out blocked routes from sidebar
+  const filteredSections = useMemo(() => {
+    if (blockedRoutes.size === 0) return sections;
+    return sections.map(section => ({
+      ...section,
+      items: section.items.filter(item => !blockedRoutes.has(item.url)),
+    })).filter(section => section.items.length > 0);
+  }, [sections, blockedRoutes]);
+
   // Auto-open section containing the active route
   const activeSectionKeys = useMemo(() => {
     const keys: string[] = [];
-    for (const s of sections) {
+    for (const s of filteredSections) {
       if (s.items.some(item => {
         if (item.url === '/') return location.pathname === '/' || location.pathname === '/dashboard';
         return location.pathname === item.url;
@@ -128,7 +159,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
       }
     }
     return keys;
-  }, [location.pathname, sections]);
+  }, [location.pathname, filteredSections]);
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
     const initial = { ...DEFAULT_OPEN };
@@ -198,7 +229,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
       {/* ── NAVIGATION ── */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 py-2 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent" style={{ scrollbarWidth: 'thin' }}>
-        {sections.map((section, si) => {
+        {filteredSections.map((section, si) => {
           const isOpen = openSections[section.key] ?? false;
           const sectionHasActive = section.items.some(item => isActive(item.url));
 
