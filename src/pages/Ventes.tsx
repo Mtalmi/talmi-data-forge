@@ -63,8 +63,10 @@ import { PendingBcValidation } from '@/components/ventes/PendingBcValidation';
 import { EmergencyBcQualityView } from '@/components/ventes/EmergencyBcQualityView';
 
 import { useAuth } from '@/hooks/useAuth';
+import { usePreviewRole } from '@/hooks/usePreviewRole';
 import { Navigate } from 'react-router-dom';
 import { Lock, Shield } from 'lucide-react';
+import { AccessDenied } from '@/components/layout/AccessDenied';
 
 export default function Ventes() {
   const navigate = useNavigate();
@@ -72,8 +74,14 @@ export default function Ventes() {
   const { 
     isCentraliste, isCeo, isSuperviseur, isAgentAdministratif, isCommercial, 
     isDirecteurOperations, isResponsableTechnique,
-    canCreateBcDirect, canValidateBcPrice, isInEmergencyWindow 
+    canCreateBcDirect, canValidateBcPrice, isInEmergencyWindow,
+    loading: authLoading,
   } = useAuth();
+  const { previewRole } = usePreviewRole();
+  
+  // SECURITY: Resp. Technique and Centraliste are BLOCKED from Sales (guard applied in render below)
+  const effectiveRespTech = isResponsableTechnique || previewRole === 'responsable_technique';
+  const effectiveCentraliste = isCentraliste || previewRole === 'centraliste';
   
   const { devisList, bcList, loading, stats, fetchData, convertToBc, createBlFromBc, createDirectBc, generateConsolidatedInvoice } = useSalesWorkflow();
   const { zones, prestataires } = useZonesLivraison();
@@ -402,23 +410,16 @@ export default function Ventes() {
   // =====================================================
   // HARD PERMISSION WALL - Centraliste TOTAL BLOCK
   // =====================================================
-  if (isCentraliste && !isCeo && !isSuperviseur) {
+  // SECURITY: Block Centraliste and Resp. Technique from Sales
+  if ((effectiveCentraliste || effectiveRespTech) && !isCeo && !isSuperviseur) {
     return (
-      <MainLayout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-          <div className="p-6 rounded-full bg-destructive/10">
-            <Lock className="h-12 w-12 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold text-destructive">{t.pages.accessDenied}</h1>
-          <p className="text-muted-foreground text-center max-w-md">
-             {t.pages.moduleNotAccessible}<br />
-             {t.pages.contactAdmin}
-          </p>
-          <Button variant="outline" onClick={() => navigate('/production')}>
-            {t.pages.backToProduction}
-          </Button>
-        </div>
-      </MainLayout>
+      <AccessDenied 
+        module="Ventes" 
+        reason={effectiveRespTech 
+          ? "Le module Ventes est interdit au Responsable Technique. Contactez la direction pour toute demande commerciale."
+          : "Le module Ventes est interdit aux Centralistes. Retournez à la Production."
+        } 
+      />
     );
   }
 

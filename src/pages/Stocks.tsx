@@ -1,4 +1,5 @@
 import MainLayout from '@/components/layout/MainLayout';
+import { AccessDenied } from '@/components/layout/AccessDenied';
 import WorldClassStocks from '@/components/stocks/WorldClassStocks';
 import { useAuth } from '@/hooks/useAuth';
 import { usePreviewRole } from '@/hooks/usePreviewRole';
@@ -95,19 +96,7 @@ export default function Stocks() {
 
   // Hard redirect if Centraliste tries to access Stocks
   if (!authLoading && effectiveCentraliste) {
-    return (
-      <MainLayout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center space-y-4">
-            <div className="text-6xl">🚫</div>
-            <h2 className="text-xl font-bold text-destructive">Accès Interdit</h2>
-            <p className="text-muted-foreground max-w-md">
-              Le module Stocks est interdit aux Centralistes pour garantir la séparation des pouvoirs et prévenir la fraude matière.
-            </p>
-          </div>
-        </div>
-      </MainLayout>
-    );
+    return <AccessDenied module="Stocks" reason="Le module Stocks est interdit aux Centralistes pour garantir la séparation des pouvoirs et prévenir la fraude matière." />;
   }
   
   const criticalStocks = getCriticalStocks();
