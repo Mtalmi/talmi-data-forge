@@ -173,6 +173,7 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
   const [hov, setHov] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [brief, setBrief] = useState<any>(null);
+  const [intel, setIntel] = useState<any>(null);
   const [loadingBrief, setLoadingBrief] = useState(false);
   const { triggerWorkflow } = useN8nWorkflow();
   const segColor = SEGMENT_COLORS[client.segment] || T.gold;
@@ -183,12 +184,16 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
     if (!client.clientId) return;
     setLoadingBrief(true);
     try {
-      const { data } = await supabase.from('ai_client_briefs')
-        .select('*')
-        .eq('client_id', client.clientId)
-        .order('generated_at', { ascending: false })
-        .limit(1);
-      if (data?.length) setBrief(data[0]);
+      const [briefRes, intelRes] = await Promise.all([
+        supabase.from('ai_client_briefs')
+          .select('*').eq('client_id', client.clientId)
+          .order('generated_at', { ascending: false }).limit(1),
+        supabase.from('client_intelligence')
+          .select('*').eq('client_id', client.clientId)
+          .order('generated_at', { ascending: false }).limit(1),
+      ]);
+      if (briefRes.data?.length) setBrief(briefRes.data[0]);
+      if (intelRes.data?.length) setIntel(intelRes.data[0]);
     } catch (e) { console.error(e); }
     finally { setLoadingBrief(false); }
   }, [client.clientId]);
