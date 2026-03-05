@@ -549,7 +549,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
@@ -605,7 +605,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={Package} label="Niveaux de Stock" />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} />)}
+              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} />)}
             </div>
           </Card>
         </section>
