@@ -19,12 +19,18 @@ function relTime(dateStr: string | null): string {
 }
 
 function parseResume(content: string): string {
+  let text = content;
   try {
     const p = JSON.parse(content);
-    return p.resume_journee || p.resume || p.content || (typeof p === 'string' ? p : content.substring(0, 250));
+    if (p.resume_journee) text = p.resume_journee;
+    else if (p.resume) text = p.resume;
+    else if (p.content) text = p.content;
+    else if (typeof p === 'string') text = p;
   } catch {
-    return content.substring(0, 250);
+    // Not JSON — use raw content
   }
+  text = text.replace(/^#+\s+.*\n?/, '').trim();
+  return text.substring(0, 250);
 }
 
 function parseJsonField(val: any): string[] {

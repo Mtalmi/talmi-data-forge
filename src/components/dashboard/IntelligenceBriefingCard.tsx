@@ -27,18 +27,19 @@ function relativeTime(dateStr: string): string {
 }
 
 function parseResume(content: string): string {
+  let text = content;
   try {
     const parsed = JSON.parse(content);
-    if (parsed.resume_journee) return parsed.resume_journee;
-    if (parsed.resume) return parsed.resume;
-    if (parsed.content) return parsed.content;
-    if (typeof parsed === 'string') return parsed;
-    // Try sections
-    if (parsed.sections?.[0]?.content) return parsed.sections[0].content;
-    return content.substring(0, 300);
+    if (parsed.resume_journee) text = parsed.resume_journee;
+    else if (parsed.resume) text = parsed.resume;
+    else if (parsed.content) text = parsed.content;
+    else if (typeof parsed === 'string') text = parsed;
+    else if (parsed.sections?.[0]?.content) text = parsed.sections[0].content;
   } catch {
-    return content.substring(0, 300);
+    // Not JSON — use raw content (likely markdown)
   }
+  text = text.replace(/^#+\s+.*\n?/, '').trim();
+  return text.substring(0, 200);
 }
 
 function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'morning' | 'evening' }) {
@@ -103,7 +104,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       </div>
 
       <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.65, marginBottom: 8 }}>
-        {resume}{resume.length >= 300 ? '...' : ''}
+        {resume}{resume.length >= 200 ? '...' : ''}
       </p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -124,22 +125,28 @@ export function IntelligenceBriefingCard() {
 
   const fetchBriefings = useCallback(async () => {
     try {
-      const { data } = await supabase
-        .from('ai_briefings')
-        .select('*')
-        .order('generated_at', { ascending: false })
-        .limit(5);
+      const [{ data: morningData, error: mErr }, { data: eveningData, error: eErr }] = await Promise.all([
+        supabase
+          .from('ai_briefings')
+          .select('*')
+          .eq('briefing_type', 'morning')
+          .order('generated_at', { ascending: false })
+          .limit(1),
+        supabase
+          .from('ai_briefings')
+          .select('*')
+          .eq('briefing_type', 'evening')
+          .order('generated_at', { ascending: false })
+          .limit(1),
+      ]);
 
-      if (data?.length) {
-        const morning = data.find((b: any) => b.briefing_type === 'morning' || b.type === 'morning') as Briefing | undefined;
-        const evening = data.find((b: any) => b.briefing_type === 'evening' || b.type === 'evening') as Briefing | undefined;
-        setMorningBriefing(morning ?? null);
-        setEveningBriefing(evening ?? null);
-      } else {
-        setMorningBriefing(null);
-        setEveningBriefing(null);
-      }
-    } catch {
+      console.log('[IntelligenceBriefing] morning:', morningData, mErr);
+      console.log('[IntelligenceBriefing] evening:', eveningData, eErr);
+
+      setMorningBriefing(morningData?.[0] ?? null);
+      setEveningBriefing(eveningData?.[0] ?? null);
+    } catch (err) {
+      console.error('[IntelligenceBriefing] fetch error:', err);
       setMorningBriefing(null);
       setEveningBriefing(null);
     }
