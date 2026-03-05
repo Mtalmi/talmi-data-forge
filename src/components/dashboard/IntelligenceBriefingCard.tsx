@@ -104,7 +104,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       </div>
 
       <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.65, marginBottom: 8 }}>
-        {resume}{resume.length >= 300 ? '...' : ''}
+        {resume}{resume.length >= 200 ? '...' : ''}
       </p>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
