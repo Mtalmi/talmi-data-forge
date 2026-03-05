@@ -27,18 +27,19 @@ function relativeTime(dateStr: string): string {
 }
 
 function parseResume(content: string): string {
+  let text = content;
   try {
     const parsed = JSON.parse(content);
-    if (parsed.resume_journee) return parsed.resume_journee;
-    if (parsed.resume) return parsed.resume;
-    if (parsed.content) return parsed.content;
-    if (typeof parsed === 'string') return parsed;
-    // Try sections
-    if (parsed.sections?.[0]?.content) return parsed.sections[0].content;
-    return content.substring(0, 300);
+    if (parsed.resume_journee) text = parsed.resume_journee;
+    else if (parsed.resume) text = parsed.resume;
+    else if (parsed.content) text = parsed.content;
+    else if (typeof parsed === 'string') text = parsed;
+    else if (parsed.sections?.[0]?.content) text = parsed.sections[0].content;
   } catch {
-    return content.substring(0, 300);
+    // Not JSON — use raw content (likely markdown)
   }
+  text = text.replace(/^#+\s+.*\n?/, '').trim();
+  return text.substring(0, 200);
 }
 
 function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'morning' | 'evening' }) {
