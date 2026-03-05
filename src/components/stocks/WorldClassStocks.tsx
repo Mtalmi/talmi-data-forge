@@ -135,6 +135,7 @@ function useStocksLiveData() {
   const [ALERTS, setAlerts] = useState<{ name: string; current: string; min: string; deficit: string; urgency: string; color: string }[]>([]);
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
+  const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
@@ -149,13 +150,23 @@ function useStocksLiveData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [stocksRes, movementsRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at')
           .order('created_at', { ascending: false })
           .limit(20),
+        supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
       ]);
+
+      // Autonomy map
+      const autoMap: Record<string, { days: number | null; calculated_at: string | null }> = {};
+      if (autonomyRes.data?.length) {
+        autonomyRes.data.forEach((a: any) => {
+          autoMap[(a.materiau || '').toLowerCase()] = { days: a.days_remaining, calculated_at: a.last_calculated_at };
+        });
+      }
+      setAutonomy(autoMap);
 
       // Stock levels
       if (stocksRes.data?.length) {
