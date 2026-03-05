@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown, BarChart3, TrendingUp } from 'lucide-react';
+import { FileText, ShoppingCart, AlertTriangle, X, Calendar, Mail, Receipt, Zap, ChevronDown, BarChart3, TrendingUp, Loader2, Target } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -779,6 +779,9 @@ export default function Ventes() {
                 onExportCSV={() => exportDevisToCSV(filteredDevis, selectedDevisIds)}
                 onClearSelection={() => setSelectedDevisIds([])}
               />
+              <div className="flex justify-end">
+                <BulkScorerButton devisList={filteredDevis} onDone={fetchData} />
+              </div>
               <Card>
                 <CardContent className="pt-6">
                   <DevisTableResponsive
