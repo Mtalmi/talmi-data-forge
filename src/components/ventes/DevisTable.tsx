@@ -364,7 +364,7 @@ export function DevisTable({
             <TableHead className="text-right">Total HT (DH)</TableHead>
             <TableHead className="text-center">Statut</TableHead>
             <TableHead className="text-center">Score IA</TableHead>
-            <TableHead className="text-center">Marge IA</TableHead>
+            <TableHead className="text-center">Conversion</TableHead>
             <TableHead className="text-center">Priorité</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
