@@ -130,6 +130,40 @@ export function DevisTable({
   const [validating, setValidating] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
   const [cancelConfirmDevis, setCancelConfirmDevis] = useState<Devis | null>(null);
+  const [scoringId, setScoringId] = useState<string | null>(null);
+  const [localScores, setLocalScores] = useState<Record<string, { score_ia: number; niveau_score: string; ai_recommandation: string; probabilite_conversion: string; scored_at: string }>>({});
+
+  const scoreDevis = async (devisId: string, devisDbId: string) => {
+    setScoringId(devisDbId);
+    try {
+      console.log('[ScoreIA] Calling webhook for devis:', devisId);
+      const res = await fetch('https://talmi.app.n8n.cloud/webhook/deal-scorer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ devis_id: devisId }),
+      });
+      const webhookResult = await res.json();
+      console.log('[ScoreIA] Webhook response:', webhookResult);
+
+      // Refetch from Supabase
+      const { data, error } = await (supabase.from('devis' as any) as any)
+        .select('score_ia, niveau_score, ai_recommandation, probabilite_conversion, scored_at')
+        .eq('devis_id', devisId)
+        .single();
+      console.log('[ScoreIA] Supabase refetch:', { data, error });
+
+      if (data && data.score_ia != null) {
+        setLocalScores(prev => ({ ...prev, [devisDbId]: data }));
+      }
+      return data;
+    } catch (err) {
+      console.error('[ScoreIA] Error:', err);
+      toast.error('Erreur lors du scoring IA');
+      return null;
+    } finally {
+      setScoringId(null);
+    }
+  };
   
   // Status options for dropdown (excluding locked states like 'converti')
   const STATUS_OPTIONS = [
@@ -473,44 +507,65 @@ export function DevisTable({
                 {/* ═══ LIVE AI Score Column ═══ */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {(() => {
-                    const score = devis.score_ia;
-                    const niveau = devis.niveau_score;
-                    const recommandation = devis.ai_recommandation;
-                    const scoredAt = devis.scored_at;
+                    const local = localScores[devis.id];
+                    const score = local?.score_ia ?? devis.score_ia;
+                    const niveau = local?.niveau_score ?? devis.niveau_score;
+                    const recommandation = local?.ai_recommandation ?? devis.ai_recommandation;
+                    const scoredAt = local?.scored_at ?? devis.scored_at;
+                    const prob = local?.probabilite_conversion ?? devis.probabilite_conversion;
+
+                    if (scoringId === devis.id) {
+                      return <Loader2 className="h-4 w-4 animate-spin mx-auto text-muted-foreground" />;
+                    }
 
                     if (score == null) {
                       return (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 4,
-                          padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                          background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.2)',
-                          color: '#64748B',
-                        }}>
+                        <button
+                          onClick={() => scoreDevis(devis.devis_id, devis.id)}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                            padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
+                            background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.2)',
+                            color: '#64748B', cursor: 'pointer',
+                          }}
+                          className="hover:bg-white/[0.08] transition-colors"
+                        >
                           Non scoré
-                        </span>
+                        </button>
                       );
                     }
 
-                    const bg = score >= 80 ? '#D4A843' : score >= 60 ? '#16a34a' : score >= 40 ? '#ca8a04' : '#dc2626';
-                    const label = score >= 80 ? 'Excellent' : score >= 60 ? 'Bon' : score >= 40 ? 'Moyen' : 'Faible';
-                    const isStar = score >= 80;
+                    const niveauUpper = (niveau || '').toUpperCase();
+                    const badgeColor = niveauUpper === 'ÉLEVÉ' || niveauUpper === 'ELEVE' ? '#10B981'
+                      : niveauUpper === 'MOYEN' ? '#D4A843'
+                      : '#EF4444';
+                    const badgeBg = niveauUpper === 'ÉLEVÉ' || niveauUpper === 'ELEVE' ? 'rgba(16,185,129,0.08)'
+                      : niveauUpper === 'MOYEN' ? 'rgba(212,168,67,0.08)'
+                      : 'rgba(239,68,68,0.08)';
 
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <div className="flex flex-col items-center gap-1">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mx-auto relative" style={{ background: bg }}>
-                              {score}
-                              {isStar && <span className="absolute -top-1 -right-1 text-[10px]">⭐</span>}
+                          <div className="flex flex-col items-center gap-0.5">
+                            <div className="flex items-center gap-1.5">
+                              <span style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 4,
+                                padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 600,
+                                background: badgeBg, border: `1px solid ${badgeColor}25`,
+                                color: badgeColor,
+                              }}>
+                                {niveau || 'Scoré'}
+                              </span>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: badgeColor }}>{score}</span>
                             </div>
-                            {niveau && (
-                              <span style={{ fontSize: 9, fontWeight: 600, color: bg }}>{niveau}</span>
+                            {prob && (
+                              <span style={{ fontSize: 9, color: '#94A3B8' }}>{prob}%</span>
                             )}
                           </div>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
                           <div className="space-y-1.5 text-xs">
-                            <div style={{ fontWeight: 700, color: bg }}>{label} — {score}/100</div>
+                            <div style={{ fontWeight: 700, color: badgeColor }}>{niveau} — {score}/100</div>
                             {recommandation && (
                               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                                 <span style={{ fontSize: 12, flexShrink: 0 }}>✨</span>
