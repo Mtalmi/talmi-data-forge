@@ -125,26 +125,23 @@ export function IntelligenceBriefingCard() {
 
   const fetchBriefings = useCallback(async () => {
     try {
-      const [{ data: morningData, error: mErr }, { data: eveningData, error: eErr }] = await Promise.all([
-        supabase
-          .from('ai_briefings')
-          .select('*')
-          .eq('briefing_type', 'morning')
-          .order('generated_at', { ascending: false })
-          .limit(1),
-        supabase
-          .from('ai_briefings')
-          .select('*')
-          .eq('briefing_type', 'evening')
-          .order('generated_at', { ascending: false })
-          .limit(1),
-      ]);
+      const { data, error } = await supabase
+        .from('ai_briefings')
+        .select('*')
+        .order('generated_at', { ascending: false })
+        .limit(10);
 
-      console.log('[IntelligenceBriefing] morning:', morningData, mErr);
-      console.log('[IntelligenceBriefing] evening:', eveningData, eErr);
+      if (error) console.error('AI Briefings query error:', error);
+      if (data) console.log('AI Briefings data:', data);
 
-      setMorningBriefing(morningData?.[0] ?? null);
-      setEveningBriefing(eveningData?.[0] ?? null);
+      const morning = data?.find((b: any) => b.briefing_type === 'morning') ?? null;
+      const evening = data?.find((b: any) => b.briefing_type === 'evening') ?? null;
+
+      console.log('[IntelligenceBriefing] morning found:', morning);
+      console.log('[IntelligenceBriefing] evening found:', evening);
+
+      setMorningBriefing(morning);
+      setEveningBriefing(evening);
     } catch (err) {
       console.error('[IntelligenceBriefing] fetch error:', err);
       setMorningBriefing(null);
