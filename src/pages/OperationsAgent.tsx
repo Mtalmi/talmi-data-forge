@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { IntelligenceHub } from "@/components/operations/IntelligenceHub";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -398,30 +399,8 @@ export default function OperationsAgent() {
                 })}
               </div>
 
-              {/* Latest briefing preview */}
-              {latestBriefing && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-5"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <FileText className="w-4 h-4 text-yellow-400" />
-                    <span className="text-sm font-semibold text-yellow-400">Latest AI Briefing</span>
-                    <span className="text-xs text-muted-foreground ml-auto font-mono">{timeAgo(latestBriefing.generated_at)}</span>
-                    <Badge variant="outline" className="text-xs">
-                      {latestBriefing.type === "morning_briefing" ? "🌅 Morning" : "🌙 End of Day"}
-                    </Badge>
-                  </div>
-                  <pre className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed line-clamp-6" style={{ fontFamily: "Inter, sans-serif" }}>
-                    {latestBriefing.content}
-                  </pre>
-                  <Button variant="ghost" size="sm" className="mt-2 text-yellow-400" onClick={() => setActiveTab("briefings")}>
-                    View all briefings <ChevronRight className="w-3 h-3 ml-1" />
-                  </Button>
-                </motion.div>
-              )}
+              {/* ── Intelligence Hub ───────────────────────────────────── */}
+              <IntelligenceHub />
 
               {/* Workflow grid */}
               <div>
