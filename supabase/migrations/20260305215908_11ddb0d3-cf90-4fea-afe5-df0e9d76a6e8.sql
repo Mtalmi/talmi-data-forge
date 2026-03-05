@@ -1,0 +1,8 @@
+
+-- Re-enable RLS on all 6 tables
+ALTER TABLE public.devis ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.clients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bons_livraison_reels ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stocks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.prix_achat_actuels ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.formules_theoriques ENABLE ROW LEVEL SECURITY;
