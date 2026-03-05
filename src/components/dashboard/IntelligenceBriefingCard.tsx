@@ -1,21 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, ChevronDown, ChevronUp, Clock, Loader2, RefreshCw } from 'lucide-react';
+import { Brain, Clock, Loader2, RefreshCw, Sun, Moon } from 'lucide-react';
 
 interface Briefing {
   id: string;
   content: string;
   type: string;
+  briefing_type: string | null;
   date: string;
   generated_at: string | null;
+  score_journee: string | null;
+  plant_name: string | null;
 }
-
-const MOCK_SECTIONS = [
-  { icon: '📊', title: 'Production', color: '#F1F5F9', content: 'Objectif: 850 m³ aujourd\'hui. 14 batches planifiés. Capacité à 87%. Formule principale: F-B25 (45% du volume).' },
-  { icon: '⚠️', title: 'Alertes', color: '#EF4444', content: 'Adjuvant à 10% — commande urgente recommandée. Pompe BP-01 en maintenance, fin estimée 12:00. 2 devis en attente de validation > 48h.' },
-  { icon: '💰', title: 'Commercial', color: '#10B981', content: 'Pipeline: 847K DH. 3 BCs validés prêts production. Marge brute 49.9% — pricing sain. Relancer DEV-2602-316 et DEV-2602-895.' },
-  { icon: '🎯', title: 'Priorités du jour', color: '#FFD700', content: '1. Valider production BL-2602-014 (Saudi Readymix, 50m³). 2. Suivre livraison Constructions Modernes (80m³ en route). 3. Relancer devis en attente.' },
-];
 
 function relativeTime(dateStr: string): string {
   const now = Date.now();
@@ -30,187 +26,168 @@ function relativeTime(dateStr: string): string {
   return `il y a ${days}j`;
 }
 
-function parseSections(content: string) {
-  // Try JSON first
+function parseResume(content: string): string {
   try {
     const parsed = JSON.parse(content);
-    if (parsed.sections && Array.isArray(parsed.sections)) return parsed.sections;
-    if (parsed.content) return null; // plain text in JSON wrapper
-  } catch { /* not JSON */ }
+    if (parsed.resume_journee) return parsed.resume_journee;
+    if (parsed.resume) return parsed.resume;
+    if (parsed.content) return parsed.content;
+    if (typeof parsed === 'string') return parsed;
+    // Try sections
+    if (parsed.sections?.[0]?.content) return parsed.sections[0].content;
+    return content.substring(0, 300);
+  } catch {
+    return content.substring(0, 300);
+  }
+}
 
-  // Try markdown heading parsing: ## Title\ncontent
-  const headingRegex = /^#{1,3}\s+(.+)$/gm;
-  const matches = [...content.matchAll(headingRegex)];
-  if (matches.length >= 2) {
-    const sections: { title: string; content: string }[] = [];
-    for (let i = 0; i < matches.length; i++) {
-      const start = (matches[i].index ?? 0) + matches[i][0].length;
-      const end = i + 1 < matches.length ? matches[i + 1].index : content.length;
-      sections.push({
-        title: matches[i][1].trim(),
-        content: content.slice(start, end).trim(),
-      });
-    }
-    return sections;
+function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'morning' | 'evening' }) {
+  const isMorning = type === 'morning';
+  const icon = isMorning ? <Sun size={15} style={{ color: '#D4A843' }} /> : <Moon size={15} style={{ color: '#8B9FCC' }} />;
+  const label = isMorning ? 'Briefing du Matin' : 'Rapport du Soir';
+  const accentColor = isMorning ? '#D4A843' : '#8B9FCC';
+
+  if (!briefing) {
+    return (
+      <div style={{
+        background: 'linear-gradient(145deg, rgba(17,27,46,0.8) 0%, rgba(22,32,54,0.9) 100%)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid rgba(212,168,67,0.1)',
+        borderRadius: 10, padding: '14px 16px',
+        flex: 1, minWidth: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+          {icon}
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>{label}</span>
+        </div>
+        <p style={{ fontSize: 12, color: '#64748B', fontStyle: 'italic' }}>
+          En attente du premier briefing IA...
+        </p>
+      </div>
+    );
   }
 
-  return null; // couldn't parse into sections
+  const resume = parseResume(briefing.content);
+  const isActive = briefing.type === 'active' || briefing.briefing_type === 'active';
+
+  return (
+    <div style={{
+      background: 'linear-gradient(145deg, rgba(17,27,46,0.8) 0%, rgba(22,32,54,0.9) 100%)',
+      backdropFilter: 'blur(12px)',
+      border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
+      borderLeft: `3px solid ${accentColor}`,
+      borderRadius: 10, padding: '14px 16px',
+      flex: 1, minWidth: 0,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+        {icon}
+        <span style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>{label}</span>
+        {briefing.score_journee && (
+          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 6, background: 'rgba(212,168,67,0.15)', color: '#D4A843' }}>
+            {briefing.score_journee}
+          </span>
+        )}
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 4,
+          fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 9999,
+          background: isActive ? 'rgba(16,185,129,0.15)' : 'rgba(100,116,139,0.2)',
+          color: isActive ? '#10B981' : '#64748B', marginLeft: 'auto',
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: '50%',
+            background: isActive ? '#10B981' : '#64748B',
+            ...(isActive ? { boxShadow: '0 0 6px #10B98180' } : {}),
+          }} />
+          {isActive ? 'Actif' : 'Archivé'}
+        </span>
+      </div>
+
+      <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.65, marginBottom: 8 }}>
+        {resume}{resume.length >= 300 ? '...' : ''}
+      </p>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <Clock size={10} color="#64748B" />
+        <span style={{ fontSize: 10, color: '#64748B' }}>
+          {briefing.generated_at ? relativeTime(briefing.generated_at) : '—'}
+        </span>
+      </div>
+    </div>
+  );
 }
 
 export function IntelligenceBriefingCard() {
-  const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [morningBriefing, setMorningBriefing] = useState<Briefing | null>(null);
+  const [eveningBriefing, setEveningBriefing] = useState<Briefing | null>(null);
   const [loading, setLoading] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-  const [isLive, setIsLive] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchBriefing = useCallback(async () => {
+  const fetchBriefings = useCallback(async () => {
     try {
       const { data } = await supabase
         .from('ai_briefings')
         .select('*')
-        .eq('type', 'morning')
         .order('generated_at', { ascending: false })
-        .limit(1);
+        .limit(5);
+
       if (data?.length) {
-        setBriefing(data[0] as Briefing);
-        setIsLive(true);
+        const morning = data.find((b: any) => b.briefing_type === 'morning' || b.type === 'morning') as Briefing | undefined;
+        const evening = data.find((b: any) => b.briefing_type === 'evening' || b.type === 'evening') as Briefing | undefined;
+        setMorningBriefing(morning ?? null);
+        setEveningBriefing(evening ?? null);
       } else {
-        // fallback: try any briefing
-        const { data: fallback } = await supabase
-          .from('ai_briefings')
-          .select('*')
-          .order('generated_at', { ascending: false })
-          .limit(1);
-        if (fallback?.length) {
-          setBriefing(fallback[0] as Briefing);
-          setIsLive(true);
-        } else {
-          setBriefing(null);
-          setIsLive(false);
-        }
+        setMorningBriefing(null);
+        setEveningBriefing(null);
       }
     } catch {
-      setBriefing(null);
-      setIsLive(false);
+      setMorningBriefing(null);
+      setEveningBriefing(null);
     }
     setLoading(false);
     setRefreshing(false);
   }, []);
 
   useEffect(() => {
-    fetchBriefing();
+    fetchBriefings();
     const ch = supabase.channel('dashboard-briefing')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ai_briefings' }, (p) => {
-        setBriefing(p.new as Briefing);
-        setIsLive(true);
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'ai_briefings' }, () => {
+        fetchBriefings();
       }).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, [fetchBriefing]);
+  }, [fetchBriefings]);
 
   const handleRefresh = () => {
     setRefreshing(true);
-    fetchBriefing();
+    fetchBriefings();
   };
-
-  const liveBadge = (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 9999, background: isLive ? 'rgba(16,185,129,0.15)' : 'rgba(100,116,139,0.2)', color: isLive ? '#10B981' : '#64748B' }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: isLive ? '#10B981' : '#64748B', ...(isLive ? { boxShadow: '0 0 6px #10B98180', animation: 'pulse 2s ease-in-out infinite' } : {}) }} />
-      {isLive ? 'Live' : 'Demo'}
-    </span>
-  );
-
-  const refreshBtn = (
-    <button onClick={(e) => { e.stopPropagation(); handleRefresh(); }} style={{ padding: 4, borderRadius: 6, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Rafraîchir">
-      <RefreshCw size={13} style={{ color: '#FFD700', ...(refreshing ? { animation: 'spin 1s linear infinite' } : {}) }} />
-    </button>
-  );
 
   if (loading) return (
     <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-      <Loader2 size={16} className="animate-spin" style={{ color: '#FFD700' }} />
-      <span style={{ color: '#64748B', fontSize: 12 }}>Chargement du briefing...</span>
+      <Loader2 size={16} className="animate-spin" style={{ color: '#D4A843' }} />
+      <span style={{ color: '#64748B', fontSize: 12 }}>Chargement des briefings...</span>
     </div>
   );
-
-  // Enhanced empty state when no briefing is available and no mock fallback wanted
-  if (!briefing && !isLive && !expanded) {
-    // Still render the card with mock sections on expand — this just improves the collapsed view
-  }
-
-  // Determine sections to render
-  let sections = MOCK_SECTIONS;
-  let headerTitle = '🧠 Intelligence du Matin';
-  let subtitle = 'Prochain briefing prévu à 05:45 — L\'agent IA analyse production, stocks et qualité';
-
-  if (briefing && isLive) {
-    headerTitle = `🧠 Intelligence Briefing — ${new Date(briefing.date || briefing.generated_at || '').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-    subtitle = briefing.generated_at ? `Généré ${relativeTime(briefing.generated_at)} par Agent IA` : '';
-
-    const parsed = parseSections(briefing.content);
-    if (parsed && parsed.length > 0) {
-      const iconMap = ['📊', '⚠️', '💰', '🎯'];
-      const colorMap = ['#F1F5F9', '#EF4444', '#10B981', '#FFD700'];
-      sections = parsed.map((s: any, i: number) => ({
-        icon: s.icon || iconMap[i % iconMap.length],
-        title: s.title,
-        color: s.color || colorMap[i % colorMap.length],
-        content: s.content || s.text || '',
-      }));
-    } else {
-      // Plain text — show as single block, keep mock structure for visual density
-      // but replace first section content with the actual briefing text
-      sections = [{
-        icon: '📊', title: 'Briefing', color: '#F1F5F9',
-        content: briefing.content.substring(0, 600) + (briefing.content.length > 600 ? '...' : ''),
-      }];
-    }
-  }
 
   return (
     <div style={{
       background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-      border: '1px solid rgba(255,215,0,0.15)', borderLeft: '4px solid #FFD700',
+      border: '1px solid rgba(212,168,67,0.12)',
       borderRadius: 12, overflow: 'hidden',
     }}>
-      <button onClick={() => setExpanded(!expanded)} style={{
-        width: '100%', padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10,
-        background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left',
-      }}>
-        <Brain size={18} style={{ color: '#FFD700', flexShrink: 0 }} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: 700, fontSize: 14, color: '#F1F5F9' }}>{headerTitle}</span>
-            {liveBadge}
-          </div>
-          {!expanded && <span style={{ display: 'block', fontSize: 11, color: '#94A3B8', marginTop: 3 }}>{subtitle}</span>}
-        </div>
-        {refreshBtn}
-        {expanded ? <ChevronUp size={16} color="#64748B" /> : <ChevronDown size={16} color="#64748B" />}
-      </button>
+      {/* Header */}
+      <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <Brain size={17} style={{ color: '#D4A843' }} />
+        <span style={{ fontWeight: 700, fontSize: 14, color: '#F1F5F9', flex: 1 }}>🧠 Intelligence IA</span>
+        <button onClick={handleRefresh} style={{ padding: 4, borderRadius: 6, background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }} title="Rafraîchir">
+          <RefreshCw size={13} style={{ color: '#D4A843', ...(refreshing ? { animation: 'spin 1s linear infinite' } : {}) }} />
+        </button>
+      </div>
 
-      {expanded && (
-        <div style={{ padding: '0 20px 16px', borderTop: '1px solid rgba(255,215,0,0.08)' }}>
-          <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 10, marginTop: 8 }}>{subtitle}</p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {sections.map((s, i) => (
-              <div key={i}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: s.color, marginBottom: 3 }}>{s.icon} {s.title}</p>
-                <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.6 }}>{s.content}</p>
-              </div>
-            ))}
-          </div>
-          <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 10 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Clock size={10} color="#64748B" />
-              <span style={{ fontSize: 10, color: '#64748B' }}>
-                {isLive && briefing?.generated_at ? relativeTime(briefing.generated_at) : 'Prochain briefing: demain 05:45'}
-              </span>
-            </div>
-            {!isLive && <span style={{ fontSize: 10, color: '#64748B', fontStyle: 'italic' }}>Données de démonstration</span>}
-          </div>
-        </div>
-      )}
+      {/* Briefing cards */}
+      <div style={{ padding: '0 16px 16px', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <BriefingCard briefing={morningBriefing} type="morning" />
+        <BriefingCard briefing={eveningBriefing} type="evening" />
+      </div>
     </div>
   );
 }
