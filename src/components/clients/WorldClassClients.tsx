@@ -290,56 +290,126 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
 
       {/* AI Intelligence Brief */}
       {expanded && (() => {
+        // Parse JSON fields from client_intelligence
+        const parseJsonField = (val: any): string[] => {
+          if (!val) return [];
+          if (Array.isArray(val)) return val;
+          try { const p = JSON.parse(val); return Array.isArray(p) ? p : [String(p)]; } catch { return val ? [String(val)] : []; }
+        };
+
+        const hasIntel = !!intel;
+        const scoreColor = !intel?.score_sante ? T.textDim
+          : intel.score_sante === 'Excellent' ? '#D4A843'
+          : intel.score_sante === 'Bon' ? T.success
+          : intel.score_sante === 'À risque' ? T.warning
+          : intel.score_sante === 'Critique' ? T.danger : T.textSec;
+
+        const opportunites = parseJsonField(intel?.opportunites);
+        const risques = parseJsonField(intel?.risques);
+        const actions = parseJsonField(intel?.actions);
+
+        // Fallback to ai_client_briefs if no client_intelligence
+        const displayBrief = brief || {};
         const MOCK_BRIEFS: Record<string, any> = {
-          'TGCC': { summary: "Client Enterprise stratégique. Volume en hausse constante, +12% ce trimestre. Aucun impayé. Potentiel d'upsell sur formules spéciales.", patterns: { avg_order_frequency_days: 7, preferred_formula: 'F-B30', avg_volume_per_order: 350 }, risk_level: 'low' },
-          'Constructions Modernes SA': { summary: "Client fidèle Mid-Market. Commandes régulières bi-hebdomadaires. Sensible aux délais de livraison. Marge stable.", patterns: { avg_order_frequency_days: 14, preferred_formula: 'F-B25', avg_volume_per_order: 80 }, risk_level: 'low' },
-          'BTP Maroc SARL': { summary: "Client actif avec 3 devis en cours. Historique de paiement excellent. Volume moyen en croissance.", patterns: { avg_order_frequency_days: 14, preferred_formula: 'F-B25', avg_volume_per_order: 30 }, risk_level: 'low' },
-          'Ciments & Béton du Sud': { summary: "Nouveau client en phase de croissance. 2 premières commandes livrées sans incident. Surveiller fidélisation.", patterns: { avg_order_frequency_days: 21, preferred_formula: 'F-B20', avg_volume_per_order: 25 }, risk_level: 'medium' },
-          'Saudi Readymix Co.': { summary: "Client export à fort potentiel. Commande volumineuse unique (50m³). Paiement en attente de validation.", patterns: { avg_order_frequency_days: 30, preferred_formula: 'F-B35', avg_volume_per_order: 50 }, risk_level: 'medium' },
+          'TGCC': { summary: "Client Enterprise stratégique. Volume en hausse constante, +12% ce trimestre.", patterns: { avg_order_frequency_days: 7, preferred_formula: 'F-B30', avg_volume_per_order: 350 }, risk_level: 'low' },
+          'Constructions Modernes SA': { summary: "Client fidèle Mid-Market. Commandes régulières bi-hebdomadaires.", patterns: { avg_order_frequency_days: 14, preferred_formula: 'F-B25', avg_volume_per_order: 80 }, risk_level: 'low' },
         };
-        const displayBrief = brief || MOCK_BRIEFS[client.name] || {
-          summary: "Client fidèle avec commandes régulières. Volume en hausse de 15% sur les 3 derniers mois.",
-          patterns: { avg_order_frequency_days: 7, preferred_formula: 'B25/B30', avg_volume_per_order: 45 },
-          risk_level: 'low',
+        const fallbackBrief = displayBrief.summary ? displayBrief : MOCK_BRIEFS[client.name] || null;
+
+        const relTime = (dateStr: string) => {
+          const mins = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+          if (mins < 1) return 'à l\'instant';
+          if (mins < 60) return `il y a ${mins} min`;
+          const hours = Math.floor(mins / 60);
+          if (hours < 24) return `il y a ${hours}h`;
+          return `il y a ${Math.floor(hours / 24)}j`;
         };
+
         return (
-        <div style={{ background: 'rgba(30,45,74,0.5)', borderLeft: '2px solid #FFD700', borderRadius: '0 10px 10px 0', padding: 16, margin: '4px 16px 8px 16px' }}>
+        <div style={{ background: 'rgba(30,45,74,0.5)', borderLeft: `2px solid ${hasIntel ? scoreColor : '#FFD700'}`, borderRadius: '0 10px 10px 0', padding: 16, margin: '4px 16px 8px 16px' }}>
           {loadingBrief ? (
             <p style={{ color: T.textDim, fontSize: 12 }}>Chargement...</p>
+          ) : !hasIntel && !fallbackBrief ? (
+            <p style={{ color: T.textDim, fontSize: 12, fontStyle: 'italic' }}>🤖 Analyse IA en attente...</p>
           ) : (
             <>
+              {/* Header with score badge */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <p style={{ color: T.gold, fontWeight: 700, fontSize: 13 }}>🧠 Intelligence Brief</p>
-                <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                  background: displayBrief.risk_level === 'low' ? `${T.success}22` : displayBrief.risk_level === 'medium' ? `${T.warning}22` : `${T.danger}22`,
-                  color: displayBrief.risk_level === 'low' ? T.success : displayBrief.risk_level === 'medium' ? T.warning : T.danger,
-                  border: `1px solid ${displayBrief.risk_level === 'low' ? T.success : displayBrief.risk_level === 'medium' ? T.warning : T.danger}44`,
-                }}>{displayBrief.risk_level === 'low' ? 'Risque Faible' : displayBrief.risk_level === 'medium' ? 'Risque Modéré' : 'Risque Élevé'}</span>
+                <p style={{ color: T.gold, fontWeight: 700, fontSize: 13 }}>🧠 Intelligence Client</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {intel?.score_sante && (
+                    <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                      background: `${scoreColor}22`, color: scoreColor, border: `1px solid ${scoreColor}44`,
+                    }}>Santé: {intel.score_sante}</span>
+                  )}
+                  {intel?.valeur_potentielle && (
+                    <span style={{ padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 600,
+                      background: 'rgba(212,168,67,0.12)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.25)',
+                    }}>💰 {intel.valeur_potentielle}</span>
+                  )}
+                </div>
               </div>
+
+              {/* Resume */}
               <div style={{ marginBottom: 10 }}>
-                <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>Résumé</p>
-                <p style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.5 }}>{displayBrief.summary}</p>
+                <p style={{ color: '#d1d5db', fontSize: 13, lineHeight: 1.55 }}>
+                  {intel?.resume || fallbackBrief?.summary || 'Aucun résumé disponible.'}
+                </p>
               </div>
-              {displayBrief.patterns && (
-                <div style={{ marginBottom: 10 }}>
-                  <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>Tendances</p>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
-                    {displayBrief.patterns.avg_order_frequency_days != null && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {displayBrief.patterns.avg_order_frequency_days}j</span>
-                    )}
-                    {displayBrief.patterns.preferred_formula && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {displayBrief.patterns.preferred_formula}</span>
-                    )}
-                    {displayBrief.patterns.avg_volume_per_order != null && (
-                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {displayBrief.patterns.avg_volume_per_order}m³</span>
-                    )}
-                  </div>
-                  <p style={{ color: '#94A3B8', fontSize: 11, lineHeight: 1.5 }}>Commande préférée: {displayBrief.patterns.preferred_formula || 'B25'}. Cycle moyen: {displayBrief.patterns.avg_order_frequency_days || 7} jours.</p>
+
+              {/* Opportunités */}
+              {opportunites.length > 0 && (
+                <div style={{ marginBottom: 8 }}>
+                  <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>✨ Opportunités</p>
+                  {opportunites.map((o: string, i: number) => (
+                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {o}</p>
+                  ))}
                 </div>
               )}
-              {!brief && <p style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic', marginBottom: 6 }}>Données de démonstration — cliquez Actualiser pour générer un vrai brief</p>}
+
+              {/* Risques */}
+              {risques.length > 0 && (
+                <div style={{ marginBottom: 8 }}>
+                  <p style={{ color: T.danger, fontWeight: 700, fontSize: 11, marginBottom: 4 }}>⚠️ Risques</p>
+                  {risques.map((r: string, i: number) => (
+                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>• {r}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Actions recommandées */}
+              {actions.length > 0 && (
+                <div style={{ marginBottom: 8 }}>
+                  <p style={{ color: '#D4A843', fontWeight: 700, fontSize: 11, marginBottom: 4 }}>🎯 Actions Recommandées</p>
+                  {actions.map((a: string, i: number) => (
+                    <p key={i} style={{ color: '#d1d5db', fontSize: 11, lineHeight: 1.5, paddingLeft: 12 }}>→ {a}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Fallback patterns from ai_client_briefs */}
+              {!hasIntel && fallbackBrief?.patterns && (
+                <div style={{ marginBottom: 10 }}>
+                  <p style={{ color: T.gold, fontWeight: 700, fontSize: 11, marginBottom: 6 }}>Tendances</p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {fallbackBrief.patterns.avg_order_frequency_days != null && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>📦 Fréq: {fallbackBrief.patterns.avg_order_frequency_days}j</span>
+                    )}
+                    {fallbackBrief.patterns.preferred_formula && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>🧪 {fallbackBrief.patterns.preferred_formula}</span>
+                    )}
+                    {fallbackBrief.patterns.avg_volume_per_order != null && (
+                      <span style={{ padding: '3px 10px', borderRadius: 999, background: '#1a1a1a', border: '1px solid #333', color: T.textSec, fontSize: 11 }}>💰 Vol moy: {fallbackBrief.patterns.avg_volume_per_order}m³</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {!hasIntel && !brief && <p style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic', marginBottom: 6 }}>Données de démonstration — cliquez Actualiser pour générer un vrai brief</p>}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 8 }}>
-                <span style={{ color: '#6B7280', fontSize: 10 }}>Dernière analyse: 01/03/2026 05:45</span>
+                <span style={{ color: '#6B7280', fontSize: 10 }}>
+                  {intel?.generated_at ? `Dernière analyse: ${relTime(intel.generated_at)}` : 'Dernière analyse: —'}
+                </span>
                 <button onClick={handleGenerate} style={{ padding: '3px 10px', borderRadius: 6, background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Actualiser</button>
               </div>
             </>
