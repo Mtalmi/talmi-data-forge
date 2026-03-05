@@ -38,6 +38,12 @@ export interface Devis {
   locked_by: string | null;
   locked_at: string | null;
   lock_expires_at: string | null;
+  // AI scoring fields
+  score_ia: number | null;
+  niveau_score: string | null;
+  ai_recommandation: string | null;
+  probabilite_conversion: string | null;
+  scored_at: string | null;
   // Joined data
   client?: { nom_client: string; adresse: string | null; email: string | null };
   formule?: { designation: string };

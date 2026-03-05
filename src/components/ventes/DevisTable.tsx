@@ -470,88 +470,91 @@ export function DevisTable({
                     {expirationBadge}
                   </div>
                 </TableCell>
+                {/* ═══ LIVE AI Score Column ═══ */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {(() => {
-                    // Mock scores by devis_id pattern for demo
-                    const MOCK_SCORES: Record<string, { score: number; reasons: { factor: string; impact: string }[] }> = {
-                      '650': { score: 62, reasons: [{ factor: 'Volume faible', impact: '-20' }, { factor: 'Client récurrent', impact: '+15' }] },
-                      '716': { score: 78, reasons: [{ factor: 'Client fidèle', impact: '+25' }, { factor: 'Volume élevé', impact: '+20' }] },
-                      '349': { score: 75, reasons: [{ factor: 'Historique positif', impact: '+20' }, { factor: 'Délai court', impact: '+15' }] },
-                      '544': { score: 91, reasons: [{ factor: 'Gros volume', impact: '+30' }, { factor: 'Client stratégique', impact: '+25' }] },
-                      '316': { score: 55, reasons: [{ factor: 'Client moyen', impact: '+10' }, { factor: 'Marge correcte', impact: '+12' }] },
-                      '895': { score: 42, reasons: [{ factor: 'Petit montant', impact: '-15' }, { factor: 'Client nouveau', impact: '-10' }] },
-                    };
-                    const realScore = (devis as any).ai_score;
-                    const realReasons = (devis as any).ai_score_reasons;
-                    // Try mock by last 3 digits of devis_id
-                    const idSuffix = devis.devis_id?.split('-').pop() || '';
-                    const mock = MOCK_SCORES[idSuffix];
-                    const score = realScore ?? mock?.score ?? null;
-                    const reasons = realReasons ?? mock?.reasons ?? null;
-                    const bg = score == null ? '#64748B' : score > 70 ? '#16a34a' : score >= 40 ? '#ca8a04' : '#dc2626';
-                    const isStar = score != null && score >= 85;
+                    const score = devis.score_ia;
+                    const niveau = devis.niveau_score;
+                    const recommandation = devis.ai_recommandation;
+                    const scoredAt = devis.scored_at;
+
+                    if (score == null) {
+                      return (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
+                          background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.2)',
+                          color: '#64748B',
+                        }}>
+                          Non scoré
+                        </span>
+                      );
+                    }
+
+                    const bg = score >= 80 ? '#D4A843' : score >= 60 ? '#16a34a' : score >= 40 ? '#ca8a04' : '#dc2626';
+                    const label = score >= 80 ? 'Excellent' : score >= 60 ? 'Bon' : score >= 40 ? 'Moyen' : 'Faible';
+                    const isStar = score >= 80;
+
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mx-auto relative" style={{ background: bg }}>
-                            {score != null ? score : '—'}
-                            {isStar && <span className="absolute -top-1 -right-1 text-[10px]">⭐</span>}
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mx-auto relative" style={{ background: bg }}>
+                              {score}
+                              {isStar && <span className="absolute -top-1 -right-1 text-[10px]">⭐</span>}
+                            </div>
+                            {niveau && (
+                              <span style={{ fontSize: 9, fontWeight: 600, color: bg }}>{niveau}</span>
+                            )}
                           </div>
                         </TooltipTrigger>
-                        <TooltipContent side="left" className="max-w-xs">
-                          {reasons && Array.isArray(reasons) ? (
-                            <div className="space-y-1 text-xs">
-                              {reasons.map((r: any, i: number) => (
-                                <div key={i}>{r.factor}: <span className="font-mono">{r.impact}</span></div>
-                              ))}
-                            </div>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">Pas encore scoré</span>
-                          )}
+                        <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
+                          <div className="space-y-1.5 text-xs">
+                            <div style={{ fontWeight: 700, color: bg }}>{label} — {score}/100</div>
+                            {recommandation && (
+                              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                                <span style={{ fontSize: 12, flexShrink: 0 }}>✨</span>
+                                <p style={{ fontSize: 11, lineHeight: 1.5, color: '#F1F5F9' }}>{recommandation}</p>
+                              </div>
+                            )}
+                            {scoredAt && (
+                              <div style={{ fontSize: 10, color: '#64748B', marginTop: 4 }}>
+                                Scoré {(() => {
+                                  const mins = Math.floor((Date.now() - new Date(scoredAt).getTime()) / 60000);
+                                  if (mins < 1) return 'à l\'instant';
+                                  if (mins < 60) return `il y a ${mins} min`;
+                                  const hours = Math.floor(mins / 60);
+                                  if (hours < 24) return `il y a ${hours}h`;
+                                  return `il y a ${Math.floor(hours / 24)}j`;
+                                })()}
+                              </div>
+                            )}
+                          </div>
                         </TooltipContent>
                       </Tooltip>
                     );
                   })()}
                 </TableCell>
+                {/* ═══ LIVE Conversion Probability Column ═══ */}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {(() => {
-                    const MOCK_MARGINS: Record<string, { pct: number; tip: string }> = {
-                      '544': { pct: 23, tip: '' },
-                      '716': { pct: 18, tip: '' },
-                      '349': { pct: 14, tip: '💡 Marge sous le seuil de 18%. Recommandation: augmenter de 45 MAD/m³ ou substituer formule B25 → B25S pour économiser 12 MAD/m³ sur les agrégats.' },
-                      '316': { pct: 8, tip: '⚠️ Marge critique. Ce devis est à 8% contre un seuil minimum de 18%. Recommandation urgente: renégocier le prix (+62 MAD/m³) ou proposer formule alternative. Coût transport élevé: 47km aller-retour.' },
-                      '650': { pct: 11, tip: '💡 Marge sous le seuil de 18%. Recommandation: revoir le prix de vente ou réduire les coûts logistiques.' },
-                      '895': { pct: 5, tip: '🔴 Marge dangereuse. Risque de perte nette après coûts indirects. Recommandation: ne pas accepter en l\'état. Proposer réduction volume ou formule économique.' },
-                    };
-                    const idSuffix = devis.devis_id?.split('-').pop() || '';
-                    const mock = MOCK_MARGINS[idSuffix];
-                    const pct = mock?.pct ?? Math.floor(Math.random() * 20 + 5);
-                    const tip = mock?.tip ?? '';
-                    const bg = pct >= 18 ? 'rgba(16,185,129,0.12)' : pct >= 10 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
-                    const border = pct >= 18 ? 'rgba(16,185,129,0.25)' : pct >= 10 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
-                    const color = pct >= 18 ? '#10B981' : pct >= 10 ? '#F59E0B' : '#EF4444';
-                    const needsTip = pct < 18 && tip;
+                    const prob = devis.probabilite_conversion;
+                    if (!prob) {
+                      return <span style={{ fontSize: 10, color: '#64748B' }}>—</span>;
+                    }
+                    const numVal = parseInt(prob);
+                    const color = numVal >= 70 ? '#10B981' : numVal >= 40 ? '#F59E0B' : '#EF4444';
+                    const bg = numVal >= 70 ? 'rgba(16,185,129,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
+                    const border = numVal >= 70 ? 'rgba(16,185,129,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
                     return (
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
-                            background: bg, border: `1px solid ${border}`, color,
-                            fontFamily: 'JetBrains Mono, monospace', cursor: needsTip ? 'help' : 'default',
-                          }}>
-                            Marge: {pct}%
-                          </span>
-                        </TooltipTrigger>
-                        {needsTip && (
-                          <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(255,215,0,0.15)', borderRadius: 8, padding: '10px 14px' }}>
-                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
-                              <span style={{ fontSize: 12, flexShrink: 0 }}>✨</span>
-                              <p style={{ fontSize: 11, lineHeight: 1.5, color: '#F1F5F9' }}>{tip}</p>
-                            </div>
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
+                      <span style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 4,
+                        padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                        background: bg, border: `1px solid ${border}`, color,
+                        fontFamily: 'JetBrains Mono, monospace',
+                      }}>
+                        {prob}
+                      </span>
                     );
                   })()}
                 </TableCell>
