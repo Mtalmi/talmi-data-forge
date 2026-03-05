@@ -36,6 +36,7 @@ import { ConvertToBcDialog } from '@/components/ventes/ConvertToBcDialog';
 import { DirectOrderDialog } from '@/components/ventes/DirectOrderDialog';
 import { VentesFilters } from '@/components/ventes/VentesFilters';
 import { BulkActionsToolbar, exportDevisToCSV, exportBcToCSV } from '@/components/ventes/BulkActionsToolbar';
+import { BulkScorerButton } from '@/components/ventes/BulkScorerButton';
 import { DevisDetailDialog } from '@/components/ventes/DevisDetailDialog';
 import { ActivityHistoryDrawer } from '@/components/ventes/ActivityHistoryDrawer';
 import { OrderCalendarView } from '@/components/ventes/OrderCalendarView';
