@@ -1,5 +1,6 @@
 import WorldClassPayments from '@/components/payments/WorldClassPayments';
 import { CashFlowForecasterCard } from '@/components/payments/CashFlowForecasterCard';
+import { CashFlowAIForecastCard } from '@/components/payments/CashFlowAIForecastCard';
 import { PaymentRiskScorerCard } from '@/components/payments/PaymentRiskScorerCard';
 import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
@@ -172,6 +173,10 @@ export default function Paiements() {
       {/* 🧠 AI Cash Flow Forecaster */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
         <CashFlowForecasterCard />
+      </div>
+      {/* 🧠 AI Cash Flow Forecast (cash_flow_forecasts table) */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+        <CashFlowAIForecastCard />
       </div>
       {/* 🛡️ AI Payment Risk Scorer */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
