@@ -135,6 +135,7 @@ function useStocksLiveData() {
   const [ALERTS, setAlerts] = useState<{ name: string; current: string; min: string; deficit: string; urgency: string; color: string }[]>([]);
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
+  const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
@@ -149,13 +150,23 @@ function useStocksLiveData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [stocksRes, movementsRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at')
           .order('created_at', { ascending: false })
           .limit(20),
+        supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
       ]);
+
+      // Autonomy map
+      const autoMap: Record<string, { days: number | null; calculated_at: string | null }> = {};
+      if (autonomyRes.data?.length) {
+        autonomyRes.data.forEach((a: any) => {
+          autoMap[(a.materiau || '').toLowerCase()] = { days: a.days_remaining, calculated_at: a.last_calculated_at };
+        });
+      }
+      setAutonomy(autoMap);
 
       // Stock levels
       if (stocksRes.data?.length) {
@@ -242,11 +253,12 @@ function useStocksLiveData() {
       .channel('wc-stocks-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -296,51 +308,60 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // STOCK LEVEL ROW — Amber progress system
 // ─────────────────────────────────────────────────────
-function StockRow({ stock, index }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number }) {
+function StockRow({ stock, index, autonomy }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number; autonomy?: { days: number | null; calculated_at: string | null } }) {
   const [visible, setVisible] = useState(false);
-  // Amber system: healthy=#F59E0B, warning=#D97706, critical=#EF4444
   const barColor = stock.pct > 30 ? T.amber : stock.pct > 10 ? T.amberDark : T.danger;
   const isAlert = stock.pct < 30;
   const animatedWidth = useAnimatedWidth(stock.pct, index * 100);
   useEffect(() => { const t = setTimeout(() => setVisible(true), index * 80); return () => clearTimeout(t); }, [index]);
   const Icon = stock.liquid ? Droplets : Package;
 
+  // Autonomy badge logic
+  const days = autonomy?.days;
+  const autoLabel = days == null ? 'Calcul en cours...'
+    : days <= 2 ? `${days}j — Critique`
+    : days <= 5 ? `${days}j — Bas`
+    : days <= 14 ? `${days}j — Normal`
+    : `${days}j — Élevé`;
+  const autoColor = days == null ? T.textDim
+    : days <= 2 ? T.danger
+    : days <= 5 ? '#F59E0B'
+    : days <= 14 ? T.success
+    : '#3B82F6';
+  const autoPulse = days != null && days <= 2;
+
+  const relTime = autonomy?.calculated_at ? (() => {
+    const mins = Math.floor((Date.now() - new Date(autonomy.calculated_at!).getTime()) / 60000);
+    if (mins < 1) return 'à l\'instant';
+    if (mins < 60) return `il y a ${mins}min`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `il y a ${hours}h`;
+    return `il y a ${Math.floor(hours / 24)}j`;
+  })() : null;
+
   return (
-    <div
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(16px)',
-        transition: 'all 500ms ease-out',
-        padding: '14px 16px',
-        background: isAlert ? 'rgba(245, 158, 11, 0.04)' : 'transparent',
-        border: `1px solid ${isAlert ? 'rgba(245, 158, 11, 0.3)' : T.cardBorder}`,
-        borderRadius: 10,
-        display: 'flex', alignItems: 'center', gap: 14,
-      }}
-    >
-      {/* Icon — always amber */}
+    <div style={{
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0)' : 'translateY(16px)',
+      transition: 'all 500ms ease-out',
+      padding: '14px 16px',
+      background: isAlert ? 'rgba(245, 158, 11, 0.04)' : 'transparent',
+      border: `1px solid ${isAlert ? 'rgba(245, 158, 11, 0.3)' : T.cardBorder}`,
+      borderRadius: 10,
+      display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+    }}>
       <div style={{ width: 34, height: 34, borderRadius: 10, background: T.amberHover, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         <Icon size={15} color={T.amber} />
       </div>
-
-      {/* Name */}
-      <div style={{ minWidth: 190, flexShrink: 0 }}>
+      <div style={{ minWidth: 150, flexShrink: 0 }}>
         <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{stock.name}</p>
       </div>
-
-      {/* Progress bar */}
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, minWidth: 100 }}>
         <div style={{ height: 8, borderRadius: 6, background: T.amberGrid, overflow: 'hidden' }}>
-          <div style={{
-            height: '100%', width: `${animatedWidth}%`,
-            background: barColor,
-            borderRadius: 6,
-          }} />
+          <div style={{ height: '100%', width: `${animatedWidth}%`, background: barColor, borderRadius: 6 }} />
         </div>
       </div>
-
-      {/* Values */}
-      <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 140 }}>
+      <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 130 }}>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: T.textPri }}>
           {stock.current.toLocaleString('fr-FR')}
         </span>
@@ -348,7 +369,19 @@ function StockRow({ stock, index }: { stock: { name: string; current: number; ma
           {' '}/ {stock.max.toLocaleString('fr-FR')} {stock.unit}
         </span>
       </div>
-
+      {/* Autonomy badge */}
+      <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 100 }}>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 4,
+          padding: '3px 9px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+          background: `${autoColor}18`, border: `1px solid ${autoColor}40`, color: autoColor,
+          animation: autoPulse ? 'tbos-pulse 2s infinite' : 'none',
+        }}>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: autoColor, flexShrink: 0 }} />
+          {autoLabel}
+        </span>
+        {relTime && <span style={{ fontSize: 9, color: T.textDim }}>Calculé {relTime}</span>}
+      </div>
       {/* Pct badge */}
       <div style={{ flexShrink: 0 }}>
         {stock.pct < 10
@@ -516,7 +549,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
@@ -572,7 +605,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={Package} label="Niveaux de Stock" />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} />)}
+              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} />)}
             </div>
           </Card>
         </section>
