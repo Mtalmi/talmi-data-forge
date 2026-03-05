@@ -253,11 +253,12 @@ function useStocksLiveData() {
       .channel('wc-stocks-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading };
 }
 
 // ─────────────────────────────────────────────────────
