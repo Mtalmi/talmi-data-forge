@@ -125,22 +125,28 @@ export function IntelligenceBriefingCard() {
 
   const fetchBriefings = useCallback(async () => {
     try {
-      const { data } = await supabase
-        .from('ai_briefings')
-        .select('*')
-        .order('generated_at', { ascending: false })
-        .limit(5);
+      const [{ data: morningData, error: mErr }, { data: eveningData, error: eErr }] = await Promise.all([
+        supabase
+          .from('ai_briefings')
+          .select('*')
+          .eq('briefing_type', 'morning')
+          .order('generated_at', { ascending: false })
+          .limit(1),
+        supabase
+          .from('ai_briefings')
+          .select('*')
+          .eq('briefing_type', 'evening')
+          .order('generated_at', { ascending: false })
+          .limit(1),
+      ]);
 
-      if (data?.length) {
-        const morning = data.find((b: any) => b.briefing_type === 'morning' || b.type === 'morning') as Briefing | undefined;
-        const evening = data.find((b: any) => b.briefing_type === 'evening' || b.type === 'evening') as Briefing | undefined;
-        setMorningBriefing(morning ?? null);
-        setEveningBriefing(evening ?? null);
-      } else {
-        setMorningBriefing(null);
-        setEveningBriefing(null);
-      }
-    } catch {
+      console.log('[IntelligenceBriefing] morning:', morningData, mErr);
+      console.log('[IntelligenceBriefing] evening:', eveningData, eErr);
+
+      setMorningBriefing(morningData?.[0] ?? null);
+      setEveningBriefing(eveningData?.[0] ?? null);
+    } catch (err) {
+      console.error('[IntelligenceBriefing] fetch error:', err);
       setMorningBriefing(null);
       setEveningBriefing(null);
     }
