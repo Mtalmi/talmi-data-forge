@@ -247,7 +247,7 @@ export function BonDetailDialog({ blId, open, onOpenChange, onUpdate }: BonDetai
                     <div>
                       <p className="text-muted-foreground text-xs">{bd.transportProvider}</p>
                       <p className="font-medium">
-                        {getPrestataireById(bon.prestataire_id)?.nom_prestataire || bon.prestataire_id}
+                        {getPrestataireById(bon.prestataire_id)?.nom || bon.prestataire_id}
                       </p>
                     </div>
                   </div>

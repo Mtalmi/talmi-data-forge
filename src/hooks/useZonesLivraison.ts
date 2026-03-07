@@ -14,7 +14,7 @@ export interface ZoneLivraison {
 export interface PrestaireTransport {
   id: string;
   code_prestataire: string;
-  nom_prestataire: string;
+  nom: string;
   contact_nom: string | null;
   contact_telephone: string | null;
   tarif_base_m3: number;
@@ -48,7 +48,7 @@ export function useZonesLivraison() {
           .from('prestataires_transport')
           .select('*')
           .eq('actif', true)
-          .order('nom_prestataire'),
+          .order('nom'),
       ]);
 
       if (zonesRes.error) throw zonesRes.error;

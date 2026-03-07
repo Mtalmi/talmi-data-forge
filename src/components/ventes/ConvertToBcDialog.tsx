@@ -27,7 +27,7 @@ interface Zone {
 
 interface Prestataire {
   id: string;
-  nom_prestataire: string;
+  nom: string;
   tarif_base_m3: number;
 }
 
