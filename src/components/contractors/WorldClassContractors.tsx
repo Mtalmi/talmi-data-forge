@@ -243,7 +243,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
         <span style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 500 }}>{trend}</span>
       </div>
       <div>
-        <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 36, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1 }}>
+        <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 48, fontWeight: 200, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1, WebkitFontSmoothing: 'antialiased' }}>
           {count}{suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>{suffix}</span>}
         </div>
         <div style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 6 }}>{label}</div>
@@ -269,7 +269,7 @@ function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string
         display: 'flex', alignItems: 'center', gap: 16,
         background: T.cardBg,
         border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
-        borderRadius: 10, padding: '14px 18px',
+        borderRadius: 10, padding: '16px 20px',
         transition: 'all 0.25s ease',
         transform: hov ? 'translateX(4px)' : 'translateX(0)',
         boxShadow: hov ? `0 4px 20px rgba(0,0,0,0.3)` : 'none',
