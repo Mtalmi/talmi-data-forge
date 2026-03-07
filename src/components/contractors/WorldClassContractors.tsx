@@ -476,19 +476,19 @@ export default function WorldClassContractors() {
   const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
 
-  // Dynamic KPI calculations
+  // Dynamic KPI calculations — derived from live arrays
+  const actifCount = contractors.length;
   const missionsEnCours = MISSIONS.length;
   const coutMTDTotal = MISSIONS.reduce((s: number, m: any) => {
-    const coutStr = m.coutEstime.replace(/[^\d]/g, '');
-    return s + parseInt(coutStr, 10);
+    const num = parseInt(String(m.coutEstime).replace(/[^\d]/g, ''), 10);
+    return s + (isNaN(num) ? 0 : num);
   }, 0);
   const coutMTDK = Math.round(coutMTDTotal / 1000);
 
-  // KPI counters
-  const actifs = useAnimatedCounter(cKpis.actifs, 1000);
-  const enMissionCount = useAnimatedCounter(missionsEnCours, 1000);
-  const coutMTD = useAnimatedCounter(coutMTDK, 1200);
-  const satisfaction = useAnimatedCounter(cKpis.satisfaction, 1200);
+  // Debug logs
+  useEffect(() => {
+    console.log('[WC-KPI] contractors.length =', contractors.length, '| MISSIONS.length =', MISSIONS.length, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
+  }, [contractors.length, coutMTDTotal, coutMTDK]);
 
   // Donut total
   const totalCost = COST_DONUT.reduce((s, d) => s + d.value, 0);
