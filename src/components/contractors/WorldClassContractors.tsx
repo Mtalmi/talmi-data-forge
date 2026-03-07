@@ -281,7 +281,7 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
         cursor: 'pointer',
       }}
     >
-       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
+       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={avatarBg} textColor={avatarText} />
        {/* Name + Specialty */}
        <div style={{ minWidth: 180 }}>
          <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
@@ -528,7 +528,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Sous-Traitants" badge={`${contractors.length} actifs`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {contractors.map((c, i) => (
-              <ContractorRow key={c.id} c={c} delay={i * 80} />
+              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
             ))}
           </div>
         </div>
