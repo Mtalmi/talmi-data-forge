@@ -70,7 +70,7 @@ function useContractorsLiveData() {
     try {
       const { data: presta } = await supabase
         .from('prestataires_transport')
-        .select('id, code_prestataire, nom, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif')
+        .select('id, code_prestataire, nom_prestataire, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif')
         .eq('actif', true);
 
       if (presta?.length) {
