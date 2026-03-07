@@ -326,11 +326,11 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
         {isMission ? (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
+            background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`,
             borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
             animation: 'tbos-pulse 2s infinite',
           }}>
-            <Briefcase size={11} /> En mission
+            <Briefcase size={11} /> En Mission
           </span>
         ) : (
           <span style={{
