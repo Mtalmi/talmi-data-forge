@@ -471,19 +471,16 @@ export default function WorldClassContractors() {
   const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
 
-  // Dynamic KPI calculations — derived from live arrays
+  // Dynamic KPI calculations — derived from live Supabase data only
   const actifCount = contractors.length;
-  const missionsEnCours = MISSIONS.length;
-  const coutMTDTotal = MISSIONS.reduce((s: number, m: any) => {
-    const num = parseInt(String(m.coutEstime).replace(/[^\d]/g, ''), 10);
-    return s + (isNaN(num) ? 0 : num);
-  }, 0);
+  const missionsEnCours = contractors.filter((c: any) => c.statut === 'mission').length;
+  const coutMTDTotal = contractors.reduce((s: number, c: any) => s + (c.cout_mtd || 0), 0);
   const coutMTDK = Math.round(coutMTDTotal / 1000);
 
   // Debug logs
   useEffect(() => {
-    console.log('[WC-KPI] contractors.length =', contractors.length, '| MISSIONS.length =', MISSIONS.length, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
-  }, [contractors.length, coutMTDTotal, coutMTDK]);
+    console.log('[WC-KPI] contractors.length =', actifCount, '| missionsEnCours =', missionsEnCours, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
+  }, [actifCount, missionsEnCours, coutMTDTotal, coutMTDK]);
 
   // Donut total
   const totalCost = COST_DONUT.reduce((s, d) => s + d.value, 0);
