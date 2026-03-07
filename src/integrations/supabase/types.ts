@@ -6005,7 +6005,7 @@ export type Database = {
           id: string
           jours_travailles: number | null
           mission_actuelle: string | null
-          nom_prestataire: string
+          nom: string
           note_service: number | null
           specialite: string | null
           statut: string | null
@@ -6023,7 +6023,7 @@ export type Database = {
           id?: string
           jours_travailles?: number | null
           mission_actuelle?: string | null
-          nom_prestataire: string
+          nom: string
           note_service?: number | null
           specialite?: string | null
           statut?: string | null
@@ -6041,7 +6041,7 @@ export type Database = {
           id?: string
           jours_travailles?: number | null
           mission_actuelle?: string | null
-          nom_prestataire?: string
+          nom?: string
           note_service?: number | null
           specialite?: string | null
           statut?: string | null

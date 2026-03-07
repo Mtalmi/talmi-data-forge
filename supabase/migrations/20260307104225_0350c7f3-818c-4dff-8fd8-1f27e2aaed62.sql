@@ -1,0 +1,1 @@
+ALTER TABLE public.prestataires_transport RENAME COLUMN nom_prestataire TO nom;
