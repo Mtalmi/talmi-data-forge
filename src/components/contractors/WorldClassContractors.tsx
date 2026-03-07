@@ -288,7 +288,7 @@ function ContractorRow({ c, delay }: { c: any; delay: number }) {
       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
       {/* Name + Specialty */}
       <div style={{ minWidth: 180 }}>
-        <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
+        <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom_prestataire || '—'}</div>
         <span style={{
           background: `${T.info}22`, color: T.info,
           border: `1px solid ${T.info}44`, borderRadius: 100,
