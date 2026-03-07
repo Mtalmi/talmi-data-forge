@@ -75,12 +75,11 @@ function useContractorsLiveData() {
 
       if (presta?.length) {
         setContractors(presta);
-        const enMission = presta.filter(p => p.statut === 'mission').length;
-        const totalCout = presta.reduce((s, p) => s + (p.cout_mtd || 0), 0);
+        const totalCout = presta.reduce((s, p) => s + (p.tarif_base_m3 || 0), 0);
         const avgRating = presta.reduce((s, p) => s + (p.note_service || 0), 0) / presta.length;
         setKpis({
           actifs: presta.length,
-          enMission,
+          enMission: 0,
           coutMTD: Math.round(totalCout / 1000),
           satisfaction: Math.round((avgRating / 5) * 100),
         });
