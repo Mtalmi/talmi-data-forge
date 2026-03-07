@@ -263,7 +263,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 // SECTION: CONTRACTOR ROW
 // ─────────────────────────────────────────────────────
-function ContractorRow({ c, delay }: { c: typeof CONTRACTORS[0]; delay: number }) {
+function ContractorRow({ c, delay }: { c: any; delay: number }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   const isMission = c.status === 'mission';
@@ -283,20 +283,20 @@ function ContractorRow({ c, delay }: { c: typeof CONTRACTORS[0]; delay: number }
         cursor: 'pointer',
       }}
     >
-      <AvatarCircle initials={c.initials} bg={c.avatarBg} textColor={c.avatarText} />
+      <AvatarCircle initials={(c.nom || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
       {/* Name + Specialty */}
       <div style={{ minWidth: 180 }}>
-        <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.name}</div>
+        <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
         <span style={{
-          background: `${c.specialtyColor}22`, color: c.specialtyColor,
-          border: `1px solid ${c.specialtyColor}44`, borderRadius: 100,
+          background: `${T.info}22`, color: T.info,
+          border: `1px solid ${T.info}44`, borderRadius: 100,
           padding: '2px 8px', fontSize: 11, fontWeight: 600, marginTop: 4, display: 'inline-block',
-        }}>{c.specialty}</span>
+        }}>{c.specialite || '—'}</span>
       </div>
       {/* Tarif */}
       <div style={{ minWidth: 110 }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Tarif/jour</div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold, fontWeight: 700 }}>{c.tarif}</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold, fontWeight: 700 }}>{c.tarif_journalier ? `${c.tarif_journalier} DH` : '—'}</div>
       </div>
       {/* Mission */}
       <div style={{ flex: 1, minWidth: 160 }}>
