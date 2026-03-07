@@ -6000,11 +6000,17 @@ export type Database = {
           code_prestataire: string
           contact_nom: string | null
           contact_telephone: string | null
+          cout_mtd: number | null
           created_at: string
           id: string
+          jours_travailles: number | null
+          mission_actuelle: string | null
           nom_prestataire: string
           note_service: number | null
+          specialite: string | null
+          statut: string | null
           tarif_base_m3: number
+          tarif_journalier: number | null
           updated_at: string
         }
         Insert: {
@@ -6012,11 +6018,17 @@ export type Database = {
           code_prestataire: string
           contact_nom?: string | null
           contact_telephone?: string | null
+          cout_mtd?: number | null
           created_at?: string
           id?: string
+          jours_travailles?: number | null
+          mission_actuelle?: string | null
           nom_prestataire: string
           note_service?: number | null
+          specialite?: string | null
+          statut?: string | null
           tarif_base_m3?: number
+          tarif_journalier?: number | null
           updated_at?: string
         }
         Update: {
@@ -6024,11 +6036,17 @@ export type Database = {
           code_prestataire?: string
           contact_nom?: string | null
           contact_telephone?: string | null
+          cout_mtd?: number | null
           created_at?: string
           id?: string
+          jours_travailles?: number | null
+          mission_actuelle?: string | null
           nom_prestataire?: string
           note_service?: number | null
+          specialite?: string | null
+          statut?: string | null
           tarif_base_m3?: number
+          tarif_journalier?: number | null
           updated_at?: string
         }
         Relationships: []
