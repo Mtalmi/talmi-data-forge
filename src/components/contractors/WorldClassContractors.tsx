@@ -471,7 +471,7 @@ export default function WorldClassContractors() {
   const { kpis: cKpis, contractors } = useContractorsLiveData();
 
   // Dynamic KPI calculations — derived from live Supabase data only
-  const actifCount = contractors.length;
+  const actifCount = contractors.filter((c: any) => c.actif === true).length;
   const missionsEnCours = contractors.filter((c: any) => c.statut === 'mission').length;
   const coutMTDTotal = contractors.reduce((s: number, c: any) => s + (c.cout_mtd || 0), 0);
   const coutMTDK = Math.round(coutMTDTotal / 1000);
