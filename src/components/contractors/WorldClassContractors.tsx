@@ -476,10 +476,18 @@ export default function WorldClassContractors() {
   const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
 
+  // Dynamic KPI calculations
+  const missionsEnCours = MISSIONS.length;
+  const coutMTDTotal = MISSIONS.reduce((s: number, m: any) => {
+    const coutStr = m.coutEstime.replace(/[^\d]/g, '');
+    return s + parseInt(coutStr, 10);
+  }, 0);
+  const coutMTDK = Math.round(coutMTDTotal / 1000);
+
   // KPI counters
   const actifs = useAnimatedCounter(cKpis.actifs, 1000);
-  const enMission = useAnimatedCounter(cKpis.enMission, 1000);
-  const coutMTD = useAnimatedCounter(cKpis.coutMTD, 1200);
+  const enMissionCount = useAnimatedCounter(missionsEnCours, 1000);
+  const coutMTD = useAnimatedCounter(coutMTDK, 1200);
   const satisfaction = useAnimatedCounter(cKpis.satisfaction, 1200);
 
   // Donut total
@@ -515,8 +523,8 @@ export default function WorldClassContractors() {
         {/* ══════════════════════════ SECTION 1: KPIs ══════════════════════════ */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
           <KPICard label="Sous-Traitants Actifs" value={cKpis.actifs}  suffix=""  color={T.gold}    icon={Users}    trend="stable"           delay={0}   />
-          <KPICard label="Missions en Cours"      value={cKpis.enMission}  suffix=""  color={T.info}    icon={FileText} trend="+1 cette semaine"  delay={80}  />
-          <KPICard label="Coût MTD"               value={cKpis.coutMTD} suffix="K DH" color={T.warning} icon={Banknote} trend="+5% ↑"         delay={160} />
+          <KPICard label="Missions en Cours"      value={missionsEnCours}  suffix=""  color={T.info}    icon={FileText} trend="+1 cette semaine"  delay={80}  />
+          <KPICard label="Coût MTD"               value={coutMTDK} suffix="K DH" color={T.warning} icon={Banknote} trend="+5% ↑"         delay={160} />
           <KPICard label="Taux de Satisfaction"   value={cKpis.satisfaction} suffix="%"  color={T.success} icon={Heart}    trend="+2% ↑ vert"      delay={240} />
         </div>
 
