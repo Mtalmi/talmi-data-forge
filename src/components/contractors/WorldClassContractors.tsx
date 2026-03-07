@@ -474,7 +474,7 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 export default function WorldClassContractors() {
   const [activeTab, setActiveTab] = useState('Tous');
   const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
-  const { kpis: cKpis } = useContractorsLiveData();
+  const { kpis: cKpis, contractors } = useContractorsLiveData();
 
   // KPI counters
   const actifs = useAnimatedCounter(cKpis.actifs, 1000);
