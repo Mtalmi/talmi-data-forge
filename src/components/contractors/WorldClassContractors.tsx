@@ -70,8 +70,7 @@ function useContractorsLiveData() {
     try {
       const { data: presta } = await supabase
         .from('prestataires_transport')
-        .select('id, code_prestataire, nom_prestataire, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif')
-        .eq('actif', true);
+        .select('id, code_prestataire, nom_prestataire, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif');
 
       const rows = presta ?? [];
       setContractors(rows);
@@ -256,13 +255,13 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 // SECTION: CONTRACTOR ROW
 // ─────────────────────────────────────────────────────
-function ContractorRow({ c, delay }: { c: any; delay: number }) {
-  const [hov, setHov] = useState(false);
-  const vis = useFadeIn(delay);
-  const isMission = c.statut === 'mission';
-  const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
-  const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
-  return (
+function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number }) {
+   const [hov, setHov] = useState(false);
+   const vis = useFadeIn(delay);
+   const isMission = c.statut === 'mission';
+   const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
+   const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
+   return (
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
@@ -278,15 +277,15 @@ function ContractorRow({ c, delay }: { c: any; delay: number }) {
         cursor: 'pointer',
       }}
     >
-      <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
-      {/* Name + Specialty */}
-      <div style={{ minWidth: 180 }}>
-        <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom_prestataire || '—'}</div>
-        <span style={{
-          background: `${T.info}22`, color: T.info,
-          border: `1px solid ${T.info}44`, borderRadius: 100,
-          padding: '2px 8px', fontSize: 11, fontWeight: 600, marginTop: 4, display: 'inline-block',
-        }}>{c.specialite || '—'}</span>
+       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
+       {/* Name + Specialty */}
+       <div style={{ minWidth: 180 }}>
+         <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
+         <span style={{
+           background: `${T.info}22`, color: T.info,
+           border: `1px solid ${T.info}44`, borderRadius: 100,
+           padding: '2px 8px', fontSize: 11, fontWeight: 600, marginTop: 4, display: 'inline-block',
+         }}>{c.specialite || '—'}</span>
       </div>
       {/* Tarif */}
       <div style={{ minWidth: 110 }}>
