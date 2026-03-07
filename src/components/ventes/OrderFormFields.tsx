@@ -37,7 +37,7 @@ interface Zone {
 
 interface Prestataire {
   id: string;
-  nom_prestataire: string;
+  nom: string;
   tarif_base_m3: number;
 }
 
@@ -277,7 +277,7 @@ export function OrderFormFields({
                 <SelectContent>
                   {prestataires.map((prest) => (
                     <SelectItem key={prest.id} value={prest.id}>
-                      {prest.nom_prestataire} ({prest.tarif_base_m3} DH/m³)
+                      {prest.nom} ({prest.tarif_base_m3} DH/m³)
                     </SelectItem>
                   ))}
                 </SelectContent>
