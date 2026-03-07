@@ -8,7 +8,7 @@ import {
 import {
   Users, Banknote, Heart, FileText, CheckCircle, Clock,
   MapPin, Calendar, ChevronRight, Briefcase, Eye,
-  RefreshCw, UserPlus, Award, Plus,
+  RefreshCw, UserPlus, Award, Plus, Zap,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 
@@ -514,6 +514,24 @@ export default function WorldClassContractors() {
 
 
       <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 32 }}>
+
+        {/* ══════════════════════════ AI INTELLIGENCE BANNER ══════════════════════════ */}
+        <div style={{
+          background: 'rgba(11, 17, 32, 0.7)',
+          backdropFilter: 'blur(8px)',
+          border: `1px solid rgba(255, 215, 0, 0.2)`,
+          borderLeft: `3px solid #D4A843`,
+          borderRadius: 8,
+          padding: '16px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+        }}>
+          <Zap size={18} color="#D4A843" strokeWidth={2.5} />
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(241, 245, 249, 0.7)', fontWeight: 400 }}>
+            3 missions actives — Atlas Pompage termine dans 4 jours, 2 sous-traitants disponibles correspondent aux besoins en attente.
+          </p>
+        </div>
 
         {/* ══════════════════════════ SECTION 1: KPIs ══════════════════════════ */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
