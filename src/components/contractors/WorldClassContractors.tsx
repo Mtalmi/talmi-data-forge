@@ -63,39 +63,39 @@ function useFadeIn(delay = 0) {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function useContractorsLiveData() {
-  const [kpis, setKpis] = useState({ actifs: 6, enMission: 3, coutMTD: 78, satisfaction: 92 });
+  const [kpis, setKpis] = useState({ actifs: 0, enMission: 0, coutMTD: 0, satisfaction: 0 });
   const [contractors, setContractors] = useState<any[]>([]);
+
   const fetchData = useCallback(async () => {
     try {
-      const { data: presta } = await supabase.from('prestataires_transport').select('*').eq('actif', true);
+      const { data: presta } = await supabase
+        .from('prestataires_transport')
+        .select('*')
+        .eq('actif', true);
+
       if (presta?.length) {
         setContractors(presta);
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-        const { data: bls } = await supabase.from('bons_livraison_reels')
-          .select('prestataire_id, prix_livraison_m3, volume_m3')
-          .not('prestataire_id', 'is', null)
-          .gte('date_livraison', startOfMonth);
-        const prestaIds = new Set((bls || []).map(b => b.prestataire_id));
-        const totalCost = (bls || []).reduce((s, b) => s + ((b.prix_livraison_m3 || 0) * (b.volume_m3 || 0)), 0);
+        const enMission = presta.filter(p => p.statut === 'mission').length;
+        const totalCout = presta.reduce((s, p) => s + (p.cout_mtd || 0), 0);
         const avgRating = presta.reduce((s, p) => s + (p.note_service || 0), 0) / presta.length;
         setKpis({
           actifs: presta.length,
-          enMission: prestaIds.size,
-          coutMTD: Math.round(totalCost / 1000) || 78,
-          satisfaction: Math.round((avgRating / 5) * 100) || 92,
+          enMission,
+          coutMTD: Math.round(totalCout / 1000),
+          satisfaction: Math.round((avgRating / 5) * 100),
         });
       }
     } catch (err) { console.error('Contractors live data error:', err); }
   }, []);
+
   useEffect(() => {
     fetchData();
     const channel = supabase.channel('wc-contractors-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'prestataires_transport' }, fetchData)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, fetchData)
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchData]);
+
   return { kpis, contractors };
 }
 
@@ -524,7 +524,7 @@ export default function WorldClassContractors() {
         <div>
           <SectionHeader title="Sous-Traitants" badge="6 actifs" />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {CONTRACTORS.map((c, i) => (
+            {contractors.map((c, i) => (
               <ContractorRow key={c.id} c={c} delay={i * 80} />
             ))}
           </div>
