@@ -243,11 +243,11 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
         <span style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 500 }}>{trend}</span>
       </div>
       <div>
-        <div style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 48, fontWeight: 200, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1, WebkitFontSmoothing: 'antialiased' }}>
-          {count}{suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>{suffix}</span>}
-        </div>
-        <div style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 6 }}>{label}</div>
-      </div>
+         <div>
+           <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: '48px', letterSpacing: '-0.02em' }}>{count}</span>{suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>{suffix}</span>}
+         </div>
+         <div style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 6 }}>{label}</div>
+       </div>
     </div>
   );
 }
