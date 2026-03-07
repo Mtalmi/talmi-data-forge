@@ -8,7 +8,7 @@ import {
 import {
   Users, Banknote, Heart, FileText, CheckCircle, Clock,
   MapPin, Calendar, ChevronRight, Briefcase, Eye,
-  RefreshCw, UserPlus, Award, Plus,
+  RefreshCw, UserPlus, Award, Plus, Zap,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 
