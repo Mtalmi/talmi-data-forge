@@ -73,17 +73,20 @@ function useContractorsLiveData() {
         .select('id, code_prestataire, nom_prestataire, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif')
         .eq('actif', true);
 
-      if (presta?.length) {
-        setContractors(presta);
-        const enMission = presta.filter((p: any) => p.statut === 'mission').length;
-        const totalCout = presta.reduce((s: number, p: any) => s + (p.cout_mtd || 0), 0);
-        const avgRating = presta.reduce((s, p) => s + (p.note_service || 0), 0) / presta.length;
+      const rows = presta ?? [];
+      setContractors(rows);
+      if (rows.length) {
+        const enMission = rows.filter((p: any) => p.statut === 'mission').length;
+        const totalCout = rows.reduce((s: number, p: any) => s + (p.cout_mtd || 0), 0);
+        const avgRating = rows.reduce((s: number, p: any) => s + (p.note_service || 0), 0) / rows.length;
         setKpis({
-          actifs: presta.length,
+          actifs: rows.length,
           enMission,
           coutMTD: Math.round(totalCout / 1000),
           satisfaction: Math.round((avgRating / 5) * 100),
         });
+      } else {
+        setKpis({ actifs: 0, enMission: 0, coutMTD: 0, satisfaction: 0 });
       }
     } catch (err) { console.error('Contractors live data error:', err); }
   }, []);
@@ -99,17 +102,7 @@ function useContractorsLiveData() {
   return { kpis, contractors };
 }
 
-// ─────────────────────────────────────────────────────
-// MOCK DATA
-// ─────────────────────────────────────────────────────
-const CONTRACTORS = [
-  { id: 1, initials: 'AP', avatarBg: T.gold,    avatarText: T.navy,    name: 'Atlas Pompage SARL',   specialty: 'Pompage béton',          specialtyColor: T.gold,    tarif: '3,500 DH/j', mission: 'Chantier ONCF Rabat',      jours: 8,  coutMTD: '28,000 DH', rating: 5, status: 'mission' },
-  { id: 2, initials: 'TE', avatarBg: T.info,    avatarText: '#fff',    name: 'Transport Express',    specialty: 'Transport spécial',      specialtyColor: T.info,    tarif: '2,800 DH/j', mission: 'Livraison Tanger',          jours: 5,  coutMTD: '14,000 DH', rating: 4, status: 'mission' },
-  { id: 3, initials: 'GM', avatarBg: T.success, avatarText: '#fff',    name: 'Grue Maroc',           specialty: 'Levage / Grue',          specialtyColor: T.success, tarif: '5,000 DH/j', mission: 'Chantier Addoha Casa',      jours: 4,  coutMTD: '20,000 DH', rating: 5, status: 'mission' },
-  { id: 4, initials: 'NP', avatarBg: T.purple,  avatarText: '#fff',    name: 'Nettoyage Pro',        specialty: 'Nettoyage chantier',     specialtyColor: T.purple,  tarif: '1,200 DH/j', mission: null,                       jours: 6,  coutMTD: '7,200 DH',  rating: 4, status: 'disponible' },
-  { id: 5, initials: 'SP', avatarBg: T.warning, avatarText: T.navy,    name: 'Sécurité Plus',        specialty: 'Gardiennage',            specialtyColor: T.warning, tarif: '800 DH/j',   mission: null,                       jours: 10, coutMTD: '8,000 DH',  rating: 3, status: 'disponible' },
-  { id: 6, initials: 'EM', avatarBg: T.cyan,    avatarText: T.navy,    name: 'Électricité MB',       specialty: 'Électricité industrielle', specialtyColor: T.cyan,  tarif: '2,500 DH/j', mission: null,                       jours: 1,  coutMTD: '2,500 DH',  rating: 4, status: 'disponible' },
-];
+// (Mock CONTRACTORS array removed — live data only)
 
 const MISSIONS = [
   { id: 'MST-2024-012', contractor: 'Atlas Pompage', client: 'ONCF — Rabat Gare',        debut: '12 Fév', fin: '28 Fév', joursActuel: 8, joursTotal: 12, coutEstime: '42,000 DH', tarif: '3,500', total: 12, progress: 67, initials: 'AP', avatarBg: T.gold,    avatarText: T.navy },
