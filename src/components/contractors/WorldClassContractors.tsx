@@ -255,12 +255,16 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 // SECTION: CONTRACTOR ROW
 // ─────────────────────────────────────────────────────
-function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number }) {
+const AVATAR_COLORS = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan, T.orange, T.danger];
+
+function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number }) {
    const [hov, setHov] = useState(false);
    const vis = useFadeIn(delay);
    const isMission = c.statut === 'mission';
    const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
    const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
+   const avatarBg = AVATAR_COLORS[colorIndex % AVATAR_COLORS.length];
+   const avatarText = avatarBg === T.gold ? '#000' : '#fff';
    return (
     <div
       onMouseEnter={() => setHov(true)}
