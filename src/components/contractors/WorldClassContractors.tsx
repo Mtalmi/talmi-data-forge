@@ -255,12 +255,16 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 // SECTION: CONTRACTOR ROW
 // ─────────────────────────────────────────────────────
-function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number }) {
+const AVATAR_COLORS = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan, T.orange, T.danger];
+
+function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number }) {
    const [hov, setHov] = useState(false);
    const vis = useFadeIn(delay);
    const isMission = c.statut === 'mission';
    const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
    const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
+   const avatarBg = AVATAR_COLORS[colorIndex % AVATAR_COLORS.length];
+   const avatarText = avatarBg === T.gold ? '#000' : '#fff';
    return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -277,7 +281,7 @@ function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string
         cursor: 'pointer',
       }}
     >
-       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
+       <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={avatarBg} textColor={avatarText} />
        {/* Name + Specialty */}
        <div style={{ minWidth: 180 }}>
          <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
@@ -322,11 +326,11 @@ function ContractorRow({ c, delay }: { c: { id: string; code_prestataire: string
         {isMission ? (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
+            background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`,
             borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
             animation: 'tbos-pulse 2s infinite',
           }}>
-            <Briefcase size={11} /> En mission
+            <Briefcase size={11} /> En Mission
           </span>
         ) : (
           <span style={{
@@ -524,7 +528,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Sous-Traitants" badge={`${contractors.length} actifs`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {contractors.map((c, i) => (
-              <ContractorRow key={c.id} c={c} delay={i * 80} />
+              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
             ))}
           </div>
         </div>
