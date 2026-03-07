@@ -70,7 +70,7 @@ function useContractorsLiveData() {
     try {
       const { data: presta } = await supabase
         .from('prestataires_transport')
-        .select('*')
+        .select('id, code_prestataire, nom, specialite, tarif_journalier, statut, note_service, mission_actuelle, jours_travailles, cout_mtd, actif')
         .eq('actif', true);
 
       if (presta?.length) {
@@ -266,7 +266,9 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 function ContractorRow({ c, delay }: { c: any; delay: number }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
-  const isMission = c.status === 'mission';
+  const isMission = c.statut === 'mission';
+  const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
+  const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -283,7 +285,7 @@ function ContractorRow({ c, delay }: { c: any; delay: number }) {
         cursor: 'pointer',
       }}
     >
-      <AvatarCircle initials={(c.nom || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
+      <AvatarCircle initials={(c.code_prestataire || '??').slice(0, 2).toUpperCase()} bg={T.gold} textColor="#000" />
       {/* Name + Specialty */}
       <div style={{ minWidth: 180 }}>
         <div style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>{c.nom || '—'}</div>
@@ -296,14 +298,14 @@ function ContractorRow({ c, delay }: { c: any; delay: number }) {
       {/* Tarif */}
       <div style={{ minWidth: 110 }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Tarif/jour</div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold, fontWeight: 700 }}>{c.tarif_journalier ? `${c.tarif_journalier} DH` : '—'}</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold, fontWeight: 700 }}>{tarifFormatted}</div>
       </div>
       {/* Mission */}
       <div style={{ flex: 1, minWidth: 160 }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Mission actuelle</div>
-        {c.mission ? (
+        {c.mission_actuelle ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.info, fontSize: 13, fontWeight: 600 }}>
-            <MapPin size={12} /> {c.mission}
+            <MapPin size={12} /> {c.mission_actuelle}
           </div>
         ) : (
           <span style={{ color: T.textDim, fontSize: 13 }}>—</span>
@@ -312,16 +314,16 @@ function ContractorRow({ c, delay }: { c: any; delay: number }) {
       {/* Jours */}
       <div style={{ minWidth: 70, textAlign: 'center' }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Jours</div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.textPri, fontWeight: 700 }}>{c.jours} j</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.textPri, fontWeight: 700 }}>{c.jours_travailles ?? 0} j</div>
       </div>
       {/* Coût MTD */}
       <div style={{ minWidth: 100, textAlign: 'right' }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Coût MTD</div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.gold, fontWeight: 700 }}>{c.coutMTD}</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.gold, fontWeight: 700 }}>{coutMtdFormatted}</div>
       </div>
       {/* Rating */}
       <div style={{ minWidth: 80, textAlign: 'center' }}>
-        <Stars rating={c.rating} />
+        <Stars rating={c.note_service ?? 0} />
       </div>
       {/* Status */}
       <div style={{ minWidth: 110, textAlign: 'center' }}>
@@ -530,7 +532,7 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 2: CONTRACTOR LIST ══════════════════════════ */}
         <div>
-          <SectionHeader title="Sous-Traitants" badge="6 actifs" />
+          <SectionHeader title="Sous-Traitants" badge={`${contractors.length} actifs`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {contractors.map((c, i) => (
               <ContractorRow key={c.id} c={c} delay={i * 80} />
