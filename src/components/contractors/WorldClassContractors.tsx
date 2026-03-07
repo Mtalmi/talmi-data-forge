@@ -476,10 +476,18 @@ export default function WorldClassContractors() {
   const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
 
+  // Dynamic KPI calculations
+  const missionsEnCours = MISSIONS.length;
+  const coutMTDTotal = MISSIONS.reduce((s: number, m: any) => {
+    const coutStr = m.coutEstime.replace(/[^\d]/g, '');
+    return s + parseInt(coutStr, 10);
+  }, 0);
+  const coutMTDK = Math.round(coutMTDTotal / 1000);
+
   // KPI counters
   const actifs = useAnimatedCounter(cKpis.actifs, 1000);
-  const enMission = useAnimatedCounter(cKpis.enMission, 1000);
-  const coutMTD = useAnimatedCounter(cKpis.coutMTD, 1200);
+  const enMissionCount = useAnimatedCounter(missionsEnCours, 1000);
+  const coutMTD = useAnimatedCounter(coutMTDK, 1200);
   const satisfaction = useAnimatedCounter(cKpis.satisfaction, 1200);
 
   // Donut total
