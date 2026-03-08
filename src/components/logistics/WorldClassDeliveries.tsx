@@ -617,8 +617,8 @@ export default function WorldClassDeliveries() {
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
                 <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                <Bar dataKey="livraisons" name="Livraisons" fill={T.gold} radius={[4, 4, 0, 0]} animationDuration={1000} />
-                <Bar dataKey="volume" name="Volume (m³)" fill={T.info} radius={[4, 4, 0, 0]} animationDuration={1000} animationBegin={200} />
+                <Bar dataKey="livraisons" name="Livraisons" fill="#D4A843" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                <Bar dataKey="volume" name="Volume (m³)" fill="#D4A843" fillOpacity={0.55} radius={[4, 4, 0, 0]} animationDuration={1000} animationBegin={200} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
