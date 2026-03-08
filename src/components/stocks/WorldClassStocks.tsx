@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
-import { format, subDays } from 'date-fns';
+import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — TBOS Amber Design System
@@ -136,6 +136,7 @@ function useStocksLiveData() {
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
+  const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
@@ -150,13 +151,19 @@ function useStocksLiveData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
+      const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
           .limit(20),
         supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
+        supabase.from('mouvements_stock')
+          .select('materiau, quantite, created_at')
+          .eq('type_mouvement', 'consumption')
+          .gte('created_at', sevenDaysAgo)
+          .order('created_at', { ascending: true }),
       ]);
 
       // Autonomy map
@@ -167,6 +174,23 @@ function useStocksLiveData() {
         });
       }
       setAutonomy(autoMap);
+
+      // Sparkline data: 7-day consumption per material
+      const sparkMap: Record<string, number[]> = {};
+      if (consumptionRes.data?.length) {
+        const byMat: Record<string, Record<number, number>> = {};
+        consumptionRes.data.forEach((m: any) => {
+          const key = (m.materiau || '').toLowerCase();
+          const dayIdx = Math.floor((Date.now() - new Date(m.created_at).getTime()) / 86400000);
+          const bucket = Math.min(6, Math.max(0, 6 - dayIdx));
+          if (!byMat[key]) byMat[key] = {};
+          byMat[key][bucket] = (byMat[key][bucket] || 0) + Math.abs(m.quantite || 0);
+        });
+        Object.entries(byMat).forEach(([key, days]) => {
+          sparkMap[key] = Array.from({ length: 7 }, (_, i) => days[i] || 0);
+        });
+      }
+      setSparklines(sparkMap);
 
       // Stock levels
       if (stocksRes.data?.length) {
@@ -258,7 +282,7 @@ function useStocksLiveData() {
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading };
 }
 
 // ─────────────────────────────────────────────────────
