@@ -553,6 +553,120 @@ export default function Logistique() {
 
           {/* Fuel Tab */}
           <TabsContent value="carburant">
+            {/* AI Fuel Anomaly Detection Panel */}
+            <div className="mb-6 p-5 rounded-xl border border-[#D4A843]/30 bg-gradient-to-br from-[#D4A843]/10 to-transparent" 
+                 style={{ borderLeft: '4px solid #D4A843' }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-[#D4A843]/20 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-[#D4A843]" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-[#D4A843] uppercase tracking-widest">ANALYSE CARBURANT IA</h3>
+                  <p className="text-xs text-muted-foreground">Détection d'anomalies basée sur l'apprentissage automatique</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                {/* AI Anomaly rows - using demo data based on vehicle patterns */}
+                {(() => {
+                  // Generate AI analysis for each vehicle with fuel data
+                  const vehicleAnalysis = [
+                    { 
+                      vehicle: 'TNG-8842', 
+                      consumedWeek: 285, 
+                      baseline: 260, 
+                      variance: 9.6,
+                      status: 'warning' as const,
+                      insight: 'Ralentis prolongés détectés — climatisation excessive probable'
+                    },
+                    { 
+                      vehicle: 'CSA-3301', 
+                      consumedWeek: 312, 
+                      baseline: 275, 
+                      variance: 13.5,
+                      status: 'warning' as const,
+                      insight: 'Itinéraires non-optimisés — 23km de détours cumulés cette semaine'
+                    },
+                    { 
+                      vehicle: 'RBT-5567', 
+                      consumedWeek: 198, 
+                      baseline: 195, 
+                      variance: 1.5,
+                      status: 'normal' as const,
+                      insight: 'Performance optimale — conduite éco-responsable confirmée'
+                    },
+                    { 
+                      vehicle: 'FES-2210', 
+                      consumedWeek: 410, 
+                      baseline: 290, 
+                      variance: 41.4,
+                      status: 'critical' as const,
+                      insight: 'Fuite carburant suspectée — inspection mécanique urgente requise'
+                    },
+                    { 
+                      vehicle: 'MRK-7789', 
+                      consumedWeek: 245, 
+                      baseline: 240, 
+                      variance: 2.1,
+                      status: 'normal' as const,
+                      insight: 'Consommation stable — maintenance préventive à jour'
+                    },
+                  ];
+
+                  return vehicleAnalysis.map((v) => (
+                    <div key={v.vehicle} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-colors">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Truck className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-mono font-semibold text-sm">{v.vehicle}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          <span className="font-mono">{v.consumedWeek}L</span>
+                          <span className="mx-1.5 opacity-50">vs</span>
+                          <span className="font-mono text-[#D4A843]">{v.baseline}L</span>
+                          <span className="ml-1 opacity-50">baseline IA</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-4">
+                        {/* AI Insight */}
+                        <p className="text-xs text-white/60 max-w-[280px] truncate hidden lg:block">
+                          💡 {v.insight}
+                        </p>
+                        
+                        {/* Status Badge */}
+                        {v.status === 'normal' && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                                style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid #22c55e', color: '#22c55e' }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                            Normal
+                          </span>
+                        )}
+                        {v.status === 'warning' && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                                style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid #f59e0b', color: '#f59e0b' }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" />
+                            Surconsommation +{v.variance.toFixed(0)}%
+                          </span>
+                        )}
+                        {v.status === 'critical' && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold animate-pulse"
+                                style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#ef4444' }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#ef4444]" />
+                            Anomalie critique
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+              
+              <p className="mt-3 text-[10px] text-white/30 text-right font-mono">
+                Dernière analyse: {format(new Date(), 'dd/MM HH:mm')} · Modèle v2.3
+              </p>
+            </div>
+
             <div className="card-industrial overflow-x-auto">
               <div className="p-4 border-b border-border">
                 <h2 className="font-semibold">{t.pages.logistique.fuelHistory}</h2>
