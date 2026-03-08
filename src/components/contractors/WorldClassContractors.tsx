@@ -667,7 +667,7 @@ export default function WorldClassContractors() {
           />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {MISSIONS.map((m, i) => (
-              <MissionCard key={m.id} m={m} delay={i * 100} />
+              <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} />
             ))}
           </div>
         </div>
