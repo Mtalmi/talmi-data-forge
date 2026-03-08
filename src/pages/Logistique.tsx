@@ -312,7 +312,7 @@ export default function Logistique() {
         </div>
 
         {/* Fleet Status Summary */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4">
           <div className="kpi-card p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.total}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1">{vehicules.length}</p>
@@ -328,6 +328,27 @@ export default function Logistique() {
           <div className="kpi-card warning p-3 sm:p-4">
             <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.inMaintenance}</p>
             <p className="text-xl sm:text-3xl font-bold mt-1 text-warning">{maintenance}</p>
+          </div>
+          {/* CO2 Emissions ESG KPI */}
+          <div className="kpi-card p-3 sm:p-4 border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-transparent">
+            <div className="flex items-center gap-2 mb-1">
+              <Leaf className="h-3.5 w-3.5 text-emerald-400" />
+              <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">ÉMISSIONS CO₂</p>
+            </div>
+            <p 
+              className="text-xl sm:text-3xl mt-1 text-emerald-400" 
+              style={{ 
+                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                fontWeight: 200,
+                letterSpacing: '-0.02em'
+              }}
+            >
+              {estimatedCO2Tons}
+              <span className="text-sm font-normal text-muted-foreground ml-1">T</span>
+            </p>
+            <p className="text-[10px] text-[#FFD700] mt-1.5 leading-tight">
+              IA: -12% vs mois dernier grâce à l'optimisation des routes
+            </p>
           </div>
         </div>
 
