@@ -1379,12 +1379,18 @@ export default function Creances() {
                       // Dispute detection: partial payment from same client
                       const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
                       return (
-                        <TableRow key={receivable.id} className={isPartialPayment ? 'bg-warning/5' : ''}>
+                        <TableRow
+                          key={receivable.id}
+                          className={cn('cursor-pointer transition-colors duration-150', isPartialPayment ? 'bg-warning/5' : '')}
+                          style={{ borderLeft: '3px solid transparent' }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; e.currentTarget.style.borderLeftColor = '#D4A843'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = isPartialPayment ? '' : 'transparent'; e.currentTarget.style.borderLeftColor = 'transparent'; }}
+                        >
                           <TableCell>
                             <div>
-                              <p className="font-medium">{receivable.client_name}</p>
+                              <p className="font-medium text-white">{receivable.client_name}</p>
                               {receivable.client_email && (
-                                <p className="text-xs text-muted-foreground">{receivable.client_email}</p>
+                                <p className="text-xs text-gray-400">{receivable.client_email}</p>
                               )}
                             </div>
                           </TableCell>
@@ -1392,10 +1398,18 @@ export default function Creances() {
                             {receivable.invoice_number}
                           </TableCell>
                           <TableCell className="text-center font-mono">
-                            {format(parseISO(receivable.due_date), 'dd MMM yyyy', { locale: getDateLocale(lang) })}
+                            {(() => {
+                              const dueDate = parseISO(receivable.due_date);
+                              const now = new Date();
+                              const diffDays = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+                              const color = diffDays < 0 ? '#ef4444' : diffDays <= 7 ? '#f59e0b' : '#FFFFFF';
+                              return <span style={{ color }}>{format(dueDate, 'dd MMM yyyy', { locale: getDateLocale(lang) })}</span>;
+                            })()}
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCurrency(receivable.amount_due)}
+                          <TableCell className="text-right">
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', color: '#D4A843', fontWeight: 500 }}>
+                              {formatCurrency(receivable.amount_due)}
+                            </span>
                           </TableCell>
                           <TableCell className="text-center">
                             {receivable.days_overdue > 0 ? (
