@@ -117,6 +117,72 @@ const WORKFLOW_STEPS_META = [
   { value: 'annule', icon: XCircle, color: 'text-destructive' },
 ];
 
+function RecoverySection({ items }: { items: { bl_id: string; client_id: string; amount: number; daysOverdue: number; action: string; actionIcon: any }[] }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{
+      background: 'rgba(212, 168, 67, 0.04)',
+      border: '1px solid rgba(212, 168, 67, 0.15)',
+      borderLeft: '4px solid #D4A843',
+      borderRadius: 12, overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+            Agent IA: Recouvrement
+          </span>
+          <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">
+            {items.length} impayés
+          </Badge>
+        </div>
+        <ChevronDown className="h-4 w-4 transition-transform" style={{ color: '#D4A843', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </button>
+      {open && (
+        <div className="px-5 pb-4 space-y-2">
+          {items.map((item, i) => {
+            const ActionIcon = item.actionIcon;
+            return (
+              <div
+                key={i}
+                className="flex items-center gap-4 p-3 rounded-lg transition-colors"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+              >
+                <span className="text-xs font-mono text-muted-foreground w-28 flex-shrink-0">{item.bl_id}</span>
+                <span className="text-sm font-medium text-white flex-1 min-w-0 truncate">{item.client_id}</span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, fontWeight: 500, color: '#D4A843', minWidth: 90, textAlign: 'right' }}>
+                  {item.amount.toLocaleString('fr-MA')} DH
+                </span>
+                <span className="text-xs font-semibold min-w-16 text-center" style={{ color: '#ef4444' }}>
+                  +{item.daysOverdue}j
+                </span>
+                <div className="flex items-center gap-1.5 min-w-48">
+                  <ActionIcon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#9CA3AF' }} />
+                  <span className="text-xs text-gray-400">{item.action}</span>
+                </div>
+                <button
+                  onClick={() => toast.success(`Relance lancée pour ${item.bl_id}`)}
+                  className="flex-shrink-0 px-3 py-1.5 rounded-md text-[11px] font-semibold transition-colors"
+                  style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                >
+                  ⚡ Lancer Relance
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Bons() {
   const { user, isCeo, isAgentAdministratif, isDirecteurOperations, isCentraliste, isResponsableTechnique, isSuperviseur, canCreateBons, canValidateTechnique } = useAuth();
   const { t, lang } = useI18n();
