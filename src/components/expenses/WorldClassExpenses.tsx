@@ -985,23 +985,57 @@ function ReallocationCard({ from, to, transferAmount }: { from: ReallocationSide
 function ExpenseRow({ e, delay = 0, isAnomaly = false }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number; isAnomaly?: boolean }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
-  const sc = e.status === 'Approuvé' ? T.success : T.warning;
-  const StatusIcon = e.status === 'Approuvé' ? CheckCircle : Clock;
-  const approverColor = e.approver === 'Auto' ? T.success : e.approver === '—' ? T.warning : T.info;
   const hasFraud = e.fraudFlags && e.fraudFlags.length > 0;
+  
+  // Category color mapping
+  const catColorMap: Record<string, string> = {
+    'Carburant': T.warning,
+    'Maintenance': T.info,
+    'Sous-traitants': T.gold,
+    'Électricité': T.purple,
+    'Énergie': T.purple,
+    'Transport': T.success,
+    'Fournitures': T.info,
+    "Main d'Oeuvre": T.info,
+    'Matières Premières': T.gold,
+  };
+  const catColor = catColorMap[e.cat] || e.catColor || T.textSec;
+
+  // Status configuration
+  const statusConfig: Record<string, { color: string; icon: any; pulse?: boolean }> = {
+    'Approuvé': { color: T.success, icon: CheckCircle },
+    'En attente': { color: T.warning, icon: Clock, pulse: true },
+    'Rejeté': { color: T.danger, icon: XCircle },
+  };
+  const sc = statusConfig[e.status] || statusConfig['En attente'];
+  const StatusIcon = sc.icon;
+
+  // Get approver initials
+  const getInitials = (name: string) => {
+    if (name === 'Auto' || name === '—') return name === 'Auto' ? '⚡' : '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 10,
-      background: isAnomaly ? `${T.warning}08` : hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
-      border: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
-      transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(16px)',
-      opacity: visible ? 1 : 0, transition: 'all 380ms ease-out',
+      background: isAnomaly ? `${T.warning}08` : hasFraud ? `${T.warning}08` : (hov ? 'rgba(255,215,0,0.04)' : 'transparent'),
+      borderLeft: hov ? '3px solid #D4A843' : '3px solid transparent',
+      borderTop: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : 'transparent'}`,
+      borderRight: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : 'transparent'}`,
+      borderBottom: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : 'transparent'}`,
+      transform: visible ? 'translateY(0)' : 'translateY(16px)',
+      opacity: visible ? 1 : 0, transition: 'all 150ms ease-out',
       cursor: 'pointer', overflow: 'hidden', position: 'relative',
     }}>
-      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: isAnomaly ? T.warning : hasFraud ? T.warning : e.catColor }} />
-      <div style={{ minWidth: 55, flexShrink: 0 }}><p style={{ color: T.textDim, fontSize: 11 }}>{e.date}</p></div>
+      {/* Date */}
+      <div style={{ minWidth: 65, flexShrink: 0 }}>
+        <p style={{ color: T.textDim, fontSize: 11, fontFamily: 'monospace' }}>{e.date}</p>
+      </div>
+
+      {/* Description */}
       <div style={{ flex: 1, minWidth: 140 }}>
-        <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p>
+        <p style={{ fontWeight: 600, fontSize: 13, color: T.textPri }}>{e.desc}</p>
         {hasFraud && (
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 4, marginTop: 4 }}>
             {e.fraudFlags!.map((flag, i) => (
@@ -1016,28 +1050,62 @@ function ExpenseRow({ e, delay = 0, isAnomaly = false }: { e: { date: string; de
           </div>
         )}
       </div>
-      <div style={{ minWidth: 120, flexShrink: 0 }}><Bdg label={e.cat} color={e.catColor} bg={`${e.catColor}15`} /></div>
-      <div style={{ minWidth: 110, flexShrink: 0 }}>
-        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{e.amount.toLocaleString('fr-FR')} DH</p>
+
+      {/* Category badge - colored */}
+      <div style={{ minWidth: 130, flexShrink: 0 }}>
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 12px', borderRadius: 6,
+          background: `${catColor}15`, border: `1px solid ${catColor}35`, color: catColor,
+          fontSize: 11, fontWeight: 700,
+        }}>
+          {e.cat}
+        </span>
       </div>
-      <div style={{ minWidth: 90, flexShrink: 0 }}><p style={{ fontSize: 11, color: approverColor, fontWeight: 600 }}>{e.approver}</p></div>
-      <div style={{ minWidth: 140, flexShrink: 0, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+
+      {/* Amount - gold monospace */}
+      <div style={{ minWidth: 110, flexShrink: 0, textAlign: 'right' }}>
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+          fontSize: 14, fontWeight: 600, color: '#D4A843',
+        }}>{e.amount.toLocaleString('fr-FR')} DH</span>
+      </div>
+
+      {/* Approver with avatar */}
+      <div style={{ minWidth: 110, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{
+          width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+          background: e.approver === 'Auto' ? `${T.success}15` : `${T.gold}15`,
+          border: `1px solid ${e.approver === 'Auto' ? T.success : T.gold}30`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 10, fontWeight: 700, color: e.approver === 'Auto' ? T.success : T.gold,
+        }}>
+          {getInitials(e.approver)}
+        </div>
+        <span style={{ fontSize: 11, color: T.textSec, fontWeight: 500 }}>
+          {e.approver === '—' ? 'En attente' : e.approver}
+        </span>
+      </div>
+
+      {/* Status badge */}
+      <div style={{ minWidth: 130, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
         {isAnomaly ? (
           <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6,
             background: `${T.warning}15`, border: `1.5px dashed ${T.warning}60`, color: T.warning,
             fontSize: 10, fontWeight: 700, animation: 'tbos-pulse 2s infinite',
           }}><AlertTriangle size={10} />Anomalie IA</span>
         ) : hasFraud ? (
           <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6,
             background: `${T.warning}15`, border: `1px solid ${T.warning}40`, color: T.warning,
             fontSize: 10, fontWeight: 700, animation: 'tbos-pulse 2.2s infinite',
-          }}><ShieldAlert size={10} />Vérification recommandée</span>
+          }}><ShieldAlert size={10} />Vérifier</span>
         ) : (
           <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
-            background: `${sc}15`, border: `1px solid ${sc}40`, color: sc, fontSize: 10, fontWeight: 700,
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 6,
+            background: `${sc.color}15`, border: `1px solid ${sc.color}40`, color: sc.color,
+            fontSize: 10, fontWeight: 700,
+            animation: sc.pulse ? 'tbos-pulse 2s infinite' : 'none',
           }}><StatusIcon size={10} />{e.status}</span>
         )}
       </div>
