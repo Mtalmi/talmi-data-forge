@@ -1061,7 +1061,7 @@ export default function Bons() {
                     <TableCell>{b.client_id}</TableCell>
                     <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
                     <TableCell className="text-right">{b.volume_m3} m³</TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       {(isCeo || isDirecteurOperations || isResponsableTechnique) && b.workflow_status !== 'facture' && b.workflow_status !== 'annule' ? (
                         <Select
                           value={b.workflow_status || 'planification'}
