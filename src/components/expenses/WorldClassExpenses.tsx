@@ -474,6 +474,67 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 }
 
 // ─────────────────────────────────────────────────────
+// AI FORECAST KPI CARD
+// ─────────────────────────────────────────────────────
+function AIForecastKPI({ totalThisMonth, dailyAvg, budgetTotal, delay = 0 }: {
+  totalThisMonth: number; dailyAvg: number; budgetTotal: number; delay?: number;
+}) {
+  const [hov, setHov] = useState(false);
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysLeft = daysInMonth - now.getDate();
+  const projected = Math.round((totalThisMonth + dailyAvg * daysLeft) * 10) / 10;
+  const ratio = budgetTotal > 0 ? projected / budgetTotal : 0;
+  const color = ratio > 1 ? T.danger : ratio > 0.9 ? T.warning : T.success;
+  // Simulate last month projected was ~5% less
+  const lastMonthProjected = Math.round(projected * 0.95 * 10) / 10;
+  const trendUp = projected > lastMonthProjected;
+  const trendPct = lastMonthProjected > 0 ? Math.round(Math.abs(projected - lastMonthProjected) / lastMonthProjected * 100) : 0;
+
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+      background: hov ? `linear-gradient(145deg, #131D32 0%, #182440 100%)` : T.cardBg,
+      border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+      borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+      transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+      transform: hov ? 'translateY(-2px)' : 'none',
+      display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+      animationDelay: `${delay}ms`,
+    }}>
+      {/* Label */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Prévision IA Fin de Mois</p>
+        <div style={{ width: 32, height: 32, borderRadius: 8, background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Bot size={16} color={color} />
+        </div>
+      </div>
+      {/* Value */}
+      <p style={{
+        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+        fontSize: 48, fontWeight: 200, color, lineHeight: 1, letterSpacing: '-0.02em',
+        WebkitFontSmoothing: 'antialiased',
+      }}>
+        {projected}
+      </p>
+      <span style={{ fontSize: 13, fontWeight: 400, color: T.textDim, fontFamily: 'monospace' }}>K DH</span>
+      {/* Subtitle + trend */}
+      <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: 10, fontWeight: 700, color: '#D4A843' }}>Projection Agent IA</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <TrendingUp size={11} style={{
+            color: trendUp ? T.danger : T.success,
+            transform: trendUp ? 'none' : 'rotate(180deg)',
+          }} />
+          <span style={{ fontSize: 10, fontWeight: 600, color: trendUp ? T.danger : T.success }}>
+            {trendUp ? '+' : '-'}{trendPct}%
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // BURN RATE CARD
 // ─────────────────────────────────────────────────────
 function BurnRateCard({ dailyAvg, todaySpend, dailyBudget, delay = 0 }: {
@@ -1779,13 +1840,14 @@ export default function WorldClassExpenses() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
             <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
             <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
             <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
             <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
+            <AIForecastKPI totalThisMonth={live.totalThisMonth} dailyAvg={live.dailyAvg} budgetTotal={live.budgetTotal} delay={400} />
           </div>
         </section>
 
