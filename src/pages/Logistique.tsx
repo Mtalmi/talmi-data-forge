@@ -58,6 +58,7 @@ import {
   Factory,
   FileSpreadsheet,
   Globe,
+  Leaf,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
