@@ -395,6 +395,138 @@ export function FleetPredatorPage() {
 
         {/* Zones Tab */}
         <TabsContent value="zones" className="mt-0">
+          {/* Seeded Geofence Map Section */}
+          <div className="mb-6 p-5 rounded-xl border border-[#FFD700]/30 bg-gradient-to-br from-[#FFD700]/5 to-transparent">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-[#FFD700]/20 flex items-center justify-center">
+                <Map className="h-4 w-4 text-[#FFD700]" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-[#FFD700] uppercase tracking-widest">ZONES GÉOFENCÉES ACTIVES</h3>
+                <p className="text-xs text-muted-foreground">Surveillance périmétrique en temps réel</p>
+              </div>
+            </div>
+            
+            {/* Map with seeded zones */}
+            <div className="relative rounded-xl overflow-hidden border border-[#FFD700]/20" style={{ height: 320 }}>
+              {/* Map background - simulated satellite view */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+                {/* Grid overlay */}
+                <div className="absolute inset-0 opacity-10" 
+                     style={{ 
+                       backgroundImage: 'linear-gradient(rgba(255,215,0,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.3) 1px, transparent 1px)',
+                       backgroundSize: '40px 40px'
+                     }} />
+                
+                {/* Zone polygons - represented as circles with labels */}
+                {(() => {
+                  const seededZones = [
+                    { 
+                      id: 1,
+                      name: 'Casablanca Port Zone',
+                      lat: 33.5950, 
+                      lng: -7.6187,
+                      top: '25%',
+                      left: '20%',
+                      vehiclesInside: 0,
+                      hasIntrusion: false,
+                    },
+                    { 
+                      id: 2,
+                      name: 'ONCF Rabat Chantier',
+                      lat: 34.0209, 
+                      lng: -6.8416,
+                      top: '15%',
+                      left: '55%',
+                      vehiclesInside: 0,
+                      hasIntrusion: true, // Demo: one zone with intrusion
+                    },
+                    { 
+                      id: 3,
+                      name: 'Addoha Casa Sidi Moumen',
+                      lat: 33.5883, 
+                      lng: -7.5025,
+                      top: '55%',
+                      left: '70%',
+                      vehiclesInside: 0,
+                      hasIntrusion: false,
+                    },
+                  ];
+
+                  return seededZones.map((zone) => (
+                    <div key={zone.id} className="absolute" style={{ top: zone.top, left: zone.left, transform: 'translate(-50%, -50%)' }}>
+                      {/* Polygon circle */}
+                      <div 
+                        className={cn(
+                          "w-24 h-24 rounded-full border-2",
+                          zone.hasIntrusion ? "border-red-500 animate-pulse" : "border-[#FFD700]"
+                        )}
+                        style={{ 
+                          background: zone.hasIntrusion 
+                            ? 'rgba(239, 68, 68, 0.15)' 
+                            : 'rgba(255, 215, 0, 0.15)',
+                          boxShadow: zone.hasIntrusion 
+                            ? '0 0 30px rgba(239, 68, 68, 0.3)' 
+                            : '0 0 30px rgba(255, 215, 0, 0.2)'
+                        }}
+                      />
+                      {/* Zone label card */}
+                      <div 
+                        className={cn(
+                          "absolute top-full left-1/2 -translate-x-1/2 mt-2 p-3 rounded-lg border min-w-[200px]",
+                          zone.hasIntrusion 
+                            ? "bg-red-950/90 border-red-500/50" 
+                            : "bg-slate-900/95 border-[#FFD700]/30"
+                        )}
+                        style={{ backdropFilter: 'blur(8px)' }}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className={cn("h-3.5 w-3.5", zone.hasIntrusion ? "text-red-400" : "text-[#FFD700]")} />
+                          <span className="text-xs font-semibold text-white truncate">{zone.name}</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-1.5">
+                            <Truck className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-[10px] text-muted-foreground font-mono">{zone.vehiclesInside} véhicule{zone.vehiclesInside !== 1 ? 's' : ''}</span>
+                          </div>
+                          {zone.hasIntrusion ? (
+                            <span 
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold animate-pulse"
+                              style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', color: '#ef4444' }}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                              Véhicule non autorisé
+                            </span>
+                          ) : (
+                            <span 
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold"
+                              style={{ background: 'rgba(34, 197, 94, 0.15)', border: '1px solid #22c55e', color: '#22c55e' }}
+                            >
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              Aucune intrusion
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ));
+                })()}
+                
+                {/* Map label */}
+                <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                  <div className="px-2 py-1 rounded bg-black/60 text-[10px] text-white/60 font-mono">
+                    Maroc · Casablanca-Rabat
+                  </div>
+                </div>
+                <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                  <div className="px-2 py-1 rounded bg-[#FFD700]/20 border border-[#FFD700]/30 text-[10px] text-[#FFD700] font-mono">
+                    3 zones actives
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid gap-6 lg:grid-cols-2">
             {/* Active Zones */}
             <Card className="bg-card border-border">
