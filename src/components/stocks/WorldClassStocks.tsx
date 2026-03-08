@@ -318,7 +318,7 @@ function StockRow({ stock, index, autonomy }: { stock: { name: string; current: 
 
   // Autonomy badge logic
   const days = autonomy?.days;
-  const autoLabel = days == null ? 'Calcul en cours...'
+  const autoLabel = days == null ? 'N/A'
     : days <= 2 ? `${days}j — Critique`
     : days <= 5 ? `${days}j — Bas`
     : days <= 14 ? `${days}j — Normal`
