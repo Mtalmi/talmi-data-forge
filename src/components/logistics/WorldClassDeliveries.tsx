@@ -157,10 +157,11 @@ function getStatusDisplay(ws: string | null) {
   return { label: ws || 'N/A', color: T.textDim };
 }
 
-function PipelineCard({ label, count, color, icon: Icon, delay = 0 }: { label: string; count: number; color: string; icon: any; delay?: number }) {
+function PipelineCard({ label, count, color, icon: Icon, delay = 0, aiRisk }: { label: string; count: number; color: string; icon: any; delay?: number; aiRisk?: { label: string; pct: number } }) {
   const [visible, setVisible] = useState(false);
   const animated = useAnimatedCounter(count, 800);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+  const riskColor = aiRisk ? (aiRisk.pct > 60 ? '#ef4444' : aiRisk.pct > 30 ? '#f59e0b' : '#22c55e') : '#22c55e';
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'scale(1)' : 'scale(0.9)', transition: 'all 500ms ease-out', flex: 1 }}>
       <Card style={{ textAlign: 'center', padding: '24px 16px' }}>
@@ -169,6 +170,17 @@ function PipelineCard({ label, count, color, icon: Icon, delay = 0 }: { label: s
         </div>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, color, lineHeight: 1 }}>{Math.round(animated)}</p>
         <p style={{ color: T.textSec, fontSize: 12, fontWeight: 600, marginTop: 6 }}>{label}</p>
+        {aiRisk && (
+          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <span style={{
+              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+              background: `${riskColor}18`, color: riskColor, border: `1px solid ${riskColor}40`,
+            }}>
+              {aiRisk.label} {aiRisk.pct}%
+            </span>
+            <span style={{ fontSize: 10, color: '#D4A843' }}>Analysé par IA</span>
+          </div>
+        )}
       </Card>
     </div>
   );
