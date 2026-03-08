@@ -197,7 +197,7 @@ function useExpensesLiveData() {
 
     // Recent expenses
     const recent = thisMonth.slice(0, 6);
-    const recentExpenses = recent.map(d => {
+    const recentFromDB = recent.map(d => {
       const cfg = getCatConfig(d.categorie || 'Autres');
       return {
         date: new Date(d.date_depense).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
@@ -210,6 +210,19 @@ function useExpensesLiveData() {
         fraudFlags: detectFraud(d, allDepenses),
       };
     });
+
+    // Seed demo data if no real expenses
+    const seededExpenses = [
+      { date: '6 mar.', desc: 'Gasoil camions toupies', cat: 'Carburant', amount: 3200, approver: 'Youssef M.', catColor: T.warning, status: 'Approuvé', fraudFlags: [] as string[] },
+      { date: '5 mar.', desc: 'Réparation malaxeur central', cat: 'Maintenance', amount: 8500, approver: 'Karim B.', catColor: T.info, status: 'Approuvé', fraudFlags: [] as string[] },
+      { date: '5 mar.', desc: 'Papeterie & toner imprimante', cat: 'Fournitures', amount: 1200, approver: 'Youssef M.', catColor: T.info, status: 'En attente', fraudFlags: [] as string[] },
+      { date: '4 mar.', desc: 'Prestation pompage chantier Hay Riad', cat: 'Sous-traitants', amount: 12000, approver: 'Karim B.', catColor: T.gold, status: 'Approuvé', fraudFlags: [] as string[] },
+      { date: '4 mar.', desc: 'Facture ONE mars 2026', cat: 'Électricité', amount: 4800, approver: 'Youssef M.', catColor: '#4A9EFF', status: 'Approuvé', fraudFlags: [] as string[] },
+      { date: '3 mar.', desc: 'Transport agrégats Benslimane', cat: 'Transport', amount: 2400, approver: 'Karim B.', catColor: T.success, status: 'En attente', fraudFlags: [] as string[] },
+      { date: '3 mar.', desc: 'Gardiennage site central', cat: 'Sécurité', amount: 1600, approver: 'Youssef M.', catColor: T.purple, status: 'Approuvé', fraudFlags: [] as string[] },
+      { date: '2 mar.', desc: 'Nettoyage & entretien locaux', cat: 'Entretien', amount: 2100, approver: 'Karim B.', catColor: T.textSec, status: 'En attente', fraudFlags: [] as string[] },
+    ];
+    const recentExpenses = recentFromDB.length > 0 ? recentFromDB : seededExpenses;
 
     // Pending approvals from expenses_controlled
     const pendingControlled = (controlled || []).filter((e: any) => e.approval_status === 'pending');
