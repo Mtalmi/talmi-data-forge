@@ -640,45 +640,107 @@ const CAT_ROI: Record<string, { roi: number; metric: string; insight: string }> 
 function CatBar({ row, delay = 0 }: { row: { name: string; spent: number; budget: number; pct: number; color: string; icon: any }; delay?: number }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
-  const w = useBarWidth(Math.min(row.pct, 100), delay + 100);
-  const barColor = row.pct >= 80 ? T.danger : row.pct >= 60 ? T.warning : T.success;
   const Icon = row.icon;
   const roiData = CAT_ROI[row.name] || CAT_ROI['Autres'];
+  
+  const isOverBudget = row.spent > row.budget;
+  const spentPct = row.budget > 0 ? Math.min((row.spent / row.budget) * 100, 100) : 0;
+  const overflowPct = isOverBudget ? ((row.spent - row.budget) / row.budget) * 100 : 0;
+  const utilizationColor = row.pct < 60 ? T.success : row.pct <= 85 ? T.warning : T.danger;
+
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-      padding: '12px 16px', borderRadius: 10,
+      padding: '14px 18px', borderRadius: 12,
       background: hov ? `${T.cardBorder}50` : 'transparent',
       border: `1px solid ${hov ? T.cardBorder : 'transparent'}`,
       opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(12px)',
       transition: 'all 380ms ease-out',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-        <div style={{ width: 30, height: 30, borderRadius: 8, background: `${row.color}18`, border: `1px solid ${row.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-          <Icon size={14} color={row.color} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        {/* Icon */}
+        <div style={{ width: 36, height: 36, borderRadius: 10, background: `${row.color}18`, border: `1px solid ${row.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Icon size={16} color={row.color} />
         </div>
-        <span style={{ flex: 1, fontWeight: 600, fontSize: 13, color: T.textPri }}>{row.name}</span>
-        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textSec }}>{row.spent}K / {row.budget}K DH</span>
-        {/* ROI badge */}
+        
+        {/* Name + Bar */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{row.name}</span>
+            {/* ROI badge */}
+            <span style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+              fontSize: 11, fontWeight: 700, color: T.gold,
+              padding: '2px 8px', borderRadius: 999,
+              background: `${T.gold}12`, border: `1px solid ${T.gold}25`,
+            }}>
+              {roiData.roi}x ROI
+            </span>
+          </div>
+          
+          {/* Horizontal bar chart */}
+          <div style={{ position: 'relative', height: 20, borderRadius: 6, overflow: 'hidden' }}>
+            {/* Budget allocation layer (dark gold) */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'rgba(212,168,67,0.2)',
+              borderRadius: 6,
+            }} />
+            {/* Actual spent layer (solid gold) */}
+            <div style={{
+              position: 'absolute', left: 0, top: 0, bottom: 0,
+              width: `${spentPct}%`,
+              background: '#D4A843',
+              borderRadius: isOverBudget ? '6px 0 0 6px' : 6,
+              transition: 'width 800ms cubic-bezier(0.4,0,0.2,1)',
+            }} />
+            {/* Overflow layer (red) */}
+            {isOverBudget && (
+              <div style={{
+                position: 'absolute', left: '100%', top: 0, bottom: 0,
+                width: `${Math.min(overflowPct, 30)}%`,
+                background: '#ef4444',
+                borderRadius: '0 6px 6px 0',
+                transition: 'width 800ms cubic-bezier(0.4,0,0.2,1)',
+              }} />
+            )}
+            {/* Budget limit indicator */}
+            <div style={{
+              position: 'absolute', right: 0, top: 0, bottom: 0, width: 2,
+              background: 'rgba(255,255,255,0.3)',
+            }} />
+          </div>
+        </div>
+        
+        {/* Amounts in monospace */}
+        <div style={{ minWidth: 130, textAlign: 'right', flexShrink: 0 }}>
+          <span style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+            fontSize: 14, fontWeight: 600, color: isOverBudget ? '#ef4444' : '#D4A843',
+          }}>
+            {row.spent}K
+          </span>
+          <span style={{ fontFamily: 'monospace', fontSize: 12, color: T.textDim }}> / </span>
+          <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 14, color: T.textSec }}>
+            {row.budget}K DH
+          </span>
+        </div>
+        
+        {/* Utilization badge */}
         <span style={{
-          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-          fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '-0.02em',
-          padding: '2px 10px', borderRadius: 999,
-          background: `${T.gold}12`, border: `1px solid ${T.gold}25`,
+          padding: '4px 12px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+          background: `${utilizationColor}15`, border: `1px solid ${utilizationColor}40`,
+          color: utilizationColor, minWidth: 56, textAlign: 'center',
         }}>
-          {roiData.roi}x ROI
+          {Math.min(row.pct, 999)}%
         </span>
-        <Bdg label={`${Math.min(row.pct, 100)}%`} color={barColor} bg={`${barColor}15`} />
-        {row.pct >= 80 ? <Bdg label="Attention" color={T.warning} bg={`${T.warning}15`} pulse /> : <Bdg label="OK" color={T.success} bg={`${T.success}15`} />}
       </div>
-      <div style={{ height: 6, borderRadius: 99, background: T.cardBorder, overflow: 'hidden', marginBottom: hov ? 8 : 0 }}>
-        <div style={{ height: '100%', width: `${w}%`, borderRadius: 99, background: barColor, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
-      </div>
+      
       {/* AI insight - shown on hover */}
       {hov && (
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px',
+          display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', marginTop: 10,
           background: `${T.gold}08`, borderRadius: 8, border: `1px solid ${T.gold}15`,
-          animation: 'fade-in 200ms ease-out',
         }}>
           <Bot size={12} color={T.gold} style={{ flexShrink: 0 }} />
           <span style={{ fontSize: 11, color: T.textSec, lineHeight: 1.4 }}>
