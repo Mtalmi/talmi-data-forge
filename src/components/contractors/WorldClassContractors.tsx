@@ -1243,7 +1243,11 @@ export default function WorldClassContractors() {
                 display: 'flex', gap: 12,
               }}>
                 <button
-                  onClick={() => { setProlongerTarget({ contractor: missionDrawer.contractor, currentFin: missionDrawer.fin }); }}
+                  onClick={() => {
+                    const lc = contractors.find((c: any) => c.nom === missionDrawer.contractor || missionDrawer.contractor.toLowerCase().includes((c.nom || '').toLowerCase()));
+                    setProlongerMission({ ...missionDrawer, id: lc?.id, tarif_journalier: lc?.tarif_journalier || Number((missionDrawer.tarif || '0').replace(/[^0-9]/g, '')), date_fin: '2025-02-28', nom: missionDrawer.contractor, mission_actuelle: missionDrawer.client });
+                    setNouvelleFinDate(''); setRaisonProlongation(''); setProlongerError('');
+                  }}
                   style={{
                     flex: 1, background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
                     borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
