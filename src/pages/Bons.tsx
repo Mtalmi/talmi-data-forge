@@ -42,7 +42,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck } from 'lucide-react';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -507,21 +508,18 @@ export default function Bons() {
             progress={progress}
           />
         )}
+        {/* TBOS Header */}
+        <PageHeader
+          icon={FileCheck}
+          title="Bons de Livraison"
+          subtitle="Gestion des livraisons en temps réel"
+        />
+
         <div className={cn(
           "flex gap-4",
           isTouchDevice ? "flex-col" : "flex-row items-center justify-between"
         )}>
-          <div>
-            <h1 className={cn(
-              "font-bold tracking-tight",
-              isTouchDevice ? "text-xl" : "text-2xl"
-            )}>{ t.pages.bons.title }</h1>
-            {!isTouchDevice && (
-              <p className="text-muted-foreground mt-1">
-                {t.pages.bons.subtitle}
-              </p>
-            )}
-          </div>
+          <div />
           <div className="flex items-center gap-2 flex-wrap">
             {/* View Toggle - Only on desktop/tablet */}
             {!isMobile && (
