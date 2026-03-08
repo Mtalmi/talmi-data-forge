@@ -318,17 +318,13 @@ function StockRow({ stock, index, autonomy }: { stock: { name: string; current: 
 
   // Autonomy badge logic
   const days = autonomy?.days;
-  const autoLabel = days == null ? 'N/A'
-    : days <= 2 ? `${days}j — Critique`
-    : days <= 5 ? `${days}j — Bas`
-    : days <= 14 ? `${days}j — Normal`
-    : `${days}j — Élevé`;
-  const autoColor = days == null ? T.textDim
-    : days <= 2 ? T.danger
-    : days <= 5 ? '#F59E0B'
-    : days <= 14 ? T.success
-    : '#3B82F6';
-  const autoPulse = days != null && days <= 2;
+  const autoBadgeConfig = days == null
+    ? { badge: 'N/A', color: '#64748B', bg: 'rgba(100, 116, 139, 0.15)', pulse: false }
+    : days <= 2
+    ? { badge: 'CRITIQUE', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)', pulse: true }
+    : days <= 5
+    ? { badge: 'ATTENTION', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', pulse: false }
+    : { badge: 'OK', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)', pulse: false };
 
   const relTime = autonomy?.calculated_at ? (() => {
     const mins = Math.floor((Date.now() - new Date(autonomy.calculated_at!).getTime()) / 60000);
@@ -370,17 +366,18 @@ function StockRow({ stock, index, autonomy }: { stock: { name: string; current: 
         </span>
       </div>
       {/* Autonomy badge */}
-      <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minWidth: 100 }}>
+      <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 6, minWidth: 120 }}>
         <span style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-          padding: '3px 9px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-          background: `${autoColor}18`, border: `1px solid ${autoColor}40`, color: autoColor,
-          animation: autoPulse ? 'tbos-pulse 2s infinite' : 'none',
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          padding: '4px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+          background: autoBadgeConfig.bg, border: `1px solid ${autoBadgeConfig.color}`, color: autoBadgeConfig.color,
+          animation: autoBadgeConfig.pulse ? 'tbos-pulse 2s infinite' : 'none',
+          whiteSpace: 'nowrap', flexShrink: 0,
         }}>
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: autoColor, flexShrink: 0 }} />
-          {autoLabel}
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: autoBadgeConfig.color, flexShrink: 0 }} />
+          {autoBadgeConfig.badge}
         </span>
-        {relTime && <span style={{ fontSize: 9, color: T.textDim }}>Calculé {relTime}</span>}
+        {days != null && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textSec, fontWeight: 600 }}>{days}j</span>}
       </div>
       {/* Pct badge */}
       <div style={{ flexShrink: 0 }}>
