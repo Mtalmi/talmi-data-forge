@@ -917,6 +917,128 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
 }
 
 // ─────────────────────────────────────────────────────
+// RECURRING EXPENSES SECTION
+// ─────────────────────────────────────────────────────
+function RecurringSection({ recurring, total30d }: {
+  recurring: { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string }[];
+  total30d: number;
+}) {
+  const [tracked, setTracked] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    recurring.forEach(r => { init[r.name] = true; });
+    return init;
+  });
+
+  const freqColor = (f: string) => f === 'Hebdo' ? T.info : f === 'Annuel' ? T.purple : T.gold;
+
+  return (
+    <section>
+      <SectionHeader icon={Repeat} label="DÉPENSES RÉCURRENTES" right={
+        <Bdg label="Détection IA" color={T.gold} bg={`${T.gold}15`} icon={<Bot size={10} />} />
+      } />
+      <div style={{
+        background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+        borderRadius: 14, overflow: 'hidden',
+        boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+      }}>
+        {/* Total header */}
+        <div style={{
+          padding: '16px 20px', borderBottom: `1px solid ${T.cardBorder}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: `${T.gold}06`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <CalendarRange size={16} color={T.gold} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>Engagements récurrents — prochains 30 jours</span>
+          </div>
+          <span style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            fontSize: 20, fontWeight: 200, color: T.gold, letterSpacing: '-0.02em',
+          }}>
+            {total30d.toLocaleString('fr-FR')} <span style={{ fontSize: 12, color: T.textDim }}>DH</span>
+          </span>
+        </div>
+
+        {/* Column headers */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 20px', borderBottom: `1px solid ${T.cardBorder}` }}>
+          <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Dépense</span>
+          <span style={{ width: 80, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fréquence</span>
+          <span style={{ width: 90, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Prochaine</span>
+          <span style={{ width: 100, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'right' }}>Montant</span>
+          <span style={{ width: 70, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Confiance</span>
+          <span style={{ width: 50, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Suivi</span>
+        </div>
+
+        {/* Rows */}
+        {recurring.map((r, i) => {
+          const isTracked = tracked[r.name] !== false;
+          return (
+            <RecurringRow key={i} r={r} isTracked={isTracked} freqColor={freqColor(r.frequency)}
+              onToggle={() => setTracked(prev => ({ ...prev, [r.name]: !prev[r.name] }))} delay={i * 60} />
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RecurringRow({ r, isTracked, freqColor, onToggle, delay = 0 }: {
+  r: { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string };
+  isTracked: boolean; freqColor: string; onToggle: () => void; delay?: number;
+}) {
+  const visible = useFadeIn(delay);
+  const [hov, setHov] = useState(false);
+  const ToggleIcon = isTracked ? ToggleRight : ToggleLeft;
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+      display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px',
+      background: hov ? `${T.cardBorder}40` : 'transparent',
+      borderBottom: `1px solid ${T.cardBorder}30`,
+      opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(10px)',
+      transition: 'all 320ms ease-out',
+    }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 4, height: 24, borderRadius: 4, background: r.catColor, flexShrink: 0 }} />
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 600, color: isTracked ? T.textPri : T.textDim }}>{r.name}</p>
+          <p style={{ fontSize: 10, color: T.textDim }}>{r.cat}</p>
+        </div>
+      </div>
+      <div style={{ width: 80 }}>
+        <Bdg label={r.frequency} color={freqColor} bg={`${freqColor}15`} />
+      </div>
+      <div style={{ width: 90 }}>
+        <span style={{ fontSize: 12, color: T.textSec }}>{r.nextDate}</span>
+      </div>
+      <div style={{ width: 100, textAlign: 'right' }}>
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          fontSize: 14, fontWeight: 600, color: T.gold,
+        }}>
+          {r.amount.toLocaleString('fr-FR')} <span style={{ fontSize: 10, color: T.textDim }}>DH</span>
+        </span>
+      </div>
+      <div style={{ width: 70, textAlign: 'center' }}>
+        <span style={{
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 600,
+          color: r.confidence >= 85 ? T.success : r.confidence >= 65 ? T.warning : T.textSec,
+        }}>
+          {r.confidence}%
+        </span>
+      </div>
+      <div style={{ width: 50, display: 'flex', justifyContent: 'center' }}>
+        <button onClick={onToggle} style={{
+          background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          color: isTracked ? T.success : T.textDim, transition: 'color 150ms',
+        }}>
+          <ToggleIcon size={22} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // PENDING APPROVAL CARD
 // ─────────────────────────────────────────────────────
 function ApprovalCard({ p, delay = 0 }: { p: { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }; delay?: number }) {
