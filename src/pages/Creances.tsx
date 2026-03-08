@@ -694,6 +694,49 @@ export default function Creances() {
           </Card>
         </div>
 
+        {/* ENCOURS PAR FORMULE */}
+        {(() => {
+          const formules = [
+            { name: 'B30', amount: 42000, pct: 45 },
+            { name: 'B25', amount: 28000, pct: 30 },
+            { name: 'B35', amount: 18000, pct: 19 },
+            { name: 'Autres', amount: 5600, pct: 6 },
+          ];
+          const maxAmount = Math.max(...formules.map(f => f.amount));
+          return (
+            <Card style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Encours par Formule</p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  {formules.map((f, i) => (
+                    <div key={i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#F1F5F9', fontFamily: 'ui-monospace, monospace' }}>{f.name}</span>
+                        <span style={{ fontSize: 12, fontWeight: 200, color: '#D4A843', fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>{f.amount.toLocaleString('fr-MA')} DH</span>
+                      </div>
+                      <div style={{ height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: `${(f.amount / maxAmount) * 100}%`, borderRadius: 3, background: i === 0 ? '#D4A843' : `rgba(212,168,67,${0.7 - i * 0.15})`, transition: 'width 600ms ease-out' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 8, padding: '10px 12px' }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sparkles className="h-3 w-3" style={{ color: '#D4A843' }} />
+                    <span style={{ fontSize: 10, fontWeight: 700, color: '#D4A843' }}>INSIGHT IA</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>
+                    Formule <span style={{ fontWeight: 600, color: '#D4A843' }}>B30</span> génère <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f59e0b' }}>45%</span> des impayés — réviser conditions paiement pour cette formule.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
         {/* Aging Summary */}
         {hasData && (
         <Card>
