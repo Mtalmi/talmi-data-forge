@@ -253,6 +253,16 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// FLEET HEALTH DATA
+// ─────────────────────────────────────────────────────
+const FLEET_HEALTH_DATA = [
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal' },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j' },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: 'Pneus à vérifier — usure détectée' },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines' },
+];
+
+// ─────────────────────────────────────────────────────
 // FORECAST 14J MOCK DATA
 // ─────────────────────────────────────────────────────
 const FORECAST_14J = [
