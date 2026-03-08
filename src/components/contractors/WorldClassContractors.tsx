@@ -503,9 +503,31 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 export default function WorldClassContractors() {
   const [activeTab, setActiveTab] = useState('tous');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [missionDrawer, setMissionDrawer] = useState<typeof MISSIONS[0] | null>(null);
   const [formData, setFormData] = useState({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [terminatingMission, setTerminatingMission] = useState(false);
+
+  const handleTermineMission = async (contractorName: string) => {
+    setTerminatingMission(true);
+    try {
+      // Find the contractor by name in the live data
+      const contractor = contractors.find((c: any) => c.nom === contractorName);
+      if (!contractor) throw new Error('Sous-traitant introuvable');
+      const { error } = await supabase.from('prestataires_transport').update({
+        statut: 'disponible',
+        mission_actuelle: null,
+      }).eq('id', contractor.id);
+      if (error) throw error;
+      setMissionDrawer(null);
+      toast({ title: 'Mission terminée' });
+    } catch (err: any) {
+      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+    } finally {
+      setTerminatingMission(false);
+    }
+  };
   const tabConfig = [
     { id: 'tous', label: 'Tous' },
     { id: 'en_mission', label: 'En Mission' },
