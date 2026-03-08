@@ -153,7 +153,7 @@ function useStocksLiveData() {
       const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
-          .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at')
+          .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
           .limit(20),
         supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
