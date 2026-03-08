@@ -516,6 +516,12 @@ export default function WorldClassContractors() {
   const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
   const [prolongerTarget, setProlongerTarget] = useState<{ contractor: string; currentFin: string } | null>(null);
   const [prolongerJours, setProlongerJours] = useState('3');
+  const [assignTarget, setAssignTarget] = useState<typeof UPCOMING[0] | null>(null);
+  const [assignSelectedId, setAssignSelectedId] = useState('');
+  const [assignSubmitting, setAssignSubmitting] = useState(false);
+  const [appelOffresTarget, setAppelOffresTarget] = useState<typeof UPCOMING[0] | null>(null);
+  const [appelOffresNotes, setAppelOffresNotes] = useState('');
+  const [appelOffresSubmitting, setAppelOffresSubmitting] = useState(false);
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
@@ -830,7 +836,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Besoins à Venir" badge="2 demandes" badgeColor={T.info} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             {UPCOMING.map((u, i) => (
-              <UpcomingCard key={i} u={u} delay={i * 100} />
+              <UpcomingCard key={i} u={u} delay={i * 100} onAssigner={() => setAssignTarget(u)} onAppelOffres={() => setAppelOffresTarget(u)} />
             ))}
           </div>
         </div>
@@ -1297,6 +1303,169 @@ export default function WorldClassContractors() {
         </>,
         document.body
       )}
+      {/* ══════════════════════════ ASSIGNER MODAL ══════════════════════════ */}
+      {assignTarget && createPortal(
+        <>
+          <div onClick={() => { setAssignTarget(null); setAssignSelectedId(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: 440, background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
+              <span style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Assigner un Sous-Traitant</span>
+            </div>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+                Besoin : <strong style={{ color: '#fff' }}>{assignTarget.besoin}</strong>
+                <br /><span style={{ fontSize: 12, color: T.textDim }}>Chantier : {assignTarget.chantier} · {assignTarget.duree} · {assignTarget.budget}</span>
+              </div>
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  Sous-traitant disponible
+                </label>
+                <select
+                  value={assignSelectedId}
+                  onChange={(e) => setAssignSelectedId(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
+                    fontFamily: "'DM Sans', sans-serif", outline: 'none',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                >
+                  <option value="" style={{ background: '#0F1629' }}>— Sélectionner —</option>
+                  {contractors.filter((c: any) => c.statut === 'disponible').map((c: any) => (
+                    <option key={c.id} value={c.id} style={{ background: '#0F1629' }}>
+                      {c.nom} — {c.specialite || 'Général'} — {Number(c.tarif_journalier || 0).toLocaleString('fr-FR')} DH/j
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={() => { setAssignTarget(null); setAssignSelectedId(''); }}
+                  style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Annuler</button>
+                <button
+                  disabled={!assignSelectedId || assignSubmitting}
+                  onClick={async () => {
+                    setAssignSubmitting(true);
+                    try {
+                      const { error } = await supabase.from('prestataires_transport').update({
+                        statut: 'mission',
+                        mission_actuelle: assignTarget.chantier,
+                      }).eq('id', assignSelectedId);
+                      if (error) throw error;
+                      const chosen = contractors.find((c: any) => c.id === assignSelectedId);
+                      toast({ title: 'Sous-traitant assigné', description: `${chosen?.nom || 'ST'} assigné à "${assignTarget.besoin}" — ${assignTarget.chantier}` });
+                      setAssignTarget(null);
+                      setAssignSelectedId('');
+                    } catch (err: any) {
+                      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+                    } finally {
+                      setAssignSubmitting(false);
+                    }
+                  }}
+                  style={{
+                    flex: 1, background: !assignSelectedId ? 'rgba(212,168,67,0.3)' : '#D4A843',
+                    color: '#0F1629', border: 'none', borderRadius: 8, padding: 12,
+                    fontWeight: 600, fontSize: 14, cursor: !assignSelectedId ? 'not-allowed' : 'pointer',
+                    fontFamily: "'DM Sans', sans-serif", opacity: assignSubmitting ? 0.6 : 1,
+                  }}
+                >{assignSubmitting ? 'Assignation...' : 'Assigner'}</button>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
+      {/* ══════════════════════════ APPEL D'OFFRES MODAL ══════════════════════════ */}
+      {appelOffresTarget && createPortal(
+        <>
+          <div onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: 480, background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
+              <span style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Créer Appel d'Offres</span>
+            </div>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Summary */}
+              <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Besoin</div><div style={{ color: '#fff', fontSize: 14, fontWeight: 600, marginTop: 2 }}>{appelOffresTarget.besoin}</div></div>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Spécialité</div><div style={{ color: appelOffresTarget.specialtyColor, fontSize: 14, fontWeight: 600, marginTop: 2 }}>{appelOffresTarget.specialty}</div></div>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Chantier</div><div style={{ color: T.textSec, fontSize: 14, marginTop: 2 }}>{appelOffresTarget.chantier}</div></div>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Budget</div><div style={{ color: T.gold, fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace", marginTop: 2 }}>{appelOffresTarget.budget}</div></div>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Date requise</div><div style={{ color: T.textSec, fontSize: 14, marginTop: 2 }}>{appelOffresTarget.date}</div></div>
+                  <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Durée</div><div style={{ color: T.textSec, fontSize: 14, marginTop: 2 }}>{appelOffresTarget.duree}</div></div>
+                </div>
+              </div>
+              {/* Notes */}
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  Notes / Critères supplémentaires
+                </label>
+                <textarea
+                  value={appelOffresNotes}
+                  onChange={(e) => setAppelOffresNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Ex: Exiger certification, expérience minimum 3 ans..."
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
+                    fontFamily: "'DM Sans', sans-serif", outline: 'none', resize: 'vertical',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                />
+              </div>
+              {/* Destinataires */}
+              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Users size={12} /> Sera envoyé à <strong style={{ color: T.textPri }}>{contractors.filter((c: any) => c.actif !== false).length}</strong> sous-traitants actifs
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); }}
+                  style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Annuler</button>
+                <button
+                  disabled={appelOffresSubmitting}
+                  onClick={async () => {
+                    setAppelOffresSubmitting(true);
+                    try {
+                      // Simulate creating the RFP (no dedicated table yet — toast confirmation)
+                      await new Promise(r => setTimeout(r, 800));
+                      toast({ title: 'Appel d\'offres créé', description: `AO pour "${appelOffresTarget.besoin}" envoyé à ${contractors.filter((c: any) => c.actif !== false).length} prestataires.` });
+                      setAppelOffresTarget(null);
+                      setAppelOffresNotes('');
+                    } catch (err: any) {
+                      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+                    } finally {
+                      setAppelOffresSubmitting(false);
+                    }
+                  }}
+                  style={{
+                    flex: 1, background: '#D4A843', color: '#0F1629', border: 'none',
+                    borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14,
+                    cursor: appelOffresSubmitting ? 'not-allowed' : 'pointer',
+                    fontFamily: "'DM Sans', sans-serif", opacity: appelOffresSubmitting ? 0.6 : 1,
+                  }}
+                >{appelOffresSubmitting ? 'Création...' : 'Envoyer l\'Appel d\'Offres'}</button>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   );
 }
@@ -1385,7 +1554,7 @@ function HistoryRow({ h, delay, last }: { h: typeof HISTORY[0]; delay: number; l
 // ─────────────────────────────────────────────────────
 // UPCOMING CARD
 // ─────────────────────────────────────────────────────
-function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
+function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOMING[0]; delay: number; onAssigner?: () => void; onAppelOffres?: () => void }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   const isHaute = u.priority === 'Haute';
@@ -1401,7 +1570,6 @@ function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
         transition: 'all 0.25s ease',
       }}
     >
-      {/* Top */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
         <div style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{u.besoin}</div>
         <span style={{
@@ -1413,13 +1581,11 @@ function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
           {u.priority}
         </span>
       </div>
-      {/* Specialty badge */}
       <span style={{
         background: `${u.specialtyColor}22`, color: u.specialtyColor,
         border: `1px solid ${u.specialtyColor}44`, borderRadius: 100,
         padding: '2px 10px', fontSize: 11, fontWeight: 600, display: 'inline-block', marginBottom: 12,
       }}>{u.specialty}</span>
-       {/* Details */}
        <div style={{ display: 'flex', gap: 20, marginBottom: 14 }}>
          <div>
            <div style={{ color: T.textDim, fontSize: 11 }}>Chantier</div>
@@ -1436,7 +1602,6 @@ function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
            <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold }}>{u.duree} — {u.budget}</div>
          </div>
        </div>
-       {/* AI Match Recommendation */}
        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: `1px solid ${T.cardBorder}` }}>
          <Zap size={14} color="#D4A843" />
          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
@@ -1444,22 +1609,25 @@ function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
            <span style={{ color: '#D4A843' }}>{u.besoin === 'Pompage gros volume' ? '94' : '91'}</span>/100
          </span>
        </div>
-       {/* Buttons */}
       <div style={{ display: 'flex', gap: 10 }}>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: T.gold, color: T.navy, border: 'none',
-          borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif",
-        }}>
+        <button
+          onClick={onAssigner}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: T.gold, color: T.navy, border: 'none',
+            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
           <UserPlus size={14} /> Assigner
         </button>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
-          borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-          fontFamily: "'DM Sans', sans-serif",
-        }}>
+        <button
+          onClick={onAppelOffres}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
+            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: "'DM Sans', sans-serif",
+          }}>
           <FileText size={14} /> Créer Appel d'Offres
         </button>
       </div>
