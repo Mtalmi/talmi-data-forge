@@ -592,6 +592,7 @@ export default function WorldClassStocks() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes urgentGlow { 0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.15)} }
       `}</style>
 
       {/* ── SEAMLESS HEADER ── */}
@@ -669,7 +670,40 @@ export default function WorldClassStocks() {
           </div>
         </section>
 
-        {/* ── SECTION 2: STOCK LEVELS ── */}
+        {/* ── AGENT IA INSIGHT ── */}
+        {(() => {
+          const critical = STOCKS
+            .map(s => ({ name: s.name, days: AUTONOMY[s.name.toLowerCase()]?.days ?? null, orderQty: Math.max(0, s.max - s.current), unit: s.unit }))
+            .filter(s => s.days !== null)
+            .sort((a, b) => a.days! - b.days!)
+            [0] || null;
+
+          if (!critical) return null;
+          const isUrgent = critical.days! < 2;
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: '4px solid #D4A843',
+              borderRadius: 12,
+              padding: 16,
+              display: 'flex', alignItems: 'center', gap: 14,
+              animation: isUrgent ? 'urgentGlow 2s ease-in-out infinite' : undefined,
+            }}>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Zap size={16} color="#D4A843" fill="#D4A843" />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>AGENT IA</span>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5 }}>
+                  ⚡ <strong style={{ color: '#fff' }}>{critical.name}</strong> atteindra zéro dans <strong style={{ color: isUrgent ? '#ef4444' : '#f59e0b' }}>{critical.days}j</strong> — commande de <strong style={{ color: '#D4A843' }}>{critical.orderQty.toLocaleString('fr-FR')} {critical.unit}</strong> recommandée avant ce soir.
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
         <section>
           <SectionHeader icon={Package} label="Niveaux de Stock" />
           <Card>
