@@ -8,7 +8,7 @@ import {
   CreditCard, Banknote, Clock, TrendingDown,
   CheckCircle, XCircle, AlertTriangle, Zap,
   Truck, Wrench, Users, Package, Box,
-  TrendingUp, Plus, LayoutGrid,
+  TrendingUp, Plus, LayoutGrid, ShieldAlert, Bot,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -60,7 +60,7 @@ function useExpensesLiveData() {
     categories: [] as { name: string; amount: number; color: string; pct: number; icon: any }[],
     budgetData: [] as { month: string; depenses: number; budget: number }[],
     catBudget: [] as { name: string; spent: number; budget: number; pct: number; color: string; icon: any }[],
-    recentExpenses: [] as { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string }[],
+    recentExpenses: [] as { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags: string[] }[],
     pending: [] as { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }[],
     budgetTotal: 0,
     budgetUsedPct: 0,
@@ -152,6 +152,22 @@ function useExpensesLiveData() {
       icon: cat.icon,
     }));
 
+    // Fraud detection logic
+    const APPROVAL_THRESHOLD = 500;
+    const detectFraud = (dep: any, allDeps: any[]): string[] => {
+      const flags: string[] = [];
+      const sameDaySameAmount = allDeps.filter(d => d.id !== dep.id && d.date_depense === dep.date_depense && d.montant === dep.montant);
+      if (sameDaySameAmount.length > 0) flags.push('Doublon détecté — même montant, même jour');
+      if (dep.montant >= APPROVAL_THRESHOLD * 0.95 && dep.montant < APPROVAL_THRESHOLD) flags.push(`Montant proche du seuil (${APPROVAL_THRESHOLD} DH)`);
+      const dayOfWeek = new Date(dep.date_depense).getDay();
+      if (dayOfWeek === 0 || dayOfWeek === 6) flags.push('Soumission un jour de week-end');
+      const amounts = allDeps.map(d => d.montant || 0).sort((a, b) => b - a);
+      const p80 = amounts[Math.floor(amounts.length * 0.2)] || 0;
+      const supplierHistory = allDeps.filter(d => d.description === dep.description && d.id !== dep.id);
+      if (supplierHistory.length === 0 && dep.montant >= p80 && dep.montant > 0) flags.push('Nouveau fournisseur — montant élevé');
+      return flags;
+    };
+
     // Recent expenses
     const recent = thisMonth.slice(0, 6);
     const recentExpenses = recent.map(d => {
@@ -164,6 +180,7 @@ function useExpensesLiveData() {
         approver: 'Auto',
         catColor: cfg.color,
         status: 'Approuvé',
+        fraudFlags: detectFraud(d, allDepenses),
       };
     });
 
@@ -534,35 +551,58 @@ function AIRecommendationCard({ icon: Icon, category, title, saving, confidence,
 // ─────────────────────────────────────────────────────
 // EXPENSE ROW
 // ─────────────────────────────────────────────────────
-function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string }; delay?: number }) {
+function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const sc = e.status === 'Approuvé' ? T.success : T.warning;
   const StatusIcon = e.status === 'Approuvé' ? CheckCircle : Clock;
   const approverColor = e.approver === 'Auto' ? T.success : e.approver === '—' ? T.warning : T.info;
+  const hasFraud = e.fraudFlags && e.fraudFlags.length > 0;
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 10,
-      background: hov ? `${T.cardBorder}50` : 'transparent',
-      border: `1px solid ${hov ? T.cardBorder : 'transparent'}`,
+      background: hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
+      border: `1px solid ${hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
       transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(16px)',
       opacity: visible ? 1 : 0, transition: 'all 380ms ease-out',
       cursor: 'pointer', overflow: 'hidden', position: 'relative',
     }}>
-      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: e.catColor }} />
+      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: hasFraud ? T.warning : e.catColor }} />
       <div style={{ minWidth: 55, flexShrink: 0 }}><p style={{ color: T.textDim, fontSize: 11 }}>{e.date}</p></div>
-      <div style={{ flex: 1, minWidth: 140 }}><p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p></div>
+      <div style={{ flex: 1, minWidth: 140 }}>
+        <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p>
+        {hasFraud && (
+          <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 4, marginTop: 4 }}>
+            {e.fraudFlags!.map((flag, i) => (
+              <span key={i} style={{
+                display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 999,
+                background: `${T.warning}15`, border: `1px solid ${T.warning}35`, color: T.warning,
+                fontSize: 9, fontWeight: 600,
+              }}>
+                <AlertTriangle size={8} />{flag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
       <div style={{ minWidth: 120, flexShrink: 0 }}><Bdg label={e.cat} color={e.catColor} bg={`${e.catColor}15`} /></div>
       <div style={{ minWidth: 110, flexShrink: 0 }}>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{e.amount.toLocaleString('fr-FR')} DH</p>
       </div>
       <div style={{ minWidth: 90, flexShrink: 0 }}><p style={{ fontSize: 11, color: approverColor, fontWeight: 600 }}>{e.approver}</p></div>
-      <div style={{ minWidth: 100, flexShrink: 0, display: 'flex', justifyContent: 'flex-end' }}>
-        <span style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
-          background: `${sc}15`, border: `1px solid ${sc}40`, color: sc, fontSize: 10, fontWeight: 700,
-          animation: e.status !== 'Approuvé' ? 'tbos-pulse 2.2s infinite' : 'none',
-        }}><StatusIcon size={10} />{e.status}</span>
+      <div style={{ minWidth: 140, flexShrink: 0, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+        {hasFraud ? (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            background: `${T.warning}15`, border: `1px solid ${T.warning}40`, color: T.warning,
+            fontSize: 10, fontWeight: 700, animation: 'tbos-pulse 2.2s infinite',
+          }}><ShieldAlert size={10} />Vérification recommandée</span>
+        ) : (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            background: `${sc}15`, border: `1px solid ${sc}40`, color: sc, fontSize: 10, fontWeight: 700,
+          }}><StatusIcon size={10} />{e.status}</span>
+        )}
       </div>
     </div>
   );
@@ -661,6 +701,45 @@ export default function WorldClassExpenses() {
           }}><Plus size={14} /> Nouvelle Dépense</button>
         }
       />
+
+      {/* AI FRAUD DETECTION BANNER */}
+      {(() => {
+        const flaggedCount = live.recentExpenses.filter(e => e.fraudFlags && e.fraudFlags.length > 0).length;
+        if (flaggedCount === 0) return null;
+        return (
+          <div style={{
+            margin: '0 32px', padding: '14px 20px',
+            background: `${T.warning}0A`,
+            border: `1px solid ${T.warning}30`,
+            borderLeft: `4px solid ${T.warning}`,
+            borderRadius: 12,
+            display: 'flex', alignItems: 'center', gap: 14,
+          }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: `${T.warning}18`, border: `1px solid ${T.warning}30`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              <Bot size={18} color={T.warning} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: T.warning }}>
+                Agent IA: {flaggedCount} transaction{flaggedCount > 1 ? 's' : ''} à vérifier
+              </p>
+              <p style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>
+                Détection automatique de patterns anormaux — doublons, seuils, week-ends, nouveaux fournisseurs
+              </p>
+            </div>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 999,
+              background: `${T.warning}18`, border: `1px solid ${T.warning}40`, color: T.warning,
+              fontSize: 11, fontWeight: 700, flexShrink: 0,
+            }}>
+              <ShieldAlert size={12} />{flaggedCount} alerte{flaggedCount > 1 ? 's' : ''}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* PAGE BODY */}
       <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>
