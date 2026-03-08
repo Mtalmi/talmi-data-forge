@@ -153,7 +153,7 @@ function useStocksLiveData() {
       const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
-          .select('materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
+          .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
           .limit(20),
         supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
@@ -219,7 +219,7 @@ function useStocksLiveData() {
           type: m.type_mouvement === 'reception' ? 'Entrée' : 'Sortie',
           material: m.materiau || '—',
           qty: `${m.type_mouvement === 'reception' ? '+' : '-'}${Math.abs(m.quantite || 0).toLocaleString('fr-FR')}`,
-          ref: m.reference_id || '—',
+          ref: m.id ? m.id.substring(0, 8).toUpperCase() : '—',
           resp: m.fournisseur || 'Atlas Concrete',
         })));
 
