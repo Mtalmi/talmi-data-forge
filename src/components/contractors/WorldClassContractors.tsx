@@ -321,27 +321,39 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
       <div style={{ minWidth: 80, textAlign: 'center' }}>
         <Stars rating={c.note_service ?? 0} />
       </div>
+      {/* Risk Indicator */}
+       <div style={{ minWidth: 40, textAlign: 'center' }}>
+         {(() => {
+           if (isMission && c.jours_travailles >= 7) {
+             return <span style={{ fontSize: 10, color: '#FF4444' }} title="Mission critique — renouvellement urgent">●</span>;
+           }
+           if (isMission && c.jours_travailles >= 4) {
+             return <span style={{ fontSize: 10, color: '#F5C842' }} title="Mission en cours — surveiller">●</span>;
+           }
+           return <span style={{ fontSize: 10, color: '#22C55E' }} title="Disponible pour assignation">●</span>;
+         })()}
+       </div>
       {/* Status */}
       <div style={{ minWidth: 110, textAlign: 'center' }}>
-        {isMission ? (
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`,
-            borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
-            animation: 'tbos-pulse 2s infinite',
-          }}>
-            <Briefcase size={11} /> En Mission
-          </span>
-        ) : (
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', gap: 5,
-            background: `${T.success}22`, color: T.success, border: `1px solid ${T.success}44`,
-            borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
-          }}>
-            <CheckCircle size={11} /> Disponible
-          </span>
-        )}
-      </div>
+         {isMission ? (
+           <span style={{
+             display: 'inline-flex', alignItems: 'center', gap: 5,
+             background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`,
+             borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
+             animation: 'tbos-pulse 2s infinite',
+           }}>
+             <Briefcase size={11} /> En Mission
+           </span>
+         ) : (
+           <span style={{
+             display: 'inline-flex', alignItems: 'center', gap: 5,
+             background: `${T.success}22`, color: T.success, border: `1px solid ${T.success}44`,
+             borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
+           }}>
+             <CheckCircle size={11} /> Disponible
+           </span>
+         )}
+       </div>
       {/* Arrow */}
       <ChevronRight size={16} color={T.textDim} style={{ transition: 'transform 0.2s', transform: hov ? 'translateX(4px)' : 'none' }} />
     </div>
