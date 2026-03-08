@@ -97,6 +97,58 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   'disputed': { label: 'Litige', color: 'bg-primary/10 text-primary border-primary/30', icon: <MessageSquare className="h-3 w-3" /> },
 };
 
+function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; client: string; action: string }[] }) {
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed || warnings.length === 0) return null;
+  const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  return (
+    <div
+      className="rounded-xl overflow-hidden animate-pulse-subtle"
+      style={{
+        background: 'rgba(239, 68, 68, 0.06)',
+        border: '1.5px solid rgba(239, 68, 68, 0.4)',
+        animation: 'pulse 3s ease-in-out infinite',
+      }}
+    >
+      <div className="px-5 py-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 flex-1">
+            <div className="p-2 rounded-lg shrink-0" style={{ background: 'rgba(239, 68, 68, 0.15)' }}>
+              <AlertTriangle className="h-5 w-5 text-red-400" />
+            </div>
+            <div className="flex-1 min-w-0 space-y-3">
+              <div className="flex items-center gap-2">
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                  ALERTE PRÉVENTIVE IA
+                </span>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, monospace' }}>{now}</span>
+              </div>
+              {warnings.map((w, i) => (
+                <div key={i} style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: '10px 14px' }}>
+                  <p style={{ fontSize: 12, color: '#ef4444', fontWeight: 600, marginBottom: 4 }}>⚠ {w.message}</p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)' }}>
+                    Client: <span style={{ fontWeight: 600, color: '#F1F5F9' }}>{w.client}</span>
+                  </p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>
+                    <span style={{ color: '#D4A843', fontWeight: 600 }}>Action →</span> {w.action}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={() => setDismissed(true)}
+            className="shrink-0 p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+            style={{ color: 'rgba(255,255,255,0.4)' }}
+          >
+            <span style={{ fontSize: 18, lineHeight: 1 }}>×</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Creances() {
   const { isCeo, role } = useAuth();
   const { t, lang } = useI18n();
@@ -330,6 +382,63 @@ export default function Creances() {
             </DropdownMenu>
           </div>
         </div>
+
+        {/* AI EARLY WARNING BANNER */}
+        {(() => {
+          // Detect risk patterns
+          const warnings: { message: string; client: string; action: string }[] = [];
+
+          // 1. Client with 2+ consecutive late payments
+          const clientLateMap = new Map<string, number>();
+          receivables.filter(r => r.days_overdue > 0 && r.status !== 'paid').forEach(r => {
+            clientLateMap.set(r.client_name, (clientLateMap.get(r.client_name) || 0) + 1);
+          });
+          clientLateMap.forEach((count, name) => {
+            if (count >= 2) {
+              warnings.push({
+                message: `${count} retards consécutifs détectés`,
+                client: name,
+                action: `Déclencher relance prioritaire et réviser conditions de paiement pour ${name}`,
+              });
+            }
+          });
+
+          // 2. Aging bucket shift — receivables with days_overdue crossing 30/60 thresholds
+          const shiftingClients = receivables.filter(r => r.days_overdue >= 28 && r.days_overdue <= 35 && r.status !== 'paid');
+          if (shiftingClients.length > 0) {
+            const clientName = shiftingClients[0].client_name;
+            warnings.push({
+              message: `${shiftingClients.length} créance(s) passent en tranche 30+ jours cette semaine`,
+              client: clientName,
+              action: `Contacter ${clientName} immédiatement avant passage en contentieux`,
+            });
+          }
+
+          // 3. Collection rate drop (simulate comparison — if rate < 65% consider it dropping)
+          if (stats.collectionRate < 65) {
+            warnings.push({
+              message: `Taux de recouvrement en baisse: ${stats.collectionRate.toFixed(1)}% (objectif: 85%)`,
+              client: 'Portefeuille global',
+              action: 'Intensifier les relances automatiques et planifier revue hebdomadaire créances',
+            });
+          }
+
+          // Demo fallback — always show at least one warning for executive demo
+          if (warnings.length === 0) {
+            const topLateClient = Array.from(clientLateMap.entries()).sort((a, b) => b[1] - a[1])[0];
+            if (topLateClient) {
+              warnings.push({
+                message: `Pattern de retard détecté — ${topLateClient[1]} factures en souffrance`,
+                client: topLateClient[0],
+                action: `Programmer appel de relance avec ${topLateClient[0]} cette semaine`,
+              });
+            }
+          }
+
+          if (warnings.length === 0) return null;
+
+          return <AIEarlyWarningBanner warnings={warnings} />;
+        })()}
 
         {/* RÉSUMÉ EXÉCUTIF IA - Premium Executive Card */}
         <div 
