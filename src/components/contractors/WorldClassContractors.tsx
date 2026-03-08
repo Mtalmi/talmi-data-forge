@@ -300,16 +300,16 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold, fontWeight: 700 }}>{tarifFormatted}</div>
       </div>
       {/* Mission */}
-      <div style={{ flex: 1, minWidth: 160 }}>
-        <div style={{ color: T.textDim, fontSize: 11 }}>Mission actuelle</div>
-        {c.mission_actuelle ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.info, fontSize: 13, fontWeight: 600 }}>
-            <MapPin size={12} /> {c.mission_actuelle}
-          </div>
-        ) : (
-          <span style={{ color: T.textDim, fontSize: 13 }}>—</span>
-        )}
-      </div>
+       <div style={{ flex: 1, minWidth: 160 }}>
+         <div style={{ color: T.textDim, fontSize: 11 }}>Mission actuelle</div>
+         {c.mission_actuelle ? (
+           <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.info, fontSize: 13, fontWeight: 600 }}>
+             <MapPin size={12} /> {c.mission_actuelle}
+           </div>
+         ) : (
+           <span style={{ display: 'inline-block', backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e', fontSize: 12, fontWeight: 600, padding: '4px 12px', borderRadius: 12 }}>Disponible</span>
+         )}
+       </div>
       {/* Jours */}
       <div style={{ minWidth: 70, textAlign: 'center' }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Jours</div>
