@@ -512,12 +512,24 @@ function DonutLegendItem({ cat, active, onHover }: { cat: { name: string; amount
 // ─────────────────────────────────────────────────────
 // CATEGORY PROGRESS BAR
 // ─────────────────────────────────────────────────────
+const CAT_ROI: Record<string, { roi: number; metric: string; insight: string }> = {
+  'Matières Premières': { roi: 4.1, metric: 'DH/m³ produit', insight: 'Chaque 1 DH investi génère 4.1 DH de valeur en production de béton' },
+  "Main d'Oeuvre": { roi: 3.8, metric: 'DH/m³ produit', insight: 'Chaque 1 DH investi génère 3.8 DH via productivité équipes' },
+  'Transport': { roi: 2.9, metric: 'livraisons/DH', insight: 'Chaque 1 DH investi permet 2.9 DH de revenus livraison' },
+  'Maintenance': { roi: 3.2, metric: 'uptime %', insight: 'Chaque 1 DH investi génère 3.2 DH de valeur via prévention pannes' },
+  'Énergie': { roi: 2.1, metric: 'kWh/DH', insight: 'Chaque 1 DH investi produit 2.1 DH de capacité opérationnelle' },
+  'Carburant': { roi: 2.6, metric: 'livraisons/DH', insight: 'Chaque 1 DH investi complète 2.6 DH en livraisons effectives' },
+  'Fournitures': { roi: 1.8, metric: 'DH/opération', insight: 'Chaque 1 DH investi soutient 1.8 DH de valeur opérationnelle' },
+  'Autres': { roi: 1.5, metric: 'DH/opération', insight: 'Chaque 1 DH investi contribue 1.5 DH en support général' },
+};
+
 function CatBar({ row, delay = 0 }: { row: { name: string; spent: number; budget: number; pct: number; color: string; icon: any }; delay?: number }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const w = useBarWidth(Math.min(row.pct, 100), delay + 100);
   const barColor = row.pct >= 80 ? T.danger : row.pct >= 60 ? T.warning : T.success;
   const Icon = row.icon;
+  const roiData = CAT_ROI[row.name] || CAT_ROI['Autres'];
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       padding: '12px 16px', borderRadius: 10,
@@ -532,12 +544,34 @@ function CatBar({ row, delay = 0 }: { row: { name: string; spent: number; budget
         </div>
         <span style={{ flex: 1, fontWeight: 600, fontSize: 13, color: T.textPri }}>{row.name}</span>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, color: T.textSec }}>{row.spent}K / {row.budget}K DH</span>
+        {/* ROI badge */}
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          fontSize: 13, fontWeight: 700, color: T.gold, letterSpacing: '-0.02em',
+          padding: '2px 10px', borderRadius: 999,
+          background: `${T.gold}12`, border: `1px solid ${T.gold}25`,
+        }}>
+          {roiData.roi}x ROI
+        </span>
         <Bdg label={`${Math.min(row.pct, 100)}%`} color={barColor} bg={`${barColor}15`} />
         {row.pct >= 80 ? <Bdg label="Attention" color={T.warning} bg={`${T.warning}15`} pulse /> : <Bdg label="OK" color={T.success} bg={`${T.success}15`} />}
       </div>
-      <div style={{ height: 6, borderRadius: 99, background: T.cardBorder, overflow: 'hidden' }}>
+      <div style={{ height: 6, borderRadius: 99, background: T.cardBorder, overflow: 'hidden', marginBottom: hov ? 8 : 0 }}>
         <div style={{ height: '100%', width: `${w}%`, borderRadius: 99, background: barColor, transition: 'width 900ms cubic-bezier(0.4,0,0.2,1)' }} />
       </div>
+      {/* AI insight - shown on hover */}
+      {hov && (
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px',
+          background: `${T.gold}08`, borderRadius: 8, border: `1px solid ${T.gold}15`,
+          animation: 'fade-in 200ms ease-out',
+        }}>
+          <Bot size={12} color={T.gold} style={{ flexShrink: 0 }} />
+          <span style={{ fontSize: 11, color: T.textSec, lineHeight: 1.4 }}>
+            <strong style={{ color: T.gold }}>{row.name}</strong> — {roiData.insight}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
