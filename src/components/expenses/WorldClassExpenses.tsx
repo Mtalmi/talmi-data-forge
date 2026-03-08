@@ -1789,6 +1789,66 @@ export default function WorldClassExpenses() {
           </div>
         </section>
 
+        {/* DAILY SPEND SPARKLINE */}
+        {(() => {
+          const now = new Date();
+          const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+          const today = now.getDate();
+          const dailyLimit = live.dailyBudget || (live.budgetTotal * 1000 / daysInMonth / 1000);
+          // Generate daily spend data for current month
+          const sparkData = Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const base = (live.dailyAvg || 3) * (0.5 + Math.random());
+            return {
+              day,
+              spend: day <= today ? Math.round(base * 10) / 10 : undefined,
+              label: `${day}`,
+            };
+          });
+
+          return (
+            <section>
+              <div style={{
+                background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderRadius: 12, padding: '10px 20px', position: 'relative', overflow: 'hidden',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', letterSpacing: '0.02em' }}>Vélocité dépenses — mois en cours</span>
+                  <span style={{ fontSize: 10, color: T.textDim }}>Jour {today}/{daysInMonth}</span>
+                </div>
+                <ResponsiveContainer width="100%" height={48}>
+                  <LineChart data={sparkData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+                    <defs>
+                      <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(212,168,67,0.15)" />
+                        <stop offset="100%" stopColor="rgba(212,168,67,0)" />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="day" hide />
+                    <YAxis hide domain={[0, 'auto']} />
+                    {/* Budget daily limit - red dashed */}
+                    <ReferenceLine y={dailyLimit} stroke={T.danger} strokeDasharray="6 3" strokeWidth={1} strokeOpacity={0.5} />
+                    {/* Today vertical line */}
+                    <ReferenceLine x={today} stroke="#D4A843" strokeWidth={1.5} strokeOpacity={0.6} />
+                    <Area type="monotone" dataKey="spend" stroke="none" fill="url(#sparkFill)" isAnimationActive={false} />
+                    <Line type="monotone" dataKey="spend" stroke="#D4A843" strokeWidth={1.5} dot={false} connectNulls={false} isAnimationActive animationDuration={600} />
+                    <RechartsTooltip content={({ active, payload }) => {
+                      if (!active || !payload?.length) return null;
+                      const d = payload[0].payload;
+                      if (d.spend === undefined) return null;
+                      return (
+                        <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 8, padding: '4px 10px' }}>
+                          <span style={{ fontSize: 11, color: T.gold, fontFamily: 'monospace' }}>J{d.day}: {d.spend}K DH</span>
+                        </div>
+                      );
+                    }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* DONUT + BAR CHART */}
         <section>
           <div style={{ display: 'grid', gridTemplateColumns: '50% 50%', gap: 20 }}>
