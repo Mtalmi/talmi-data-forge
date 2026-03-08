@@ -920,7 +920,7 @@ function ReallocationCard({ from, to, transferAmount }: { from: ReallocationSide
 // ─────────────────────────────────────────────────────
 // EXPENSE ROW
 // ─────────────────────────────────────────────────────
-function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number }) {
+function ExpenseRow({ e, delay = 0, isAnomaly = false }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number; isAnomaly?: boolean }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const sc = e.status === 'Approuvé' ? T.success : T.warning;
@@ -930,13 +930,13 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 10,
-      background: hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
-      border: `1px solid ${hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
+      background: isAnomaly ? `${T.warning}08` : hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
+      border: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
       transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(16px)',
       opacity: visible ? 1 : 0, transition: 'all 380ms ease-out',
       cursor: 'pointer', overflow: 'hidden', position: 'relative',
     }}>
-      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: hasFraud ? T.warning : e.catColor }} />
+      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: isAnomaly ? T.warning : hasFraud ? T.warning : e.catColor }} />
       <div style={{ minWidth: 55, flexShrink: 0 }}><p style={{ color: T.textDim, fontSize: 11 }}>{e.date}</p></div>
       <div style={{ flex: 1, minWidth: 140 }}>
         <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p>
@@ -960,7 +960,13 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
       </div>
       <div style={{ minWidth: 90, flexShrink: 0 }}><p style={{ fontSize: 11, color: approverColor, fontWeight: 600 }}>{e.approver}</p></div>
       <div style={{ minWidth: 140, flexShrink: 0, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-        {hasFraud ? (
+        {isAnomaly ? (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            background: `${T.warning}15`, border: `1.5px dashed ${T.warning}60`, color: T.warning,
+            fontSize: 10, fontWeight: 700, animation: 'tbos-pulse 2s infinite',
+          }}><AlertTriangle size={10} />Anomalie IA</span>
+        ) : hasFraud ? (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
             background: `${T.warning}15`, border: `1px solid ${T.warning}40`, color: T.warning,
