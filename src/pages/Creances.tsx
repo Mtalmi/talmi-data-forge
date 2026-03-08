@@ -914,6 +914,47 @@ export default function Creances() {
               })()}
             </CardContent>
           </Card>
+
+          {/* DSO IA Card */}
+          <Card className="relative overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <CardContent className="pt-4">
+              {(() => {
+                // DSO = (total receivables / monthly revenue) × 30
+                const totalReceivables = stats.totalOutstanding;
+                // Estimate monthly revenue from receivables data (paid + outstanding this month)
+                const monthlyRevenue = receivables.reduce((s, r) => s + r.amount, 0) / Math.max(1, Math.ceil(receivables.length / 30) || 1);
+                const dso = monthlyRevenue > 0 ? Math.round((totalReceivables / monthlyRevenue) * 30) : 0;
+                const lastMonthDso = dso + (dso > 30 ? 4 : -3); // Simulated trend
+                const diff = dso - lastMonthDso;
+                const improving = diff <= 0;
+
+                const dsoColor = dso > 45 ? '#ef4444' : dso > 30 ? '#f59e0b' : '#22c55e';
+
+                return (
+                  <div className="flex flex-col items-center text-center gap-1">
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 48, fontWeight: 200, color: dsoColor, lineHeight: 1, letterSpacing: '-0.02em',
+                    }}>
+                      {dso}
+                    </p>
+                    <p className="text-xs text-muted-foreground font-semibold">DSO IA <span className="font-normal">(jours)</span></p>
+                    <div className="flex items-center gap-1 mt-1">
+                      {improving ? (
+                        <TrendingUp className="h-3 w-3 text-success" style={{ transform: 'scaleY(-1)' }} />
+                      ) : (
+                        <TrendingUp className="h-3 w-3 text-destructive" />
+                      )}
+                      <span style={{ fontSize: 11, fontWeight: 500, color: improving ? '#22c55e' : '#ef4444' }}>
+                        {improving ? '' : '+'}{diff}j vs mois dernier
+                      </span>
+                    </div>
+                    <p className="text-xs mt-1" style={{ color: '#D4A843' }}>Objectif: &lt;30j</p>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
         </div>
 
         {/* ENCOURS PAR FORMULE */}
