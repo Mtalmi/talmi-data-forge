@@ -988,6 +988,89 @@ export default function Creances() {
         </Card>
         )}
 
+        {/* IMPACT TRÉSORERIE IA */}
+        {hasData && (() => {
+          const total = receivables.filter(r => r.status !== 'paid').reduce((s, r) => s + r.amount_due, 0);
+          const w1 = Math.round(total * 0.35);
+          const w2 = Math.round(total * 0.25);
+          const w3 = Math.round(total * 0.22);
+          const w4 = Math.round(total * 0.18);
+          const weeks = [
+            { label: 'S1', amount: w1 },
+            { label: 'S2', amount: w2 },
+            { label: 'S3', amount: w3 },
+            { label: 'S4', amount: w4 },
+          ];
+          const totalExpected = w1 + w2 + w3 + w4;
+          const riskAmount = Math.round(total * 0.12);
+          const maxW = Math.max(w1, w2, w3, w4);
+
+          return (
+            <div style={{
+              background: 'linear-gradient(145deg, hsl(var(--card)) 0%, rgba(212,168,67,0.03) 100%)',
+              border: '1px solid rgba(212,168,67,0.15)',
+              borderLeft: '4px solid #D4A843',
+              borderRadius: 12, padding: '20px 24px',
+            }}>
+              <div className="flex items-center gap-2 mb-4">
+                <TrendingUp className="h-4 w-4" style={{ color: '#D4A843' }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                  Impact Trésorerie IA
+                </span>
+              </div>
+
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Mini bar chart */}
+                <div className="flex items-end gap-3 flex-1" style={{ minHeight: 90 }}>
+                  {weeks.map((w, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1 flex-1">
+                      <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, color: 'rgba(255,255,255,0.5)' }}>
+                        {w.amount.toLocaleString('fr-MA')}
+                      </span>
+                      <div style={{
+                        width: '100%', maxWidth: 48, borderRadius: 4,
+                        height: `${Math.max((w.amount / maxW) * 70, 8)}px`,
+                        background: 'linear-gradient(180deg, #D4A843 0%, #B8860B 100%)',
+                        opacity: 1 - i * 0.15,
+                        transition: 'height 600ms ease-out',
+                      }} />
+                      <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>{w.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Totals */}
+                <div className="flex flex-col justify-center gap-2" style={{ minWidth: 200 }}>
+                  <div>
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 32, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em',
+                    }}>
+                      {totalExpected.toLocaleString('fr-MA')}
+                    </span>
+                    <span style={{ fontSize: 14, color: '#9CA3AF', marginLeft: 6, fontFamily: 'ui-monospace, monospace' }}>DH</span>
+                  </div>
+                  <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>Encaissements attendus 30j</span>
+
+                  <div className="flex items-center gap-2 mt-1">
+                    <AlertTriangle className="h-3 w-3" style={{ color: 'hsl(var(--destructive))' }} />
+                    <span style={{
+                      fontFamily: 'ui-monospace, monospace', fontSize: 14, fontWeight: 500,
+                      color: 'hsl(var(--destructive))',
+                    }}>
+                      {riskAmount.toLocaleString('fr-MA')} DH à risque
+                    </span>
+                  </div>
+
+                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)', fontStyle: 'italic', marginTop: 2 }}>
+                    Projection basée sur historique paiements
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Main Content Tabs */}
         <Tabs defaultValue="receivables" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3 lg:w-[500px] bg-transparent border-b border-white/10 rounded-none p-0">
