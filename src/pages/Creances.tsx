@@ -709,8 +709,10 @@ export default function Creances() {
                       </TableRow>
                     ) : filteredReceivables.slice(0, 50).map((receivable) => {
                       const statusConfig = STATUS_CONFIG[receivable.status];
+                      // Dispute detection: partial payment from same client
+                      const isPartialPayment = receivable.amount_paid > 0 && receivable.amount_paid < receivable.amount && receivable.status !== 'paid';
                       return (
-                        <TableRow key={receivable.id}>
+                        <TableRow key={receivable.id} className={isPartialPayment ? 'bg-warning/5' : ''}>
                           <TableCell>
                             <div>
                               <p className="font-medium">{receivable.client_name}</p>
@@ -738,10 +740,18 @@ export default function Creances() {
                             )}
                           </TableCell>
                           <TableCell className="text-center">
-                            <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
-                              {statusConfig.icon}
-                              {statusConfig.label}
-                            </Badge>
+                            <div className="flex flex-col items-center gap-1">
+                              <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
+                                {statusConfig.icon}
+                                {statusConfig.label}
+                              </Badge>
+                              {isPartialPayment && (
+                                <Badge variant="outline" className="gap-1 mx-auto border-warning/50 bg-warning/10 text-warning text-[10px] animate-pulse">
+                                  <AlertTriangle className="h-2.5 w-2.5" />
+                                  Litige possible
+                                </Badge>
+                              )}
+                            </div>
                           </TableCell>
                           {canManageReceivables && (
                             <TableCell className="text-center">
