@@ -4,7 +4,7 @@ import {
   ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
 import {
-  Package, AlertTriangle, ArrowUpDown,
+  Package, AlertTriangle, ArrowUpDown, ShoppingCart,
   Droplets, Bell, ArrowUp, ArrowDown, TrendingUp, Zap,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -591,6 +591,7 @@ export default function WorldClassStocks() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700;800&display=swap');
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
+        @keyframes fadeSlideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
 
       {/* ── SEAMLESS HEADER ── */}
@@ -678,7 +679,98 @@ export default function WorldClassStocks() {
           </Card>
         </section>
 
-        {/* ── SECTION 3 + 4: CHART + ALERTS ── */}
+        {/* ── PLAN DE RÉAPPROVISIONNEMENT IA ── */}
+        <section>
+          <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
+          <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
+            {(() => {
+              // Build reorder items sorted by days_remaining ascending
+              const items = STOCKS
+                .map(s => {
+                  const auto = AUTONOMY[s.name.toLowerCase()];
+                  const days = auto?.days ?? 999;
+                  const orderQty = Math.max(0, s.max - s.current);
+                  // Find most recent supplier for this material
+                  const mv = MOVEMENTS.find(m => m.material.toLowerCase() === s.name.toLowerCase());
+                  const supplier = mv?.resp || 'Fournisseur à définir';
+                  return { name: s.name, days, orderQty, unit: s.unit, supplier, pct: s.pct };
+                })
+                .filter(i => i.orderQty > 0)
+                .sort((a, b) => a.days - b.days)
+                .slice(0, 5);
+
+              if (items.length === 0) {
+                return (
+                  <Card style={{ flex: 1, textAlign: 'center', padding: '40px 20px' }}>
+                    <p style={{ color: T.textDim, fontSize: 13 }}>Tous les stocks sont à niveau optimal</p>
+                  </Card>
+                );
+              }
+
+              return items.map((item, idx) => {
+                const isUrgent = item.days <= 2;
+                return (
+                  <div key={item.name} style={{
+                    minWidth: 240, flex: '0 0 auto',
+                    background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
+                    borderLeft: `3px solid ${isUrgent ? '#ef4444' : '#D4A843'}`,
+                    borderRadius: 14, padding: '18px 16px',
+                    display: 'flex', flexDirection: 'column', gap: 10,
+                    opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
+                  }}>
+                    {/* Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.name}</span>
+                      <span style={{
+                        padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                        background: isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
+                        color: isUrgent ? '#ef4444' : '#D4A843',
+                        border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : 'rgba(212,168,67,0.4)'}`,
+                        animation: isUrgent ? 'tbos-pulse 2s infinite' : 'none',
+                      }}>
+                        {isUrgent ? 'URGENT' : 'PLANIFIÉ'}
+                      </span>
+                    </div>
+                    {/* Details */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: T.textDim }}>Qté recommandée</span>
+                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
+                          {item.orderQty.toLocaleString('fr-FR')} {item.unit}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: T.textDim }}>Fournisseur</span>
+                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.supplier}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: T.textDim }}>Autonomie</span>
+                        <span style={{
+                          fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                          color: isUrgent ? '#ef4444' : item.days <= 5 ? '#f59e0b' : '#22c55e',
+                        }}>
+                          {item.days === 999 ? 'N/A' : `${item.days}j`}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Action */}
+                    <button style={{
+                      marginTop: 'auto', padding: '8px 0', borderRadius: 8,
+                      background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
+                      color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                      transition: 'all 150ms',
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                    >
+                      Créer Commande
+                    </button>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+        </section>
         <section>
           <SectionHeader icon={ArrowUpDown} label="Mouvements & Alertes" />
           <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24 }}>
