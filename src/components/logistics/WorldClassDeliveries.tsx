@@ -565,9 +565,7 @@ export default function WorldClassDeliveries() {
             </div>
           } />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {todayBons.length > 0 ? todayBons.map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />) : (
-              <Card><div style={{ textAlign: 'center', padding: 32, color: T.textDim }}>Aucune livraison aujourd'hui</div></Card>
-            )}
+            {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)}
           </div>
         </section>
 
