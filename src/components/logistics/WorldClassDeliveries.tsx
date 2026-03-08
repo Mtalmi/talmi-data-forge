@@ -202,12 +202,14 @@ function DeliveryRow({ d, delay = 0 }: { d: any; delay?: number }) {
         <div style={{ minWidth: 160 }}>
           <p style={{ color: T.textDim, fontSize: 11, marginBottom: 2 }}>{d.bl_id}</p>
           <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{d.client_id?.substring(0, 8) || 'N/A'}</p>
+          {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
         </div>
         <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: `${T.gold}18`, color: T.gold, border: `1px solid ${T.gold}40` }}>{d.formule_id || '—'}</span>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.gold }}>{d.volume_m3} m³</p>
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 6, background: `${T.info}18`, color: T.info, fontSize: 11, fontWeight: 600, border: `1px solid ${T.info}30` }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
+        {d._eta && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.25)', padding: '2px 8px', borderRadius: 4 }}>{d._eta}</span>}
         <div style={{ marginLeft: 'auto' }}>
           <Badge label={status.label} color={status.color} bg={`${status.color}18`} pulse={isPulsing} />
         </div>
@@ -260,6 +262,30 @@ const FLEET_HEALTH_DATA = [
   { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j' },
   { name: 'T-09 Toupie 8m³', score: 58, insight: 'Pneus à vérifier — usure détectée' },
   { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines' },
+];
+
+// ─────────────────────────────────────────────────────
+// SEEDED DELIVERIES (fallback when no live data)
+// ─────────────────────────────────────────────────────
+const SEEDED_DELIVERIES = [
+  {
+    bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30',
+    volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali',
+    workflow_status: 'production', heure_prevue: '10:30',
+    _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min',
+  },
+  {
+    bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25',
+    volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi',
+    workflow_status: 'validation_technique', heure_prevue: '08:15',
+    _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02',
+  },
+  {
+    bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35',
+    volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi',
+    workflow_status: 'planification', heure_prevue: '14:00',
+    _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45',
+  },
 ];
 
 // ─────────────────────────────────────────────────────
@@ -565,9 +591,7 @@ export default function WorldClassDeliveries() {
             </div>
           } />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {todayBons.length > 0 ? todayBons.map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />) : (
-              <Card><div style={{ textAlign: 'center', padding: 32, color: T.textDim }}>Aucune livraison aujourd'hui</div></Card>
-            )}
+            {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)}
           </div>
         </section>
 
