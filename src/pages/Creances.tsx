@@ -1413,24 +1413,60 @@ export default function Creances() {
                           </TableCell>
                           <TableCell className="text-center">
                             {receivable.days_overdue > 0 ? (
-                              <span className="text-destructive font-medium">
-                                +{receivable.days_overdue}j
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold" style={{ background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>
+                                <Clock className="h-3 w-3" />{receivable.days_overdue}j de retard
                               </span>
                             ) : (
-                              <span className="text-success">{t.pages.creances.upToDate}</span>
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold" style={{ background: 'rgba(34,197,94,0.12)', color: '#22c55e' }}>
+                                <CheckCircle className="h-3 w-3" />À jour
+                              </span>
                             )}
                           </TableCell>
                           <TableCell className="text-center">
                             <div className="flex flex-col items-center gap-1">
-                              <Badge variant="outline" className={cn("gap-1 mx-auto", statusConfig.color)}>
-                                {statusConfig.icon}
-                                {statusConfig.label}
-                              </Badge>
+                              {(() => {
+                                // Determine styled pill based on status
+                                const s = receivable.status;
+                                const isOverdue = s.startsWith('overdue_');
+                                const isAtRisk = s === 'at_risk';
+                                const isPaid = s === 'paid';
+                                const isDisputed = s === 'disputed';
+
+                                let label = statusConfig.label;
+                                let bg = 'rgba(34,197,94,0.15)';
+                                let border = '#22c55e';
+                                let color = '#22c55e';
+                                let pulse = false;
+                                let icon = statusConfig.icon;
+
+                                if (isOverdue) {
+                                  label = receivable.days_overdue > 30 ? 'Critique' : 'En retard';
+                                  bg = 'rgba(239,68,68,0.15)'; border = '#ef4444'; color = '#ef4444'; pulse = true;
+                                } else if (isAtRisk) {
+                                  label = 'À risque';
+                                  bg = 'rgba(245,158,11,0.15)'; border = '#f59e0b'; color = '#f59e0b'; pulse = false;
+                                } else if (isPaid) {
+                                  label = 'Payé'; bg = 'rgba(34,197,94,0.15)'; border = '#22c55e'; color = '#22c55e';
+                                } else if (isDisputed) {
+                                  label = 'Litige'; bg = 'rgba(245,158,11,0.15)'; border = '#f59e0b'; color = '#f59e0b';
+                                } else {
+                                  label = 'Courant';
+                                }
+
+                                return (
+                                  <span
+                                    className={cn("inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold", pulse && 'animate-pulse')}
+                                    style={{ background: bg, border: `1px solid ${border}`, color }}
+                                  >
+                                    {icon}{label}
+                                  </span>
+                                );
+                              })()}
                               {isPartialPayment && (
-                                <Badge variant="outline" className="gap-1 mx-auto border-warning/50 bg-warning/10 text-warning text-[10px] animate-pulse">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold animate-pulse" style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid #f59e0b', color: '#f59e0b' }}>
                                   <AlertTriangle className="h-2.5 w-2.5" />
                                   Litige possible
-                                </Badge>
+                                </span>
                               )}
                             </div>
                           </TableCell>
