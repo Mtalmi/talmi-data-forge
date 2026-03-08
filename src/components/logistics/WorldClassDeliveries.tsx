@@ -527,7 +527,7 @@ export default function WorldClassDeliveries() {
               <li style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
                 <strong style={{ color: T.textPri }}>Économie carburant :</strong>{' '}
                 {todayBons.length > 0
-                  ? `Estimation −12% de consommation gasoil (≈${Math.round(totalVolume * 0.8)} DH/jour) en regroupant les livraisons par zone géographique vs itinéraires individuels.`
+                  ? `Estimation −12% de consommation gasoil (≈${Math.round(totalVolumeLivre * 0.8)} DH/jour) en regroupant les livraisons par zone géographique vs itinéraires individuels.`
                   : 'Calcul en attente de données de livraison.'}
               </li>
             </ul>
