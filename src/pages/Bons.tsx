@@ -935,6 +935,63 @@ export default function Bons() {
           </div>
         </div>
 
+        {/* AI Agent Banner — Analyse Paiements */}
+        {bons.length > 0 && (() => {
+          const now = new Date();
+          const atRisk = bons.filter(b =>
+            (b.statut_paiement === 'En Attente' || b.statut_paiement === 'Pending' || b.statut_paiement === 'en_attente') &&
+            differenceInDays(now, new Date(b.date_livraison)) > 14
+          );
+          const atRiskTotal = atRisk.reduce((s, b) => s + (b.volume_m3 * (b.prix_vente_m3 || 0)), 0);
+          const unpaidByClient: Record<string, number> = {};
+          bons
+            .filter(b => b.statut_paiement === 'En Attente' || b.statut_paiement === 'Pending' || b.statut_paiement === 'en_attente')
+            .forEach(b => { unpaidByClient[b.client_id] = (unpaidByClient[b.client_id] || 0) + (b.volume_m3 * (b.prix_vente_m3 || 0)); });
+          const topUnpaid = Object.entries(unpaidByClient).sort((a, b) => b[1] - a[1])[0];
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              borderLeft: '4px solid #D4A843',
+              border: '1px solid rgba(212,168,67,0.15)',
+              borderLeftWidth: 4, borderLeftColor: '#D4A843',
+              borderRadius: 12, padding: '16px 20px',
+              display: 'flex', alignItems: 'flex-start', gap: 14,
+            }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginTop: 2 }}>
+                <Sparkles size={16} style={{ color: '#FFD700' }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>
+                  Agent IA — Analyse Paiements
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>
+                    ⚠️ <strong style={{ color: '#F59E0B' }}>{atRisk.length}</strong> paiement{atRisk.length !== 1 ? 's' : ''} en attente depuis +14 jours — montant à risque : <strong style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>{atRiskTotal.toLocaleString('fr-MA')} DH</strong>
+                  </span>
+                  {topUnpaid && (
+                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)' }}>
+                      🔍 Client prioritaire : <strong style={{ color: '#E2E8F0' }}>{topUnpaid[0]}</strong> — créance de <strong style={{ fontFamily: 'ui-monospace, monospace', color: '#D4A843' }}>{topUnpaid[1].toLocaleString('fr-MA')} DH</strong>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => toast.success('Rapport IA paiements en cours de génération...')}
+                style={{
+                  flexShrink: 0, padding: '8px 16px', borderRadius: 8,
+                  background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
+                  color: '#D4A843', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                  transition: 'background 150ms',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+              >
+                Voir Rapport
+              </button>
+            </div>
+          );
+        })()}
+
         {/* Workflow Filter Tabs - Desktop */}
         {!isMobile && (
           <div className="flex items-center gap-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 0 }}>
