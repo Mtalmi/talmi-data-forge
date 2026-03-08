@@ -4,6 +4,7 @@ import WorldClassLaboratory from '@/components/laboratory/WorldClassLaboratory';
 import { AIAnalysisSection } from '@/components/laboratory/AIAnalysisSection';
 import { FormulaOptimizationCard } from '@/components/laboratory/FormulaOptimizationCard';
 import { RegulatoryComplianceCard } from '@/components/laboratory/RegulatoryComplianceCard';
+import { OperatorPerformanceSection } from '@/components/laboratory/OperatorPerformanceSection';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useLabTests } from '@/hooks/useLabTests';
