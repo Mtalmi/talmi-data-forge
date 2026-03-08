@@ -4,6 +4,7 @@ import WorldClassLaboratory from '@/components/laboratory/WorldClassLaboratory';
 import { AIAnalysisSection } from '@/components/laboratory/AIAnalysisSection';
 import { FormulaOptimizationCard } from '@/components/laboratory/FormulaOptimizationCard';
 import { RegulatoryComplianceCard } from '@/components/laboratory/RegulatoryComplianceCard';
+import { OperatorPerformanceSection } from '@/components/laboratory/OperatorPerformanceSection';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useLabTests } from '@/hooks/useLabTests';
@@ -187,6 +188,10 @@ export default function Laboratoire() {
       {/* 🛡️ AI Regulatory Compliance */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
         <RegulatoryComplianceCard />
+      </div>
+      {/* 🧑‍🔬 Performance Opérateurs IA */}
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+        <OperatorPerformanceSection />
       </div>
       {/* Legacy section removed — WorldClassLaboratory is the primary UI */}
     </MainLayout>
