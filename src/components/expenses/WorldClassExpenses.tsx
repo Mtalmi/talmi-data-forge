@@ -1474,6 +1474,137 @@ function DepartmentBudgetAllocation() {
 }
 
 // ─────────────────────────────────────────────────────
+// PENDING APPROVALS QUEUE
+// ─────────────────────────────────────────────────────
+function PendingApprovalsQueue() {
+  const [items, setItems] = useState([
+    { id: '1', name: 'Ahmed B.', avatar: 'AB', desc: 'Pièces de rechange — pompe hydraulique', amount: 4850, cat: 'Maintenance', catColor: T.purple, date: '06 Mar 2026', priority: 'Urgent' as const },
+    { id: '2', name: 'Karim L.', avatar: 'KL', desc: 'Carburant flotte — semaine 10', amount: 3200, cat: 'Carburant', catColor: T.warning, date: '05 Mar 2026', priority: 'Normal' as const },
+    { id: '3', name: 'Sara M.', avatar: 'SM', desc: 'Fournitures bureau — papeterie Q1', amount: 680, cat: 'Fournitures', catColor: T.info, date: '04 Mar 2026', priority: 'Faible' as const },
+  ]);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'approve' | 'reject' } | null>(null);
+
+  const priorityConfig = {
+    Urgent: { color: T.danger, bg: `${T.danger}15` },
+    Normal: { color: T.warning, bg: `${T.warning}15` },
+    Faible: { color: T.success, bg: `${T.success}15` },
+  };
+
+  const handleConfirm = () => {
+    if (!confirmAction) return;
+    setItems(prev => prev.filter(i => i.id !== confirmAction.id));
+    setConfirmAction(null);
+  };
+
+  return (
+    <section>
+      <SectionHeader icon={Clock} label="APPROBATIONS EN ATTENTE" right={
+        <Bdg label={`${items.length} demandes`} color={T.warning} bg={`${T.warning}15`} pulse />
+      } />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {items.length === 0 && (
+          <div style={{
+            background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12,
+            padding: 32, textAlign: 'center',
+          }}>
+            <CheckCircle size={32} color={T.success} style={{ margin: '0 auto 12px', opacity: 0.5 }} />
+            <p style={{ color: T.textSec, fontSize: 13 }}>Toutes les demandes ont été traitées</p>
+          </div>
+        )}
+        {items.map((item) => {
+          const pc = priorityConfig[item.priority];
+          const isConfirming = confirmAction?.id === item.id;
+          return (
+            <div key={item.id} style={{
+              background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12,
+              padding: 20, position: 'relative', overflow: 'hidden',
+              transition: 'all 220ms',
+            }}>
+              {/* Confirm overlay */}
+              {isConfirming && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 10,
+                  background: 'rgba(11,17,32,0.92)', backdropFilter: 'blur(8px)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+                }}>
+                  <p style={{ fontSize: 13, color: T.textSec }}>
+                    {confirmAction.action === 'approve' ? 'Approuver' : 'Rejeter'} cette dépense ?
+                  </p>
+                  <button onClick={handleConfirm} style={{
+                    padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                    background: confirmAction.action === 'approve' ? T.success : T.danger,
+                    color: '#fff', border: 'none', fontFamily: 'DM Sans, sans-serif',
+                  }}>Confirmer</button>
+                  <button onClick={() => setConfirmAction(null)} style={{
+                    padding: '7px 16px', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                    background: 'transparent', color: T.textSec, border: `1px solid ${T.cardBorder}`,
+                    fontFamily: 'DM Sans, sans-serif',
+                  }}>Annuler</button>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                {/* Avatar */}
+                <div style={{
+                  width: 40, height: 40, borderRadius: 10, flexShrink: 0,
+                  background: `${T.gold}15`, border: `1px solid ${T.gold}25`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'monospace', fontSize: 13, fontWeight: 700, color: T.gold,
+                }}>{item.avatar}</div>
+
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: T.textPri }}>{item.name}</span>
+                    <span style={{ fontSize: 11, color: T.textDim }}>{item.date}</span>
+                  </div>
+                  <p style={{ fontSize: 12, color: T.textSec }}>{item.desc}</p>
+                </div>
+
+                {/* Category badge */}
+                <Bdg label={item.cat} color={item.catColor} bg={`${item.catColor}15`} />
+
+                {/* Priority */}
+                <span style={{
+                  padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 700,
+                  background: pc.bg, color: pc.color, border: `1px solid ${pc.color}40`,
+                }}>{item.priority}</span>
+
+                {/* Amount */}
+                <span style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                  fontSize: 16, fontWeight: 600, color: T.gold, minWidth: 100, textAlign: 'right',
+                }}>{item.amount.toLocaleString('fr-FR')} DH</span>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                  <button onClick={() => setConfirmAction({ id: item.id, action: 'approve' })} style={{
+                    padding: '7px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                    background: `${T.success}15`, border: `1px solid ${T.success}40`, color: T.success,
+                    cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = T.success; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = `${T.success}15`; e.currentTarget.style.color = T.success; }}
+                  >Approuver</button>
+                  <button onClick={() => setConfirmAction({ id: item.id, action: 'reject' })} style={{
+                    padding: '7px 14px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                    background: `${T.danger}15`, border: `1px solid ${T.danger}40`, color: T.danger,
+                    cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = T.danger; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = `${T.danger}15`; e.currentTarget.style.color = T.danger; }}
+                  >Rejeter</button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // APPROVAL INTELLIGENCE PANEL
 // ─────────────────────────────────────────────────────
 function ApprovalIntelligencePanel({ recurringCount }: { recurringCount: number }) {
