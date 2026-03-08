@@ -837,24 +837,32 @@ function UpcomingCard({ u, delay }: { u: typeof UPCOMING[0]; delay: number }) {
         border: `1px solid ${u.specialtyColor}44`, borderRadius: 100,
         padding: '2px 10px', fontSize: 11, fontWeight: 600, display: 'inline-block', marginBottom: 12,
       }}>{u.specialty}</span>
-      {/* Details */}
-      <div style={{ display: 'flex', gap: 20, marginBottom: 14 }}>
-        <div>
-          <div style={{ color: T.textDim, fontSize: 11 }}>Chantier</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.textSec, fontSize: 13 }}>
-            <MapPin size={11} /> {u.chantier}
-          </div>
-        </div>
-        <div>
-          <div style={{ color: T.textDim, fontSize: 11 }}>Date requise</div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: isHaute ? T.danger : T.info, fontWeight: 700 }}>{u.date}</div>
-        </div>
-        <div>
-          <div style={{ color: T.textDim, fontSize: 11 }}>Durée / Budget</div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold }}>{u.duree} — {u.budget}</div>
-        </div>
-      </div>
-      {/* Buttons */}
+       {/* Details */}
+       <div style={{ display: 'flex', gap: 20, marginBottom: 14 }}>
+         <div>
+           <div style={{ color: T.textDim, fontSize: 11 }}>Chantier</div>
+           <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: T.textSec, fontSize: 13 }}>
+             <MapPin size={11} /> {u.chantier}
+           </div>
+         </div>
+         <div>
+           <div style={{ color: T.textDim, fontSize: 11 }}>Date requise</div>
+           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: isHaute ? T.danger : T.info, fontWeight: 700 }}>{u.date}</div>
+         </div>
+         <div>
+           <div style={{ color: T.textDim, fontSize: 11 }}>Durée / Budget</div>
+           <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.gold }}>{u.duree} — {u.budget}</div>
+         </div>
+       </div>
+       {/* AI Match Recommendation */}
+       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: `1px solid ${T.cardBorder}` }}>
+         <Zap size={14} color="#D4A843" />
+         <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
+           IA recommande · {u.besoin === 'Pompage gros volume' ? 'Atlas Pompage SARL' : 'Électricité MB'} — score{' '}
+           <span style={{ color: '#D4A843' }}>{u.besoin === 'Pompage gros volume' ? '94' : '91'}</span>/100
+         </span>
+       </div>
+       {/* Buttons */}
       <div style={{ display: 'flex', gap: 10 }}>
         <button style={{
           display: 'flex', alignItems: 'center', gap: 6,
