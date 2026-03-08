@@ -216,9 +216,9 @@ function useStocksLiveData() {
       if (movementsRes.data?.length) {
         setMovements(movementsRes.data.map(m => ({
           date: m.created_at ? format(new Date(m.created_at), 'dd/MM HH:mm') : '—',
-          type: m.type_mouvement === 'entree' ? 'Entrée' : 'Sortie',
+          type: m.type_mouvement === 'reception' ? 'Entrée' : 'Sortie',
           material: m.materiau || '—',
-          qty: `${m.type_mouvement === 'entree' ? '+' : '-'}${Math.abs(m.quantite || 0).toLocaleString('fr-FR')}`,
+          qty: `${m.type_mouvement === 'reception' ? '+' : '-'}${Math.abs(m.quantite || 0).toLocaleString('fr-FR')}`,
           ref: m.reference_id || '—',
           resp: m.fournisseur || 'Atlas Concrete',
         })));
