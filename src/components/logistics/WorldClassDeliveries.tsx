@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
-  Bell, TrendingUp,
+  Bell, TrendingUp, Zap, ChevronDown,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
@@ -275,6 +275,68 @@ function ForecastTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// BRIEFING LOGISTIQUE IA
+// ─────────────────────────────────────────────────────
+function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalDeliveries: number; enRoute: number; planned: number }) {
+  const [expanded, setExpanded] = useState(true);
+  return (
+    <section>
+      <div
+        style={{
+          background: 'rgba(212,168,67,0.08)',
+          border: '1px solid rgba(212,168,67,0.2)',
+          borderLeft: '4px solid #D4A843',
+          borderRadius: 10,
+          overflow: 'hidden',
+          transition: 'all 0.3s ease',
+        }}
+      >
+        {/* Header — always visible */}
+        <button
+          onClick={() => setExpanded(e => !e)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px',
+            background: 'transparent', border: 'none', cursor: 'pointer', color: T.textPri,
+          }}
+        >
+          <Zap size={16} color="#D4A843" fill="#D4A843" />
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#D4A843', flex: 1, textAlign: 'left' }}>
+            BRIEFING LOGISTIQUE IA
+          </span>
+          <span style={{ fontSize: 10, color: T.textDim, marginRight: 4 }}>{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
+          <ChevronDown
+            size={16}
+            color={T.textSec}
+            style={{ transition: 'transform 0.3s ease', transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          />
+        </button>
+
+        {/* Collapsible body */}
+        <div style={{
+          maxHeight: expanded ? 300 : 0,
+          opacity: expanded ? 1 : 0,
+          overflow: 'hidden',
+          transition: 'max-height 0.35s ease, opacity 0.3s ease',
+          padding: expanded ? '0 18px 16px' : '0 18px',
+        }}>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7 }}>
+            <p style={{ margin: '0 0 8px' }}>
+              📋 <strong style={{ color: T.textPri }}>{totalDeliveries} livraisons planifiées</strong> aujourd'hui — {enRoute} en route, {planned} en préparation.
+            </p>
+            <p style={{ margin: '0 0 8px', color: '#F59E0B' }}>
+              ⚠️ <strong>Risque élevé :</strong> Livraison BL-2024-0847 (client Résidences Atlas) — retard estimé 45 min dû au trafic sur l'axe A3. Recommandation : réaffecter toupie T-09.
+            </p>
+            <p style={{ margin: 0, color: 'rgba(255,255,255,0.7)' }}>
+              🚛 <strong style={{ color: T.textPri }}>Déploiement optimal :</strong> 6 toupies actives suffisent pour le volume prévu ({totalDeliveries * 8} m³). Garder T-03 et T-12 en réserve pour les commandes flash après 14h.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('aujourdhui');
   const tabs = [{ id: 'aujourdhui', label: "Aujourd'hui" }, { id: 'semaine', label: 'Cette semaine' }, { id: 'historique', label: 'Historique' }];
@@ -343,6 +405,9 @@ export default function WorldClassDeliveries() {
             <KPICard label="En Route" value={enRoute} suffix="" color={T.info} icon={MapPin} trend={`${planned} planifiés`} trendPositive delay={240} />
           </div>
         </section>
+
+        {/* Briefing Logistique IA */}
+        <LogisticsBriefingBanner totalDeliveries={totalDeliveries} enRoute={enRoute} planned={planned} />
 
         {/* Pipeline */}
         <section>
