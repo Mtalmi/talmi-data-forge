@@ -573,6 +573,51 @@ export default function WorldClassLaboratory() {
           </div>
         </section>
 
+        {/* ══════ AI RISK PREDICTION CARD ══════ */}
+        <section>
+          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Zap size={14} color={T.gold} />
+                <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                  Agent IA: Risque Prochain Batch
+                </span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+              <div style={{ textAlign: 'center', flexShrink: 0 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
+                  Score Risque
+                </div>
+                <span style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                  fontSize: 48, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em',
+                  color: '#F59E0B',
+                }}>
+                  34
+                </span>
+                <div style={{ fontSize: 10, color: T.textDim, marginTop: 4 }}>/100</div>
+              </div>
+              <div style={{ flex: 1, borderLeft: '1px solid rgba(255,255,255,0.06)', paddingLeft: 20 }}>
+                <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, margin: 0 }}>
+                  <strong style={{ color: T.gold }}>Formule B35</strong> — variance élevée détectée sur les 5 derniers tests. Probabilité de non-conformité : <strong style={{ fontFamily: 'ui-monospace, monospace', color: '#F59E0B' }}>34%</strong>. Recommandation : <span style={{ color: T.success }}>réduire E/C de 0.02</span>.
+                </p>
+                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: `${T.warning}20`, border: `1px solid ${T.warning}40`, color: T.warning, fontSize: 10, fontWeight: 600 }}>
+                    Variance: ±4.2 MPa
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: T.textSec, fontSize: 10, fontWeight: 600 }}>
+                    5 tests analysés
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 6, background: `${T.gold}15`, border: `1px solid ${T.gold}30`, color: T.gold, fontSize: 10, fontWeight: 600 }}>
+                    E/C actuel: 0.48
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
         {/* ══════ SECTION 4 — NON-CONFORMITY DETAIL ══════ */}
         <section>
           <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)' }}>
