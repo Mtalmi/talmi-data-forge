@@ -6,7 +6,7 @@ import {
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
-  Bell, TrendingUp,
+  Bell, TrendingUp, Zap, ChevronDown,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
@@ -343,6 +343,9 @@ export default function WorldClassDeliveries() {
             <KPICard label="En Route" value={enRoute} suffix="" color={T.info} icon={MapPin} trend={`${planned} planifiés`} trendPositive delay={240} />
           </div>
         </section>
+
+        {/* Briefing Logistique IA */}
+        <LogisticsBriefingBanner totalDeliveries={totalDeliveries} enRoute={enRoute} planned={planned} />
 
         {/* Pipeline */}
         <section>
