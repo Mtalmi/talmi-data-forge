@@ -884,17 +884,59 @@ export default function Bons() {
           </div>
         </div>
 
-        {/* Workflow Legend - Hide on mobile */}
+        {/* Workflow Filter Tabs - Desktop */}
         {!isMobile && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: 0 }}>
+            {/* All tab */}
+            <button
+              onClick={() => setStatusFilter('all')}
+              className="relative px-4 py-2.5 text-xs font-medium transition-colors"
+              style={{
+                color: statusFilter === 'all' ? '#D4A843' : 'rgba(255,255,255,0.5)',
+                background: statusFilter === 'all' ? 'rgba(212,168,67,0.15)' : 'transparent',
+                borderBottom: statusFilter === 'all' ? '2px solid #D4A843' : '2px solid transparent',
+                borderRadius: '8px 8px 0 0',
+              }}
+              onMouseEnter={e => { if (statusFilter !== 'all') e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { if (statusFilter !== 'all') e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+            >
+              Tous
+              <Badge variant="outline" className="ml-1.5 text-[10px] px-1.5 py-0" style={{ borderColor: 'rgba(255,255,255,0.15)', color: 'inherit' }}>
+                {bons.length}
+              </Badge>
+            </button>
             {WORKFLOW_STEPS.map((step) => {
               const Icon = step.icon;
+              const count = bons.filter(b => (b.workflow_status || 'planification') === step.value).length;
+              const isActive = statusFilter === step.value;
               return (
-                <span key={step.value} className={cn('inline-flex items-center gap-1 px-2 py-1 rounded text-xs bg-muted/50', step.color)}>
-                   <Icon className="h-3 w-3" />
-
+                <button
+                  key={step.value}
+                  onClick={() => setStatusFilter(step.value)}
+                  className="relative flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors"
+                  style={{
+                    color: isActive ? '#D4A843' : 'rgba(255,255,255,0.5)',
+                    background: isActive ? 'rgba(212,168,67,0.15)' : 'transparent',
+                    borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                    borderRadius: '8px 8px 0 0',
+                  }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; }}
+                >
+                  <Icon className="h-3.5 w-3.5" />
                   {step.label}
-                </span>
+                  {count > 0 && (
+                    <span
+                      className="text-[10px] font-semibold px-1.5 rounded-full"
+                      style={{
+                        background: isActive ? 'rgba(212,168,67,0.25)' : 'rgba(255,255,255,0.08)',
+                        color: isActive ? '#D4A843' : 'rgba(255,255,255,0.6)',
+                      }}
+                    >
+                      {count}
+                    </span>
+                  )}
+                </button>
               );
             })}
           </div>
