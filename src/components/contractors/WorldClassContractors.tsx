@@ -922,7 +922,7 @@ export default function WorldClassContractors() {
                   fontFamily: "'DM Sans', sans-serif", marginTop: 8, opacity: submitting ? 0.7 : 1,
                 }}
               >
-                {submitting ? 'Création…' : 'Créer le Sous-Traitant'}
+                {submitting ? 'Sauvegarde…' : editingContractorId ? 'Enregistrer les Modifications' : 'Créer le Sous-Traitant'}
               </button>
               {formError && (
                 <div style={{ color: '#EF4444', fontSize: 13, marginTop: 4 }}>{formError}</div>
