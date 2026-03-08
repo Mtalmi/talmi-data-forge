@@ -841,7 +841,7 @@ export default function WorldClassContractors() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
-                <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Nouveau Sous-Traitant</span>
+                <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{editingContractorId ? 'Modifier Sous-Traitant' : 'Nouveau Sous-Traitant'}</span>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
