@@ -679,6 +679,39 @@ export default function Bons() {
           );
         })()}
 
+        {/* 4 KPI Cards */}
+        {(() => {
+          const totalBons = bons.length;
+          const totalVol = bons.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+          const ca = bons.reduce((s, b) => s + ((b.volume_m3 || 0) * (b.prix_vente_m3 || 0)), 0);
+          const caFmt = ca >= 1_000_000 ? `${(ca / 1_000_000).toFixed(1)} M` : ca >= 1_000 ? `${(ca / 1_000).toFixed(0)} K` : ca.toFixed(0);
+          const paidCount = bons.filter(b => b.statut_paiement === 'Payé').length;
+          const tauxPaiement = totalBons > 0 ? ((paidCount / totalBons) * 100).toFixed(0) : '0';
+          const numStyle: React.CSSProperties = { fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' };
+          const unitStyle: React.CSSProperties = { fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 20, fontWeight: 400, color: '#9CA3AF' };
+          const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10 };
+          const cardStyle: React.CSSProperties = { flex: 1, background: 'rgba(255,255,255,0.04)', borderLeft: '3px solid #D4A843', borderRadius: 12, padding: 20 };
+          const cards = [
+            { label: 'Total Bons', value: String(totalBons), unit: 'bons' },
+            { label: 'Volume Total', value: totalVol.toFixed(0), unit: 'm³' },
+            { label: "Chiffre d'Affaires", value: caFmt, unit: 'DH' },
+            { label: 'Taux Paiement', value: tauxPaiement, unit: '%' },
+          ];
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+              {cards.map((c, i) => (
+                <div key={i} style={cardStyle}>
+                  <div style={labelStyle}>{c.label}</div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                    <span style={numStyle}>{c.value}</span>
+                    <span style={unitStyle}>{c.unit}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
+
         <div className={cn(
           "flex gap-4",
           isTouchDevice ? "flex-col" : "flex-row items-center justify-between"
