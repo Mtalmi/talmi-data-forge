@@ -381,7 +381,7 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
 // ─────────────────────────────────────────────────────
 // SECTION: MISSION CARD
 // ─────────────────────────────────────────────────────
-function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void }) {
+function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
   const vis = useFadeIn(delay);
