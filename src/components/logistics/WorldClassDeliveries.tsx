@@ -467,7 +467,7 @@ export default function WorldClassDeliveries() {
           <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
             {pipeline.map((stage, i) => (
               <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 16 }}>
-                <PipelineCard label={stage.label} count={stage.count} color={stage.color} icon={stage.icon} delay={i * 100} />
+                <PipelineCard label={stage.label} count={stage.count} color={stage.color} icon={stage.icon} delay={i * 100} aiRisk={stage.aiRisk} />
                 {i < pipeline.length - 1 && <div style={{ flexShrink: 0, color: T.textDim, fontSize: 22, fontWeight: 300 }}>→</div>}
               </div>
             ))}
