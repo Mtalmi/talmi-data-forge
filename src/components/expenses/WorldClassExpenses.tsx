@@ -64,6 +64,9 @@ function useExpensesLiveData() {
     pending: [] as { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }[],
     budgetTotal: 0,
     budgetUsedPct: 0,
+    dailyAvg: 0,
+    todaySpend: 0,
+    dailyBudget: 0,
   });
 
   const fetch = useCallback(async () => {
@@ -85,11 +88,19 @@ function useExpensesLiveData() {
       .limit(200) as { data: any[] | null };
 
     const allDepenses = depenses || [];
+    const todayStr = now.toISOString().split('T')[0];
     const thisMonth = allDepenses.filter(d => d.date_depense >= startOfMonth);
+    const todayExpenses = allDepenses.filter(d => d.date_depense === todayStr);
+    const todaySpend = todayExpenses.reduce((s, d) => s + (d.montant || 0), 0);
 
     // Total this month in K
     const totalThisMonthRaw = thisMonth.reduce((s, d) => s + (d.montant || 0), 0);
     const totalThisMonth = Math.round(totalThisMonthRaw / 1000);
+
+    // Daily average
+    const dayOfMonth = Math.max(now.getDate(), 1);
+    const dailyAvg = Math.round(totalThisMonthRaw / dayOfMonth);
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
     // Estimate budget (use average of last 3 months * 1.1 or fixed 250K if no history)
     const monthTotals: number[] = [];
@@ -212,16 +223,20 @@ function useExpensesLiveData() {
       pending,
       budgetTotal,
       budgetUsedPct: Math.min(budgetUsedPct, 100),
+      dailyAvg,
+      todaySpend,
+      dailyBudget: budgetTotal > 0 ? Math.round((budgetTotal * 1000) / daysInMonth) : 8000,
     });
   }, []);
 
   useEffect(() => {
     fetch();
+    const interval = setInterval(fetch, 30000);
     const ch = supabase.channel('wc-expenses-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'depenses' }, () => fetch())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses_controlled' }, () => fetch())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => { clearInterval(interval); supabase.removeChannel(ch); };
   }, [fetch]);
 
   return data;
@@ -747,12 +762,13 @@ export default function WorldClassExpenses() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
             <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
             <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
             <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
+            <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
           </div>
         </section>
 
