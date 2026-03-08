@@ -569,13 +569,39 @@ export default function Creances() {
                 </CardContent>
               </Card>
             ) : (
+            <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {overdueByClient.slice(0, 12).map((client) => (
+              {overdueByClient.slice(0, 12).map((client) => {
+                const creditScore = calculateCreditScore(client.client_name, client.receivables);
+                const scoreColor = getCreditScoreColor(creditScore);
+                return (
                 <Card key={client.client_name} className="border-warning/30">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base flex items-center justify-between">
                       <span className="truncate">{client.client_name}</span>
-                      <Badge variant="destructive">{client.count} {t.pages.creances.invoices}</Badge>
+                      <div className="flex items-center gap-2">
+                        {/* AI Credit Score */}
+                        <div 
+                          className="w-8 h-8 rounded-full flex items-center justify-center"
+                          style={{ 
+                            backgroundColor: `${scoreColor}20`,
+                            border: `1.5px solid ${scoreColor}`,
+                          }}
+                          title="Score Crédit IA"
+                        >
+                          <span 
+                            style={{ 
+                              fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                              fontWeight: 200,
+                              fontSize: '12px',
+                              color: scoreColor,
+                            }}
+                          >
+                            {creditScore}
+                          </span>
+                        </div>
+                        <Badge variant="destructive">{client.count} {t.pages.creances.invoices}</Badge>
+                      </div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -600,8 +626,39 @@ export default function Creances() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
+
+            {/* Credit Score Legend */}
+            <div className="flex justify-end mt-4">
+              <Card className="w-fit" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <CardContent className="py-3 px-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Score Crédit IA</p>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#22c55e' }} />
+                      <span className="text-gray-300">≥80 — Excellent</span>
+                      <span className="text-gray-500 ml-auto">Risque faible</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#f59e0b' }} />
+                      <span className="text-gray-300">60-79 — Modéré</span>
+                      <span className="text-gray-500 ml-auto">Surveiller</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ef4444' }} />
+                      <span className="text-gray-300">&lt;60 — Critique</span>
+                      <span className="text-gray-500 ml-auto">Action requise</span>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-2 border-t border-white/10 pt-2">
+                    Calcul: Ponctualité (50%) • Délai moyen (30%) • Encours (20%)
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+            </>
             )}
           </TabsContent>
 
