@@ -9,6 +9,7 @@ import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
+import { BonDetailDrawer } from '@/components/bons/BonDetailDrawer';
 import { BlPrintable } from '@/components/bons/BlPrintable';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
@@ -209,6 +210,8 @@ export default function Bons() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [anomalyBannerDismissed, setAnomalyBannerDismissed] = useState(false);
+  const [drawerBlId, setDrawerBlId] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Anomaly detection
   const anomalies = (() => {
@@ -1037,7 +1040,14 @@ export default function Bons() {
               </TableHeader>
               <TableBody>
                 {bons.map((b) => (
-                  <TableRow key={b.bl_id} className={cn(b.alerte_ecart && 'bg-destructive/5', b.alerte_marge && 'bg-warning/5')}>
+                  <TableRow
+                    key={b.bl_id}
+                    className={cn(b.alerte_ecart && 'bg-destructive/5', b.alerte_marge && 'bg-warning/5', 'cursor-pointer transition-all duration-150 border-l-[3px] border-l-transparent hover:border-l-[#D4A843]')}
+                    style={{ transition: 'background 150ms, border-color 150ms' }}
+                    onClick={() => { setDrawerBlId(b.bl_id); setDrawerOpen(true); }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = ''; }}
+                  >
                     <TableCell className="font-mono font-medium">
                       <div className="flex items-center gap-2">
                         {b.bl_id}
@@ -1051,7 +1061,7 @@ export default function Bons() {
                     <TableCell>{b.client_id}</TableCell>
                     <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
                     <TableCell className="text-right">{b.volume_m3} m³</TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       {(isCeo || isDirecteurOperations || isResponsableTechnique) && b.workflow_status !== 'facture' && b.workflow_status !== 'annule' ? (
                         <Select
                           value={b.workflow_status || 'planification'}
@@ -1072,7 +1082,7 @@ export default function Bons() {
                         getWorkflowBadge(b.workflow_status)
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       {canUpdatePayment ? (
                         <Select
                           value={b.statut_paiement}
@@ -1102,7 +1112,7 @@ export default function Bons() {
                         <CheckCircle className="h-5 w-5 text-success" />
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       <div className="flex items-center gap-1">
                         {/* AI Risk Indicators */}
                         <TooltipProvider>
@@ -1177,6 +1187,13 @@ export default function Bons() {
           open={detailDialogOpen}
           onOpenChange={setDetailDialogOpen}
           onUpdate={fetchData}
+        />
+
+        {/* Detail Drawer */}
+        <BonDetailDrawer
+          blId={drawerBlId}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
         />
       </div>
     </MainLayout>
