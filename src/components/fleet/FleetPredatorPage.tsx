@@ -30,7 +30,12 @@ import {
   Signal,
   Fuel,
   Route,
-  Navigation2
+  Navigation2,
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Zap,
 } from 'lucide-react';
 import { FleetGPSMap, type GPSVehicle } from './FleetGPSMap';
 import { TripHistoryReplay } from './TripHistoryReplay';
@@ -659,6 +664,11 @@ export function FleetPredatorPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Drivers Performance Tab */}
+        <TabsContent value="drivers" className="mt-0">
+          <DriverLeaderboard />
         </TabsContent>
 
         {/* API Tab */}
