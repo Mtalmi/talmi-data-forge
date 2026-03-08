@@ -220,7 +220,7 @@ function useStocksLiveData() {
           material: m.materiau || '—',
           qty: `${m.type_mouvement === 'entree' ? '+' : '-'}${Math.abs(m.quantite || 0).toLocaleString('fr-FR')}`,
           ref: m.reference_id || '—',
-          resp: m.created_by || '—',
+          resp: m.fournisseur || 'Atlas Concrete',
         })));
 
         // Weekly movement chart
