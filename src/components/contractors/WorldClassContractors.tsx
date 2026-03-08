@@ -379,7 +379,7 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
 // ─────────────────────────────────────────────────────
 // SECTION: MISSION CARD
 // ─────────────────────────────────────────────────────
-function MissionCard({ m, delay }: { m: typeof MISSIONS[0]; delay: number }) {
+function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
   const vis = useFadeIn(delay);
