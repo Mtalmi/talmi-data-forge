@@ -14,6 +14,8 @@ interface ExportButtonProps<T extends Record<string, unknown>> {
   columns: Column<T>[];
   filename: string;
   disabled?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export function ExportButton<T extends Record<string, unknown>>({
@@ -21,6 +23,8 @@ export function ExportButton<T extends Record<string, unknown>>({
   columns,
   filename,
   disabled = false,
+  className,
+  style,
 }: ExportButtonProps<T>) {
   const { t } = useI18n();
   const eb = t.exportButton;
@@ -41,7 +45,8 @@ export function ExportButton<T extends Record<string, unknown>>({
       size="sm"
       onClick={handleExport}
       disabled={disabled || data.length === 0}
-      className="gap-2"
+      className={className || "gap-2"}
+      style={style}
     >
       <FileSpreadsheet className="h-4 w-4" />
       {eb.label}
