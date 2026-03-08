@@ -277,6 +277,11 @@ export function FleetPredatorPage() {
             <span className="hidden sm:inline">Zones Sécurisées</span>
             <span className="sm:hidden">Zones</span>
           </TabsTrigger>
+          <TabsTrigger value="drivers" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
+            <Users className="h-4 w-4" />
+            <span className="hidden sm:inline">Performance</span>
+            <span className="sm:hidden">Perf.</span>
+          </TabsTrigger>
           <TabsTrigger value="api" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
             <Server className="h-4 w-4" />
             <span className="hidden sm:inline">API Hardware</span>
