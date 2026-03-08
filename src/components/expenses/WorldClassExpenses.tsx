@@ -2670,7 +2670,97 @@ export default function WorldClassExpenses() {
           </div>
         </section>
 
-        {/* CATEGORY PROGRESS BARS */}
+        {/* DONUT BREAKDOWN - Par Catégorie */}
+        {activeTab === 'Par Catégorie' && (() => {
+          const donutColorMap: Record<string, string> = {
+            'Sous-traitants': '#D4A843',
+            'Maintenance': '#F0C060',
+            'Carburant': '#B8902E',
+            'Électricité': '#4A9EFF',
+            'Énergie': '#4A9EFF',
+            'Transport': '#22c55e',
+          };
+          const fallback = 'rgba(212,168,67,0.4)';
+          const cats = live.categories.length > 0 ? live.categories : [
+            { name: 'Sous-traitants', amount: 95, pct: 28, color: '#D4A843' },
+            { name: 'Maintenance', amount: 72, pct: 21, color: '#F0C060' },
+            { name: 'Carburant', amount: 58, pct: 17, color: '#B8902E' },
+            { name: 'Électricité', amount: 45, pct: 13, color: '#4A9EFF' },
+            { name: 'Transport', amount: 40, pct: 12, color: '#22c55e' },
+            { name: 'Autres', amount: 30, pct: 9, color: 'rgba(212,168,67,0.4)' },
+          ];
+          const coloredCats = cats.map(c => ({ ...c, color: donutColorMap[c.name] || fallback }));
+          const total = coloredCats.reduce((s, c) => s + c.amount, 0);
+
+          // SVG donut
+          const size = 220; const cxD = size / 2; const cyD = size / 2;
+          const outerR = 95; const innerR = 62; const gap = 2;
+          let cumAngle = -90;
+
+          return (
+            <section>
+              <div style={chartCardStyle}>
+                <SectionHeader icon={LayoutGrid} label="RÉPARTITION PAR CATÉGORIE" right={
+                  <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 11, color: '#9CA3AF' }}>{coloredCats.length} catégories</span>
+                } />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 32, flexWrap: 'wrap' as const, justifyContent: 'center' }}>
+                  {/* Donut SVG */}
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                      {coloredCats.map((cat, i) => {
+                        const sliceAngle = (cat.amount / total) * 360 - gap;
+                        const startA = cumAngle + gap / 2;
+                        const endA = startA + sliceAngle;
+                        cumAngle += (cat.amount / total) * 360;
+                        const toRad = (d: number) => (d * Math.PI) / 180;
+                        const largeArc = sliceAngle > 180 ? 1 : 0;
+                        const x1 = cxD + outerR * Math.cos(toRad(startA));
+                        const y1 = cyD + outerR * Math.sin(toRad(startA));
+                        const x2 = cxD + outerR * Math.cos(toRad(endA));
+                        const y2 = cyD + outerR * Math.sin(toRad(endA));
+                        const x3 = cxD + innerR * Math.cos(toRad(endA));
+                        const y3 = cyD + innerR * Math.sin(toRad(endA));
+                        const x4 = cxD + innerR * Math.cos(toRad(startA));
+                        const y4 = cyD + innerR * Math.sin(toRad(startA));
+                        const d = `M ${x1},${y1} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x2},${y2} L ${x3},${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4},${y4} Z`;
+                        return <path key={i} d={d} fill={cat.color} opacity={0.9} style={{ transition: 'opacity 200ms' }} />;
+                      })}
+                    </svg>
+                    {/* Center label */}
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                      <span style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                        fontSize: 36, fontWeight: 200, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em',
+                      }}>{total}K</span>
+                      <span style={{ fontSize: 10, color: '#9CA3AF', marginTop: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>DH Total</span>
+                    </div>
+                  </div>
+
+                  {/* Legend */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1, minWidth: 200 }}>
+                    {coloredCats.map((cat, i) => (
+                      <div key={i} style={{
+                        display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8,
+                        background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+                      }}>
+                        <div style={{ width: 12, height: 12, borderRadius: 3, background: cat.color, flexShrink: 0 }} />
+                        <span style={{ flex: 1, fontSize: 12, color: '#F1F5F9', fontWeight: 500 }}>{cat.name}</span>
+                        <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, fontWeight: 600, color: cat.color }}>
+                          {cat.amount}K DH
+                        </span>
+                        <span style={{
+                          fontSize: 10, fontWeight: 600, color: '#9CA3AF',
+                          padding: '2px 6px', borderRadius: 4, background: 'rgba(255,255,255,0.04)',
+                        }}>{cat.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         <section>
           <div style={chartCardStyle}>
             <SectionHeader icon={TrendingDown} label="Dépenses par Catégorie" right={<span style={{ color: T.textDim, fontSize: 11 }}>Dépensé vs Budget</span>} />
