@@ -115,6 +115,45 @@ export default function Creances() {
 
   const overdueByClient = getOverdueByClient();
 
+  // AI Credit Score calculation (0-100)
+  // Factors: payment punctuality (50%), average delay (30%), outstanding vs limit (20%)
+  const calculateCreditScore = (clientName: string, clientReceivables: Receivable[]) => {
+    if (clientReceivables.length === 0) return 100;
+    
+    // Find all receivables for this client (including paid ones)
+    const allClientReceivables = receivables.filter(r => r.client_name === clientName);
+    
+    // 1. Payment punctuality (50%): % of paid invoices
+    const paidCount = allClientReceivables.filter(r => r.status === 'paid').length;
+    const totalCount = allClientReceivables.length;
+    const punctualityScore = totalCount > 0 ? (paidCount / totalCount) * 100 : 50;
+    
+    // 2. Average delay (30%): lower is better, max penalty at 60+ days
+    const avgDelay = clientReceivables.reduce((sum, r) => sum + r.days_overdue, 0) / clientReceivables.length;
+    const delayScore = Math.max(0, 100 - (avgDelay * 1.5)); // -1.5 points per day
+    
+    // 3. Outstanding ratio (20%): total outstanding as % of typical order (approximated)
+    const totalOutstanding = clientReceivables.reduce((sum, r) => sum + r.amount_due, 0);
+    const avgInvoice = allClientReceivables.length > 0 
+      ? allClientReceivables.reduce((sum, r) => sum + r.amount, 0) / allClientReceivables.length 
+      : 50000;
+    const outstandingRatio = Math.min(totalOutstanding / (avgInvoice * 3), 1); // Cap at 3x avg
+    const outstandingScore = (1 - outstandingRatio) * 100;
+    
+    // Weighted final score
+    const finalScore = Math.round(
+      (punctualityScore * 0.5) + (delayScore * 0.3) + (outstandingScore * 0.2)
+    );
+    
+    return Math.max(0, Math.min(100, finalScore));
+  };
+
+  const getCreditScoreColor = (score: number) => {
+    if (score >= 80) return '#22c55e'; // green
+    if (score >= 60) return '#f59e0b'; // amber
+    return '#ef4444'; // red
+  };
+
   const handleAction = async () => {
     if (!selectedReceivable) return;
     setProcessingAction(true);
