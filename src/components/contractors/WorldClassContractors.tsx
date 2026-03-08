@@ -321,18 +321,33 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
       <div style={{ minWidth: 80, textAlign: 'center' }}>
         <Stars rating={c.note_service ?? 0} />
       </div>
-      {/* Risk Indicator */}
-       <div style={{ minWidth: 40, textAlign: 'center' }}>
-         {(() => {
-           if (isMission && c.jours_travailles >= 7) {
-             return <span style={{ fontSize: 10, color: '#FF4444' }} title="Mission critique — renouvellement urgent">●</span>;
-           }
-           if (isMission && c.jours_travailles >= 4) {
-             return <span style={{ fontSize: 10, color: '#F5C842' }} title="Mission en cours — surveiller">●</span>;
-           }
-           return <span style={{ fontSize: 10, color: '#22C55E' }} title="Disponible pour assignation">●</span>;
-         })()}
-       </div>
+       {/* Risk Indicator */}
+        <div style={{ minWidth: 40, textAlign: 'center' }}>
+          {(() => {
+            const getRiskDot = (contractor: any) => {
+              if (contractor.statut === 'mission' && contractor.jours_travailles >= 7) {
+                return { color: '#EF4444', label: 'Risque élevé' };
+              }
+              if (contractor.statut === 'mission' && contractor.jours_travailles >= 4) {
+                return { color: '#F59E0B', label: 'À surveiller' };
+              }
+              return { color: '#10B981', label: 'Nominal' };
+            };
+            const dot = getRiskDot(c);
+            return (
+              <div
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  backgroundColor: dot.color,
+                  margin: '0 auto',
+                }}
+                title={dot.label}
+              />
+            );
+          })()}
+        </div>
       {/* Status */}
       <div style={{ minWidth: 110, textAlign: 'center' }}>
          {isMission ? (
