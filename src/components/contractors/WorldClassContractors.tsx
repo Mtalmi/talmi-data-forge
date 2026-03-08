@@ -911,6 +911,146 @@ export default function WorldClassContractors() {
           </div>
         </>
       )}
+
+      {/* ══════════════════════════ MISSION DETAIL DRAWER ══════════════════════════ */}
+      {missionDrawer && (
+        <>
+          <div
+            onClick={() => setMissionDrawer(null)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998 }}
+          />
+          <div style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: 520, background: '#0F1629',
+            zIndex: 9999, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.5)',
+          }}>
+            {/* Header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 4, height: 48, background: '#D4A843', borderRadius: 2, flexShrink: 0 }} />
+                <AvatarCircle initials={missionDrawer.initials} bg={missionDrawer.avatarBg} textColor={missionDrawer.avatarText} size={44} />
+                <div>
+                  <div style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{missionDrawer.contractor}</div>
+                  <span style={{
+                    background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
+                    borderRadius: 100, padding: '2px 8px', fontSize: 11, fontWeight: 600, display: 'inline-block', marginTop: 4,
+                  }}>Sous-traitant</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setMissionDrawer(null)}
+                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}
+              >×</button>
+            </div>
+
+            {/* Content */}
+            <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 24, overflowY: 'auto' }}>
+
+              {/* Section 1 — Détails de la Mission */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <div style={{ width: 3, height: 16, background: '#D4A843', borderRadius: 2 }} />
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>Détails de la Mission</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {[
+                    { label: 'Mission ID', value: missionDrawer.id },
+                    { label: 'Client', value: missionDrawer.client },
+                    { label: 'Période', value: `${missionDrawer.debut} → ${missionDrawer.fin}` },
+                    { label: 'Tarif / Durée', value: `${missionDrawer.tarif} DH/jour × ${missionDrawer.total} jours` },
+                    { label: 'Coût estimé', value: missionDrawer.coutEstime, gold: true },
+                  ].map((row) => (
+                    <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>{row.label}</span>
+                      <span style={{
+                        fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700,
+                        color: (row as any).gold ? '#D4A843' : '#fff',
+                      }}>{row.value}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Progress */}
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, color: T.textSec }}>
+                      Jour {missionDrawer.joursActuel} sur {missionDrawer.joursTotal}
+                    </span>
+                    <span style={{
+                      background: `${T.gold}22`, color: T.gold, borderRadius: 100,
+                      padding: '2px 8px', fontSize: 11, fontWeight: 700,
+                    }}>{missionDrawer.progress}%</span>
+                  </div>
+                  <div style={{ height: 6, background: '#1E2D4A', borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{
+                      height: '100%', background: `linear-gradient(90deg, #D4A843, #F5D77A)`,
+                      borderRadius: 3, width: `${missionDrawer.progress}%`, transition: 'width 0.6s ease',
+                    }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 2 — Performance */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <div style={{ width: 3, height: 16, background: '#D4A843', borderRadius: 2 }} />
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>Performance</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Note moyenne</span>
+                    <Stars rating={5} />
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Coût MTD</span>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: '#D4A843', fontWeight: 700 }}>{missionDrawer.coutEstime}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Statut</span>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5,
+                      background: `${T.gold}22`, color: T.gold, border: `1px solid ${T.gold}44`,
+                      borderRadius: 100, padding: '4px 10px', fontSize: 11, fontWeight: 700,
+                    }}>
+                      <Briefcase size={11} /> En Mission
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3 — Actions */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <div style={{ width: 3, height: 16, background: '#D4A843', borderRadius: 2 }} />
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>Actions</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <button
+                    onClick={() => { setMissionDrawer(null); }}
+                    style={{
+                      width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+                      borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14, cursor: 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >Prolonger la Mission</button>
+                  <button
+                    onClick={() => handleTermineMission(missionDrawer.contractor)}
+                    disabled={terminatingMission}
+                    style={{
+                      width: '100%', background: 'transparent', border: '1px solid rgba(239,68,68,0.5)', color: '#EF4444',
+                      borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14,
+                      cursor: terminatingMission ? 'wait' : 'pointer', fontFamily: "'DM Sans', sans-serif",
+                      opacity: terminatingMission ? 0.7 : 1,
+                    }}
+                  >{terminatingMission ? 'En cours…' : 'Terminer la Mission'}</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
