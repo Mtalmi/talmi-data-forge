@@ -64,6 +64,9 @@ function useExpensesLiveData() {
     pending: [] as { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }[],
     budgetTotal: 0,
     budgetUsedPct: 0,
+    dailyAvg: 0,
+    todaySpend: 0,
+    dailyBudget: 0,
   });
 
   const fetch = useCallback(async () => {
@@ -85,11 +88,19 @@ function useExpensesLiveData() {
       .limit(200) as { data: any[] | null };
 
     const allDepenses = depenses || [];
+    const todayStr = now.toISOString().split('T')[0];
     const thisMonth = allDepenses.filter(d => d.date_depense >= startOfMonth);
+    const todayExpenses = allDepenses.filter(d => d.date_depense === todayStr);
+    const todaySpend = todayExpenses.reduce((s, d) => s + (d.montant || 0), 0);
 
     // Total this month in K
     const totalThisMonthRaw = thisMonth.reduce((s, d) => s + (d.montant || 0), 0);
     const totalThisMonth = Math.round(totalThisMonthRaw / 1000);
+
+    // Daily average
+    const dayOfMonth = Math.max(now.getDate(), 1);
+    const dailyAvg = Math.round(totalThisMonthRaw / dayOfMonth);
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
     // Estimate budget (use average of last 3 months * 1.1 or fixed 250K if no history)
     const monthTotals: number[] = [];
@@ -212,16 +223,20 @@ function useExpensesLiveData() {
       pending,
       budgetTotal,
       budgetUsedPct: Math.min(budgetUsedPct, 100),
+      dailyAvg,
+      todaySpend,
+      dailyBudget: budgetTotal > 0 ? Math.round((budgetTotal * 1000) / daysInMonth) : 8000,
     });
   }, []);
 
   useEffect(() => {
     fetch();
+    const interval = setInterval(fetch, 30000);
     const ch = supabase.channel('wc-expenses-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'depenses' }, () => fetch())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'expenses_controlled' }, () => fetch())
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => { clearInterval(interval); supabase.removeChannel(ch); };
   }, [fetch]);
 
   return data;
@@ -392,8 +407,79 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 }
 
 // ─────────────────────────────────────────────────────
-// DONUT LEGEND ITEM
+// BURN RATE CARD
 // ─────────────────────────────────────────────────────
+function BurnRateCard({ dailyAvg, todaySpend, dailyBudget, delay = 0 }: {
+  dailyAvg: number; todaySpend: number; dailyBudget: number; delay?: number;
+}) {
+  const visible = useFadeIn(delay);
+  const animatedAvg = useAnimatedCounter(dailyAvg, 1200);
+  const [liveSpend, setLiveSpend] = useState(todaySpend);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => { setLiveSpend(todaySpend); }, [todaySpend]);
+  useEffect(() => {
+    const iv = setInterval(() => setTick(t => t + 1), 30000);
+    return () => clearInterval(iv);
+  }, []);
+
+  const pct = dailyBudget > 0 ? Math.min((liveSpend / dailyBudget) * 100, 100) : 0;
+  const onTrack = liveSpend <= dailyBudget;
+  const barColor = onTrack ? T.success : T.danger;
+  const barW = useBarWidth(pct, delay + 400);
+
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
+      <Card style={{ height: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>BURN RATE</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 30, fontWeight: 200, color: T.gold, lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' as any }}>
+              {animatedAvg.toLocaleString('fr-FR')}
+              <span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>DH/j</span>
+            </p>
+
+            {/* Today's live counter */}
+            <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontSize: 10, color: T.textDim, fontWeight: 600 }}>Aujourd'hui:</span>
+              <span style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                fontSize: 14, fontWeight: 600, color: onTrack ? T.success : T.danger,
+              }}>
+                {liveSpend.toLocaleString('fr-FR')} DH
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div style={{ marginTop: 8, height: 3, borderRadius: 3, background: `${T.cardBorder}80`, overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', borderRadius: 3,
+                width: `${barW}%`,
+                background: barColor,
+                boxShadow: `0 0 8px ${barColor}60`,
+                transition: 'width 800ms cubic-bezier(0.4,0,0.2,1)',
+                animation: `tbos-pulse 2s infinite`,
+              }} />
+            </div>
+
+            {/* Live indicator */}
+            <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{
+                width: 6, height: 6, borderRadius: '50%', background: T.success,
+                animation: 'tbos-pulse 2s infinite', flexShrink: 0,
+              }} />
+              <span style={{ fontSize: 9, color: T.textDim, fontWeight: 500 }}>Mis à jour en temps réel</span>
+            </div>
+          </div>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255, 215, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Zap size={18} color={T.gold} />
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 function DonutLegendItem({ cat, active, onHover }: { cat: { name: string; amount: number; color: string; pct: number }; active: boolean; onHover: () => void }) {
   return (
     <div onMouseEnter={onHover} style={{
@@ -747,12 +833,13 @@ export default function WorldClassExpenses() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
             <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
             <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
             <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
+            <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
           </div>
         </section>
 
