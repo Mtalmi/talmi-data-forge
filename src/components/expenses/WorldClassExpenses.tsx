@@ -2649,6 +2649,9 @@ export default function WorldClassExpenses() {
           );
         })()}
 
+        {/* PENDING APPROVALS QUEUE - Approbations tab only */}
+        {activeTab === 'Approbations' && <PendingApprovalsQueue />}
+
         {/* AI APPROVAL INTELLIGENCE - Approbations tab only */}
         {activeTab === 'Approbations' && <ApprovalIntelligencePanel recurringCount={live.recurring.filter(r => r.amount < 500).length} />}
       </div>
