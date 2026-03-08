@@ -514,8 +514,11 @@ export default function WorldClassContractors() {
   const [terminatingMission, setTerminatingMission] = useState(false);
   const [selectedContractor, setSelectedContractor] = useState<any>(null);
   const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
-  const [prolongerTarget, setProlongerTarget] = useState<{ contractor: string; currentFin: string } | null>(null);
-  const [prolongerJours, setProlongerJours] = useState('3');
+  const [prolongerMission, setProlongerMission] = useState<any>(null);
+  const [nouvelleFinDate, setNouvelleFinDate] = useState('');
+  const [raisonProlongation, setRaisonProlongation] = useState('');
+  const [prolongerLoading, setProlongerLoading] = useState(false);
+  const [prolongerError, setProlongerError] = useState('');
   const [assignTarget, setAssignTarget] = useState<typeof UPCOMING[0] | null>(null);
   const [assignSelectedId, setAssignSelectedId] = useState('');
   const [assignSubmitting, setAssignSubmitting] = useState(false);
