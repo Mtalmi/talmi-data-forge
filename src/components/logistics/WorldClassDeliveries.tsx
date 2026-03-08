@@ -202,12 +202,14 @@ function DeliveryRow({ d, delay = 0 }: { d: any; delay?: number }) {
         <div style={{ minWidth: 160 }}>
           <p style={{ color: T.textDim, fontSize: 11, marginBottom: 2 }}>{d.bl_id}</p>
           <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{d.client_id?.substring(0, 8) || 'N/A'}</p>
+          {d._destination && <p style={{ fontSize: 10, color: T.textSec, marginTop: 2 }}>{d._destination}</p>}
         </div>
         <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: `${T.gold}18`, color: T.gold, border: `1px solid ${T.gold}40` }}>{d.formule_id || '—'}</span>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 16, fontWeight: 700, color: T.gold }}>{d.volume_m3} m³</p>
         {d.camion_assigne && <span style={{ padding: '2px 8px', borderRadius: 6, background: `${T.info}18`, color: T.info, fontSize: 11, fontWeight: 600, border: `1px solid ${T.info}30` }}>{d.camion_assigne}</span>}
         {d.chauffeur_nom && <span style={{ color: T.textDim, fontSize: 11 }}>{d.chauffeur_nom}</span>}
         {d.heure_prevue && <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color={T.textDim} /><span style={{ color: T.textDim, fontSize: 11 }}>{d.heure_prevue}</span></div>}
+        {d._eta && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 600, color: '#D4A843', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.25)', padding: '2px 8px', borderRadius: 4 }}>{d._eta}</span>}
         <div style={{ marginLeft: 'auto' }}>
           <Badge label={status.label} color={status.color} bg={`${status.color}18`} pulse={isPulsing} />
         </div>
