@@ -157,10 +157,11 @@ function getStatusDisplay(ws: string | null) {
   return { label: ws || 'N/A', color: T.textDim };
 }
 
-function PipelineCard({ label, count, color, icon: Icon, delay = 0 }: { label: string; count: number; color: string; icon: any; delay?: number }) {
+function PipelineCard({ label, count, color, icon: Icon, delay = 0, aiRisk }: { label: string; count: number; color: string; icon: any; delay?: number; aiRisk?: { label: string; pct: number } }) {
   const [visible, setVisible] = useState(false);
   const animated = useAnimatedCounter(count, 800);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+  const riskColor = aiRisk ? (aiRisk.pct > 60 ? '#ef4444' : aiRisk.pct > 30 ? '#f59e0b' : '#22c55e') : '#22c55e';
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'scale(1)' : 'scale(0.9)', transition: 'all 500ms ease-out', flex: 1 }}>
       <Card style={{ textAlign: 'center', padding: '24px 16px' }}>
@@ -169,6 +170,17 @@ function PipelineCard({ label, count, color, icon: Icon, delay = 0 }: { label: s
         </div>
         <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 36, fontWeight: 800, color, lineHeight: 1 }}>{Math.round(animated)}</p>
         <p style={{ color: T.textSec, fontSize: 12, fontWeight: 600, marginTop: 6 }}>{label}</p>
+        {aiRisk && (
+          <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+            <span style={{
+              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+              background: `${riskColor}18`, color: riskColor, border: `1px solid ${riskColor}40`,
+            }}>
+              {aiRisk.label} {aiRisk.pct}%
+            </span>
+            <span style={{ fontSize: 10, color: '#D4A843' }}>Analysé par IA</span>
+          </div>
+        )}
       </Card>
     </div>
   );
@@ -356,10 +368,20 @@ export default function WorldClassDeliveries() {
   const routeEfficiency = totalDeliveries > 0 ? Math.min(100, Math.round(85 + (delivered / Math.max(totalDeliveries, 1)) * 10)) : 82;
   const aiLogisticsScore = Math.round(onTimeRate * 0.4 + fleetAvail * 0.3 + routeEfficiency * 0.3);
 
+  // AI risk per pipeline stage — En Route uses avg distance vs remaining hours
+  const hoursLeft = Math.max(1, 18 - new Date().getHours()); // assume 18h end-of-day
+  const enRouteWithTime = todayBons.filter(b => b.workflow_status === 'production');
+  const avgRotation = enRouteWithTime.length > 0
+    ? enRouteWithTime.reduce((s, b) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
+    : 45;
+  const enRouteRisk = Math.min(100, Math.round((avgRotation / (hoursLeft * 60)) * 100));
+  const planRisk = planned > 3 ? Math.min(100, Math.round(planned * 8)) : Math.round(planned * 5);
+  const deliveredRisk = totalDeliveries > 0 ? Math.max(0, 100 - Math.round((delivered / totalDeliveries) * 100)) : 0;
+
   const pipeline = [
-    { label: 'Planifié', count: planned, color: T.warning, icon: ClipboardCheck },
-    { label: 'En Route', count: enRoute, color: T.info, icon: Truck },
-    { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle },
+    { label: 'Planifié', count: planned, color: T.warning, icon: ClipboardCheck, aiRisk: { label: 'Risque Saturation', pct: planRisk } },
+    { label: 'En Route', count: enRoute, color: T.info, icon: Truck, aiRisk: { label: 'Risque Retard', pct: enRouteRisk } },
+    { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle, aiRisk: { label: 'Non-livré', pct: deliveredRisk } },
   ];
 
   const perfData = useMemo(() => {
@@ -445,7 +467,7 @@ export default function WorldClassDeliveries() {
           <div style={{ display: 'flex', gap: 16, alignItems: 'stretch' }}>
             {pipeline.map((stage, i) => (
               <div key={stage.label} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 16 }}>
-                <PipelineCard label={stage.label} count={stage.count} color={stage.color} icon={stage.icon} delay={i * 100} />
+                <PipelineCard label={stage.label} count={stage.count} color={stage.color} icon={stage.icon} delay={i * 100} aiRisk={stage.aiRisk} />
                 {i < pipeline.length - 1 && <div style={{ flexShrink: 0, color: T.textDim, fontSize: 22, fontWeight: 300 }}>→</div>}
               </div>
             ))}
