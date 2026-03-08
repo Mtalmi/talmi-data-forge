@@ -512,6 +512,8 @@ export default function WorldClassContractors() {
   const [terminatingMission, setTerminatingMission] = useState(false);
   const [selectedContractor, setSelectedContractor] = useState<any>(null);
   const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
+  const [prolongerTarget, setProlongerTarget] = useState<{ contractor: string; currentFin: string } | null>(null);
+  const [prolongerJours, setProlongerJours] = useState('3');
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
