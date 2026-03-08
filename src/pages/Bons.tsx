@@ -1258,8 +1258,12 @@ export default function Bons() {
                       )}
                     </TableCell>
                     <TableCell>
-                      {b.validation_technique && (
-                        <CheckCircle className="h-5 w-5 text-success" />
+                      {(b.workflow_status === 'livre' || b.workflow_status === 'facture') ? (
+                        <CheckCircle className="h-5 w-5" style={{ color: '#22c55e' }} />
+                      ) : b.workflow_status === 'annule' ? (
+                        <XCircle className="h-5 w-5" style={{ color: '#ef4444' }} />
+                      ) : (
+                        <Clock className="h-5 w-5" style={{ color: '#F59E0B' }} />
                       )}
                     </TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
