@@ -786,6 +786,106 @@ export default function WorldClassContractors() {
         </div>
 
       </div>
+
+      {/* ══════════════════════════ SLIDE-OVER DRAWER ══════════════════════════ */}
+      {drawerOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            onClick={() => setDrawerOpen(false)}
+            style={{
+              position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998,
+            }}
+          />
+          {/* Drawer */}
+          <div style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: 480, background: '#0F1629',
+            zIndex: 9999, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.5)',
+          }}>
+            {/* Header */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.08)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
+                <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Nouveau Sous-Traitant</span>
+              </div>
+              <button
+                onClick={() => setDrawerOpen(false)}
+                style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}
+              >×</button>
+            </div>
+            {/* Form */}
+            <div style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto' }}>
+              {[
+                { label: 'Nom du sous-traitant', key: 'nom', type: 'text' },
+                { label: 'Spécialité', key: 'specialite', type: 'text' },
+                { label: 'Tarif/jour (DH)', key: 'tarif_journalier', type: 'number' },
+                { label: 'Note moyenne', key: 'note_service', type: 'number', min: 1, max: 5, step: 0.1 },
+              ].map((field) => (
+                <div key={field.key}>
+                  <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    min={(field as any).min}
+                    max={(field as any).max}
+                    step={(field as any).step}
+                    value={(formData as any)[field.key]}
+                    onChange={(e) => setFormData(prev => ({ ...prev, [field.key]: e.target.value }))}
+                    style={{
+                      width: '100%', boxSizing: 'border-box',
+                      background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
+                      fontFamily: "'DM Sans', sans-serif", outline: 'none', transition: 'border-color 0.2s',
+                    }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                  />
+                </div>
+              ))}
+              {/* Statut select */}
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6, fontFamily: "'DM Sans', sans-serif" }}>
+                  Statut
+                </label>
+                <select
+                  value={formData.statut}
+                  onChange={(e) => setFormData(prev => ({ ...prev, statut: e.target.value }))}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
+                    fontFamily: "'DM Sans', sans-serif", outline: 'none', transition: 'border-color 0.2s',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                >
+                  <option value="disponible" style={{ background: '#0F1629' }}>Disponible</option>
+                  <option value="mission" style={{ background: '#0F1629' }}>En Mission</option>
+                </select>
+              </div>
+              {/* Submit */}
+              <button
+                onClick={handleCreateContractor}
+                disabled={submitting}
+                style={{
+                  width: '100%', background: '#D4A843', color: '#0F1629', border: 'none',
+                  borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14, cursor: submitting ? 'wait' : 'pointer',
+                  fontFamily: "'DM Sans', sans-serif", marginTop: 8, opacity: submitting ? 0.7 : 1,
+                }}
+              >
+                {submitting ? 'Création…' : 'Créer le Sous-Traitant'}
+              </button>
+              {formError && (
+                <div style={{ color: '#EF4444', fontSize: 13, marginTop: 4 }}>{formError}</div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
