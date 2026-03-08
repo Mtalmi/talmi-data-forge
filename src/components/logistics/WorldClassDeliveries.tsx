@@ -131,25 +131,27 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <Card style={{ height: '100%' }}>
+      <div style={{
+        height: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+        borderLeft: '3px solid #D4A843', borderRadius: 14, padding: '20px 18px',
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 200, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' as any }}>
               {suffix === 'm³' ? animated.toFixed(1) : Math.round(animated)}
               <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>
             </p>
             <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>{trendPositive ? '↑' : '↓'} {trend}</p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255, 215, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#FFD700" />
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
-
 function getStatusDisplay(ws: string | null) {
   if (ws === 'validation_technique') return { label: 'Livré', color: T.success };
   if (ws === 'production') return { label: 'En route', color: T.info };
@@ -392,7 +394,7 @@ export default function WorldClassDeliveries() {
   const { todayBons, weekBons, fleet, loading } = useDeliveriesLiveData();
 
   const totalDeliveries = todayBons.length;
-  const totalVolume = todayBons.reduce((s, b) => s + (b.volume_m3 || 0), 0);
+  const totalVolumeLivre = todayBons.reduce((s, b) => s + (b.volume_livre || b.volume_m3 || 0), 0);
   const delivered = todayBons.filter(b => b.workflow_status === 'validation_technique').length;
   const enRoute = todayBons.filter(b => b.workflow_status === 'production').length;
   const planned = todayBons.filter(b => b.workflow_status === 'planification').length;
@@ -464,33 +466,9 @@ export default function WorldClassDeliveries() {
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Livraisons Aujourd'hui" value={totalDeliveries} suffix="" color={T.gold} icon={Truck} trend={`${delivered} livrées`} trendPositive delay={0} />
-            <KPICard label="Volume Livré" value={totalVolume} suffix="m³" color={T.gold} icon={Package} trend={`${enRoute} en route`} trendPositive delay={80} />
+            <KPICard label="Volume Livré" value={totalVolumeLivre} suffix="m³" color={T.gold} icon={Package} trend={`${enRoute} en route`} trendPositive delay={80} />
             <KPICard label="Taux Livraison" value={punctuality} suffix="%" color={punctuality >= 80 ? T.success : T.warning} icon={Clock} trend={punctuality >= 80 ? 'Bon' : 'À améliorer'} trendPositive={punctuality >= 80} delay={160} />
-            {/* AI Logistics Score Card */}
-            <div style={{
-              background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14,
-              padding: '20px 18px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-              gap: 4, position: 'relative', overflow: 'hidden',
-            }}>
-              <div style={{
-                position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 8,
-                background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <Zap size={18} color={T.gold} />
-              </div>
-              <span style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                fontSize: 48, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1,
-                color: aiLogisticsScore >= 80 ? '#22c55e' : aiLogisticsScore >= 60 ? '#f59e0b' : '#ef4444',
-                WebkitFontSmoothing: 'antialiased' as any,
-              }}>
-                {aiLogisticsScore}
-              </span>
-              <span style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-                Score Logistique IA
-              </span>
-              <span style={{ fontSize: 11, color: '#D4A843' }}>Performance IA temps réel</span>
-            </div>
+            <KPICard label="En Route" value={enRoute} suffix="" color={T.gold} icon={Truck} trend={`${planned} planifiées`} trendPositive delay={240} />
           </div>
         </section>
 
