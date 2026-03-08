@@ -1233,29 +1233,44 @@ export default function Bons() {
                       )}
                     </TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
-                      {canUpdatePayment ? (
-                        <Select
-                          value={b.statut_paiement}
-                          onValueChange={(val) => updatePaymentStatus(b.bl_id, val)}
-                        >
-                          <SelectTrigger className={cn(
-                            'w-[120px] h-8',
-                            getStatusPill(b.statut_paiement) === 'paid' && 'border-success/50',
-                            getStatusPill(b.statut_paiement) === 'late' && 'border-destructive/50'
-                          )}>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="En Attente">{t.pages.bons.statusPending}</SelectItem>
-                            <SelectItem value="Payé">{t.pages.bons.statusPaid}</SelectItem>
-                            <SelectItem value="Retard">{t.pages.bons.statusLate}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <span className={cn('status-pill', getStatusPill(b.statut_paiement))}>
-                          {b.statut_paiement}
-                        </span>
-                      )}
+                      {(() => {
+                        const st = b.statut_paiement;
+                        const isPaid = st === 'Payé';
+                        const isLate = st === 'Retard';
+                        const bg = isPaid ? 'rgba(34,197,94,0.15)' : isLate ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)';
+                        const bc = isPaid ? '#22c55e' : isLate ? '#ef4444' : '#f59e0b';
+                        const pulse = !isPaid;
+                        const label = isPaid ? 'Payé' : isLate ? 'En retard' : 'En attente';
+                        const badge = (
+                          <span
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 6,
+                              padding: '4px 10px', borderRadius: 6,
+                              background: bg, border: `1px solid ${bc}`,
+                              color: bc, fontSize: 11, fontWeight: 600,
+                              animation: pulse ? 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite' : undefined,
+                            }}
+                          >
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: bc, flexShrink: 0 }} />
+                            {label}
+                          </span>
+                        );
+                        return canUpdatePayment ? (
+                          <Select
+                            value={b.statut_paiement}
+                            onValueChange={(val) => updatePaymentStatus(b.bl_id, val)}
+                          >
+                            <SelectTrigger className="w-auto h-auto p-0 border-0 bg-transparent shadow-none focus:ring-0 [&>svg]:ml-1 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:opacity-40">
+                              {badge}
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="En Attente">{t.pages.bons.statusPending}</SelectItem>
+                              <SelectItem value="Payé">{t.pages.bons.statusPaid}</SelectItem>
+                              <SelectItem value="Retard">{t.pages.bons.statusLate}</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : badge;
+                      })()}
                     </TableCell>
                     <TableCell>
                       {(b.workflow_status === 'livre' || b.workflow_status === 'facture') ? (
