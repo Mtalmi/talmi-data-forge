@@ -1100,31 +1100,50 @@ export default function Creances() {
 
         {/* Aging Summary */}
         {hasData && (
-        <Card>
+        <Card style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
-              {t.pages.creances.aging}
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-md" style={{ background: 'rgba(255, 215, 0, 0.15)' }}>
+                <Calendar className="h-4 w-4" style={{ color: '#FFD700' }} />
+              </div>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                {t.pages.creances.aging}
+              </span>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-6">
               {/* Aging bars */}
-              <div className="flex-1 space-y-3">
-                {stats.agingBuckets.map((bucket, index) => (
-                  <div key={bucket.bucket} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">{bucket.bucket}</span>
-                      <span className="text-muted-foreground">
-                        {bucket.invoice_count} {t.pages.creances.invoices} • {formatCurrency(bucket.total_amount)}
-                      </span>
-                    </div>
-                    <Progress 
-                      value={bucket.percentage} 
-                      className="h-2"
-                    />
-                  </div>
-                ))}
+              <div className="flex-1 space-y-4">
+                {(() => {
+                  const BAR_COLORS = ['#D4A843', '#f59e0b', '#f97316', '#ef4444', '#dc2626'];
+                  return stats.agingBuckets.map((bucket, index) => {
+                    const barColor = BAR_COLORS[index] || BAR_COLORS[4];
+                    const isDeepRed = index >= 4;
+                    return (
+                      <div key={bucket.bucket} className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-white">{bucket.bucket}</span>
+                          <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: '#9CA3AF' }}>
+                            {bucket.invoice_count} fact. · <span style={{ color: barColor, fontWeight: 500 }}>{bucket.total_amount.toLocaleString('fr-MA')} DH</span>
+                          </span>
+                        </div>
+                        <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                          <div
+                            className={isDeepRed ? 'animate-pulse' : ''}
+                            style={{
+                              height: '100%',
+                              width: `${Math.max(bucket.percentage, 2)}%`,
+                              borderRadius: 4,
+                              background: barColor,
+                              transition: 'width 600ms ease-out',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
               </div>
 
               {/* Donut chart */}
