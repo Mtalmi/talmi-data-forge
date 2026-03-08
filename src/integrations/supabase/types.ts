@@ -6002,6 +6002,7 @@ export type Database = {
           contact_telephone: string | null
           cout_mtd: number | null
           created_at: string
+          date_fin: string | null
           id: string
           jours_travailles: number | null
           mission_actuelle: string | null
@@ -6020,6 +6021,7 @@ export type Database = {
           contact_telephone?: string | null
           cout_mtd?: number | null
           created_at?: string
+          date_fin?: string | null
           id?: string
           jours_travailles?: number | null
           mission_actuelle?: string | null
@@ -6038,6 +6040,7 @@ export type Database = {
           contact_telephone?: string | null
           cout_mtd?: number | null
           created_at?: string
+          date_fin?: string | null
           id?: string
           jours_travailles?: number | null
           mission_actuelle?: string | null
