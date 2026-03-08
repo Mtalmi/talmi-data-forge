@@ -463,7 +463,7 @@ function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay
         </span>
       </div>
       {/* Buttons */}
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', gap: 10, position: 'relative', zIndex: 1 }}>
         <button
           onClick={onViewDetails}
           style={{
