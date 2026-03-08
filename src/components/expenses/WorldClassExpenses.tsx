@@ -1211,6 +1211,148 @@ function BudgetAlertBanner({ catBudget }: { catBudget: { name: string; spent: nu
 }
 
 // ─────────────────────────────────────────────────────
+// DEPARTMENT BUDGET ALLOCATION
+// ─────────────────────────────────────────────────────
+function DepartmentBudgetAllocation() {
+  const [hovIdx, setHovIdx] = useState<number | null>(null);
+
+  // Calculate days left in month
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysLeft = lastDay - now.getDate();
+  const daysPassed = now.getDate();
+
+  // Department data (in production would come from live queries)
+  const departments = [
+    { name: 'Production', allocated: 180000, spent: 142000 },
+    { name: 'Logistique', allocated: 95000, spent: 78500 },
+    { name: 'Administration', allocated: 45000, spent: 22000 },
+    { name: 'Maintenance', allocated: 65000, spent: 61500 },
+  ].map(d => {
+    const pct = Math.round((d.spent / d.allocated) * 100);
+    const remaining = d.allocated - d.spent;
+    const dailyRate = d.spent / daysPassed;
+    const projectedTotal = dailyRate * lastDay;
+    const projectedPct = Math.round((projectedTotal / d.allocated) * 100);
+    const burnStatus = projectedPct > 100 ? 'Dépassement prévu' : projectedPct > 90 ? 'À surveiller' : 'En ligne';
+    const progressColor = pct < 60 ? T.success : pct <= 85 ? T.warning : T.danger;
+    return { ...d, pct, remaining, dailyRate, projectedTotal, projectedPct, burnStatus, progressColor };
+  });
+
+  return (
+    <section>
+      <SectionHeader icon={LayoutGrid} label="ALLOCATION BUDGÉTAIRE PAR DÉPARTEMENT" right={
+        <Bdg label={`${daysLeft}j restants`} color={T.gold} bg={`${T.gold}15`} icon={<CalendarRange size={10} />} />
+      } />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+        {departments.map((dept, idx) => {
+          const isHov = hovIdx === idx;
+          return (
+            <div key={dept.name}
+              onMouseEnter={() => setHovIdx(idx)}
+              onMouseLeave={() => setHovIdx(null)}
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isHov ? T.goldBorder : 'rgba(255,255,255,0.06)'}`,
+                borderRadius: 12, padding: 20,
+                backdropFilter: 'blur(12px)',
+                transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+                transform: isHov ? 'translateY(-2px)' : 'none',
+                boxShadow: isHov ? `0 8px 24px rgba(0,0,0,0.2), 0 0 15px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.1)',
+              }}
+            >
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: 10,
+                    background: `${T.gold}15`, border: `1px solid ${T.gold}25`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Briefcase size={16} color={T.gold} />
+                  </div>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: T.textPri }}>{dept.name}</span>
+                </div>
+                <span style={{
+                  padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                  background: `${dept.progressColor}15`, color: dept.progressColor,
+                }}>
+                  {dept.pct}%
+                </span>
+              </div>
+
+              {/* Budget info */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{ fontSize: 11, color: T.textDim }}>Budget Alloué</span>
+                <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, fontWeight: 600, color: T.gold }}>
+                  {(dept.allocated / 1000).toFixed(0)}K DH
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div style={{
+                height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.08)',
+                overflow: 'hidden', marginBottom: 12,
+              }}>
+                <div style={{
+                  width: `${Math.min(100, dept.pct)}%`,
+                  height: '100%',
+                  borderRadius: 4,
+                  background: `linear-gradient(90deg, ${dept.progressColor}, ${dept.progressColor}CC)`,
+                  transition: 'width 600ms cubic-bezier(0.4,0,0.2,1)',
+                }} />
+              </div>
+
+              {/* Stats row */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
+                <div>
+                  <p style={{ fontSize: 10, color: T.textDim, marginBottom: 2 }}>Dépensé</p>
+                  <p style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 600, color: T.textPri }}>
+                    {(dept.spent / 1000).toFixed(1)}K DH
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: 10, color: T.textDim, marginBottom: 2 }}>Restant</p>
+                  <p style={{ fontFamily: 'monospace', fontSize: 13, fontWeight: 600, color: dept.remaining > 0 ? T.success : T.danger }}>
+                    {(dept.remaining / 1000).toFixed(1)}K DH
+                  </p>
+                </div>
+              </div>
+
+              {/* AI Burn Rate Projection */}
+              <div style={{
+                padding: '10px 12px', borderRadius: 8,
+                background: 'rgba(0,0,0,0.25)', border: `1px solid ${T.cardBorder}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                  <Bot size={12} color={T.gold} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Projection IA</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ fontSize: 11, color: T.textSec }}>
+                    Rythme: <strong style={{ fontFamily: 'monospace', color: T.textPri }}>{(dept.dailyRate / 1000).toFixed(1)}K/jour</strong>
+                  </span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                    background: dept.projectedPct > 100 ? `${T.danger}20` : dept.projectedPct > 90 ? `${T.warning}20` : `${T.success}20`,
+                    color: dept.projectedPct > 100 ? T.danger : dept.projectedPct > 90 ? T.warning : T.success,
+                  }}>
+                    {dept.burnStatus}
+                  </span>
+                </div>
+                <p style={{ fontSize: 10, color: T.textDim, marginTop: 6 }}>
+                  Fin de mois estimée: <strong style={{ color: dept.projectedPct > 100 ? T.danger : T.textPri }}>{dept.projectedPct}%</strong> du budget
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // APPROVAL INTELLIGENCE PANEL
 // ─────────────────────────────────────────────────────
 function ApprovalIntelligencePanel({ recurringCount }: { recurringCount: number }) {
@@ -1698,6 +1840,9 @@ export default function WorldClassExpenses() {
         {activeTab === "Vue d'ensemble" && live.recurring.length > 0 && (
           <RecurringSection recurring={live.recurring} total30d={live.recurringTotal30d} />
         )}
+
+        {/* DEPARTMENT BUDGET ALLOCATION - Par Catégorie tab only */}
+        {activeTab === 'Par Catégorie' && <DepartmentBudgetAllocation />}
 
         {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
         {activeTab === 'Par Catégorie' && (
