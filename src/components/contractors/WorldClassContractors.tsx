@@ -1234,7 +1234,7 @@ export default function WorldClassContractors() {
             </div>
           </>
         );
-      })()}
+      })(), document.body)}
     </div>
   );
 }
