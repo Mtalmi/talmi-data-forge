@@ -475,11 +475,13 @@ function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay
         >
           <Eye size={14} /> Voir Détails
         </button>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'transparent', border: `1px solid ${T.info}`, color: T.info,
-          borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-        }}>
+        <button
+          onClick={(e) => { e.stopPropagation(); setProlongerTarget({ contractor: m.contractor, currentFin: m.fin }); }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'transparent', border: `1px solid ${T.info}`, color: T.info,
+            borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}>
           <Clock size={14} /> Prolonger
         </button>
       </div>
@@ -1222,16 +1224,21 @@ export default function WorldClassContractors() {
                 padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.08)',
                 display: 'flex', gap: 12,
               }}>
-                <button style={{
-                  flex: 1, background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
-                  borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>Prolonger la Mission</button>
-                <button style={{
-                  flex: 1, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444',
-                  borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>Terminer la Mission</button>
+                <button
+                  onClick={() => { setProlongerTarget({ contractor: missionDrawer.contractor, currentFin: missionDrawer.fin }); }}
+                  style={{
+                    flex: 1, background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+                    borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}>Prolonger la Mission</button>
+                <button
+                  onClick={() => handleTermineMission(missionDrawer.contractor)}
+                  disabled={terminatingMission}
+                  style={{
+                    flex: 1, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444',
+                    borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: terminatingMission ? 'wait' : 'pointer',
+                    fontFamily: "'DM Sans', sans-serif", opacity: terminatingMission ? 0.7 : 1,
+                  }}>{terminatingMission ? 'En cours…' : 'Terminer la Mission'}</button>
               </div>
             </div>
           </>
