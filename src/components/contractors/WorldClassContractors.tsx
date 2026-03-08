@@ -509,6 +509,7 @@ export default function WorldClassContractors() {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [terminatingMission, setTerminatingMission] = useState(false);
+  const [selectedContractor, setSelectedContractor] = useState<any>(null);
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
@@ -658,7 +659,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Sous-Traitants" badge={`${filteredContractors.length} résultat${filteredContractors.length !== 1 ? 's' : ''}`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {filteredContractors.map((c, i) => (
-              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
+              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} onClick={() => setSelectedContractor({ ...c, colorIndex: i })} />
             ))}
           </div>
         </div>
