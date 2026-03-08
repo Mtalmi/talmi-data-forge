@@ -198,14 +198,14 @@ const TYPE_DIST = [
 ];
 
 const BATCH_DIST = [
-  { batch: 'BN-0142', conf: 1, nonConf: 0 },
-  { batch: 'BN-0141', conf: 1, nonConf: 0 },
-  { batch: 'BN-0140', conf: 0, nonConf: 1 },
-  { batch: 'BN-0139', conf: 1, nonConf: 0 },
-  { batch: 'BN-0138', conf: 1, nonConf: 0 },
-  { batch: 'BN-0137', conf: 1, nonConf: 0 },
-  { batch: 'BN-0136', conf: 1, nonConf: 0 },
-  { batch: 'BN-0135', conf: 0, nonConf: 0 },
+  { batch: 'BN-0142', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0141', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0140', conf: 0, nonConf: 1, enAttente: 0 },
+  { batch: 'BN-0139', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0138', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0137', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0136', conf: 1, nonConf: 0, enAttente: 0 },
+  { batch: 'BN-0135', conf: 0, nonConf: 0, enAttente: 1 },
 ];
 
 const PENDING = [
@@ -730,8 +730,9 @@ export default function WorldClassLaboratory() {
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 1]} />
                   <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} width={80} />
                   <RechartsTooltip content={<BatchTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                  <Bar dataKey="conf"    name="Conformes"   fill={T.success} radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
-                  <Bar dataKey="nonConf" name="Non-conf."   fill={T.danger}  radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
+                  <Bar dataKey="conf"      name="Conformes"   fill="#22c55e" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
+                  <Bar dataKey="nonConf"   name="Non-conf."   fill="#ef4444" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
+                  <Bar dataKey="enAttente" name="En attente"  fill="#f59e0b" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
