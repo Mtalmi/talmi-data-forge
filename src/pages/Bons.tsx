@@ -1015,6 +1015,7 @@ export default function Bons() {
                 ))}
               </TableBody>
           </Table>
+          </>
         )}
 
         {/* Detail Dialog */}
