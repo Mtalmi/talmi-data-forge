@@ -510,6 +510,7 @@ export default function WorldClassContractors() {
   const [submitting, setSubmitting] = useState(false);
   const [terminatingMission, setTerminatingMission] = useState(false);
   const [selectedContractor, setSelectedContractor] = useState<any>(null);
+  const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
