@@ -999,8 +999,35 @@ export default function WorldClassContractors() {
               </div>
               {/* Footer */}
               <div style={{ position: 'sticky', bottom: 0, background: '#0F1629', padding: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button style={{ width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Modifier le Sous-Traitant</button>
-                <button style={{ width: '100%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Désactiver</button>
+                <button
+                  onClick={() => {
+                    setFormData({
+                      nom: sc.nom || '',
+                      specialite: sc.specialite || '',
+                      tarif_journalier: sc.tarif_journalier != null ? String(sc.tarif_journalier) : '',
+                      note_service: sc.note_service != null ? String(sc.note_service) : '',
+                      statut: sc.statut || 'disponible',
+                    });
+                    setEditingContractorId(sc.id);
+                    setSelectedContractor(null);
+                    setDrawerOpen(true);
+                  }}
+                  style={{ width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Modifier le Sous-Traitant</button>
+                <button
+                  onClick={async () => {
+                    if (!confirm('Voulez-vous vraiment désactiver ce sous-traitant ?')) return;
+                    try {
+                      const { error } = await supabase.from('prestataires_transport').update({ actif: false, statut: 'disponible', mission_actuelle: null }).eq('id', sc.id);
+                      if (error) throw error;
+                      setSelectedContractor(null);
+                      toast({ title: 'Sous-traitant désactivé' });
+                    } catch (err: any) {
+                      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+                    }
+                  }}
+                  style={{ width: '100%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Désactiver</button>
               </div>
             </div>
           </>
