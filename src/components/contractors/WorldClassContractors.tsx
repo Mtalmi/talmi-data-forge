@@ -939,8 +939,8 @@ export default function WorldClassContractors() {
         const dimL: React.CSSProperties = { color: 'rgba(255,255,255,0.5)', fontSize: 14 };
         return (
           <>
-            <div onClick={() => setSelectedContractor(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 50 }} />
-            <div style={{ position: 'fixed', top: 0, right: 0, height: '100vh', width: 520, background: '#0F1629', zIndex: 51, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.5)', overflowY: 'auto' }}>
+            <div onClick={() => setSelectedContractor(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998 }} />
+            <div style={{ position: 'fixed', top: 0, right: 0, height: '100vh', width: 520, background: '#0F1629', zIndex: 9999, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.5)', overflowY: 'auto' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
