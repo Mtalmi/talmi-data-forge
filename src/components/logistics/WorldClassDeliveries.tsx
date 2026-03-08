@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid,
+  LineChart, Line, Area, ComposedChart,
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
@@ -240,7 +241,39 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// MAIN
+// FORECAST 14J MOCK DATA
+// ─────────────────────────────────────────────────────
+const FORECAST_14J = [
+  { jour: 'J1', réel: 12, prévu: 11, upper: 14, lowerInv: -8 },
+  { jour: 'J2', réel: 10, prévu: 12, upper: 15, lowerInv: -9 },
+  { jour: 'J3', réel: 14, prévu: 13, upper: 16, lowerInv: -10 },
+  { jour: 'J4', réel: 11, prévu: 12, upper: 15, lowerInv: -9 },
+  { jour: 'J5', réel: 13, prévu: 14, upper: 17, lowerInv: -11 },
+  { jour: 'J6', réel: 9, prévu: 10, upper: 13, lowerInv: -7 },
+  { jour: 'J7', réel: 8, prévu: 9, upper: 12, lowerInv: -6 },
+  { jour: 'J8', réel: null, prévu: 13, upper: 16, lowerInv: -10 },
+  { jour: 'J9', réel: null, prévu: 14, upper: 18, lowerInv: -10 },
+  { jour: 'J10', réel: null, prévu: 12, upper: 16, lowerInv: -8 },
+  { jour: 'J11', réel: null, prévu: 15, upper: 19, lowerInv: -11 },
+  { jour: 'J12', réel: null, prévu: 11, upper: 14, lowerInv: -8 },
+  { jour: 'J13', réel: null, prévu: 10, upper: 13, lowerInv: -7 },
+  { jour: 'J14', réel: null, prévu: 12, upper: 15, lowerInv: -9 },
+];
+
+function ForecastTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#162036', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+      <p style={{ color: '#D4A843', fontWeight: 700, marginBottom: 6 }}>{label}</p>
+      {payload.filter((p: any) => p.dataKey === 'réel' || p.dataKey === 'prévu').map((p: any) => (
+        <p key={p.dataKey} style={{ color: p.dataKey === 'réel' ? '#D4A843' : 'rgba(212,168,67,0.6)', fontSize: 12, marginBottom: 2 }}>
+          {p.name}: <strong>{p.value ?? '—'}</strong>
+        </p>
+      ))}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────
 export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('aujourdhui');
@@ -368,7 +401,31 @@ export default function WorldClassDeliveries() {
           </Card>
         </section>
 
-        {/* Footer */}
+        {/* Prévision Demande IA */}
+        <section>
+          <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700,
+              color: '#D4A843', background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
+              borderRadius: 4, padding: '2px 8px', letterSpacing: '0.06em',
+            }}>Prévision IA</span>
+          } />
+          <Card>
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={FORECAST_14J} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} label={{ value: 'Livraisons', angle: -90, position: 'insideLeft', fill: T.textDim, fontSize: 10, dx: 10 }} />
+                <RechartsTooltip content={<ForecastTooltip />} cursor={{ stroke: 'rgba(212,168,67,0.2)' }} />
+                <Area dataKey="upper" stackId="band" fill="rgba(212,168,67,0.1)" stroke="none" />
+                <Area dataKey="lowerInv" stackId="band" fill={T.navy} stroke="none" />
+                <Line dataKey="réel" name="Réel" type="monotone" stroke="#D4A843" strokeWidth={2} dot={{ r: 3, fill: '#D4A843', stroke: T.navy, strokeWidth: 1 }} activeDot={{ r: 5 }} />
+                <Line dataKey="prévu" name="Prévu IA" type="monotone" stroke="#D4A843" strokeWidth={2} strokeDasharray="6 4" strokeOpacity={0.5} dot={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </Card>
+        </section>
+
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Livraisons v2.0 — Données live • {new Date().toLocaleString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
