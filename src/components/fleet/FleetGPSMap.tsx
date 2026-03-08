@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import Map, { Marker, Popup, NavigationControl } from 'react-map-gl';
+import Map, { Marker, Popup, NavigationControl, Source, Layer } from 'react-map-gl';
 import { supabase } from '@/integrations/supabase/client';
 import { MAPBOX_TOKEN } from '@/apiConfig';
-import { Truck, Factory, MapPin, Signal, Clock } from 'lucide-react';
+import { Truck, Factory, MapPin, Signal, Clock, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
@@ -31,6 +31,25 @@ export interface FleetGPSMapProps {
 
 const PLANT_COORDS = { latitude: 33.5731, longitude: -7.5898 };
 
+// ── Seeded vehicles for demo ──
+const SEEDED_VEHICLES: (GPSVehicle & { speed: number; eta: string; destLat: number; destLng: number; destName: string })[] = [
+  {
+    id_camion: 'T-04', chauffeur: 'Youssef Benali', statut: 'en_mission', type: 'Toupie 8m³',
+    last_latitude: 33.5894, last_longitude: -7.6311, last_gps_update: new Date(Date.now() - 120000).toISOString(), gps_provider: 'GPS-Tracker',
+    speed: 42, eta: '14 min', destLat: 33.5553, destLng: -7.6354, destName: 'Chantier Maarif',
+  },
+  {
+    id_camion: 'T-07', chauffeur: 'Karim Idrissi', statut: 'en_mission', type: 'Toupie 10m³',
+    last_latitude: 34.0209, last_longitude: -6.8416, last_gps_update: new Date(Date.now() - 60000).toISOString(), gps_provider: 'GPS-Tracker',
+    speed: 65, eta: '23 min', destLat: 34.0531, destLng: -6.7986, destName: 'Résidence Rabat Center',
+  },
+  {
+    id_camion: 'T-12', chauffeur: 'Mehdi Tazi', statut: 'en_mission', type: 'Toupie 8m³',
+    last_latitude: 34.2610, last_longitude: -6.5802, last_gps_update: new Date(Date.now() - 90000).toISOString(), gps_provider: 'GPS-Tracker',
+    speed: 38, eta: '9 min', destLat: 34.2741, destLng: -6.5714, destName: 'Projet Marina Kénitra',
+  },
+];
+
 function getMinutesAgo(lastUpdate: string | null): number {
   if (!lastUpdate) return Infinity;
   return Math.floor((Date.now() - new Date(lastUpdate).getTime()) / 60000);
@@ -42,6 +61,24 @@ function getMarkerColor(minutesAgo: number): string {
   return '#ef4444';
 }
 
+// Route GeoJSON for seeded vehicles
+function buildRouteGeoJSON() {
+  return {
+    type: 'FeatureCollection' as const,
+    features: SEEDED_VEHICLES.map(v => ({
+      type: 'Feature' as const,
+      properties: { id: v.id_camion },
+      geometry: {
+        type: 'LineString' as const,
+        coordinates: [
+          [v.last_longitude, v.last_latitude],
+          [v.destLng, v.destLat],
+        ],
+      },
+    })),
+  };
+}
+
 export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }: FleetGPSMapProps) {
   const { t } = useI18n();
   const g = t.fleetGPS;
@@ -50,7 +87,6 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
   const [loading, setLoading] = useState(true);
   const mapRef = useRef<any>(null);
 
-  const vehicles = externalVehicles ?? internalVehicles;
   const hasExternal = !!externalVehicles;
 
   function getStatusLabel(minutesAgo: number): { text: string; variant: 'default' | 'secondary' | 'destructive' } {
@@ -96,21 +132,46 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
 
   useEffect(() => { if (hasExternal) setLoading(false); }, [hasExternal, externalVehicles]);
 
+  // Use seeded vehicles as fallback when no real data
+  const rawVehicles = externalVehicles ?? internalVehicles;
+  const vehicles = rawVehicles.length > 0 ? rawVehicles : SEEDED_VEHICLES;
+  const useSeeded = rawVehicles.length === 0;
+
   const activeCount = vehicles.filter(v => getMinutesAgo(v.last_gps_update) < 5).length;
   const warningCount = vehicles.filter(v => { const m = getMinutesAgo(v.last_gps_update); return m >= 5 && m < 30; }).length;
   const lostCount = vehicles.filter(v => getMinutesAgo(v.last_gps_update) >= 30).length;
+
+  // Find seeded vehicle data for a given id
+  const getSeededInfo = (id: string) => SEEDED_VEHICLES.find(s => s.id_camion === id);
 
   return (
     <div className={cn("relative w-full rounded-2xl overflow-hidden border border-border", className || "h-[600px]")}>
       <Map
         ref={mapRef}
-        initialViewState={{ latitude: PLANT_COORDS.latitude, longitude: PLANT_COORDS.longitude, zoom: 11 }}
+        initialViewState={{ latitude: 33.82, longitude: -7.05, zoom: 7.2 }}
         mapboxAccessToken={MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/dark-v11"
         style={{ width: '100%', height: '100%' }}
       >
         <NavigationControl position="top-right" />
 
+        {/* Route lines for seeded vehicles */}
+        {useSeeded && (
+          <Source id="routes" type="geojson" data={buildRouteGeoJSON()}>
+            <Layer
+              id="route-lines"
+              type="line"
+              paint={{
+                'line-color': '#D4A843',
+                'line-width': 2.5,
+                'line-dasharray': [4, 3],
+                'line-opacity': 0.7,
+              }}
+            />
+          </Source>
+        )}
+
+        {/* Plant marker */}
         <Marker latitude={PLANT_COORDS.latitude} longitude={PLANT_COORDS.longitude} anchor="center">
           <div className="relative group cursor-pointer">
             <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping opacity-50" />
@@ -120,20 +181,61 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
           </div>
         </Marker>
 
+        {/* Destination markers for seeded */}
+        {useSeeded && SEEDED_VEHICLES.map(sv => (
+          <Marker key={`dest-${sv.id_camion}`} latitude={sv.destLat} longitude={sv.destLng} anchor="center">
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'rgba(212,168,67,0.3)', border: '2px solid #D4A843' }} />
+          </Marker>
+        ))}
+
+        {/* Vehicle markers */}
         {vehicles.map(v => {
           const minutesAgo = getMinutesAgo(v.last_gps_update);
-          const color = getMarkerColor(minutesAgo);
+          const seeded = getSeededInfo(v.id_camion);
+          const isGold = useSeeded;
           return (
             <Marker key={v.id_camion} latitude={v.last_latitude} longitude={v.last_longitude} anchor="center"
               onClick={(e) => { e.originalEvent.stopPropagation(); setSelectedVehicle({ ...v, minutesAgo }); }}>
               <div className="cursor-pointer group relative">
-                <div className="h-8 w-8 rounded-full flex items-center justify-center border-2 shadow-lg transition-transform hover:scale-110"
-                  style={{ backgroundColor: color, borderColor: 'rgba(255,255,255,0.8)', boxShadow: `0 0 12px ${color}80` }}>
+                {/* Marker circle */}
+                <div className="h-9 w-9 rounded-full flex items-center justify-center border-2 shadow-lg transition-transform hover:scale-110"
+                  style={{
+                    backgroundColor: isGold ? '#D4A843' : getMarkerColor(minutesAgo),
+                    borderColor: 'rgba(255,255,255,0.8)',
+                    boxShadow: `0 0 14px ${isGold ? 'rgba(212,168,67,0.5)' : getMarkerColor(minutesAgo) + '80'}`,
+                  }}>
                   <Truck className="h-4 w-4 text-white" />
                 </div>
-                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-mono font-bold text-white bg-black/70 px-1.5 py-0.5 rounded">
+                {/* ID label */}
+                <div style={{
+                  position: 'absolute', bottom: -18, left: '50%', transform: 'translateX(-50%)',
+                  whiteSpace: 'nowrap', fontSize: 9, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700,
+                  color: '#fff', background: 'rgba(0,0,0,0.75)', padding: '1px 5px', borderRadius: 3,
+                }}>
                   {v.id_camion}
                 </div>
+                {/* Speed badge */}
+                {seeded && (
+                  <div style={{
+                    position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
+                    whiteSpace: 'nowrap', fontSize: 8, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                    color: '#D4A843', background: 'rgba(11,17,32,0.9)', border: '1px solid rgba(212,168,67,0.3)',
+                    padding: '1px 5px', borderRadius: 3,
+                  }}>
+                    {seeded.speed} km/h
+                  </div>
+                )}
+                {/* ETA badge */}
+                {seeded && (
+                  <div style={{
+                    position: 'absolute', bottom: -32, left: '50%', transform: 'translateX(-50%)',
+                    whiteSpace: 'nowrap', fontSize: 8, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                    color: '#10B981', background: 'rgba(11,17,32,0.9)', border: '1px solid rgba(16,185,129,0.25)',
+                    padding: '1px 5px', borderRadius: 3, display: 'flex', alignItems: 'center', gap: 2,
+                  }}>
+                    <Zap size={7} /> ETA {seeded.eta}
+                  </div>
+                )}
               </div>
             </Marker>
           );
@@ -167,12 +269,23 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
                     {' '}({formatTimeAgo(selectedVehicle.minutesAgo)})
                   </span>
                 </div>
+                {(() => {
+                  const s = getSeededInfo(selectedVehicle.id_camion);
+                  if (!s) return null;
+                  return (
+                    <div className="flex items-center gap-2 pt-1 border-t border-border mt-1">
+                      <Zap className="h-3 w-3 shrink-0" style={{ color: '#D4A843' }} />
+                      <span style={{ color: '#D4A843' }}>IA ETA: {s.eta} → {s.destName}</span>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </Popup>
         )}
       </Map>
 
+      {/* GPS Fleet overlay */}
       {!hideOverlay && (
         <div className="absolute top-4 left-4 bg-card/90 backdrop-blur-xl border border-border rounded-xl p-3 space-y-2 shadow-lg">
           <div className="text-xs font-semibold text-foreground uppercase tracking-wider flex items-center gap-2">
@@ -195,6 +308,41 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
           </div>
           <div className="text-[10px] text-muted-foreground border-t border-border pt-1.5">
             {t.common.total}: {vehicles.length} {g.totalTracked}
+          </div>
+        </div>
+      )}
+
+      {/* Legend card bottom-left */}
+      {useSeeded && (
+        <div style={{
+          position: 'absolute', bottom: 16, left: 16, zIndex: 5,
+          background: 'rgba(17,27,46,0.92)', backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(212,168,67,0.2)', borderRadius: 10,
+          padding: '10px 14px', minWidth: 180,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <Truck size={12} color="#D4A843" />
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700, color: '#D4A843', letterSpacing: '0.08em' }}>
+              LÉGENDE FLOTTE
+            </span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#D4A843', flexShrink: 0 }} />
+              Véhicule en mission
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'rgba(212,168,67,0.3)', border: '2px solid #D4A843', flexShrink: 0 }} />
+              Destination
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>
+              <div style={{ width: 20, height: 0, borderTop: '2px dashed #D4A843', flexShrink: 0 }} />
+              Itinéraire prévu
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>
+              <Zap size={10} color="#10B981" />
+              ETA prédite par IA
+            </div>
           </div>
         </div>
       )}
