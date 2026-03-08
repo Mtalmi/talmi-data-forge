@@ -497,9 +497,30 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassContractors() {
-  const [activeTab, setActiveTab] = useState('Tous');
-  const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
+  const [activeTab, setActiveTab] = useState('tous');
+  const tabConfig = [
+    { id: 'tous', label: 'Tous' },
+    { id: 'en_mission', label: 'En Mission' },
+    { id: 'disponibles', label: 'Disponibles' },
+    { id: 'evaluation', label: 'Évaluation' },
+  ];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
+
+  // Filter contractors based on active tab
+  const getFilteredContractors = () => {
+    switch (activeTab) {
+      case 'en_mission':
+        return contractors.filter((c: any) => c.statut === 'mission');
+      case 'disponibles':
+        return contractors.filter((c: any) => c.statut === 'disponible');
+      case 'evaluation':
+        return contractors.filter((c: any) => c.note_service < 4);
+      case 'tous':
+      default:
+        return contractors;
+    }
+  };
+  const filteredContractors = getFilteredContractors();
 
   // Dynamic KPI calculations — derived from live Supabase data only
   const actifCount = contractors.filter((c: any) => c.actif === true).length;
