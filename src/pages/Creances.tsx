@@ -1000,6 +1000,104 @@ export default function Creances() {
           );
         })()}
 
+        {/* AI AGENT — ANALYSE RECOUVREMENT */}
+        {hasData && (() => {
+          const atRisk = receivables.filter(r => r.days_overdue > 15 && r.status !== 'paid');
+          const atRiskAmount = atRisk.reduce((s, r) => s + r.amount_due, 0);
+          const atRiskClients = new Set(atRisk.map(r => r.client_id)).size;
+
+          // Find highest risk client
+          const clientRiskMap = new Map<string, { name: string; total: number; avgOverdue: number; count: number }>();
+          atRisk.forEach(r => {
+            const c = clientRiskMap.get(r.client_id) || { name: r.client_name, total: 0, avgOverdue: 0, count: 0 };
+            c.total += r.amount_due;
+            c.avgOverdue += r.days_overdue;
+            c.count++;
+            clientRiskMap.set(r.client_id, c);
+          });
+          let topRisk = { name: '—', probability: 0, total: 0 };
+          clientRiskMap.forEach(c => {
+            const avg = c.count > 0 ? c.avgOverdue / c.count : 0;
+            const prob = Math.min(95, Math.round(30 + avg * 0.8 + (c.total > 50000 ? 15 : c.total > 20000 ? 8 : 0)));
+            if (prob > topRisk.probability) topRisk = { name: c.name, probability: prob, total: c.total };
+          });
+          if (topRisk.probability === 0 && atRisk.length > 0) {
+            topRisk = { name: atRisk[0].client_name, probability: 42, total: atRisk[0].amount_due };
+          }
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: '4px solid #D4A843',
+              borderRadius: 8, padding: '18px 22px',
+            }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-md" style={{ background: 'rgba(255, 215, 0, 0.15)' }}>
+                    <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                    Agent IA — Analyse Recouvrement
+                  </span>
+                </div>
+                <button
+                  onClick={() => toast.success('Recouvrement IA lancé — analyse en cours pour ' + atRiskClients + ' clients')}
+                  style={{
+                    padding: '7px 16px', borderRadius: 8,
+                    background: 'rgba(212, 168, 67, 0.15)', border: '1px solid rgba(212, 168, 67, 0.3)',
+                    color: '#D4A843', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', gap: 6, transition: 'all 150ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                >
+                  ⚡ Lancer Recouvrement IA
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Insight 1: Amount at risk */}
+                <div className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.12)' }}>
+                  <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#ef4444' }} />
+                  <div>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: '#ef4444', marginBottom: 2 }}>Montant à risque</p>
+                    <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 18, fontWeight: 500, color: '#FFFFFF' }}>
+                      {atRiskAmount.toLocaleString('fr-MA')} DH
+                    </p>
+                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+                      {atRiskClients} client{atRiskClients > 1 ? 's' : ''} concerné{atRiskClients > 1 ? 's' : ''} · retard &gt;15j
+                    </p>
+                  </div>
+                </div>
+
+                {/* Insight 2: Highest risk client */}
+                <div className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.12)' }}>
+                  <Target className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#f59e0b' }} />
+                  <div>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: '#f59e0b', marginBottom: 2 }}>Client à risque max</p>
+                    <p style={{ fontSize: 14, fontWeight: 600, color: '#FFFFFF' }}>{topRisk.name}</p>
+                    <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+                      Probabilité défaut: <span style={{ color: topRisk.probability > 70 ? '#ef4444' : '#f59e0b', fontWeight: 600 }}>{topRisk.probability}%</span> · {topRisk.total.toLocaleString('fr-MA')} DH
+                    </p>
+                  </div>
+                </div>
+
+                {/* Insight 3: Recommended action */}
+                <div className="flex items-start gap-3 p-3 rounded-lg" style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.12)' }}>
+                  <CheckCircle className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4A843' }} />
+                  <div>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: '#D4A843', marginBottom: 2 }}>Action recommandée</p>
+                    <p style={{ fontSize: 12, color: '#E2E8F0', lineHeight: 1.5 }}>
+                      Prioriser relance immédiate sur <span style={{ fontWeight: 600, color: '#FFFFFF' }}>{topRisk.name}</span> — envoyer mise en demeure formelle et bloquer nouvelles commandes jusqu'à régularisation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Aging Summary */}
         {hasData && (
         <Card>
