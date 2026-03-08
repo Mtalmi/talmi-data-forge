@@ -42,10 +42,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, isToday, differenceInDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface BonLivraison {
