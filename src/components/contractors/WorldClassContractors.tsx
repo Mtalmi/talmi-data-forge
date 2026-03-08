@@ -381,7 +381,7 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
 // ─────────────────────────────────────────────────────
 // SECTION: MISSION CARD
 // ─────────────────────────────────────────────────────
-function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void }) {
+function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
   const vis = useFadeIn(delay);
@@ -475,11 +475,13 @@ function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay
         >
           <Eye size={14} /> Voir Détails
         </button>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'transparent', border: `1px solid ${T.info}`, color: T.info,
-          borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-        }}>
+        <button
+          onClick={(e) => { e.stopPropagation(); onProlonger?.(); }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'transparent', border: `1px solid ${T.info}`, color: T.info,
+            borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}>
           <Clock size={14} /> Prolonger
         </button>
       </div>
@@ -512,6 +514,8 @@ export default function WorldClassContractors() {
   const [terminatingMission, setTerminatingMission] = useState(false);
   const [selectedContractor, setSelectedContractor] = useState<any>(null);
   const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
+  const [prolongerTarget, setProlongerTarget] = useState<{ contractor: string; currentFin: string } | null>(null);
+  const [prolongerJours, setProlongerJours] = useState('3');
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
@@ -688,7 +692,7 @@ export default function WorldClassContractors() {
           />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {MISSIONS.map((m, i) => (
-              <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} />
+              <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => setProlongerTarget({ contractor: m.contractor, currentFin: m.fin })} />
             ))}
           </div>
         </div>
@@ -1220,21 +1224,79 @@ export default function WorldClassContractors() {
                 padding: '16px 24px', borderTop: '1px solid rgba(255,255,255,0.08)',
                 display: 'flex', gap: 12,
               }}>
-                <button style={{
-                  flex: 1, background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
-                  borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>Prolonger la Mission</button>
-                <button style={{
-                  flex: 1, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444',
-                  borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
-                  fontFamily: "'DM Sans', sans-serif",
-                }}>Terminer la Mission</button>
+                <button
+                  onClick={() => { setProlongerTarget({ contractor: missionDrawer.contractor, currentFin: missionDrawer.fin }); }}
+                  style={{
+                    flex: 1, background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+                    borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer',
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}>Prolonger la Mission</button>
+                <button
+                  onClick={() => handleTermineMission(missionDrawer.contractor)}
+                  disabled={terminatingMission}
+                  style={{
+                    flex: 1, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444',
+                    borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: terminatingMission ? 'wait' : 'pointer',
+                    fontFamily: "'DM Sans', sans-serif", opacity: terminatingMission ? 0.7 : 1,
+                  }}>{terminatingMission ? 'En cours…' : 'Terminer la Mission'}</button>
               </div>
             </div>
           </>
         );
       })(), document.body)}
+      {/* ══════════════════════════ PROLONGER MODAL ══════════════════════════ */}
+      {prolongerTarget && createPortal(
+        <>
+          <div onClick={() => setProlongerTarget(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: 400, background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+          }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
+              <span style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Prolonger la Mission</span>
+            </div>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
+                Prolonger la mission de <strong style={{ color: '#fff' }}>{prolongerTarget.contractor}</strong> (fin actuelle : {prolongerTarget.currentFin})
+              </div>
+              <div>
+                <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
+                  Jours supplémentaires
+                </label>
+                <input
+                  type="number" min="1" max="90" value={prolongerJours}
+                  onChange={(e) => setProlongerJours(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
+                    fontFamily: "'JetBrains Mono', monospace", outline: 'none',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={() => setProlongerTarget(null)}
+                  style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Annuler</button>
+                <button
+                  onClick={() => {
+                    toast({ title: 'Mission prolongée', description: `${prolongerTarget.contractor} prolongé de ${prolongerJours} jours supplémentaires.` });
+                    setProlongerTarget(null);
+                    setProlongerJours('3');
+                  }}
+                  style={{ flex: 1, background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Confirmer</button>
+              </div>
+            </div>
+          </div>
+        </>,
+        document.body
+      )}
     </div>
   );
 }
