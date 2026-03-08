@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -463,7 +464,7 @@ function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay
         </span>
       </div>
       {/* Buttons */}
-      <div style={{ display: 'flex', gap: 10 }}>
+      <div style={{ display: 'flex', gap: 10, position: 'relative', zIndex: 1 }}>
         <button
           onClick={onViewDetails}
           style={{
@@ -1049,7 +1050,7 @@ export default function WorldClassContractors() {
       })()}
 
       {/* ══════════════════════════ MISSION DETAIL DRAWER ══════════════════════════ */}
-      {missionDrawer && (() => {
+      {missionDrawer && createPortal((() => {
         const matchedContractor = contractors.find((c: any) => 
           c.nom === missionDrawer.contractor || 
           c.nom?.toLowerCase().includes(missionDrawer.contractor.toLowerCase()) ||
@@ -1233,7 +1234,7 @@ export default function WorldClassContractors() {
             </div>
           </>
         );
-      })()}
+      })(), document.body)}
     </div>
   );
 }
