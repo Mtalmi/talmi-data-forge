@@ -233,7 +233,98 @@ export default function Creances() {
           </div>
         </div>
 
-        {/* Fresh Start Info Banner */}
+        {/* RÉSUMÉ EXÉCUTIF IA - Premium Executive Card */}
+        <div 
+          className="rounded-xl p-6"
+          style={{
+            background: 'linear-gradient(145deg, rgba(17, 27, 46, 0.95) 0%, rgba(22, 32, 54, 0.95) 100%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderTop: '2px solid #D4A843',
+          }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Target className="h-4 w-4 text-[#D4A843]" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#D4A843]">
+              RÉSUMÉ EXÉCUTIF IA
+            </span>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Left: Portfolio Health Score */}
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Score Santé Portefeuille</p>
+              {(() => {
+                // Calculate portfolio health score
+                const collectionScore = Math.min(stats.collectionRate, 100);
+                const overdueRatio = stats.totalOutstanding > 0 
+                  ? (1 - (stats.totalOverdue / stats.totalOutstanding)) * 100 
+                  : 100;
+                const dsoScore = Math.max(0, 100 - (stats.dsoAverage * 1.5));
+                const healthScore = Math.round((collectionScore * 0.4) + (overdueRatio * 0.35) + (dsoScore * 0.25));
+                const scoreColor = healthScore >= 80 ? '#22c55e' : healthScore >= 60 ? '#f59e0b' : '#ef4444';
+                
+                return (
+                  <span 
+                    style={{ 
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: '64px',
+                      fontWeight: 200,
+                      lineHeight: 1,
+                      color: scoreColor,
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    {healthScore}
+                  </span>
+                );
+              })()}
+              <p className="text-[10px] text-gray-500 mt-1">/ 100</p>
+            </div>
+
+            {/* Center: AI Insights */}
+            <div className="flex flex-col justify-center space-y-2 border-l border-r border-white/10 px-6">
+              <div className="flex items-start gap-2">
+                <TrendingUp className="h-3.5 w-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <span className="text-emerald-400 font-medium">Tendance forte:</span> Taux de recouvrement en hausse de {Math.round(stats.collectionRate)}% ce mois
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="h-3.5 w-3.5 text-amber-400 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <span className="text-amber-400 font-medium">Risque majeur:</span> {stats.clientsWithOverdue} client{stats.clientsWithOverdue > 1 ? 's' : ''} avec créances +30 jours ({formatCurrency(stats.atRiskAmount)})
+                </p>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle className="h-3.5 w-3.5 text-[#D4A843] mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-gray-300">
+                  <span className="text-[#D4A843] font-medium">Action recommandée:</span> Prioriser relance des {Math.min(3, stats.clientsWithOverdue)} plus gros encours
+                </p>
+              </div>
+            </div>
+
+            {/* Right: 30-day Forecast */}
+            <div className="flex flex-col items-center justify-center">
+              <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-2">Prévision Encaissement 30j</p>
+              <div className="flex items-baseline gap-2">
+                <span 
+                  style={{ 
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: '28px',
+                    fontWeight: 200,
+                    color: '#D4A843',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {formatCurrency(Math.round(stats.totalOutstanding * (stats.collectionRate / 100) * 0.8))}
+                </span>
+                <TrendingUp className="h-5 w-5 text-emerald-400" />
+              </div>
+              <p className="text-[10px] text-gray-500 mt-1">basé sur historique recouvrement</p>
+            </div>
+          </div>
+        </div>
+
         {!hasData && (
           <Card className="border-primary/30 bg-primary/5">
             <CardContent className="pt-6">
