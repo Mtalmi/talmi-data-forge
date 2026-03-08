@@ -1631,6 +1631,151 @@ export default function WorldClassExpenses() {
       {/* PAGE BODY */}
       <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
+        {/* CFO DASHBOARD - Vue d'ensemble only */}
+        {activeTab === "Vue d'ensemble" && (() => {
+          // Calculate budget health score based on utilization
+          const healthScore = Math.max(0, Math.min(100, Math.round(100 - (live.budgetUsedPct * 0.8) + (live.budgetRemaining > 0 ? 15 : -10))));
+          const scoreColor = healthScore >= 80 ? T.success : healthScore >= 60 ? T.gold : healthScore >= 40 ? T.warning : T.danger;
+          
+          const microKpis = [
+            { label: 'Burn Rate', value: `${live.dailyAvg}K`, suffix: 'DH/jour' },
+            { label: 'Jours avant épuisement', value: live.budgetRemaining > 0 ? Math.round((live.budgetRemaining * 1000) / (live.dailyAvg * 1000 || 1)) : 0, suffix: 'jours' },
+            { label: 'Économies IA identifiées', value: '2.6K', suffix: 'DH', color: T.success },
+            { label: 'ROI Dépenses', value: '3.4x', suffix: '', color: T.gold },
+          ];
+
+          const aiActions = [
+            { priority: 1, text: 'Renégocier contrat énergie — économie potentielle 1.2K DH/mois', urgency: 'urgent' },
+            { priority: 2, text: 'Regrouper commandes fournitures avec Logistique', urgency: 'moyen' },
+            { priority: 3, text: 'Planifier maintenance préventive Q2 pour éviter surcoûts', urgency: 'planifié' },
+          ];
+
+          return (
+            <section>
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                backdropFilter: 'blur(16px)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderTop: '2px solid #D4A843',
+                borderRadius: 14,
+                padding: 0,
+                overflow: 'hidden',
+              }}>
+                {/* Header */}
+                <div style={{
+                  padding: '16px 24px',
+                  background: 'rgba(212,168,67,0.06)',
+                  borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 10,
+                      background: `${T.gold}15`, border: `1px solid ${T.gold}25`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <BarChart3 size={18} color={T.gold} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: 14, fontWeight: 700, color: T.textPri, letterSpacing: '0.02em' }}>TABLEAU DE BORD CFO</p>
+                      <p style={{ fontSize: 10, color: T.textDim }}>Vue exécutive — Analyse temps réel</p>
+                    </div>
+                  </div>
+                  <Bdg label="Agent IA Actif" color={T.gold} bg={`${T.gold}15`} icon={<Bot size={10} />} />
+                </div>
+
+                {/* 3-Column Layout */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 1.5fr', gap: 0 }}>
+                  
+                  {/* LEFT: Budget Health Score */}
+                  <div style={{
+                    padding: 32, borderRight: '1px solid rgba(255,255,255,0.06)',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                      fontSize: 72, fontWeight: 200, color: scoreColor,
+                      lineHeight: 1, letterSpacing: '-0.03em',
+                      WebkitFontSmoothing: 'antialiased',
+                    }}>
+                      {healthScore}
+                    </p>
+                    <p style={{ fontSize: 12, color: T.textSec, marginTop: 8, fontWeight: 600 }}>Santé Budgétaire IA</p>
+                    <div style={{
+                      marginTop: 12, padding: '4px 12px', borderRadius: 6,
+                      background: `${scoreColor}15`, border: `1px solid ${scoreColor}30`,
+                    }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, color: scoreColor, textTransform: 'uppercase' }}>
+                        {healthScore >= 80 ? 'Excellent' : healthScore >= 60 ? 'Bon' : healthScore >= 40 ? 'Attention' : 'Critique'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* CENTER: 4 Micro KPIs */}
+                  <div style={{
+                    padding: 24, borderRight: '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                      {microKpis.map((kpi, i) => (
+                        <div key={i} style={{
+                          padding: 16, borderRadius: 10,
+                          background: 'rgba(0,0,0,0.2)', border: `1px solid ${T.cardBorder}`,
+                        }}>
+                          <p style={{ fontSize: 9, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{kpi.label}</p>
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+                            <span style={{
+                              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                              fontSize: 24, fontWeight: 300, color: kpi.color || T.textPri,
+                            }}>
+                              {kpi.value}
+                            </span>
+                            {kpi.suffix && <span style={{ fontSize: 11, color: T.textDim }}>{kpi.suffix}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* RIGHT: AI Action Items */}
+                  <div style={{ padding: 24 }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: T.gold, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <Bot size={12} /> Actions Prioritaires IA
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {aiActions.map((action) => (
+                        <div key={action.priority} style={{
+                          display: 'flex', alignItems: 'flex-start', gap: 10,
+                          padding: '10px 12px', borderRadius: 8,
+                          background: 'rgba(0,0,0,0.2)', border: `1px solid ${T.cardBorder}`,
+                        }}>
+                          <span style={{
+                            width: 20, height: 20, borderRadius: 6, flexShrink: 0,
+                            background: `${T.gold}20`, border: `1px solid ${T.gold}40`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontFamily: 'monospace', fontSize: 11, fontWeight: 700, color: T.gold,
+                          }}>
+                            {action.priority}
+                          </span>
+                          <div style={{ flex: 1 }}>
+                            <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.4 }}>{action.text}</p>
+                          </div>
+                          <span style={{
+                            padding: '2px 8px', borderRadius: 4, fontSize: 9, fontWeight: 700, textTransform: 'uppercase', flexShrink: 0,
+                            background: action.urgency === 'urgent' ? `${T.danger}15` : action.urgency === 'moyen' ? `${T.warning}15` : `${T.info}15`,
+                            color: action.urgency === 'urgent' ? T.danger : action.urgency === 'moyen' ? T.warning : T.info,
+                          }}>
+                            {action.urgency}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
