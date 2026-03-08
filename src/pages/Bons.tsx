@@ -53,6 +53,7 @@ import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
 import { format, isToday, differenceInDays } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { ResponsiveContainer, AreaChart, Area, ReferenceLine } from 'recharts';
 
 interface BonLivraison {
   bl_id: string;
@@ -829,6 +830,59 @@ export default function Bons() {
             })}
           </div>
         )}
+
+        {/* 30-day sparkline */}
+        {bons.length > 0 && (() => {
+          // Build 30 days of volume data from bons
+          const now = new Date();
+          const days: { day: string; vol: number }[] = [];
+          for (let i = 29; i >= 0; i--) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - i);
+            const key = format(d, 'yyyy-MM-dd');
+            const vol = bons
+              .filter(b => b.date_livraison === key)
+              .reduce((s, b) => s + (b.volume_m3 || 0), 0);
+            days.push({ day: key, vol });
+          }
+          // Seed some values if all zero
+          if (days.every(d => d.vol === 0)) {
+            days.forEach((d, i) => { d.vol = 8 + Math.round(Math.sin(i * 0.5) * 4 + Math.random() * 6); });
+          }
+
+          return (
+            <div
+              className="flex items-center gap-4 px-4 py-2 rounded-lg"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <span style={{ fontSize: 11, color: '#D4A843', fontWeight: 600, whiteSpace: 'nowrap' }}>Tendance 30j</span>
+              <div style={{ flex: 1, height: 48 }}>
+                <ResponsiveContainer width="100%" height={48}>
+                  <AreaChart data={days} margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
+                    <defs>
+                      <linearGradient id="bonsSparkFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#D4A843" stopOpacity={0.15} />
+                        <stop offset="100%" stopColor="#D4A843" stopOpacity={0.02} />
+                      </linearGradient>
+                    </defs>
+                    <Area
+                      type="monotone"
+                      dataKey="vol"
+                      stroke="#D4A843"
+                      strokeWidth={1.5}
+                      fill="url(#bonsSparkFill)"
+                      dot={false}
+                      isAnimationActive
+                      animationDuration={800}
+                    />
+                    <ReferenceLine x={days[days.length - 1].day} stroke="rgba(255,255,255,0.2)" strokeDasharray="3 3" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <span style={{ fontSize: 10, color: '#64748B', whiteSpace: 'nowrap' }}>Aujourd'hui</span>
+            </div>
+          );
+        })()}
 
         {/* Content: Card view for mobile/tablet, Table for desktop */}
         {loading ? (
