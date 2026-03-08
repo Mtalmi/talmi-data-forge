@@ -9,6 +9,7 @@ import { useBonWorkflow } from '@/hooks/useBonWorkflow';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePullToRefresh } from '@/hooks/usePullToRefresh';
 import { BonDetailDialog } from '@/components/bons/BonDetailDialog';
+import { BonDetailDrawer } from '@/components/bons/BonDetailDrawer';
 import { BlPrintable } from '@/components/bons/BlPrintable';
 import { ExportButton } from '@/components/documents/ExportButton';
 import { PullToRefreshIndicator } from '@/components/ui/PullToRefreshIndicator';
