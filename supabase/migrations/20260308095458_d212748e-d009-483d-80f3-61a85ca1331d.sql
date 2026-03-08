@@ -1,0 +1,1 @@
+ALTER TABLE public.prestataires_transport ADD COLUMN IF NOT EXISTS date_fin DATE;

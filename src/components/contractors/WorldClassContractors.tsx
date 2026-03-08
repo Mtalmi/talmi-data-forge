@@ -1402,9 +1402,9 @@ export default function WorldClassContractors() {
                       try {
                         if (prolongerMission.id) {
                           const { error } = await supabase.from('prestataires_transport').update({
-                            // date_fin doesn't exist on the table yet, but this is the intended update
-                          }).eq('id', prolongerMission.id);
-                          // Since date_fin column may not exist, we just confirm the action
+                            date_fin: nouvelleFinDate,
+                          } as any).eq('id', prolongerMission.id);
+                          if (error) throw error;
                         }
                         toast({ title: 'Mission prolongée', description: `${prolongerMission.nom} · Mission prolongée au ${nouvDateFormatted} (+${nbJours} jours)` });
                         closeProlonger();
