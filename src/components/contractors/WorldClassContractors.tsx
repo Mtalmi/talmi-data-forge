@@ -519,9 +519,10 @@ export default function WorldClassContractors() {
   const [raisonProlongation, setRaisonProlongation] = useState('');
   const [prolongerLoading, setProlongerLoading] = useState(false);
   const [prolongerError, setProlongerError] = useState('');
-  const [assignTarget, setAssignTarget] = useState<typeof UPCOMING[0] | null>(null);
-  const [assignSelectedId, setAssignSelectedId] = useState('');
-  const [assignSubmitting, setAssignSubmitting] = useState(false);
+  const [assignerBesoin, setAssignerBesoin] = useState<typeof UPCOMING[0] | null>(null);
+  const [selectedPrestataire, setSelectedPrestataire] = useState('');
+  const [assignerLoading, setAssignerLoading] = useState(false);
+  const [assignerError, setAssignerError] = useState('');
   const [appelOffresTarget, setAppelOffresTarget] = useState<typeof UPCOMING[0] | null>(null);
   const [appelOffresNotes, setAppelOffresNotes] = useState('');
   const [appelOffresSelectedIds, setAppelOffresSelectedIds] = useState<string[]>([]);
@@ -848,7 +849,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Besoins à Venir" badge="2 demandes" badgeColor={T.info} />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
             {UPCOMING.map((u, i) => (
-              <UpcomingCard key={i} u={u} delay={i * 100} onAssigner={() => setAssignTarget(u)} onAppelOffres={() => setAppelOffresTarget(u)} />
+              <UpcomingCard key={i} u={u} delay={i * 100} onAssigner={() => { setAssignerBesoin(u); setSelectedPrestataire(''); setAssignerError(''); }} onAppelOffres={() => setAppelOffresTarget(u)} />
             ))}
           </div>
         </div>
@@ -1430,83 +1431,236 @@ export default function WorldClassContractors() {
         document.body
       )}
       {/* ══════════════════════════ ASSIGNER MODAL ══════════════════════════ */}
-      {assignTarget && createPortal(
-        <>
-          <div onClick={() => { setAssignTarget(null); setAssignSelectedId(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
-          <div style={{
-            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            width: 440, background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-          }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
-              <span style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Assigner un Sous-Traitant</span>
-            </div>
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14 }}>
-                Besoin : <strong style={{ color: '#fff' }}>{assignTarget.besoin}</strong>
-                <br /><span style={{ fontSize: 12, color: T.textDim }}>Chantier : {assignTarget.chantier} · {assignTarget.duree} · {assignTarget.budget}</span>
+      {assignerBesoin && createPortal(
+        (() => {
+          const closeAssigner = () => { setAssignerBesoin(null); setSelectedPrestataire(''); setAssignerLoading(false); setAssignerError(''); };
+          const disponibles = contractors.filter((c: any) => c.statut === 'disponible');
+          const selectedC = disponibles.find((c: any) => c.id === selectedPrestataire);
+          const dureeJours = parseInt((assignerBesoin.duree || '0').replace(/[^0-9]/g, '')) || 1;
+          const coutEstime = selectedC ? dureeJours * (selectedC.tarif_journalier || 0) : 0;
+          const today = new Date();
+          const todayStr = today.toISOString().split('T')[0];
+          const todayFormatted = today.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+          const finDate = new Date(today);
+          finDate.setDate(finDate.getDate() + dureeJours);
+          const finStr = finDate.toISOString().split('T')[0];
+          const finFormatted = finDate.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+          const iaRecommended = assignerBesoin.besoin === 'Pompage gros volume' ? 'Atlas Pompage SARL' : 'Électricité MB';
+          const iaScore = assignerBesoin.besoin === 'Pompage gros volume' ? 94 : 91;
+
+          return (
+            <>
+              <div onClick={closeAssigner} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 10000 }} />
+              <div
+                onKeyDown={(e) => { if (e.key === 'Escape') closeAssigner(); }}
+                tabIndex={-1}
+                ref={(el) => el?.focus()}
+                style={{
+                  position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                  width: 480, maxHeight: 'calc(100vh - 4rem)', overflowY: 'auto',
+                  background: '#0F1629', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+                  padding: 28, outline: 'none',
+                }}
+              >
+                {/* Header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+                  <div style={{ display: 'flex', gap: 12 }}>
+                    <div style={{ width: 4, height: 44, background: '#D4A843', borderRadius: 2, flexShrink: 0 }} />
+                    <div>
+                      <div style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Assigner un Sous-Traitant</div>
+                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 4 }}>
+                        {assignerBesoin.besoin} · {assignerBesoin.chantier}
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={closeAssigner} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 22, cursor: 'pointer', lineHeight: 1, padding: 4 }}>×</button>
+                </div>
+
+                {/* Body */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {/* Section 1: Besoin summary */}
+                  <div style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 8, padding: '12px 16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div>
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Spécialité</div>
+                        <span style={{ background: `${assignerBesoin.specialtyColor}22`, color: assignerBesoin.specialtyColor, border: `1px solid ${assignerBesoin.specialtyColor}44`, borderRadius: 100, padding: '2px 10px', fontSize: 11, fontWeight: 600 }}>
+                          {assignerBesoin.specialty}
+                        </span>
+                      </div>
+                      <div>
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Priorité</div>
+                        <span style={{
+                          background: assignerBesoin.priority === 'Haute' ? 'rgba(239,68,68,0.15)' : 'rgba(16,185,129,0.15)',
+                          color: assignerBesoin.priority === 'Haute' ? '#EF4444' : '#10B981',
+                          border: `1px solid ${assignerBesoin.priority === 'Haute' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`,
+                          borderRadius: 100, padding: '2px 10px', fontSize: 11, fontWeight: 600,
+                        }}>{assignerBesoin.priority}</span>
+                      </div>
+                      <div>
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Date requise</div>
+                        <div style={{ color: '#D4A843', fontSize: 13, fontWeight: 600 }}>{assignerBesoin.date}</div>
+                      </div>
+                      <div>
+                        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>Budget</div>
+                        <div style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>{assignerBesoin.budget}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: IA Recommandation */}
+                  <div style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Zap size={14} color="#D4A843" />
+                      <div>
+                        <div style={{ color: '#D4A843', fontSize: 12, fontWeight: 600 }}>IA recommande</div>
+                        <div style={{ color: '#fff', fontSize: 14, marginTop: 2 }}>{iaRecommended}</div>
+                      </div>
+                    </div>
+                    <span style={{ color: '#D4A843', background: 'rgba(212,168,67,0.1)', borderRadius: 4, padding: '2px 8px', fontSize: 12, fontWeight: 600 }}>{iaScore}/100</span>
+                  </div>
+
+                  {/* Section 3: Contractor selector cards */}
+                  <div>
+                    <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+                      Choisir le sous-traitant
+                    </label>
+                    {disponibles.length === 0 ? (
+                      <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, textAlign: 'center', padding: '20px 0' }}>
+                        Aucun sous-traitant disponible pour cette spécialité
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 200, overflowY: 'auto' }}>
+                        {disponibles.map((c: any) => {
+                          const isSelected = selectedPrestataire === c.id;
+                          const isIaRec = (c.nom || '').toLowerCase().includes(iaRecommended.toLowerCase().split(' ')[0]);
+                          const initials = (c.nom || '??').split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
+                          return (
+                            <div
+                              key={c.id}
+                              onClick={() => setSelectedPrestataire(c.id)}
+                              style={{
+                                position: 'relative',
+                                background: isSelected ? 'rgba(212,168,67,0.06)' : 'rgba(255,255,255,0.04)',
+                                border: `1px solid ${isSelected ? '#D4A843' : isIaRec ? 'rgba(212,168,67,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                                borderRadius: 8, padding: '12px 14px', cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                                display: 'flex', alignItems: 'center', gap: 12,
+                              }}
+                            >
+                              {/* Avatar */}
+                              <div style={{
+                                width: 36, height: 36, borderRadius: '50%',
+                                background: isSelected ? '#D4A843' : 'rgba(255,255,255,0.08)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 13, fontWeight: 700,
+                                color: isSelected ? '#0F1629' : 'rgba(255,255,255,0.6)',
+                                flexShrink: 0,
+                              }}>{initials}</div>
+                              {/* Info */}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ color: '#fff', fontSize: 14, fontWeight: 500 }}>{c.nom}</div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
+                                  <span style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)', borderRadius: 100, padding: '1px 8px', fontSize: 11 }}>{c.specialite || 'Général'}</span>
+                                  <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12 }}>{Number(c.tarif_journalier || 0).toLocaleString('fr-FR')} DH/j</span>
+                                  <Stars rating={c.note_service || 0} />
+                                </div>
+                              </div>
+                              {/* IA badge */}
+                              {isIaRec && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'rgba(212,168,67,0.1)', color: '#D4A843', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 600, flexShrink: 0 }}>
+                                  <Zap size={10} /> IA
+                                </span>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Section 4: Mission details (animated) */}
+                  {selectedC && (
+                    <div style={{
+                      background: 'rgba(255,255,255,0.03)', borderRadius: 8, padding: '12px 16px',
+                      animation: 'fadeSlideIn 0.25s ease forwards',
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Durée</div>
+                          <div style={{ color: '#fff', fontSize: 13 }}>{dureeJours} jours</div>
+                        </div>
+                        <div>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Coût estimé</div>
+                          <div style={{ color: '#D4A843', fontSize: 13, fontWeight: 600 }}>{coutEstime.toLocaleString('fr-FR')} DH</div>
+                        </div>
+                        <div>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Date début</div>
+                          <div style={{ color: '#fff', fontSize: 13 }}>{todayFormatted}</div>
+                        </div>
+                        <div>
+                          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>Date fin estimée</div>
+                          <div style={{ color: '#fff', fontSize: 13 }}>{finFormatted}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error */}
+                  {assignerError && (
+                    <div style={{ color: '#EF4444', fontSize: 12 }}>{assignerError}</div>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', marginTop: 16, paddingTop: 16, display: 'flex', gap: 12 }}>
+                  <button
+                    onClick={closeAssigner}
+                    style={{
+                      background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.6)', border: 'none',
+                      borderRadius: 8, padding: '10px 20px', fontWeight: 500, fontSize: 14, cursor: 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >Annuler</button>
+                  <button
+                    disabled={!selectedPrestataire || assignerLoading}
+                    onClick={async () => {
+                      if (!selectedPrestataire) return;
+                      setAssignerLoading(true);
+                      setAssignerError('');
+                      // Optimistic update
+                      const prevContractors = [...contractors];
+                      // Note: contractors come from hook, optimistic not directly possible on hook state
+                      try {
+                        await Promise.all([
+                          supabase.from('prestataires_transport').update({
+                            statut: 'mission',
+                            mission_actuelle: assignerBesoin.chantier,
+                            date_debut: todayStr,
+                            date_fin: finStr,
+                          } as any).eq('id', selectedPrestataire),
+                        ]);
+                        toast({ title: 'Sous-traitant assigné', description: `${selectedC?.nom || 'ST'} assigné à ${assignerBesoin.chantier} · Mission créée` });
+                        closeAssigner();
+                      } catch (err: any) {
+                        setAssignerError("Erreur lors de l'assignation. Veuillez réessayer.");
+                        setAssignerLoading(false);
+                      }
+                    }}
+                    style={{
+                      flex: 1, background: !selectedPrestataire ? 'rgba(212,168,67,0.3)' : '#D4A843',
+                      color: '#0F1629', border: 'none', borderRadius: 8, padding: 10,
+                      fontWeight: 600, fontSize: 14,
+                      cursor: !selectedPrestataire || assignerLoading ? 'not-allowed' : 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                      opacity: assignerLoading ? 0.6 : 1,
+                    }}
+                  >{assignerLoading ? 'Assignation...' : selectedC ? `Assigner · ${selectedC.nom}` : "Confirmer l'Assignment"}</button>
+                </div>
               </div>
-              <div>
-                <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
-                  Sous-traitant disponible
-                </label>
-                <select
-                  value={assignSelectedId}
-                  onChange={(e) => setAssignSelectedId(e.target.value)}
-                  style={{
-                    width: '100%', boxSizing: 'border-box',
-                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 8, padding: '10px 14px', color: '#fff', fontSize: 14,
-                    fontFamily: "'DM Sans', sans-serif", outline: 'none',
-                  }}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-                >
-                  <option value="" style={{ background: '#0F1629' }}>— Sélectionner —</option>
-                  {contractors.filter((c: any) => c.statut === 'disponible').map((c: any) => (
-                    <option key={c.id} value={c.id} style={{ background: '#0F1629' }}>
-                      {c.nom} — {c.specialite || 'Général'} — {Number(c.tarif_journalier || 0).toLocaleString('fr-FR')} DH/j
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <button
-                  onClick={() => { setAssignTarget(null); setAssignSelectedId(''); }}
-                  style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
-                >Annuler</button>
-                <button
-                  disabled={!assignSelectedId || assignSubmitting}
-                  onClick={async () => {
-                    setAssignSubmitting(true);
-                    try {
-                      const { error } = await supabase.from('prestataires_transport').update({
-                        statut: 'mission',
-                        mission_actuelle: assignTarget.chantier,
-                      }).eq('id', assignSelectedId);
-                      if (error) throw error;
-                      const chosen = contractors.find((c: any) => c.id === assignSelectedId);
-                      toast({ title: 'Sous-traitant assigné', description: `${chosen?.nom || 'ST'} assigné à "${assignTarget.besoin}" — ${assignTarget.chantier}` });
-                      setAssignTarget(null);
-                      setAssignSelectedId('');
-                    } catch (err: any) {
-                      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
-                    } finally {
-                      setAssignSubmitting(false);
-                    }
-                  }}
-                  style={{
-                    flex: 1, background: !assignSelectedId ? 'rgba(212,168,67,0.3)' : '#D4A843',
-                    color: '#0F1629', border: 'none', borderRadius: 8, padding: 12,
-                    fontWeight: 600, fontSize: 14, cursor: !assignSelectedId ? 'not-allowed' : 'pointer',
-                    fontFamily: "'DM Sans', sans-serif", opacity: assignSubmitting ? 0.6 : 1,
-                  }}
-                >{assignSubmitting ? 'Assignation...' : 'Assigner'}</button>
-              </div>
-            </div>
-          </div>
-        </>,
+            </>
+          );
+        })(),
         document.body
       )}
       {/* ══════════════════════════ APPEL D'OFFRES MODAL ══════════════════════════ */}
