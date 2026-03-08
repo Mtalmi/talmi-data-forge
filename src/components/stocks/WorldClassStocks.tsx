@@ -381,7 +381,20 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
           <div style={{ height: '100%', width: `${animatedWidth}%`, background: barColor, borderRadius: 6 }} />
         </div>
       </div>
-      <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 130 }}>
+      {/* Sparkline — 7-day consumption */}
+      {(() => {
+        const data = sparkline && sparkline.length === 7 ? sparkline : null;
+        if (!data || data.every(v => v === 0)) return <div style={{ width: 80, height: 24, flexShrink: 0 }} />;
+        const max = Math.max(...data, 1);
+        const isIncreasing = data[5] + data[6] > data[0] + data[1];
+        const color = isIncreasing ? '#ef4444' : '#D4A843';
+        const points = data.map((v, i) => `${(i / 6) * 76 + 2},${22 - (v / max) * 18}`).join(' ');
+        return (
+          <svg width={80} height={24} style={{ flexShrink: 0 }}>
+            <polyline points={points} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        );
+      })()}
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: T.textPri }}>
           {stock.current.toLocaleString('fr-FR')}
         </span>
