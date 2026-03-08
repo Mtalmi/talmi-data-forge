@@ -969,21 +969,81 @@ export default function Creances() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {stats.agingBuckets.map((bucket, index) => (
-                <div key={bucket.bucket} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{bucket.bucket}</span>
-                    <span className="text-muted-foreground">
-                      {bucket.invoice_count} {t.pages.creances.invoices} • {formatCurrency(bucket.total_amount)}
-                    </span>
+            <div className="flex flex-col md:flex-row gap-6">
+              {/* Aging bars */}
+              <div className="flex-1 space-y-3">
+                {stats.agingBuckets.map((bucket, index) => (
+                  <div key={bucket.bucket} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">{bucket.bucket}</span>
+                      <span className="text-muted-foreground">
+                        {bucket.invoice_count} {t.pages.creances.invoices} • {formatCurrency(bucket.total_amount)}
+                      </span>
+                    </div>
+                    <Progress 
+                      value={bucket.percentage} 
+                      className="h-2"
+                    />
                   </div>
-                  <Progress 
-                    value={bucket.percentage} 
-                    className="h-2"
-                  />
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Donut chart */}
+              {(() => {
+                const AGING_DONUT_COLORS = ['#D4A843', '#F59E0B', '#F97316', '#EF4444', '#B91C1C'];
+                const totalAmount = stats.agingBuckets.reduce((s, b) => s + b.total_amount, 0);
+                const donutData = stats.agingBuckets.map((b, i) => ({
+                  name: b.bucket,
+                  value: b.total_amount,
+                  fill: AGING_DONUT_COLORS[i] || AGING_DONUT_COLORS[4],
+                }));
+
+                return (
+                  <div className="flex flex-col items-center justify-center" style={{ minWidth: 160 }}>
+                    <div style={{ position: 'relative', width: 140, height: 140 }}>
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={donutData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={40}
+                            outerRadius={60}
+                            paddingAngle={2}
+                            dataKey="value"
+                            stroke="none"
+                          >
+                            {donutData.map((entry, idx) => (
+                              <Cell key={idx} fill={entry.fill} />
+                            ))}
+                          </Pie>
+                          <RechartsTooltip
+                            contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
+                            formatter={(val: number) => [`${val.toLocaleString('fr-MA')} DH`, '']}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      {/* Center label */}
+                      <div style={{
+                        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+                        textAlign: 'center', pointerEvents: 'none',
+                      }}>
+                        <span style={{
+                          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                          fontSize: 14, fontWeight: 600, color: '#FFFFFF', lineHeight: 1,
+                        }}>
+                          {totalAmount >= 1000000
+                            ? `${(totalAmount / 1000000).toFixed(1)}M`
+                            : totalAmount >= 1000
+                            ? `${Math.round(totalAmount / 1000)}K`
+                            : totalAmount.toLocaleString('fr-MA')}
+                        </span>
+                        <p style={{ fontSize: 9, color: '#9CA3AF', marginTop: 2 }}>DH</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </CardContent>
         </Card>
