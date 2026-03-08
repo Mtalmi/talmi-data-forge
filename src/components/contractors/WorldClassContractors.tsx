@@ -590,9 +590,9 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 2: CONTRACTOR LIST ══════════════════════════ */}
         <div>
-          <SectionHeader title="Sous-Traitants" badge={`${contractors.length} actifs`} />
+          <SectionHeader title="Sous-Traitants" badge={`${filteredContractors.length} résultat${filteredContractors.length !== 1 ? 's' : ''}`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {contractors.map((c, i) => (
+            {filteredContractors.map((c, i) => (
               <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
             ))}
           </div>
