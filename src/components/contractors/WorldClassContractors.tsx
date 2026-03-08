@@ -513,7 +513,11 @@ export default function WorldClassContractors() {
     setTerminatingMission(true);
     try {
       // Find the contractor by name in the live data
-      const contractor = contractors.find((c: any) => c.nom === contractorName);
+      const contractor = contractors.find((c: any) => 
+        c.nom === contractorName || 
+        c.nom?.toLowerCase().includes(contractorName.toLowerCase()) ||
+        contractorName.toLowerCase().includes(c.nom?.toLowerCase())
+      );
       if (!contractor) throw new Error('Sous-traitant introuvable');
       const { error } = await supabase.from('prestataires_transport').update({
         statut: 'disponible',
