@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
-import { format, subDays } from 'date-fns';
+import { format, subDays, startOfDay } from 'date-fns';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS — TBOS Amber Design System
@@ -136,6 +136,7 @@ function useStocksLiveData() {
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
+  const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
@@ -150,13 +151,19 @@ function useStocksLiveData() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [stocksRes, movementsRes, autonomyRes] = await Promise.all([
+      const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
           .order('created_at', { ascending: false })
           .limit(20),
         supabase.from('stock_autonomy_cache').select('materiau, days_remaining, last_calculated_at'),
+        supabase.from('mouvements_stock')
+          .select('materiau, quantite, created_at')
+          .eq('type_mouvement', 'consumption')
+          .gte('created_at', sevenDaysAgo)
+          .order('created_at', { ascending: true }),
       ]);
 
       // Autonomy map
@@ -167,6 +174,23 @@ function useStocksLiveData() {
         });
       }
       setAutonomy(autoMap);
+
+      // Sparkline data: 7-day consumption per material
+      const sparkMap: Record<string, number[]> = {};
+      if (consumptionRes.data?.length) {
+        const byMat: Record<string, Record<number, number>> = {};
+        consumptionRes.data.forEach((m: any) => {
+          const key = (m.materiau || '').toLowerCase();
+          const dayIdx = Math.floor((Date.now() - new Date(m.created_at).getTime()) / 86400000);
+          const bucket = Math.min(6, Math.max(0, 6 - dayIdx));
+          if (!byMat[key]) byMat[key] = {};
+          byMat[key][bucket] = (byMat[key][bucket] || 0) + Math.abs(m.quantite || 0);
+        });
+        Object.entries(byMat).forEach(([key, days]) => {
+          sparkMap[key] = Array.from({ length: 7 }, (_, i) => days[i] || 0);
+        });
+      }
+      setSparklines(sparkMap);
 
       // Stock levels
       if (stocksRes.data?.length) {
@@ -258,7 +282,7 @@ function useStocksLiveData() {
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -308,7 +332,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // STOCK LEVEL ROW — Amber progress system
 // ─────────────────────────────────────────────────────
-function StockRow({ stock, index, autonomy }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number; autonomy?: { days: number | null; calculated_at: string | null } }) {
+function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number; autonomy?: { days: number | null; calculated_at: string | null }; sparkline?: number[] }) {
   const [visible, setVisible] = useState(false);
   const barColor = stock.pct > 30 ? T.amber : stock.pct > 10 ? T.amberDark : T.danger;
   const isAlert = stock.pct < 30;
@@ -357,6 +381,20 @@ function StockRow({ stock, index, autonomy }: { stock: { name: string; current: 
           <div style={{ height: '100%', width: `${animatedWidth}%`, background: barColor, borderRadius: 6 }} />
         </div>
       </div>
+      {/* Sparkline — 7-day consumption */}
+      {(() => {
+        const data = sparkline && sparkline.length === 7 ? sparkline : null;
+        if (!data || data.every(v => v === 0)) return <div style={{ width: 80, height: 24, flexShrink: 0 }} />;
+        const max = Math.max(...data, 1);
+        const isIncreasing = data[5] + data[6] > data[0] + data[1];
+        const color = isIncreasing ? '#ef4444' : '#D4A843';
+        const points = data.map((v, i) => `${(i / 6) * 76 + 2},${22 - (v / max) * 18}`).join(' ');
+        return (
+          <svg width={80} height={24} style={{ flexShrink: 0 }}>
+            <polyline points={points} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        );
+      })()}
       <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 130 }}>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: T.textPri }}>
           {stock.current.toLocaleString('fr-FR')}
@@ -541,7 +579,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
@@ -635,7 +673,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={Package} label="Niveaux de Stock" />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} />)}
+              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} sparkline={SPARKLINES[s.name.toLowerCase()]} />)}
             </div>
           </Card>
         </section>
