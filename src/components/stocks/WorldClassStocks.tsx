@@ -673,7 +673,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={Package} label="Niveaux de Stock" />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} />)}
+              {STOCKS.map((s, i) => <StockRow key={s.name} stock={s} index={i} autonomy={AUTONOMY[s.name.toLowerCase()]} sparkline={SPARKLINES[s.name.toLowerCase()]} />)}
             </div>
           </Card>
         </section>
