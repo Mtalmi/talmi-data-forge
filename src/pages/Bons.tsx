@@ -52,7 +52,7 @@ import {
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X, Sparkles, ChevronDown, Phone, Mail, ArrowUpRight } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
-import { format, isToday, differenceInDays } from 'date-fns';
+import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, ReferenceLine } from 'recharts';
 
