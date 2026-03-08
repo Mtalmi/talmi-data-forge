@@ -258,7 +258,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 const AVATAR_COLORS = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan, T.orange, T.danger];
 
-function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number }) {
+function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number; onClick?: () => void }) {
    const [hov, setHov] = useState(false);
    const vis = useFadeIn(delay);
    const isMission = c.statut === 'mission';
