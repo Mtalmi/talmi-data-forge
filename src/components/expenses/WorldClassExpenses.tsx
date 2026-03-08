@@ -2453,81 +2453,70 @@ export default function WorldClassExpenses() {
               </div>
             </div>
 
-            {/* Budget vs Réel vs Forecast */}
+            {/* Budget vs Réel */}
             <div style={chartCardStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                 <div>
-                  <p style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>Budget vs Réel vs Prévision IA</p>
-                  <p style={{ color: T.textDim, fontSize: 11 }}>6 derniers mois — Analyse CFO</p>
+                  <p style={{ color: '#D4A843', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>ANALYSE FINANCIÈRE</p>
+                  <p style={{ fontWeight: 700, fontSize: 15, color: '#F1F5F9' }}>Budget vs Réel vs Prévision IA</p>
+                  <p style={{ color: '#64748B', fontSize: 11 }}>6 derniers mois — Analyse CFO</p>
                 </div>
-                {/* Legend */}
                 <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 20, height: 2, background: T.gold }} />
-                    <span style={{ fontSize: 10, color: T.textSec }}>Réel</span>
+                    <div style={{ width: 14, height: 10, borderRadius: 2, background: 'rgba(212,168,67,0.2)', border: '1px solid #D4A843' }} />
+                    <span style={{ fontSize: 10, color: '#94A3B8' }}>Budget</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 20, height: 2, borderTop: `2px dashed ${T.gold}` }} />
-                    <span style={{ fontSize: 10, color: T.textSec }}>Budget</span>
+                    <div style={{ width: 14, height: 10, borderRadius: 2, background: '#D4A843' }} />
+                    <span style={{ fontSize: 10, color: '#94A3B8' }}>Réel</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 20, height: 2, borderTop: `2px dotted rgba(212,168,67,0.5)` }} />
-                    <span style={{ fontSize: 10, color: T.textSec }}>Prévision IA</span>
+                    <div style={{ width: 14, height: 10, borderRadius: 2, background: '#ef4444' }} />
+                    <span style={{ fontSize: 10, color: '#94A3B8' }}>Dépassement</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 12, height: 8, borderRadius: 2, background: 'rgba(212,168,67,0.15)' }} />
-                    <span style={{ fontSize: 10, color: T.textSec }}>Intervalle</span>
+                    <div style={{ width: 20, height: 2, borderTop: '2px dashed #ef4444' }} />
+                    <span style={{ fontSize: 10, color: '#94A3B8' }}>Limite</span>
                   </div>
                 </div>
               </div>
               <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={live.budgetData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="overbudgetFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(239,68,68,0.15)" />
-                      <stop offset="100%" stopColor="rgba(239,68,68,0.02)" />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={(v: number) => `${v}K`} />
+                <BarChart data={live.budgetData} margin={{ top: 5, right: 10, left: -10, bottom: 0 }} barCategoryGap="25%">
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748B', fontSize: 10 }} tickFormatter={(v: number) => `${v}K`} />
                   <RechartsTooltip content={({ active, payload, label }) => {
                     if (!active || !payload?.length) return null;
                     const d = payload[0]?.payload;
                     if (!d) return null;
                     const overBudget = d.depenses > d.budget;
                     return (
-                      <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)' }}>
-                        <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6, fontSize: 12 }}>{label}</p>
-                        <p style={{ fontSize: 12, color: T.gold, marginBottom: 2 }}>Réel: <strong>{d.depenses}K DH</strong></p>
+                      <div style={{ background: '#1A2540', border: '1px solid rgba(255,215,0,0.3)', borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)' }}>
+                        <p style={{ color: '#D4A843', fontWeight: 700, marginBottom: 6, fontSize: 12 }}>{label}</p>
+                        <p style={{ fontSize: 12, color: overBudget ? '#ef4444' : '#D4A843', marginBottom: 2 }}>Réel: <strong>{d.depenses}K DH</strong></p>
                         <p style={{ fontSize: 12, color: '#94A3B8', marginBottom: 2 }}>Budget: <strong>{d.budget}K DH</strong></p>
-                        <p style={{ fontSize: 12, color: 'rgba(212,168,67,0.6)', marginBottom: 2 }}>Prévision IA: <strong>{d.forecast}K DH</strong> <span style={{ fontSize: 10, color: T.textDim }}>±{d.forecastHi - d.forecast}K</span></p>
-                        {overBudget && <p style={{ fontSize: 11, color: T.danger, marginTop: 4, fontWeight: 600 }}>⚠ Dépassement: +{d.depenses - d.budget}K DH</p>}
+                        {overBudget && <p style={{ fontSize: 11, color: '#ef4444', marginTop: 4, fontWeight: 600 }}>⚠ Dépassement: +{d.depenses - d.budget}K DH</p>}
                       </div>
                     );
                   }} />
-                  {/* Confidence band */}
-                  <Area type="monotone" dataKey="forecastHi" stroke="none" fill="rgba(212,168,67,0.1)" isAnimationActive animationDuration={800} />
-                  <Area type="monotone" dataKey="forecastLo" stroke="none" fill={T.navy} isAnimationActive animationDuration={800} />
-                  {/* Over-budget shading via reference areas */}
-                  {live.budgetData.map((d, i) => {
-                    if (d.depenses > d.budget && i < live.budgetData.length) {
-                      return <ReferenceArea key={i} x1={d.month} x2={d.month} fill="rgba(239,68,68,0.08)" />;
-                    }
-                    return null;
-                  })}
-                  {/* Budget line - dashed */}
-                  <Line type="monotone" dataKey="budget" name="Budget" stroke={T.gold} strokeWidth={1.5} strokeDasharray="8 4" dot={false} isAnimationActive animationDuration={800} />
-                  {/* Forecast line - dotted, lighter */}
-                  <Line type="monotone" dataKey="forecast" name="Prévision IA" stroke="rgba(212,168,67,0.5)" strokeWidth={1.5} strokeDasharray="3 3" dot={false} isAnimationActive animationDuration={800} />
-                  {/* Actual line - solid, hero */}
-                  <Line type="monotone" dataKey="depenses" name="Réel" stroke={T.gold} strokeWidth={2} dot={{ r: 3, fill: T.gold, stroke: T.navy, strokeWidth: 2 }} activeDot={{ r: 5, fill: T.gold, stroke: T.navy, strokeWidth: 2 }} isAnimationActive animationDuration={1000} />
-                </LineChart>
+                  {/* Budget limit reference line */}
+                  {live.budgetData.length > 0 && (
+                    <ReferenceLine y={Math.max(...live.budgetData.map(d => d.budget))} stroke="#ef4444" strokeDasharray="8 4" strokeWidth={1.5} strokeOpacity={0.6} label={{ value: 'Limite Budget', position: 'insideTopRight', fill: '#ef4444', fontSize: 9, fontWeight: 600 }} />
+                  )}
+                  {/* Budget bars - transparent with border */}
+                  <Bar dataKey="budget" name="Budget" fill="rgba(212,168,67,0.2)" stroke="#D4A843" strokeWidth={1} radius={[4, 4, 0, 0]} isAnimationActive animationDuration={800} />
+                  {/* Réel bars - solid, color depends on over-budget */}
+                  <Bar dataKey="depenses" name="Réel" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={1000}>
+                    {live.budgetData.map((d, i) => (
+                      <Cell key={i} fill={d.depenses > d.budget ? '#ef4444' : '#D4A843'} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
               {live.vsBudgetPct <= 0 && (
-                <div style={{ marginTop: 14, padding: '8px 14px', borderRadius: 8, background: `${T.success}12`, border: `1px solid ${T.success}30`, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                  <CheckCircle size={13} color={T.success} />
-                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.success }}>Sous budget de {live.budgetRemaining}K DH ce mois</span>
+                <div style={{ marginTop: 14, padding: '8px 14px', borderRadius: 8, background: 'rgba(16,185,129,0.07)', border: '1px solid rgba(16,185,129,0.3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  <CheckCircle size={13} color="#10B981" />
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 12, fontWeight: 700, color: '#10B981' }}>Sous budget de {live.budgetRemaining}K DH ce mois</span>
                 </div>
               )}
             </div>
