@@ -2599,13 +2599,23 @@ export default function WorldClassExpenses() {
             <AnomalyBannerWrapper anomalyCount={anomalyCount}>
               <div style={chartCardStyle}>
                 <SectionHeader icon={CreditCard} label="Dépenses Récentes" right={<span style={{ color: T.textDim, fontSize: 11 }}>{live.recentExpenses.length} opérations</span>} />
-                <div style={{ display: 'flex', gap: 14, padding: '4px 16px 8px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 8 }}>
-                  {['Date', 'Description', 'Catégorie', 'Montant', 'Approuvé par', 'Statut'].map((h, i) => (
+                <div style={{
+                  display: 'flex', gap: 14, padding: '10px 16px',
+                  background: 'rgba(212,168,67,0.06)', borderBottom: `2px solid rgba(212,168,67,0.3)`,
+                  borderRadius: '8px 8px 0 0', marginBottom: 4,
+                }}>
+                  {[
+                    { label: 'Date', width: 65 },
+                    { label: 'Description', flex: 1 },
+                    { label: 'Catégorie', width: 130 },
+                    { label: 'Montant', width: 110, align: 'right' },
+                    { label: 'Approuvé par', width: 110 },
+                    { label: 'Statut', width: 130, align: 'right' },
+                  ].map((h, i) => (
                     <p key={i} style={{
-                      color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
-                      flex: i === 1 ? 1 : undefined,
-                      minWidth: i === 0 ? 55 : i === 2 ? 120 : i === 3 ? 110 : i === 4 ? 90 : i === 5 ? 100 : undefined,
-                    }}>{h}</p>
+                      color: '#D4A843', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+                      flex: h.flex, minWidth: h.width, textAlign: h.align as any || 'left',
+                    }}>{h.label}</p>
                   ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
