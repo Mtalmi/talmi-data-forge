@@ -564,23 +564,36 @@ export default function WorldClassContractors() {
     if (!formData.nom.trim()) { setFormError('Le nom est requis'); return; }
     setSubmitting(true);
     try {
-      const code = 'ST-' + Date.now().toString(36).toUpperCase().slice(-6);
-      const { error } = await supabase.from('prestataires_transport').insert({
-        nom: formData.nom.trim(),
-        code_prestataire: code,
-        specialite: formData.specialite.trim() || null,
-        tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
-        note_service: formData.note_service ? Number(formData.note_service) : null,
-        statut: formData.statut,
-        actif: true,
-        tarif_base_m3: 0,
-      });
-      if (error) throw error;
+      if (editingContractorId) {
+        const { error } = await supabase.from('prestataires_transport').update({
+          nom: formData.nom.trim(),
+          specialite: formData.specialite.trim() || null,
+          tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
+          note_service: formData.note_service ? Number(formData.note_service) : null,
+          statut: formData.statut,
+        }).eq('id', editingContractorId);
+        if (error) throw error;
+        toast({ title: 'Sous-traitant modifié avec succès' });
+      } else {
+        const code = 'ST-' + Date.now().toString(36).toUpperCase().slice(-6);
+        const { error } = await supabase.from('prestataires_transport').insert({
+          nom: formData.nom.trim(),
+          code_prestataire: code,
+          specialite: formData.specialite.trim() || null,
+          tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
+          note_service: formData.note_service ? Number(formData.note_service) : null,
+          statut: formData.statut,
+          actif: true,
+          tarif_base_m3: 0,
+        });
+        if (error) throw error;
+        toast({ title: 'Sous-traitant créé avec succès' });
+      }
       setDrawerOpen(false);
+      setEditingContractorId(null);
       setFormData({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
-      toast({ title: 'Sous-traitant créé avec succès' });
     } catch (err: any) {
-      setFormError(err.message || 'Erreur lors de la création');
+      setFormError(err.message || 'Erreur lors de la sauvegarde');
     } finally {
       setSubmitting(false);
     }
