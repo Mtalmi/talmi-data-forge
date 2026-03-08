@@ -700,11 +700,19 @@ export default function WorldClassContractors() {
             badge="3 actives"
             badgeColor={T.info}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            {MISSIONS.map((m, i) => (
-              <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => setProlongerTarget({ contractor: m.contractor, currentFin: m.fin })} />
-            ))}
-          </div>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+             {MISSIONS.map((m, i) => {
+               const liveContractor = contractors.find((c: any) => c.nom === m.contractor || m.contractor.toLowerCase().includes((c.nom || '').toLowerCase()));
+               return (
+                 <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => {
+                   setProlongerMission({ ...m, id: liveContractor?.id, tarif_journalier: liveContractor?.tarif_journalier || Number((m.tarif || '0').replace(/[^0-9]/g, '')), date_fin: '2025-02-28', nom: m.contractor, mission_actuelle: m.client });
+                   setNouvelleFinDate('');
+                   setRaisonProlongation('');
+                   setProlongerError('');
+                 }} />
+               );
+             })}
+           </div>
         </div>
 
         {/* ══════════════════════════ SECTION 4: COST ANALYSIS ══════════════════════════ */}
