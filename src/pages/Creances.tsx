@@ -1468,6 +1468,112 @@ export default function Creances() {
               </Card>
             ) : (
             <>
+            {/* CLASSEMENT CLIENTS IA */}
+            {(() => {
+              // Build client ranking from ALL receivables (not just overdue)
+              const clientMap = new Map<string, { name: string; total: number; oldestAge: number; paid: number; totalCount: number; overdueCount: number; avgOverdue: number }>();
+              receivables.forEach(r => {
+                const c = clientMap.get(r.client_id) || { name: r.client_name, total: 0, oldestAge: 0, paid: 0, totalCount: 0, overdueCount: 0, avgOverdue: 0 };
+                if (r.status !== 'paid') c.total += r.amount_due;
+                if (r.days_overdue > c.oldestAge) c.oldestAge = r.days_overdue;
+                if (r.status === 'paid') c.paid++;
+                c.totalCount++;
+                if (r.days_overdue > 0 && r.status !== 'paid') { c.overdueCount++; c.avgOverdue += r.days_overdue; }
+                clientMap.set(r.client_id, c);
+              });
+
+              const ranked = Array.from(clientMap.values())
+                .filter(c => c.total > 0)
+                .map(c => {
+                  const avgOd = c.overdueCount > 0 ? c.avgOverdue / c.overdueCount : 0;
+                  // Risk score 0-100: higher = worse
+                  const overdueRatio = c.totalCount > 0 ? c.overdueCount / c.totalCount : 0;
+                  const score = Math.min(100, Math.round(overdueRatio * 40 + Math.min(avgOd, 60) + (c.total > 100000 ? 10 : c.total > 50000 ? 5 : 0)));
+                  let behavior: 'regular' | 'delays' | 'high_risk';
+                  if (score > 70) behavior = 'high_risk';
+                  else if (score > 40) behavior = 'delays';
+                  else behavior = 'regular';
+                  return { ...c, score, behavior };
+                })
+                .sort((a, b) => b.total - a.total);
+
+              if (ranked.length === 0) return null;
+
+              return (
+                <Card>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4" style={{ color: '#D4A843' }} />
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                        Classement Clients IA
+                      </span>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>#</TableHead>
+                          <TableHead>Client</TableHead>
+                          <TableHead className="text-right">Encours</TableHead>
+                          <TableHead className="text-center">Facture la + ancienne</TableHead>
+                          <TableHead className="text-center">Score Risque IA</TableHead>
+                          <TableHead className="text-center">Comportement</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {ranked.slice(0, 15).map((c, i) => (
+                          <TableRow key={i}>
+                            <TableCell className="text-muted-foreground font-mono text-xs">{i + 1}</TableCell>
+                            <TableCell className="font-medium">{c.name}</TableCell>
+                            <TableCell className="text-right">
+                              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', color: '#D4A843', fontWeight: 500 }}>
+                                {c.total.toLocaleString('fr-MA')} DH
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-center font-mono text-sm">
+                              {c.oldestAge > 0 ? <span className="text-destructive">+{c.oldestAge}j</span> : <span className="text-success">À jour</span>}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <div
+                                className="inline-flex items-center justify-center w-9 h-9 rounded-full"
+                                style={{
+                                  backgroundColor: c.score > 70 ? 'rgba(239,68,68,0.12)' : c.score > 40 ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)',
+                                  border: `1.5px solid ${c.score > 70 ? '#ef4444' : c.score > 40 ? '#f59e0b' : '#22c55e'}`,
+                                }}
+                              >
+                                <span style={{
+                                  fontFamily: 'ui-monospace, monospace', fontSize: 12, fontWeight: 600,
+                                  color: c.score > 70 ? '#ef4444' : c.score > 40 ? '#f59e0b' : '#22c55e',
+                                }}>{c.score}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {c.behavior === 'regular' && (
+                                <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-[10px] gap-1">
+                                  <CheckCircle className="h-2.5 w-2.5" />Payeur régulier
+                                </Badge>
+                              )}
+                              {c.behavior === 'delays' && (
+                                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-[10px] gap-1">
+                                  <Clock className="h-2.5 w-2.5" />Retards fréquents
+                                </Badge>
+                              )}
+                              {c.behavior === 'high_risk' && (
+                                <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 text-[10px] gap-1 animate-pulse">
+                                  <AlertTriangle className="h-2.5 w-2.5" />Risque élevé
+                                </Badge>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              );
+            })()}
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {overdueByClient.slice(0, 12).map((client) => {
                 const creditScore = calculateCreditScore(client.client_name, client.receivables);
