@@ -637,6 +637,127 @@ function AIRecommendationCard({ icon: Icon, category, title, saving, confidence,
 }
 
 // ─────────────────────────────────────────────────────
+// REALLOCATION CARD
+// ─────────────────────────────────────────────────────
+interface ReallocationSide {
+  name: string; color: string; icon: any; spent: number; budget: number; pct: number; afterPct: number;
+}
+function ReallocationCard({ from, to, transferAmount }: { from: ReallocationSide; to: ReallocationSide; transferAmount: number }) {
+  const [hov, setHov] = useState(false);
+  const [hovApprove, setHovApprove] = useState(false);
+  const [hovIgnore, setHovIgnore] = useState(false);
+  const FromIcon = from.icon;
+  const ToIcon = to.icon;
+
+  const MiniBar = ({ label, pct, afterPct, color }: { label: string; pct: number; afterPct: number; color: string }) => (
+    <div style={{ flex: 1 }}>
+      <p style={{ fontSize: 10, color: T.textDim, marginBottom: 6, fontWeight: 600 }}>{label}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+            <span style={{ fontSize: 9, color: T.textDim }}>Avant</span>
+            <span style={{ fontSize: 9, color: pct > 90 ? T.danger : T.textSec, fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>{pct}%</span>
+          </div>
+          <div style={{ height: 4, borderRadius: 4, background: `${T.cardBorder}80`, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${Math.min(pct, 100)}%`, borderRadius: 4, background: pct > 90 ? T.danger : pct > 70 ? T.warning : color, transition: 'width 600ms' }} />
+          </div>
+        </div>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+            <span style={{ fontSize: 9, color: T.textDim }}>Après</span>
+            <span style={{ fontSize: 9, color: afterPct > 90 ? T.danger : T.success, fontFamily: 'ui-monospace, monospace', fontWeight: 600 }}>{afterPct}%</span>
+          </div>
+          <div style={{ height: 4, borderRadius: 4, background: `${T.cardBorder}80`, overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${Math.min(afterPct, 100)}%`, borderRadius: 4, background: afterPct > 90 ? T.danger : afterPct > 70 ? T.warning : T.success, transition: 'width 600ms' }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+      background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+      borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden',
+      transform: hov ? 'translateY(-4px)' : 'none',
+      boxShadow: hov ? `0 14px 36px rgba(0,0,0,0.32), 0 0 28px ${T.goldGlow}` : '0 4px 14px rgba(0,0,0,0.15)',
+      transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+    }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0, transition: 'opacity 220ms' }} />
+
+      {/* Transfer visual: FROM → Amount → TO */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        {/* FROM */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: `${from.color}18`, border: `1px solid ${from.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <FromIcon size={20} color={from.color} />
+          </div>
+          <div>
+            <p style={{ fontSize: 10, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>Surplus</p>
+            <p style={{ fontSize: 14, fontWeight: 700, color: T.textPri }}>{from.name}</p>
+            <p style={{ fontSize: 11, color: T.success, fontWeight: 600 }}>{from.pct}% utilisé</p>
+          </div>
+        </div>
+
+        {/* Arrow + Amount */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+          <ArrowRight size={18} color={T.gold} />
+          <span style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            fontSize: 22, fontWeight: 200, color: T.gold, letterSpacing: '-0.02em',
+          }}>
+            {transferAmount.toLocaleString('fr-FR')}K
+          </span>
+          <span style={{ fontSize: 9, color: T.textDim }}>DH suggéré</span>
+        </div>
+
+        {/* TO */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'flex-end', textAlign: 'right' }}>
+          <div>
+            <p style={{ fontSize: 10, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>Déficit</p>
+            <p style={{ fontSize: 14, fontWeight: 700, color: T.textPri }}>{to.name}</p>
+            <p style={{ fontSize: 11, color: T.danger, fontWeight: 600 }}>{to.pct}% utilisé</p>
+          </div>
+          <div style={{ width: 44, height: 44, borderRadius: 12, background: `${to.color}18`, border: `1px solid ${to.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ToIcon size={20} color={to.color} />
+          </div>
+        </div>
+      </div>
+
+      {/* Before/After mini bars */}
+      <div style={{ display: 'flex', gap: 24, marginBottom: 20, padding: '16px', background: 'rgba(255,255,255,0.02)', borderRadius: 10, border: `1px solid ${T.cardBorder}` }}>
+        <MiniBar label={from.name} pct={from.pct} afterPct={from.afterPct} color={from.color} />
+        <div style={{ width: 1, background: T.cardBorder }} />
+        <MiniBar label={to.name} pct={to.pct} afterPct={to.afterPct} color={to.color} />
+      </div>
+
+      {/* Action buttons */}
+      <div style={{ display: 'flex', gap: 10 }}>
+        <button onMouseEnter={() => setHovApprove(true)} onMouseLeave={() => setHovApprove(false)} style={{
+          flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          padding: '10px 20px', borderRadius: 8,
+          background: hovApprove ? '#FFE033' : T.gold, color: T.navy,
+          border: 'none', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+          transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
+          transform: hovApprove ? 'scale(1.02)' : 'scale(1)',
+        }}>
+          <CheckCircle size={14} /> Approuver Réallocation
+        </button>
+        <button onMouseEnter={() => setHovIgnore(true)} onMouseLeave={() => setHovIgnore(false)} style={{
+          padding: '10px 20px', borderRadius: 8,
+          background: hovIgnore ? `${T.cardBorder}50` : 'transparent',
+          border: `1px solid ${T.cardBorder}`, color: T.textSec,
+          fontWeight: 600, fontSize: 12, cursor: 'pointer',
+          transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
+        }}>
+          Ignorer
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // EXPENSE ROW
 // ─────────────────────────────────────────────────────
 function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number }) {
