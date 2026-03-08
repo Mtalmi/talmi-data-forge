@@ -189,6 +189,11 @@ export default function Logistique() {
   ).length;
   const maintenance = vehicules.filter(v => v.statut === 'Maintenance').length;
 
+  // Calculate CO2 emissions from total km driven (0.27 kg/km factor)
+  const totalKmDriven = carburant.reduce((sum, c) => sum + (c.km_parcourus || 0), 0);
+  const estimatedCO2Kg = Math.round(totalKmDriven * 0.27);
+  const estimatedCO2Tons = (estimatedCO2Kg / 1000).toFixed(1);
+
   return (
     <MainLayout>
       <WorldClassDeliveries />
