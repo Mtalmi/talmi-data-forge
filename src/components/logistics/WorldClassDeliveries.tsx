@@ -368,10 +368,20 @@ export default function WorldClassDeliveries() {
   const routeEfficiency = totalDeliveries > 0 ? Math.min(100, Math.round(85 + (delivered / Math.max(totalDeliveries, 1)) * 10)) : 82;
   const aiLogisticsScore = Math.round(onTimeRate * 0.4 + fleetAvail * 0.3 + routeEfficiency * 0.3);
 
+  // AI risk per pipeline stage — En Route uses avg distance vs remaining hours
+  const hoursLeft = Math.max(1, 18 - new Date().getHours()); // assume 18h end-of-day
+  const enRouteWithTime = todayBons.filter(b => b.workflow_status === 'production');
+  const avgRotation = enRouteWithTime.length > 0
+    ? enRouteWithTime.reduce((s, b) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
+    : 45;
+  const enRouteRisk = Math.min(100, Math.round((avgRotation / (hoursLeft * 60)) * 100));
+  const planRisk = planned > 3 ? Math.min(100, Math.round(planned * 8)) : Math.round(planned * 5);
+  const deliveredRisk = totalDeliveries > 0 ? Math.max(0, 100 - Math.round((delivered / totalDeliveries) * 100)) : 0;
+
   const pipeline = [
-    { label: 'Planifié', count: planned, color: T.warning, icon: ClipboardCheck },
-    { label: 'En Route', count: enRoute, color: T.info, icon: Truck },
-    { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle },
+    { label: 'Planifié', count: planned, color: T.warning, icon: ClipboardCheck, aiRisk: { label: 'Risque Saturation', pct: planRisk } },
+    { label: 'En Route', count: enRoute, color: T.info, icon: Truck, aiRisk: { label: 'Risque Retard', pct: enRouteRisk } },
+    { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle, aiRisk: { label: 'Non-livré', pct: deliveredRisk } },
   ];
 
   const perfData = useMemo(() => {
