@@ -263,6 +263,30 @@ const FLEET_HEALTH_DATA = [
 ];
 
 // ─────────────────────────────────────────────────────
+// SEEDED DELIVERIES (fallback when no live data)
+// ─────────────────────────────────────────────────────
+const SEEDED_DELIVERIES = [
+  {
+    bl_id: 'BL-2024-A8F3', client_id: 'Résidences Atlas', formule_id: 'B30',
+    volume_m3: 12, camion_assigne: 'T-04', chauffeur_nom: 'Youssef Benali',
+    workflow_status: 'production', heure_prevue: '10:30',
+    _destination: 'Chantier Maarif — Casablanca', _eta: '≈ 14 min',
+  },
+  {
+    bl_id: 'BL-2024-C1D7', client_id: 'Groupe Addoha', formule_id: 'B25',
+    volume_m3: 8, camion_assigne: 'T-07', chauffeur_nom: 'Karim Idrissi',
+    workflow_status: 'validation_technique', heure_prevue: '08:15',
+    _destination: 'Résidence Rabat Center', _eta: 'Livré à 09:02',
+  },
+  {
+    bl_id: 'BL-2024-E5B2', client_id: 'Saham Immobilier', formule_id: 'B35',
+    volume_m3: 10, camion_assigne: 'T-12', chauffeur_nom: 'Mehdi Tazi',
+    workflow_status: 'planification', heure_prevue: '14:00',
+    _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45',
+  },
+];
+
+// ─────────────────────────────────────────────────────
 // FORECAST 14J MOCK DATA
 // ─────────────────────────────────────────────────────
 const FORECAST_14J = [
