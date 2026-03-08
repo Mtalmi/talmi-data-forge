@@ -463,11 +463,11 @@ function MovementRow({ m, delay = 0 }: { m: { date: string; type: string; materi
   const typeColor = isEntree ? T.success : T.danger;
   const TypeIcon = isEntree ? ArrowUp : ArrowDown;
 
-  // Truncate UUID-like references to first 8 chars
+  // Truncate UUID-like references to first 8 chars (uppercase)
   const displayRef = (() => {
     if (!m.ref || m.ref === '—') return '—';
     const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}/i;
-    if (uuidPattern.test(m.ref)) return m.ref.substring(0, 8) + '…';
+    if (uuidPattern.test(m.ref)) return m.ref.substring(0, 8).toUpperCase();
     return m.ref.length > 16 ? m.ref.substring(0, 16) + '…' : m.ref;
   })();
 
