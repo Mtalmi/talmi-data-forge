@@ -258,7 +258,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
 // ─────────────────────────────────────────────────────
 const AVATAR_COLORS = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan, T.orange, T.danger];
 
-function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number }) {
+function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number; onClick?: () => void }) {
    const [hov, setHov] = useState(false);
    const vis = useFadeIn(delay);
    const isMission = c.statut === 'mission';
@@ -268,6 +268,7 @@ function ContractorRow({ c, delay, colorIndex }: { c: { id: string; code_prestat
    const avatarText = avatarBg === T.gold ? '#000' : '#fff';
    return (
     <div
+      onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -508,6 +509,7 @@ export default function WorldClassContractors() {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [terminatingMission, setTerminatingMission] = useState(false);
+  const [selectedContractor, setSelectedContractor] = useState<any>(null);
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
@@ -657,7 +659,7 @@ export default function WorldClassContractors() {
           <SectionHeader title="Sous-Traitants" badge={`${filteredContractors.length} résultat${filteredContractors.length !== 1 ? 's' : ''}`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {filteredContractors.map((c, i) => (
-              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
+              <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} onClick={() => setSelectedContractor({ ...c, colorIndex: i })} />
             ))}
           </div>
         </div>
@@ -915,6 +917,95 @@ export default function WorldClassContractors() {
           </div>
         </>
       )}
+
+      {/* ══════════════════════════ CONTRACTOR DETAIL DRAWER ══════════════════════════ */}
+      {selectedContractor && (() => {
+        const sc = selectedContractor;
+        const isMission = sc.statut === 'mission';
+        const avatarBg = AVATAR_COLORS[sc.colorIndex % AVATAR_COLORS.length];
+        const avatarText = avatarBg === T.gold ? '#000' : '#fff';
+        const initials = (sc.code_prestataire || '??').slice(0, 2).toUpperCase();
+        const tarifFormatted = sc.tarif_journalier ? `${Number(sc.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
+        const coutMtdFormatted = sc.cout_mtd != null ? `${Number(sc.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
+        const getRiskDot = () => {
+          if (sc.statut === 'mission' && sc.jours_travailles >= 7) return { color: '#EF4444', label: 'Risque élevé' };
+          if (sc.statut === 'mission' && sc.jours_travailles >= 4) return { color: '#F59E0B', label: 'À surveiller' };
+          return { color: '#10B981', label: 'Nominal' };
+        };
+        const risk = getRiskDot();
+        const sLabel: React.CSSProperties = { color: 'rgba(255,255,255,0.4)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, marginBottom: 14 };
+        const rowS: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0' };
+        const valS: React.CSSProperties = { color: '#fff', fontSize: 14 };
+        const dimL: React.CSSProperties = { color: 'rgba(255,255,255,0.5)', fontSize: 14 };
+        return (
+          <>
+            <div onClick={() => setSelectedContractor(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 50 }} />
+            <div style={{ position: 'fixed', top: 0, right: 0, height: '100vh', width: 520, background: '#0F1629', zIndex: 51, display: 'flex', flexDirection: 'column', boxShadow: '-8px 0 32px rgba(0,0,0,0.5)', overflowY: 'auto' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 4, height: 48, background: '#D4A843', borderRadius: 2, flexShrink: 0 }} />
+                  <AvatarCircle initials={initials} bg={avatarBg} textColor={avatarText} size={44} />
+                  <div>
+                    <div style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{sc.nom}</div>
+                    <span style={{ background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`, borderRadius: 100, padding: '2px 8px', fontSize: 11, fontWeight: 600, display: 'inline-block', marginTop: 4 }}>{sc.specialite || '—'}</span>
+                  </div>
+                </div>
+                <button onClick={() => setSelectedContractor(null)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}>×</button>
+              </div>
+              {/* Body */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {isMission && (
+                  <>
+                    <div style={{ padding: '20px 24px' }}>
+                      <div style={sLabel}>Mission Actuelle</div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={rowS}><span style={dimL}>Localisation</span><span style={{ ...valS, display: 'flex', alignItems: 'center', gap: 4 }}><MapPin size={12} color={T.info} /> {sc.mission_actuelle || '—'}</span></div>
+                        <div style={rowS}><span style={dimL}>Jours travaillés</span><span style={{ ...valS, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600 }}>{sc.jours_travailles ?? 0} j</span></div>
+                        <div style={rowS}><span style={dimL}>Coût MTD</span><span style={{ ...valS, color: '#D4A843', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}>{coutMtdFormatted}</span></div>
+                      </div>
+                    </div>
+                    <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                  </>
+                )}
+                <div style={{ padding: '20px 24px' }}>
+                  <div style={sLabel}>Tarification</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={rowS}><span style={dimL}>Tarif/jour</span><span style={{ ...valS, fontFamily: "'JetBrains Mono', monospace", fontWeight: 600, color: T.gold }}>{tarifFormatted}</span></div>
+                    <div style={rowS}><span style={dimL}>Note moyenne</span><Stars rating={sc.note_service ?? 0} /></div>
+                  </div>
+                </div>
+                <div style={{ height: 1, background: 'rgba(255,255,255,0.06)' }} />
+                <div style={{ padding: '20px 24px' }}>
+                  <div style={sLabel}>Statut & Risque</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={rowS}>
+                      <span style={dimL}>Statut</span>
+                      {isMission ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(16,185,129,0.15)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700 }}><Briefcase size={11} /> En Mission</span>
+                      ) : (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(6,182,212,0.15)', color: '#06B6D4', border: '1px solid rgba(6,182,212,0.3)', borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700 }}><CheckCircle size={11} /> Disponible</span>
+                      )}
+                    </div>
+                    <div style={rowS}>
+                      <span style={dimL}>Indicateur risque</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ width: 10, height: 10, borderRadius: '50%', background: risk.color }} />
+                        <span style={{ color: risk.color, fontSize: 13, fontWeight: 600 }}>{risk.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Footer */}
+              <div style={{ position: 'sticky', bottom: 0, background: '#0F1629', padding: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <button style={{ width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Modifier le Sous-Traitant</button>
+                <button style={{ width: '100%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Désactiver</button>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
       {/* ══════════════════════════ MISSION DETAIL DRAWER ══════════════════════════ */}
       {missionDrawer && (() => {
