@@ -268,6 +268,7 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
    const avatarText = avatarBg === T.gold ? '#000' : '#fff';
    return (
     <div
+      onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
