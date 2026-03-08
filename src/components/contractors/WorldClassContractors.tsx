@@ -517,20 +517,19 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ AI INTELLIGENCE BANNER ══════════════════════════ */}
         <div style={{
-          background: 'rgba(11, 17, 32, 0.7)',
-          backdropFilter: 'blur(8px)',
-          border: `1px solid rgba(255, 215, 0, 0.2)`,
-          borderLeft: `3px solid #D4A843`,
+          background: 'rgba(212, 168, 67, 0.08)',
+          border: '1px solid rgba(212, 168, 67, 0.3)',
+          borderLeft: '4px solid #D4A843',
           borderRadius: 8,
-          padding: '16px 20px',
+          padding: '12px 16px',
           display: 'flex',
           alignItems: 'center',
-          gap: 14,
+          gap: 12,
         }}>
-          <Zap size={18} color="#D4A843" strokeWidth={2.5} />
-          <p style={{ margin: 0, fontSize: 14, color: 'rgba(241, 245, 249, 0.7)', fontWeight: 400 }}>
-            3 missions actives — Atlas Pompage termine dans 4 jours, 2 sous-traitants disponibles correspondent aux besoins en attente.
-          </p>
+          <Zap size={16} color="#D4A843" strokeWidth={2.5} />
+          <span style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.85)', fontWeight: 400 }}>
+            3 missions actives · Atlas Pompage termine dans 4 jours · 2 sous-traitants disponibles correspondent aux besoins en attente
+          </span>
         </div>
 
         {/* ══════════════════════════ SECTION 1: KPIs ══════════════════════════ */}
