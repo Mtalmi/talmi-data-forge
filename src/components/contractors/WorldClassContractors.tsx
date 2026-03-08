@@ -547,7 +547,7 @@ export default function WorldClassContractors() {
         icon={Briefcase}
         title="Sous-Traitants"
         subtitle="Gestion des sous-traitants et missions"
-        tabs={tabs.map(t => ({ id: t, label: t }))}
+        tabs={tabConfig.map(t => ({ id: t.id, label: t.label }))}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
