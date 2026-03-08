@@ -313,24 +313,24 @@ export default function Logistique() {
 
         {/* Fleet Status Summary */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4">
-          <div className="kpi-card p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.total}</p>
+          <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">TOTAL</p>
             <p className="text-xl sm:text-3xl font-bold mt-1">{vehicules.length}</p>
           </div>
-          <div className="kpi-card positive p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.available}</p>
-            <p className="text-xl sm:text-3xl font-bold mt-1 text-success">{disponibles}</p>
+          <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">DISPONIBLES</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1" style={{ color: '#22c55e' }}>{disponibles}</p>
           </div>
-          <div className="kpi-card p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.onDelivery}</p>
-            <p className="text-xl sm:text-3xl font-bold mt-1 text-primary">{enLivraisonCount}</p>
+          <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">EN LIVRAISON</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1" style={{ color: '#D4A843' }}>{enLivraisonCount}</p>
           </div>
-          <div className="kpi-card warning p-3 sm:p-4">
-            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">{t.pages.logistique.inMaintenance}</p>
-            <p className="text-xl sm:text-3xl font-bold mt-1 text-warning">{maintenance}</p>
+          <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">MAINTENANCE</p>
+            <p className="text-xl sm:text-3xl font-bold mt-1" style={{ color: '#ef4444' }}>{maintenance}</p>
           </div>
           {/* CO2 Emissions ESG KPI */}
-          <div className="kpi-card p-3 sm:p-4 border-emerald-500/30 bg-gradient-to-br from-emerald-950/20 to-transparent">
+          <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(16,185,129,0.2)' }}>
             <div className="flex items-center gap-2 mb-1">
               <Leaf className="h-3.5 w-3.5 text-emerald-400" />
               <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">ÉMISSIONS CO₂</p>
