@@ -984,6 +984,60 @@ function ExpenseRow({ e, delay = 0, isAnomaly = false }: { e: { date: string; de
 }
 
 // ─────────────────────────────────────────────────────
+// ANOMALY BANNER WRAPPER
+// ─────────────────────────────────────────────────────
+function AnomalyBannerWrapper({ anomalyCount, children }: { anomalyCount: number; children: React.ReactNode }) {
+  const [dismissed, setDismissed] = useState(false);
+  return (
+    <section>
+      {anomalyCount > 0 && !dismissed && (
+        <div style={{
+          marginBottom: 14, padding: '12px 18px',
+          background: `${T.danger}0A`, border: `1px solid ${T.danger}35`,
+          borderLeft: `4px solid ${T.danger}`,
+          borderRadius: 12, display: 'flex', alignItems: 'center', gap: 14,
+        }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: `${T.danger}18`, border: `1px solid ${T.danger}35`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <AlertTriangle size={18} color={T.danger} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: T.danger }}>
+              Agent IA: {anomalyCount} dépense{anomalyCount > 1 ? 's' : ''} inhabituelle{anomalyCount > 1 ? 's' : ''} détectée{anomalyCount > 1 ? 's' : ''} ce mois
+            </p>
+            <p style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>
+              Montants supérieurs à la moyenne historique de la catégorie (&gt;2x)
+            </p>
+          </div>
+          <button onClick={() => {}} style={{
+            padding: '6px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+            background: `${T.gold}15`, border: `1px solid ${T.gold}40`, color: T.gold,
+            cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = `${T.gold}25`; }}
+          onMouseLeave={e => { e.currentTarget.style.background = `${T.gold}15`; }}
+          >
+            Examiner
+          </button>
+          <button onClick={() => setDismissed(true)} style={{
+            width: 28, height: 28, borderRadius: 6, border: `1px solid ${T.cardBorder}`,
+            background: 'rgba(255,255,255,0.03)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: T.textDim, transition: 'all 150ms', flexShrink: 0,
+          }}>
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
+      {children}
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // RECURRING EXPENSES SECTION
 // ─────────────────────────────────────────────────────
 function RecurringSection({ recurring, total30d }: {
