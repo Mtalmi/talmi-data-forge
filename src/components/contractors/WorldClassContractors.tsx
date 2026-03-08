@@ -510,6 +510,7 @@ export default function WorldClassContractors() {
   const [submitting, setSubmitting] = useState(false);
   const [terminatingMission, setTerminatingMission] = useState(false);
   const [selectedContractor, setSelectedContractor] = useState<any>(null);
+  const [editingContractorId, setEditingContractorId] = useState<string | null>(null);
 
   const handleTermineMission = async (contractorName: string) => {
     setTerminatingMission(true);
@@ -563,23 +564,36 @@ export default function WorldClassContractors() {
     if (!formData.nom.trim()) { setFormError('Le nom est requis'); return; }
     setSubmitting(true);
     try {
-      const code = 'ST-' + Date.now().toString(36).toUpperCase().slice(-6);
-      const { error } = await supabase.from('prestataires_transport').insert({
-        nom: formData.nom.trim(),
-        code_prestataire: code,
-        specialite: formData.specialite.trim() || null,
-        tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
-        note_service: formData.note_service ? Number(formData.note_service) : null,
-        statut: formData.statut,
-        actif: true,
-        tarif_base_m3: 0,
-      });
-      if (error) throw error;
+      if (editingContractorId) {
+        const { error } = await supabase.from('prestataires_transport').update({
+          nom: formData.nom.trim(),
+          specialite: formData.specialite.trim() || null,
+          tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
+          note_service: formData.note_service ? Number(formData.note_service) : null,
+          statut: formData.statut,
+        }).eq('id', editingContractorId);
+        if (error) throw error;
+        toast({ title: 'Sous-traitant modifié avec succès' });
+      } else {
+        const code = 'ST-' + Date.now().toString(36).toUpperCase().slice(-6);
+        const { error } = await supabase.from('prestataires_transport').insert({
+          nom: formData.nom.trim(),
+          code_prestataire: code,
+          specialite: formData.specialite.trim() || null,
+          tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
+          note_service: formData.note_service ? Number(formData.note_service) : null,
+          statut: formData.statut,
+          actif: true,
+          tarif_base_m3: 0,
+        });
+        if (error) throw error;
+        toast({ title: 'Sous-traitant créé avec succès' });
+      }
       setDrawerOpen(false);
+      setEditingContractorId(null);
       setFormData({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
-      toast({ title: 'Sous-traitant créé avec succès' });
     } catch (err: any) {
-      setFormError(err.message || 'Erreur lors de la création');
+      setFormError(err.message || 'Erreur lors de la sauvegarde');
     } finally {
       setSubmitting(false);
     }
@@ -615,7 +629,7 @@ export default function WorldClassContractors() {
         onTabChange={setActiveTab}
         actions={
           <button
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => { setEditingContractorId(null); setFormData({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' }); setDrawerOpen(true); }}
             style={{
               background: T.gold, color: T.navy, border: 'none', borderRadius: 8,
               padding: '7px 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer',
@@ -823,7 +837,7 @@ export default function WorldClassContractors() {
         <>
           {/* Backdrop */}
           <div
-            onClick={() => setDrawerOpen(false)}
+            onClick={() => { setDrawerOpen(false); setEditingContractorId(null); }}
             style={{
               position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998,
             }}
@@ -840,10 +854,10 @@ export default function WorldClassContractors() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
-                <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Nouveau Sous-Traitant</span>
+                <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{editingContractorId ? 'Modifier Sous-Traitant' : 'Nouveau Sous-Traitant'}</span>
               </div>
               <button
-                onClick={() => setDrawerOpen(false)}
+                onClick={() => { setDrawerOpen(false); setEditingContractorId(null); }}
                 style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}
               >×</button>
             </div>
@@ -908,7 +922,7 @@ export default function WorldClassContractors() {
                   fontFamily: "'DM Sans', sans-serif", marginTop: 8, opacity: submitting ? 0.7 : 1,
                 }}
               >
-                {submitting ? 'Création…' : 'Créer le Sous-Traitant'}
+                {submitting ? 'Sauvegarde…' : editingContractorId ? 'Enregistrer les Modifications' : 'Créer le Sous-Traitant'}
               </button>
               {formError && (
                 <div style={{ color: '#EF4444', fontSize: 13, marginTop: 4 }}>{formError}</div>
@@ -999,8 +1013,35 @@ export default function WorldClassContractors() {
               </div>
               {/* Footer */}
               <div style={{ position: 'sticky', bottom: 0, background: '#0F1629', padding: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <button style={{ width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Modifier le Sous-Traitant</button>
-                <button style={{ width: '100%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}>Désactiver</button>
+                <button
+                  onClick={() => {
+                    setFormData({
+                      nom: sc.nom || '',
+                      specialite: sc.specialite || '',
+                      tarif_journalier: sc.tarif_journalier != null ? String(sc.tarif_journalier) : '',
+                      note_service: sc.note_service != null ? String(sc.note_service) : '',
+                      statut: sc.statut || 'disponible',
+                    });
+                    setEditingContractorId(sc.id);
+                    setSelectedContractor(null);
+                    setDrawerOpen(true);
+                  }}
+                  style={{ width: '100%', background: 'transparent', border: '1px solid #D4A843', color: '#D4A843', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Modifier le Sous-Traitant</button>
+                <button
+                  onClick={async () => {
+                    if (!confirm('Voulez-vous vraiment désactiver ce sous-traitant ?')) return;
+                    try {
+                      const { error } = await supabase.from('prestataires_transport').update({ actif: false, statut: 'disponible', mission_actuelle: null }).eq('id', sc.id);
+                      if (error) throw error;
+                      setSelectedContractor(null);
+                      toast({ title: 'Sous-traitant désactivé' });
+                    } catch (err: any) {
+                      toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
+                    }
+                  }}
+                  style={{ width: '100%', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
+                >Désactiver</button>
               </div>
             </div>
           </>
