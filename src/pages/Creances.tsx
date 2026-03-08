@@ -149,6 +149,88 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   );
 }
 
+function RelancesPipeline({ stages }: { stages: { label: string; range: string; color: string; bgAlpha: string; borderAlpha: string; clients: number; amount: number; lastAction: string; pulse: boolean }[] }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{
+      background: 'rgba(212, 168, 67, 0.04)',
+      border: '1px solid rgba(212, 168, 67, 0.15)',
+      borderLeft: '4px solid #D4A843',
+      borderRadius: 12, overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+            Agent IA: Relances Automatiques
+          </span>
+          <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">
+            {stages.reduce((s, st) => s + st.clients, 0)} clients
+          </Badge>
+        </div>
+        <ChevronDown className="h-4 w-4 transition-transform" style={{ color: '#D4A843', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </button>
+      {open && (
+        <div className="px-5 pb-5 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stages.map((stage, i) => (
+              <div key={i} style={{
+                background: `${stage.color}${stage.bgAlpha.replace('0.', '0')}`,
+                border: `1px solid ${stage.color}${stage.borderAlpha.replace('0.', '')}`,
+                borderRadius: 10, padding: '16px 18px',
+                animation: stage.pulse ? 'pulse 3s ease-in-out infinite' : 'none',
+              }}>
+                {/* Stage header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.color }} />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: stage.color }}>{stage.label}</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>{stage.range}</span>
+                </div>
+                {/* Metrics */}
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 28, fontWeight: 200, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em',
+                  }}>{stage.clients}</span>
+                  <span style={{ fontSize: 11, color: '#9CA3AF' }}>clients</span>
+                </div>
+                <p style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                  fontSize: 14, fontWeight: 500, color: stage.color, marginBottom: 12,
+                }}>{stage.amount.toLocaleString('fr-MA')} DH</p>
+                {/* Last action */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Clock className="h-3 w-3" style={{ color: 'rgba(255,255,255,0.3)' }} />
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>Dernière relance: {stage.lastAction}</span>
+                </div>
+                {/* Action button */}
+                <button
+                  onClick={() => toast.success(`Relances ${stage.label} lancées pour ${stage.clients} clients`)}
+                  style={{
+                    width: '100%', padding: '8px 0', borderRadius: 8,
+                    background: 'rgba(212, 168, 67, 0.15)', border: '1px solid rgba(212, 168, 67, 0.3)',
+                    color: '#D4A843', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    transition: 'all 150ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                >
+                  ⚡ Lancer Relances
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Creances() {
   const { isCeo, role } = useAuth();
   const { t, lang } = useI18n();
