@@ -367,22 +367,39 @@ export default function Creances() {
   return (
     <MainLayout>
       <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Wallet className="h-6 w-6 text-primary" />
-              {t.pages.creances.title}
-            </h1>
-            <p className="text-muted-foreground">
-              {t.pages.creances.subtitle} {format(startDate, 'dd MMM yyyy', { locale: getDateLocale(lang) })}
-              {hasData && ` • DSO: ${stats.dsoAverage} jours`}
-            </p>
+        {/* TBOS Header Bar */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #FFD700, #D4A843)' }}>
+              <Wallet className="h-5 w-5 text-black" />
+            </div>
+            <div>
+              <h1 className="flex items-center gap-2">
+                <span style={{ fontSize: 18, fontWeight: 700, color: '#94A3B8' }}>TBOS</span>
+                <span style={{ fontSize: 18, fontWeight: 800, color: '#FFD700' }}>Créances</span>
+              </h1>
+              <p style={{ fontSize: 12, color: '#64748B' }}>
+                Suivi automatique des créances en temps réel · {format(startDate, 'dd MMM yyyy', { locale: getDateLocale(lang) })}
+                {hasData && ` · DSO: ${stats.dsoAverage}j`}
+              </p>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={refetch}>
+          <div className="flex items-center gap-4">
+            {/* Live clock */}
+            <span style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+              fontSize: 13, color: '#64748B', fontWeight: 500,
+            }}>
+              {new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={refetch}
+              style={{ background: 'transparent', border: '1px solid #D4A843', color: '#D4A843' }}
+            >
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              {t.pages.creances.refresh}
+              Actualiser
             </Button>
             
             {/* Export Dropdown */}
