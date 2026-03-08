@@ -171,11 +171,11 @@ const TEST_TYPE_ICON: Record<string, React.ElementType> = {
   'Air occlus': CloudRain,
 };
 const TEST_TYPE_COLOR: Record<string, string> = {
-  'Slump': T.info,
-  'Résistance 7j': T.gold,
-  'Résistance 28j': T.purple,
-  'Température': T.orange,
-  'Air occlus': T.cyan,
+  'Slump': '#D4A843',
+  'Résistance 7j': '#F0C060',
+  'Résistance 28j': '#B8902E',
+  'Température': '#FFD700',
+  'Air occlus': 'rgba(212,168,67,0.5)',
 };
 
 const RESULTS = [
