@@ -2167,27 +2167,45 @@ export default function WorldClassExpenses() {
         </section>
 
         {/* RECENT EXPENSES */}
-        <section>
-          <div style={chartCardStyle}>
-            <SectionHeader icon={CreditCard} label="Dépenses Récentes" right={<span style={{ color: T.textDim, fontSize: 11 }}>{live.recentExpenses.length} opérations</span>} />
-            <div style={{ display: 'flex', gap: 14, padding: '4px 16px 8px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 8 }}>
-              {['Date', 'Description', 'Catégorie', 'Montant', 'Approuvé par', 'Statut'].map((h, i) => (
-                <p key={i} style={{
-                  color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
-                  flex: i === 1 ? 1 : undefined,
-                  minWidth: i === 0 ? 55 : i === 2 ? 120 : i === 3 ? 110 : i === 4 ? 90 : i === 5 ? 100 : undefined,
-                }}>{h}</p>
-              ))}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {live.recentExpenses.length > 0 ? live.recentExpenses.map((e, i) => (
-                <ExpenseRow key={i} e={e} delay={i * 60} />
-              )) : (
-                <p style={{ color: T.textDim, fontSize: 13, padding: '20px 16px', textAlign: 'center' }}>Aucune dépense ce mois</p>
-              )}
-            </div>
-          </div>
-        </section>
+        {(() => {
+          // Compute category averages for anomaly detection
+          const catTotals: Record<string, { sum: number; count: number }> = {};
+          live.recentExpenses.forEach(e => {
+            if (!catTotals[e.cat]) catTotals[e.cat] = { sum: 0, count: 0 };
+            catTotals[e.cat].sum += e.amount;
+            catTotals[e.cat].count += 1;
+          });
+          const catAvg: Record<string, number> = {};
+          Object.entries(catTotals).forEach(([k, v]) => { catAvg[k] = v.count > 0 ? v.sum / v.count : 0; });
+          const anomalySet = new Set(
+            live.recentExpenses.filter(e => catAvg[e.cat] > 0 && e.amount > catAvg[e.cat] * 2).map((_, i) => i)
+          );
+          const anomalyCount = anomalySet.size;
+
+          return (
+            <AnomalyBannerWrapper anomalyCount={anomalyCount}>
+              <div style={chartCardStyle}>
+                <SectionHeader icon={CreditCard} label="Dépenses Récentes" right={<span style={{ color: T.textDim, fontSize: 11 }}>{live.recentExpenses.length} opérations</span>} />
+                <div style={{ display: 'flex', gap: 14, padding: '4px 16px 8px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 8 }}>
+                  {['Date', 'Description', 'Catégorie', 'Montant', 'Approuvé par', 'Statut'].map((h, i) => (
+                    <p key={i} style={{
+                      color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
+                      flex: i === 1 ? 1 : undefined,
+                      minWidth: i === 0 ? 55 : i === 2 ? 120 : i === 3 ? 110 : i === 4 ? 90 : i === 5 ? 100 : undefined,
+                    }}>{h}</p>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {live.recentExpenses.length > 0 ? live.recentExpenses.map((e, i) => (
+                    <ExpenseRow key={i} e={e} delay={i * 60} isAnomaly={anomalySet.has(i)} />
+                  )) : (
+                    <p style={{ color: T.textDim, fontSize: 13, padding: '20px 16px', textAlign: 'center' }}>Aucune dépense ce mois</p>
+                  )}
+                </div>
+              </div>
+            </AnomalyBannerWrapper>
+          );
+        })()}
 
         {/* PENDING APPROVALS */}
         {live.pending.length > 0 && (
