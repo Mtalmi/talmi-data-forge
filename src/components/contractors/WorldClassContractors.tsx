@@ -837,7 +837,7 @@ export default function WorldClassContractors() {
         <>
           {/* Backdrop */}
           <div
-            onClick={() => setDrawerOpen(false)}
+            onClick={() => { setDrawerOpen(false); setEditingContractorId(null); }}
             style={{
               position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998,
             }}
@@ -857,7 +857,7 @@ export default function WorldClassContractors() {
                 <span style={{ color: '#fff', fontSize: 20, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>{editingContractorId ? 'Modifier Sous-Traitant' : 'Nouveau Sous-Traitant'}</span>
               </div>
               <button
-                onClick={() => setDrawerOpen(false)}
+                onClick={() => { setDrawerOpen(false); setEditingContractorId(null); }}
                 style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', fontSize: 24, cursor: 'pointer', lineHeight: 1 }}
               >×</button>
             </div>
