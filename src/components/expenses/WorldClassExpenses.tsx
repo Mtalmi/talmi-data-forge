@@ -1779,13 +1779,14 @@ export default function WorldClassExpenses() {
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
             <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
             <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
             <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
             <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
+            <AIForecastKPI totalThisMonth={live.totalThisMonth} dailyAvg={live.dailyAvg} budgetTotal={live.budgetTotal} delay={400} />
           </div>
         </section>
 
