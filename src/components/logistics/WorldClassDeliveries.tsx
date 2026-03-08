@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid,
+  LineChart, Line, Area, ComposedChart,
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
@@ -368,7 +369,31 @@ export default function WorldClassDeliveries() {
           </Card>
         </section>
 
-        {/* Footer */}
+        {/* Prévision Demande IA */}
+        <section>
+          <SectionHeader icon={TrendingUp} label="Prévision Demande IA — 14 Jours" right={
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 10, fontWeight: 700,
+              color: '#D4A843', background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.25)',
+              borderRadius: 4, padding: '2px 8px', letterSpacing: '0.06em',
+            }}>Prévision IA</span>
+          } />
+          <Card>
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={FORECAST_14J} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
+                <XAxis dataKey="jour" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} label={{ value: 'Livraisons', angle: -90, position: 'insideLeft', fill: T.textDim, fontSize: 10, dx: 10 }} />
+                <RechartsTooltip content={<ForecastTooltip />} cursor={{ stroke: 'rgba(212,168,67,0.2)' }} />
+                <Area dataKey="upper" stackId="band" fill="rgba(212,168,67,0.1)" stroke="none" />
+                <Area dataKey="lowerInv" stackId="band" fill={T.navy} stroke="none" />
+                <Line dataKey="réel" name="Réel" type="monotone" stroke="#D4A843" strokeWidth={2} dot={{ r: 3, fill: '#D4A843', stroke: T.navy, strokeWidth: 1 }} activeDot={{ r: 5 }} />
+                <Line dataKey="prévu" name="Prévu IA" type="monotone" stroke="#D4A843" strokeWidth={2} strokeDasharray="6 4" strokeOpacity={0.5} dot={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </Card>
+        </section>
+
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Livraisons v2.0 — Données live • {new Date().toLocaleString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
