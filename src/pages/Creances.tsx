@@ -78,9 +78,7 @@ import {
   ChevronDown,
   FileSpreadsheet,
   Briefcase,
-  Eye,
 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
