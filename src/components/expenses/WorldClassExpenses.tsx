@@ -1537,6 +1537,9 @@ export default function WorldClassExpenses() {
             </section>
           );
         })()}
+
+        {/* AI APPROVAL INTELLIGENCE - Approbations tab only */}
+        {activeTab === 'Approbations' && <ApprovalIntelligencePanel recurringCount={live.recurring.filter(r => r.amount < 500).length} />}
       </div>
     </div>
   );
