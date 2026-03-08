@@ -583,11 +583,14 @@ export default function WorldClassContractors() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
-          <button style={{
-            background: T.gold, color: T.navy, border: 'none', borderRadius: 8,
-            padding: '7px 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-            display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'DM Sans, sans-serif',
-          }}><Plus size={14} /> Nouveau Sous-Traitant</button>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            style={{
+              background: T.gold, color: T.navy, border: 'none', borderRadius: 8,
+              padding: '7px 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'DM Sans, sans-serif',
+            }}
+          ><Plus size={14} /> Nouveau Sous-Traitant</button>
         }
       />
 
