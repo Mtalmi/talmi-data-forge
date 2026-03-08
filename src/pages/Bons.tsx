@@ -52,7 +52,7 @@ import {
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X, Sparkles, ChevronDown, Phone, Mail, ArrowUpRight } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
-import { format, isToday, differenceInDays } from 'date-fns';
+import { format, isToday, differenceInDays, getDaysInMonth, getDate, startOfMonth, subMonths, endOfMonth } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ResponsiveContainer, AreaChart, Area, ReferenceLine } from 'recharts';
 
@@ -627,6 +627,57 @@ export default function Bons() {
           title="Bons de Livraison"
           subtitle="Gestion des livraisons en temps réel"
         />
+
+        {/* KPI: Prévision Revenus IA */}
+        {bons.length > 0 && (() => {
+          const now = new Date();
+          const dayOfMonth = getDate(now);
+          const daysInMonth = getDaysInMonth(now);
+          const monthStart = startOfMonth(now);
+          const currentMonthBons = bons.filter(b => new Date(b.date_livraison) >= monthStart);
+          const currentRevenue = currentMonthBons.reduce((s, b) => s + (b.volume_m3 * (b.prix_vente_m3 || 0)), 0);
+          const dailyRate = dayOfMonth > 0 ? currentRevenue / dayOfMonth : 0;
+          const projected = dailyRate * daysInMonth;
+          const lastMonthStart = startOfMonth(subMonths(now, 1));
+          const lastMonthEnd = endOfMonth(subMonths(now, 1));
+          const lastMonthRevenue = bons
+            .filter(b => { const d = new Date(b.date_livraison); return d >= lastMonthStart && d <= lastMonthEnd; })
+            .reduce((s, b) => s + (b.volume_m3 * (b.prix_vente_m3 || 0)), 0);
+          const trend = lastMonthRevenue > 0 ? ((projected - lastMonthRevenue) / lastMonthRevenue) * 100 : 0;
+          const trendUp = trend >= 0;
+          const formatted = projected >= 1_000_000
+            ? `${(projected / 1_000_000).toFixed(1)} M`
+            : projected >= 1_000 ? `${(projected / 1_000).toFixed(0)} K` : projected.toFixed(0);
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 20,
+            }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Sparkles size={20} style={{ color: '#FFD700' }} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 6 }}>
+                  Prévision Revenus IA
+                </div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' }}>
+                    {formatted}
+                  </span>
+                  <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 20, fontWeight: 400, color: '#9CA3AF' }}>DH</span>
+                </div>
+                <div style={{ fontSize: 11, color: '#D4A843', marginTop: 4 }}>Projection IA fin de mois</div>
+              </div>
+              {lastMonthRevenue > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 500, color: trendUp ? '#34d399' : '#f87171' }}>
+                  <span>{trendUp ? '▲' : '▼'}</span>
+                  <span>{Math.abs(trend).toFixed(1)}%</span>
+                  <span style={{ fontSize: 10, color: '#64748B', marginLeft: 2 }}>vs M-1</span>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         <div className={cn(
           "flex gap-4",
