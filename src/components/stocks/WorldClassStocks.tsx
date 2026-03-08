@@ -395,6 +395,7 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
           </svg>
         );
       })()}
+      <div style={{ flexShrink: 0, textAlign: 'right', minWidth: 130 }}>
         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: T.textPri }}>
           {stock.current.toLocaleString('fr-FR')}
         </span>
