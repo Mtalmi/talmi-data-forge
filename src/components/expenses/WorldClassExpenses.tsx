@@ -1882,6 +1882,91 @@ export default function WorldClassExpenses() {
           </section>
         )}
 
+        {/* AI PAYMENT TERMS OPTIMIZATION */}
+        {activeTab === 'Par Catégorie' && (() => {
+          const terms = [
+            { cat: 'Matières Premières', current: 30, recommended: 45, volume: 180000 },
+            { cat: 'Transport', current: 15, recommended: 30, volume: 95000 },
+            { cat: 'Maintenance', current: 30, recommended: 30, volume: 65000 },
+            { cat: 'Énergie', current: 10, recommended: 20, volume: 42000 },
+            { cat: 'Fournitures', current: 45, recommended: 60, volume: 28000 },
+          ].map(t => {
+            const extraDays = t.recommended - t.current;
+            const impact = extraDays > 0 ? Math.round((t.volume / 30) * extraDays) : 0;
+            const status = extraDays > 0 ? 'optimisable' : 'optimal';
+            return { ...t, extraDays, impact, status };
+          });
+          const totalImpact = terms.reduce((s, t) => s + t.impact, 0);
+
+          return (
+            <section>
+              <SectionHeader icon={Bot} label="AGENT IA: OPTIMISATION DÉLAIS PAIEMENT" right={
+                <Bdg label="Benchmark secteur" color={T.gold} bg={`${T.gold}15`} icon={<Zap size={10} />} />
+              } />
+              <div style={{
+                background: 'rgba(255,255,255,0.03)', border: `1px solid rgba(255,255,255,0.06)`,
+                borderRadius: 12, overflow: 'hidden', backdropFilter: 'blur(12px)',
+              }}>
+                {/* Table header */}
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.2fr 1fr',
+                  padding: '12px 20px', borderBottom: `1px solid ${T.cardBorder}`,
+                  background: 'rgba(0,0,0,0.2)',
+                }}>
+                  {['Catégorie', 'Délai actuel', 'Délai IA', 'Impact trésorerie', 'Statut'].map(h => (
+                    <span key={h} style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</span>
+                  ))}
+                </div>
+                {/* Rows */}
+                {terms.map((t, i) => (
+                  <div key={t.cat} style={{
+                    display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1.2fr 1fr',
+                    padding: '14px 20px', alignItems: 'center',
+                    borderBottom: i < terms.length - 1 ? `1px solid ${T.cardBorder}` : 'none',
+                    transition: 'background 150ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,215,0,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <span style={{ fontSize: 13, fontWeight: 600, color: T.textPri }}>{t.cat}</span>
+                    <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: T.textSec }}>{t.current}j</span>
+                    <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, color: t.status === 'optimisable' ? T.success : T.gold }}>{t.recommended}j</span>
+                    <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13, fontWeight: 600, color: t.impact > 0 ? T.success : T.textDim }}>
+                      {t.impact > 0 ? `+${(t.impact / 1000).toFixed(1)}K DH` : '—'}
+                    </span>
+                    <span style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, width: 'fit-content',
+                      background: t.status === 'optimisable' ? `${T.success}15` : `${T.gold}15`,
+                      color: t.status === 'optimisable' ? T.success : T.gold,
+                    }}>
+                      {t.status === 'optimisable' ? <TrendingUp size={10} /> : <CheckCircle size={10} />}
+                      {t.status === 'optimisable' ? 'Optimisable' : 'Optimal'}
+                    </span>
+                  </div>
+                ))}
+                {/* Total footer */}
+                <div style={{
+                  padding: '16px 20px', borderTop: `1px solid ${T.goldBorder}`,
+                  background: `${T.gold}06`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Bot size={14} color={T.gold} />
+                    <span style={{ fontSize: 12, color: T.textSec }}>Amélioration potentielle de trésorerie</span>
+                  </div>
+                  <span style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                    fontSize: 20, fontWeight: 200, color: T.gold, letterSpacing: '-0.02em',
+                  }}>
+                    +{(totalImpact / 1000).toFixed(1)}K DH
+                  </span>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* AI BUDGET REALLOCATION */}
         {activeTab === 'Par Catégorie' && live.catBudget.length >= 2 && (() => {
           // Find underspending (lowest pct) and overspending (highest pct) categories
