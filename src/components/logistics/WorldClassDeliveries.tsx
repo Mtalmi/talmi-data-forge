@@ -241,7 +241,39 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
-// MAIN
+// FORECAST 14J MOCK DATA
+// ─────────────────────────────────────────────────────
+const FORECAST_14J = [
+  { jour: 'J1', réel: 12, prévu: 11, upper: 14, lowerInv: -8 },
+  { jour: 'J2', réel: 10, prévu: 12, upper: 15, lowerInv: -9 },
+  { jour: 'J3', réel: 14, prévu: 13, upper: 16, lowerInv: -10 },
+  { jour: 'J4', réel: 11, prévu: 12, upper: 15, lowerInv: -9 },
+  { jour: 'J5', réel: 13, prévu: 14, upper: 17, lowerInv: -11 },
+  { jour: 'J6', réel: 9, prévu: 10, upper: 13, lowerInv: -7 },
+  { jour: 'J7', réel: 8, prévu: 9, upper: 12, lowerInv: -6 },
+  { jour: 'J8', réel: null, prévu: 13, upper: 16, lowerInv: -10 },
+  { jour: 'J9', réel: null, prévu: 14, upper: 18, lowerInv: -10 },
+  { jour: 'J10', réel: null, prévu: 12, upper: 16, lowerInv: -8 },
+  { jour: 'J11', réel: null, prévu: 15, upper: 19, lowerInv: -11 },
+  { jour: 'J12', réel: null, prévu: 11, upper: 14, lowerInv: -8 },
+  { jour: 'J13', réel: null, prévu: 10, upper: 13, lowerInv: -7 },
+  { jour: 'J14', réel: null, prévu: 12, upper: 15, lowerInv: -9 },
+];
+
+function ForecastTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#162036', border: `1px solid ${T.cardBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+      <p style={{ color: '#D4A843', fontWeight: 700, marginBottom: 6 }}>{label}</p>
+      {payload.filter((p: any) => p.dataKey === 'réel' || p.dataKey === 'prévu').map((p: any) => (
+        <p key={p.dataKey} style={{ color: p.dataKey === 'réel' ? '#D4A843' : 'rgba(212,168,67,0.6)', fontSize: 12, marginBottom: 2 }}>
+          {p.name}: <strong>{p.value ?? '—'}</strong>
+        </p>
+      ))}
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────
 export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('aujourdhui');
