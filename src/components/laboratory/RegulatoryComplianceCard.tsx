@@ -55,18 +55,19 @@ export function RegulatoryComplianceCard() {
       <div style={{ padding: '0 20px 20px' }}>
         {/* Compliance Score */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
-          <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="34" fill="none" stroke={`${T.cardBorder}`} strokeWidth="6" />
-              <circle cx="40" cy="40" r="34" fill="none" stroke={scoreColor} strokeWidth="6"
-                strokeDasharray={`${(score / 100) * 213.6} 213.6`}
+          <div style={{ position: 'relative', width: 88, height: 88, flexShrink: 0, filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.25))' }}>
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle cx="44" cy="44" r="37" fill="#0B1120" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
+              <circle cx="44" cy="44" r="37" fill="none" stroke="#D4A843" strokeWidth="5"
+                strokeDasharray={`${(score / 100) * 232.5} 232.5`}
                 strokeLinecap="round"
-                transform="rotate(-90 40 40)"
+                transform="rotate(-90 44 44)"
                 style={{ transition: 'stroke-dasharray 1s ease' }}
               />
             </svg>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-              <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: scoreColor }}>{score}%</span>
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>{score}</span>
+              <span style={{ fontSize: 9, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 3 }}>Score IA</span>
             </div>
           </div>
           <div>
