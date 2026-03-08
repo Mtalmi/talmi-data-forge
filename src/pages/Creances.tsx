@@ -78,7 +78,9 @@ import {
   ChevronDown,
   FileSpreadsheet,
   Briefcase,
+  Eye,
 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
 import { cn } from '@/lib/utils';
@@ -1223,34 +1225,100 @@ export default function Creances() {
                             <TableCell className="text-center">
                               <div className="flex gap-1 justify-center">
                                 {receivable.status !== 'paid' && (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => {
-                                        setSelectedReceivable(receivable);
-                                        setActionType('paid');
-                                        setActionDialogOpen(true);
-                                      }}
-                                    >
-                                      <CheckCircle className="h-4 w-4 text-success" />
-                                    </Button>
-                                    {receivable.client_email && (
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-8 w-8"
-                                        onClick={() => {
-                                          setSelectedReceivable(receivable);
-                                          setActionType('reminder');
-                                          setActionDialogOpen(true);
-                                        }}
-                                      >
-                                        <Send className="h-4 w-4 text-primary" />
-                                      </Button>
-                                    )}
-                                  </>
+                                  <TooltipProvider delayDuration={200}>
+                                    <div className="flex items-center gap-2">
+                                      {/* Mark as paid - always visible */}
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-8 px-2 gap-1.5 text-xs"
+                                            onClick={() => {
+                                              setSelectedReceivable(receivable);
+                                              setActionType('paid');
+                                              setActionDialogOpen(true);
+                                            }}
+                                          >
+                                            <CheckCircle className="h-3.5 w-3.5 text-success" />
+                                            <span className="hidden sm:inline text-success">Payé</span>
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                          <p>Marquer comme payé</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+
+                                      {/* Courant (not overdue): Send reminder ghost button */}
+                                      {receivable.days_overdue <= 0 && receivable.client_email && (
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-8 px-3 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                                              onClick={() => {
+                                                setSelectedReceivable(receivable);
+                                                setActionType('reminder');
+                                                setActionDialogOpen(true);
+                                              }}
+                                            >
+                                              <Send className="h-3.5 w-3.5" />
+                                              <span>Envoyer rappel</span>
+                                            </Button>
+                                          </TooltipTrigger>
+                                          <TooltipContent side="top">
+                                            <p>Envoyer un rappel de paiement par email</p>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      )}
+
+                                      {/* Overdue: Red "Relancer" button + Gold "Voir détails" */}
+                                      {receivable.days_overdue > 0 && (
+                                        <>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <Button
+                                                size="sm"
+                                                className="h-8 px-3 gap-1.5 text-xs bg-destructive/20 hover:bg-destructive/30 text-destructive border border-destructive/30"
+                                                onClick={() => {
+                                                  setSelectedReceivable(receivable);
+                                                  setActionType('reminder');
+                                                  setActionDialogOpen(true);
+                                                }}
+                                              >
+                                                <Send className="h-3.5 w-3.5" />
+                                                <span>Relancer</span>
+                                              </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top">
+                                              <p>Envoyer une relance urgente au client</p>
+                                            </TooltipContent>
+                                          </Tooltip>
+
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="h-8 px-3 gap-1.5 text-xs border-[#D4A843]/30 text-[#D4A843] hover:bg-[#D4A843]/10"
+                                                onClick={() => {
+                                                  setSelectedReceivable(receivable);
+                                                  toast.info(`Détails facture ${receivable.invoice_number}`);
+                                                }}
+                                              >
+                                                <Eye className="h-3.5 w-3.5" />
+                                                <span>Voir détails</span>
+                                              </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top">
+                                              <p>Afficher les détails de la créance</p>
+                                            </TooltipContent>
+                                          </Tooltip>
+                                        </>
+                                      )}
+                                    </div>
+                                  </TooltipProvider>
                                 )}
                               </div>
                             </TableCell>
