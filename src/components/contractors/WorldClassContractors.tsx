@@ -521,6 +521,7 @@ export default function WorldClassContractors() {
   const [assignSubmitting, setAssignSubmitting] = useState(false);
   const [appelOffresTarget, setAppelOffresTarget] = useState<typeof UPCOMING[0] | null>(null);
   const [appelOffresNotes, setAppelOffresNotes] = useState('');
+  const [appelOffresSelectedIds, setAppelOffresSelectedIds] = useState<string[]>([]);
   const [appelOffresSubmitting, setAppelOffresSubmitting] = useState(false);
 
   const handleTermineMission = async (contractorName: string) => {
@@ -1386,17 +1387,18 @@ export default function WorldClassContractors() {
       {/* ══════════════════════════ APPEL D'OFFRES MODAL ══════════════════════════ */}
       {appelOffresTarget && createPortal(
         <>
-          <div onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
+          <div onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); setAppelOffresSelectedIds([]); }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 10000 }} />
           <div style={{
             position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-            width: 480, background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
+            width: 520, maxHeight: '85vh', background: '#0F1629', border: '1px solid rgba(255,255,255,0.1)',
             borderRadius: 12, zIndex: 10001, boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+            display: 'flex', flexDirection: 'column',
           }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
               <div style={{ width: 4, height: 24, background: '#D4A843', borderRadius: 2 }} />
               <span style={{ color: '#fff', fontSize: 18, fontWeight: 500, fontFamily: "'DM Sans', sans-serif" }}>Créer Appel d'Offres</span>
             </div>
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16, overflowY: 'auto', flex: 1 }}>
               {/* Summary */}
               <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 16 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -1408,6 +1410,81 @@ export default function WorldClassContractors() {
                   <div><div style={{ color: T.textDim, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Durée</div><div style={{ color: T.textSec, fontSize: 14, marginTop: 2 }}>{appelOffresTarget.duree}</div></div>
                 </div>
               </div>
+              {/* Contractor selection */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <label style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Destinataires
+                  </label>
+                  <button
+                    onClick={() => {
+                      const allIds = contractors.filter((c: any) => c.actif !== false).map((c: any) => c.id);
+                      setAppelOffresSelectedIds(prev => prev.length === allIds.length ? [] : allIds);
+                    }}
+                    style={{ background: 'none', border: 'none', color: T.gold, fontSize: 11, cursor: 'pointer', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}
+                  >
+                    {appelOffresSelectedIds.length === contractors.filter((c: any) => c.actif !== false).length ? 'Tout désélectionner' : 'Tout sélectionner'}
+                  </button>
+                </div>
+                <div style={{
+                  background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 8, maxHeight: 200, overflowY: 'auto',
+                }}>
+                  {contractors.filter((c: any) => c.actif !== false).map((c: any) => {
+                    const isSelected = appelOffresSelectedIds.includes(c.id);
+                    const isMission = c.statut === 'mission';
+                    return (
+                      <div
+                        key={c.id}
+                        onClick={() => {
+                          setAppelOffresSelectedIds(prev =>
+                            prev.includes(c.id) ? prev.filter(id => id !== c.id) : [...prev, c.id]
+                          );
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 12,
+                          padding: '10px 14px',
+                          borderBottom: '1px solid rgba(255,255,255,0.04)',
+                          cursor: 'pointer',
+                          background: isSelected ? 'rgba(212,168,67,0.08)' : 'transparent',
+                          transition: 'background 0.15s ease',
+                        }}
+                      >
+                        {/* Checkbox */}
+                        <div style={{
+                          width: 18, height: 18, borderRadius: 4, flexShrink: 0,
+                          border: isSelected ? '2px solid #D4A843' : '2px solid rgba(255,255,255,0.15)',
+                          background: isSelected ? '#D4A843' : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          transition: 'all 0.15s ease',
+                        }}>
+                          {isSelected && <span style={{ color: '#0F1629', fontSize: 12, fontWeight: 900, lineHeight: 1 }}>✓</span>}
+                        </div>
+                        {/* Info */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <span style={{ fontWeight: 600, fontSize: 13, color: T.textPri }}>{c.nom}</span>
+                            {isMission && (
+                              <span style={{
+                                background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
+                                borderRadius: 100, padding: '1px 6px', fontSize: 9, fontWeight: 700,
+                              }}>En mission</span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: 11, color: T.textDim }}>{c.specialite || 'Général'} · {Number(c.tarif_journalier || 0).toLocaleString('fr-FR')} DH/j</div>
+                        </div>
+                        {/* Rating */}
+                        <div style={{ fontSize: 11, color: T.gold, fontFamily: "'JetBrains Mono', monospace" }}>
+                          {'★'.repeat(Math.round(c.note_service || 0))}{'☆'.repeat(5 - Math.round(c.note_service || 0))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div style={{ color: T.textDim, fontSize: 11, marginTop: 6 }}>
+                  {appelOffresSelectedIds.length} sur {contractors.filter((c: any) => c.actif !== false).length} sélectionné{appelOffresSelectedIds.length > 1 ? 's' : ''}
+                </div>
+              </div>
               {/* Notes */}
               <div>
                 <label style={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>
@@ -1416,7 +1493,7 @@ export default function WorldClassContractors() {
                 <textarea
                   value={appelOffresNotes}
                   onChange={(e) => setAppelOffresNotes(e.target.value)}
-                  rows={3}
+                  rows={2}
                   placeholder="Ex: Exiger certification, expérience minimum 3 ans..."
                   style={{
                     width: '100%', boxSizing: 'border-box',
@@ -1428,25 +1505,22 @@ export default function WorldClassContractors() {
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
                 />
               </div>
-              {/* Destinataires */}
-              <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Users size={12} /> Sera envoyé à <strong style={{ color: T.textPri }}>{contractors.filter((c: any) => c.actif !== false).length}</strong> sous-traitants actifs
-              </div>
               <div style={{ display: 'flex', gap: 12 }}>
                 <button
-                  onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); }}
+                  onClick={() => { setAppelOffresTarget(null); setAppelOffresNotes(''); setAppelOffresSelectedIds([]); }}
                   style={{ flex: 1, background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 8, padding: 12, fontWeight: 500, fontSize: 14, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif" }}
                 >Annuler</button>
                 <button
-                  disabled={appelOffresSubmitting}
+                  disabled={appelOffresSubmitting || appelOffresSelectedIds.length === 0}
                   onClick={async () => {
                     setAppelOffresSubmitting(true);
                     try {
-                      // Simulate creating the RFP (no dedicated table yet — toast confirmation)
                       await new Promise(r => setTimeout(r, 800));
-                      toast({ title: 'Appel d\'offres créé', description: `AO pour "${appelOffresTarget.besoin}" envoyé à ${contractors.filter((c: any) => c.actif !== false).length} prestataires.` });
+                      const selectedNames = appelOffresSelectedIds.map(id => contractors.find((c: any) => c.id === id)?.nom).filter(Boolean);
+                      toast({ title: 'Appel d\'offres créé', description: `AO pour "${appelOffresTarget.besoin}" envoyé à ${selectedNames.length} prestataire${selectedNames.length > 1 ? 's' : ''}: ${selectedNames.slice(0, 3).join(', ')}${selectedNames.length > 3 ? '...' : ''}` });
                       setAppelOffresTarget(null);
                       setAppelOffresNotes('');
+                      setAppelOffresSelectedIds([]);
                     } catch (err: any) {
                       toast({ title: 'Erreur', description: err.message, variant: 'destructive' });
                     } finally {
@@ -1454,12 +1528,13 @@ export default function WorldClassContractors() {
                     }
                   }}
                   style={{
-                    flex: 1, background: '#D4A843', color: '#0F1629', border: 'none',
-                    borderRadius: 8, padding: 12, fontWeight: 600, fontSize: 14,
-                    cursor: appelOffresSubmitting ? 'not-allowed' : 'pointer',
+                    flex: 1, background: appelOffresSelectedIds.length === 0 ? 'rgba(212,168,67,0.3)' : '#D4A843',
+                    color: '#0F1629', border: 'none', borderRadius: 8, padding: 12,
+                    fontWeight: 600, fontSize: 14,
+                    cursor: appelOffresSelectedIds.length === 0 || appelOffresSubmitting ? 'not-allowed' : 'pointer',
                     fontFamily: "'DM Sans', sans-serif", opacity: appelOffresSubmitting ? 0.6 : 1,
                   }}
-                >{appelOffresSubmitting ? 'Création...' : 'Envoyer l\'Appel d\'Offres'}</button>
+                >{appelOffresSubmitting ? 'Création...' : `Envoyer (${appelOffresSelectedIds.length})`}</button>
               </div>
             </div>
           </div>
