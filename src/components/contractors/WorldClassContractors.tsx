@@ -1050,7 +1050,7 @@ export default function WorldClassContractors() {
       })()}
 
       {/* ══════════════════════════ MISSION DETAIL DRAWER ══════════════════════════ */}
-      {missionDrawer && (() => {
+      {missionDrawer && createPortal((() => {
         const matchedContractor = contractors.find((c: any) => 
           c.nom === missionDrawer.contractor || 
           c.nom?.toLowerCase().includes(missionDrawer.contractor.toLowerCase()) ||
