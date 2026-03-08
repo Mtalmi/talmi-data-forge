@@ -535,21 +535,26 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const isNegative = value < 0;
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <Card style={{ height: '100%' }}>
+      <div style={{
+        height: '100%', padding: 20, borderRadius: 12,
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderLeft: '3px solid #D4A843',
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 36, fontWeight: 700, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, color, lineHeight: 1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' }}>
               {isNegative ? '-' : ''}{animated.toLocaleString('fr-FR')}
-              {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace' }}>{suffix}</span>}
+              {suffix && <span style={{ fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4, fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace' }}>{suffix}</span>}
             </p>
             {trend && <p style={{ fontSize: 12, fontWeight: 500, marginTop: 6, color: trendPositive ? '#10B981' : '#EF4444' }}>{trendPositive ? '↑' : '↓'} {trend}</p>}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(255, 215, 0, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#FFD700" />
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
@@ -2243,10 +2248,10 @@ export default function WorldClassExpenses() {
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
-            <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
-            <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
-            <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
+            <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color="#D4A843" icon={CreditCard} delay={0} />
+            <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={live.budgetTotal > 0 ? (live.budgetRemaining / live.budgetTotal > 0.5 ? '#22c55e' : live.budgetRemaining / live.budgetTotal > 0.2 ? '#f59e0b' : '#ef4444') : '#22c55e'} icon={Banknote} delay={80} />
+            <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color="#f59e0b" icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
+            <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? '#22c55e' : '#ef4444'} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
             <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
             <AIForecastKPI totalThisMonth={live.totalThisMonth} dailyAvg={live.dailyAvg} budgetTotal={live.budgetTotal} delay={400} />
