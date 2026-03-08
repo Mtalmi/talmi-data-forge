@@ -497,9 +497,30 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassContractors() {
-  const [activeTab, setActiveTab] = useState('Tous');
-  const tabs = ['Tous', 'En Mission', 'Disponibles', 'Évaluation'];
+  const [activeTab, setActiveTab] = useState('tous');
+  const tabConfig = [
+    { id: 'tous', label: 'Tous' },
+    { id: 'en_mission', label: 'En Mission' },
+    { id: 'disponibles', label: 'Disponibles' },
+    { id: 'evaluation', label: 'Évaluation' },
+  ];
   const { kpis: cKpis, contractors } = useContractorsLiveData();
+
+  // Filter contractors based on active tab
+  const getFilteredContractors = () => {
+    switch (activeTab) {
+      case 'en_mission':
+        return contractors.filter((c: any) => c.statut === 'mission');
+      case 'disponibles':
+        return contractors.filter((c: any) => c.statut === 'disponible');
+      case 'evaluation':
+        return contractors.filter((c: any) => c.note_service < 4);
+      case 'tous':
+      default:
+        return contractors;
+    }
+  };
+  const filteredContractors = getFilteredContractors();
 
   // Dynamic KPI calculations — derived from live Supabase data only
   const actifCount = contractors.filter((c: any) => c.actif === true).length;
@@ -526,7 +547,7 @@ export default function WorldClassContractors() {
         icon={Briefcase}
         title="Sous-Traitants"
         subtitle="Gestion des sous-traitants et missions"
-        tabs={tabs.map(t => ({ id: t, label: t }))}
+        tabs={tabConfig.map(t => ({ id: t.id, label: t.label }))}
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
@@ -569,9 +590,9 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 2: CONTRACTOR LIST ══════════════════════════ */}
         <div>
-          <SectionHeader title="Sous-Traitants" badge={`${contractors.length} actifs`} />
+          <SectionHeader title="Sous-Traitants" badge={`${filteredContractors.length} résultat${filteredContractors.length !== 1 ? 's' : ''}`} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {contractors.map((c, i) => (
+            {filteredContractors.map((c, i) => (
               <ContractorRow key={c.id} c={c} delay={i * 80} colorIndex={i} />
             ))}
           </div>
