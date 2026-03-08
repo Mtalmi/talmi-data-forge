@@ -42,10 +42,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { format, isToday, differenceInDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface BonLivraison {
@@ -852,6 +858,40 @@ export default function Bons() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
+                        {/* AI Risk Indicators */}
+                        <TooltipProvider>
+                          {/* Late payment risk: Delivered + Pending + older than 7 days */}
+                          {b.workflow_status === 'livre' && 
+                           b.statut_paiement === 'En Attente' && 
+                           differenceInDays(new Date(), new Date(b.date_livraison)) > 7 && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span 
+                                  className="w-2.5 h-2.5 rounded-full animate-pulse mr-1"
+                                  style={{ backgroundColor: '#F59E0B' }}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="text-xs">
+                                IA: Paiement en retard — relance recommandée
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                          {/* Today's delivery: Planning + date is today */}
+                          {b.workflow_status === 'planification' && 
+                           isToday(new Date(b.date_livraison)) && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span 
+                                  className="w-2.5 h-2.5 rounded-full mr-1"
+                                  style={{ backgroundColor: '#FFD700' }}
+                                />
+                              </TooltipTrigger>
+                              <TooltipContent side="left" className="text-xs">
+                                IA: Livraison planifiée aujourd'hui
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                        </TooltipProvider>
                         <Button
                           variant="ghost"
                           size="sm"
