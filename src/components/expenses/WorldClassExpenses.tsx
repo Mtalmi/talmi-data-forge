@@ -2119,6 +2119,121 @@ export default function WorldClassExpenses() {
           </section>
         )}
 
+        {/* TOP FOURNISSEURS IA - Par Catégorie tab only */}
+        {activeTab === 'Par Catégorie' && (() => {
+          const totalBudget = live.budgetTotal * 1000 || 385000;
+          const suppliers = [
+            { name: 'Atlas Ciment SA', spend: 68500, efficiency: 88, lastMonth: 62000 },
+            { name: 'TransMag Logistique', spend: 42300, efficiency: 64, lastMonth: 45800 },
+            { name: 'EnergiePro Maroc', spend: 31200, efficiency: 76, lastMonth: 29500 },
+            { name: 'MécaService Fès', spend: 24800, efficiency: 58, lastMonth: 28100 },
+            { name: 'Sable & Gravier du Nord', spend: 19400, efficiency: 91, lastMonth: 18200 },
+          ].map((s, i) => ({
+            ...s,
+            rank: i + 1,
+            pctBudget: Math.round((s.spend / totalBudget) * 1000) / 10,
+            trend: s.spend > s.lastMonth ? 'up' : s.spend < s.lastMonth ? 'down' : 'flat',
+            trendPct: Math.round(Math.abs(s.spend - s.lastMonth) / s.lastMonth * 100),
+          }));
+
+          return (
+            <section>
+              <SectionHeader icon={Users} label="TOP FOURNISSEURS IA" right={
+                <Bdg label="Ce mois" color={T.gold} bg={`${T.gold}15`} icon={<TrendingUp size={10} />} />
+              } />
+              <div style={{
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: 12, overflow: 'hidden', backdropFilter: 'blur(12px)',
+              }}>
+                {/* Header */}
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '40px 2fr 1.2fr 0.8fr 1fr 0.8fr 1fr',
+                  padding: '12px 20px', borderBottom: `1px solid ${T.cardBorder}`,
+                  background: 'rgba(0,0,0,0.2)', gap: 12, alignItems: 'center',
+                }}>
+                  {['#', 'Fournisseur', 'Dépenses', '% Budget', 'Score IA', 'Tendance', ''].map(h => (
+                    <span key={h} style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h}</span>
+                  ))}
+                </div>
+                {suppliers.map((s, i) => (
+                  <div key={s.name} style={{
+                    display: 'grid', gridTemplateColumns: '40px 2fr 1.2fr 0.8fr 1fr 0.8fr 1fr',
+                    padding: '14px 20px', gap: 12, alignItems: 'center',
+                    borderBottom: i < suppliers.length - 1 ? `1px solid ${T.cardBorder}` : 'none',
+                    transition: 'background 150ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,215,0,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    {/* Rank */}
+                    <span style={{
+                      width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: `${T.gold}15`, border: `1px solid ${T.gold}30`,
+                      fontFamily: 'monospace', fontSize: 13, fontWeight: 700, color: T.gold,
+                    }}>{s.rank}</span>
+
+                    {/* Name */}
+                    <span style={{ fontSize: 13, fontWeight: 600, color: T.textPri }}>{s.name}</span>
+
+                    {/* Spend */}
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                      fontSize: 14, fontWeight: 600, color: T.gold,
+                    }}>{(s.spend / 1000).toFixed(1)}K DH</span>
+
+                    {/* % Budget */}
+                    <span style={{ fontSize: 12, color: T.textSec }}>{s.pctBudget}%</span>
+
+                    {/* Efficiency Score */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: s.efficiency >= 80 ? `${T.success}15` : s.efficiency >= 70 ? `${T.warning}15` : `${T.danger}15`,
+                        border: `2px solid ${s.efficiency >= 80 ? T.success : s.efficiency >= 70 ? T.warning : T.danger}40`,
+                      }}>
+                        <span style={{
+                          fontFamily: 'monospace', fontSize: 11, fontWeight: 700,
+                          color: s.efficiency >= 80 ? T.success : s.efficiency >= 70 ? T.warning : T.danger,
+                        }}>{s.efficiency}</span>
+                      </div>
+                    </div>
+
+                    {/* Trend */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <TrendingUp size={12} style={{
+                        color: s.trend === 'up' ? T.danger : T.success,
+                        transform: s.trend === 'down' ? 'rotate(180deg)' : 'none',
+                      }} />
+                      <span style={{
+                        fontSize: 11, fontWeight: 600,
+                        color: s.trend === 'up' ? T.danger : T.success,
+                      }}>
+                        {s.trend === 'up' ? '+' : '-'}{s.trendPct}%
+                      </span>
+                    </div>
+
+                    {/* Action */}
+                    <div>
+                      {s.efficiency < 70 && (
+                        <button style={{
+                          padding: '5px 12px', borderRadius: 6, fontSize: 10, fontWeight: 700,
+                          background: `${T.warning}15`, border: `1px solid ${T.warning}40`, color: T.warning,
+                          cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = `${T.warning}25`; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = `${T.warning}15`; }}
+                        >
+                          Négocier Tarifs
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
+
         {/* AI PAYMENT TERMS OPTIMIZATION */}
         {activeTab === 'Par Catégorie' && (() => {
           const terms = [
