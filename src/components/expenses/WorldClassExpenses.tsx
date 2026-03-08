@@ -9,6 +9,7 @@ import {
   CheckCircle, XCircle, AlertTriangle, Zap,
   Truck, Wrench, Users, Package, Box,
   TrendingUp, Plus, LayoutGrid, ShieldAlert, Bot,
+  FileText, ChevronDown, Loader2, BarChart3, Briefcase, CalendarRange,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -750,6 +751,31 @@ export default function WorldClassExpenses() {
   const [hoverNew, setHoverNew] = useState(false);
   const live = useExpensesLiveData();
 
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportLoading, setReportLoading] = useState<string | null>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (reportRef.current && !reportRef.current.contains(e.target as Node)) setReportOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const handleReport = (id: string) => {
+    setReportLoading(id);
+    setTimeout(() => { setReportLoading(null); setReportOpen(false); }, 2400);
+  };
+
+  const reportOptions = [
+    { id: 'monthly', icon: FileText, label: 'Rapport Mensuel Dirigeant', sub: 'Généré par Agent IA' },
+    { id: 'budget', icon: BarChart3, label: 'Analyse Budgétaire Complète', sub: 'Généré par Agent IA' },
+    { id: 'suppliers', icon: Briefcase, label: 'Rapport Fournisseurs', sub: 'Généré par Agent IA' },
+    { id: 'forecast', icon: CalendarRange, label: 'Prévision Trésorerie 90j', sub: 'Généré par Agent IA' },
+  ];
+
   const tabs = ["Vue d'ensemble", 'Par Catégorie', 'Approbations'];
 
   const chartCardStyle = {
@@ -769,7 +795,8 @@ export default function WorldClassExpenses() {
 
   return (
     <div style={{ minHeight: '100vh', background: T.navy, fontFamily: 'DM Sans, sans-serif', color: T.textPri, padding: '0 0 60px 0' }}>
-      <style>{`@keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }`}</style>
+      <style>{`@keyframes tbos-pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+@keyframes tbos-spin { to { transform: rotate(360deg); } }`}</style>
 
       <PageHeader
         icon={CreditCard}
@@ -779,12 +806,70 @@ export default function WorldClassExpenses() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         actions={
-          <button onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)} style={{
-            display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
-            background: hoverNew ? '#FFE033' : T.gold, color: T.navy,
-            border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
-            cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
-          }}><Plus size={14} /> Nouvelle Dépense</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Rapport IA Dropdown */}
+            <div ref={reportRef} style={{ position: 'relative' }}>
+              <button onClick={() => setReportOpen(!reportOpen)} style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '7px 14px',
+                background: 'rgba(255,255,255,0.04)', border: `1px solid ${T.goldBorder}`,
+                borderRadius: 8, color: T.gold, fontWeight: 700, fontSize: 12,
+                cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
+              }}>
+                <Bot size={14} /> Rapport IA <ChevronDown size={12} style={{ transform: reportOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
+              </button>
+
+              {reportOpen && (
+                <div style={{
+                  position: 'absolute', top: 'calc(100% + 8px)', right: 0, zIndex: 50,
+                  minWidth: 280, padding: 6, borderRadius: 12,
+                  background: 'linear-gradient(145deg, rgba(17, 27, 46, 0.98), rgba(22, 32, 54, 0.98))',
+                  border: `1px solid ${T.goldBorder}`,
+                  backdropFilter: 'blur(20px)',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                }}>
+                  {reportOptions.map((opt) => {
+                    const Icon = opt.icon;
+                    const isLoading = reportLoading === opt.id;
+                    return (
+                      <button key={opt.id} onClick={() => handleReport(opt.id)} disabled={!!reportLoading} style={{
+                        display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '10px 12px',
+                        background: 'transparent', border: 'none', borderRadius: 8,
+                        cursor: reportLoading ? 'wait' : 'pointer', textAlign: 'left',
+                        transition: 'background 150ms', fontFamily: 'DM Sans, sans-serif',
+                      }}
+                      onMouseEnter={(e) => { if (!reportLoading) e.currentTarget.style.background = `${T.gold}10`; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                      >
+                        <div style={{
+                          width: 32, height: 32, borderRadius: 8,
+                          background: `${T.gold}15`, border: `1px solid ${T.gold}25`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                        }}>
+                          {isLoading ? (
+                            <Loader2 size={14} color={T.gold} style={{ animation: 'tbos-spin 1s linear infinite' }} />
+                          ) : (
+                            <Icon size={14} color={T.gold} />
+                          )}
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: T.textPri, margin: 0 }}>{opt.label}</p>
+                          <p style={{ fontSize: 10, color: T.textDim, margin: '2px 0 0', fontStyle: 'italic' }}>{opt.sub}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Nouvelle Dépense */}
+            <button onMouseEnter={() => setHoverNew(true)} onMouseLeave={() => setHoverNew(false)} style={{
+              display: 'flex', alignItems: 'center', gap: 7, padding: '7px 16px',
+              background: hoverNew ? '#FFE033' : T.gold, color: T.navy,
+              border: 'none', borderRadius: 8, fontWeight: 700, fontSize: 12,
+              cursor: 'pointer', transition: 'all 180ms', fontFamily: 'DM Sans, sans-serif',
+            }}><Plus size={14} /> Nouvelle Dépense</button>
+          </div>
         }
       />
 
