@@ -805,16 +805,80 @@ export default function WorldClassStocks() {
             </Card>
 
             {/* Alerts */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-                <AlertTriangle size={14} color={T.danger} />
-                <span style={{ color: T.danger, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Alertes Stock</span>
-                <Badge label={`${ALERTS.length} actives`} color={T.danger} bg="rgba(239, 68, 68, 0.15)" pulse />
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {ALERTS.map((a, i) => <AlertCard key={a.name} alert={a} delay={i * 100} />)}
-              </div>
-            </div>
+            {(() => {
+              // Build alerts from STOCKS + AUTONOMY: days_remaining <= 5 OR pct <= threshold (low stock)
+              const computedAlerts = STOCKS
+                .map(s => {
+                  const auto = AUTONOMY[s.name.toLowerCase()];
+                  const days = auto?.days ?? null;
+                  const isLowStock = s.pct <= 30;
+                  const isCritical = days !== null && days <= 2;
+                  const isLow = days !== null && days <= 5;
+                  if (!isLowStock && !isLow) return null;
+                  return {
+                    name: s.name,
+                    days,
+                    isCritical: isCritical || s.pct <= 10,
+                    message: isCritical || s.pct <= 10
+                      ? 'Stock critique — réapprovisionner immédiatement'
+                      : 'Niveau bas — commander cette semaine',
+                    current: `${s.current.toLocaleString('fr-FR')} ${s.unit}`,
+                    max: `${s.max.toLocaleString('fr-FR')} ${s.unit}`,
+                  };
+                })
+                .filter(Boolean) as { name: string; days: number | null; isCritical: boolean; message: string; current: string; max: string }[];
+
+              return (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                    <AlertTriangle size={14} color={T.danger} />
+                    <span style={{ color: T.danger, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Alertes Stock</span>
+                    <Badge label={`${computedAlerts.length} actives`} color={computedAlerts.length > 0 ? T.danger : T.success} bg={computedAlerts.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'} pulse={computedAlerts.length > 0} />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {computedAlerts.length === 0 ? (
+                      <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '24px 16px', textAlign: 'center' }}>
+                        <p style={{ color: T.textDim, fontSize: 12 }}>Aucune alerte — stocks à niveau</p>
+                      </div>
+                    ) : (
+                      computedAlerts.map((a, i) => (
+                        <div key={a.name} style={{
+                          background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
+                          borderLeft: `3px solid ${a.isCritical ? '#ef4444' : '#f59e0b'}`,
+                          borderRadius: 10, padding: '12px 14px',
+                          opacity: 0, animation: `fadeSlideIn 400ms ${i * 80}ms forwards`,
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                            <div style={{
+                              width: 8, height: 8, borderRadius: '50%',
+                              background: a.isCritical ? '#ef4444' : '#f59e0b',
+                              boxShadow: `0 0 8px ${a.isCritical ? 'rgba(239,68,68,0.5)' : 'rgba(245,158,11,0.5)'}`,
+                              animation: a.isCritical ? 'tbos-pulse 2s infinite' : 'none',
+                            }} />
+                            <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{a.name}</span>
+                            {a.days !== null && (
+                              <span style={{
+                                marginLeft: 'auto', fontFamily: 'JetBrains Mono, monospace',
+                                fontSize: 11, fontWeight: 600,
+                                color: a.isCritical ? '#ef4444' : '#f59e0b',
+                              }}>
+                                {a.days}j
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ fontSize: 11, color: a.isCritical ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)', marginBottom: 4 }}>
+                            {a.message}
+                          </p>
+                          <p style={{ fontSize: 10, color: T.textDim }}>
+                            Actuel: {a.current} / Max: {a.max}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </section>
 
