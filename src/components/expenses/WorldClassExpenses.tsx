@@ -10,6 +10,7 @@ import {
   Truck, Wrench, Users, Package, Box,
   TrendingUp, Plus, LayoutGrid, ShieldAlert, Bot,
   FileText, ChevronDown, Loader2, BarChart3, Briefcase, CalendarRange,
+  ArrowRight, Repeat,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -1102,6 +1103,38 @@ export default function WorldClassExpenses() {
             </div>
           </section>
         )}
+
+        {/* AI BUDGET REALLOCATION */}
+        {activeTab === 'Par Catégorie' && live.catBudget.length >= 2 && (() => {
+          // Find underspending (lowest pct) and overspending (highest pct) categories
+          const sorted = [...live.catBudget].sort((a, b) => a.pct - b.pct);
+          const from = sorted[0];
+          const to = sorted[sorted.length - 1];
+          if (!from || !to || from.pct >= 70 || to.pct < 80) return null;
+          const surplus = from.budget - from.spent;
+          const deficit = to.spent - to.budget;
+          const transferAmount = Math.max(1, Math.min(surplus, Math.abs(deficit), Math.round(from.budget * 0.3)));
+          if (transferAmount < 1) return null;
+          const fromCfg = getCatConfig(from.name);
+          const toCfg = getCatConfig(to.name);
+          const FromIcon = fromCfg.icon;
+          const ToIcon = toCfg.icon;
+          const fromAfterPct = from.budget - transferAmount > 0 ? Math.round((from.spent / (from.budget - transferAmount)) * 100) : 0;
+          const toAfterPct = to.budget + transferAmount > 0 ? Math.round((to.spent / (to.budget + transferAmount)) * 100) : 0;
+
+          return (
+            <section>
+              <SectionHeader icon={Repeat} label="AGENT IA: RÉALLOCATION BUDGÉTAIRE" right={
+                <Bdg label="Suggestion automatique" color={T.gold} bg={`${T.gold}15`} icon={<Bot size={10} />} />
+              } />
+              <ReallocationCard
+                from={{ name: from.name, color: fromCfg.color, icon: FromIcon, spent: from.spent, budget: from.budget, pct: from.pct, afterPct: fromAfterPct }}
+                to={{ name: to.name, color: toCfg.color, icon: ToIcon, spent: to.spent, budget: to.budget, pct: to.pct, afterPct: toAfterPct }}
+                transferAmount={transferAmount}
+              />
+            </section>
+          );
+        })()}
       </div>
     </div>
   );
