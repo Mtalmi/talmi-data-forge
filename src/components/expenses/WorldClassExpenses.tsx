@@ -1086,6 +1086,131 @@ function ApprovalCard({ p, delay = 0 }: { p: { desc: string; cat: string; catCol
 }
 
 // ─────────────────────────────────────────────────────
+// BUDGET ALERT BANNER (Real-time threshold monitoring)
+// ─────────────────────────────────────────────────────
+function BudgetAlertBanner({ catBudget }: { catBudget: { name: string; spent: number; budget: number; pct: number; color: string }[] }) {
+  const [dismissed, setDismissed] = useState<string[]>([]);
+
+  // Calculate days left in month
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysLeft = lastDay - now.getDate();
+
+  // AI recommended actions based on threshold level
+  const getAIAction = (cat: string, pct: number, remaining: number, days: number) => {
+    const dailyBudget = days > 0 ? remaining / days : 0;
+    if (pct >= 95) return `STOP immédiat des dépenses ${cat}. Réaffectation budget urgente requise.`;
+    if (pct >= 85) return `Limiter ${cat} à ${Math.round(dailyBudget)}DH/jour max pour tenir ${days}j restants.`;
+    return `Modérer ${cat}: ${Math.round(dailyBudget)}DH/jour disponible. Surveiller de près.`;
+  };
+
+  // Build alerts for categories hitting thresholds
+  const alerts = catBudget
+    .filter(c => c.budget > 0 && c.pct >= 70 && !dismissed.includes(c.name))
+    .map(c => {
+      const remaining = Math.max(0, c.budget - c.spent);
+      const level = c.pct >= 95 ? 'ROUGE' : c.pct >= 85 ? 'ORANGE' : 'JAUNE';
+      const color = level === 'ROUGE' ? T.danger : level === 'ORANGE' ? '#FF8C00' : T.warning;
+      return {
+        ...c,
+        remaining,
+        level,
+        color,
+        action: getAIAction(c.name, c.pct, remaining, daysLeft),
+      };
+    })
+    .sort((a, b) => b.pct - a.pct);
+
+  if (alerts.length === 0) return null;
+
+  return (
+    <div style={{ margin: '16px 32px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <style>{`
+        @keyframes budget-pulse-orange { 0%,100%{box-shadow:0 0 0 0 rgba(255,140,0,0.4)} 50%{box-shadow:0 0 12px 4px rgba(255,140,0,0.25)} }
+        @keyframes budget-pulse-red { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)} 50%{box-shadow:0 0 16px 6px rgba(239,68,68,0.3)} }
+        @keyframes budget-shake { 0%,100%{transform:translateX(0)} 10%,30%,50%,70%,90%{transform:translateX(-2px)} 20%,40%,60%,80%{transform:translateX(2px)} }
+      `}</style>
+      {alerts.map((alert) => {
+        const isRouge = alert.level === 'ROUGE';
+        const isOrange = alert.level === 'ORANGE';
+        return (
+          <div key={alert.name} style={{
+            padding: '14px 20px',
+            background: `${alert.color}08`,
+            border: `1px solid ${alert.color}35`,
+            borderLeft: `4px solid ${alert.color}`,
+            borderRadius: 12,
+            display: 'flex', alignItems: 'center', gap: 14,
+            animation: isRouge ? 'budget-pulse-red 1.5s ease-in-out infinite, budget-shake 0.5s ease-in-out' : isOrange ? 'budget-pulse-orange 2s ease-in-out infinite' : 'none',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            {/* Pulsing background for critical */}
+            {isRouge && <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(90deg, transparent, ${alert.color}08, transparent)`, animation: 'tbos-pulse 1s ease-in-out infinite' }} />}
+
+            <div style={{
+              width: 40, height: 40, borderRadius: 10,
+              background: `${alert.color}18`, border: `1px solid ${alert.color}40`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              position: 'relative', zIndex: 1,
+            }}>
+              <AlertTriangle size={20} color={alert.color} />
+            </div>
+
+            <div style={{ flex: 1, position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                <span style={{
+                  padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 800,
+                  background: alert.color, color: '#000', letterSpacing: '0.05em',
+                }}>
+                  {alert.level}
+                </span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: alert.color }}>
+                  {alert.name}
+                </span>
+                <span style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                  fontSize: 16, fontWeight: 700, color: alert.color,
+                }}>
+                  {Math.round(alert.pct)}%
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, fontSize: 12 }}>
+                <span style={{ color: T.textSec }}>
+                  Restant: <strong style={{ fontFamily: 'monospace', color: T.gold }}>{(alert.remaining / 1000).toFixed(1)}K DH</strong>
+                </span>
+                <span style={{ color: T.textDim }}>•</span>
+                <span style={{ color: T.textSec }}>
+                  <strong style={{ color: T.textPri }}>{daysLeft}</strong> jours restants
+                </span>
+              </div>
+              <div style={{ marginTop: 8, display: 'flex', alignItems: 'flex-start', gap: 6, padding: '6px 10px', borderRadius: 6, background: 'rgba(0,0,0,0.2)' }}>
+                <Bot size={12} color={T.gold} style={{ marginTop: 2, flexShrink: 0 }} />
+                <p style={{ fontSize: 11, color: T.textSec, lineHeight: 1.4, margin: 0 }}>
+                  <strong style={{ color: T.gold }}>Action IA:</strong> {alert.action}
+                </p>
+              </div>
+            </div>
+
+            <button onClick={() => setDismissed([...dismissed, alert.name])} style={{
+              width: 28, height: 28, borderRadius: 6, border: `1px solid ${T.cardBorder}`,
+              background: 'rgba(255,255,255,0.03)', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: T.textDim, transition: 'all 150ms', position: 'relative', zIndex: 1,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = `${alert.color}15`; e.currentTarget.style.color = alert.color; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.color = T.textDim; }}
+            >
+              <XCircle size={14} />
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // APPROVAL INTELLIGENCE PANEL
 // ─────────────────────────────────────────────────────
 function ApprovalIntelligencePanel({ recurringCount }: { recurringCount: number }) {
@@ -1357,6 +1482,9 @@ export default function WorldClassExpenses() {
           </div>
         );
       })()}
+
+      {/* REAL-TIME BUDGET ALERT SYSTEM */}
+      <BudgetAlertBanner catBudget={live.catBudget} />
 
       {/* PAGE BODY */}
       <div style={{ padding: '32px 32px 0', display: 'flex', flexDirection: 'column', gap: 32 }}>
