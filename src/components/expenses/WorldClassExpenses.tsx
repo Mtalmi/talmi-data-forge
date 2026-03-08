@@ -1699,6 +1699,9 @@ export default function WorldClassExpenses() {
           <RecurringSection recurring={live.recurring} total30d={live.recurringTotal30d} />
         )}
 
+        {/* DEPARTMENT BUDGET ALLOCATION - Par Catégorie tab only */}
+        {activeTab === 'Par Catégorie' && <DepartmentBudgetAllocation />}
+
         {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
         {activeTab === 'Par Catégorie' && (
           <section>
