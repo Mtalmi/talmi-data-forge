@@ -1086,6 +1086,109 @@ function ApprovalCard({ p, delay = 0 }: { p: { desc: string; cat: string; catCol
 }
 
 // ─────────────────────────────────────────────────────
+// APPROVAL INTELLIGENCE PANEL
+// ─────────────────────────────────────────────────────
+function ApprovalIntelligencePanel({ recurringCount }: { recurringCount: number }) {
+  const [autoApproval, setAutoApproval] = useState(false);
+  const [hov, setHov] = useState(false);
+  
+  // Mock approval intelligence data (in production would come from live queries)
+  const avgApprovalTime = 2.8;
+  const bottleneckApprover = 'Karim B.';
+  const bottleneckAvg = 4.2;
+  const autoApprovalCandidates = recurringCount;
+
+  return (
+    <section>
+      <SectionHeader icon={Bot} label="INTELLIGENCE APPROBATION IA" right={
+        <Bdg label="Analyse temps réel" color={T.gold} bg={`${T.gold}15`} icon={<Zap size={10} />} />
+      } />
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+        background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+        borderRadius: 14, padding: 24, position: 'relative', overflow: 'hidden',
+        transform: hov ? 'translateY(-2px)' : 'none',
+        boxShadow: hov ? `0 10px 30px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 14px rgba(0,0,0,0.15)',
+        transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+      }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0, transition: 'opacity 220ms' }} />
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 24 }}>
+          {/* Average approval time */}
+          <div style={{ padding: 20, borderRadius: 12, background: `${T.gold}08`, border: `1px solid ${T.gold}20` }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Temps d'approbation moyen</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                fontSize: 36, fontWeight: 200, color: T.gold, letterSpacing: '-0.02em',
+              }}>
+                {avgApprovalTime}
+              </span>
+              <span style={{ fontSize: 14, color: T.textSec }}>heures</span>
+            </div>
+            <p style={{ fontSize: 11, color: T.textDim, marginTop: 8 }}>Ce mois · {Math.round(avgApprovalTime * 60)} min en moyenne</p>
+          </div>
+
+          {/* Bottleneck identifier */}
+          <div style={{ padding: 20, borderRadius: 12, background: `${T.warning}08`, border: `1px solid ${T.warning}20` }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Goulot d'étranglement</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: `${T.warning}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AlertTriangle size={16} color={T.warning} />
+              </div>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 700, color: T.textPri }}>{bottleneckApprover}</p>
+                <p style={{ fontSize: 12, color: T.warning }}>Moyenne: {bottleneckAvg}h</p>
+              </div>
+            </div>
+            <p style={{ fontSize: 11, color: T.textDim, marginTop: 10 }}>Approbateur le plus lent ce mois</p>
+          </div>
+
+          {/* Auto-approval recommendation */}
+          <div style={{ padding: 20, borderRadius: 12, background: `${T.success}08`, border: `1px solid ${T.success}20` }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>Recommandation IA</p>
+            <p style={{ fontSize: 13, color: T.textPri, lineHeight: 1.5, marginBottom: 12 }}>
+              <strong style={{ color: T.success }}>{autoApprovalCandidates}</strong> dépenses récurrentes &lt;500 DH éligibles à l'auto-approbation
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 8, background: 'rgba(255,255,255,0.03)', border: `1px solid ${T.cardBorder}` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Bot size={14} color={T.gold} />
+                <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>Auto-approbation IA</span>
+              </div>
+              <button onClick={() => setAutoApproval(!autoApproval)} style={{
+                width: 48, height: 26, borderRadius: 13, padding: 2, cursor: 'pointer',
+                background: autoApproval ? `linear-gradient(135deg, ${T.gold}, #B8860B)` : T.cardBorder,
+                border: `1px solid ${autoApproval ? T.gold : T.cardBorder}`,
+                transition: 'all 200ms', position: 'relative',
+              }}>
+                <div style={{
+                  width: 20, height: 20, borderRadius: '50%', background: '#fff',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                  transform: autoApproval ? 'translateX(22px)' : 'translateX(0)',
+                  transition: 'transform 200ms cubic-bezier(0.4,0,0.2,1)',
+                }} />
+              </button>
+            </div>
+            {autoApproval && (
+              <p style={{ fontSize: 10, color: T.success, marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <CheckCircle size={10} /> Activé pour dépenses récurrentes &lt;500 DH
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Insight footer */}
+        <div style={{ marginTop: 20, padding: '12px 16px', borderRadius: 8, background: `${T.gold}06`, border: `1px solid ${T.gold}12`, display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Bot size={14} color={T.gold} />
+          <p style={{ fontSize: 11, color: T.textSec, lineHeight: 1.5 }}>
+            <strong style={{ color: T.gold }}>Agent IA:</strong> L'activation de l'auto-approbation pour les dépenses récurrentes de faible montant réduirait le temps moyen de traitement de <strong style={{ color: T.success }}>67%</strong> et libèrerait ~<strong style={{ color: T.gold }}>3.2h</strong>/semaine pour les approbateurs.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassExpenses() {
@@ -1537,6 +1640,9 @@ export default function WorldClassExpenses() {
             </section>
           );
         })()}
+
+        {/* AI APPROVAL INTELLIGENCE - Approbations tab only */}
+        {activeTab === 'Approbations' && <ApprovalIntelligencePanel recurringCount={live.recurring.filter(r => r.amount < 500).length} />}
       </div>
     </div>
   );
