@@ -332,7 +332,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // STOCK LEVEL ROW — Amber progress system
 // ─────────────────────────────────────────────────────
-function StockRow({ stock, index, autonomy }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number; autonomy?: { days: number | null; calculated_at: string | null } }) {
+function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string; current: number; max: number; unit: string; pct: number; liquid: boolean }; index: number; autonomy?: { days: number | null; calculated_at: string | null }; sparkline?: number[] }) {
   const [visible, setVisible] = useState(false);
   const barColor = stock.pct > 30 ? T.amber : stock.pct > 10 ? T.amberDark : T.danger;
   const isAlert = stock.pct < 30;
