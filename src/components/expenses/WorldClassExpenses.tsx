@@ -420,24 +420,105 @@ function DarkTooltip({ active, payload, label }: any) {
 // GAUGE
 // ─────────────────────────────────────────────────────
 function BudgetGauge({ value = 74 }: { value?: number }) {
-  const r = 72; const cx = 110; const cy = 100;
-  const startAngle = 210; const sweep = 120;
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const bgStart = toRad(startAngle); const bgEnd = toRad(startAngle + sweep);
-  const bgPath = `M ${cx + r * Math.cos(bgStart)},${cy + r * Math.sin(bgStart)} A ${r} ${r} 0 0 1 ${cx + r * Math.cos(bgEnd)},${cy + r * Math.sin(bgEnd)}`;
-  const filled = (Math.min(value, 100) / 100) * sweep;
-  const fEnd = toRad(startAngle + filled);
-  const fPath = `M ${cx + r * Math.cos(bgStart)},${cy + r * Math.sin(bgStart)} A ${r} ${r} 0 0 1 ${cx + r * Math.cos(fEnd)},${cy + r * Math.sin(fEnd)}`;
-  const nx = cx + r * Math.cos(toRad(startAngle + filled));
-  const ny = cy + r * Math.sin(toRad(startAngle + filled));
+  const clamped = Math.min(Math.max(value, 0), 100);
+  const svgW = 300; const svgH = 200;
+  const cx = svgW / 2; const cy = 165;
+  const r = 120; const strokeW = 18;
+  // Semicircle from 180° (left) to 0° (right)
+  const startDeg = 180; const sweepDeg = 180;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+
+  // Arc path helper
+  const arcPath = (from: number, to: number, radius: number) => {
+    const s = toRad(from); const e = toRad(to);
+    const x1 = cx + radius * Math.cos(s); const y1 = cy + radius * Math.sin(s);
+    const x2 = cx + radius * Math.cos(e); const y2 = cy + radius * Math.sin(e);
+    const large = (to - from) > 180 ? 1 : 0;
+    return `M ${x1},${y1} A ${radius} ${radius} 0 ${large} 1 ${x2},${y2}`;
+  };
+
+  // Zone boundaries (degrees from startDeg)
+  const zones = [
+    { pct: 0, endPct: 60, color: '#10B981' },   // green
+    { pct: 60, endPct: 85, color: '#F59E0B' },   // amber
+    { pct: 85, endPct: 100, color: '#EF4444' },   // red
+  ];
+
+  // Needle angle
+  const needleDeg = startDeg + (clamped / 100) * sweepDeg;
+  const needleLen = r - strokeW / 2 - 8;
+  const nx = cx + needleLen * Math.cos(toRad(needleDeg));
+  const ny = cy + needleLen * Math.sin(toRad(needleDeg));
+
+  // Used arc (gold)
+  const usedEnd = startDeg + (clamped / 100) * sweepDeg;
+
   return (
-    <svg width={220} height={140} viewBox="0 0 220 140">
-      <defs><linearGradient id="expGaugeGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor={T.warning} /><stop offset="100%" stopColor={T.gold} /></linearGradient></defs>
-      <path d={bgPath} fill="none" stroke="#1E2D4A" strokeWidth={14} strokeLinecap="round" />
-      <path d={fPath} fill="none" stroke="url(#expGaugeGrad)" strokeWidth={14} strokeLinecap="round" />
-      <circle cx={nx} cy={ny} r={7} fill={T.gold} />
-      <text x={cx} y={cy - 8} textAnchor="middle" dominantBaseline="middle" style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, fill: T.gold }}>{value}%</text>
-      <text x={cx} y={cy + 18} textAnchor="middle" style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 9, fill: T.textDim }}>Utilisation Budget</text>
+    <svg width={svgW} height={svgH} viewBox={`0 0 ${svgW} ${svgH}`}>
+      <defs>
+        <linearGradient id="expGaugeGoldArc" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#B8860B" />
+          <stop offset="100%" stopColor="#FFD700" />
+        </linearGradient>
+        <filter id="needleGlow">
+          <feGaussianBlur stdDeviation="3" result="glow" />
+          <feMerge><feMergeNode in="glow" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+
+      {/* Zone arcs (background) */}
+      {zones.map((z, i) => (
+        <path key={i}
+          d={arcPath(startDeg + (z.pct / 100) * sweepDeg, startDeg + (z.endPct / 100) * sweepDeg, r)}
+          fill="none" stroke={z.color} strokeWidth={strokeW} strokeLinecap={i === 0 ? 'round' : i === 2 ? 'round' : 'butt'}
+          opacity={0.12}
+        />
+      ))}
+
+      {/* Dark navy remaining arc */}
+      <path d={arcPath(usedEnd, startDeg + sweepDeg, r)} fill="none" stroke="#1E2D4A" strokeWidth={strokeW} strokeLinecap="round" />
+
+      {/* Gold used arc */}
+      {clamped > 0 && (
+        <path d={arcPath(startDeg, usedEnd, r)} fill="none" stroke="url(#expGaugeGoldArc)" strokeWidth={strokeW} strokeLinecap="round" />
+      )}
+
+      {/* Zone tick marks */}
+      {[0, 60, 85, 100].map((pct) => {
+        const angle = toRad(startDeg + (pct / 100) * sweepDeg);
+        const x1t = cx + (r - strokeW / 2 - 2) * Math.cos(angle);
+        const y1t = cy + (r - strokeW / 2 - 2) * Math.sin(angle);
+        const x2t = cx + (r + strokeW / 2 + 2) * Math.cos(angle);
+        const y2t = cy + (r + strokeW / 2 + 2) * Math.sin(angle);
+        return <line key={pct} x1={x1t} y1={y1t} x2={x2t} y2={y2t} stroke="rgba(255,255,255,0.15)" strokeWidth={1.5} />;
+      })}
+
+      {/* Zone labels */}
+      {[0, 60, 85, 100].map((pct) => {
+        const angle = toRad(startDeg + (pct / 100) * sweepDeg);
+        const lx = cx + (r + strokeW / 2 + 14) * Math.cos(angle);
+        const ly = cy + (r + strokeW / 2 + 14) * Math.sin(angle);
+        return (
+          <text key={pct} x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
+            style={{ fontSize: 9, fill: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>
+            {pct}%
+          </text>
+        );
+      })}
+
+      {/* Needle */}
+      <line x1={cx} y1={cy} x2={nx} y2={ny} stroke="#FFD700" strokeWidth={2.5} strokeLinecap="round" filter="url(#needleGlow)" />
+      <circle cx={cx} cy={cy} r={6} fill="#0B1120" stroke="#FFD700" strokeWidth={2} />
+
+      {/* Center percentage */}
+      <text x={cx} y={cy - 36} textAnchor="middle" dominantBaseline="middle"
+        style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 48, fontWeight: 200, fill: '#FFFFFF', letterSpacing: '-0.02em' }}>
+        {clamped}%
+      </text>
+      <text x={cx} y={cy - 10} textAnchor="middle"
+        style={{ fontFamily: 'DM Sans, sans-serif', fontSize: 10, fill: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.15em' }}>
+        Utilisation
+      </text>
     </svg>
   );
 }
@@ -2547,23 +2628,43 @@ export default function WorldClassExpenses() {
 
         {/* GAUGE */}
         <section>
-          <div style={{ ...chartCardStyle, display: 'flex', alignItems: 'center', gap: 32, justifyContent: 'center', flexWrap: 'wrap' as const }}>
-            <div style={{ textAlign: 'center', padding: '16px 28px', borderRadius: 12, background: `${T.cardBorder}60`, border: `1px solid ${T.cardBorder}` }}>
-              <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Budget Total</p>
-              <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.textPri }}>{live.budgetTotal}K DH</p>
-            </div>
+          <div style={{ ...chartCardStyle, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 24 }}>
             <div style={{ textAlign: 'center' }}>
               <BudgetGauge value={live.budgetUsedPct} />
-              <p style={{ color: T.textDim, fontSize: 11, marginTop: 4 }}>Utilisation Budget Mensuel</p>
             </div>
-            <div style={{ display: 'flex', gap: 16 }}>
-              <div style={{ textAlign: 'center', padding: '16px 28px', borderRadius: 12, background: `${T.gold}0A`, border: `1px solid ${T.goldBorder}` }}>
-                <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Dépensé</p>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.gold }}>{live.totalThisMonth}K DH</p>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' as const, justifyContent: 'center', width: '100%' }}>
+              {/* Budget Total */}
+              <div style={{
+                flex: '1 1 160px', maxWidth: 220, textAlign: 'center', padding: '20px 24px', borderRadius: 12,
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                backdropFilter: 'blur(12px)',
+              }}>
+                <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>Budget Total</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#FFFFFF', lineHeight: 1 }}>
+                  {live.budgetTotal}<span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>K DH</span>
+                </p>
               </div>
-              <div style={{ textAlign: 'center', padding: '16px 28px', borderRadius: 12, background: `${T.success}0A`, border: `1px solid ${T.success}30` }}>
-                <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Restant</p>
-                <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 22, fontWeight: 800, color: T.success }}>{live.budgetRemaining}K DH</p>
+              {/* Dépensé */}
+              <div style={{
+                flex: '1 1 160px', maxWidth: 220, textAlign: 'center', padding: '20px 24px', borderRadius: 12,
+                background: 'rgba(255,215,0,0.04)', border: '1px solid rgba(255,215,0,0.15)',
+                backdropFilter: 'blur(12px)',
+              }}>
+                <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>Dépensé</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#FFD700', lineHeight: 1 }}>
+                  {live.totalThisMonth}<span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>K DH</span>
+                </p>
+              </div>
+              {/* Restant */}
+              <div style={{
+                flex: '1 1 160px', maxWidth: 220, textAlign: 'center', padding: '20px 24px', borderRadius: 12,
+                background: 'rgba(16,185,129,0.04)', border: '1px solid rgba(16,185,129,0.15)',
+                backdropFilter: 'blur(12px)',
+              }}>
+                <p style={{ color: '#9CA3AF', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>Restant</p>
+                <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color: '#10B981', lineHeight: 1 }}>
+                  {live.budgetRemaining}<span style={{ fontSize: 14, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>K DH</span>
+                </p>
               </div>
             </div>
           </div>
