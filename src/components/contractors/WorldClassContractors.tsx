@@ -476,7 +476,7 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
           <Eye size={14} /> Voir Détails
         </button>
         <button
-          onClick={(e) => { e.stopPropagation(); setProlongerTarget({ contractor: m.contractor, currentFin: m.fin }); }}
+          onClick={(e) => { e.stopPropagation(); onProlonger?.(); }}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
             background: 'transparent', border: `1px solid ${T.info}`, color: T.info,
