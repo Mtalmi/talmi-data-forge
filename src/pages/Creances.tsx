@@ -740,52 +740,63 @@ export default function Creances() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Wallet className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.totalOutstanding)}</p>
-                  <p className="text-xs text-muted-foreground">{t.pages.creances.totalOutstanding}</p>
+          {/* Card 1: ENCOURS TOTAL */}
+          <Card className="rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
+            <CardContent className="pt-5 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(255, 215, 0, 0.15)' }}>
+                  <Wallet className="h-5 w-5" style={{ color: '#FFD700' }} />
                 </div>
               </div>
+              <p style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                fontSize: 48, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em',
+              }}>{formatCurrency(stats.totalOutstanding).replace(' DH', '')}</p>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 14, color: '#9CA3AF' }}> DH</span>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>Encours Total</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/10">
-                  <AlertTriangle className="h-5 w-5 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.totalOverdue)}</p>
-                  <p className="text-xs text-muted-foreground">{t.pages.creances.overdue}</p>
+          {/* Card 2: EN RETARD */}
+          <Card className="rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
+            <CardContent className="pt-5 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.15)' }}>
+                  <AlertTriangle className="h-5 w-5" style={{ color: '#ef4444' }} />
                 </div>
               </div>
+              <p style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                fontSize: 48, fontWeight: 200, color: '#ef4444', lineHeight: 1, letterSpacing: '-0.02em',
+              }}>{formatCurrency(stats.totalOverdue).replace(' DH', '')}</p>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 14, color: '#9CA3AF' }}> DH</span>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>En Retard</p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-warning/10">
-                  <AlertCircle className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.atRiskAmount)}</p>
-                  <p className="text-xs text-muted-foreground">{t.pages.creances.atRisk}</p>
+          {/* Card 3: À RISQUE (60j+) */}
+          <Card className="rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
+            <CardContent className="pt-5 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(245, 158, 11, 0.15)' }}>
+                  <AlertCircle className="h-5 w-5" style={{ color: '#f59e0b' }} />
                 </div>
               </div>
+              <p style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                fontSize: 48, fontWeight: 200, color: '#f59e0b', lineHeight: 1, letterSpacing: '-0.02em',
+              }}>{formatCurrency(stats.atRiskAmount).replace(' DH', '')}</p>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 14, color: '#9CA3AF' }}> DH</span>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>À Risque (60j+)</p>
             </CardContent>
           </Card>
 
-          <Card className="col-span-2 md:col-span-1">
+          {/* Card 4: TAUX RECOUVREMENT */}
+          <Card className="rounded-xl col-span-2 md:col-span-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
             <CardContent className="pt-4 flex flex-col items-center">
               {(() => {
                 const rate = Math.min(Math.max(stats.collectionRate, 0), 100);
+                const rateColor = rate >= 80 ? '#22c55e' : rate >= 60 ? '#f59e0b' : '#ef4444';
                 const svgW = 180; const svgH = 110;
                 const cxG = svgW / 2; const cyG = 100;
                 const r = 72; const sw = 14;
@@ -808,7 +819,6 @@ export default function Creances() {
                 const needleLen = r - sw / 2 - 6;
                 const nx = cxG + needleLen * Math.cos(toRad(needleDeg));
                 const ny = cyG + needleLen * Math.sin(toRad(needleDeg));
-                // Objectif 85% marker
                 const objAngle = toRad(startDeg + (85 / 100) * sweepDeg);
                 const ox1 = cxG + (r - sw / 2 - 2) * Math.cos(objAngle);
                 const oy1 = cyG + (r - sw / 2 - 2) * Math.sin(objAngle);
@@ -836,35 +846,35 @@ export default function Creances() {
                       ))}
                       <path d={arcPath(usedEnd, startDeg + sweepDeg)} fill="none" stroke="#1E2D4A" strokeWidth={sw} strokeLinecap="round" />
                       {rate > 0 && <path d={arcPath(startDeg, usedEnd)} fill="none" stroke="url(#crGaugeGold)" strokeWidth={sw} strokeLinecap="round" />}
-                      {/* Objectif 85% marker */}
                       <line x1={ox1} y1={oy1} x2={ox2} y2={oy2} stroke="#22c55e" strokeWidth={2} strokeDasharray="3 2" />
                       <text x={olx} y={oly} textAnchor="middle" dominantBaseline="middle" style={{ fontSize: 7, fill: '#22c55e', fontFamily: 'ui-monospace, monospace' }}>85%</text>
-                      {/* Needle */}
                       <line x1={cxG} y1={cyG} x2={nx} y2={ny} stroke="#FFD700" strokeWidth={2} strokeLinecap="round" filter="url(#crNeedleGlow)" />
                       <circle cx={cxG} cy={cyG} r={4} fill="#0B1120" stroke="#FFD700" strokeWidth={1.5} />
                     </svg>
                     <p style={{
                       fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                      fontSize: 32, fontWeight: 200, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em', marginTop: -4,
+                      fontSize: 32, fontWeight: 200, color: rateColor, lineHeight: 1, letterSpacing: '-0.02em', marginTop: -4,
                     }}>{rate.toFixed(1)}<span style={{ fontSize: 14, color: '#9CA3AF' }}>%</span></p>
-                    <p className="text-xs text-muted-foreground mt-1">{t.pages.creances.collectionRate}</p>
+                    <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 4 }}>Taux Recouvrement</p>
                   </div>
                 );
               })()}
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-accent/10">
-                  <Users className="h-5 w-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{stats.clientsWithOverdue}</p>
-                  <p className="text-xs text-muted-foreground">{t.pages.creances.clientsOverdue}</p>
+          {/* Card 5: CLIENTS EN RETARD */}
+          <Card className="rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderLeft: '3px solid #D4A843' }}>
+            <CardContent className="pt-5 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.15)' }}>
+                  <Users className="h-5 w-5" style={{ color: '#ef4444' }} />
                 </div>
               </div>
+              <p style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                fontSize: 48, fontWeight: 200, color: '#ef4444', lineHeight: 1, letterSpacing: '-0.02em',
+              }}>{stats.clientsWithOverdue}</p>
+              <p style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 8 }}>Clients en Retard</p>
             </CardContent>
           </Card>
 
