@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  LineChart, Line, PieChart, Pie, Cell, Area,
+  LineChart, Line, PieChart, Pie, Cell, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  Tooltip as RechartsTooltip, Sector, ReferenceArea,
+  Tooltip as RechartsTooltip, Sector, ReferenceArea, ReferenceLine, LabelList,
 } from 'recharts';
 import {
   CreditCard, Banknote, Clock, TrendingDown,
@@ -1766,6 +1766,98 @@ export default function WorldClassExpenses() {
             </div>
           </div>
         </section>
+
+        {/* CASH FLOW WATERFALL CHART - Vue d'ensemble only */}
+        {activeTab === "Vue d'ensemble" && (() => {
+          const months = ['Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar'];
+          const waterfallData = [
+            { month: 'Oct', opening: 420, revenue: 185, expense: -142, closing: 463 },
+            { month: 'Nov', opening: 463, revenue: 210, expense: -178, closing: 495 },
+            { month: 'Déc', opening: 495, revenue: 195, expense: -165, closing: 525 },
+            { month: 'Jan', opening: 525, revenue: 220, expense: -188, closing: 557 },
+            { month: 'Fév', opening: 557, revenue: 175, expense: -152, closing: 580 },
+            { month: 'Mar', opening: 580, revenue: 198, expense: -168, closing: 610 },
+          ];
+
+          // Transform for stacked waterfall appearance
+          const chartData = waterfallData.map(d => ({
+            month: d.month,
+            base: d.opening,
+            revenue: d.revenue,
+            expense: Math.abs(d.expense),
+            expenseOffset: d.opening + d.revenue - Math.abs(d.expense),
+            closing: d.closing,
+          }));
+
+          return (
+            <section>
+              <div style={{
+                background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+                borderRadius: 14, padding: 24,
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                  <div>
+                    <p style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>FLUX DE TRÉSORERIE</p>
+                    <p style={{ color: T.textDim, fontSize: 11 }}>Évolution mensuelle — 6 derniers mois</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: T.success }} />
+                      <span style={{ fontSize: 10, color: T.textSec }}>Revenus</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: T.danger }} />
+                      <span style={{ fontSize: 10, color: T.textSec }}>Dépenses</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: 2, background: T.gold }} />
+                      <span style={{ fontSize: 10, color: T.textSec }}>Solde</span>
+                    </div>
+                  </div>
+                </div>
+                <ResponsiveContainer width="100%" height={320}>
+                  <BarChart data={chartData} barCategoryGap="20%">
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={(v) => `${v}K`} domain={[0, 'auto']} />
+                    <RechartsTooltip content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) return null;
+                      const d = waterfallData.find(w => w.month === label);
+                      if (!d) return null;
+                      return (
+                        <div style={{ background: '#1A2540', border: `1px solid ${T.goldBorder}`, borderRadius: 10, padding: '10px 14px', boxShadow: '0 8px 24px rgba(0,0,0,0.35)' }}>
+                          <p style={{ color: T.gold, fontWeight: 700, marginBottom: 6, fontSize: 12 }}>{label}</p>
+                          <p style={{ fontSize: 12, color: T.textSec, marginBottom: 2 }}>Ouverture: <strong style={{ color: T.textPri }}>{d.opening}K DH</strong></p>
+                          <p style={{ fontSize: 12, color: T.success, marginBottom: 2 }}>+Revenus: <strong>+{d.revenue}K DH</strong></p>
+                          <p style={{ fontSize: 12, color: T.danger, marginBottom: 2 }}>-Dépenses: <strong>{d.expense}K DH</strong></p>
+                          <p style={{ fontSize: 12, color: T.gold, marginTop: 6, fontWeight: 700 }}>Clôture: {d.closing}K DH</p>
+                        </div>
+                      );
+                    }} />
+                    {/* Invisible base bar for stacking */}
+                    <Bar dataKey="base" stackId="flow" fill="transparent" />
+                    {/* Revenue bar (green, going up) */}
+                    <Bar dataKey="revenue" stackId="flow" fill={T.success} radius={[4, 4, 0, 0]} isAnimationActive animationDuration={800} />
+                    {/* Closing balance bar (gold, final position) */}
+                    <Bar dataKey="closing" fill={T.gold} radius={[4, 4, 4, 4]} barSize={8} isAnimationActive animationDuration={1000}>
+                      <LabelList dataKey="closing" position="top" formatter={(v: number) => `${v}K`} style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                        fontSize: 11, fontWeight: 600, fill: T.gold,
+                      }} />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                {/* Expense visualization note */}
+                <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 8, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <Bot size={14} color={T.gold} />
+                  <p style={{ fontSize: 11, color: T.textSec }}>
+                    <strong style={{ color: T.gold }}>Tendance IA:</strong> Solde de clôture en hausse de <strong style={{ color: T.success }}>+{Math.round(((610 - 420) / 420) * 100)}%</strong> sur 6 mois — trésorerie saine
+                  </p>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* GAUGE */}
         <section>
