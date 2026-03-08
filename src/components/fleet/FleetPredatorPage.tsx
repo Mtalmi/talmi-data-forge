@@ -30,7 +30,12 @@ import {
   Signal,
   Fuel,
   Route,
-  Navigation2
+  Navigation2,
+  Users,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Zap,
 } from 'lucide-react';
 import { FleetGPSMap, type GPSVehicle } from './FleetGPSMap';
 import { TripHistoryReplay } from './TripHistoryReplay';
@@ -42,6 +47,101 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useI18n } from '@/i18n/I18nContext';
+
+// ─────────────────────────────────────────────────────
+// DRIVER LEADERBOARD DATA & COMPONENT
+// ─────────────────────────────────────────────────────
+const DRIVER_DATA = [
+  { name: 'Youssef Benali', initials: 'YB', score: 94, trend: 3, ponctualite: 'green' as const, securite: 'green' as const, efficacite: 'green' as const },
+  { name: 'Karim Idrissi', initials: 'KI', score: 89, trend: 1, ponctualite: 'green' as const, securite: 'green' as const, efficacite: 'amber' as const },
+  { name: 'Mehdi Tazi', initials: 'MT', score: 85, trend: -2, ponctualite: 'amber' as const, securite: 'green' as const, efficacite: 'green' as const },
+  { name: 'Omar Fassi', initials: 'OF', score: 78, trend: 0, ponctualite: 'green' as const, securite: 'amber' as const, efficacite: 'amber' as const },
+  { name: 'Hassan Berrada', initials: 'HB', score: 72, trend: -4, ponctualite: 'amber' as const, securite: 'red' as const, efficacite: 'amber' as const },
+  { name: 'Rachid Amrani', initials: 'RA', score: 65, trend: 2, ponctualite: 'red' as const, securite: 'amber' as const, efficacite: 'amber' as const },
+];
+
+const BADGE_COLORS = { green: { bg: 'rgba(34,197,94,0.12)', text: '#22c55e' }, amber: { bg: 'rgba(245,158,11,0.12)', text: '#f59e0b' }, red: { bg: 'rgba(239,68,68,0.12)', text: '#ef4444' } };
+
+function DriverLeaderboard() {
+  return (
+    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 14, padding: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+        <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Zap size={18} color="#D4A843" />
+        </div>
+        <div>
+          <h3 style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', color: '#D4A843', margin: 0 }}>
+            PERFORMANCE CHAUFFEURS IA
+          </h3>
+          <p style={{ fontSize: 11, color: '#64748B', margin: 0 }}>Classement composite temps réel</p>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 80px 200px 60px', gap: 12, alignItems: 'center', padding: '0 8px 10px', borderBottom: '1px solid #1E2D4A' }}>
+        <span />
+        <span style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Chauffeur</span>
+        <span style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Score IA</span>
+        <span style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Indicateurs</span>
+        <span style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Trend</span>
+      </div>
+      {DRIVER_DATA.map((d, i) => (
+        <div key={d.name} style={{
+          display: 'grid', gridTemplateColumns: '44px 1fr 80px 200px 60px', gap: 12, alignItems: 'center',
+          padding: '12px 8px', borderBottom: i < DRIVER_DATA.length - 1 ? '1px solid rgba(30,45,74,0.5)' : 'none',
+          transition: 'background 0.15s', borderRadius: 6, cursor: 'default',
+        }}
+          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+        >
+          <div style={{
+            width: 36, height: 36, borderRadius: '50%',
+            background: `linear-gradient(135deg, rgba(212,168,67,${0.25 - i * 0.03}), rgba(212,168,67,0.1))`,
+            border: '1px solid rgba(212,168,67,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 600, color: '#D4A843',
+          }}>
+            {d.initials}
+          </div>
+          <div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#F1F5F9' }}>{d.name}</span>
+            <span style={{ fontSize: 10, color: '#64748B', marginLeft: 8 }}>#{i + 1}</span>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <span style={{
+              fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+              fontSize: 26, fontWeight: 200, color: d.score >= 85 ? '#22c55e' : d.score >= 70 ? '#f59e0b' : '#ef4444',
+              letterSpacing: '-0.02em', lineHeight: 1, WebkitFontSmoothing: 'antialiased' as any,
+            }}>
+              {d.score}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 6 }}>
+            {(['ponctualite', 'securite', 'efficacite'] as const).map(key => {
+              const label = key === 'ponctualite' ? 'Ponctualité' : key === 'securite' ? 'Sécurité' : 'Efficacité';
+              const c = BADGE_COLORS[d[key]];
+              return (
+                <span key={key} style={{
+                  fontSize: 9, fontWeight: 600, padding: '2px 7px', borderRadius: 4,
+                  background: c.bg, color: c.text, whiteSpace: 'nowrap',
+                }}>
+                  {label}
+                </span>
+              );
+            })}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+            {d.trend > 0 ? <TrendingUp size={13} color="#22c55e" /> : d.trend < 0 ? <TrendingDown size={13} color="#ef4444" /> : <Minus size={13} color="#64748B" />}
+            <span style={{
+              fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 600,
+              color: d.trend > 0 ? '#22c55e' : d.trend < 0 ? '#ef4444' : '#64748B',
+            }}>
+              {d.trend > 0 ? `+${d.trend}` : d.trend === 0 ? '—' : d.trend}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export function FleetPredatorPage() {
   const { t } = useI18n();
@@ -276,6 +376,11 @@ export function FleetPredatorPage() {
             <Shield className="h-4 w-4" />
             <span className="hidden sm:inline">Zones Sécurisées</span>
             <span className="sm:hidden">Zones</span>
+          </TabsTrigger>
+          <TabsTrigger value="drivers" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
+            <Users className="h-4 w-4" />
+            <span className="hidden sm:inline">Performance</span>
+            <span className="sm:hidden">Perf.</span>
           </TabsTrigger>
           <TabsTrigger value="api" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary gap-1.5">
             <Server className="h-4 w-4" />
@@ -654,6 +759,11 @@ export function FleetPredatorPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Drivers Performance Tab */}
+        <TabsContent value="drivers" className="mt-0">
+          <DriverLeaderboard />
         </TabsContent>
 
         {/* API Tab */}
