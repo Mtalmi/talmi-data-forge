@@ -1212,25 +1212,50 @@ export default function Bons() {
                     <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
                     <TableCell className="text-right">{b.volume_m3} m³</TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
-                      {(isCeo || isDirecteurOperations || isResponsableTechnique) && b.workflow_status !== 'facture' && b.workflow_status !== 'annule' ? (
-                        <Select
-                          value={b.workflow_status || 'planification'}
-                          onValueChange={(val) => updateWorkflowStatus(b.bl_id, val)}
-                        >
-                          <SelectTrigger className="w-[140px] h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {WORKFLOW_STEPS.filter(s => s.value !== 'annule').map((step) => (
-                              <SelectItem key={step.value} value={step.value}>
-                                {step.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        getWorkflowBadge(b.workflow_status)
-                      )}
+                      {(() => {
+                        const ws = b.workflow_status || 'planification';
+                        const wfStyles: Record<string, { bg: string; bc: string; label: string }> = {
+                          planification: { bg: 'rgba(59,130,246,0.15)', bc: '#3b82f6', label: 'Planning' },
+                          production: { bg: 'rgba(245,158,11,0.15)', bc: '#f59e0b', label: 'Production' },
+                          validation_technique: { bg: 'rgba(168,85,247,0.15)', bc: '#a855f7', label: 'Tech. Valid.' },
+                          en_livraison: { bg: 'rgba(212,168,67,0.15)', bc: '#D4A843', label: 'En livraison' },
+                          livre: { bg: 'rgba(34,197,94,0.15)', bc: '#22c55e', label: 'Livré' },
+                          facture: { bg: 'rgba(34,197,94,0.15)', bc: '#22c55e', label: 'Facturé' },
+                          annule: { bg: 'rgba(239,68,68,0.15)', bc: '#ef4444', label: 'Annulé' },
+                        };
+                        const s = wfStyles[ws] || wfStyles.planification;
+                        const step = WORKFLOW_STEPS.find(st => st.value === ws) || WORKFLOW_STEPS[0];
+                        const Icon = step.icon;
+                        const badge = (
+                          <span style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                            padding: '4px 10px', borderRadius: 6,
+                            background: s.bg, border: `1px solid ${s.bc}`,
+                            color: s.bc, fontSize: 11, fontWeight: 600,
+                          }}>
+                            <Icon size={12} />
+                            {s.label}
+                          </span>
+                        );
+                        const canEdit = (isCeo || isDirecteurOperations || isResponsableTechnique) && ws !== 'facture' && ws !== 'annule';
+                        return canEdit ? (
+                          <Select
+                            value={ws}
+                            onValueChange={(val) => updateWorkflowStatus(b.bl_id, val)}
+                          >
+                            <SelectTrigger className="w-auto h-auto p-0 border-0 bg-transparent shadow-none focus:ring-0 [&>svg]:ml-1 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:opacity-40">
+                              {badge}
+                            </SelectTrigger>
+                            <SelectContent>
+                              {WORKFLOW_STEPS.filter(st => st.value !== 'annule').map((st) => (
+                                <SelectItem key={st.value} value={st.value}>
+                                  {st.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : badge;
+                      })()}
                     </TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
                       {(() => {
