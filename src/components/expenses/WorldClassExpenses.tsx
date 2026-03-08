@@ -10,7 +10,7 @@ import {
   Truck, Wrench, Users, Package, Box,
   TrendingUp, Plus, LayoutGrid, ShieldAlert, Bot,
   FileText, ChevronDown, Loader2, BarChart3, Briefcase, CalendarRange,
-  ArrowRight, Repeat,
+  ArrowRight, Repeat, ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -64,6 +64,8 @@ function useExpensesLiveData() {
     catBudget: [] as { name: string; spent: number; budget: number; pct: number; color: string; icon: any }[],
     recentExpenses: [] as { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags: string[] }[],
     pending: [] as { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }[],
+    recurring: [] as { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string }[],
+    recurringTotal30d: 0,
     budgetTotal: 0,
     budgetUsedPct: 0,
     dailyAvg: 0,
