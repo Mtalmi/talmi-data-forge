@@ -332,16 +332,25 @@ export default function Creances() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="receivables" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
-            <TabsTrigger value="receivables" className="gap-2">
+          <TabsList className="grid w-full grid-cols-3 lg:w-[500px] bg-transparent border-b border-white/10 rounded-none p-0">
+            <TabsTrigger 
+              value="receivables" 
+              className="gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-[#D4A843] data-[state=active]:text-[#D4A843] data-[state=active]:bg-transparent text-gray-400 data-[state=active]:shadow-none"
+            >
               <FileText className="h-4 w-4" />
               {t.pages.creances.allReceivables}
             </TabsTrigger>
-            <TabsTrigger value="by-client" className="gap-2">
+            <TabsTrigger 
+              value="by-client" 
+              className="gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-[#D4A843] data-[state=active]:text-[#D4A843] data-[state=active]:bg-transparent text-gray-400 data-[state=active]:shadow-none"
+            >
               <Users className="h-4 w-4" />
               {t.pages.creances.byClient}
             </TabsTrigger>
-            <TabsTrigger value="logs" className="gap-2">
+            <TabsTrigger 
+              value="logs" 
+              className="gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-[#D4A843] data-[state=active]:text-[#D4A843] data-[state=active]:bg-transparent text-gray-400 data-[state=active]:shadow-none"
+            >
               <Clock className="h-4 w-4" />
                {t.pages.creances.history}
             </TabsTrigger>
@@ -354,16 +363,28 @@ export default function Creances() {
               <CardContent className="pt-4">
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
                       placeholder={t.pages.creances.searchPlaceholder}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 rounded-lg placeholder:text-gray-400"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#D4A843'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                     />
                   </div>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger 
+                      className="w-[180px] rounded-lg"
+                      style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                      }}
+                    >
                       <SelectValue placeholder="Statut" />
                     </SelectTrigger>
                     <SelectContent>
