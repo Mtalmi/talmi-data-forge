@@ -48,7 +48,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search, AlertTriangle, X } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
 import { format, isToday, differenceInDays } from 'date-fns';
@@ -141,6 +141,42 @@ export default function Bons() {
   const [viewMode, setViewMode] = useState<'table' | 'cards'>(isMobile || isTablet ? 'cards' : 'table');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [anomalyBannerDismissed, setAnomalyBannerDismissed] = useState(false);
+
+  // Anomaly detection
+  const anomalies = (() => {
+    const issues: string[] = [];
+    
+    // 1. Same client with 3+ pending bons (payment risk)
+    const pendingByClient: Record<string, number> = {};
+    bons.filter(b => b.statut_paiement === 'En Attente').forEach(b => {
+      pendingByClient[b.client_id] = (pendingByClient[b.client_id] || 0) + 1;
+    });
+    const riskyClients = Object.entries(pendingByClient).filter(([_, count]) => count >= 3);
+    if (riskyClients.length > 0) {
+      issues.push(`${riskyClients.length} client(s) avec 3+ bons en attente de paiement — risque de créance`);
+    }
+    
+    // 2. Volume outlier >2x average
+    const volumes = bons.map(b => b.volume_m3).filter(v => v > 0);
+    const avgVolume = volumes.length > 0 ? volumes.reduce((a, b) => a + b, 0) / volumes.length : 0;
+    const outliers = bons.filter(b => b.volume_m3 > avgVolume * 2);
+    if (outliers.length > 0 && avgVolume > 0) {
+      issues.push(`${outliers.length} bon(s) avec volume >2x la moyenne (${avgVolume.toFixed(1)} m³) — commande inhabituelle`);
+    }
+    
+    // 3. Bon in Planning status >5 days (stuck workflow)
+    const stuckBons = bons.filter(b => {
+      if (b.workflow_status !== 'planification') return false;
+      const daysSince = differenceInDays(new Date(), new Date(b.date_livraison));
+      return daysSince > 5;
+    });
+    if (stuckBons.length > 0) {
+      issues.push(`${stuckBons.length} bon(s) en planification depuis +5 jours — workflow bloqué`);
+    }
+    
+    return issues;
+  })();
 
   // Check for URL params to open detail
   useEffect(() => {
@@ -807,7 +843,32 @@ export default function Bons() {
             <p className="text-muted-foreground">{t.pages.bons.noBons}</p>
           </div>
         ) : (
-          <Table className="data-table-industrial">
+          <>
+            {/* AI Anomaly Banner */}
+            {anomalies.length > 0 && !anomalyBannerDismissed && (
+              <div 
+                className="rounded-lg p-4 mb-4 flex items-start gap-3"
+                style={{
+                  background: 'rgba(245,158,11,0.1)',
+                  border: '1px solid #f59e0b',
+                }}
+              >
+                <AlertTriangle className="h-5 w-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-1">
+                  <p className="text-sm font-medium text-amber-200">IA: Anomalies détectées</p>
+                  {anomalies.map((a, i) => (
+                    <p key={i} className="text-xs text-amber-300/80">• {a}</p>
+                  ))}
+                </div>
+                <button 
+                  onClick={() => setAnomalyBannerDismissed(true)}
+                  className="text-amber-400 hover:text-amber-200 transition-colors p-1"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            <Table className="data-table-industrial">
               <TableHeader>
                 <TableRow>
                   <TableHead>{t.pages.bons.bonNumber}</TableHead>
@@ -954,6 +1015,7 @@ export default function Bons() {
                 ))}
               </TableBody>
           </Table>
+          </>
         )}
 
         {/* Detail Dialog */}
