@@ -1341,6 +1341,11 @@ export default function WorldClassExpenses() {
           </section>
         )}
 
+        {/* RECURRING EXPENSES - Vue d'ensemble only */}
+        {activeTab === "Vue d'ensemble" && live.recurring.length > 0 && (
+          <RecurringSection recurring={live.recurring} total30d={live.recurringTotal30d} />
+        )}
+
         {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
         {activeTab === 'Par Catégorie' && (
           <section>
