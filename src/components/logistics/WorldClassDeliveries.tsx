@@ -458,7 +458,33 @@ export default function WorldClassDeliveries() {
           </div>
         </section>
 
-        {/* Briefing Logistique IA */}
+        {/* Santé Flotte IA */}
+        <section>
+          <SectionHeader icon={Truck} label="Santé Flotte IA" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+            {FLEET_HEALTH_DATA.map(v => {
+              const sc = v.score >= 80 ? '#22c55e' : v.score >= 60 ? '#f59e0b' : '#ef4444';
+              return (
+                <Card key={v.name} style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{v.name}</span>
+                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc, boxShadow: `0 0 8px ${sc}60` }} />
+                  </div>
+                  <span style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 32, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: sc,
+                    WebkitFontSmoothing: 'antialiased' as any, textAlign: 'center', padding: '6px 0',
+                  }}>
+                    {v.score}
+                  </span>
+                  <span style={{ fontSize: 11, color: T.textSec, textAlign: 'center', lineHeight: 1.4 }}>{v.insight}</span>
+                  <span style={{ fontSize: 10, color: '#D4A843', textAlign: 'center' }}>Diagnostic IA</span>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
         <LogisticsBriefingBanner totalDeliveries={totalDeliveries} enRoute={enRoute} planned={planned} />
 
         {/* Pipeline */}
