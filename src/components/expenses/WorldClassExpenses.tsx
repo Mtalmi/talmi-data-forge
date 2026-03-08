@@ -2248,10 +2248,10 @@ export default function WorldClassExpenses() {
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color={T.gold} icon={CreditCard} delay={0} />
-            <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={T.success} icon={Banknote} delay={80} />
-            <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color={T.warning} icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
-            <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? T.success : T.danger} icon={TrendingDown}
+            <KPICard label="Dépenses ce mois" value={live.totalThisMonth} suffix="K DH" color="#D4A843" icon={CreditCard} delay={0} />
+            <KPICard label="Budget Restant" value={live.budgetRemaining} suffix="K DH" color={live.budgetTotal > 0 ? (live.budgetRemaining / live.budgetTotal > 0.5 ? '#22c55e' : live.budgetRemaining / live.budgetTotal > 0.2 ? '#f59e0b' : '#ef4444') : '#22c55e'} icon={Banknote} delay={80} />
+            <KPICard label="En Attente Approbation" value={live.pendingApproval} suffix="K DH" color="#f59e0b" icon={Clock} trend={`${live.pending.length} demandes`} trendPositive={false} delay={160} />
+            <KPICard label="vs Budget" value={live.vsBudgetPct} suffix="%" color={live.vsBudgetPct <= 0 ? '#22c55e' : '#ef4444'} icon={TrendingDown}
               trend={live.vsBudgetPct <= 0 ? 'Sous budget ✓' : 'Dépassement'} trendPositive={live.vsBudgetPct <= 0} delay={240} />
             <BurnRateCard dailyAvg={live.dailyAvg} todaySpend={live.todaySpend} dailyBudget={live.dailyBudget} delay={320} />
             <AIForecastKPI totalThisMonth={live.totalThisMonth} dailyAvg={live.dailyAvg} budgetTotal={live.budgetTotal} delay={400} />
