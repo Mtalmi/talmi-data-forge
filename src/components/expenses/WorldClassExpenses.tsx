@@ -707,6 +707,44 @@ export default function WorldClassExpenses() {
             </div>
           </section>
         )}
+
+        {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
+        {activeTab === 'Par Catégorie' && (
+          <section>
+            <SectionHeader icon={Zap} label="RECOMMANDATIONS IA — OPTIMISATION COÛTS" right={
+              <Bdg label="Agent IA" color={T.gold} bg={`${T.gold}15`} icon={<Zap size={10} />} />
+            } />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+              {/* Recommendation 1: Fuel Optimization */}
+              <AIRecommendationCard
+                icon={Truck}
+                category="Carburant"
+                title="Optimiser routes livraison"
+                saving={800}
+                confidence={87}
+                explanation="L'analyse des trajets révèle des détours évitables sur 23% des livraisons ce mois."
+              />
+              {/* Recommendation 2: Maintenance */}
+              <AIRecommendationCard
+                icon={Wrench}
+                category="Maintenance"
+                title="Regrouper interventions préventives"
+                saving={1200}
+                confidence={92}
+                explanation="3 véhicules nécessitent une révision similaire — négocier tarif groupé avec prestataire."
+              />
+              {/* Recommendation 3: Energy */}
+              <AIRecommendationCard
+                icon={Zap}
+                category="Énergie"
+                title="Décaler production heures creuses"
+                saving={650}
+                confidence={78}
+                explanation="18% de la production actuelle sur heures pleines pourrait être décalée sans impact opérationnel."
+              />
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
