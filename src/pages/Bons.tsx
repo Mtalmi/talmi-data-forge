@@ -48,7 +48,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck } from 'lucide-react';
+import { Plus, Truck, Loader2, AlertCircle, CheckCircle, Clock, Play, Package, FileText, XCircle, Eye, Printer, List, LayoutGrid, FileCheck, Search } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { toast } from 'sonner';
 import { format, isToday, differenceInDays } from 'date-fns';
@@ -140,6 +140,7 @@ export default function Bons() {
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'cards'>(isMobile || isTablet ? 'cards' : 'table');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Check for URL params to open detail
   useEffect(() => {
@@ -548,6 +549,24 @@ export default function Bons() {
                 </Button>
               </div>
             )}
+            {/* Search Input */}
+            {!isTouchDevice && (
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher un bon, client, formule..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 w-[280px]"
+                  style={{
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#D4A843'}
+                  onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                />
+              </div>
+            )}
             {!isTouchDevice && (
               <ExportButton
                 data={bons.map(b => ({
@@ -575,13 +594,26 @@ export default function Bons() {
                   { key: 'marge_pct', label: 'Marge (%)' },
                 ]}
                 filename="bons_livraison"
+                className="hover:bg-[rgba(212,168,67,0.2)]"
+                style={{
+                  background: 'rgba(212,168,67,0.1)',
+                  border: '1px solid #D4A843',
+                  color: '#D4A843',
+                }}
               />
             )}
             {/* Manual BL creation - CEO only exception */}
             {isCeo && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button
+                  style={{
+                    background: '#D4A843',
+                    color: '#000',
+                    fontWeight: 500,
+                  }}
+                  className="hover:bg-[#c49a3d]"
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   {t.pages.bons.newBon}
                 </Button>
