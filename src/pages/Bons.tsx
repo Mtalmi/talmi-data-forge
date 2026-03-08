@@ -210,6 +210,8 @@ export default function Bons() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [anomalyBannerDismissed, setAnomalyBannerDismissed] = useState(false);
+  const [drawerBlId, setDrawerBlId] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Anomaly detection
   const anomalies = (() => {
@@ -1038,7 +1040,14 @@ export default function Bons() {
               </TableHeader>
               <TableBody>
                 {bons.map((b) => (
-                  <TableRow key={b.bl_id} className={cn(b.alerte_ecart && 'bg-destructive/5', b.alerte_marge && 'bg-warning/5')}>
+                  <TableRow
+                    key={b.bl_id}
+                    className={cn(b.alerte_ecart && 'bg-destructive/5', b.alerte_marge && 'bg-warning/5', 'cursor-pointer transition-all duration-150 border-l-[3px] border-l-transparent hover:border-l-[#D4A843]')}
+                    style={{ transition: 'background 150ms, border-color 150ms' }}
+                    onClick={() => { setDrawerBlId(b.bl_id); setDrawerOpen(true); }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = ''; }}
+                  >
                     <TableCell className="font-mono font-medium">
                       <div className="flex items-center gap-2">
                         {b.bl_id}
@@ -1178,6 +1187,13 @@ export default function Bons() {
           open={detailDialogOpen}
           onOpenChange={setDetailDialogOpen}
           onUpdate={fetchData}
+        />
+
+        {/* Detail Drawer */}
+        <BonDetailDrawer
+          blId={drawerBlId}
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
         />
       </div>
     </MainLayout>
