@@ -1274,6 +1274,54 @@ export default function Bons() {
           </>
         )}
 
+        {/* INTELLIGENCE LIVRAISONS IA */}
+        {bons.length > 0 && (() => {
+          const clientCounts: Record<string, number> = {};
+          bons.forEach(b => { clientCounts[b.client_id] = (clientCounts[b.client_id] || 0) + 1; });
+          const topClient = Object.entries(clientCounts).sort((a, b) => b[1] - a[1])[0];
+          const formulaVol: Record<string, number> = {};
+          bons.forEach(b => { formulaVol[b.formule_id] = (formulaVol[b.formule_id] || 0) + b.volume_m3; });
+          const totalVol = bons.reduce((s, b) => s + b.volume_m3, 0);
+          const topFormula = Object.entries(formulaVol).sort((a, b) => b[1] - a[1])[0];
+          const formulaPct = totalVol > 0 && topFormula ? ((topFormula[1] / totalVol) * 100).toFixed(0) : '0';
+          const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+          const dayVol: number[] = [0, 0, 0, 0, 0, 0, 0];
+          bons.forEach(b => { dayVol[new Date(b.date_livraison).getDay()] += b.volume_m3; });
+          const peakDayIdx = dayVol.indexOf(Math.max(...dayVol));
+          const cs: React.CSSProperties = { flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '16px 20px' };
+          return (
+            <div style={{ marginTop: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                <Sparkles size={14} style={{ color: '#FFD700' }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Intelligence Livraisons IA</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                <div style={cs}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Client le plus actif</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topClient?.[0] || '—'}</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 24, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
+                    {topClient?.[1] || 0}<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>commandes</span>
+                  </div>
+                </div>
+                <div style={cs}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Formule dominante</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topFormula?.[0] || '—'}</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 24, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
+                    {formulaPct}%<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>du volume</span>
+                  </div>
+                </div>
+                <div style={cs}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Jour de pointe</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{dayNames[peakDayIdx]}</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 24, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
+                    {dayVol[peakDayIdx].toFixed(0)}<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>m³ total</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Detail Dialog */}
         <BonDetailDialog
           blId={detailBlId}
