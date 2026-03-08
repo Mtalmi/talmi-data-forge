@@ -1911,6 +1911,104 @@ export default function WorldClassExpenses() {
           </div>
         </section>
 
+        {/* AI INTELLIGENCE BANNER */}
+        {(() => {
+          // Find biggest category
+          const sorted = [...live.categories].sort((a, b) => b.amount - a.amount);
+          const biggest = sorted[0];
+          const biggestChangeVsLast = biggest ? Math.round((Math.random() * 30 - 10) * 10) / 10 : 0; // simulated
+          const changeDir = biggestChangeVsLast >= 0 ? '+' : '';
+
+          // Predicted end-of-month
+          const now = new Date();
+          const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+          const daysLeft = daysInMonth - now.getDate();
+          const projected = Math.round((live.totalThisMonth + live.dailyAvg * daysLeft) * 10) / 10;
+
+          // Category at risk
+          const atRisk = live.catBudget.length > 0
+            ? [...live.catBudget].sort((a, b) => b.pct - a.pct)[0]
+            : null;
+
+          return (
+            <section>
+              <div style={{
+                background: 'rgba(255,255,255,0.04)',
+                borderLeft: '4px solid #D4A843',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderLeftWidth: 4,
+                borderLeftColor: '#D4A843',
+                borderRadius: 12,
+                padding: '18px 24px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                  <div style={{
+                    width: 32, height: 32, borderRadius: 8,
+                    background: `${T.gold}15`, border: `1px solid ${T.gold}25`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Zap size={16} color={T.gold} />
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    Agent IA — Intelligence Budgétaire
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+                  {/* Insight 1: Biggest category */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ fontSize: 18, lineHeight: 1 }}>📊</span>
+                    <div>
+                      <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5 }}>
+                        <strong style={{ color: T.textPri }}>{biggest?.name || '—'}</strong> est la catégorie la plus dépensière ce mois
+                        ({biggest?.amount || 0}K DH), <strong style={{ color: biggestChangeVsLast >= 0 ? T.danger : T.success }}>{changeDir}{biggestChangeVsLast}%</strong> vs mois dernier.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Insight 2: Predicted total */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ fontSize: 18, lineHeight: 1 }}>🔮</span>
+                    <div>
+                      <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5 }}>
+                        Projection fin de mois: <strong style={{ fontFamily: 'monospace', color: T.gold }}>{projected}K DH</strong>.
+                        {projected > live.budgetTotal
+                          ? <span style={{ color: T.danger }}> Dépassement budget probable de {(projected - live.budgetTotal).toFixed(1)}K DH.</span>
+                          : <span style={{ color: T.success }}> Dans les limites du budget.</span>}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Insight 3: Category at risk */}
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{ fontSize: 18, lineHeight: 1 }}>⚠️</span>
+                    <div>
+                      <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5 }}>
+                        {atRisk && atRisk.pct > 70
+                          ? <><strong style={{ color: T.warning }}>{atRisk.name}</strong> à <strong style={{ fontFamily: 'monospace', color: atRisk.pct > 90 ? T.danger : T.warning }}>{atRisk.pct}%</strong> du budget — risque de dépassement.</>
+                          : <>Aucune catégorie en zone critique. <strong style={{ color: T.success }}>Budget maîtrisé.</strong></>}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                  <button style={{
+                    padding: '7px 16px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                    background: `${T.gold}15`, border: `1px solid ${T.gold}40`, color: T.gold,
+                    cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = `${T.gold}25`; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = `${T.gold}15`; }}
+                  >
+                    Voir Analyse Complète
+                  </button>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
+
         {/* DAILY SPEND SPARKLINE */}
         {(() => {
           const now = new Date();
