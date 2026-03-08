@@ -1082,7 +1082,7 @@ export default function Bons() {
                         getWorkflowBadge(b.workflow_status)
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       {canUpdatePayment ? (
                         <Select
                           value={b.statut_paiement}
@@ -1112,7 +1112,7 @@ export default function Bons() {
                         <CheckCircle className="h-5 w-5 text-success" />
                       )}
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={e => e.stopPropagation()}>
                       <div className="flex items-center gap-1">
                         {/* AI Risk Indicators */}
                         <TooltipProvider>
