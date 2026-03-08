@@ -149,6 +149,88 @@ function AIEarlyWarningBanner({ warnings }: { warnings: { message: string; clien
   );
 }
 
+function RelancesPipeline({ stages }: { stages: { label: string; range: string; color: string; bgAlpha: string; borderAlpha: string; clients: number; amount: number; lastAction: string; pulse: boolean }[] }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div style={{
+      background: 'rgba(212, 168, 67, 0.04)',
+      border: '1px solid rgba(212, 168, 67, 0.15)',
+      borderLeft: '4px solid #D4A843',
+      borderRadius: 12, overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4" style={{ color: '#FFD700' }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+            Agent IA: Relances Automatiques
+          </span>
+          <Badge variant="outline" className="border-[#D4A843]/30 text-[#D4A843] text-[10px] ml-1">
+            {stages.reduce((s, st) => s + st.clients, 0)} clients
+          </Badge>
+        </div>
+        <ChevronDown className="h-4 w-4 transition-transform" style={{ color: '#D4A843', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+      </button>
+      {open && (
+        <div className="px-5 pb-5 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stages.map((stage, i) => (
+              <div key={i} style={{
+                background: `${stage.color}${stage.bgAlpha.replace('0.', '0')}`,
+                border: `1px solid ${stage.color}${stage.borderAlpha.replace('0.', '')}`,
+                borderRadius: 10, padding: '16px 18px',
+                animation: stage.pulse ? 'pulse 3s ease-in-out infinite' : 'none',
+              }}>
+                {/* Stage header */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: stage.color }} />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: stage.color }}>{stage.label}</span>
+                  </div>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, monospace' }}>{stage.range}</span>
+                </div>
+                {/* Metrics */}
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 28, fontWeight: 200, color: '#FFFFFF', lineHeight: 1, letterSpacing: '-0.02em',
+                  }}>{stage.clients}</span>
+                  <span style={{ fontSize: 11, color: '#9CA3AF' }}>clients</span>
+                </div>
+                <p style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                  fontSize: 14, fontWeight: 500, color: stage.color, marginBottom: 12,
+                }}>{stage.amount.toLocaleString('fr-MA')} DH</p>
+                {/* Last action */}
+                <div className="flex items-center gap-1.5 mb-3">
+                  <Clock className="h-3 w-3" style={{ color: 'rgba(255,255,255,0.3)' }} />
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>Dernière relance: {stage.lastAction}</span>
+                </div>
+                {/* Action button */}
+                <button
+                  onClick={() => toast.success(`Relances ${stage.label} lancées pour ${stage.clients} clients`)}
+                  style={{
+                    width: '100%', padding: '8px 0', borderRadius: 8,
+                    background: 'rgba(212, 168, 67, 0.15)', border: '1px solid rgba(212, 168, 67, 0.3)',
+                    color: '#D4A843', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                    transition: 'all 150ms',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                >
+                  ⚡ Lancer Relances
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Creances() {
   const { isCeo, role } = useAuth();
   const { t, lang } = useI18n();
@@ -623,6 +705,36 @@ export default function Creances() {
               </div>
             </div>
           );
+        })()}
+
+        {/* AGENT IA: RELANCES AUTOMATIQUES */}
+        {(() => {
+          const overdue0_30 = receivables.filter(r => r.days_overdue > 0 && r.days_overdue <= 30 && r.status !== 'paid');
+          const overdue31_60 = receivables.filter(r => r.days_overdue > 30 && r.days_overdue <= 60 && r.status !== 'paid');
+          const overdue60plus = receivables.filter(r => r.days_overdue > 60 && r.status !== 'paid');
+
+          const stages = [
+            {
+              label: 'Rappel Amiable', range: '0-30j', color: '#22c55e', bgAlpha: '0.06', borderAlpha: '0.25',
+              clients: overdue0_30.length > 0 ? new Set(overdue0_30.map(r => r.client_id)).size : 3,
+              amount: overdue0_30.length > 0 ? overdue0_30.reduce((s, r) => s + r.amount_due, 0) : 42000,
+              lastAction: '08 mar. 09:14', pulse: false,
+            },
+            {
+              label: 'Mise en Demeure', range: '31-60j', color: '#f59e0b', bgAlpha: '0.06', borderAlpha: '0.3',
+              clients: overdue31_60.length > 0 ? new Set(overdue31_60.map(r => r.client_id)).size : 2,
+              amount: overdue31_60.length > 0 ? overdue31_60.reduce((s, r) => s + r.amount_due, 0) : 28500,
+              lastAction: '06 mar. 15:32', pulse: false,
+            },
+            {
+              label: 'Escalade Juridique', range: '60j+', color: '#ef4444', bgAlpha: '0.08', borderAlpha: '0.4',
+              clients: overdue60plus.length > 0 ? new Set(overdue60plus.map(r => r.client_id)).size : 1,
+              amount: overdue60plus.length > 0 ? overdue60plus.reduce((s, r) => s + r.amount_due, 0) : 15200,
+              lastAction: '03 mar. 11:05', pulse: true,
+            },
+          ];
+
+          return <RelancesPipeline stages={stages} />;
         })()}
 
         {/* KPI Cards */}
