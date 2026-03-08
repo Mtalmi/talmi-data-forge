@@ -28,12 +28,24 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -59,6 +71,11 @@ import {
   MessageSquare,
   Target,
   AlertCircle,
+  Download,
+  Sparkles,
+  ChevronDown,
+  FileSpreadsheet,
+  Briefcase,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
@@ -230,6 +247,85 @@ export default function Creances() {
               <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
               {t.pages.creances.refresh}
             </Button>
+            
+            {/* Export Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="gap-2"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid #D4A843',
+                    color: '#D4A843',
+                  }}
+                >
+                  <Download className="h-4 w-4" />
+                  Exporter
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end"
+                className="w-56"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(17, 27, 46, 0.98) 0%, rgba(22, 32, 54, 0.98) 100%)',
+                  border: '1px solid #D4A843',
+                  backdropFilter: 'blur(12px)',
+                }}
+              >
+                <DropdownMenuItem 
+                  className="gap-2 cursor-pointer hover:bg-white/5"
+                  onClick={() => toast.success('Export Excel en cours...')}
+                >
+                  <FileSpreadsheet className="h-4 w-4 text-emerald-400" />
+                  <span>Exporter Excel Complet</span>
+                </DropdownMenuItem>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuItem 
+                        className="gap-2 cursor-pointer hover:bg-white/5"
+                        onClick={() => toast.success('Génération du rapport IA...')}
+                      >
+                        <Sparkles className="h-4 w-4 text-[#D4A843]" />
+                        <span>Rapport Recouvrement IA PDF</span>
+                      </DropdownMenuItem>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">
+                      Généré par Agent IA
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuItem 
+                        className="gap-2 cursor-pointer hover:bg-white/5"
+                        onClick={() => toast.success('Synthèse dirigeant en cours...')}
+                      >
+                        <Briefcase className="h-4 w-4 text-[#D4A843]" />
+                        <span>Synthèse Dirigeant</span>
+                      </DropdownMenuItem>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="text-xs">
+                      Généré par Agent IA
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <DropdownMenuItem 
+                  className="gap-2 cursor-pointer hover:bg-white/5"
+                  onClick={() => toast.success('Export relances en attente...')}
+                >
+                  <Mail className="h-4 w-4 text-amber-400" />
+                  <span>Relances en attente</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
