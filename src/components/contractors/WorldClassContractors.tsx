@@ -463,11 +463,14 @@ function MissionCard({ m, delay, onViewDetails }: { m: typeof MISSIONS[0]; delay
       </div>
       {/* Buttons */}
       <div style={{ display: 'flex', gap: 10 }}>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
-          borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
-        }}>
+        <button
+          onClick={onViewDetails}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
+            borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+          }}
+        >
           <Eye size={14} /> Voir Détails
         </button>
         <button style={{
