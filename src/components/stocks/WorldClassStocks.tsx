@@ -4,8 +4,8 @@ import {
   ResponsiveContainer, CartesianGrid, Cell,
 } from 'recharts';
 import {
-  Package, AlertTriangle, ArrowUpDown, RefreshCw,
-  Droplets, Bell, ArrowUp, ArrowDown, TrendingUp,
+  Package, AlertTriangle, ArrowUpDown,
+  Droplets, Bell, ArrowUp, ArrowDown, TrendingUp, Zap,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -588,7 +588,45 @@ export default function WorldClassStocks() {
             <KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} />
             <KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert />
             <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
-            <KPICard label="Rotation Moyenne"         value={4.2}  suffix="x"   color={T.amber}   icon={RefreshCw}    trend="+0.3 vs semaine"     trendPositive decimals={1} delay={240} />
+            {/* SANTÉ STOCK IA */}
+            {(() => {
+              // 40% — avg days_remaining (capped at 30 days = 100%)
+              const autoVals = Object.values(AUTONOMY).filter(a => a.days != null).map(a => a.days!);
+              const avgDays = autoVals.length > 0 ? autoVals.reduce((s, d) => s + d, 0) / autoVals.length : 0;
+              const dayScore = Math.min(100, Math.round((avgDays / 30) * 100));
+
+              // 40% — % of materials above alert threshold
+              const aboveThreshold = STOCKS.length > 0 ? Math.round((STOCKS.filter(s => s.pct > 20).length / STOCKS.length) * 100) : 0;
+
+              // 20% — reorder completion (inverse of alert ratio)
+              const reorderRate = STOCKS.length > 0 ? Math.round(((STOCKS.length - ALERTS.length) / STOCKS.length) * 100) : 100;
+
+              const score = Math.round(dayScore * 0.4 + aboveThreshold * 0.4 + reorderRate * 0.2);
+              const scoreColor = score >= 80 ? '#22c55e' : score >= 50 ? '#f59e0b' : '#ef4444';
+
+              return (
+                <div style={{
+                  opacity: 1, height: '100%',
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 14, padding: '20px 18px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative', gap: 4,
+                }}>
+                  <div style={{ position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 8, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Zap size={18} color="#FFD700" />
+                  </div>
+                  <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>Santé Stock IA</p>
+                  <p style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                    fontSize: 48, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
+                    WebkitFontSmoothing: 'antialiased' as any,
+                  }}>
+                    {score}
+                  </p>
+                  <span style={{ fontSize: 11, color: '#D4A843', marginTop: 4 }}>Score calculé par IA</span>
+                </div>
+              );
+            })()}
           </div>
         </section>
 
