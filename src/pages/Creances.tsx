@@ -1216,13 +1216,14 @@ export default function Creances() {
                        <TableHead className="text-right">{t.pages.creances.amount}</TableHead>
                        <TableHead className="text-center">{t.pages.creances.delay}</TableHead>
                        <TableHead className="text-center">{t.pages.creances.status}</TableHead>
+                       <TableHead className="text-center">Prédiction IA</TableHead>
                        {canManageReceivables && <TableHead className="text-center">{t.pages.creances.actions}</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredReceivables.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={canManageReceivables ? 7 : 6} className="h-32 text-center">
+                        <TableCell colSpan={canManageReceivables ? 8 : 7} className="h-32 text-center">
                           <div className="flex flex-col items-center gap-2 text-muted-foreground">
                             <FileText className="h-8 w-8" />
                              <p className="font-medium">{t.pages.creances.noReceivables}</p>
@@ -1279,6 +1280,64 @@ export default function Creances() {
                                 </Badge>
                               )}
                             </div>
+                          </TableCell>
+                          {/* AI Prediction Column */}
+                          <TableCell className="text-center">
+                            {(() => {
+                              // Calculate prediction based on client payment patterns
+                              const clientInvoices = receivables.filter(r => r.client_id === receivable.client_id);
+                              const paidInvoices = clientInvoices.filter(r => r.status === 'paid');
+                              const overdueInvoices = clientInvoices.filter(r => r.days_overdue > 0 && r.status !== 'paid');
+                              
+                              // Score: higher = riskier
+                              const overdueRatio = clientInvoices.length > 0 ? overdueInvoices.length / clientInvoices.length : 0;
+                              const avgOverdue = overdueInvoices.length > 0 
+                                ? overdueInvoices.reduce((s, r) => s + r.days_overdue, 0) / overdueInvoices.length 
+                                : 0;
+                              
+                              // Determine prediction
+                              let prediction: 'on_track' | 'risk' | 'unpaid';
+                              let daysEstimate = 0;
+                              
+                              if (receivable.status === 'paid') {
+                                return <span className="text-xs text-muted-foreground">—</span>;
+                              }
+                              
+                              if (overdueRatio >= 0.5 || avgOverdue > 30 || receivable.days_overdue > 45) {
+                                prediction = 'unpaid';
+                              } else if (overdueRatio >= 0.2 || avgOverdue > 10 || receivable.days_overdue > 15) {
+                                prediction = 'risk';
+                                daysEstimate = Math.max(7, 30 - receivable.days_overdue);
+                              } else {
+                                prediction = 'on_track';
+                                daysEstimate = receivable.days_overdue > 0 
+                                  ? Math.max(3, 14 - receivable.days_overdue) 
+                                  : Math.max(1, Math.abs(receivable.days_overdue) || 5);
+                              }
+
+                              if (prediction === 'on_track') {
+                                return (
+                                  <Badge variant="outline" className="bg-success/10 text-success border-success/30 text-[10px] gap-1">
+                                    <CheckCircle className="h-2.5 w-2.5" />
+                                    Paiement prévu dans {daysEstimate}j
+                                  </Badge>
+                                );
+                              } else if (prediction === 'risk') {
+                                return (
+                                  <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-[10px] gap-1">
+                                    <Clock className="h-2.5 w-2.5" />
+                                    Risque retard
+                                  </Badge>
+                                );
+                              } else {
+                                return (
+                                  <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 text-[10px] gap-1 animate-pulse">
+                                    <AlertTriangle className="h-2.5 w-2.5" />
+                                    Impayé probable
+                                  </Badge>
+                                );
+                              }
+                            })()}
                           </TableCell>
                           {canManageReceivables && (
                             <TableCell className="text-center">
