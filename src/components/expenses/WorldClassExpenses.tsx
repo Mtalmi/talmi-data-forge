@@ -426,6 +426,112 @@ function CatBar({ row, delay = 0 }: { row: { name: string; spent: number; budget
 }
 
 // ─────────────────────────────────────────────────────
+// AI RECOMMENDATION CARD
+// ─────────────────────────────────────────────────────
+function AIRecommendationCard({ icon: Icon, category, title, saving, confidence, explanation }: {
+  icon: any;
+  category: string;
+  title: string;
+  saving: number;
+  confidence: number;
+  explanation: string;
+}) {
+  const [hov, setHov] = useState(false);
+  const cfg = getCatConfig(category);
+  
+  return (
+    <div 
+      onMouseEnter={() => setHov(true)} 
+      onMouseLeave={() => setHov(false)}
+      style={{
+        background: T.cardBg,
+        border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
+        borderRadius: 14,
+        padding: 20,
+        transform: hov ? 'translateY(-4px)' : 'none',
+        boxShadow: hov ? `0 14px 36px rgba(0,0,0,0.32), 0 0 28px ${T.goldGlow}` : '0 4px 14px rgba(0,0,0,0.15)',
+        transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
+      }}
+    >
+      {/* Category Icon + Badge */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        <div style={{ 
+          width: 40, height: 40, borderRadius: 10, 
+          background: `${cfg.color}18`, 
+          border: `1px solid ${cfg.color}30`, 
+          display: 'flex', alignItems: 'center', justifyContent: 'center' 
+        }}>
+          <Icon size={18} color={cfg.color} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <span style={{ fontSize: 10, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{category}</span>
+          <p style={{ fontSize: 14, fontWeight: 600, color: T.textPri, marginTop: 2 }}>{title}</p>
+        </div>
+        <Bdg 
+          label={`${confidence}%`} 
+          color={confidence >= 85 ? T.success : confidence >= 70 ? T.warning : T.textSec} 
+          bg={`${confidence >= 85 ? T.success : confidence >= 70 ? T.warning : T.textSec}15`} 
+        />
+      </div>
+
+      {/* Potential Saving */}
+      <div style={{ 
+        background: `${T.gold}10`, 
+        border: `1px solid ${T.gold}25`, 
+        borderRadius: 10, 
+        padding: '12px 16px',
+        marginBottom: 12,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <span style={{ fontSize: 11, color: T.textSec }}>Économie potentielle</span>
+        <span style={{ 
+          fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+          fontSize: 20,
+          fontWeight: 200,
+          color: T.gold,
+          letterSpacing: '-0.02em',
+        }}>
+          {saving.toLocaleString('fr-FR')} <span style={{ fontSize: 12, color: T.textSec }}>DH/mois</span>
+        </span>
+      </div>
+
+      {/* Explanation */}
+      <p style={{ fontSize: 12, color: T.textSec, lineHeight: 1.5, marginBottom: 16 }}>
+        {explanation}
+      </p>
+
+      {/* Action Button */}
+      <button style={{
+        width: '100%',
+        padding: '10px 16px',
+        background: 'transparent',
+        border: `1px solid ${T.cardBorder}`,
+        borderRadius: 8,
+        color: T.textSec,
+        fontSize: 12,
+        fontWeight: 600,
+        cursor: 'pointer',
+        transition: 'all 180ms',
+        fontFamily: 'DM Sans, sans-serif',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = T.gold;
+        e.currentTarget.style.color = T.gold;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = T.cardBorder;
+        e.currentTarget.style.color = T.textSec;
+      }}
+      >
+        Appliquer Recommandation
+      </button>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // EXPENSE ROW
 // ─────────────────────────────────────────────────────
 function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string }; delay?: number }) {
@@ -704,6 +810,44 @@ export default function WorldClassExpenses() {
             } />
             <div style={{ display: 'grid', gridTemplateColumns: live.pending.length > 1 ? '1fr 1fr' : '1fr', gap: 16 }}>
               {live.pending.map((p, i) => <ApprovalCard key={i} p={p} delay={i * 100} />)}
+            </div>
+          </section>
+        )}
+
+        {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
+        {activeTab === 'Par Catégorie' && (
+          <section>
+            <SectionHeader icon={Zap} label="RECOMMANDATIONS IA — OPTIMISATION COÛTS" right={
+              <Bdg label="Agent IA" color={T.gold} bg={`${T.gold}15`} icon={<Zap size={10} />} />
+            } />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+              {/* Recommendation 1: Fuel Optimization */}
+              <AIRecommendationCard
+                icon={Truck}
+                category="Carburant"
+                title="Optimiser routes livraison"
+                saving={800}
+                confidence={87}
+                explanation="L'analyse des trajets révèle des détours évitables sur 23% des livraisons ce mois."
+              />
+              {/* Recommendation 2: Maintenance */}
+              <AIRecommendationCard
+                icon={Wrench}
+                category="Maintenance"
+                title="Regrouper interventions préventives"
+                saving={1200}
+                confidence={92}
+                explanation="3 véhicules nécessitent une révision similaire — négocier tarif groupé avec prestataire."
+              />
+              {/* Recommendation 3: Energy */}
+              <AIRecommendationCard
+                icon={Zap}
+                category="Énergie"
+                title="Décaler production heures creuses"
+                saving={650}
+                confidence={78}
+                explanation="18% de la production actuelle sur heures pleines pourrait être décalée sans impact opérationnel."
+              />
             </div>
           </section>
         )}
