@@ -920,7 +920,7 @@ function ReallocationCard({ from, to, transferAmount }: { from: ReallocationSide
 // ─────────────────────────────────────────────────────
 // EXPENSE ROW
 // ─────────────────────────────────────────────────────
-function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number }) {
+function ExpenseRow({ e, delay = 0, isAnomaly = false }: { e: { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags?: string[] }; delay?: number; isAnomaly?: boolean }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const sc = e.status === 'Approuvé' ? T.success : T.warning;
@@ -930,13 +930,13 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
   return (
     <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
       display: 'flex', alignItems: 'center', gap: 14, padding: '12px 16px', borderRadius: 10,
-      background: hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
-      border: `1px solid ${hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
+      background: isAnomaly ? `${T.warning}08` : hasFraud ? `${T.warning}08` : (hov ? `${T.cardBorder}50` : 'transparent'),
+      border: `1px solid ${isAnomaly ? `${T.warning}30` : hasFraud ? `${T.warning}30` : (hov ? T.cardBorder : 'transparent')}`,
       transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(16px)',
       opacity: visible ? 1 : 0, transition: 'all 380ms ease-out',
       cursor: 'pointer', overflow: 'hidden', position: 'relative',
     }}>
-      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: hasFraud ? T.warning : e.catColor }} />
+      <div style={{ position: 'absolute', left: 0, top: 8, bottom: 8, width: 4, borderRadius: 4, background: isAnomaly ? T.warning : hasFraud ? T.warning : e.catColor }} />
       <div style={{ minWidth: 55, flexShrink: 0 }}><p style={{ color: T.textDim, fontSize: 11 }}>{e.date}</p></div>
       <div style={{ flex: 1, minWidth: 140 }}>
         <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{e.desc}</p>
@@ -960,7 +960,13 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
       </div>
       <div style={{ minWidth: 90, flexShrink: 0 }}><p style={{ fontSize: 11, color: approverColor, fontWeight: 600 }}>{e.approver}</p></div>
       <div style={{ minWidth: 140, flexShrink: 0, display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-        {hasFraud ? (
+        {isAnomaly ? (
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
+            background: `${T.warning}15`, border: `1.5px dashed ${T.warning}60`, color: T.warning,
+            fontSize: 10, fontWeight: 700, animation: 'tbos-pulse 2s infinite',
+          }}><AlertTriangle size={10} />Anomalie IA</span>
+        ) : hasFraud ? (
           <span style={{
             display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 999,
             background: `${T.warning}15`, border: `1px solid ${T.warning}40`, color: T.warning,
@@ -974,6 +980,60 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
         )}
       </div>
     </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
+// ANOMALY BANNER WRAPPER
+// ─────────────────────────────────────────────────────
+function AnomalyBannerWrapper({ anomalyCount, children }: { anomalyCount: number; children: React.ReactNode }) {
+  const [dismissed, setDismissed] = useState(false);
+  return (
+    <section>
+      {anomalyCount > 0 && !dismissed && (
+        <div style={{
+          marginBottom: 14, padding: '12px 18px',
+          background: `${T.danger}0A`, border: `1px solid ${T.danger}35`,
+          borderLeft: `4px solid ${T.danger}`,
+          borderRadius: 12, display: 'flex', alignItems: 'center', gap: 14,
+        }}>
+          <div style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: `${T.danger}18`, border: `1px solid ${T.danger}35`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <AlertTriangle size={18} color={T.danger} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: T.danger }}>
+              Agent IA: {anomalyCount} dépense{anomalyCount > 1 ? 's' : ''} inhabituelle{anomalyCount > 1 ? 's' : ''} détectée{anomalyCount > 1 ? 's' : ''} ce mois
+            </p>
+            <p style={{ fontSize: 11, color: T.textSec, marginTop: 2 }}>
+              Montants supérieurs à la moyenne historique de la catégorie (&gt;2x)
+            </p>
+          </div>
+          <button onClick={() => {}} style={{
+            padding: '6px 14px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+            background: `${T.gold}15`, border: `1px solid ${T.gold}40`, color: T.gold,
+            cursor: 'pointer', transition: 'all 150ms', fontFamily: 'DM Sans, sans-serif', flexShrink: 0,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = `${T.gold}25`; }}
+          onMouseLeave={e => { e.currentTarget.style.background = `${T.gold}15`; }}
+          >
+            Examiner
+          </button>
+          <button onClick={() => setDismissed(true)} style={{
+            width: 28, height: 28, borderRadius: 6, border: `1px solid ${T.cardBorder}`,
+            background: 'rgba(255,255,255,0.03)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: T.textDim, transition: 'all 150ms', flexShrink: 0,
+          }}>
+            <XCircle size={14} />
+          </button>
+        </div>
+      )}
+      {children}
+    </section>
   );
 }
 
@@ -2161,27 +2221,45 @@ export default function WorldClassExpenses() {
         </section>
 
         {/* RECENT EXPENSES */}
-        <section>
-          <div style={chartCardStyle}>
-            <SectionHeader icon={CreditCard} label="Dépenses Récentes" right={<span style={{ color: T.textDim, fontSize: 11 }}>{live.recentExpenses.length} opérations</span>} />
-            <div style={{ display: 'flex', gap: 14, padding: '4px 16px 8px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 8 }}>
-              {['Date', 'Description', 'Catégorie', 'Montant', 'Approuvé par', 'Statut'].map((h, i) => (
-                <p key={i} style={{
-                  color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
-                  flex: i === 1 ? 1 : undefined,
-                  minWidth: i === 0 ? 55 : i === 2 ? 120 : i === 3 ? 110 : i === 4 ? 90 : i === 5 ? 100 : undefined,
-                }}>{h}</p>
-              ))}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {live.recentExpenses.length > 0 ? live.recentExpenses.map((e, i) => (
-                <ExpenseRow key={i} e={e} delay={i * 60} />
-              )) : (
-                <p style={{ color: T.textDim, fontSize: 13, padding: '20px 16px', textAlign: 'center' }}>Aucune dépense ce mois</p>
-              )}
-            </div>
-          </div>
-        </section>
+        {(() => {
+          // Compute category averages for anomaly detection
+          const catTotals: Record<string, { sum: number; count: number }> = {};
+          live.recentExpenses.forEach(e => {
+            if (!catTotals[e.cat]) catTotals[e.cat] = { sum: 0, count: 0 };
+            catTotals[e.cat].sum += e.amount;
+            catTotals[e.cat].count += 1;
+          });
+          const catAvg: Record<string, number> = {};
+          Object.entries(catTotals).forEach(([k, v]) => { catAvg[k] = v.count > 0 ? v.sum / v.count : 0; });
+          const anomalySet = new Set(
+            live.recentExpenses.filter(e => catAvg[e.cat] > 0 && e.amount > catAvg[e.cat] * 2).map((_, i) => i)
+          );
+          const anomalyCount = anomalySet.size;
+
+          return (
+            <AnomalyBannerWrapper anomalyCount={anomalyCount}>
+              <div style={chartCardStyle}>
+                <SectionHeader icon={CreditCard} label="Dépenses Récentes" right={<span style={{ color: T.textDim, fontSize: 11 }}>{live.recentExpenses.length} opérations</span>} />
+                <div style={{ display: 'flex', gap: 14, padding: '4px 16px 8px', borderBottom: `1px solid ${T.cardBorder}`, marginBottom: 8 }}>
+                  {['Date', 'Description', 'Catégorie', 'Montant', 'Approuvé par', 'Statut'].map((h, i) => (
+                    <p key={i} style={{
+                      color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em',
+                      flex: i === 1 ? 1 : undefined,
+                      minWidth: i === 0 ? 55 : i === 2 ? 120 : i === 3 ? 110 : i === 4 ? 90 : i === 5 ? 100 : undefined,
+                    }}>{h}</p>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {live.recentExpenses.length > 0 ? live.recentExpenses.map((e, i) => (
+                    <ExpenseRow key={i} e={e} delay={i * 60} isAnomaly={anomalySet.has(i)} />
+                  )) : (
+                    <p style={{ color: T.textDim, fontSize: 13, padding: '20px 16px', textAlign: 'center' }}>Aucune dépense ce mois</p>
+                  )}
+                </div>
+              </div>
+            </AnomalyBannerWrapper>
+          );
+        })()}
 
         {/* PENDING APPROVALS */}
         {live.pending.length > 0 && (
