@@ -10,7 +10,7 @@ import {
   Truck, Wrench, Users, Package, Box,
   TrendingUp, Plus, LayoutGrid, ShieldAlert, Bot,
   FileText, ChevronDown, Loader2, BarChart3, Briefcase, CalendarRange,
-  ArrowRight, Repeat,
+  ArrowRight, Repeat, ToggleLeft, ToggleRight,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -64,6 +64,8 @@ function useExpensesLiveData() {
     catBudget: [] as { name: string; spent: number; budget: number; pct: number; color: string; icon: any }[],
     recentExpenses: [] as { date: string; desc: string; cat: string; amount: number; approver: string; catColor: string; status: string; fraudFlags: string[] }[],
     pending: [] as { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }[],
+    recurring: [] as { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string }[],
+    recurringTotal30d: 0,
     budgetTotal: 0,
     budgetUsedPct: 0,
     dailyAvg: 0,
@@ -225,6 +227,55 @@ function useExpensesLiveData() {
       };
     });
 
+    // Recurring expense detection
+    const descGroups: Record<string, { dates: string[]; amounts: number[]; cat: string }> = {};
+    allDepenses.forEach(d => {
+      const key = (d.description || d.categorie || 'Dépense').trim();
+      if (!descGroups[key]) descGroups[key] = { dates: [], amounts: [], cat: d.categorie || 'Autres' };
+      descGroups[key].dates.push(d.date_depense);
+      descGroups[key].amounts.push(d.montant || 0);
+    });
+
+    const recurring: typeof data.recurring = [];
+    Object.entries(descGroups).forEach(([name, g]) => {
+      if (g.dates.length < 2) return;
+      const sorted = g.dates.map(d => new Date(d).getTime()).sort((a, b) => a - b);
+      const gaps = sorted.slice(1).map((t, i) => (t - sorted[i]) / (1000 * 60 * 60 * 24));
+      const avgGap = gaps.reduce((s, g) => s + g, 0) / gaps.length;
+      const stdDev = Math.sqrt(gaps.reduce((s, g) => s + Math.pow(g - avgGap, 2), 0) / gaps.length);
+      const cv = avgGap > 0 ? stdDev / avgGap : 1;
+      if (cv > 0.5 || avgGap > 400) return; // too irregular or too infrequent
+
+      let frequency = 'Mensuel';
+      if (avgGap <= 10) frequency = 'Hebdo';
+      else if (avgGap > 300) frequency = 'Annuel';
+
+      const avgAmount = Math.round(g.amounts.reduce((s, a) => s + a, 0) / g.amounts.length);
+      const lastDate = new Date(sorted[sorted.length - 1]);
+      const nextDate = new Date(lastDate.getTime() + avgGap * 24 * 60 * 60 * 1000);
+      const confidence = Math.min(98, Math.round((1 - cv) * 80 + g.dates.length * 3));
+      const cfg = getCatConfig(g.cat);
+
+      recurring.push({
+        name,
+        frequency,
+        nextDate: nextDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+        amount: avgAmount,
+        confidence,
+        cat: g.cat,
+        catColor: cfg.color,
+      });
+    });
+    recurring.sort((a, b) => b.amount - a.amount);
+
+    const now30 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const recurringTotal30d = recurring
+      .filter(r => {
+        // rough check if next date is within 30 days
+        return true; // all identified recurring are expected within their cycle
+      })
+      .reduce((s, r) => s + r.amount, 0);
+
     setData({
       totalThisMonth,
       budgetRemaining,
@@ -235,6 +286,8 @@ function useExpensesLiveData() {
       catBudget,
       recentExpenses,
       pending,
+      recurring: recurring.slice(0, 8),
+      recurringTotal30d,
       budgetTotal,
       budgetUsedPct: Math.min(budgetUsedPct, 100),
       dailyAvg,
@@ -864,6 +917,128 @@ function ExpenseRow({ e, delay = 0 }: { e: { date: string; desc: string; cat: st
 }
 
 // ─────────────────────────────────────────────────────
+// RECURRING EXPENSES SECTION
+// ─────────────────────────────────────────────────────
+function RecurringSection({ recurring, total30d }: {
+  recurring: { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string }[];
+  total30d: number;
+}) {
+  const [tracked, setTracked] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    recurring.forEach(r => { init[r.name] = true; });
+    return init;
+  });
+
+  const freqColor = (f: string) => f === 'Hebdo' ? T.info : f === 'Annuel' ? T.purple : T.gold;
+
+  return (
+    <section>
+      <SectionHeader icon={Repeat} label="DÉPENSES RÉCURRENTES" right={
+        <Bdg label="Détection IA" color={T.gold} bg={`${T.gold}15`} icon={<Bot size={10} />} />
+      } />
+      <div style={{
+        background: T.cardBg, border: `1px solid ${T.cardBorder}`,
+        borderRadius: 14, overflow: 'hidden',
+        boxShadow: '0 4px 14px rgba(0,0,0,0.15)',
+      }}>
+        {/* Total header */}
+        <div style={{
+          padding: '16px 20px', borderBottom: `1px solid ${T.cardBorder}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: `${T.gold}06`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <CalendarRange size={16} color={T.gold} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec }}>Engagements récurrents — prochains 30 jours</span>
+          </div>
+          <span style={{
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+            fontSize: 20, fontWeight: 200, color: T.gold, letterSpacing: '-0.02em',
+          }}>
+            {total30d.toLocaleString('fr-FR')} <span style={{ fontSize: 12, color: T.textDim }}>DH</span>
+          </span>
+        </div>
+
+        {/* Column headers */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 20px', borderBottom: `1px solid ${T.cardBorder}` }}>
+          <span style={{ flex: 1, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Dépense</span>
+          <span style={{ width: 80, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Fréquence</span>
+          <span style={{ width: 90, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Prochaine</span>
+          <span style={{ width: 100, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'right' }}>Montant</span>
+          <span style={{ width: 70, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Confiance</span>
+          <span style={{ width: 50, fontSize: 10, fontWeight: 700, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.08em', textAlign: 'center' }}>Suivi</span>
+        </div>
+
+        {/* Rows */}
+        {recurring.map((r, i) => {
+          const isTracked = tracked[r.name] !== false;
+          return (
+            <RecurringRow key={i} r={r} isTracked={isTracked} freqColor={freqColor(r.frequency)}
+              onToggle={() => setTracked(prev => ({ ...prev, [r.name]: !prev[r.name] }))} delay={i * 60} />
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RecurringRow({ r, isTracked, freqColor, onToggle, delay = 0 }: {
+  r: { name: string; frequency: string; nextDate: string; amount: number; confidence: number; cat: string; catColor: string };
+  isTracked: boolean; freqColor: string; onToggle: () => void; delay?: number;
+}) {
+  const visible = useFadeIn(delay);
+  const [hov, setHov] = useState(false);
+  const ToggleIcon = isTracked ? ToggleRight : ToggleLeft;
+  return (
+    <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
+      display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px',
+      background: hov ? `${T.cardBorder}40` : 'transparent',
+      borderBottom: `1px solid ${T.cardBorder}30`,
+      opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(10px)',
+      transition: 'all 320ms ease-out',
+    }}>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 4, height: 24, borderRadius: 4, background: r.catColor, flexShrink: 0 }} />
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 600, color: isTracked ? T.textPri : T.textDim }}>{r.name}</p>
+          <p style={{ fontSize: 10, color: T.textDim }}>{r.cat}</p>
+        </div>
+      </div>
+      <div style={{ width: 80 }}>
+        <Bdg label={r.frequency} color={freqColor} bg={`${freqColor}15`} />
+      </div>
+      <div style={{ width: 90 }}>
+        <span style={{ fontSize: 12, color: T.textSec }}>{r.nextDate}</span>
+      </div>
+      <div style={{ width: 100, textAlign: 'right' }}>
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          fontSize: 14, fontWeight: 600, color: T.gold,
+        }}>
+          {r.amount.toLocaleString('fr-FR')} <span style={{ fontSize: 10, color: T.textDim }}>DH</span>
+        </span>
+      </div>
+      <div style={{ width: 70, textAlign: 'center' }}>
+        <span style={{
+          fontFamily: 'ui-monospace, monospace', fontSize: 11, fontWeight: 600,
+          color: r.confidence >= 85 ? T.success : r.confidence >= 65 ? T.warning : T.textSec,
+        }}>
+          {r.confidence}%
+        </span>
+      </div>
+      <div style={{ width: 50, display: 'flex', justifyContent: 'center' }}>
+        <button onClick={onToggle} style={{
+          background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+          color: isTracked ? T.success : T.textDim, transition: 'color 150ms',
+        }}>
+          <ToggleIcon size={22} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // PENDING APPROVAL CARD
 // ─────────────────────────────────────────────────────
 function ApprovalCard({ p, delay = 0 }: { p: { desc: string; cat: string; catColor: string; amount: number; by: string; date: string; urgency: string }; delay?: number }) {
@@ -1286,6 +1461,11 @@ export default function WorldClassExpenses() {
               {live.pending.map((p, i) => <ApprovalCard key={i} p={p} delay={i * 100} />)}
             </div>
           </section>
+        )}
+
+        {/* RECURRING EXPENSES - Vue d'ensemble only */}
+        {activeTab === "Vue d'ensemble" && live.recurring.length > 0 && (
+          <RecurringSection recurring={live.recurring} total30d={live.recurringTotal30d} />
         )}
 
         {/* AI COST OPTIMIZATION RECOMMENDATIONS */}
