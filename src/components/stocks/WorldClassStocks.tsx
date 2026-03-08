@@ -205,7 +205,7 @@ function useStocksLiveData() {
             : s.name.toLowerCase().includes('adjuvant') ? 'Adjuvants'
             : s.name.toLowerCase().includes('sable') ? 'Sable'
             : s.name.toLowerCase().includes('eau') ? 'Eau' : 'Autre';
-          const clr = amberPalette[key] || T.amber;
+          const clr = '#D4A843';
           if (!catMap[key]) catMap[key] = { value: 0, color: clr };
           catMap[key].value += Math.round(s.current / 1000);
         });
