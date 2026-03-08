@@ -629,7 +629,7 @@ export default function WorldClassContractors() {
         onTabChange={setActiveTab}
         actions={
           <button
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => { setEditingContractorId(null); setFormData({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' }); setDrawerOpen(true); }}
             style={{
               background: T.gold, color: T.navy, border: 'none', borderRadius: 8,
               padding: '7px 16px', fontWeight: 700, fontSize: 12, cursor: 'pointer',
