@@ -71,6 +71,11 @@ import {
   MessageSquare,
   Target,
   AlertCircle,
+  Download,
+  Sparkles,
+  ChevronDown,
+  FileSpreadsheet,
+  Briefcase,
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { getDateLocale } from '@/i18n/dateLocale';
