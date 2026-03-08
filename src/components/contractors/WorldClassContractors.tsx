@@ -499,6 +499,10 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassContractors() {
   const [activeTab, setActiveTab] = useState('tous');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [formData, setFormData] = useState({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
+  const [formError, setFormError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const tabConfig = [
     { id: 'tous', label: 'Tous' },
     { id: 'en_mission', label: 'En Mission' },
@@ -522,6 +526,33 @@ export default function WorldClassContractors() {
     }
   };
   const filteredContractors = getFilteredContractors();
+
+  const handleCreateContractor = async () => {
+    setFormError('');
+    if (!formData.nom.trim()) { setFormError('Le nom est requis'); return; }
+    setSubmitting(true);
+    try {
+      const code = 'ST-' + Date.now().toString(36).toUpperCase().slice(-6);
+      const { error } = await supabase.from('prestataires_transport').insert({
+        nom: formData.nom.trim(),
+        code_prestataire: code,
+        specialite: formData.specialite.trim() || null,
+        tarif_journalier: formData.tarif_journalier ? Number(formData.tarif_journalier) : null,
+        note_service: formData.note_service ? Number(formData.note_service) : null,
+        statut: formData.statut,
+        actif: true,
+        tarif_base_m3: 0,
+      });
+      if (error) throw error;
+      setDrawerOpen(false);
+      setFormData({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
+      toast({ title: 'Sous-traitant créé avec succès' });
+    } catch (err: any) {
+      setFormError(err.message || 'Erreur lors de la création');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Dynamic KPI calculations — derived from live Supabase data only
   const actifCount = contractors.filter((c: any) => c.actif === true).length;
