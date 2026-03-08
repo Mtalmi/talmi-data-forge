@@ -625,6 +625,36 @@ export default function Creances() {
           );
         })()}
 
+        {/* AGENT IA: RELANCES AUTOMATIQUES */}
+        {(() => {
+          const overdue0_30 = receivables.filter(r => r.days_overdue > 0 && r.days_overdue <= 30 && r.status !== 'paid');
+          const overdue31_60 = receivables.filter(r => r.days_overdue > 30 && r.days_overdue <= 60 && r.status !== 'paid');
+          const overdue60plus = receivables.filter(r => r.days_overdue > 60 && r.status !== 'paid');
+
+          const stages = [
+            {
+              label: 'Rappel Amiable', range: '0-30j', color: '#22c55e', bgAlpha: '0.06', borderAlpha: '0.25',
+              clients: overdue0_30.length > 0 ? new Set(overdue0_30.map(r => r.client_id)).size : 3,
+              amount: overdue0_30.length > 0 ? overdue0_30.reduce((s, r) => s + r.amount_due, 0) : 42000,
+              lastAction: '08 mar. 09:14', pulse: false,
+            },
+            {
+              label: 'Mise en Demeure', range: '31-60j', color: '#f59e0b', bgAlpha: '0.06', borderAlpha: '0.3',
+              clients: overdue31_60.length > 0 ? new Set(overdue31_60.map(r => r.client_id)).size : 2,
+              amount: overdue31_60.length > 0 ? overdue31_60.reduce((s, r) => s + r.amount_due, 0) : 28500,
+              lastAction: '06 mar. 15:32', pulse: false,
+            },
+            {
+              label: 'Escalade Juridique', range: '60j+', color: '#ef4444', bgAlpha: '0.08', borderAlpha: '0.4',
+              clients: overdue60plus.length > 0 ? new Set(overdue60plus.map(r => r.client_id)).size : 1,
+              amount: overdue60plus.length > 0 ? overdue60plus.reduce((s, r) => s + r.amount_due, 0) : 15200,
+              lastAction: '03 mar. 11:05', pulse: true,
+            },
+          ];
+
+          return <RelancesPipeline stages={stages} />;
+        })()}
+
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Card>
