@@ -513,7 +513,11 @@ export default function WorldClassContractors() {
     setTerminatingMission(true);
     try {
       // Find the contractor by name in the live data
-      const contractor = contractors.find((c: any) => c.nom === contractorName);
+      const contractor = contractors.find((c: any) => 
+        c.nom === contractorName || 
+        c.nom?.toLowerCase().includes(contractorName.toLowerCase()) ||
+        contractorName.toLowerCase().includes(c.nom?.toLowerCase())
+      );
       if (!contractor) throw new Error('Sous-traitant introuvable');
       const { error } = await supabase.from('prestataires_transport').update({
         statut: 'disponible',
@@ -914,7 +918,11 @@ export default function WorldClassContractors() {
 
       {/* ══════════════════════════ MISSION DETAIL DRAWER ══════════════════════════ */}
       {missionDrawer && (() => {
-        const matchedContractor = contractors.find((c: any) => c.nom === missionDrawer.contractor);
+        const matchedContractor = contractors.find((c: any) => 
+          c.nom === missionDrawer.contractor || 
+          c.nom?.toLowerCase().includes(missionDrawer.contractor.toLowerCase()) ||
+          missionDrawer.contractor.toLowerCase().includes(c.nom?.toLowerCase())
+        );
         const getRiskInfo = () => {
           const jours = matchedContractor?.jours_travailles ?? missionDrawer.joursActuel;
           if (jours >= 7) return { color: '#EF4444', label: 'Risque élevé' };
@@ -922,7 +930,7 @@ export default function WorldClassContractors() {
           return { color: '#10B981', label: 'Nominal' };
         };
         const risk = getRiskInfo();
-        const tarifNum = matchedContractor?.tarif_journalier ?? Number(missionDrawer.tarif.replace(/\s/g, ''));
+        const tarifNum = matchedContractor?.tarif_journalier ?? Number(missionDrawer.tarif.replace(/[\s,]/g, ''));
         const totalJours = missionDrawer.joursTotal;
         const coutTotal = tarifNum * totalJours;
         const coutMtd = matchedContractor?.cout_mtd ?? coutTotal;
