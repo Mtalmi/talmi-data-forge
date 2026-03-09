@@ -502,7 +502,7 @@ function MethodCard({ m, delay = 0 }: { m: { name: string; amount: number; count
 
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+      <Card style={{ borderTop: '2px solid #D4A843' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: `${m.color}18`, border: `1px solid ${m.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Icon size={18} color={m.color} />
