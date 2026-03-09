@@ -1949,15 +1949,43 @@ export default function WorldClassContractors() {
 // ─────────────────────────────────────────────────────
 // PERFORMANCE CARD
 // ─────────────────────────────────────────────────────
-function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, showStars, delay }: {
+function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, showStars, delay, scoreType }: {
   icon: React.ElementType; iconColor: string; value: number; suffix: string;
-  label: string; desc: string; showStars?: number; delay: number;
+  label: string; desc: string; showStars?: number; delay: number; scoreType?: string;
 }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   const isDecimal = suffix === '/5';
-  const count = useAnimatedCounter(isDecimal ? Math.round(value * 10) : Math.round(value), 1200);
+
+  // Live data from contractor_performance_scores
+  const [liveData, setLiveData] = useState<{ value: number; calculated_at: string } | null>(null);
+  useEffect(() => {
+    if (!scoreType) return;
+    const fetch = async () => {
+      try {
+        const { data } = await supabase
+          .from('contractor_performance_scores' as any)
+          .select('value, calculated_at')
+          .eq('score_type', scoreType)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setLiveData({ value: Number((data as any).value), calculated_at: (data as any).calculated_at });
+        }
+      } catch { /* fallback */ }
+    };
+    fetch();
+  }, [scoreType]);
+
+  const effectiveValue = liveData?.value ?? value;
+  const count = useAnimatedCounter(isDecimal ? Math.round(effectiveValue * 10) : Math.round(effectiveValue), 1200);
   const displayVal = isDecimal ? (count / 10).toFixed(1) : count;
+
+  const updatedLabel = liveData?.calculated_at
+    ? `Mis à jour · ${new Date(liveData.calculated_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}`
+    : null;
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -1983,6 +2011,9 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
         )}
         <div style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginTop: 4 }}>{label}</div>
         <div style={{ fontSize: 12, color: T.textDim }}>{desc}</div>
+        {updatedLabel && (
+          <div style={{ fontSize: 10, color: '#D4A843', marginTop: 6, fontWeight: 600 }}>{updatedLabel}</div>
+        )}
       </div>
     </div>
   );
