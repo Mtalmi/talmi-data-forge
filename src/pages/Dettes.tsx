@@ -1355,6 +1355,127 @@ export default function Dettes() {
               );
             })()}
 
+            {/* RISQUE DE CONCENTRATION */}
+            {(() => {
+              const ranked = [...payablesBySupplier].sort((a, b) => b.total_due - a.total_due);
+              const grandTotal = ranked.reduce((s, r) => s + r.total_due, 0) || 1;
+              const sliceColors = ['#D4A843', '#f59e0b', '#4A9EFF', '#22c55e', '#f97316', '#a78bfa', '#ec4899', '#6B7280'];
+              const slices = ranked.map((s, i) => ({
+                name: s.fournisseur_name,
+                pct: (s.total_due / grandTotal) * 100,
+                amount: s.total_due,
+                color: sliceColors[i % sliceColors.length],
+                isRisk: (s.total_due / grandTotal) * 100 > 30,
+              }));
+              const topSupplier = slices[0];
+
+              // Build SVG donut
+              const size = 180, cx = size / 2, cy = size / 2, r = 65, strokeW = 22;
+              let cumAngle = -90;
+              const arcs = slices.map(s => {
+                const angle = (s.pct / 100) * 360;
+                const startAngle = cumAngle;
+                cumAngle += angle;
+                const startRad = (startAngle * Math.PI) / 180;
+                const endRad = ((startAngle + angle) * Math.PI) / 180;
+                const largeArc = angle > 180 ? 1 : 0;
+                const x1 = cx + r * Math.cos(startRad);
+                const y1 = cy + r * Math.sin(startRad);
+                const x2 = cx + r * Math.cos(endRad);
+                const y2 = cy + r * Math.sin(endRad);
+                return { ...s, d: `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}` };
+              });
+
+              return (
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 12,
+                  padding: '20px 24px',
+                  marginTop: 4,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <AlertTriangle size={16} color="#D4A843" />
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                      Risque de Concentration
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 28, alignItems: 'center' }}>
+                    {/* Donut */}
+                    <div style={{ position: 'relative', width: size, height: size, margin: '0 auto' }}>
+                      <svg width={size} height={size}>
+                        {/* Background ring */}
+                        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth={strokeW} />
+                        {arcs.map((arc, i) => (
+                          <path key={i} d={arc.d} fill="none" stroke={arc.color} strokeWidth={strokeW}
+                            strokeLinecap="butt" style={{ filter: arc.isRisk ? 'drop-shadow(0 0 6px rgba(239,68,68,0.4))' : undefined }} />
+                        ))}
+                      </svg>
+                      {/* Center label */}
+                      <div style={{
+                        position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <span style={{
+                          fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                          fontSize: 18, fontWeight: 200, color: '#F1F5F9',
+                        }}>{grandTotal.toLocaleString('fr-MA')}</span>
+                        <span style={{ fontSize: 10, color: '#6B7280' }}>DH</span>
+                      </div>
+                    </div>
+
+                    {/* Legend + rows */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {slices.map((s, i) => (
+                        <div key={i} style={{
+                          display: 'grid', gridTemplateColumns: '12px 1fr 70px 60px 130px',
+                          gap: 10, alignItems: 'center', padding: '6px 8px', borderRadius: 6,
+                          background: s.isRisk ? 'rgba(239,68,68,0.06)' : 'transparent',
+                        }}>
+                          <div style={{ width: 10, height: 10, borderRadius: '50%', background: s.color }} />
+                          <span style={{ fontSize: 12, color: '#F1F5F9', fontWeight: 500 }}>{s.name}</span>
+                          <span style={{
+                            fontFamily: 'ui-monospace', fontSize: 12, fontWeight: 500, color: '#D4A843', textAlign: 'right',
+                          }}>{s.pct.toFixed(1)}%</span>
+                          <span style={{
+                            fontFamily: 'ui-monospace', fontSize: 11, color: '#9CA3AF', textAlign: 'right',
+                          }}>{(s.amount / 1000).toFixed(0)}k</span>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            {s.isRisk && (
+                              <span className="animate-pulse" style={{
+                                fontSize: 9, fontWeight: 700, padding: '2px 8px', borderRadius: 12,
+                                background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444',
+                                whiteSpace: 'nowrap',
+                              }}>Risque concentration élevé</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* AI Insight */}
+                  {topSupplier && (
+                    <div style={{
+                      marginTop: 16, padding: '10px 14px', borderRadius: 8,
+                      background: 'rgba(212,168,67,0.04)', borderLeft: '2px solid rgba(212,168,67,0.3)',
+                      display: 'flex', alignItems: 'center', gap: 10,
+                    }}>
+                      <Zap size={14} color="#D4A843" style={{ flexShrink: 0 }} />
+                      <p style={{ fontSize: 12, color: '#D1D5DB', lineHeight: 1.5 }}>
+                        <strong style={{ color: '#F1F5F9' }}>{topSupplier.name}</strong> représente{' '}
+                        <strong style={{ color: '#D4A843', fontFamily: 'ui-monospace' }}>{topSupplier.pct.toFixed(0)}%</strong> de vos dettes
+                        {topSupplier.pct > 25 ? ' — diversification recommandée.' : ' — concentration acceptable.'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* AGENT IA: NÉGOCIATION FOURNISSEURS */}
             {(() => {
               const overdueSuppliers = payablesBySupplier.filter(s => s.total_overdue > 0);
