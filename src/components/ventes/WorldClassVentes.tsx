@@ -149,13 +149,13 @@ const donutBase = [
   { nameKey: 'activePOs' as const, value: 504 },
   { nameKey: 'closedDeals' as const, value: 338 },
 ];
-const DONUT_COLORS = ['#FFD700', '#E8C860', '#B8860B', '#6B7280'];
+const DONUT_COLORS = ['rgba(212,168,67,0.9)', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.5)', 'rgba(212,168,67,0.3)'];
 
 function PipelineSection() {
   const { t } = useI18n();
   const vt = t.pages.ventes;
   const [barWidths, setBarWidths] = useState([0, 0, 0, 0]);
-  const goldOpacities = [1, 0.75, 0.55, 0.40];
+  const goldOpacities = [1, 0.75, 0.50, 0.35];
 
   const stageLabels: Record<string, string> = {
     leads: 'Leads',
@@ -192,7 +192,7 @@ function PipelineSection() {
           <GCard key={k.label} delay={i * 80} style={{ padding: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <Metric value={k.value} suffix={k.suffix} color="white" />
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {i === 0 && <TrendingUp size={20} color="#F59E0B" />}
                 {i === 1 && <Activity size={20} color="#F59E0B" />}
                 {i === 2 && <BarChart3 size={20} color="#F59E0B" />}
@@ -226,7 +226,7 @@ function PipelineSection() {
                     <div style={{
                       position: 'absolute', left: 0, top: 0, bottom: 0,
                       width: barWidths[i] ? f.width : '0%',
-                      background: `rgba(253,185,19,${goldOpacities[i]})`,
+                      background: `rgba(212,168,67,${goldOpacities[i]})`,
                       borderRadius: 6,
                       transition: `width 600ms cubic-bezier(0.4,0,0.2,1) ${i * 150}ms`,
                       display: 'flex', alignItems: 'center', paddingLeft: 10, gap: 8,
@@ -460,7 +460,7 @@ function DealPipelineSection() {
           <GCard key={k.label} delay={i * 80}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <Metric value={k.value} suffix={k.suffix} color={k.color} />
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <k.icon size={18} color="#FFD700" />
               </div>
             </div>
@@ -749,7 +749,7 @@ function ActivitiesSection() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: 'rgba(245, 158, 11, 0.15)',
+                background: 'rgba(212,168,67,0.08)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <k.icon size={18} color="#FFD700" />

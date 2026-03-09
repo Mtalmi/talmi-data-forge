@@ -54,7 +54,7 @@ function PipelineStage({
         <StageCount value={count} dimmed={isEmpty} />
         <span style={{
           fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-          color: isEmpty ? 'rgba(226,232,240,0.2)' : 'rgba(226,232,240,0.7)',
+          color: isEmpty ? 'rgba(226,232,240,0.2)' : '#D4A843',
           textTransform: 'uppercase',
           fontFamily: 'DM Sans, sans-serif',
         }}>{label}</span>
