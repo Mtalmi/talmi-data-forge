@@ -244,6 +244,7 @@ function usePaymentsLiveData() {
       objectifMensuel: needsMockFallback ? 200 : totalFacture,
       aEncaisser: needsMockFallback ? 44 : Math.max(0, totalFacture - encaisseThisMonth),
     });
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -251,11 +252,13 @@ function usePaymentsLiveData() {
     const ch = supabase.channel('wc-payments-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetch())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'cash_deposits' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetch())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [fetch]);
 
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────
