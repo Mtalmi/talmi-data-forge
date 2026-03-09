@@ -740,20 +740,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
           <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
             {(() => {
-              // Build reorder items sorted by days_remaining ascending
-              const items = STOCKS
-                .map(s => {
-                  const auto = AUTONOMY[s.name.toLowerCase()];
-                  const days = auto?.days ?? 999;
-                  const orderQty = Math.max(0, s.max - s.current);
-                  // Find most recent supplier for this material
-                  const mv = MOVEMENTS.find(m => m.material.toLowerCase() === s.name.toLowerCase());
-                  const supplier = mv?.resp || 'Fournisseur à définir';
-                  return { name: s.name, days, orderQty, unit: s.unit, supplier, pct: s.pct };
-                })
-                .filter(i => i.orderQty > 0)
-                .sort((a, b) => a.days - b.days)
-                .slice(0, 5);
+              const items = REORDER_RECS;
 
               if (items.length === 0) {
                 return (
@@ -764,9 +751,10 @@ export default function WorldClassStocks() {
               }
 
               return items.map((item, idx) => {
-                const isUrgent = item.days <= 2;
+                const isUrgent = item.urgency === 'urgent' || item.urgency === 'critique';
+                const days = item.days_remaining;
                 return (
-                  <div key={item.name} style={{
+                  <div key={item.id} style={{
                     minWidth: 240, flex: '0 0 auto',
                     background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
                     borderLeft: `3px solid ${isUrgent ? '#ef4444' : '#D4A843'}`,
@@ -776,7 +764,7 @@ export default function WorldClassStocks() {
                   }}>
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.name}</span>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
                       <span style={{
                         padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
                         background: isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
@@ -784,7 +772,7 @@ export default function WorldClassStocks() {
                         border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : 'rgba(212,168,67,0.4)'}`,
                         animation: isUrgent ? 'tbos-pulse 2s infinite' : 'none',
                       }}>
-                        {isUrgent ? 'URGENT' : 'PLANIFIÉ'}
+                        {item.urgency.toUpperCase()}
                       </span>
                     </div>
                     {/* Details */}
@@ -792,22 +780,24 @@ export default function WorldClassStocks() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                         <span style={{ color: T.textDim }}>Qté recommandée</span>
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
-                          {item.orderQty.toLocaleString('fr-FR')} {item.unit}
+                          {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
                         </span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                         <span style={{ color: T.textDim }}>Fournisseur</span>
-                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.supplier}</span>
+                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                        <span style={{ color: T.textDim }}>Autonomie</span>
-                        <span style={{
-                          fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                          color: isUrgent ? '#ef4444' : item.days <= 5 ? '#f59e0b' : '#22c55e',
-                        }}>
-                          {item.days === 999 ? 'N/A' : `${item.days}j`}
-                        </span>
-                      </div>
+                      {days !== null && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                          <span style={{ color: T.textDim }}>Autonomie</span>
+                          <span style={{
+                            fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                            color: isUrgent ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                          }}>
+                            {Number(days)}j
+                          </span>
+                        </div>
+                      )}
                     </div>
                     {/* Action */}
                     <button style={{
