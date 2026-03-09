@@ -179,12 +179,16 @@ function usePaymentsLiveData() {
       };
     });
 
-    // Payment methods breakdown
+    // Payment methods breakdown from bons_livraison_reels
+    const { data: blForMethods } = await supabase
+      .from('bons_livraison_reels')
+      .select('mode_paiement, prix_vente_m3, volume_m3');
+
     const methodGroups: Record<string, { amount: number; count: number }> = {};
-    allFactures.forEach((f: any) => {
-      const m = f.mode_paiement || 'Virement';
+    (blForMethods || []).forEach((bl: any) => {
+      const m = bl.mode_paiement || 'Virement';
       if (!methodGroups[m]) methodGroups[m] = { amount: 0, count: 0 };
-      methodGroups[m].amount += f.total_ttc || 0;
+      methodGroups[m].amount += (bl.prix_vente_m3 || 0) * (bl.volume_m3 || 0);
       methodGroups[m].count += 1;
     });
     const totalAll = Object.values(methodGroups).reduce((s, g) => s + g.amount, 0) || 1;
