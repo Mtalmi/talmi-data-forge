@@ -237,12 +237,21 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
               const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
               const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
               return (
-                <span title={risk.detail} style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
-                  background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
-                  cursor: 'help',
-                }}>
+                <span
+                  title={risk.detail}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (client.name === 'Sigma Bâtiment') {
+                      toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.');
+                    }
+                  }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
+                    background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
+                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
+                  }}
+                >
                   {emoji} {risk.label}
                 </span>
               );
@@ -259,12 +268,21 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
               const churn = CHURN_DATA[client.name];
               if (!churn) return null;
               return (
-                <span title={churn.detail} style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 3,
-                  padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
-                  background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
-                  cursor: 'help',
-                }}>
+                <span
+                  title={churn.detail}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (client.name === 'Sigma Bâtiment') {
+                      toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.');
+                    }
+                  }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 3,
+                    padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
+                    background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
+                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
+                  }}
+                >
                   {churn.icon} {churn.label}
                 </span>
               );
