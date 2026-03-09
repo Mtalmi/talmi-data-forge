@@ -882,6 +882,7 @@ export default function WorldClassContractors() {
               label="Respect des Délais"
               desc="Missions terminées à temps"
               delay={80}
+              scoreType="respect_delais"
             />
             {/* Renouvellement */}
             <PerformanceCard
