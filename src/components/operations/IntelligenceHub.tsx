@@ -40,36 +40,81 @@ function parseJsonField(val: any): string[] {
 }
 
 const SCORE_COLORS: Record<string, string> = {
-  'Excellent': 'text-yellow-400 border-yellow-400/30 bg-yellow-400/10',
-  'Bon': 'text-green-400 border-green-400/30 bg-green-400/10',
-  'À risque': 'text-orange-400 border-orange-400/30 bg-orange-400/10',
-  'Attention': 'text-orange-400 border-orange-400/30 bg-orange-400/10',
-  'Critique': 'text-red-400 border-red-400/30 bg-red-400/10',
+  'Excellent': 'border-yellow-400/30 bg-yellow-400/10',
+  'Bon': 'border-green-400/30 bg-green-400/10',
+  'À risque': 'border-orange-400/30 bg-orange-400/10',
+  'Attention': 'border-orange-400/30 bg-orange-400/10',
+  'Critique': 'border-red-400/30 bg-red-400/10',
 };
 
+// #5 Score badges — amber gold styling
 function ScoreBadge({ score }: { score: string | null }) {
   if (!score) return null;
   return (
-    <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full border text-xs font-semibold', SCORE_COLORS[score] || 'text-muted-foreground border-border bg-muted/10')}>
+    <span
+      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+      style={{
+        background: 'rgba(212,168,67,0.15)',
+        color: '#D4A843',
+        border: '1px solid rgba(212,168,67,0.4)',
+      }}
+    >
       {score}
     </span>
   );
 }
 
+// ─── Gold top border ──────────────────────────────────────────────────────────
+const goldTopBorder: React.CSSProperties = {
+  borderTop: '2px solid transparent',
+  borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+};
+
+// ─── Gold shimmer keyframes (injected once) ───────────────────────────────────
+const shimmerStyleId = 'gold-shimmer-style';
+if (typeof document !== 'undefined' && !document.getElementById(shimmerStyleId)) {
+  const style = document.createElement('style');
+  style.id = shimmerStyleId;
+  style.textContent = `
+    @keyframes goldShimmer {
+      0%, 100% { border-color: rgba(212,168,67,0.3); }
+      50% { border-color: rgba(212,168,67,0.7); }
+    }
+    .gold-shimmer-border {
+      animation: goldShimmer 4s ease-in-out infinite;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// ─── AI Badge ─────────────────────────────────────────────────────────────────
+function AiBadge() {
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
+      style={{ color: '#D4A843', background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843' }}
+    >
+      ✨ Généré par IA · Claude Opus
+    </span>
+  );
+}
+
 // ─── Section Card ─────────────────────────────────────────────────────────────
-function SectionCard({ title, icon: Icon, iconColor, children, delay = 0 }: {
-  title: string; icon: any; iconColor: string; children: React.ReactNode; delay?: number;
+function SectionCard({ title, icon: Icon, iconColor, children, delay = 0, isAiCard = false }: {
+  title: string; icon: any; iconColor: string; children: React.ReactNode; delay?: number; isAiCard?: boolean;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="rounded-xl border border-border bg-card p-5"
+      className={cn("rounded-xl border border-border bg-card p-5", isAiCard && "gold-shimmer-border")}
+      style={goldTopBorder}
     >
-      <div className="flex items-center gap-2.5 mb-4">
+      <div className="flex items-center gap-2.5 mb-4 flex-wrap">
         <Icon className={cn('w-4 h-4', iconColor)} />
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+        {isAiCard && <AiBadge />}
       </div>
       {children}
     </motion.div>
@@ -77,7 +122,11 @@ function SectionCard({ title, icon: Icon, iconColor, children, delay = 0 }: {
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export function IntelligenceHub() {
+interface IntelligenceHubProps {
+  devisStats?: { count: number; avgScore: number } | null;
+}
+
+export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
   const [loading, setLoading] = useState(true);
   const [morningBriefing, setMorningBriefing] = useState<any>(null);
   const [eveningBriefing, setEveningBriefing] = useState<any>(null);
@@ -162,14 +211,15 @@ export function IntelligenceHub() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-2">
+      {/* #2 Section header with gold left border */}
+      <div className="flex items-center gap-2 mb-2" style={{ borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <Brain className="w-4 h-4 text-yellow-400" />
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">🧠 Hub Intelligence IA — Vue Temps Réel</h2>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* ── 1. Morning Briefing ─────────────────────────────────────── */}
-        <SectionCard title="Briefing du Matin" icon={Sun} iconColor="text-yellow-400" delay={0.05}>
+        {/* ── 1. Morning Briefing — #4 AI card with shimmer + badge ─── */}
+        <SectionCard title="Briefing du Matin" icon={Sun} iconColor="text-yellow-400" delay={0.05} isAiCard>
           {morningBriefing ? (
             <>
               <p className="text-sm text-foreground/80 leading-relaxed line-clamp-4">
@@ -188,8 +238,8 @@ export function IntelligenceHub() {
           )}
         </SectionCard>
 
-        {/* ── 2. Evening Report ───────────────────────────────────────── */}
-        <SectionCard title="Rapport du Soir" icon={Moon} iconColor="text-purple-400" delay={0.1}>
+        {/* ── 2. Evening Report — #4 AI card with shimmer + badge ──── */}
+        <SectionCard title="Rapport du Soir" icon={Moon} iconColor="text-purple-400" delay={0.1} isAiCard>
           {eveningBriefing ? (
             <>
               <p className="text-sm text-foreground/80 leading-relaxed line-clamp-4">
@@ -216,7 +266,7 @@ export function IntelligenceHub() {
                 <div key={score} className={cn(
                   'flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold',
                   SCORE_COLORS[score] || 'text-muted-foreground border-border bg-muted/10'
-                )}>
+                )} style={{ color: '#D4A843' }}>
                   <span className="text-lg font-mono font-bold">{clientHealth[score]}</span>
                   <span>{score}</span>
                 </div>
@@ -301,10 +351,17 @@ export function IntelligenceHub() {
           )}
         </SectionCard>
 
-        {/* ── 6. Recent Deal Scores ───────────────────────────────────── */}
+        {/* ── 6. Recent Deal Scores — #9 wired to devis table ─────── */}
         <SectionCard title="Scores Devis IA" icon={FileText} iconColor="text-yellow-400" delay={0.3}>
           {dealScores.length > 0 ? (
             <div className="space-y-2">
+              {devisStats && (
+                <div className="flex items-center gap-3 mb-3 px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
+                  <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{devisStats.count} devis scorés</span>
+                  <span className="text-xs text-muted-foreground">·</span>
+                  <span className="text-xs font-mono font-bold" style={{ color: '#D4A843' }}>Moy: {devisStats.avgScore}/100</span>
+                </div>
+              )}
               {dealScores.map((d: any) => (
                 <div key={d.devis_id} className="flex items-center justify-between px-3 py-2 rounded-lg border border-border bg-muted/5 text-xs">
                   <div className="flex items-center gap-2 min-w-0">
@@ -321,6 +378,10 @@ export function IntelligenceHub() {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : devisStats && devisStats.count > 0 ? (
+            <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
+              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{devisStats.count} devis scorés · Moy: {devisStats.avgScore}/100</span>
             </div>
           ) : (
             <p className="text-xs text-muted-foreground italic">🤖 Aucun devis scoré par l'IA...</p>

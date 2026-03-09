@@ -215,6 +215,12 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+// ─── Gold top border helper ──────────────────────────────────────────────────
+const goldTopBorder: React.CSSProperties = {
+  borderTop: '2px solid transparent',
+  borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function OperationsAgent() {
   const navigate = useNavigate();
@@ -227,6 +233,7 @@ export default function OperationsAgent() {
   const [activeTab, setActiveTab] = useState<"overview" | "briefings" | "maintenance" | "procurement" | "quality" | "setup">("overview");
   const [expandedBriefing, setExpandedBriefing] = useState<string | null>(null);
   const [triggering, setTriggering] = useState<string | null>(null);
+  const [devisStats, setDevisStats] = useState<{ count: number; avgScore: number } | null>(null);
 
   // Fetch all agent data
   useEffect(() => {
@@ -236,16 +243,25 @@ export default function OperationsAgent() {
         { data: m },
         { data: p },
         { data: q },
+        { data: devisData },
       ] = await Promise.all([
         supabase.from("ai_briefings").select("*").order("generated_at", { ascending: false }).limit(20),
         supabase.from("maintenance_orders").select("*").order("created_at", { ascending: false }).limit(50),
         supabase.from("purchase_orders").select("*").order("created_at", { ascending: false }).limit(50),
         supabase.from("quality_failure_tickets").select("*").order("created_at", { ascending: false }).limit(50),
+        supabase.from("devis").select("devis_id, score_ia, niveau_score").not("score_ia", "is", null),
       ]);
       if (b) setBriefings(b as AiBriefing[]);
       if (m) setMaintenanceOrders(m as MaintenanceOrder[]);
       if (p) setPurchaseOrders(p as PurchaseOrder[]);
       if (q) setQualityTickets(q as QualityTicket[]);
+      if (devisData && devisData.length > 0) {
+        const scores = devisData.map((d: any) => d.score_ia).filter((s: any) => s != null);
+        setDevisStats({
+          count: scores.length,
+          avgScore: scores.length > 0 ? Math.round((scores.reduce((a: number, b: number) => a + b, 0) / scores.length) * 10) / 10 : 0,
+        });
+      }
     }
     fetchAll();
 
@@ -330,10 +346,11 @@ export default function OperationsAgent() {
               <p className="text-xs text-muted-foreground">7 autonomous AI workflows · n8n orchestration</p>
             </div>
           </div>
+          {/* #10 AGENT ACTIVE badge — gold border + pulsing green dot */}
           <div className="ml-auto flex items-center gap-2">
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-green-400/30 bg-green-400/5">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.5)', background: 'rgba(212,168,67,0.06)' }}>
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-              <span className="text-xs text-green-400 font-mono">AGENT ACTIVE</span>
+              <span className="text-xs font-mono" style={{ color: '#D4A843' }}>AGENT ACTIVE</span>
             </div>
           </div>
         </div>
@@ -371,7 +388,7 @@ export default function OperationsAgent() {
               transition={{ duration: 0.25 }}
               className="space-y-6"
             >
-              {/* KPI Cards */}
+              {/* #1 KPI Cards — gold top border, glassmorphism, gold icons, monospace numerals */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                   { label: "AI Briefings", value: briefings.length, icon: FileText, color: "text-yellow-400" },
@@ -386,12 +403,18 @@ export default function OperationsAgent() {
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.07 }}
-                      className="rounded-xl p-4 border border-border bg-card"
+                      className="rounded-xl p-4 border border-border backdrop-blur-md"
+                      style={{
+                        ...goldTopBorder,
+                        background: 'rgba(255,215,0,0.04)',
+                      }}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <Icon className={cn("w-5 h-5", kpi.color)} />
+                        <Icon className="w-5 h-5" style={{ color: 'rgba(212,168,67,0.85)' }} />
                       </div>
-                      <div className={cn("text-3xl font-bold font-mono", kpi.color)}>{kpi.value}</div>
+                      <div className="text-3xl" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, color: kpi.color === 'text-yellow-400' ? '#FACC15' : kpi.color === 'text-orange-400' ? '#FB923C' : kpi.color === 'text-blue-400' ? '#60A5FA' : kpi.color === 'text-red-400' ? '#F87171' : '#4ADE80' }}>
+                        {kpi.value}
+                      </div>
                       <div className="text-xs text-muted-foreground mt-1">{kpi.label}</div>
                       {kpi.sub && <div className="text-xs text-red-400 mt-0.5">{kpi.sub}</div>}
                     </motion.div>
@@ -400,11 +423,16 @@ export default function OperationsAgent() {
               </div>
 
               {/* ── Intelligence Hub ───────────────────────────────────── */}
-              <IntelligenceHub />
+              <IntelligenceHub devisStats={devisStats} />
 
-              {/* Workflow grid */}
+              {/* #6 Workflow grid header + #7 gold top borders + #8 Test Run buttons */}
               <div>
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Autonomous Workflows</h2>
+                <h2
+                  className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3"
+                  style={{ borderLeft: '3px solid #D4A843', paddingLeft: 10 }}
+                >
+                  Autonomous Workflows
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {WORKFLOWS.map((wf, i) => {
                     const Icon = wf.icon;
@@ -417,6 +445,7 @@ export default function OperationsAgent() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 + i * 0.06 }}
                         className={cn("rounded-xl border p-4 flex flex-col gap-3", wf.borderColor, wf.bgColor)}
+                        style={goldTopBorder}
                       >
                         <div className="flex items-start gap-3">
                           <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center bg-background/50")}>
@@ -441,20 +470,20 @@ export default function OperationsAgent() {
                           </div>
                         )}
                         <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className={cn("flex-1 h-8 text-xs border-current", wf.color)}
+                          {/* #8 Test Run button — gold bg */}
+                          <button
+                            className="flex-1 h-8 text-xs rounded-md flex items-center justify-center gap-1 font-semibold transition-all hover:brightness-110 disabled:opacity-50"
+                            style={{ background: '#D4A843', color: '#0F1629', fontWeight: 600 }}
                             onClick={() => handleTrigger(wf)}
                             disabled={isTriggering || isSubmitting}
                           >
                             {isTriggering ? (
-                              <RefreshCw className="w-3 h-3 mr-1 animate-spin" />
+                              <RefreshCw className="w-3 h-3 animate-spin" />
                             ) : (
-                              <Zap className="w-3 h-3 mr-1" />
+                              <Zap className="w-3 h-3" />
                             )}
                             Test Run
-                          </Button>
+                          </button>
                           <Button
                             size="sm"
                             variant="ghost"
