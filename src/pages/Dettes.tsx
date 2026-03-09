@@ -89,6 +89,7 @@ export default function Dettes() {
     'paid': { label: 'Payé', badgeStyle: { background: 'rgba(34,197,94,0.15)', border: '1px solid #22c55e', color: '#22c55e' }, icon: <CheckCircle className="h-3 w-3" /> },
   };
 
+  const [activeTab, setActiveTab] = useState('payables');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedPayable, setSelectedPayable] = useState<Payable | null>(null);
