@@ -312,7 +312,7 @@ function PerformanceSection() {
       <SectionHeader title="Performance Commerciale" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         {/* Rep Chart */}
-        <GCard delay={0}>
+        <GCard delay={0} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>Ventes par Commercial</p>
           <div style={{ height: 180 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -346,7 +346,7 @@ function PerformanceSection() {
         </GCard>
 
         {/* Product Donut */}
-        <GCard delay={80}>
+        <GCard delay={80} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 8, letterSpacing: '0.05em' }}>CA par Produit</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 items-center">
             <div style={{ position: 'relative', height: 180 }}>
@@ -382,7 +382,7 @@ function PerformanceSection() {
       </div>
 
       {/* Segment Bar */}
-      <GCard delay={160}>
+      <GCard delay={160} goldTop>
         <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>CA par Segment Client</p>
         <div style={{ height: 140 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -472,7 +472,7 @@ function DealPipelineSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Deal List */}
-        <GCard delay={100} style={{ padding: 16 }}>
+        <GCard delay={100} goldTop style={{ padding: 16 }}>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>Liste des Deals</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {deals.map((d, i) => (
@@ -483,7 +483,7 @@ function DealPipelineSection() {
 
         {/* Analytics */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <GCard delay={200}>
+          <GCard delay={200} goldTop>
             <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 4, letterSpacing: '0.05em' }}>Win / Loss</p>
             <div style={{ position: 'relative', height: 160 }}>
               <ResponsiveContainer width="100%" height="100%">
@@ -501,7 +501,7 @@ function DealPipelineSection() {
             </div>
           </GCard>
 
-          <GCard delay={280} style={{ padding: 16 }}>
+          <GCard delay={280} goldTop style={{ padding: 16 }}>
             <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 10, letterSpacing: '0.05em' }}>Ancienneté des Deals</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {agingData.map((a, i) => (
@@ -667,7 +667,7 @@ function ForecastSection() {
 
         {/* Right column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <GCard delay={100}>
+          <GCard delay={100} goldTop>
             <GaugeSvg pct={78} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-1.5 mt-2">
               {[
@@ -683,7 +683,7 @@ function ForecastSection() {
             </div>
           </GCard>
 
-          <GCard delay={200}>
+          <GCard delay={200} goldTop>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)' }}>Précision Prévisions</p>
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 10, color: T.gold }}>87% actuelle</span>
@@ -766,7 +766,7 @@ function ActivitiesSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Timeline */}
-        <GCard delay={100} style={{ padding: 16 }}>
+        <GCard delay={100} goldTop style={{ padding: 16 }}>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 14, letterSpacing: '0.05em' }}>Historique & Planning</p>
           <div style={{ position: 'relative', paddingLeft: 20 }}>
             <div style={{ position: 'absolute', left: 7, top: 8, bottom: 8, width: 1, background: `linear-gradient(180deg, rgba(253,185,19,0.4), transparent)` }} />
@@ -779,7 +779,7 @@ function ActivitiesSection() {
         </GCard>
 
         {/* Next Actions */}
-        <GCard delay={200} style={{ padding: 16 }}>
+        <GCard delay={200} goldTop style={{ padding: 16 }}>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>Prochaines Actions</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {nextActions.map((a, i) => (
