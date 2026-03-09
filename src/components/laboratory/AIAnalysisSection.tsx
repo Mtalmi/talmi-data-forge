@@ -49,11 +49,19 @@ export function AIAnalysisSection() {
 
   if (!analysis) return (
     <div style={{ borderTop: `1px solid ${T.danger}20`, marginTop: 16, paddingTop: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ position: 'relative', display: 'inline-flex', width: 8, height: 8 }}>
-        <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#D4A843', opacity: 0.75, animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
-        <span style={{ position: 'relative', width: 8, height: 8, borderRadius: '50%', background: '#D4A843' }} />
-      </span>
-      <span style={{ fontSize: 12, color: '#F59E0B' }}>Agent IA en cours d'analyse...</span>
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+        padding: '6px 14px', borderRadius: 999,
+        background: 'rgba(212,168,67,0.08)',
+        border: '1px solid rgba(212,168,67,0.25)',
+        backdropFilter: 'blur(8px)',
+      }}>
+        <span style={{ position: 'relative', display: 'inline-flex', width: 8, height: 8 }}>
+          <span style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#D4A843', opacity: 0.75, animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite' }} />
+          <span style={{ position: 'relative', width: 8, height: 8, borderRadius: '50%', background: '#D4A843' }} />
+        </span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A843', letterSpacing: '0.04em' }}>Agent IA · Analyse en cours</span>
+      </div>
     </div>
   );
 
