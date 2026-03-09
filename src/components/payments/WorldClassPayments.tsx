@@ -199,10 +199,10 @@ function usePaymentsLiveData() {
       { date: '15 Fév', client: 'Saudi Readymix Co.', amount: 23200, method: 'Traite', ref: 'FAC-2602-005', status: 'En retard' },
     ];
     const MOCK_METHODS = [
-      { name: 'Virement', amount: 420, count: 28, pct: 62, color: T.info, icon: ArrowRightLeft },
-      { name: 'Chèque', amount: 156, count: 14, pct: 23, color: T.purple, icon: FileText },
-      { name: 'Espèces', amount: 68, count: 8, pct: 10, color: T.success, icon: Banknote },
-      { name: 'Traite', amount: 34, count: 4, pct: 5, color: T.warning, icon: Clock },
+      { name: 'Virement', amount: 420, count: 28, pct: 62, color: '#D4A843', icon: ArrowRightLeft },
+      { name: 'Chèque', amount: 156, count: 14, pct: 23, color: '#C49A35', icon: FileText },
+      { name: 'Espèces', amount: 68, count: 8, pct: 10, color: '#A07820', icon: Banknote },
+      { name: 'Traite', amount: 34, count: 4, pct: 5, color: 'rgba(212,168,67,0.5)', icon: Clock },
     ];
 
     setData({
