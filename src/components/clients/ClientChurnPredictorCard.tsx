@@ -36,11 +36,22 @@ export function ClientChurnPredictorCard() {
     <div style={{
       background: T.cardBg,
       border: `1px solid ${T.cardBorder}`,
+      borderTop: '2px solid #D4A843',
       borderRadius: 12,
       overflow: 'hidden',
+      position: 'relative',
     }}>
+      {/* Gold shimmer border */}
+      <div style={{
+        position: 'absolute', inset: 0, borderRadius: 12, pointerEvents: 'none',
+        background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.15), transparent)',
+        backgroundSize: '200% 100%',
+        animation: 'churn-shimmer 4s ease-in-out infinite',
+      }} />
+      <style>{`@keyframes churn-shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }`}</style>
+
       {/* Header */}
-      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 1 }}>
         <div style={{
           width: 30, height: 30, borderRadius: 8, background: T.goldDim,
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -54,9 +65,14 @@ export function ClientChurnPredictorCard() {
           </span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
+        {/* AI pill badge */}
+        <span style={{
+          background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843',
+          fontSize: 11, borderRadius: 9999, padding: '2px 10px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0,
+        }}>✨ Généré par IA · Claude Opus</span>
       </div>
 
-      <div style={{ padding: '0 20px 20px' }}>
+      <div style={{ padding: '0 20px 20px', position: 'relative', zIndex: 1 }}>
         {/* KPIs */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 20 }}>
           {kpis.map((k, i) => (

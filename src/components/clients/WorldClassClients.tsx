@@ -26,7 +26,7 @@ const T = {
 };
 
 const SEGMENT_COLORS: Record<string, string> = {
-  Enterprise: T.gold, 'Mid-Market': T.info, PME: T.success, Startup: T.purple, Autre: T.textSec,
+  Enterprise: '#D4A843', 'Mid-Market': '#A07820', PME: T.success, Startup: 'rgba(212,168,67,0.3)', Autre: T.textSec,
 };
 
 // ─────────────────────────────────────────────────────
@@ -91,16 +91,15 @@ function useClientsLiveData() {
 // ─────────────────────────────────────────────────────
 // SHARED UI
 // ─────────────────────────────────────────────────────
-function Card({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
+function Card({ children, style = {}, className = '', goldBorder: showGoldBorder = false }: { children: React.ReactNode; style?: React.CSSProperties; className?: string; goldBorder?: boolean }) {
   const [hov, setHov] = useState(false);
   const [press, setPress] = useState(false);
   return (
     <div className={className} onMouseEnter={() => setHov(true)} onMouseLeave={() => { setHov(false); setPress(false); }} onMouseDown={() => setPress(true)} onMouseUp={() => setPress(false)}
-      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
+      style={{ background: T.cardBg, border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`, borderTop: showGoldBorder ? '2px solid #D4A843' : undefined, borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
         transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
         boxShadow: 'none',
         transition: 'all 200ms cubic-bezier(0.4,0,0.2,1)', ...style }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'transparent', opacity: 0 }} />
       {children}
     </div>
   );
@@ -148,7 +147,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const visible = useFadeIn(delay);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <Card style={{ height: '100%' }}>
+      <Card style={{ height: '100%', borderTop: '2px solid #D4A843', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(212,168,67,0.15)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>{label}</p>
@@ -157,8 +156,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
             </p>
             {trend && <p style={{ fontSize: 12, color: trendPositive ? '#10B981' : '#EF4444', marginTop: 6, fontWeight: 500 }}>{trendPositive ? '↑' : '↓'} {trend}</p>}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color="#F59E0B" />
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#D4A843" />
           </div>
         </div>
       </Card>
@@ -214,7 +213,7 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
     <div>
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleExpand}
         style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
-        <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${segColor}, ${segColor}99)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: T.navy, boxShadow: `0 0 10px ${segColor}40` }}>{initial}</div>
+        <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 16, color: '#D4A843' }}>{initial}</div>
         <div style={{ minWidth: 170, flexShrink: 0 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -432,7 +431,7 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
             <Icon size={20} color={color} />
           </div>
           <div>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>{animated}</p>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1 }}>{animated}</p>
             <p style={{ fontWeight: 700, fontSize: 13, color: T.textPri, marginTop: 4 }}>{label}</p>
             <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>{desc}</p>
           </div>
@@ -622,7 +621,7 @@ export default function WorldClassClients() {
         {/* Top clients + Segments */}
         <section>
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 24 }}>
-            <Card>
+            <Card goldBorder>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>Top Clients par CA</p>
                 <Badge label={`Top ${topClients.length}`} color={T.gold} bg={`${T.gold}18`} />
@@ -634,7 +633,12 @@ export default function WorldClassClients() {
                     <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={v => `${v}K`} />
                     <YAxis dataKey="client" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} width={120} />
                     <RechartsTooltip content={<DarkTooltip suffix=" K DH" />} cursor={{ fill: `${T.gold}08` }} />
-                    <Bar dataKey="ca" name="CA" fill={T.gold} radius={[0, 6, 6, 0]} animationDuration={1000} />
+                    <Bar dataKey="ca" name="CA" radius={[0, 6, 6, 0]} animationDuration={1000}>
+                      {topClients.map((_, i) => {
+                        const fills = ['#D4A843', '#C49A35', '#A07820', 'rgba(212,168,67,0.6)', 'rgba(212,168,67,0.4)'];
+                        return <Cell key={i} fill={fills[i] || fills[fills.length - 1]} />;
+                      })}
+                    </Bar>
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -642,7 +646,7 @@ export default function WorldClassClients() {
               )}
             </Card>
 
-            <Card>
+            <Card goldBorder>
               <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 16 }}>Segmentation</p>
               {segments.length > 0 ? (
                 <>
@@ -677,20 +681,20 @@ export default function WorldClassClients() {
           <SectionHeader icon={Banknote} label="Évolution CA Clients" right={
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.gold }}>{totalNewCA}K DH</span>
           } />
-          <Card>
+          <Card goldBorder>
             <ResponsiveContainer width="100%" height={240}>
               <AreaChart data={trendData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#F59E0B" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#F59E0B" stopOpacity={0} />
+                    <stop offset="0%" stopColor="#D4A843" stopOpacity={0.08} />
+                    <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(245, 158, 11, 0.08)" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(212,168,67,0.08)" vertical={false} />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} tickFormatter={v => `${v}K`} />
                 <RechartsTooltip content={<DarkTooltip suffix="K DH" />} cursor={{ stroke: `${T.gold}40` }} />
-                <Area dataKey="ca" name="CA" type="monotone" stroke="#F59E0B" strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: '#F59E0B', r: 4 }} />
+                <Area dataKey="ca" name="CA" type="monotone" stroke="#D4A843" strokeWidth={2.5} fill="url(#caGrad)" animationDuration={1200} dot={{ fill: '#D4A843', r: 4 }} />
                 <Bar dataKey="nouveaux" name="Nouveaux clients" fill={T.info} radius={[3, 3, 0, 0]} animationDuration={1000} />
               </AreaChart>
             </ResponsiveContainer>
@@ -700,7 +704,7 @@ export default function WorldClassClients() {
         {/* Client List */}
         <section>
           <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{filteredClients.length} résultats</span>} />
-          <Card>
+          <Card goldBorder>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} />)}
               {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#6B7280', fontSize: 14, minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Aucun client trouvé</div>}
@@ -712,9 +716,9 @@ export default function WorldClassClients() {
         <section>
           <SectionHeader icon={Heart} label="Santé du Portefeuille" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-            <HealthCard label="Clients Fidèles" value={loyal} color={T.gold} desc="Commande dans les 30 derniers jours" icon={Heart} delay={0} />
-            <HealthCard label="À Risque" value={atRisk - lost} color={T.warning} desc="Pas de commande depuis >30j" icon={AlertTriangle} delay={100} />
-            <HealthCard label="Clients Perdus" value={lost} color={T.danger} desc="Pas de commande depuis >90j" icon={UserX} delay={200} />
+            <HealthCard label="Clients Fidèles" value={loyal} color="#22c55e" desc="Commande dans les 30 derniers jours" icon={Heart} delay={0} />
+            <HealthCard label="À Risque" value={atRisk - lost} color="#f59e0b" desc="Pas de commande depuis >30j" icon={AlertTriangle} delay={100} />
+            <HealthCard label="Clients Perdus" value={lost} color="#ef4444" desc="Pas de commande depuis >90j" icon={UserX} delay={200} />
           </div>
         </section>
 
