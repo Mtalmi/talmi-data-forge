@@ -928,67 +928,151 @@ export default function Dettes() {
 
           {/* Calendar Tab */}
           <TabsContent value="calendar" className="space-y-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Due Soon */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Timer className="h-5 w-5 text-warning" />
-                    {d.dueSoon7}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {dueSoon.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-4">{d.noInvoiceToPay}</p>
-                    ) : (
-                      dueSoon.slice(0, 10).map(p => (
-                        <div key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-warning/5 border border-warning/20">
-                          <div>
-                            <p className="font-medium">{p.fournisseur_name}</p>
-                            <p className="text-xs text-muted-foreground">{p.invoice_number}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold">{formatCurrency(p.amount_due)}</p>
-                            <p className="text-xs text-warning">{p.days_until_due}{d.daysRemaining}</p>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+            {(() => {
+              const year = 2026, month = 2; // March 2026 (0-indexed)
+              const firstDay = new Date(year, month, 1);
+              const daysInMonth = new Date(year, month + 1, 0).getDate();
+              const startDow = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // Monday start
+              const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+              const today = new Date();
 
-              {/* Overdue */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
-                    {d.overdueLabel}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {overdue.length === 0 ? (
-                      <p className="text-success text-center py-4">{d.noOverdueInvoice}</p>
-                    ) : (
-                      overdue.slice(0, 10).map(p => (
-                        <div key={p.id} className="flex items-center justify-between p-3 rounded-lg bg-destructive/5 border border-destructive/20">
-                          <div>
-                            <p className="font-medium">{p.fournisseur_name}</p>
-                            <p className="text-xs text-muted-foreground">{p.invoice_number}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold text-destructive">{formatCurrency(p.amount_due)}</p>
-                            <p className="text-xs text-destructive">+{p.days_overdue}{d.daysLate}</p>
-                          </div>
-                        </div>
-                      ))
-                    )}
+              // Map payments by day
+              const unpaid = payables.filter(p => p.status !== 'paid');
+              const byDay: Record<number, { suppliers: string[]; total: number; isOverdue: boolean; isScheduled: boolean }> = {};
+              unpaid.forEach(p => {
+                const d = new Date(p.due_date);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                  const day = d.getDate();
+                  if (!byDay[day]) byDay[day] = { suppliers: [], total: 0, isOverdue: false, isScheduled: false };
+                  byDay[day].suppliers.push(p.fournisseur_name);
+                  byDay[day].total += p.amount_due;
+                  if (p.days_overdue > 0) byDay[day].isOverdue = true;
+                }
+              });
+              // Mark scheduled (demo: payments already due_soon get gold dot)
+              unpaid.filter(p => p.status === 'due_soon' || p.status === 'not_due').forEach(p => {
+                const d = new Date(p.due_date);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                  const day = d.getDate();
+                  if (byDay[day]) byDay[day].isScheduled = true;
+                }
+              });
+
+              // Build calendar grid with weeks
+              const weeks: (number | null)[][] = [];
+              let currentWeek: (number | null)[] = [];
+              for (let i = 0; i < startDow; i++) currentWeek.push(null);
+              for (let d = 1; d <= daysInMonth; d++) {
+                currentWeek.push(d);
+                if (currentWeek.length === 7) { weeks.push(currentWeek); currentWeek = []; }
+              }
+              if (currentWeek.length > 0) {
+                while (currentWeek.length < 7) currentWeek.push(null);
+                weeks.push(currentWeek);
+              }
+
+              const monthTotal = Object.values(byDay).reduce((s, d) => s + d.total, 0);
+
+              return (
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 12,
+                  padding: '20px 24px',
+                }}>
+                  {/* Header */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CalendarDays size={16} color="#D4A843" />
+                      </div>
+                      <span style={{ fontSize: 16, fontWeight: 600, color: '#F1F5F9' }}>Mars 2026</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total mois</span>
+                      <p style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                        fontSize: 20, fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em',
+                      }}>{monthTotal.toLocaleString('fr-MA')} DH</p>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
+
+                  {/* Day names header */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4, marginBottom: 4 }}>
+                    {dayNames.map(dn => (
+                      <div key={dn} style={{ textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em', padding: '6px 0' }}>
+                        {dn}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Weeks */}
+                  {weeks.map((week, wi) => {
+                    const weekTotal = week.reduce((s, d) => s + (d && byDay[d] ? byDay[d].total : 0), 0);
+                    return (
+                      <div key={wi}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+                          {week.map((day, di) => {
+                            if (day === null) return <div key={di} style={{ height: 64 }} />;
+                            const info = byDay[day];
+                            const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+                            const isPast = new Date(year, month, day) < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+                            return (
+                              <div
+                                key={di}
+                                title={info ? `${info.suppliers.join(', ')}\n${info.total.toLocaleString('fr-MA')} DH` : undefined}
+                                style={{
+                                  height: 64, borderRadius: 8, padding: '6px 8px',
+                                  background: info?.isOverdue
+                                    ? 'rgba(239,68,68,0.1)'
+                                    : isToday ? 'rgba(212,168,67,0.08)' : 'rgba(255,255,255,0.02)',
+                                  border: isToday ? '1px solid rgba(212,168,67,0.3)' : '1px solid rgba(255,255,255,0.04)',
+                                  animation: info?.isOverdue ? 'tbos-pulse 2.5s infinite' : undefined,
+                                  position: 'relative',
+                                  cursor: info ? 'pointer' : 'default',
+                                  transition: 'background 150ms',
+                                }}
+                              >
+                                <span style={{
+                                  fontSize: 12, fontWeight: isToday ? 700 : 400,
+                                  color: isPast && !isToday ? '#6B7280' : isToday ? '#D4A843' : '#F1F5F9',
+                                }}>{day}</span>
+                                {info && (
+                                  <div style={{ position: 'absolute', bottom: 6, left: 8, right: 8, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                      <div style={{
+                                        width: 6, height: 6, borderRadius: '50%',
+                                        background: info.isOverdue ? '#ef4444' : info.isScheduled ? '#D4A843' : '#ef4444',
+                                        animation: info.isOverdue ? 'tbos-pulse 2s infinite' : undefined,
+                                      }} />
+                                      <span style={{
+                                        fontSize: 10, fontFamily: 'ui-monospace', fontWeight: 500,
+                                        color: info.isOverdue ? '#ef4444' : '#D4A843',
+                                      }}>
+                                        {info.total >= 1000 ? `${(info.total / 1000).toFixed(0)}k` : info.total}
+                                      </span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {/* Weekly total */}
+                        <div style={{
+                          textAlign: 'right', padding: '4px 8px 8px', fontSize: 11,
+                          fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                          color: weekTotal > 0 ? '#D4A843' : '#3f3f46',
+                        }}>
+                          {weekTotal > 0 ? `Sem. ${wi + 1}: ${weekTotal.toLocaleString('fr-MA')} DH` : ''}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </TabsContent>
         </Tabs>
 
