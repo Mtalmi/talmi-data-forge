@@ -262,12 +262,33 @@ const AVATAR_COLORS = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan, T
 
 function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; code_prestataire: string; nom: string; specialite: string; tarif_journalier: number; statut: string; note_service: number; mission_actuelle: string | null; jours_travailles: number; cout_mtd: number; }; delay: number; colorIndex: number; onClick?: () => void }) {
    const [hov, setHov] = useState(false);
+   const [anomalyTip, setAnomalyTip] = useState(false);
    const vis = useFadeIn(delay);
    const isMission = c.statut === 'mission';
    const tarifFormatted = c.tarif_journalier ? `${Number(c.tarif_journalier).toLocaleString('fr-FR')} DH/j` : '—';
    const coutMtdFormatted = c.cout_mtd != null ? `${Number(c.cout_mtd).toLocaleString('fr-FR')} DH` : '—';
    const avatarBg = AVATAR_COLORS[colorIndex % AVATAR_COLORS.length];
    const avatarText = avatarBg === T.gold ? '#000' : '#fff';
+
+   // Budget anomaly indicator
+   const [anomaly, setAnomaly] = useState<{ deviation_pct: number; anomaly_type: string | null } | null>(null);
+   useEffect(() => {
+     const fetchAnomaly = async () => {
+       try {
+         const { data } = await supabase
+           .from('budget_anomalies' as any)
+           .select('deviation_pct, anomaly_type')
+           .eq('contractor_id', c.id)
+           .order('detected_at', { ascending: false })
+           .limit(1)
+           .maybeSingle();
+         if (data) {
+           setAnomaly({ deviation_pct: Number((data as any).deviation_pct), anomaly_type: (data as any).anomaly_type });
+         }
+       } catch { /* no anomaly */ }
+     };
+     fetchAnomaly();
+   }, [c.id]);
    return (
     <div
       onClick={onClick}
