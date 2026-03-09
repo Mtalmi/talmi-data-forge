@@ -788,6 +788,67 @@ export default function WorldClassClients() {
           </div>
         </section>
 
+
+        {selectedClient && (
+          <div onClick={() => setSelectedClient(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Détail Client</p>
+                <button onClick={() => setSelectedClient(null)} style={{ border: 'none', background: 'transparent', color: T.textSec, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Nom</p>
+                  <p style={{ color: T.textPri, fontSize: 14, fontWeight: 600 }}>{selectedClient.name}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>ID Client</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.clientId || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Email</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.email || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Téléphone</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.telephone || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Ville</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.ville || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Segment</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.segment}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isCreateModalOpen && (
+          <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateClient} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20, display: 'grid', gap: 12 }}>
+              <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nouveau Client</p>
+              <input required value={newClient.nom_client} onChange={(e) => setNewClient(prev => ({ ...prev, nom_client: e.target.value }))} placeholder="nom_client" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <select value={newClient.segment} onChange={(e) => setNewClient(prev => ({ ...prev, segment: e.target.value }))} style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }}>
+                <option value="Mid-Market">Mid-Market</option>
+                <option value="Enterprise">Enterprise</option>
+                <option value="Startup">Startup</option>
+              </select>
+              <input value={newClient.email} onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))} placeholder="email" type="email" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <input value={newClient.telephone} onChange={(e) => setNewClient(prev => ({ ...prev, telephone: e.target.value }))} placeholder="telephone" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <input value={newClient.ville} onChange={(e) => setNewClient(prev => ({ ...prev, ville: e.target.value }))} placeholder="ville" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'transparent', color: T.textSec, cursor: 'pointer' }}>Annuler</button>
+                <button type="submit" disabled={creatingClient} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.25)', background: 'linear-gradient(135deg, #C4933B, #FDB913)', color: '#0F172A', cursor: creatingClient ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
+                  {creatingClient ? 'Création...' : 'Créer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <span style={{ color: '#4B5563', fontSize: 12 }}>TBOS Clients v2.0 — Données live • {format(new Date(), 'dd/MM/yyyy')}</span>
