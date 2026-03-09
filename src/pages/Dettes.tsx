@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
@@ -2293,7 +2293,12 @@ export default function Dettes() {
                   </Button>
                   <Button
                     disabled={!drawerDate}
-                    onClick={() => setDrawerConfirmed(true)}
+                    onClick={async () => {
+                      if (drawerPayable && drawerDate) {
+                        const ok = await schedulePayment(drawerPayable, drawerDate, drawerMethod);
+                        if (ok) setDrawerConfirmed(true);
+                      }
+                    }}
                     style={{
                       flex: 2, background: 'linear-gradient(135deg, #D4A843, #b8922e)',
                       color: '#000', fontWeight: 700, border: 'none', borderRadius: 8,
