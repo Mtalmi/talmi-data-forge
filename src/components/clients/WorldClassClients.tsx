@@ -563,6 +563,41 @@ export default function WorldClassClients() {
     return matchSearch;
   });
 
+  const handleOpenClientDetail = (client: ClientDisplay) => {
+    setSelectedClient(client);
+  };
+
+  const handleCreateClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClient.nom_client.trim()) {
+      toast.error('Nom client requis');
+      return;
+    }
+
+    setCreatingClient(true);
+    try {
+      const generatedId = `CL-${Date.now()}`;
+      const { error } = await supabase.from('clients').insert([{ 
+        client_id: generatedId,
+        nom_client: newClient.nom_client.trim(),
+        email: newClient.email.trim() || null,
+        telephone: newClient.telephone.trim() || null,
+        ville: newClient.ville.trim() || null,
+      }]);
+
+      if (error) throw error;
+
+      toast.success(`Client créé (${newClient.segment})`);
+      setIsCreateModalOpen(false);
+      setNewClient({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
+    } catch (error) {
+      console.error('Create client error:', error);
+      toast.error('Impossible de créer ce client');
+    } finally {
+      setCreatingClient(false);
+    }
+  };
+
   // Health metrics
   const atRisk = clients.filter(c => {
     const lastFact = factures.filter(f => f.client_id === c.client_id).sort((a, b) => (b.date_facture || '').localeCompare(a.date_facture || ''))[0];
