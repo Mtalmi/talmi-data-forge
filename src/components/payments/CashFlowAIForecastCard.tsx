@@ -70,10 +70,11 @@ export function CashFlowAIForecastCard() {
 
   if (!forecast) return (
     <div style={{ background: T.cardBg, border: `1px solid rgba(212,168,67,0.15)`, borderLeft: `4px solid ${T.gold}`, borderRadius: 12, padding: 24 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Brain size={18} color={T.gold} />
           <span style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>🧠 Prévision Trésorerie IA</span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843' }}>Généré par IA · Claude Opus</span>
           <span style={{ padding: '3px 12px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: `${T.success}18`, border: `1px solid ${T.success}40`, color: T.success }}>Bon</span>
         </div>
         <button onClick={handleRefresh} style={{ padding: '4px 10px', borderRadius: 6, background: 'transparent', border: `1px solid rgba(212,168,67,0.2)`, color: T.gold, fontSize: 11, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -86,11 +87,11 @@ export function CashFlowAIForecastCard() {
       </p>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
-        <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
+        <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)', borderTop: '2px solid #D4A843' }}>
           <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📊 Prévision 30 jours</p>
           <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>Solde projeté positif. Entrées estimées supérieures aux sorties avec marge de sécurité de ~15%.</p>
         </div>
-        <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}>
+        <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)', borderTop: '2px solid #D4A843' }}>
           <p style={{ color: T.info, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📈 Prévision 90 jours</p>
           <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>Tendance haussière attendue. Recouvrement des créances en cours devrait renforcer la position de trésorerie.</p>
         </div>
@@ -99,10 +100,10 @@ export function CashFlowAIForecastCard() {
       <div style={{ marginBottom: 18 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
           <span style={{ color: T.textSec, fontSize: 11, fontWeight: 600 }}>Taux de recouvrement</span>
-          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: T.success }}>78%</span>
+          <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: '#D4A843' }}>78%</span>
         </div>
         <div style={{ height: 6, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: '78%', borderRadius: 4, background: T.success, transition: 'width 800ms ease-out' }} />
+          <div style={{ height: '100%', width: '78%', borderRadius: 4, background: '#D4A843', transition: 'width 800ms ease-out' }} />
         </div>
       </div>
 
@@ -130,10 +131,11 @@ export function CashFlowAIForecastCard() {
   return (
     <div style={{ background: T.cardBg, border: `1px solid rgba(212,168,67,0.15)`, borderLeft: `4px solid ${sc}`, borderRadius: 12, padding: 24 }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Brain size={18} color={T.gold} />
           <span style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>🧠 Prévision Trésorerie IA</span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843' }}>Généré par IA · Claude Opus</span>
           {forecast.score_sante && (
             <span style={{
               padding: '3px 12px', borderRadius: 999, fontSize: 11, fontWeight: 700,
@@ -156,13 +158,13 @@ export function CashFlowAIForecastCard() {
       {/* Previsions 30j / 90j */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
         {forecast.prevision_30j && (
-          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
+          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)', borderTop: '2px solid #D4A843' }}>
             <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📊 Prévision 30 jours</p>
             <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>{forecast.prevision_30j}</p>
           </div>
         )}
         {forecast.prevision_90j && (
-          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}>
+          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)', borderTop: '2px solid #D4A843' }}>
             <p style={{ color: T.info, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📈 Prévision 90 jours</p>
             <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>{forecast.prevision_90j}</p>
           </div>
@@ -174,12 +176,12 @@ export function CashFlowAIForecastCard() {
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ color: T.textSec, fontSize: 11, fontWeight: 600 }}>Taux de recouvrement</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: tauxNum >= 80 ? T.success : tauxNum >= 60 ? T.warning : T.danger }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: '#D4A843' }}>
               {forecast.taux_recouvrement}
             </span>
           </div>
           <div style={{ height: 6, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${Math.min(tauxNum, 100)}%`, borderRadius: 4, background: tauxNum >= 80 ? T.success : tauxNum >= 60 ? T.warning : T.danger, transition: 'width 800ms ease-out' }} />
+            <div style={{ height: '100%', width: `${Math.min(tauxNum, 100)}%`, borderRadius: 4, background: '#D4A843', transition: 'width 800ms ease-out' }} />
           </div>
         </div>
       )}

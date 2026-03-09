@@ -23,8 +23,13 @@ const atRiskInvoices = [
 
 function getProbColor(prob: number) {
   if (prob >= 75) return T.danger;
-  if (prob >= 50) return T.warning;
+  if (prob >= 50) return '#D4A843';
   return T.success;
+}
+function getProbBg(prob: number) {
+  if (prob >= 75) return 'rgba(239,68,68,0.15)';
+  if (prob >= 50) return 'rgba(212,168,67,0.15)';
+  return 'rgba(16,185,129,0.15)';
 }
 
 const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', 'Action Recommandée', ''];
@@ -46,11 +51,12 @@ export function PaymentRiskScorerCard() {
         }}>
           <Shield size={14} color={T.gold} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
           <Sparkles size={12} color={T.gold} />
           <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
             Agent IA: Risque de Paiement
           </span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843', marginLeft: 6 }}>Généré par IA · Claude Opus</span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
       </div>
@@ -111,7 +117,7 @@ export function PaymentRiskScorerCard() {
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 5,
                         padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700,
-                        background: `${probColor}18`, color: probColor,
+                        background: getProbBg(inv.prob), color: probColor,
                         border: `1px solid ${probColor}30`,
                       }}>
                         {inv.prob}%

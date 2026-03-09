@@ -130,9 +130,9 @@ function usePaymentsLiveData() {
       else agingBuckets['>90'] += f.total_ttc || 0;
     });
     const agingData = [
-      { bracket: 'Courant',    amount: Math.round(agingBuckets.current / 1000), color: T.success },
-      { bracket: '1-30 jours', amount: Math.round(agingBuckets['1-30'] / 1000), color: T.warning },
-      { bracket: '31-60 j',    amount: Math.round(agingBuckets['31-60'] / 1000), color: T.orange },
+      { bracket: 'Courant',    amount: Math.round(agingBuckets.current / 1000), color: '#D4A843' },
+      { bracket: '1-30 jours', amount: Math.round(agingBuckets['1-30'] / 1000), color: '#C49A35' },
+      { bracket: '31-60 j',    amount: Math.round(agingBuckets['31-60'] / 1000), color: '#A07820' },
       { bracket: '61-90 j',    amount: Math.round(agingBuckets['61-90'] / 1000), color: T.danger },
       { bracket: '>90 jours',  amount: Math.round(agingBuckets['>90'] / 1000),   color: T.dangerDark },
     ];
@@ -162,7 +162,7 @@ function usePaymentsLiveData() {
       methodGroups[m].count += 1;
     });
     const totalAll = Object.values(methodGroups).reduce((s, g) => s + g.amount, 0) || 1;
-    const methodColors: Record<string, string> = { Virement: T.info, Chèque: T.purple, Espèces: T.success, Traite: T.warning };
+    const methodColors: Record<string, string> = { Virement: '#D4A843', Chèque: '#C49A35', Espèces: '#A07820', Traite: 'rgba(212,168,67,0.5)' };
     const methodIcons: Record<string, any> = { Virement: ArrowRightLeft, Chèque: FileText, Espèces: Banknote, Traite: Clock };
     const methods = Object.entries(methodGroups).slice(0, 4).map(([name, g]) => ({
       name,
@@ -185,9 +185,9 @@ function usePaymentsLiveData() {
       { month: 'Mar', encaisse: 156, facture: 200 },
     ];
     const MOCK_AGING = [
-      { bracket: 'Courant',    amount: 89, color: T.success },
-      { bracket: '1-30 jours', amount: 15, color: T.warning },
-      { bracket: '31-60 j',    amount: 8, color: T.orange },
+      { bracket: 'Courant',    amount: 89, color: '#D4A843' },
+      { bracket: '1-30 jours', amount: 15, color: '#C49A35' },
+      { bracket: '31-60 j',    amount: 8, color: '#A07820' },
       { bracket: '61-90 j',    amount: 0, color: T.danger },
       { bracket: '>90 jours',  amount: 0, color: T.dangerDark },
     ];
@@ -199,10 +199,10 @@ function usePaymentsLiveData() {
       { date: '15 Fév', client: 'Saudi Readymix Co.', amount: 23200, method: 'Traite', ref: 'FAC-2602-005', status: 'En retard' },
     ];
     const MOCK_METHODS = [
-      { name: 'Virement', amount: 420, count: 28, pct: 62, color: T.info, icon: ArrowRightLeft },
-      { name: 'Chèque', amount: 156, count: 14, pct: 23, color: T.purple, icon: FileText },
-      { name: 'Espèces', amount: 68, count: 8, pct: 10, color: T.success, icon: Banknote },
-      { name: 'Traite', amount: 34, count: 4, pct: 5, color: T.warning, icon: Clock },
+      { name: 'Virement', amount: 420, count: 28, pct: 62, color: '#D4A843', icon: ArrowRightLeft },
+      { name: 'Chèque', amount: 156, count: 14, pct: 23, color: '#C49A35', icon: FileText },
+      { name: 'Espèces', amount: 68, count: 8, pct: 10, color: '#A07820', icon: Banknote },
+      { name: 'Traite', amount: 34, count: 4, pct: 5, color: 'rgba(212,168,67,0.5)', icon: Clock },
     ];
 
     setData({
@@ -311,7 +311,7 @@ function Badge({ label, color, bg, pulse = false }: { label: string; color: stri
 
 function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string; right?: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
       <Icon size={16} color={T.gold} />
       <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '2px' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
@@ -416,11 +416,11 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const visible = useFadeIn(delay);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+      <Card style={{ borderTop: '2px solid #D4A843', background: 'linear-gradient(145deg, rgba(255,215,0,0.04) 0%, #111B2E 40%, #162036 100%)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1, WebkitFontSmoothing: 'antialiased' }}>
               {animated.toLocaleString('fr-MA')}
               {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
             </p>
@@ -430,8 +430,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               </p>
             )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,215,0,0.15)', border: '1px solid rgba(255,215,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#D4A843" />
           </div>
         </div>
       </Card>
@@ -718,8 +718,8 @@ export default function WorldClassPayments() {
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Paiements v2.0 — {new Date().toLocaleDateString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Données en temps réel</span>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.6)', animation: 'tbos-pulse 2.5s infinite' }} />
+            <span style={{ color: '#10B981', fontSize: 11, fontWeight: 600 }}>Données en temps réel</span>
           </div>
         </footer>
       </div>
