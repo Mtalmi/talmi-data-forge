@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
+import { PageHeader } from '@/components/layout/PageHeader';
 import { usePayables, Payable } from '@/hooks/usePayables';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
