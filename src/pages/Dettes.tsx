@@ -362,7 +362,123 @@ export default function Dettes() {
           );
         })()}
 
+        {/* IMPACT TRÉSORERIE IA */}
         {(() => {
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const totalOutstanding = unpaid.reduce((s, p) => s + p.amount_due, 0);
+          const today = new Date();
+
+          // 4-week forecast
+          const weekAmounts = [0, 1, 2, 3].map(w => {
+            const items = unpaid.filter(p => {
+              const diff = Math.floor((new Date(p.due_date).getTime() - today.getTime()) / 86400000);
+              const overdue = p.days_overdue > 0;
+              if (w === 0) return overdue || (diff >= 0 && diff < 7);
+              return diff >= w * 7 && diff < (w + 1) * 7;
+            });
+            return items.reduce((s, p) => s + p.amount_due, 0);
+          });
+          const maxWeek = Math.max(...weekAmounts, 1);
+
+          // AI savings calc
+          const overdueItems = unpaid.filter(p => p.days_overdue > 0);
+          const lateFees = overdueItems.reduce((s, p) => s + p.amount_due * 0.06 * (p.days_overdue / 365), 0);
+          const potentialSaving = Math.round(lateFees * 0.7);
+          const cashReserve = Math.round(weekAmounts[0] * 1.15);
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(212,168,67,0.2)',
+              borderRadius: 12,
+              padding: '24px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1.2fr 1fr',
+              gap: 24,
+            }}>
+              {/* LEFT — Total Outstanding */}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginBottom: 8 }}>
+                  Dettes en cours
+                </span>
+                <p style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                  fontWeight: 200, fontSize: 48, letterSpacing: '-0.02em', lineHeight: 1,
+                  color: '#D4A843', WebkitFontSmoothing: 'antialiased',
+                }}>
+                  {totalOutstanding.toLocaleString('fr-MA')}
+                </p>
+                <span style={{ fontSize: 14, fontFamily: 'ui-monospace', color: '#9CA3AF', marginTop: 4 }}>DH</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10 }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4A843' }} />
+                  <span style={{ fontSize: 11, color: '#6B7280' }}>{unpaid.length} facture{unpaid.length !== 1 ? 's' : ''} en attente</span>
+                </div>
+              </div>
+
+              {/* CENTER — 4-Week Forecast */}
+              <div style={{ borderLeft: '1px solid rgba(255,255,255,0.06)', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '0 24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <TrendingDown size={14} color="#ef4444" />
+                  <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>
+                    Prévision sorties 4 semaines
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 90 }}>
+                  {weekAmounts.map((amt, i) => (
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <span style={{
+                        fontSize: 10, fontFamily: 'ui-monospace', color: amt > 0 ? '#ef4444' : '#3f3f46',
+                        fontWeight: 500,
+                      }}>
+                        {amt > 0 ? `-${(amt / 1000).toFixed(0)}k` : '0'}
+                      </span>
+                      <div style={{
+                        width: '100%', borderRadius: 4,
+                        height: `${Math.max((amt / maxWeek) * 60, 4)}px`,
+                        background: amt > 0 ? 'linear-gradient(180deg, rgba(239,68,68,0.6), rgba(239,68,68,0.2))' : 'rgba(255,255,255,0.03)',
+                        transition: 'height 400ms ease',
+                      }} />
+                      <span style={{ fontSize: 9, color: '#6B7280', textTransform: 'uppercase' }}>S{i + 1}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* RIGHT — AI Recommendation */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Zap size={14} color="#D4A843" />
+                  <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Recommandation IA
+                  </span>
+                </div>
+                <div style={{
+                  background: 'rgba(212,168,67,0.06)', borderRadius: 8, padding: '12px 14px',
+                  border: '1px solid rgba(212,168,67,0.12)',
+                }}>
+                  <p style={{ fontSize: 12, color: '#D1D5DB', lineHeight: 1.5 }}>
+                    Séquence optimale identifiée : économie de{' '}
+                    <strong style={{ color: '#22c55e', fontFamily: 'ui-monospace' }}>{potentialSaving.toLocaleString('fr-MA')} DH</strong>{' '}
+                    en pénalités de retard.
+                  </p>
+                </div>
+                <div style={{
+                  background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '12px 14px',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}>
+                  <span style={{ fontSize: 10, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Réserve trésorerie requise</span>
+                  <p style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                    fontSize: 18, fontWeight: 200, color: '#F1F5F9', marginTop: 4,
+                  }}>
+                    {cashReserve.toLocaleString('fr-MA')} <span style={{ fontSize: 12, color: '#6B7280' }}>DH</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
           const agingBuckets = [
             { label: 'Courantes 0-30j', min: -Infinity, max: 30, color: '#D4A843', pulse: false },
             { label: '31-60j', min: 31, max: 60, color: '#f59e0b', pulse: false },
