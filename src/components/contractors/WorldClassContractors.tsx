@@ -1987,6 +1987,35 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
   const vis = useFadeIn(delay);
   const isHaute = u.priority === 'Haute';
   const barColor = isHaute ? T.danger : T.info;
+
+  // Live AI match score from contractor_match_scores
+  const [liveScore, setLiveScore] = useState<{ score: number; recommandation: string | null } | null>(null);
+  const [isLive, setIsLive] = useState(false);
+  useEffect(() => {
+    const fetchScore = async () => {
+      try {
+        const { data } = await supabase
+          .from('contractor_match_scores' as any)
+          .select('score, recommandation')
+          .eq('besoin_id', u.besoin)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setLiveScore({ score: (data as any).score, recommandation: (data as any).recommandation });
+          setIsLive(true);
+        }
+      } catch { /* fallback to static */ }
+    };
+    fetchScore();
+  }, [u.besoin]);
+
+  // Fallback static values
+  const fallbackContractor = u.besoin === 'Pompage gros volume' ? 'Atlas Pompage SARL' : 'Électricité MB';
+  const fallbackScore = u.besoin === 'Pompage gros volume' ? 94 : 91;
+  const displayContractor = liveScore?.recommandation || fallbackContractor;
+  const displayScore = liveScore?.score ?? fallbackScore;
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -2036,9 +2065,19 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14, paddingBottom: 12, borderBottom: `1px solid ${T.cardBorder}` }}>
          <Zap size={14} color="#D4A843" />
          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>
-           IA recommande · {u.besoin === 'Pompage gros volume' ? 'Atlas Pompage SARL' : 'Électricité MB'} — score{' '}
-           <span style={{ color: '#D4A843' }}>{u.besoin === 'Pompage gros volume' ? '94' : '91'}</span>/100
+           IA recommande · {displayContractor} — score{' '}
+           <span style={{ color: '#D4A843' }}>{displayScore}</span>/100
          </span>
+         <span style={{
+           background: 'rgba(15,22,41,0.8)', color: '#D4A843', border: '1px solid #D4A843',
+           borderRadius: 100, padding: '2px 8px', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
+           marginLeft: 'auto', whiteSpace: 'nowrap',
+         }}>IA · Claude Opus</span>
+         {isLive ? (
+           <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E', flexShrink: 0 }} title="Live" />
+         ) : (
+           <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>Demo</span>
+         )}
        </div>
       <div style={{ display: 'flex', gap: 10 }}>
         <button
