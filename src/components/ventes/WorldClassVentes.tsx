@@ -210,7 +210,7 @@ function PipelineSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Funnel */}
-        <GCard delay={100}>
+        <GCard delay={100} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 16, letterSpacing: '0.05em' }}>{vt.salesFunnelLabel}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {funnelData.map((f, i) => (
@@ -247,7 +247,7 @@ function PipelineSection() {
         </GCard>
 
         {/* Donut */}
-        <GCard delay={200}>
+        <GCard delay={200} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 8, letterSpacing: '0.05em' }}>{vt.pipelineByStage}</p>
           <div style={{ position: 'relative', height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -627,7 +627,7 @@ function ForecastSection() {
       <SectionHeader title="Prévisions de Ventes" />
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Area Chart */}
-        <GCard delay={0}>
+        <GCard delay={0} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>Prévision de Revenus</p>
           <div style={{ height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
