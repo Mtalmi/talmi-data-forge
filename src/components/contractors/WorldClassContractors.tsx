@@ -817,7 +817,7 @@ export default function WorldClassContractors() {
             {/* Respect Délais */}
             <PerformanceCard
               icon={Clock}
-              iconColor={T.success}
+              iconColor={'#D4A843'}
               value={89}
               suffix="%"
               label="Respect des Délais"
