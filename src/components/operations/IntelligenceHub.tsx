@@ -143,12 +143,14 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
       { data: stocks },
       { data: cashFlow },
       { data: deals },
+      { data: allScoredDevis },
     ] = await Promise.all([
       supabase.from('ai_briefings').select('*').order('generated_at', { ascending: false }).limit(10),
       supabase.from('client_intelligence').select('id, score_sante, nom_client'),
       supabase.from('stock_autonomy_cache').select('*').lte('days_remaining', 5),
       supabase.from('cash_flow_forecasts').select('*').order('generated_at', { ascending: false }).limit(1),
       supabase.from('devis').select('devis_id, score_ia, niveau_score, ai_recommandation, scored_at, client_id').not('score_ia', 'is', null).order('scored_at', { ascending: false }).limit(5),
+      supabase.from('devis').select('score_ia').not('score_ia', 'is', null),
     ]);
 
     // Briefings
