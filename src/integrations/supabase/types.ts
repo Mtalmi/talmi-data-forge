@@ -5373,6 +5373,30 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_risk_alerts: {
+        Row: {
+          calculated_at: string
+          id: string
+          mission_id: string
+          risk_level: string
+          risk_reason: string | null
+        }
+        Insert: {
+          calculated_at?: string
+          id?: string
+          mission_id: string
+          risk_level?: string
+          risk_reason?: string | null
+        }
+        Update: {
+          calculated_at?: string
+          id?: string
+          mission_id?: string
+          risk_level?: string
+          risk_reason?: string | null
+        }
+        Relationships: []
+      }
       monthly_expense_caps: {
         Row: {
           cap_exceeded: boolean | null

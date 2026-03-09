@@ -394,7 +394,32 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
 function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
+  const [riskTooltip, setRiskTooltip] = useState(false);
   const vis = useFadeIn(delay);
+
+  // Live risk data from mission_risk_alerts
+  const [risk, setRisk] = useState<{ risk_level: string; risk_reason: string | null } | null>(null);
+  useEffect(() => {
+    const fetchRisk = async () => {
+      try {
+        const { data } = await supabase
+          .from('mission_risk_alerts' as any)
+          .select('risk_level, risk_reason')
+          .eq('mission_id', m.id)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setRisk({ risk_level: (data as any).risk_level, risk_reason: (data as any).risk_reason });
+        }
+      } catch { /* no risk data */ }
+    };
+    fetchRisk();
+  }, [m.id]);
+
+  const showRiskDot = risk && (risk.risk_level === 'high' || risk.risk_level === 'medium');
+  const riskColor = risk?.risk_level === 'high' ? '#EF4444' : '#F59E0B';
+
   useEffect(() => {
     const t = setTimeout(() => setProgW(m.progress), delay + 400);
     return () => clearTimeout(t);
@@ -419,9 +444,33 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
     >
       {/* Blue tint overlay */}
       <div style={{ position: 'absolute', inset: 0, background: `${T.info}08`, pointerEvents: 'none' }} />
-      {/* Top row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: T.textDim }}>{m.id}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: T.textDim }}>{m.id}</span>
+          {showRiskDot && (
+            <div
+              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+              onMouseEnter={() => setRiskTooltip(true)}
+              onMouseLeave={() => setRiskTooltip(false)}
+            >
+              <span style={{
+                width: 8, height: 8, borderRadius: '50%', background: riskColor,
+                display: 'inline-block', animation: risk?.risk_level === 'high' ? 'tbos-pulse 2s infinite' : 'none',
+              }} />
+              {riskTooltip && risk?.risk_reason && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+                  marginTop: 6, background: '#1A2540', border: `1px solid ${riskColor}44`,
+                  borderRadius: 8, padding: '8px 12px', fontSize: 11, color: 'rgba(255,255,255,0.85)',
+                  whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}>
+                  <span style={{ fontWeight: 700, color: riskColor }}>{risk.risk_level === 'high' ? '⚠ Risque élevé' : '⚡ À surveiller'}</span>
+                  <br />{risk.risk_reason}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
