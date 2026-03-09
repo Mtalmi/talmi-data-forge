@@ -539,9 +539,9 @@ export default function WorldClassLaboratory() {
                   <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 15]} />
                   <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 110]} tickFormatter={(v: number) => `${v}%`} />
                   <RechartsTooltip content={<WeeklyTooltip />} />
-                  <Area yAxisId="left" type="monotone" dataKey="conformes" name="Conformes" stroke={T.success} fill="url(#gradConf)" strokeWidth={2} isAnimationActive animationDuration={1200} />
+                  <Area yAxisId="left" type="monotone" dataKey="conformes" name="Conformes" stroke={T.success} fill="none" fillOpacity={0} strokeWidth={2} isAnimationActive animationDuration={1200} />
                   <Area yAxisId="left" type="monotone" dataKey="non" name="Non-conf." stroke={T.danger} fill="url(#gradNon)" strokeWidth={2} isAnimationActive animationDuration={1200} />
-                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="none" strokeWidth={2.5} strokeDasharray="4 3" dot={{ fill: '#D4A843', r: 4, strokeWidth: 2, stroke: '#D4A843' }} isAnimationActive animationDuration={1200} />
+                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#FFD700" fill="none" strokeWidth={3} strokeDasharray="4 3" dot={{ fill: '#FFD700', r: 4, strokeWidth: 2, stroke: '#FFD700' }} isAnimationActive animationDuration={1200} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -550,7 +550,7 @@ export default function WorldClassLaboratory() {
 
         {/* ══════ SECTION 3 — TEST RESULTS TABLE ══════ */}
         <section>
-          <div style={chartStyle}>
+          <div style={{ ...chartStyle, borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
             <SectionHeader
               icon={FlaskConical}
               label="Résultats du Jour"
@@ -620,7 +620,7 @@ export default function WorldClassLaboratory() {
 
         {/* ══════ SECTION 4 — NON-CONFORMITY DETAIL ══════ */}
         <section>
-          <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)' }}>
+          <Card style={{ borderLeft: `4px solid ${T.danger}`, background: 'linear-gradient(145deg, #1C0F0F 0%, #201520 100%)', borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <AlertTriangle size={18} color={T.danger} />
