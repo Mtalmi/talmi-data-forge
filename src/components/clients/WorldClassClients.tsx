@@ -425,7 +425,7 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
   const visible = useFadeIn(delay);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+      <Card goldBorder>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
           <div style={{ width: 44, height: 44, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={20} color={color} />
