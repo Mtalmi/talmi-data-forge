@@ -103,6 +103,7 @@ export default function Dettes() {
   const [paymentReference, setPaymentReference] = useState('');
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [processingAction, setProcessingAction] = useState(false);
+  const [expandedNego, setExpandedNego] = useState<Record<string, boolean>>({});
 
   const canManagePayables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
@@ -1075,6 +1076,136 @@ export default function Dettes() {
                       })}
                     </div>
                   )}
+                </div>
+              );
+            })()}
+
+            {/* AGENT IA: NÉGOCIATION FOURNISSEURS */}
+            {(() => {
+              const overdueSuppliers = payablesBySupplier.filter(s => s.total_overdue > 0);
+              if (overdueSuppliers.length === 0) return null;
+
+              const getNegoData = (supplier: typeof overdueSuppliers[0]) => {
+                const maxOverdue = Math.max(...supplier.payables.map(p => p.days_overdue));
+                const riskLevel = maxOverdue > 60 ? 'Élevé' : maxOverdue > 20 ? 'Moyen' : 'Faible';
+                const riskColor = riskLevel === 'Élevé' ? '#ef4444' : riskLevel === 'Moyen' ? '#f59e0b' : '#22c55e';
+                const extensionProb = Math.max(15, Math.min(85, 90 - maxOverdue * 1.2));
+                const suggestedPartial = Math.round(supplier.total_overdue * (maxOverdue > 30 ? 0.6 : 0.4));
+                const scripts: Record<string, string> = {
+                  'Élevé': `Bonjour, nous souhaitons régulariser notre situation et proposons un échéancier immédiat de ${suggestedPartial.toLocaleString('fr-MA')} DH en premier versement.`,
+                  'Moyen': `Bonjour, nous préparons le règlement et souhaiterions convenir d'un calendrier de paiement adapté pour les ${supplier.total_overdue.toLocaleString('fr-MA')} DH en cours.`,
+                  'Faible': `Bonjour, le règlement de ${supplier.total_overdue.toLocaleString('fr-MA')} DH est en cours de traitement, nous confirmons le paiement sous 48h.`,
+                };
+                return { riskLevel, riskColor, extensionProb: Math.round(extensionProb), suggestedPartial, script: scripts[riskLevel], maxOverdue };
+              };
+
+              return (
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderLeft: '3px solid #D4A843',
+                  borderRadius: 12,
+                  padding: '20px 24px',
+                  marginTop: 4,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Handshake size={16} color="#D4A843" />
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                      Agent IA : Négociation Fournisseurs
+                    </span>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', animation: 'tbos-pulse 2s infinite', marginLeft: 4 }} />
+                    <span style={{ fontSize: 11, color: '#6B7280', marginLeft: 'auto' }}>{overdueSuppliers.length} fournisseur{overdueSuppliers.length !== 1 ? 's' : ''} en retard</span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {overdueSuppliers.map(supplier => {
+                      const nego = getNegoData(supplier);
+                      const isExpanded = expandedNego[supplier.fournisseur_name] || false;
+
+                      return (
+                        <div key={supplier.fournisseur_name}>
+                          {/* Row header */}
+                          <div
+                            onClick={() => setExpandedNego(prev => ({ ...prev, [supplier.fournisseur_name]: !prev[supplier.fournisseur_name] }))}
+                            style={{
+                              display: 'grid', gridTemplateColumns: '1fr 100px 100px 80px 30px',
+                              gap: 12, padding: '12px 14px', alignItems: 'center', cursor: 'pointer',
+                              borderRadius: 8, transition: 'background 150ms',
+                              background: isExpanded ? 'rgba(255,255,255,0.03)' : 'transparent',
+                            }}
+                            onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.background = 'rgba(255,215,0,0.04)'; }}
+                            onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            <div>
+                              <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>{supplier.fournisseur_name}</span>
+                              <span style={{ fontSize: 11, color: '#6B7280', marginLeft: 10 }}>+{nego.maxOverdue}j retard</span>
+                            </div>
+                            <span style={{ fontFamily: 'ui-monospace', fontSize: 13, color: '#ef4444', textAlign: 'right' }}>
+                              {supplier.total_overdue.toLocaleString('fr-MA')} DH
+                            </span>
+                            <div style={{ textAlign: 'center' }}>
+                              <span style={{
+                                fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 12,
+                                background: `${nego.riskColor}20`, color: nego.riskColor, border: `1px solid ${nego.riskColor}40`,
+                              }}>
+                                {nego.riskLevel}
+                              </span>
+                            </div>
+                            <span style={{ fontFamily: 'ui-monospace', fontSize: 12, color: '#D4A843', textAlign: 'center' }}>
+                              {nego.extensionProb}%
+                            </span>
+                            <span style={{ fontSize: 16, color: '#6B7280', textAlign: 'center', transition: 'transform 200ms', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)' }}>
+                              ▾
+                            </span>
+                          </div>
+
+                          {/* Expanded details */}
+                          {isExpanded && (
+                            <div style={{
+                              padding: '14px 18px', margin: '0 8px 8px',
+                              background: 'rgba(212,168,67,0.04)', borderRadius: 8,
+                              border: '1px solid rgba(212,168,67,0.1)',
+                              display: 'flex', flexDirection: 'column', gap: 12,
+                            }}>
+                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+                                <div>
+                                  <span style={{ fontSize: 10, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Probabilité extension</span>
+                                  <p style={{ fontFamily: 'ui-monospace', fontSize: 22, fontWeight: 200, color: nego.extensionProb > 50 ? '#22c55e' : '#f59e0b', marginTop: 4 }}>
+                                    {nego.extensionProb}<span style={{ fontSize: 12, color: '#6B7280' }}>%</span>
+                                  </p>
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: 10, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Paiement partiel suggéré</span>
+                                  <p style={{ fontFamily: 'ui-monospace', fontSize: 22, fontWeight: 200, color: '#D4A843', marginTop: 4 }}>
+                                    {nego.suggestedPartial.toLocaleString('fr-MA')} <span style={{ fontSize: 12, color: '#6B7280' }}>DH</span>
+                                  </p>
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: 10, color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Risque relation</span>
+                                  <p style={{ fontSize: 16, fontWeight: 600, color: nego.riskColor, marginTop: 6 }}>{nego.riskLevel}</p>
+                                </div>
+                              </div>
+                              <div>
+                                <span style={{ fontSize: 10, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                                  <Zap size={12} color="#D4A843" />
+                                  Script d'appel recommandé
+                                </span>
+                                <p style={{
+                                  fontSize: 12, color: '#D1D5DB', lineHeight: 1.6,
+                                  background: 'rgba(255,255,255,0.03)', borderRadius: 6, padding: '10px 14px',
+                                  borderLeft: '2px solid rgba(212,168,67,0.3)', fontStyle: 'italic',
+                                }}>
+                                  "{nego.script}"
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               );
             })()}
