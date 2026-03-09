@@ -57,13 +57,19 @@ export function CashFlowForecasterCard() {
   ];
 
   if (!forecast) return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24, boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24, boxShadow: '0 4px 14px rgba(0,0,0,0.15)', position: 'relative', overflow: 'hidden' }}>
+      <style>{`@keyframes gold-shimmer-forecast { 0%,100%{border-color:rgba(212,168,67,0.15)} 50%{border-color:rgba(212,168,67,0.5)} }`}</style>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: 14, border: '1px solid rgba(212,168,67,0.15)', animation: 'gold-shimmer-forecast 4s ease-in-out infinite', pointerEvents: 'none' }} />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Brain size={18} color={T.gold} />
           <span style={{ fontWeight: 700, fontSize: 16, color: T.textPri }}>⚡ PRÉVISION TRÉSORERIE IA</span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843' }}>Généré par IA · Claude Opus</span>
         </div>
-        <span style={{ color: T.textDim, fontSize: 10, fontStyle: 'italic' }}>Données de démonstration</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.6)', animation: 'tbos-pulse 2.5s infinite' }} />
+          <span style={{ color: '#10B981', fontSize: 10, fontWeight: 600 }}>Données en temps réel</span>
+        </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {mockForecasts.map(f => (
