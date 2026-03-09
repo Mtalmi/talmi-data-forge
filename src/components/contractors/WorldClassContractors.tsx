@@ -2045,8 +2045,8 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
           onClick={onAssigner}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            background: T.gold, color: T.navy, border: 'none',
-            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+             background: '#D4A843', color: '#0F1629', border: 'none',
+             borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif",
           }}>
           <UserPlus size={14} /> Assigner
