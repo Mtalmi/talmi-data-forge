@@ -771,8 +771,8 @@ export default function WorldClassContractors() {
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 4, height: 20, background: T.gold, borderRad, borderLeft: '3px solid #D4A843', paddingLeft: 10ius: 2 }} />
-                <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Tendance Mensuelle</h3>
+                <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
+                <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Tendance Mensuelle</h3>
               </div>
               <span style={{
                 background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`,
