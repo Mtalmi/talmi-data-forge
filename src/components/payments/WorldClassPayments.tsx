@@ -60,42 +60,7 @@ function usePaymentsLiveData() {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
     const todayStr = now.toISOString().split('T')[0];
 
-    // KPI 1: ENCAISSÉ CE MOIS → sum(prix_vente_m3 * volume_m3) from bons_livraison_reels this month
-    const { data: blReels } = await supabase
-      .from('bons_livraison_reels')
-      .select('prix_vente_m3, volume_m3')
-      .gte('date_livraison', startOfMonth)
-      .lte('date_livraison', endOfMonth);
-
-    const encaisseRaw = (blReels || []).reduce((s, bl) => s + ((bl.prix_vente_m3 || 0) * (bl.volume_m3 || 0)), 0);
-    const encaisseThisMonth = Math.round(encaisseRaw / 1000);
-
-    // KPI 2: EN ATTENTE → sum(total_ht) from devis where statut = 'en_attente'
-    const { data: devisAttente } = await supabase
-      .from('devis')
-      .select('total_ht')
-      .eq('statut', 'en_attente');
-
-    const enAttenteRaw = (devisAttente || []).reduce((s, d) => s + (d.total_ht || 0), 0);
-    const enAttente = Math.round(enAttenteRaw / 1000);
-
-    // KPI 3: EN RETARD → sum(total_ht) from devis where statut = 'en_retard' OR date_expiration < today
-    const { data: devisRetard } = await supabase
-      .from('devis')
-      .select('total_ht, statut, date_expiration')
-      .or(`statut.eq.en_retard,date_expiration.lt.${todayStr}`);
-
-    // Deduplicate: only count non-paid, non-cancelled
-    const enRetardRaw = (devisRetard || [])
-      .filter(d => !['payé', 'payée', 'paye', 'annulé', 'annule'].includes((d.statut || '').toLowerCase()))
-      .reduce((s, d) => s + (d.total_ht || 0), 0);
-    const enRetard = Math.round(enRetardRaw / 1000);
-
-    // KPI 4: TAUX D'ENCAISSEMENT
-    const tauxDenom = encaisseThisMonth + enAttente;
-    const tauxEncaissement = tauxDenom > 0 ? Math.round((encaisseThisMonth / tauxDenom) * 100) : 0;
-
-    // Fetch factures for other sections (trend, aging, payments, methods)
+    // Fetch factures for all sections (KPIs, trend, aging, payments, methods)
     const { data: factures } = await supabase
       .from('factures')
       .select('facture_id, client_id, total_ttc, statut, date_facture, mode_paiement, numero_facture')
