@@ -394,7 +394,32 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
 function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
+  const [riskTooltip, setRiskTooltip] = useState(false);
   const vis = useFadeIn(delay);
+
+  // Live risk data from mission_risk_alerts
+  const [risk, setRisk] = useState<{ risk_level: string; risk_reason: string | null } | null>(null);
+  useEffect(() => {
+    const fetchRisk = async () => {
+      try {
+        const { data } = await supabase
+          .from('mission_risk_alerts' as any)
+          .select('risk_level, risk_reason')
+          .eq('mission_id', m.id)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setRisk({ risk_level: (data as any).risk_level, risk_reason: (data as any).risk_reason });
+        }
+      } catch { /* no risk data */ }
+    };
+    fetchRisk();
+  }, [m.id]);
+
+  const showRiskDot = risk && (risk.risk_level === 'high' || risk.risk_level === 'medium');
+  const riskColor = risk?.risk_level === 'high' ? '#EF4444' : '#F59E0B';
+
   useEffect(() => {
     const t = setTimeout(() => setProgW(m.progress), delay + 400);
     return () => clearTimeout(t);
