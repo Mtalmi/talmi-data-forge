@@ -145,7 +145,7 @@ export function FleetGPSMap({ className, externalVehicles, hideOverlay = false }
   const getSeededInfo = (id: string) => SEEDED_VEHICLES.find(s => s.id_camion === id);
 
   return (
-    <div className={cn("relative w-full rounded-2xl overflow-hidden border border-border", className || "h-[600px]")}>
+    <div className={cn("relative w-full rounded-2xl overflow-hidden border border-border", className || "h-[600px]")} style={{ minHeight: 500 }}>
       <Map
         ref={mapRef}
         initialViewState={{ latitude: 33.82, longitude: -7.05, zoom: 7.2 }}
