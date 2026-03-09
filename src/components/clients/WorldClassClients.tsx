@@ -116,7 +116,7 @@ function Badge({ label, color, bg, pulse = false }: { label: string; color: stri
 
 function SectionHeader({ icon: Icon, label, right }: { icon: any; label: string; right?: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
       <Icon size={16} color={T.gold} />
       <span style={{ color: T.gold, fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em' }}>{label}</span>
       <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
