@@ -15,7 +15,7 @@ interface SalesPerformanceChartsProps {
 
 /* ───── Palette ───── */
 const GOLD = '#FDB913';
-const PRODUCT_COLORS = ['#D4A843', '#E8C860', '#8B6914'];
+const PRODUCT_COLORS = ['#D4A843', '#A07820', '#5A3F10'];
 // Status colors are mapped dynamically in the component using statusColorMap
 const SUCCESS = '#10B981';
 const DANGER = '#FF6B6B';
@@ -61,7 +61,7 @@ function StatChip({ value, label, color, subtext }: { value: number; label: stri
       </p>
       <p style={{ fontSize: 10, color: 'rgba(148,163,184,0.4)', fontWeight: 500, textTransform: 'uppercase' as const, letterSpacing: '0.1em', marginTop: 4 }}>{label}</p>
       {value === 0 && !subtext && (
-        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginTop: 2 }}>—</p>
+        <p style={{ fontSize: 14, color, opacity: 0.4, marginTop: 2 }}>—</p>
       )}
       {subtext && (
         <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'JetBrains Mono, monospace', marginTop: 2 }}>{subtext}</p>
@@ -136,10 +136,10 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
   }, [bcList, vt]);
 
   const STATUS_COLORS: Record<string, string> = {
-    [vt.validated]: '#F59E0B',
-    [vt.statusLivre]: '#D97706',
-    [vt.other]: '#78716C',
-    Production: '#B8860B',
+    [vt.validated]: '#D4A843',
+    [vt.statusLivre]: '#C49A35',
+    [vt.other]: 'rgba(212,168,67,0.4)',
+    Production: '#A07820',
   };
 
   return (
@@ -149,6 +149,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: '1px solid rgba(245, 158, 11, 0.15)',
         borderRadius: 12,
+        borderTop: '2px solid transparent',
+        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+        borderImageSlice: '1 1 0 1',
         padding: 24,
         overflow: 'hidden',
       }}>
@@ -214,6 +217,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: '1px solid rgba(245, 158, 11, 0.15)',
         borderRadius: 12,
+        borderTop: '2px solid transparent',
+        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+        borderImageSlice: '1 1 0 1',
         padding: 24,
         overflow: 'hidden',
       }}>
@@ -260,6 +266,9 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: '1px solid rgba(245, 158, 11, 0.15)',
         borderRadius: 12,
+        borderTop: '2px solid transparent',
+        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+        borderImageSlice: '1 1 0 1',
         padding: 24,
         overflow: 'hidden',
       }}>
@@ -279,15 +288,36 @@ export function SalesPerformanceCharts({ bcList, devisList }: SalesPerformanceCh
 
         {/* Summary chips */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
-          <StatChip value={winLossData.won} label={vt.won} color={SUCCESS} />
-          <StatChip value={winLossData.lost} label={vt.lost} color={DANGER} />
+          <StatChip 
+            value={winLossData.won} 
+            label={vt.won} 
+            color={SUCCESS} 
+            subtext={winLossData.won === 0 ? 'Aucun clôturé' : undefined}
+          />
+          <StatChip 
+            value={winLossData.lost} 
+            label={vt.lost} 
+            color={winLossData.lost === 0 ? 'rgba(239,68,68,0.4)' : DANGER} 
+            subtext={winLossData.lost === 0 ? 'Aucun perdu' : undefined}
+          />
           <StatChip 
             value={winLossData.pending} 
             label={vt.inProgress} 
-            color={WARNING} 
+            color={GOLD} 
             subtext={winLossData.pendingValueHT > 0 ? `${winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH` : undefined}
           />
         </div>
+
+        {/* Insight line */}
+        {winLossData.pending > 0 && (
+          <div style={{
+            padding: '6px 10px', borderRadius: 8, marginBottom: 12,
+            background: 'rgba(212,168,67,0.04)', border: '1px solid rgba(212,168,67,0.1)',
+            fontSize: 10, color: 'rgba(148,163,184,0.5)', fontFamily: 'JetBrains Mono, monospace',
+          }}>
+            {winLossData.pending} deals actifs · Valeur totale: {winLossData.pendingValueHT >= 1000 ? `${(winLossData.pendingValueHT / 1000).toFixed(0)}K` : winLossData.pendingValueHT} DH · Décision attendue: 14j moy.
+          </div>
+        )}
 
         {/* Pie chart */}
         {winLossPie.length > 0 ? (
