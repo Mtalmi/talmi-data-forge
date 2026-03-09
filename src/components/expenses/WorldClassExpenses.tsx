@@ -134,7 +134,7 @@ function useExpensesLiveData() {
       { name: 'Électricité', amount: 4.8, color: '#4A9EFF', pct: 13, icon: Zap },
       { name: 'Carburant', amount: 3.2, color: '#f59e0b', pct: 9, icon: Zap },
       { name: 'Transport', amount: 2.4, color: '#22c55e', pct: 7, icon: Truck },
-      { name: 'Sécurité', amount: 1.6, color: '#8B5CF6', pct: 4, icon: Shield },
+      { name: 'Sécurité', amount: 1.6, color: '#8B5CF6', pct: 4, icon: ShieldAlert },
       { name: 'Entretien', amount: 2.1, color: '#EC4899', pct: 6, icon: Wrench },
       { name: 'Fournitures', amount: 1.2, color: '#6B7280', pct: 3, icon: Box },
     ];
