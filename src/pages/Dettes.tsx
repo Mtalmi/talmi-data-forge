@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
 import { getDateLocale } from '@/i18n/dateLocale';
 import MainLayout from '@/components/layout/MainLayout';
@@ -1334,13 +1334,72 @@ export default function Dettes() {
 
           {/* By Supplier Tab */}
           <TabsContent value="by-supplier" className="space-y-4">
-            {/* CLASSEMENT FOURNISSEURS */}
+            {/* SANTÉ RELATIONS FOURNISSEURS + CLASSEMENT */}
             {(() => {
               const ranked = [...payablesBySupplier].sort((a, b) => b.total_due - a.total_due);
               const topThreshold = ranked.length > 0 ? ranked[0].total_due * 0.5 : 0;
 
+              // Compute AI health score per supplier
+              const healthScores = new Map<string, number>();
+              ranked.forEach(supplier => {
+                const maxOverdue = Math.max(0, ...supplier.payables.map(p => p.days_overdue));
+                const overdueRatio = supplier.total_due > 0 ? supplier.total_overdue / supplier.total_due : 0;
+                // Punctuality (40%): penalize overdue days
+                const punctuality = Math.max(0, 100 - maxOverdue * 1.5);
+                // Dispute frequency (30%): proxy via overdue invoice ratio
+                const overdueCount = supplier.payables.filter(p => p.status === 'overdue').length;
+                const disputeScore = supplier.count > 0 ? Math.max(0, 100 - (overdueCount / supplier.count) * 100) : 100;
+                // Contract compliance (30%): inverse of overdue amount ratio
+                const complianceScore = Math.max(0, 100 - overdueRatio * 100);
+                const score = Math.round(punctuality * 0.4 + disputeScore * 0.3 + complianceScore * 0.3);
+                healthScores.set(supplier.fournisseur_name, Math.max(0, Math.min(100, score)));
+              });
+              const avgHealth = ranked.length > 0
+                ? Math.round(Array.from(healthScores.values()).reduce((s, v) => s + v, 0) / ranked.length)
+                : 0;
+              const avgColor = avgHealth >= 80 ? '#22c55e' : avgHealth >= 60 ? '#f59e0b' : '#ef4444';
+
               return (
+                <>
+                {/* Average Health Score Card */}
                 <div style={{
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 12, padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 20,
+                  borderLeft: '4px solid #D4A843',
+                }}>
+                  <div style={{
+                    width: 64, height: 64, borderRadius: '50%',
+                    border: `3px solid ${avgColor}`, background: `${avgColor}15`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                  }}>
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 24, fontWeight: 200, color: avgColor, letterSpacing: '-0.02em',
+                      WebkitFontSmoothing: 'antialiased' as any,
+                    }}>{avgHealth}</span>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                        Santé Relations Fournisseurs
+                      </span>
+                      <span style={{ fontSize: 10, color: '#6B7280' }}>Score moyen</span>
+                    </div>
+                    <p style={{ fontSize: 12, color: '#9CA3AF', lineHeight: 1.5 }}>
+                      Basé sur la ponctualité des paiements (40%), fréquence des litiges (30%) et conformité contractuelle (30%) sur 12 mois.
+                    </p>
+                  </div>
+                  <div style={{
+                    fontFamily: 'ui-monospace', fontSize: 48, fontWeight: 200,
+                    color: '#D4A843', letterSpacing: '-0.02em', lineHeight: 1,
+                    WebkitFontSmoothing: 'antialiased' as any,
+                  }}>
+                    {avgHealth}<span style={{ fontSize: 16, color: '#6B7280', fontWeight: 400 }}>/100</span>
+                  </div>
+                </div>
+
+                <div style={{
+
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: 12,
@@ -1414,10 +1473,33 @@ export default function Dettes() {
                             }}>
                               {i + 1}
                             </span>
-                            {/* Supplier name */}
-                            <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>
-                              {supplier.fournisseur_name}
-                            </span>
+                            {/* Supplier name with health score circle */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <div style={{
+                                      width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                                      border: `2px solid ${(healthScores.get(supplier.fournisseur_name) || 0) >= 80 ? '#22c55e' : (healthScores.get(supplier.fournisseur_name) || 0) >= 60 ? '#f59e0b' : '#ef4444'}`,
+                                      background: `${(healthScores.get(supplier.fournisseur_name) || 0) >= 80 ? '#22c55e' : (healthScores.get(supplier.fournisseur_name) || 0) >= 60 ? '#f59e0b' : '#ef4444'}15`,
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                      cursor: 'help',
+                                    }}>
+                                      <span style={{
+                                        fontFamily: 'ui-monospace', fontSize: 9, fontWeight: 600,
+                                        color: (healthScores.get(supplier.fournisseur_name) || 0) >= 80 ? '#22c55e' : (healthScores.get(supplier.fournisseur_name) || 0) >= 60 ? '#f59e0b' : '#ef4444',
+                                      }}>{healthScores.get(supplier.fournisseur_name) || 0}</span>
+                                    </div>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="right">
+                                    <p className="text-xs">Score basé sur 12 mois d'historique</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>
+                                {supplier.fournisseur_name}
+                              </span>
+                            </div>
                             {/* Total owed */}
                             <span style={{
                               fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
