@@ -1,5 +1,7 @@
-import React from 'react';
-import { Shield, Sparkles, TrendingDown, Mail } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Shield, Sparkles, TrendingDown, Mail, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { formatCurrencyDH } from '@/lib/formatters';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
@@ -15,11 +17,14 @@ const riskKpis = [
   { label: 'Prédiction Encaissement Semaine', value: '142,000 MAD', color: T.success },
 ];
 
-const atRiskInvoices = [
-  { facture: '#1847', client: 'Atlas Construction', montant: '84,200 MAD', echeance: '8 Mars', prob: 82, action: 'Relance immédiate' },
-  { facture: '#1851', client: 'Sigma Bâtiment', montant: '126,500 MAD', echeance: '12 Mars', prob: 91, action: 'Livraison contre paiement' },
-  { facture: '#1839', client: 'Omega Immobilier', montant: '45,800 MAD', echeance: '5 Mars', prob: 58, action: 'Relance préventive' },
-];
+interface AtRiskInvoice {
+  facture: string;
+  client: string;
+  montant: string;
+  echeance: string;
+  prob: number;
+  action: string;
+}
 
 function getProbColor(prob: number) {
   if (prob >= 75) return T.danger;
