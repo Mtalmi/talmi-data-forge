@@ -642,7 +642,7 @@ export default function WorldClassPayments() {
                   <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} tickFormatter={(v: number) => `${v}K`} />
                   <RechartsTooltip content={<DarkTooltip />} cursor={{ stroke: `${T.gold}30` }} />
                   <Area dataKey="facture" name="Facturé" type="monotone" stroke="#94A3B8" strokeWidth={2} strokeDasharray="6 4" fill="url(#pay-facGrad)" isAnimationActive animationDuration={1200} />
-                  <Area dataKey="encaisse" name="Encaissé" type="monotone" stroke={T.gold} strokeWidth={2.5} fill="url(#pay-encGrad)" isAnimationActive animationDuration={1200} dot={{ fill: T.gold, r: 4, strokeWidth: 0 }} />
+                  <Area dataKey="encaisse" name="Encaissé" type="monotone" stroke="#D4A843" strokeWidth={3} fill="url(#pay-encGrad)" isAnimationActive animationDuration={1200} dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
