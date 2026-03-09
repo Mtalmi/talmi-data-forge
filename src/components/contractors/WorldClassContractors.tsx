@@ -1995,6 +1995,7 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
         ...cardStyle(hov),
         opacity: vis ? 1 : 0,
         borderLeft: `4px solid ${barColor}`,
+        borderTop: '2px solid #D4A843',
         transition: 'all 0.25s ease',
       }}
     >
