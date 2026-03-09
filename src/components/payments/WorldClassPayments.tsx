@@ -38,6 +38,7 @@ const T = {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function usePaymentsLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     encaisseThisMonth: 0,
     enAttente: 0,
@@ -53,11 +54,48 @@ function usePaymentsLiveData() {
   });
 
   const fetch = useCallback(async () => {
+    setLoading(true);
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+    const todayStr = now.toISOString().split('T')[0];
 
-    // Fetch factures
+    // KPI 1: ENCAISSÉ CE MOIS → sum(prix_vente_m3 * volume_m3) from bons_livraison_reels this month
+    const { data: blReels } = await supabase
+      .from('bons_livraison_reels')
+      .select('prix_vente_m3, volume_m3')
+      .gte('date_livraison', startOfMonth)
+      .lte('date_livraison', endOfMonth);
+
+    const encaisseRaw = (blReels || []).reduce((s, bl) => s + ((bl.prix_vente_m3 || 0) * (bl.volume_m3 || 0)), 0);
+    const encaisseThisMonth = Math.round(encaisseRaw / 1000);
+
+    // KPI 2: EN ATTENTE → sum(total_ht) from devis where statut = 'en_attente'
+    const { data: devisAttente } = await supabase
+      .from('devis')
+      .select('total_ht')
+      .eq('statut', 'en_attente');
+
+    const enAttenteRaw = (devisAttente || []).reduce((s, d) => s + (d.total_ht || 0), 0);
+    const enAttente = Math.round(enAttenteRaw / 1000);
+
+    // KPI 3: EN RETARD → sum(total_ht) from devis where statut = 'en_retard' OR date_expiration < today
+    const { data: devisRetard } = await supabase
+      .from('devis')
+      .select('total_ht, statut, date_expiration')
+      .or(`statut.eq.en_retard,date_expiration.lt.${todayStr}`);
+
+    // Deduplicate: only count non-paid, non-cancelled
+    const enRetardRaw = (devisRetard || [])
+      .filter(d => !['payé', 'payée', 'paye', 'annulé', 'annule'].includes((d.statut || '').toLowerCase()))
+      .reduce((s, d) => s + (d.total_ht || 0), 0);
+    const enRetard = Math.round(enRetardRaw / 1000);
+
+    // KPI 4: TAUX D'ENCAISSEMENT
+    const tauxDenom = encaisseThisMonth + enAttente;
+    const tauxEncaissement = tauxDenom > 0 ? Math.round((encaisseThisMonth / tauxDenom) * 100) : 0;
+
+    // Fetch factures for other sections (trend, aging, payments, methods)
     const { data: factures } = await supabase
       .from('factures')
       .select('facture_id, client_id, total_ttc, statut, date_facture, mode_paiement, numero_facture')
@@ -82,25 +120,13 @@ function usePaymentsLiveData() {
     const allFactures = factures || [];
     const thisMonthFactures = allFactures.filter((f: any) => f.date_facture >= startOfMonth && f.date_facture <= endOfMonth);
 
-    // Normalize status to handle both 'Payé'/'payee' formats
+    // Normalize status
     const isPaid = (f: any) => ['Payé', 'Payée', 'payee', 'paye', 'payé', 'payée'].includes(f.statut);
     const isPending = (f: any) => ['Envoyée', 'En attente', 'emise', 'envoyee', 'en_attente', 'brouillon'].includes(f.statut);
     const isOverdue = (f: any) => ['En retard', 'Impayée', 'impayee', 'en_retard'].includes(f.statut);
     const isCancelled = (f: any) => ['Annulée', 'annulee'].includes(f.statut);
 
-    // KPIs
-    const paye = allFactures.filter(isPaid);
-    const payeThisMonth = paye.filter((f: any) => f.date_facture >= startOfMonth);
-    const encaisseThisMonth = Math.round(payeThisMonth.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
-
-    const attente = allFactures.filter(isPending);
-    const enAttente = Math.round(attente.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
-
-    const retard = allFactures.filter(isOverdue);
-    const enRetard = Math.round(retard.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
-
     const totalFacture = Math.round(thisMonthFactures.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
-    const tauxEncaissement = totalFacture > 0 ? Math.round((encaisseThisMonth / totalFacture) * 100) : 0;
 
     // Trend data: last 6 months
     const trendData: { month: string; encaisse: number; facture: number }[] = [];
@@ -218,6 +244,7 @@ function usePaymentsLiveData() {
       objectifMensuel: needsMockFallback ? 200 : totalFacture,
       aEncaisser: needsMockFallback ? 44 : Math.max(0, totalFacture - encaisseThisMonth),
     });
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -225,11 +252,13 @@ function usePaymentsLiveData() {
     const ch = supabase.channel('wc-payments-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'factures' }, () => fetch())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'cash_deposits' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bons_livraison_reels' }, () => fetch())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'devis' }, () => fetch())
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [fetch]);
 
-  return data;
+  return { ...data, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -609,10 +638,24 @@ export default function WorldClassPayments() {
         <section>
           <SectionHeader icon={Banknote} label="Indicateurs de Paiement" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Encaissé ce mois" value={live.encaisseThisMonth} suffix="K DH" color={T.gold} icon={Banknote} trend="+12% vs mois dernier" trendPositive delay={0} />
-            <KPICard label="En Attente" value={live.enAttente} suffix="K DH" color={T.warning} icon={Clock} trend={`${Math.max(1, Math.round(live.enAttente / 22))} factures`} delay={80} />
-            <KPICard label="En Retard" value={live.enRetard} suffix="K DH" color={T.danger} icon={AlertTriangle} trend={live.enRetard > 0 ? `${Math.max(1, Math.round(live.enRetard / 12))} factures >30j` : undefined} trendPositive={false} delay={160} />
-            <KPICard label="Taux d'Encaissement" value={live.tauxEncaissement} suffix="%" color={live.tauxEncaissement >= 70 ? T.success : T.warning} icon={TrendingUp} trend="Obj: 85%" delay={240} />
+            {live.loading ? (
+              <>
+                {[0,1,2,3].map(i => (
+                  <div key={i} style={{ borderTop: '2px solid #D4A843', background: 'linear-gradient(145deg, rgba(255,215,0,0.04) 0%, #111B2E 40%, #162036 100%)', borderRadius: 12, border: '1px solid #1E2D4A', padding: '16px 20px' }}>
+                    <div style={{ width: 80, height: 10, borderRadius: 4, background: 'rgba(255,215,0,0.1)', marginBottom: 12 }} className="animate-pulse" />
+                    <div style={{ width: 120, height: 28, borderRadius: 6, background: 'rgba(255,215,0,0.08)', marginBottom: 8 }} className="animate-pulse" />
+                    <div style={{ width: 100, height: 10, borderRadius: 4, background: 'rgba(255,215,0,0.06)' }} className="animate-pulse" />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                <KPICard label="Encaissé ce mois" value={live.encaisseThisMonth} suffix="K DH" color={T.gold} icon={Banknote} trend="+12% vs mois dernier" trendPositive delay={0} />
+                <KPICard label="En Attente" value={live.enAttente} suffix="K DH" color={T.warning} icon={Clock} trend={`${Math.max(1, Math.round(live.enAttente / 22))} factures`} delay={80} />
+                <KPICard label="En Retard" value={live.enRetard} suffix="K DH" color={T.danger} icon={AlertTriangle} trend={live.enRetard > 0 ? `${Math.max(1, Math.round(live.enRetard / 12))} factures >30j` : undefined} trendPositive={false} delay={160} />
+                <KPICard label="Taux d'Encaissement" value={live.tauxEncaissement} suffix="%" color={live.tauxEncaissement >= 70 ? T.success : T.warning} icon={TrendingUp} trend="Obj: 85%" delay={240} />
+              </>
+            )}
           </div>
         </section>
 
