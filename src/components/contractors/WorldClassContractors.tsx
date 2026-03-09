@@ -178,7 +178,7 @@ function AvatarCircle({ initials, bg, textColor, size = 44 }: { initials: string
 
 function SectionHeader({ title, badge, badgeColor = T.gold }: { title: string; badge?: string; badgeColor?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
       <div style={{ width: 4, height: 24, background: T.gold, borderRadius: 2, flexShrink: 0 }} />
       <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 18, color: T.textPri, margin: 0 }}>{title}</h2>
       {badge && (
@@ -726,7 +726,7 @@ export default function WorldClassContractors() {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
-                  <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Répartition des Coûts</h3>
+                  <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Répartition des Coûts</h3>
                 </div>
               </div>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>78K DH</span>
@@ -772,7 +772,7 @@ export default function WorldClassContractors() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
-                <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Tendance Mensuelle</h3>
+                <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Tendance Mensuelle</h3>
               </div>
               <span style={{
                 background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`,
