@@ -2407,6 +2407,30 @@ export type Database = {
         }
         Relationships: []
       }
+      contractor_performance_scores: {
+        Row: {
+          calculated_at: string
+          id: string
+          score_type: string
+          trend: string | null
+          value: number
+        }
+        Insert: {
+          calculated_at?: string
+          id?: string
+          score_type: string
+          trend?: string | null
+          value?: number
+        }
+        Update: {
+          calculated_at?: string
+          id?: string
+          score_type?: string
+          trend?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           contact_email: string | null
