@@ -415,7 +415,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const animated = useAnimatedCounter(value, 1200);
   const visible = useFadeIn(delay);
   return (
-    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
+    <div style={{ borderTop: '2px solid #D4A843', opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
       <Card style={{ borderTop: '2px solid #D4A843', background: 'linear-gradient(145deg, rgba(255,215,0,0.04) 0%, #111B2E 40%, #162036 100%)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
