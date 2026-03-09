@@ -125,10 +125,13 @@ export function PaymentRiskScorerCard() {
                     </td>
                     <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec, fontWeight: 500 }}>{inv.action}</td>
                     <td style={{ padding: '10px 14px' }}>
-                      <button style={{
+                      <button
+                        onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
+                        onMouseLeave={e => (e.currentTarget.style.filter = 'none')}
+                        style={{
                         padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                        background: `${T.gold}18`, color: T.gold, border: `1px solid ${T.gold}30`,
-                        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
+                        background: '#D4A843', color: '#0F1629', border: 'none',
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, transition: 'filter 150ms',
                       }}>
                         <Mail size={10} /> Relancer
                       </button>
