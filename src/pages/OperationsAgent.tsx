@@ -403,16 +403,17 @@ export default function OperationsAgent() {
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.07 }}
-                      className="rounded-xl p-4 border border-border backdrop-blur-md"
+                      className="rounded-xl p-4 border border-border"
                       style={{
-                        ...goldTopBorder,
+                        borderTop: '2px solid #D4A843',
                         background: 'rgba(255,215,0,0.04)',
+                        backdropFilter: 'blur(8px)',
                       }}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <Icon className="w-5 h-5" style={{ color: 'rgba(212,168,67,0.85)' }} />
+                        <Icon className="w-5 h-5" style={{ color: '#D4A843' }} />
                       </div>
-                      <div className="text-3xl" style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, color: kpi.color === 'text-yellow-400' ? '#FACC15' : kpi.color === 'text-orange-400' ? '#FB923C' : kpi.color === 'text-blue-400' ? '#60A5FA' : kpi.color === 'text-red-400' ? '#F87171' : '#4ADE80' }}>
+                      <div className="text-3xl" style={{ fontFamily: 'ui-monospace', fontWeight: 200 }}>
                         {kpi.value}
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">{kpi.label}</div>
