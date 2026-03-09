@@ -134,6 +134,7 @@ function useStocksLiveData() {
   const [MOVEMENT_DATA, setMovementData] = useState<{ day: string; entrees: number; sorties: number }[]>([]);
   const [ALERTS, setAlerts] = useState<{ name: string; current: string; min: string; deficit: string; urgency: string; color: string }[]>([]);
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
+  const [STOCK_ALERTS_DB, setStockAlertsDb] = useState<{ id: string; materiau: string; alert_type: string; severity: string; message: string; created_at: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
@@ -152,7 +153,7 @@ function useStocksLiveData() {
   const fetchAll = useCallback(async () => {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
-      const [stocksRes, movementsRes, autonomyRes, consumptionRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
@@ -164,7 +165,16 @@ function useStocksLiveData() {
           .eq('type_mouvement', 'consumption')
           .gte('created_at', sevenDaysAgo)
           .order('created_at', { ascending: true }),
+        supabase.from('stock_alerts')
+          .select('id, materiau, alert_type, severity, message, created_at')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false }),
       ]);
+
+      // Stock alerts from DB
+      if (stockAlertsRes.data) {
+        setStockAlertsDb(stockAlertsRes.data);
+      }
 
       // Autonomy map
       const autoMap: Record<string, { days: number | null; calculated_at: string | null }> = {};
@@ -278,11 +288,12 @@ function useStocksLiveData() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_alerts' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -579,7 +590,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
@@ -838,76 +849,59 @@ export default function WorldClassStocks() {
               </ResponsiveContainer>
             </Card>
 
-            {/* Alerts */}
+            {/* Alerts — from stock_alerts Supabase table */}
             {(() => {
-              // Build alerts from STOCKS + AUTONOMY: days_remaining <= 5 OR pct <= threshold (low stock)
-              const computedAlerts = STOCKS
-                .map(s => {
-                  const auto = AUTONOMY[s.name.toLowerCase()];
-                  const days = auto?.days ?? null;
-                  const isLowStock = s.pct <= 30;
-                  const isCritical = days !== null && days <= 2;
-                  const isLow = days !== null && days <= 5;
-                  if (!isLowStock && !isLow) return null;
-                  return {
-                    name: s.name,
-                    days,
-                    isCritical: isCritical || s.pct <= 10,
-                    message: isCritical || s.pct <= 10
-                      ? 'Stock critique — réapprovisionner immédiatement'
-                      : 'Niveau bas — commander cette semaine',
-                    current: `${s.current.toLocaleString('fr-FR')} ${s.unit}`,
-                    max: `${s.max.toLocaleString('fr-FR')} ${s.unit}`,
-                  };
-                })
-                .filter(Boolean) as { name: string; days: number | null; isCritical: boolean; message: string; current: string; max: string }[];
-
+              const dbAlerts = STOCK_ALERTS_DB;
               return (
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
                     <AlertTriangle size={14} color={T.danger} />
                     <span style={{ color: T.danger, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Alertes Stock</span>
-                    <Badge label={`${computedAlerts.length} actives`} color={computedAlerts.length > 0 ? T.danger : T.success} bg={computedAlerts.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'} pulse={computedAlerts.length > 0} />
+                    <Badge label={`${dbAlerts.length} actives`} color={dbAlerts.length > 0 ? T.danger : T.success} bg={dbAlerts.length > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)'} pulse={dbAlerts.length > 0} />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {computedAlerts.length === 0 ? (
+                    {dbAlerts.length === 0 ? (
                       <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '24px 16px', textAlign: 'center' }}>
                         <p style={{ color: T.textDim, fontSize: 12 }}>Aucune alerte — stocks à niveau</p>
                       </div>
                     ) : (
-                      computedAlerts.map((a, i) => (
-                        <div key={a.name} style={{
-                          background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
-                          borderLeft: `3px solid ${a.isCritical ? '#ef4444' : '#f59e0b'}`,
-                          borderRadius: 10, padding: '12px 14px',
-                          opacity: 0, animation: `fadeSlideIn 400ms ${i * 80}ms forwards`,
-                        }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                            <div style={{
-                              width: 8, height: 8, borderRadius: '50%',
-                              background: a.isCritical ? '#ef4444' : '#f59e0b',
-                              boxShadow: `0 0 8px ${a.isCritical ? 'rgba(239,68,68,0.5)' : 'rgba(245,158,11,0.5)'}`,
-                              animation: a.isCritical ? 'tbos-pulse 2s infinite' : 'none',
-                            }} />
-                            <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{a.name}</span>
-                            {a.days !== null && (
+                      dbAlerts.map((a, i) => {
+                        const isCritical = a.severity === 'critical';
+                        return (
+                          <div key={a.id} style={{
+                            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                            borderLeft: `3px solid ${isCritical ? '#ef4444' : '#f59e0b'}`,
+                            borderRadius: 10, padding: '12px 14px',
+                            opacity: 0, animation: `fadeSlideIn 400ms ${i * 80}ms forwards`,
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                              <div style={{
+                                width: 8, height: 8, borderRadius: '50%',
+                                background: isCritical ? '#ef4444' : '#f59e0b',
+                                boxShadow: `0 0 8px ${isCritical ? 'rgba(239,68,68,0.5)' : 'rgba(245,158,11,0.5)'}`,
+                                animation: isCritical ? 'tbos-pulse 2s infinite' : 'none',
+                              }} />
+                              <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{a.materiau}</span>
                               <span style={{
-                                marginLeft: 'auto', fontFamily: 'JetBrains Mono, monospace',
-                                fontSize: 11, fontWeight: 600,
-                                color: a.isCritical ? '#ef4444' : '#f59e0b',
+                                marginLeft: 'auto',
+                                padding: '2px 8px', borderRadius: 999,
+                                fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
+                                background: isCritical ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
+                                color: isCritical ? '#ef4444' : '#f59e0b',
+                                border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`,
                               }}>
-                                {a.days}j
+                                {a.alert_type}
                               </span>
-                            )}
+                            </div>
+                            <p style={{ fontSize: 11, color: isCritical ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)', marginBottom: 4 }}>
+                              {a.message}
+                            </p>
+                            <p style={{ fontSize: 10, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
+                              {a.severity.toUpperCase()} • {new Date(a.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                            </p>
                           </div>
-                          <p style={{ fontSize: 11, color: a.isCritical ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)', marginBottom: 4 }}>
-                            {a.message}
-                          </p>
-                          <p style={{ fontSize: 10, color: T.textDim }}>
-                            Actuel: {a.current} / Max: {a.max}
-                          </p>
-                        </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>
