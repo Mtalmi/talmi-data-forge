@@ -66,8 +66,8 @@ function ScoreBadge({ score }: { score: string | null }) {
 
 // ─── Gold top border ──────────────────────────────────────────────────────────
 const goldTopBorder: React.CSSProperties = {
-  borderTop: '2px solid transparent',
-  borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+  borderTop: '2px solid #D4A843',
+  background: 'rgba(255,215,0,0.04)',
 };
 
 // ─── Gold shimmer keyframes (injected once) ───────────────────────────────────

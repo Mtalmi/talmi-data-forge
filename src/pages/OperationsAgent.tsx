@@ -217,8 +217,8 @@ function timeAgo(dateStr: string): string {
 
 // ─── Gold top border helper ──────────────────────────────────────────────────
 const goldTopBorder: React.CSSProperties = {
-  borderTop: '2px solid transparent',
-  borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+  borderTop: '2px solid #D4A843',
+  background: 'rgba(255,215,0,0.04)',
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
