@@ -5397,6 +5397,30 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_prolongation_advice: {
+        Row: {
+          calculated_at: string
+          confidence: number | null
+          id: string
+          mission_id: string
+          recommendation: string
+        }
+        Insert: {
+          calculated_at?: string
+          confidence?: number | null
+          id?: string
+          mission_id: string
+          recommendation: string
+        }
+        Update: {
+          calculated_at?: string
+          confidence?: number | null
+          id?: string
+          mission_id?: string
+          recommendation?: string
+        }
+        Relationships: []
+      }
       mission_risk_alerts: {
         Row: {
           calculated_at: string
