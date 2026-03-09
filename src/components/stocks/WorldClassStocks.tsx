@@ -138,6 +138,7 @@ function useStocksLiveData() {
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
+  const [REORDER_RECS, setReorderRecs] = useState<{ id: string; materiau: string; recommended_qty: number; urgency: string; fournisseur: string | null; unite: string; days_remaining: number | null; created_at: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
