@@ -1475,9 +1475,9 @@ export default function Dettes() {
                             </span>
                             {/* Supplier name with health score circle */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
+                              <UITooltipProvider>
+                                <UITooltip>
+                                  <UITooltipTrigger asChild>
                                     <div style={{
                                       width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
                                       border: `2px solid ${(healthScores.get(supplier.fournisseur_name) || 0) >= 80 ? '#22c55e' : (healthScores.get(supplier.fournisseur_name) || 0) >= 60 ? '#f59e0b' : '#ef4444'}`,
@@ -1490,12 +1490,12 @@ export default function Dettes() {
                                         color: (healthScores.get(supplier.fournisseur_name) || 0) >= 80 ? '#22c55e' : (healthScores.get(supplier.fournisseur_name) || 0) >= 60 ? '#f59e0b' : '#ef4444',
                                       }}>{healthScores.get(supplier.fournisseur_name) || 0}</span>
                                     </div>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="right">
+                                  </UITooltipTrigger>
+                                  <UITooltipContent side="right">
                                     <p className="text-xs">Score basé sur 12 mois d'historique</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
+                                  </UITooltipContent>
+                                </UITooltip>
+                              </UITooltipProvider>
                               <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>
                                 {supplier.fournisseur_name}
                               </span>
