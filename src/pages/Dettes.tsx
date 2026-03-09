@@ -427,6 +427,133 @@ export default function Dettes() {
           );
         })()}
 
+        {/* CALENDRIER PAIEMENTS IA */}
+        {(() => {
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const sorted = [...unpaid].sort((a, b) => a.days_until_due - b.days_until_due);
+          const today = new Date();
+
+          const getPriority = (p: Payable) => {
+            if (p.days_overdue > 0 || p.days_until_due <= 3) return { label: 'URGENT', bg: 'rgba(239,68,68,0.15)', border: '#ef4444', color: '#ef4444', pulse: true };
+            if (p.days_until_due <= 10) return { label: 'IMPORTANT', bg: 'rgba(245,158,11,0.15)', border: '#f59e0b', color: '#f59e0b', pulse: false };
+            return { label: 'PLANIFIÉ', bg: 'rgba(212,168,67,0.15)', border: '#D4A843', color: '#D4A843', pulse: false };
+          };
+
+          const totalOutflow = sorted.reduce((s, p) => s + p.amount_due, 0);
+
+          // Group by week
+          const weeks: { label: string; total: number }[] = [];
+          for (let w = 0; w < 4; w++) {
+            const weekItems = sorted.filter(p => {
+              const dueDate = new Date(p.due_date);
+              const daysDiff = Math.floor((dueDate.getTime() - today.getTime()) / 86400000);
+              return daysDiff >= w * 7 && daysDiff < (w + 1) * 7;
+            });
+            // Also include overdue in week 0
+            const overdueInWeek = w === 0 ? sorted.filter(p => p.days_overdue > 0) : [];
+            const combined = w === 0 ? [...new Set([...weekItems, ...overdueInWeek])] : weekItems;
+            weeks.push({ label: `Semaine ${w + 1}`, total: combined.reduce((s, p) => s + p.amount_due, 0) });
+          }
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CalendarDays size={16} color="#D4A843" />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Calendrier Paiements IA
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Sortie totale 30j</span>
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 22, fontWeight: 200, color: '#ef4444', letterSpacing: '-0.02em', lineHeight: 1,
+                    }}>-{totalOutflow.toLocaleString('fr-MA')} DH</p>
+                  </div>
+                  <Button size="sm" style={{
+                    background: 'linear-gradient(135deg, #D4A843, #b8922e)',
+                    color: '#000', fontWeight: 600, border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12,
+                  }}>
+                    <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+                    Approuver Tout
+                  </Button>
+                </div>
+              </div>
+
+              {/* Weekly impact */}
+              <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+                {weeks.map((w, i) => (
+                  <div key={i} style={{
+                    flex: 1, padding: '10px 14px', borderRadius: 8,
+                    background: w.total > 0 ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.02)',
+                    border: `1px solid ${w.total > 0 ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.06)'}`,
+                  }}>
+                    <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{w.label}</span>
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                      fontSize: 14, fontWeight: 500,
+                      color: w.total > 0 ? '#ef4444' : '#6B7280',
+                    }}>
+                      {w.total > 0 ? `-${w.total.toLocaleString('fr-MA')} DH` : '0 DH'}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Timeline items */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {sorted.slice(0, 8).map((p, i) => {
+                  const priority = getPriority(p);
+                  const recDate = p.days_overdue > 0
+                    ? format(addDays(new Date(), 1 + i), 'dd MMM', { locale: dateLocale || undefined })
+                    : format(parseISO(p.due_date), 'dd MMM', { locale: dateLocale || undefined });
+                  return (
+                    <div key={p.id} style={{
+                      display: 'flex', alignItems: 'center', padding: '10px 0',
+                      borderBottom: i < sorted.slice(0, 8).length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                      gap: 14,
+                    }}>
+                      {/* Timeline dot + line */}
+                      <div style={{ width: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: priority.color, animation: priority.pulse ? 'tbos-pulse 2s infinite' : undefined }} />
+                      </div>
+                      {/* Date */}
+                      <span style={{ fontSize: 12, fontFamily: 'ui-monospace', color: '#9CA3AF', width: 55, flexShrink: 0 }}>{recDate}</span>
+                      {/* Supplier */}
+                      <span style={{ flex: 1, fontSize: 13, color: '#F1F5F9', fontWeight: 500 }}>{p.fournisseur_name}</span>
+                      {/* Amount */}
+                      <span style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                        fontSize: 14, fontWeight: 500, color: '#D4A843', minWidth: 90, textAlign: 'right',
+                      }}>
+                        {p.amount_due.toLocaleString('fr-MA')} DH
+                      </span>
+                      {/* Priority badge */}
+                      <span className={priority.pulse ? 'animate-pulse' : ''} style={{
+                        fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 20,
+                        background: priority.bg, border: `1px solid ${priority.border}`, color: priority.color,
+                        letterSpacing: '0.05em', minWidth: 75, textAlign: 'center',
+                      }}>
+                        {priority.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <div className="flex items-center justify-between">
