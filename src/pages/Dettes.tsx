@@ -1279,7 +1279,7 @@ export default function Dettes() {
                                     <Button
                                       size="sm" title="Programmer le paiement"
                                       style={{ fontSize: 11, fontWeight: 600, background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', borderRadius: 6, padding: '4px 10px', height: 28 }}
-                                      onClick={() => { setSelectedPayable(payable); setScheduledDate(parseISO(payable.due_date)); setScheduleDialogOpen(true); }}
+                                      onClick={() => { setDrawerPayable(payable); setDrawerDate(parseISO(payable.due_date)); setDrawerMethod('virement'); setDrawerNote(''); setDrawerConfirmed(false); setDrawerOpen(true); }}
                                     >
                                       <CalendarDays className="h-3 w-3 mr-1" />
                                       Programmer
