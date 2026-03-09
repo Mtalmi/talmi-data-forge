@@ -416,11 +416,11 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   const visible = useFadeIn(delay);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out' }}>
-      <Card>
+      <Card style={{ borderTop: '2px solid #D4A843', background: 'linear-gradient(145deg, rgba(255,215,0,0.04) 0%, #111B2E 40%, #162036 100%)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 28, fontWeight: 800, color, lineHeight: 1.1 }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1, WebkitFontSmoothing: 'antialiased' }}>
               {animated.toLocaleString('fr-MA')}
               {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
             </p>
@@ -430,8 +430,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               </p>
             )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon size={18} color={color} />
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,215,0,0.15)', border: '1px solid rgba(255,215,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon size={18} color="#D4A843" />
           </div>
         </div>
       </Card>
