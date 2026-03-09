@@ -181,9 +181,20 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
       setForecast(cashFlow[0]);
     }
 
-    // Deal scores
+    // Deal scores (top 5)
     if (deals?.length) {
       setDealScores(deals);
+    }
+
+    // Live devis stats (count + avg)
+    if (allScoredDevis && allScoredDevis.length > 0) {
+      const scores = allScoredDevis.map((d: any) => d.score_ia).filter((s: any) => s != null);
+      setLiveDevisStats({
+        count: scores.length,
+        avgScore: scores.length > 0 ? Math.round((scores.reduce((a: number, b: number) => a + b, 0) / scores.length) * 10) / 10 : 0,
+      });
+    } else {
+      setLiveDevisStats({ count: 0, avgScore: 0 });
     }
 
     setLoading(false);
