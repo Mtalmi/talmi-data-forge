@@ -338,9 +338,31 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.textPri, fontWeight: 700 }}>{c.jours_travailles ?? 0} j</div>
       </div>
       {/* Coût MTD */}
-      <div style={{ minWidth: 100, textAlign: 'right' }}>
+      <div style={{ minWidth: 100, textAlign: 'right', position: 'relative' }}>
         <div style={{ color: T.textDim, fontSize: 11 }}>Coût MTD</div>
-        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.gold, fontWeight: 700 }}>{coutMtdFormatted}</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 5 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 14, color: T.gold, fontWeight: 700 }}>{coutMtdFormatted}</span>
+          {anomaly && (
+            <div
+              style={{ position: 'relative', display: 'inline-flex', cursor: 'default' }}
+              onMouseEnter={() => setAnomalyTip(true)}
+              onMouseLeave={() => setAnomalyTip(false)}
+            >
+              <span style={{ fontSize: 13, color: '#F59E0B' }}>⚠</span>
+              {anomalyTip && (
+                <div style={{
+                  position: 'absolute', bottom: '100%', right: 0, marginBottom: 6,
+                  background: '#1A2540', border: '1px solid rgba(245,158,11,0.4)',
+                  borderRadius: 8, padding: '6px 10px', fontSize: 11, color: 'rgba(255,255,255,0.85)',
+                  whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}>
+                  <span style={{ fontWeight: 700, color: '#F59E0B' }}>Écart budget : {anomaly.deviation_pct > 0 ? '+' : ''}{anomaly.deviation_pct}%</span>
+                  {anomaly.anomaly_type && <><br /><span style={{ color: T.textDim }}>{anomaly.anomaly_type}</span></>}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
       {/* Rating */}
       <div style={{ minWidth: 80, textAlign: 'center' }}>
