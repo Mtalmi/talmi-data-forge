@@ -548,6 +548,9 @@ export default function WorldClassClients() {
         status: isActive ? 'Actif' : 'Inactif',
         solde: c.solde_du || 0,
         clientId: c.client_id,
+        email: c.email || '—',
+        telephone: c.telephone || '—',
+        ville: c.ville || '—',
       };
     }).sort((a, b) => {
       const aVal = parseFloat(a.ca.replace(/[^\d]/g, '')) || 0;
