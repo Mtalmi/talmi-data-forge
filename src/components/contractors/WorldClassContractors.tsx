@@ -178,7 +178,7 @@ function AvatarCircle({ initials, bg, textColor, size = 44 }: { initials: string
 
 function SectionHeader({ title, badge, badgeColor = T.gold }: { title: string; badge?: string; badgeColor?: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10, borderLeft: '3px solid #D4A843', paddingLeft: 10, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
       <div style={{ width: 4, height: 24, background: T.gold, borderRadius: 2, flexShrink: 0 }} />
       <h2 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 18, color: T.textPri, margin: 0 }}>{title}</h2>
       {badge && (
@@ -725,7 +725,7 @@ export default function WorldClassContractors() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
+                  <div style={{ width: 4, height: 20, background: T.gold, borderRadiu, borderLeft: '3px solid #D4A843', paddingLeft: 10s: 2 }} />
                   <h3 style={{ fontWeig, borderLeft: '3px solid #D4A843', paddingLeft: 10ht: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Répartition des Coûts</h3>
                 </div>
               </div>
@@ -771,7 +771,7 @@ export default function WorldClassContractors() {
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
+                <div style={{ width: 4, height: 20, background: T.gold, borderRad, borderLeft: '3px solid #D4A843', paddingLeft: 10ius: 2 }} />
                 <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Tendance Mensuelle</h3>
               </div>
               <span style={{
