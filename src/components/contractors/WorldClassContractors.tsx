@@ -450,7 +450,7 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
         </div>
         <div style={{ height: 6, background: '#1E2D4A', borderRadius: 3, overflow: 'hidden' }}>
           <div style={{
-            height: '100%', background: `linear-gradient(90deg, ${T.info}, #60A5FA)`,
+            height: '100%', background: '#D4A843',
             borderRadius: 3, width: `${progW}%`, transition: 'width 1s cubic-bezier(0.25,0.8,0.25,1)',
           }} />
         </div>
