@@ -1908,6 +1908,7 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
         ...cardStyle(hov),
         opacity: vis ? 1 : 0,
         transition: 'all 0.25s ease',
+        borderTop: '2px solid #D4A843',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
