@@ -893,6 +893,7 @@ export default function WorldClassContractors() {
               label="Taux de Renouvellement"
               desc="Missions renouvelées"
               delay={160}
+              scoreType="taux_renouvellement"
             />
           </div>
         </div>
