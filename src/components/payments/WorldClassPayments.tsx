@@ -420,7 +420,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <p style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>{label}</p>
-            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1, WebkitFontSmoothing: 'antialiased' }}>
+            <p style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 28, fontWeight: 200, color, lineHeight: 1.1, letterSpacing: '-0.02em', WebkitFontSmoothing: 'antialiased' }}>
               {animated.toLocaleString('fr-MA')}
               {suffix && <span style={{ fontSize: 12, fontWeight: 600, color: T.textSec, marginLeft: 4 }}>{suffix}</span>}
             </p>
