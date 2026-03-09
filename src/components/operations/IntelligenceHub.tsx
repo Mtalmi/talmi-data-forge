@@ -134,6 +134,7 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
   const [stockAlerts, setStockAlerts] = useState<any[]>([]);
   const [forecast, setForecast] = useState<any>(null);
   const [dealScores, setDealScores] = useState<any[]>([]);
+  const [liveDevisStats, setLiveDevisStats] = useState<{ count: number; avgScore: number } | null>(null);
 
   const fetchAll = useCallback(async () => {
     const [
