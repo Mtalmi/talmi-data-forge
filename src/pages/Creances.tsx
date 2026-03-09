@@ -1203,7 +1203,7 @@ export default function Creances() {
                           </Pie>
                           <RechartsTooltip
                             contentStyle={{ background: 'hsl(var(--card))', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }}
-                            formatter={(val: number) => [`${val.toLocaleString('fr-MA')} DH`, '']}
+                            formatter={(val: number, name: string, entry: any) => [`${(entry?.payload?.realValue ?? val).toLocaleString('fr-MA')} DH`, '']}
                           />
                         </PieChart>
                       </ResponsiveContainer>
