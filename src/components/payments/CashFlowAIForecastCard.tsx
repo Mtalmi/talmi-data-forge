@@ -158,13 +158,13 @@ export function CashFlowAIForecastCard() {
       {/* Previsions 30j / 90j */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18 }}>
         {forecast.prevision_30j && (
-          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)' }}>
+          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.15)', borderTop: '2px solid #D4A843' }}>
             <p style={{ color: T.success, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📊 Prévision 30 jours</p>
             <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>{forecast.prevision_30j}</p>
           </div>
         )}
         {forecast.prevision_90j && (
-          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}>
+          <div style={{ padding: 14, borderRadius: 10, background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)', borderTop: '2px solid #D4A843' }}>
             <p style={{ color: T.info, fontWeight: 700, fontSize: 11, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.1em' }}>📈 Prévision 90 jours</p>
             <p style={{ color: T.textSec, fontSize: 12, lineHeight: 1.55 }}>{forecast.prevision_90j}</p>
           </div>
