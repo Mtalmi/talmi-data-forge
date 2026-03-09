@@ -277,7 +277,7 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
       style={{
         background: T.cardBg,
         border: `1px solid ${hov ? T.goldBorder : T.cardBorder}`,
-        borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden',
+        borderRadius: 14, padding: 20, position: 'relative', overflow: 'visible',
         transform: press ? 'translateY(-1px) scale(0.997)' : hov ? 'translateY(-4px) scale(1.005)' : 'none',
         boxShadow: hov ? `0 14px 36px rgba(0,0,0,0.32), 0 0 28px ${T.goldGlow}` : '0 4px 14px rgba(0,0,0,0.15)',
         transition: 'all 220ms cubic-bezier(0.4,0,0.2,1)',
