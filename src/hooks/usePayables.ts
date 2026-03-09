@@ -133,6 +133,21 @@ export function usePayables() {
         };
       });
 
+      // Demo fallback: seed 8 realistic records when DB is empty
+      if (processedPayables.length === 0) {
+        const DEMO_PAYABLES: Payable[] = [
+          { id: 'demo-1', fournisseur_id: 'f1', fournisseur_name: 'LafargeHolcim Maroc', invoice_number: 'FAC-2602-441', invoice_date: '2026-02-15', due_date: '2026-03-25', amount: 42000, amount_paid: 0, amount_due: 42000, days_until_due: differenceInDays(new Date('2026-03-25'), today), days_overdue: 0, status: getPayableStatus(differenceInDays(new Date('2026-03-25'), today), false) },
+          { id: 'demo-2', fournisseur_id: 'f2', fournisseur_name: 'Carrière Bouskoura', invoice_number: 'FAC-2602-388', invoice_date: '2026-02-10', due_date: '2026-03-16', amount: 28500, amount_paid: 0, amount_due: 28500, days_until_due: differenceInDays(new Date('2026-03-16'), today), days_overdue: Math.max(0, -differenceInDays(new Date('2026-03-16'), today)), status: getPayableStatus(differenceInDays(new Date('2026-03-16'), today), false) },
+          { id: 'demo-3', fournisseur_id: 'f3', fournisseur_name: 'ONEE', invoice_number: 'FAC-2602-312', invoice_date: '2026-02-05', due_date: '2026-03-31', amount: 12800, amount_paid: 0, amount_due: 12800, days_until_due: differenceInDays(new Date('2026-03-31'), today), days_overdue: 0, status: getPayableStatus(differenceInDays(new Date('2026-03-31'), today), false) },
+          { id: 'demo-4', fournisseur_id: 'f4', fournisseur_name: 'Sika Maroc', invoice_number: 'FAC-2602-290', invoice_date: '2026-01-25', due_date: '2026-03-10', amount: 8400, amount_paid: 0, amount_due: 8400, days_until_due: differenceInDays(new Date('2026-03-10'), today), days_overdue: Math.max(0, -differenceInDays(new Date('2026-03-10'), today)), status: getPayableStatus(differenceInDays(new Date('2026-03-10'), today), false) },
+          { id: 'demo-5', fournisseur_id: 'f5', fournisseur_name: 'Carrière Atlas Settat', invoice_number: 'FAC-2602-445', invoice_date: '2026-02-20', due_date: '2026-03-28', amount: 35200, amount_paid: 0, amount_due: 35200, days_until_due: differenceInDays(new Date('2026-03-28'), today), days_overdue: 0, status: getPayableStatus(differenceInDays(new Date('2026-03-28'), today), false) },
+          { id: 'demo-6', fournisseur_id: 'f6', fournisseur_name: 'Total Maroc', invoice_number: 'FAC-2602-201', invoice_date: '2026-01-20', due_date: '2026-03-12', amount: 6600, amount_paid: 0, amount_due: 6600, days_until_due: differenceInDays(new Date('2026-03-12'), today), days_overdue: Math.max(0, -differenceInDays(new Date('2026-03-12'), today)), status: getPayableStatus(differenceInDays(new Date('2026-03-12'), today), false) },
+          { id: 'demo-7', fournisseur_id: 'f7', fournisseur_name: 'Ciments du Maroc', invoice_number: 'FAC-2602-178', invoice_date: '2026-01-15', due_date: '2026-03-20', amount: 18900, amount_paid: 0, amount_due: 18900, days_until_due: differenceInDays(new Date('2026-03-20'), today), days_overdue: 0, status: getPayableStatus(differenceInDays(new Date('2026-03-20'), today), false) },
+          { id: 'demo-8', fournisseur_id: 'f8', fournisseur_name: 'Sopromat', invoice_number: 'FAC-2602-155', invoice_date: '2026-01-10', due_date: '2026-03-08', amount: 4200, amount_paid: 0, amount_due: 4200, days_until_due: differenceInDays(new Date('2026-03-08'), today), days_overdue: Math.max(0, -differenceInDays(new Date('2026-03-08'), today)), status: getPayableStatus(differenceInDays(new Date('2026-03-08'), today), false) },
+        ];
+        processedPayables.push(...DEMO_PAYABLES);
+      }
+
       setPayables(processedPayables);
 
       // Process schedules
