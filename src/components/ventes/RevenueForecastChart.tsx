@@ -150,9 +150,9 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         {/* Summary Stats — uniform glass cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           {/* Confirmed */}
-          <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
             <div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 36, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>
                 <AnimatedKDH value={totalConfirmed} />
               </span>
             </div>
@@ -162,18 +162,18 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
             )}
           </div>
           {/* Potential */}
-          <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
             <div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 36, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>
                 <AnimatedKDH value={totalPotential} />
               </span>
             </div>
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground whitespace-nowrap mt-1">{rf.potential}</p>
           </div>
           {/* Total Forecast */}
-          <div style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
             <div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, fontSize: '1.875rem', letterSpacing: '-0.02em', lineHeight: 1.1, color: 'white' }}>
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 36, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>
                 <AnimatedKDH value={totalForecast} />
               </span>
             </div>
