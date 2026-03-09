@@ -817,7 +817,7 @@ export default function WorldClassContractors() {
             {/* Respect Délais */}
             <PerformanceCard
               icon={Clock}
-              iconColor={T.success}
+              iconColor={'#D4A843'}
               value={89}
               suffix="%"
               label="Respect des Délais"
@@ -827,7 +827,7 @@ export default function WorldClassContractors() {
             {/* Renouvellement */}
             <PerformanceCard
               icon={RefreshCw}
-              iconColor={T.success}
+              iconColor={'#D4A843'}
               value={83}
               suffix="%"
               label="Taux de Renouvellement"
@@ -1908,6 +1908,7 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
         ...cardStyle(hov),
         opacity: vis ? 1 : 0,
         transition: 'all 0.25s ease',
+        borderTop: '2px solid #D4A843',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
