@@ -871,6 +871,7 @@ export default function WorldClassContractors() {
               desc="Tous sous-traitants"
               showStars={4}
               delay={0}
+              scoreType="note_moyenne"
             />
             {/* Respect Délais */}
             <PerformanceCard
