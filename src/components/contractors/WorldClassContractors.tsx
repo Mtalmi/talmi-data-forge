@@ -113,11 +113,11 @@ const MISSIONS = [
 
 const COST_DONUT = [
   { name: 'Atlas Pompage',    value: 28,  color: '#D4A843' },
-  { name: 'Grue Maroc',       value: 20,  color: '#4A9EFF' },
-  { name: 'Transport Express',value: 14,  color: '#22C55E' },
-  { name: 'Sécurité Plus',    value: 8,   color: '#F97316' },
-  { name: 'Nettoyage Pro',    value: 7.2, color: '#A855F7' },
-  { name: 'Électricité MB',   value: 2.5, color: '#EC4899' },
+  { name: 'Grue Maroc',       value: 20,  color: '#C49A35' },
+  { name: 'Transport Express',value: 14,  color: '#A07820' },
+  { name: 'Sécurité Plus',    value: 8,   color: 'rgba(212,168,67,0.6)' },
+  { name: 'Nettoyage Pro',    value: 7.2, color: 'rgba(212,168,67,0.4)' },
+  { name: 'Électricité MB',   value: 2.5, color: 'rgba(212,168,67,0.25)' },
 ];
 
 const TREND_DATA = [
