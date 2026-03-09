@@ -430,7 +430,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
               </p>
             )}
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,215,0,0.15)', border: '1px solid rgba(255,215,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon size={18} color="#D4A843" />
           </div>
         </div>
