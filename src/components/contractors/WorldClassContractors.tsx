@@ -565,7 +565,65 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
           }}>
           <Clock size={14} /> Prolonger
         </button>
+        {m.progress > 75 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowAdviceModal(true); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              background: 'rgba(212,168,67,0.1)', border: '1px solid #D4A843', color: '#D4A843',
+              borderRadius: 8, padding: '7px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            }}>
+            ⚡ Prolonger ?
+          </button>
+        )}
       </div>
+      {/* AI Advice Modal */}
+      {showAdviceModal && createPortal(
+        <div
+          onClick={() => setShowAdviceModal(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9998, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#111B2E', border: '1px solid #D4A84366', borderRadius: 16,
+              padding: 32, maxWidth: 480, width: '90%', boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <Zap size={18} color="#D4A843" />
+              <span style={{ fontWeight: 700, fontSize: 16, color: '#fff' }}>Conseiller IA — {m.contractor}</span>
+              <span style={{
+                background: 'rgba(15,22,41,0.8)', color: '#D4A843', border: '1px solid #D4A843',
+                borderRadius: 100, padding: '2px 8px', fontSize: 10, fontWeight: 700, marginLeft: 'auto',
+              }}>IA · Claude Opus</span>
+            </div>
+            <div style={{ fontSize: 11, color: T.textDim, marginBottom: 8 }}>Mission {m.id} · Progression {m.progress}%</div>
+            <div style={{
+              background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.2)',
+              borderRadius: 10, padding: 16, marginBottom: 20, fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6,
+            }}>
+              {advice?.recommendation || `La mission ${m.id} approche de sa fin (${m.progress}%). Compte tenu du rythme actuel et des conditions du chantier, une prolongation de 3 à 5 jours pourrait être bénéfique pour garantir la qualité des livrables. Coût estimé supplémentaire : ${m.tarif} DH/jour.`}
+            </div>
+            {advice?.confidence != null && (
+              <div style={{ fontSize: 12, color: '#D4A843', marginBottom: 16 }}>
+                Confiance : <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700 }}>{advice.confidence}%</span>
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setShowAdviceModal(false)}
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: '#9CA3AF', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              >Fermer</button>
+              <button
+                onClick={() => { setShowAdviceModal(false); onProlonger?.(); }}
+                style={{ background: '#D4A843', color: '#0F1629', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+              >Prolonger la Mission</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
