@@ -1,5 +1,7 @@
-import React from 'react';
-import { Shield, Sparkles, TrendingDown, Mail } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Shield, Sparkles, TrendingDown, Mail, Loader2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { formatCurrencyDH } from '@/lib/formatters';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
@@ -15,11 +17,14 @@ const riskKpis = [
   { label: 'Prédiction Encaissement Semaine', value: '142,000 MAD', color: T.success },
 ];
 
-const atRiskInvoices = [
-  { facture: '#1847', client: 'Atlas Construction', montant: '84,200 MAD', echeance: '8 Mars', prob: 82, action: 'Relance immédiate' },
-  { facture: '#1851', client: 'Sigma Bâtiment', montant: '126,500 MAD', echeance: '12 Mars', prob: 91, action: 'Livraison contre paiement' },
-  { facture: '#1839', client: 'Omega Immobilier', montant: '45,800 MAD', echeance: '5 Mars', prob: 58, action: 'Relance préventive' },
-];
+interface AtRiskInvoice {
+  facture: string;
+  client: string;
+  montant: string;
+  echeance: string;
+  prob: number;
+  action: string;
+}
 
 function getProbColor(prob: number) {
   if (prob >= 75) return T.danger;
@@ -35,6 +40,64 @@ function getProbBg(prob: number) {
 const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', 'Action Recommandée', ''];
 
 export function PaymentRiskScorerCard() {
+  const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchAtRisk() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('devis')
+        .select('devis_id, client_id, total_ht, date_expiration, probabilite_conversion, ai_recommandation, statut')
+        .neq('statut', 'payé')
+        .order('probabilite_conversion', { ascending: true });
+
+      if (error || !data) {
+        setAtRiskInvoices([]);
+        setLoading(false);
+        return;
+      }
+
+      // Filter rows where probabilite_conversion < 0.5 (field is string)
+      const filtered = data.filter(d => {
+        const p = parseFloat(d.probabilite_conversion ?? '1');
+        return !isNaN(p) && p < 0.5;
+      });
+
+      // Fetch client names
+      const clientIds = [...new Set(filtered.map(d => d.client_id).filter(Boolean))] as string[];
+      let clientMap: Record<string, string> = {};
+      if (clientIds.length > 0) {
+        const { data: clients } = await supabase
+          .from('clients')
+          .select('client_id, nom_client')
+          .in('client_id', clientIds);
+        if (clients) {
+          clientMap = Object.fromEntries(clients.map(c => [c.client_id, c.nom_client]));
+        }
+      }
+
+      const mapped: AtRiskInvoice[] = filtered.map(d => {
+        const prob = (1 - parseFloat(d.probabilite_conversion ?? '0')) * 100;
+        const echeance = d.date_expiration
+          ? new Date(d.date_expiration).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+          : '—';
+        return {
+          facture: `#${d.devis_id}`,
+          client: d.client_id ? (clientMap[d.client_id] || d.client_id) : '—',
+          montant: formatCurrencyDH(d.total_ht),
+          echeance,
+          prob: Math.round(prob),
+          action: d.ai_recommandation || 'Relance préventive',
+        };
+      });
+
+      setAtRiskInvoices(mapped);
+      setLoading(false);
+    }
+    fetchAtRisk();
+  }, []);
+
   return (
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
@@ -99,7 +162,15 @@ export function PaymentRiskScorerCard() {
               </tr>
             </thead>
             <tbody>
-              {atRiskInvoices.map((inv, i) => {
+              {loading ? (
+                <tr><td colSpan={7} style={{ padding: 30, textAlign: 'center' }}>
+                  <Loader2 size={20} color={T.gold} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
+                </td></tr>
+              ) : atRiskInvoices.length === 0 ? (
+                <tr><td colSpan={7} style={{ padding: 20, textAlign: 'center', color: T.textDim, fontSize: 12 }}>
+                  Aucune facture à risque détectée
+                </td></tr>
+              ) : atRiskInvoices.map((inv, i) => {
                 const probColor = getProbColor(inv.prob);
                 return (
                   <tr key={i} style={{
