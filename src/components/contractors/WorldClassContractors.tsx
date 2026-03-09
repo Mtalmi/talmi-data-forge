@@ -444,9 +444,33 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
     >
       {/* Blue tint overlay */}
       <div style={{ position: 'absolute', inset: 0, background: `${T.info}08`, pointerEvents: 'none' }} />
-      {/* Top row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: T.textDim }}>{m.id}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: T.textDim }}>{m.id}</span>
+          {showRiskDot && (
+            <div
+              style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}
+              onMouseEnter={() => setRiskTooltip(true)}
+              onMouseLeave={() => setRiskTooltip(false)}
+            >
+              <span style={{
+                width: 8, height: 8, borderRadius: '50%', background: riskColor,
+                display: 'inline-block', animation: risk?.risk_level === 'high' ? 'tbos-pulse 2s infinite' : 'none',
+              }} />
+              {riskTooltip && risk?.risk_reason && (
+                <div style={{
+                  position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)',
+                  marginTop: 6, background: '#1A2540', border: `1px solid ${riskColor}44`,
+                  borderRadius: 8, padding: '8px 12px', fontSize: 11, color: 'rgba(255,255,255,0.85)',
+                  whiteSpace: 'nowrap', zIndex: 10, boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}>
+                  <span style={{ fontWeight: 700, color: riskColor }}>{risk.risk_level === 'high' ? '⚠ Risque élevé' : '⚡ À surveiller'}</span>
+                  <br />{risk.risk_reason}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
           background: `${T.info}22`, color: T.info, border: `1px solid ${T.info}44`,
