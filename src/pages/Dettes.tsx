@@ -291,6 +291,12 @@ export default function Dettes() {
                       color: '#FFFFFF',
                       WebkitFontSmoothing: 'antialiased',
                     }}>{kpi.value}</p>
+                    {'benchmark' in kpi && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <span style={{ fontSize: 10, color: '#D4A843', letterSpacing: '0.05em' }}>Délai moyen de paiement</span>
+                        <span style={{ fontSize: 10, color: '#6B7280' }}>Industrie: {(kpi as any).benchmark}j</span>
+                      </div>
+                    )}
                   </div>
                 );
               })}
