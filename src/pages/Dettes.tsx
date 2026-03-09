@@ -60,7 +60,11 @@ import {
   Eye,
   Check,
   Handshake,
+  Download,
+  Plus,
+  ChevronDown,
 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { format, parseISO, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -224,10 +228,45 @@ export default function Dettes() {
               ))}
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={refetch} style={{ border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
-            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-            Actualiser
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Button variant="outline" size="sm" onClick={refetch} style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#9CA3AF', background: 'rgba(255,255,255,0.03)' }}>
+              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+              Actualiser
+            </Button>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" style={{ border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+                  <Zap className="h-4 w-4 mr-2" />
+                  Rapport IA
+                  <ChevronDown className="h-3 w-3 ml-1 opacity-60" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56" style={{ background: 'rgba(15,22,41,0.95)', backdropFilter: 'blur(20px)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: 10 }}>
+                {[
+                  { label: 'Rapport Dettes Mensuel', icon: '📊' },
+                  { label: 'Analyse Fournisseurs', icon: '🏢' },
+                  { label: 'Prévision Trésorerie 90j', icon: '📈' },
+                  { label: 'Rapport Risques', icon: '⚠️' },
+                ].map(item => (
+                  <DropdownMenuItem key={item.label} onClick={() => toast.info(`${item.label} en cours de génération...`)} style={{ color: '#F1F5F9', cursor: 'pointer', fontSize: 13 }} className="focus:bg-[rgba(212,168,67,0.1)] focus:text-[#D4A843]">
+                    <span style={{ marginRight: 8 }}>{item.icon}</span>
+                    {item.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="outline" size="sm" onClick={() => toast.info('Export Excel en cours...')} style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#9CA3AF', background: 'rgba(255,255,255,0.03)' }}>
+              <Download className="h-4 w-4 mr-2" />
+              Exporter Excel
+            </Button>
+
+            <Button size="sm" onClick={() => toast.info('Formulaire nouvelle facture...')} style={{ background: 'linear-gradient(135deg, #D4A843, #b8922e)', color: '#000', fontWeight: 600, border: 'none' }}>
+              <Plus className="h-4 w-4 mr-1" />
+              Nouvelle Facture
+            </Button>
+          </div>
         </div>
 
         {/* Urgent Alerts */}
