@@ -31,11 +31,21 @@ export function MarginOverviewCard() {
       background: GLASS.bg,
       border: `1px solid ${GLASS.border}`,
       borderRadius: GLASS.radius,
+      borderTop: '2px solid transparent',
+      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+      borderImageSlice: '1 1 0 1',
       padding: 20,
       position: 'relative',
       overflow: 'hidden',
       marginBottom: 24,
+      animation: 'gold-shimmer-border 4s ease-in-out infinite',
     }}>
+      <style>{`
+        @keyframes gold-shimmer-border {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,67,0); }
+          50% { box-shadow: 0 0 20px 0 rgba(212,168,67,0.08); }
+        }
+      `}</style>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
         <div style={{
@@ -49,6 +59,15 @@ export function MarginOverviewCard() {
           Agent IA: Optimiseur de Marges
         </span>
         <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          padding: '3px 10px', borderRadius: 20,
+          background: 'rgba(212,168,67,0.08)',
+          border: '1px solid rgba(212,168,67,0.25)',
+          backdropFilter: 'blur(8px)',
+        }}>
+          <span style={{ fontSize: 9, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Généré par IA · Claude Opus</span>
+        </div>
       </div>
 
       {/* KPIs row */}

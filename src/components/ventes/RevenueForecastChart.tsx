@@ -140,6 +140,9 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
           background: 'rgba(255,255,255,0.02)',
           border: '1px solid rgba(245, 158, 11, 0.15)',
           borderRadius: 12,
+          borderTop: '2px solid transparent',
+          borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+          borderImageSlice: '1 1 0 1',
           padding: 24,
           overflow: 'hidden',
         }}

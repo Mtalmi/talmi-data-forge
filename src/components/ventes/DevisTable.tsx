@@ -525,12 +525,12 @@ export function DevisTable({
                           style={{
                             display: 'inline-flex', alignItems: 'center', gap: 4,
                             padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                            background: 'rgba(100,116,139,0.12)', border: '1px solid rgba(100,116,139,0.2)',
-                            color: '#64748B', cursor: 'pointer',
+                            background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.25)',
+                            color: '#D4A843', cursor: 'pointer',
                           }}
-                          className="hover:bg-white/[0.08] transition-colors"
+                          className="animate-pulse transition-colors"
                         >
-                          Non scoré
+                          ⏳ Scoring...
                         </button>
                       );
                     }

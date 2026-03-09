@@ -80,8 +80,8 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
 }
 
 /* ─── GLASS CARD ─── */
-function GCard({ children, className = '', style = {}, delay = 0, interactive = false }: {
-  children: React.ReactNode; className?: string; style?: React.CSSProperties; delay?: number; interactive?: boolean;
+function GCard({ children, className = '', style = {}, delay = 0, interactive = false, goldTop = false }: {
+  children: React.ReactNode; className?: string; style?: React.CSSProperties; delay?: number; interactive?: boolean; goldTop?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -102,6 +102,7 @@ function GCard({ children, className = '', style = {}, delay = 0, interactive = 
         transition: 'all 300ms ease',
         transform: hovered && interactive ? 'translateY(-1px)' : 'translateY(0)',
         opacity: visible ? 1 : 0,
+        ...(goldTop ? { borderTop: '2px solid #D4A843', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1', borderImageSlice: '1 1 0 1' } : {}),
         ...style,
       }}
     >
@@ -149,13 +150,13 @@ const donutBase = [
   { nameKey: 'activePOs' as const, value: 504 },
   { nameKey: 'closedDeals' as const, value: 338 },
 ];
-const DONUT_COLORS = ['#FFD700', '#E8C860', '#B8860B', '#6B7280'];
+const DONUT_COLORS = ['rgba(212,168,67,0.9)', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.5)', 'rgba(212,168,67,0.3)'];
 
 function PipelineSection() {
   const { t } = useI18n();
   const vt = t.pages.ventes;
   const [barWidths, setBarWidths] = useState([0, 0, 0, 0]);
-  const goldOpacities = [1, 0.75, 0.55, 0.40];
+  const goldOpacities = [1, 0.75, 0.50, 0.35];
 
   const stageLabels: Record<string, string> = {
     leads: 'Leads',
@@ -192,7 +193,7 @@ function PipelineSection() {
           <GCard key={k.label} delay={i * 80} style={{ padding: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <Metric value={k.value} suffix={k.suffix} color="white" />
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 {i === 0 && <TrendingUp size={20} color="#F59E0B" />}
                 {i === 1 && <Activity size={20} color="#F59E0B" />}
                 {i === 2 && <BarChart3 size={20} color="#F59E0B" />}
@@ -209,7 +210,7 @@ function PipelineSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Funnel */}
-        <GCard delay={100}>
+        <GCard delay={100} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 16, letterSpacing: '0.05em' }}>{vt.salesFunnelLabel}</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {funnelData.map((f, i) => (
@@ -222,11 +223,11 @@ function PipelineSection() {
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 11, color: T.textSec, width: 100, flexShrink: 0 }}>{f.stage}</span>
-                  <div style={{ flex: 1, position: 'relative', height: 28, background: `rgba(253,185,19,0.06)`, borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ flex: 1, position: 'relative', height: 28, background: `rgba(212,168,67,0.06)`, borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{
                       position: 'absolute', left: 0, top: 0, bottom: 0,
                       width: barWidths[i] ? f.width : '0%',
-                      background: `rgba(253,185,19,${goldOpacities[i]})`,
+                      background: `rgba(212,168,67,${goldOpacities[i]})`,
                       borderRadius: 6,
                       transition: `width 600ms cubic-bezier(0.4,0,0.2,1) ${i * 150}ms`,
                       display: 'flex', alignItems: 'center', paddingLeft: 10, gap: 8,
@@ -246,7 +247,7 @@ function PipelineSection() {
         </GCard>
 
         {/* Donut */}
-        <GCard delay={200}>
+        <GCard delay={200} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 8, letterSpacing: '0.05em' }}>{vt.pipelineByStage}</p>
           <div style={{ position: 'relative', height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -460,7 +461,7 @@ function DealPipelineSection() {
           <GCard key={k.label} delay={i * 80}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <Metric value={k.value} suffix={k.suffix} color={k.color} />
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <k.icon size={18} color="#FFD700" />
               </div>
             </div>
@@ -626,7 +627,7 @@ function ForecastSection() {
       <SectionHeader title="Prévisions de Ventes" />
       <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-4">
         {/* Area Chart */}
-        <GCard delay={0}>
+        <GCard delay={0} goldTop>
           <p style={{ fontWeight: 600, fontSize: 12, color: 'rgba(226,232,240,0.7)', marginBottom: 12, letterSpacing: '0.05em' }}>Prévision de Revenus</p>
           <div style={{ height: 200 }}>
             <ResponsiveContainer width="100%" height="100%">
@@ -749,7 +750,7 @@ function ActivitiesSection() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div style={{
                 width: 40, height: 40, borderRadius: 10,
-                background: 'rgba(245, 158, 11, 0.15)',
+                background: 'rgba(212,168,67,0.08)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <k.icon size={18} color="#FFD700" />

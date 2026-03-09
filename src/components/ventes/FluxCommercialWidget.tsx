@@ -54,7 +54,7 @@ function PipelineStage({
         <StageCount value={count} dimmed={isEmpty} />
         <span style={{
           fontSize: 11, fontWeight: 600, letterSpacing: '0.1em',
-          color: isEmpty ? 'rgba(226,232,240,0.2)' : 'rgba(226,232,240,0.7)',
+          color: isEmpty ? 'rgba(226,232,240,0.2)' : '#D4A843',
           textTransform: 'uppercase',
           fontFamily: 'DM Sans, sans-serif',
         }}>{label}</span>
@@ -140,16 +140,17 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">{ vt.salesFeed }</span>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 5,
-            padding: '2px 8px', borderRadius: 6,
+            padding: '2px 10px', borderRadius: 20,
             background: 'rgba(16,185,129,0.08)',
-            border: '1px solid rgba(16,185,129,0.15)',
+            border: '1px solid rgba(16,185,129,0.2)',
+            backdropFilter: 'blur(8px)',
           }}>
             <div className="animate-pulse" style={{
-              width: 5, height: 5, borderRadius: '50%',
+              width: 6, height: 6, borderRadius: '50%',
               background: '#10B981',
-              boxShadow: '0 0 6px rgba(16,185,129,0.5)',
+              boxShadow: '0 0 8px rgba(16,185,129,0.6)',
             }} />
-            <span style={{ fontSize: 9, fontWeight: 600, color: '#10B981', letterSpacing: '0.1em' }}>{vt.live}</span>
+            <span style={{ fontSize: 9, fontWeight: 700, color: '#10B981', letterSpacing: '0.1em' }}>LIVE</span>
           </div>
           <div className="flex-1 border-t border-amber-500/30" />
           {pipelineValue > 0 && (
@@ -179,6 +180,9 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         padding: '24px 16px',
         background: 'rgba(255,255,255,0.02)',
         border: '1px solid rgba(255,255,255,0.08)',
+        borderTop: '2px solid transparent',
+        borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
+        borderImageSlice: '1 1 0 1',
         borderRadius: 16,
         overflow: 'hidden',
       }}>
@@ -191,7 +195,7 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
         }}>
           <div style={{
             width: `${progressPct}%`, height: '100%',
-            background: 'linear-gradient(90deg, #FDB913, #3B82F6, #00D9FF, #10B981)',
+            background: 'linear-gradient(90deg, #D4A843, #C49A35, #A07820, #10B981)',
             borderRadius: 2, opacity: 0.6,
             transition: 'width 800ms ease',
           }} />
