@@ -479,6 +479,7 @@ export default function Dettes() {
           );
         })()}
 
+        {(() => {
           const agingBuckets = [
             { label: 'Courantes 0-30j', min: -Infinity, max: 30, color: '#D4A843', pulse: false },
             { label: '31-60j', min: 31, max: 60, color: '#f59e0b', pulse: false },
