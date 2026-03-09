@@ -103,6 +103,7 @@ export default function Dettes() {
   const [paymentReference, setPaymentReference] = useState('');
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [processingAction, setProcessingAction] = useState(false);
+  const [expandedNego, setExpandedNego] = useState<Record<string, boolean>>({});
 
   const canManagePayables = isCeo || role === 'agent_administratif' || role === 'superviseur';
 
