@@ -98,6 +98,7 @@ export function PaymentRiskScorerCard() {
     fetchAtRisk();
   }, []);
 
+  return (
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
       border: '1px solid rgba(239,68,68,0.15)',
