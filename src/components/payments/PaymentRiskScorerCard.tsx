@@ -23,8 +23,13 @@ const atRiskInvoices = [
 
 function getProbColor(prob: number) {
   if (prob >= 75) return T.danger;
-  if (prob >= 50) return T.warning;
+  if (prob >= 50) return '#D4A843';
   return T.success;
+}
+function getProbBg(prob: number) {
+  if (prob >= 75) return 'rgba(239,68,68,0.15)';
+  if (prob >= 50) return 'rgba(212,168,67,0.15)';
+  return 'rgba(16,185,129,0.15)';
 }
 
 const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', 'Action Recommandée', ''];
