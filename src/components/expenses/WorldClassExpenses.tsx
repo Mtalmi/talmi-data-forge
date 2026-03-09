@@ -128,7 +128,17 @@ function useExpensesLiveData() {
       catTotals[cat] = (catTotals[cat] || 0) + (d.montant || 0);
     });
     const catEntries = Object.entries(catTotals).sort((a, b) => b[1] - a[1]);
-    const categories = catEntries.map(([name, amount]) => {
+    const SEEDED_CATEGORIES = [
+      { name: 'Sous-traitants', amount: 12, color: '#D4A843', pct: 34, icon: getCatConfig('Sous-traitants').icon },
+      { name: 'Maintenance', amount: 8.5, color: '#F0C060', pct: 24, icon: Wrench },
+      { name: 'Électricité', amount: 4.8, color: '#4A9EFF', pct: 13, icon: Zap },
+      { name: 'Carburant', amount: 3.2, color: '#f59e0b', pct: 9, icon: Zap },
+      { name: 'Transport', amount: 2.4, color: '#22c55e', pct: 7, icon: Truck },
+      { name: 'Sécurité', amount: 1.6, color: '#8B5CF6', pct: 4, icon: Shield },
+      { name: 'Entretien', amount: 2.1, color: '#EC4899', pct: 6, icon: Wrench },
+      { name: 'Fournitures', amount: 1.2, color: '#6B7280', pct: 3, icon: Box },
+    ];
+    const categories = catEntries.length > 0 ? catEntries.map(([name, amount]) => {
       const cfg = getCatConfig(name);
       return {
         name,
@@ -137,7 +147,7 @@ function useExpensesLiveData() {
         pct: totalThisMonthRaw > 0 ? Math.round((amount / totalThisMonthRaw) * 100) : 0,
         icon: cfg.icon,
       };
-    });
+    }) : SEEDED_CATEGORIES;
 
     // Budget vs Actual last 6 months
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
