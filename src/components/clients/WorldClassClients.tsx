@@ -638,6 +638,7 @@ export default function WorldClassClients() {
         actions={
           <>
             <button
+              onClick={() => setIsCreateModalOpen(true)}
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
