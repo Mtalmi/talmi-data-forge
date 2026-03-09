@@ -165,9 +165,9 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   );
 }
 
-interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string }
+interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string; email?: string; telephone?: string; ville?: string }
 
-function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: number }) {
+function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay; delay?: number; onOpenDetail: (client: ClientDisplay) => void }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -202,6 +202,11 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
     if (!expanded && !brief) fetchBrief();
   };
 
+  const handleRowClick = () => {
+    onOpenDetail(client);
+    handleExpand();
+  };
+
   const handleGenerate = async () => {
     try {
       await triggerWorkflow('client_intelligence', { client_id: client.clientId });
@@ -211,7 +216,7 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
 
   return (
     <div>
-      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleExpand}
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleRowClick}
         style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
         <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
         <div style={{ minWidth: 170, flexShrink: 0 }}>
@@ -232,12 +237,21 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
               const rc = risk.level === 'high' ? T.danger : risk.level === 'moderate' ? T.warning : T.success;
               const emoji = risk.level === 'high' ? '🔴' : risk.level === 'moderate' ? '🟠' : '🟢';
               return (
-                <span title={risk.detail} style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
-                  background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
-                  cursor: 'help',
-                }}>
+                <span
+                  title={risk.detail}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (client.name === 'Sigma Bâtiment') {
+                      toast.info('Sigma Bâtiment — IA: Réunion direction pour négocier un plan de paiement et relancer les commandes.');
+                    }
+                  }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 4,
+                    padding: '2px 8px', borderRadius: 999, fontSize: 9, fontWeight: 700,
+                    background: `${rc}15`, color: rc, border: `1px solid ${rc}30`,
+                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
+                  }}
+                >
                   {emoji} {risk.label}
                 </span>
               );
@@ -254,12 +268,21 @@ function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: numbe
               const churn = CHURN_DATA[client.name];
               if (!churn) return null;
               return (
-                <span title={churn.detail} style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 3,
-                  padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
-                  background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
-                  cursor: 'help',
-                }}>
+                <span
+                  title={churn.detail}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (client.name === 'Sigma Bâtiment') {
+                      toast.info('Sigma Bâtiment — IA: Aucune commande depuis 28 jours, 4 impayés (189,000 MAD). Recommandation: réunion de direction immédiate.');
+                    }
+                  }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 3,
+                    padding: '2px 7px', borderRadius: 999, fontSize: 9, fontWeight: 600,
+                    background: 'transparent', color: churn.color, border: `1.5px dashed ${churn.color}50`,
+                    cursor: client.name === 'Sigma Bâtiment' ? 'pointer' : 'help',
+                  }}
+                >
                   {churn.icon} {churn.label}
                 </span>
               );
@@ -447,6 +470,10 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
 export default function WorldClassClients() {
   const [activeTab, setActiveTab] = useState('tous');
   const [search, setSearch] = useState('');
+  const [selectedClient, setSelectedClient] = useState<ClientDisplay | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
+  const [creatingClient, setCreatingClient] = useState(false);
   const tabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
 
   const { clients, factures, loading } = useClientsLiveData();
@@ -521,6 +548,9 @@ export default function WorldClassClients() {
         status: isActive ? 'Actif' : 'Inactif',
         solde: c.solde_du || 0,
         clientId: c.client_id,
+        email: c.email || '—',
+        telephone: c.telephone || '—',
+        ville: c.ville || '—',
       };
     }).sort((a, b) => {
       const aVal = parseFloat(a.ca.replace(/[^\d]/g, '')) || 0;
@@ -535,6 +565,41 @@ export default function WorldClassClients() {
     if (activeTab === 'inactifs') return matchSearch && c.status === 'Inactif';
     return matchSearch;
   });
+
+  const handleOpenClientDetail = (client: ClientDisplay) => {
+    setSelectedClient(client);
+  };
+
+  const handleCreateClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newClient.nom_client.trim()) {
+      toast.error('Nom client requis');
+      return;
+    }
+
+    setCreatingClient(true);
+    try {
+      const generatedId = `CL-${Date.now()}`;
+      const { error } = await supabase.from('clients').insert([{ 
+        client_id: generatedId,
+        nom_client: newClient.nom_client.trim(),
+        email: newClient.email.trim() || null,
+        telephone: newClient.telephone.trim() || null,
+        ville: newClient.ville.trim() || null,
+      }]);
+
+      if (error) throw error;
+
+      toast.success(`Client créé (${newClient.segment})`);
+      setIsCreateModalOpen(false);
+      setNewClient({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
+    } catch (error) {
+      console.error('Create client error:', error);
+      toast.error('Impossible de créer ce client');
+    } finally {
+      setCreatingClient(false);
+    }
+  };
 
   // Health metrics
   const atRisk = clients.filter(c => {
@@ -573,6 +638,7 @@ export default function WorldClassClients() {
         actions={
           <>
             <button
+              onClick={() => setIsCreateModalOpen(true)}
               style={{
                 padding: '6px 16px',
                 borderRadius: 8,
@@ -706,7 +772,7 @@ export default function WorldClassClients() {
           <SectionHeader icon={Users} label="Liste des Clients" right={<span style={{ color: '#6B7280', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>{filteredClients.length} résultats</span>} />
           <Card goldBorder>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} />)}
+              {filteredClients.slice(0, 20).map((c, i) => <ClientRow key={c.name + i} client={c} delay={i * 40} onOpenDetail={handleOpenClientDetail} />)}
               {filteredClients.length === 0 && <div style={{ textAlign: 'center', padding: 20, color: '#6B7280', fontSize: 14, minHeight: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Aucun client trouvé</div>}
             </div>
           </Card>
@@ -721,6 +787,67 @@ export default function WorldClassClients() {
             <HealthCard label="Clients Perdus" value={lost} color="#ef4444" desc="Pas de commande depuis >90j" icon={UserX} delay={200} />
           </div>
         </section>
+
+
+        {selectedClient && (
+          <div onClick={() => setSelectedClient(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Détail Client</p>
+                <button onClick={() => setSelectedClient(null)} style={{ border: 'none', background: 'transparent', color: T.textSec, cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Nom</p>
+                  <p style={{ color: T.textPri, fontSize: 14, fontWeight: 600 }}>{selectedClient.name}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>ID Client</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.clientId || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Email</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.email || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Téléphone</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.telephone || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Ville</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.ville || '—'}</p>
+                </div>
+                <div>
+                  <p style={{ color: T.textDim, fontSize: 10, marginBottom: 4 }}>Segment</p>
+                  <p style={{ color: T.textPri, fontSize: 14 }}>{selectedClient.segment}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isCreateModalOpen && (
+          <div onClick={() => setIsCreateModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <form onClick={(e) => e.stopPropagation()} onSubmit={handleCreateClient} style={{ width: 'min(560px, 100%)', background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20, display: 'grid', gap: 12 }}>
+              <p style={{ color: T.gold, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nouveau Client</p>
+              <input required value={newClient.nom_client} onChange={(e) => setNewClient(prev => ({ ...prev, nom_client: e.target.value }))} placeholder="nom_client" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <select value={newClient.segment} onChange={(e) => setNewClient(prev => ({ ...prev, segment: e.target.value }))} style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }}>
+                <option value="Mid-Market">Mid-Market</option>
+                <option value="Enterprise">Enterprise</option>
+                <option value="Startup">Startup</option>
+              </select>
+              <input value={newClient.email} onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))} placeholder="email" type="email" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <input value={newClient.telephone} onChange={(e) => setNewClient(prev => ({ ...prev, telephone: e.target.value }))} placeholder="telephone" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <input value={newClient.ville} onChange={(e) => setNewClient(prev => ({ ...prev, ville: e.target.value }))} placeholder="ville" style={{ padding: '10px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'rgba(255,255,255,0.03)', color: T.textPri }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 4 }}>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ padding: '8px 12px', borderRadius: 8, border: `1px solid ${T.cardBorder}`, background: 'transparent', color: T.textSec, cursor: 'pointer' }}>Annuler</button>
+                <button type="submit" disabled={creatingClient} style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.25)', background: 'linear-gradient(135deg, #C4933B, #FDB913)', color: '#0F172A', cursor: creatingClient ? 'not-allowed' : 'pointer', fontWeight: 600 }}>
+                  {creatingClient ? 'Création...' : 'Créer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
 
         {/* Footer */}
         <footer style={{ borderTop: '1px solid rgba(245, 158, 11, 0.08)', paddingTop: 24, paddingBottom: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
