@@ -238,78 +238,53 @@ export default function Dettes() {
           </Card>
         )}
 
-        {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <TrendingDown className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.totalOutstanding)}</p>
-                  <p className="text-xs text-muted-foreground">{d.totalPayables}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-warning/10">
-                  <Timer className="h-5 w-5 text-warning" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.totalDueSoon)}</p>
-                  <p className="text-xs text-muted-foreground">{d.dueSoon}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-destructive/10">
-                  <AlertTriangle className="h-5 w-5 text-destructive" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{formatCurrency(stats.totalOverdue)}</p>
-                  <p className="text-xs text-muted-foreground">{d.overdue}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-success/10">
-                  <CheckCircle className="h-5 w-5 text-success" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{stats.paymentRate.toFixed(1)}%</p>
-                  <p className="text-xs text-muted-foreground">{d.paymentRate}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-accent/10">
-                  <CalendarDays className="h-5 w-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold">{stats.scheduledPayments}</p>
-                  <p className="text-xs text-muted-foreground">{d.scheduled}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* KPI Cards — Glassmorphism */}
+        {(() => {
+          const tauxColor = stats.paymentRate >= 80 ? '#22c55e' : stats.paymentRate >= 60 ? '#f59e0b' : '#ef4444';
+          const kpis = [
+            { label: 'DETTES TOTALES', value: formatCurrency(stats.totalOutstanding), color: '#D4A843', icon: TrendingDown, pulse: false },
+            { label: 'À PAYER', value: formatCurrency(stats.totalDueSoon), color: '#f59e0b', icon: Timer, pulse: false },
+            { label: 'EN RETARD', value: formatCurrency(stats.totalOverdue), color: '#ef4444', icon: AlertTriangle, pulse: true },
+            { label: 'TAUX PAIEMENT', value: `${stats.paymentRate.toFixed(1)}%`, color: tauxColor, icon: CheckCircle, pulse: false },
+            { label: 'PROGRAMMÉS', value: String(stats.scheduledPayments), color: '#4A9EFF', icon: CalendarDays, pulse: false },
+          ];
+          return (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {kpis.map((kpi, i) => {
+                const Icon = kpi.icon;
+                return (
+                  <div key={i} style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderLeft: `3px solid ${kpi.color}`,
+                    borderRadius: 12,
+                    padding: '16px 18px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 10,
+                    animation: kpi.pulse ? 'tbos-pulse 2.5s infinite' : undefined,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 8, background: `${kpi.color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon size={18} color={kpi.color} />
+                      </div>
+                      <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>{kpi.label}</span>
+                    </div>
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontWeight: 200,
+                      fontSize: kpi.value.length > 12 ? 30 : 48,
+                      letterSpacing: '-0.02em',
+                      lineHeight: 1,
+                      color: '#FFFFFF',
+                      WebkitFontSmoothing: 'antialiased',
+                    }}>{kpi.value}</p>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* Aging Chart */}
         {hasData && (
