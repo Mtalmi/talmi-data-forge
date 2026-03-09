@@ -130,9 +130,9 @@ function usePaymentsLiveData() {
       else agingBuckets['>90'] += f.total_ttc || 0;
     });
     const agingData = [
-      { bracket: 'Courant',    amount: Math.round(agingBuckets.current / 1000), color: T.success },
-      { bracket: '1-30 jours', amount: Math.round(agingBuckets['1-30'] / 1000), color: T.warning },
-      { bracket: '31-60 j',    amount: Math.round(agingBuckets['31-60'] / 1000), color: T.orange },
+      { bracket: 'Courant',    amount: Math.round(agingBuckets.current / 1000), color: '#D4A843' },
+      { bracket: '1-30 jours', amount: Math.round(agingBuckets['1-30'] / 1000), color: '#C49A35' },
+      { bracket: '31-60 j',    amount: Math.round(agingBuckets['31-60'] / 1000), color: '#A07820' },
       { bracket: '61-90 j',    amount: Math.round(agingBuckets['61-90'] / 1000), color: T.danger },
       { bracket: '>90 jours',  amount: Math.round(agingBuckets['>90'] / 1000),   color: T.dangerDark },
     ];
