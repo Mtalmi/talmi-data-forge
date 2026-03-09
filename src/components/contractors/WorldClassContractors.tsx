@@ -1961,7 +1961,7 @@ function HistoryRow({ h, delay, last }: { h: typeof HISTORY[0]; delay: number; l
       <Stars rating={h.rating} />
       <span style={{
         display: 'inline-flex', alignItems: 'center', gap: 5,
-        background: `${T.success}22`, color: T.success, border: `1px solid ${T.success}44`,
+        background: 'rgba(212,168,67,0.15)', color: '#D4A843', border: '1px solid rgba(212,168,67,0.3)',
         borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700,
       }}>
         <CheckCircle size={11} /> Terminé
