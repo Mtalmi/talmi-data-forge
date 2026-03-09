@@ -524,9 +524,9 @@ export function DevisTable({
                           onClick={() => scoreDevis(devis.devis_id, devis.id)}
                           style={{
                             display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '3px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                            background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.25)',
-                            color: '#D4A843', cursor: 'pointer',
+                            padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 500,
+                            background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)',
+                            color: '#f59e0b', cursor: 'pointer',
                           }}
                           className="animate-pulse transition-colors"
                         >
