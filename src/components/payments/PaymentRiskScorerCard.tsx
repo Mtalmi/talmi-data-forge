@@ -67,7 +67,7 @@ export function PaymentRiskScorerCard() {
           {riskKpis.map(k => (
             <div key={k.label} style={{
               background: `${T.cardBorder}40`, borderRadius: 10, padding: '10px 14px',
-              border: `1px solid ${T.cardBorder}`, textAlign: 'center',
+              border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', textAlign: 'center',
             }}>
               <p style={{ color: T.textDim, fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{k.label}</p>
               <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: k.bold ? 800 : 700, color: k.color }}>
