@@ -725,8 +725,8 @@ export default function WorldClassContractors() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 4, height: 20, background: T.gold, borderRadiu, borderLeft: '3px solid #D4A843', paddingLeft: 10s: 2 }} />
-                  <h3 style={{ fontWeig, borderLeft: '3px solid #D4A843', paddingLeft: 10ht: 700, fontSize: 16, color: T.textPri, margin: 0 }}>Répartition des Coûts</h3>
+                  <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
+                  <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Répartition des Coûts</h3>
                 </div>
               </div>
               <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>78K DH</span>
