@@ -6,12 +6,13 @@ import {
 } from 'recharts';
 import {
   Truck, Package, Clock, MapPin, CheckCircle, ClipboardCheck,
-  Bell, TrendingUp, Zap, ChevronDown,
+  Bell, TrendingUp, Zap, ChevronDown, Signal,
 } from 'lucide-react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import WorldClassDeliveryArchive from '@/components/archive/WorldClassDeliveryArchive';
 import { supabase } from '@/integrations/supabase/client';
-import { format, startOfWeek, endOfWeek } from 'date-fns';
+import { format, startOfWeek, endOfWeek, subDays, addDays } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -48,26 +49,30 @@ function useAnimatedCounter(target: number, duration = 1000) {
 function useDeliveriesLiveData() {
   const [todayBons, setTodayBons] = useState<any[]>([]);
   const [weekBons, setWeekBons] = useState<any[]>([]);
+  const [allBons, setAllBons] = useState<any[]>([]);
   const [fleet, setFleet] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const today = format(new Date(), 'yyyy-MM-dd');
   const weekStart = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const weekEnd = format(endOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
+  const last7Start = format(subDays(new Date(), 6), 'yyyy-MM-dd');
 
   const fetchAll = useCallback(async () => {
     try {
-      const [bonsRes, weekRes, fleetRes] = await Promise.all([
+      const [bonsRes, weekRes, allRes, fleetRes] = await Promise.all([
         supabase.from('bons_livraison_reels').select('bl_id, client_id, volume_m3, workflow_status, heure_prevue, camion_assigne, chauffeur_nom, formule_id, date_livraison, heure_depart_centrale, heure_arrivee_chantier').eq('date_livraison', today),
         supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', weekStart).lte('date_livraison', weekEnd),
+        supabase.from('bons_livraison_reels').select('bl_id, volume_m3, date_livraison, workflow_status').gte('date_livraison', last7Start).order('date_livraison', { ascending: true }),
         supabase.from('flotte').select('id_camion, immatriculation, statut, chauffeur_actuel').limit(20),
       ]);
       setTodayBons(bonsRes.data || []);
       setWeekBons(weekRes.data || []);
+      setAllBons(allRes.data || []);
       setFleet(fleetRes.data || []);
     } catch (e) { console.error('WorldClassDeliveries fetch error:', e); }
     finally { setLoading(false); }
-  }, [today, weekStart, weekEnd]);
+  }, [today, weekStart, weekEnd, last7Start]);
 
   useEffect(() => {
     fetchAll();
@@ -78,7 +83,7 @@ function useDeliveriesLiveData() {
     return () => { supabase.removeChannel(ch); };
   }, [fetchAll]);
 
-  return { todayBons, weekBons, fleet, loading };
+  return { todayBons, weekBons, allBons, fleet, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -93,7 +98,17 @@ function Card({ children, style = {}, className = '' }: { children: React.ReactN
         transform: press ? 'translateY(-1px) scale(0.995)' : hov ? 'translateY(-3px) scale(1.005)' : 'none',
         boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 20px ${T.goldGlow}` : '0 4px 12px rgba(0,0,0,0.15)',
         transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)', ...style }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0, transition: 'opacity 200ms' }} />
+      {/* Gold top border */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${T.gold}, transparent)`, opacity: hov ? 1 : 0.5, transition: 'opacity 200ms' }} />
+      {children}
+    </div>
+  );
+}
+
+function GoldBorderCard({ children, style = {}, className = '' }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {
+  return (
+    <div className={className} style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 20, position: 'relative', overflow: 'hidden', ...style }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent 0%, ${T.gold} 50%, transparent 100%)` }} />
       {children}
     </div>
   );
@@ -131,9 +146,8 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
   return (
     <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: 'all 600ms ease-out', height: '100%' }}>
-      <div style={{
-        height: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-        borderLeft: '3px solid #D4A843', borderRadius: 14, padding: '20px 18px',
+      <GoldBorderCard style={{
+        height: '100%', borderLeft: '3px solid #D4A843', padding: '20px 18px',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
@@ -148,7 +162,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
             <Icon size={18} color="#FFD700" />
           </div>
         </div>
-      </div>
+      </GoldBorderCard>
     </div>
   );
 }
@@ -260,11 +274,79 @@ function CustomTooltip({ active, payload, label }: any) {
 // FLEET HEALTH DATA
 // ─────────────────────────────────────────────────────
 const FLEET_HEALTH_DATA = [
-  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal' },
-  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j' },
-  { name: 'T-09 Toupie 8m³', score: 58, insight: 'Pneus à vérifier — usure détectée' },
-  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines' },
+  { name: 'T-04 Toupie 8m³', score: 92, insight: 'RAS — véhicule optimal', fullDiag: 'Moteur: optimal · Pneus: 85% · Vidange: OK (il y a 12j) · Batterie: 98% · Freins: 90%' },
+  { name: 'T-07 Toupie 10m³', score: 74, insight: 'Vidange recommandée dans 5j', fullDiag: 'Moteur: bon · Pneus: 72% · Vidange: URGENT (dans 5j / 800km) · Batterie: 91% · Freins: 78%' },
+  { name: 'T-09 Toupie 8m³', score: 58, insight: 'Pneus à vérifier — usure détectée', fullDiag: 'Moteur: attention · Pneus: 35% CRITIQUE · Vidange: OK · Batterie: 84% · Freins: 65% — vibrations détectées' },
+  { name: 'T-12 Toupie 8m³', score: 86, insight: 'Visite technique dans 3 semaines', fullDiag: 'Moteur: optimal · Pneus: 80% · Vidange: OK · Batterie: 95% · Freins: 88% · VT prévue 28/03' },
 ];
+
+// ─────────────────────────────────────────────────────
+// CIRCULAR PROGRESS RING
+// ─────────────────────────────────────────────────────
+function ScoreRing({ score, color, size = 72 }: { score: number; color: string; size?: number }) {
+  const strokeWidth = 4;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (score / 100) * circumference;
+  return (
+    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={strokeWidth} />
+      <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth}
+        strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
+        style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
+    </svg>
+  );
+}
+
+function FleetHealthCard({ v, delay = 0 }: { v: typeof FLEET_HEALTH_DATA[0]; delay?: number }) {
+  const [visible, setVisible] = useState(false);
+  const [hov, setHov] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+  const sc = v.score >= 80 ? '#22c55e' : v.score >= 60 ? '#f59e0b' : '#ef4444';
+  const isActive = v.score >= 60;
+
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(16px)', transition: 'all 500ms ease-out' }}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
+      <GoldBorderCard style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 8, transition: 'all 200ms ease', transform: hov ? 'translateY(-2px)' : 'none', boxShadow: hov ? `0 8px 24px rgba(0,0,0,0.25), 0 0 12px ${sc}30` : 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{v.name}</span>
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc, boxShadow: `0 0 8px ${sc}60` }} />
+            {isActive && (
+              <div style={{
+                position: 'absolute', width: 18, height: 18, borderRadius: '50%', border: `2px solid ${sc}`,
+                animation: 'tbos-pulse 2s infinite', opacity: 0.5,
+              }} />
+            )}
+          </div>
+        </div>
+        {/* Score with circular ring */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', padding: '4px 0' }}>
+          <ScoreRing score={v.score} color={sc} size={72} />
+          <span style={{
+            position: 'absolute', fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+            fontSize: 26, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: sc,
+            WebkitFontSmoothing: 'antialiased' as any,
+          }}>
+            {v.score}
+          </span>
+        </div>
+        <span style={{ fontSize: 11, color: T.textSec, textAlign: 'center', lineHeight: 1.4 }}>{v.insight}</span>
+        {/* Expanded diagnostic on hover */}
+        <div style={{
+          maxHeight: hov ? 60 : 0, opacity: hov ? 1 : 0, overflow: 'hidden',
+          transition: 'max-height 0.3s ease, opacity 0.2s ease',
+        }}>
+          <div style={{ fontSize: 10, color: T.textDim, textAlign: 'center', lineHeight: 1.6, paddingTop: 6, borderTop: `1px solid ${T.cardBorder}` }}>
+            {v.fullDiag}
+          </div>
+        </div>
+        <span style={{ fontSize: 10, color: '#D4A843', textAlign: 'center' }}>Diagnostic IA</span>
+      </GoldBorderCard>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────────────
 // SEEDED DELIVERIES (fallback when no live data)
@@ -289,6 +371,21 @@ const SEEDED_DELIVERIES = [
     _destination: 'Marina Kénitra — Lot 7', _eta: 'Départ prévu 13:45',
   },
 ];
+
+// ─────────────────────────────────────────────────────
+// SEEDED WEEKLY DATA (fallback)
+// ─────────────────────────────────────────────────────
+function buildSeededWeeklyData() {
+  const data = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = subDays(new Date(), i);
+    const dayLabel = format(d, 'EEE dd/MM', { locale: fr });
+    const counts = [5, 7, 4, 8, 6, 3, 2];
+    const volumes = [42, 58, 35, 68, 50, 24, 16];
+    data.push({ day: dayLabel, livraisons: counts[6 - i], volume: volumes[6 - i] });
+  }
+  return data;
+}
 
 // ─────────────────────────────────────────────────────
 // FORECAST 14J MOCK DATA
@@ -331,6 +428,13 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
   const [expanded, setExpanded] = useState(true);
   return (
     <section>
+      <style>{`
+        @keyframes gold-shimmer-border {
+          0% { border-color: rgba(212,168,67,0.2); box-shadow: 0 0 0 rgba(212,168,67,0); }
+          50% { border-color: rgba(212,168,67,0.5); box-shadow: 0 0 20px rgba(212,168,67,0.08); }
+          100% { border-color: rgba(212,168,67,0.2); box-shadow: 0 0 0 rgba(212,168,67,0); }
+        }
+      `}</style>
       <div
         style={{
           background: 'rgba(212,168,67,0.08)',
@@ -339,6 +443,7 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
           borderRadius: 10,
           overflow: 'hidden',
           transition: 'all 0.3s ease',
+          animation: 'gold-shimmer-border 4s ease-in-out infinite',
         }}
       >
         {/* Header — always visible */}
@@ -352,6 +457,17 @@ function LogisticsBriefingBanner({ totalDeliveries, enRoute, planned }: { totalD
           <Zap size={16} color="#D4A843" fill="#D4A843" />
           <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', color: '#D4A843', flex: 1, textAlign: 'left' }}>
             BRIEFING LOGISTIQUE IA
+          </span>
+          {/* AI source badge */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 4,
+            background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)',
+            borderRadius: 6, padding: '3px 10px', fontSize: 10, fontWeight: 700,
+            color: '#D4A843', letterSpacing: '0.04em', backdropFilter: 'blur(8px)',
+            marginRight: 8,
+          }}>
+            <Zap size={9} />
+            Généré par IA · Gemini Pro
           </span>
           <span style={{ fontSize: 10, color: T.textDim, marginRight: 4 }}>{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
           <ChevronDown
@@ -391,26 +507,31 @@ export default function WorldClassDeliveries() {
   const [activeTab, setActiveTab] = useState('aujourdhui');
   const tabs = [{ id: 'aujourdhui', label: "Aujourd'hui" }, { id: 'semaine', label: 'Cette semaine' }, { id: 'historique', label: 'Historique' }];
 
-  const { todayBons, weekBons, fleet, loading } = useDeliveriesLiveData();
+  const { todayBons, weekBons, allBons, fleet, loading } = useDeliveriesLiveData();
 
-  const totalDeliveries = todayBons.length;
-  const totalVolumeLivre = Math.round(todayBons.reduce((s, b) => s + (b.volume_m3 || 0), 0));
-  const delivered = todayBons.filter(b => ['validation_technique', 'livre', 'livré', 'termine'].includes(b.workflow_status)).length;
-  const enRoute = todayBons.filter(b => b.workflow_status === 'en_livraison').length;
-  const planned = todayBons.filter(b => b.workflow_status === 'planification').length;
+  // Use seeded deliveries as the active pipeline when no today data
+  const activePipeline = todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES;
+  const useSeeded = todayBons.length === 0;
+
+  // KPIs from active pipeline state (not timestamp-filtered)
+  const totalDeliveries = activePipeline.length;
+  const totalVolumeLivre = Math.round(activePipeline.reduce((s, b) => s + (b.volume_m3 || 0), 0));
+  const delivered = activePipeline.filter(b => ['validation_technique', 'livre', 'livré', 'termine'].includes(b.workflow_status)).length;
+  const enRoute = activePipeline.filter(b => b.workflow_status === 'production').length;
+  const planned = activePipeline.filter(b => b.workflow_status === 'planification').length;
   const punctuality = totalDeliveries > 0 ? Math.round((delivered / totalDeliveries) * 100) : 0;
 
-  // AI Logistics Score: on-time rate (40%) + fleet availability (30%) + route efficiency (30%)
+  // AI Logistics Score
   const onTimeRate = totalDeliveries > 0 ? Math.min(100, Math.round((delivered / Math.max(totalDeliveries, 1)) * 100)) : 75;
   const fleetAvail = fleet.length > 0 ? Math.min(100, Math.round((fleet.filter(f => f.statut === 'disponible' || f.statut === 'en_mission').length / fleet.length) * 100)) : 80;
   const routeEfficiency = totalDeliveries > 0 ? Math.min(100, Math.round(85 + (delivered / Math.max(totalDeliveries, 1)) * 10)) : 82;
   const aiLogisticsScore = Math.round(onTimeRate * 0.4 + fleetAvail * 0.3 + routeEfficiency * 0.3);
 
-  // AI risk per pipeline stage — En Route uses avg distance vs remaining hours
-  const hoursLeft = Math.max(1, 18 - new Date().getHours()); // assume 18h end-of-day
-  const enRouteWithTime = todayBons.filter(b => b.workflow_status === 'en_livraison');
+  // AI risk per pipeline stage
+  const hoursLeft = Math.max(1, 18 - new Date().getHours());
+  const enRouteWithTime = activePipeline.filter(b => b.workflow_status === 'production' || b.workflow_status === 'en_livraison');
   const avgRotation = enRouteWithTime.length > 0
-    ? enRouteWithTime.reduce((s, b) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
+    ? enRouteWithTime.reduce((s: number, b: any) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
     : 45;
   const enRouteRisk = Math.min(100, Math.round((avgRotation / (hoursLeft * 60)) * 100));
   const planRisk = planned > 3 ? Math.min(100, Math.round(planned * 8)) : Math.round(planned * 5);
@@ -422,23 +543,39 @@ export default function WorldClassDeliveries() {
     { label: 'Livré', count: delivered, color: T.success, icon: CheckCircle, aiRisk: { label: 'Non-livré', pct: deliveredRisk } },
   ];
 
+  // Performance weekly data — use allBons grouped by day with real dates, or seeded fallback
   const perfData = useMemo(() => {
-    const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    if (allBons.length === 0) return buildSeededWeeklyData();
+
     const map: Record<string, { livraisons: number; volume: number }> = {};
-    ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].forEach(d => { map[d] = { livraisons: 0, volume: 0 }; });
-    weekBons.forEach(b => {
-      const dayIdx = new Date(b.date_livraison).getDay();
-      const dayName = dayNames[dayIdx];
-      if (map[dayName]) {
-        map[dayName].livraisons++;
-        map[dayName].volume += b.volume_m3 || 0;
+    for (let i = 6; i >= 0; i--) {
+      const d = subDays(new Date(), i);
+      const key = format(d, 'yyyy-MM-dd');
+      const label = format(d, 'EEE dd/MM', { locale: fr });
+      map[key] = { livraisons: 0, volume: 0 };
+    }
+    allBons.forEach(b => {
+      if (map[b.date_livraison]) {
+        map[b.date_livraison].livraisons++;
+        map[b.date_livraison].volume += b.volume_m3 || 0;
       }
     });
-    return ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, livraisons: map[day].livraisons, volume: Math.round(map[day].volume) }));
-  }, [weekBons]);
+    return Object.entries(map).map(([key, val]) => {
+      const d = new Date(key + 'T00:00:00');
+      return { day: format(d, 'EEE dd/MM', { locale: fr }), livraisons: val.livraisons, volume: Math.round(val.volume) };
+    });
+  }, [allBons]);
 
-  const weekTotal = weekBons.length;
-  const weekVolume = Math.round(weekBons.reduce((s, b) => s + (b.volume_m3 || 0), 0));
+  const weekTotal = weekBons.length || perfData.reduce((s, d) => s + d.livraisons, 0);
+  const weekVolume = weekBons.length > 0
+    ? Math.round(weekBons.reduce((s, b) => s + (b.volume_m3 || 0), 0))
+    : perfData.reduce((s, d) => s + d.volume, 0);
+
+  // Tab-filtered deliveries for display
+  const displayDeliveries = useMemo(() => {
+    if (activeTab === 'semaine') return weekBons;
+    return activePipeline;
+  }, [activeTab, activePipeline, weekBons]);
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', background: T.navy, minHeight: '100vh', color: T.textPri }}>
@@ -461,6 +598,18 @@ export default function WorldClassDeliveries() {
       {/* Content */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
+        {/* Live badge + header accent */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Signal size={14} color={T.success} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: T.success, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, display: 'inline-block', animation: 'tbos-pulse 2s infinite' }} />
+              Connecté · Données en temps réel
+            </span>
+          </div>
+          <LiveClock />
+        </div>
+
         {/* KPIs */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
@@ -476,26 +625,9 @@ export default function WorldClassDeliveries() {
         <section>
           <SectionHeader icon={Truck} label="Santé Flotte IA" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {FLEET_HEALTH_DATA.map(v => {
-              const sc = v.score >= 80 ? '#22c55e' : v.score >= 60 ? '#f59e0b' : '#ef4444';
-              return (
-                <Card key={v.name} style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{v.name}</span>
-                    <div style={{ width: 10, height: 10, borderRadius: '50%', background: sc, boxShadow: `0 0 8px ${sc}60` }} />
-                  </div>
-                  <span style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                    fontSize: 32, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: sc,
-                    WebkitFontSmoothing: 'antialiased' as any, textAlign: 'center', padding: '6px 0',
-                  }}>
-                    {v.score}
-                  </span>
-                  <span style={{ fontSize: 11, color: T.textSec, textAlign: 'center', lineHeight: 1.4 }}>{v.insight}</span>
-                  <span style={{ fontSize: 10, color: '#D4A843', textAlign: 'center' }}>Diagnostic IA</span>
-                </Card>
-              );
-            })}
+            {FLEET_HEALTH_DATA.map((v, i) => (
+              <FleetHealthCard key={v.name} v={v} delay={i * 100} />
+            ))}
           </div>
         </section>
 
@@ -503,11 +635,7 @@ export default function WorldClassDeliveries() {
 
         {/* AI Route Optimization Agent */}
         <section>
-          <div style={{
-            background: 'rgba(255,255,255,0.04)', borderLeft: '4px solid #D4A843',
-            border: '1px solid rgba(212,168,67,0.2)', borderLeftWidth: 4, borderLeftColor: '#D4A843',
-            borderRadius: 10, padding: '18px 22px',
-          }}>
+          <GoldBorderCard style={{ borderLeft: '4px solid #D4A843', padding: '18px 22px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
               <span style={{ fontSize: 16 }}>⚡</span>
               <span style={{
@@ -520,13 +648,13 @@ export default function WorldClassDeliveries() {
             <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
               <li style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
                 <strong style={{ color: T.textPri }}>Route optimale :</strong>{' '}
-                {todayBons.length > 0
-                  ? `La livraison ${todayBons.sort((a, b) => (b.volume_m3 || 0) - (a.volume_m3 || 0))[0]?.bl_id || '—'} (${todayBons[0]?.volume_m3 || 0} m³) bénéficierait d'un départ anticipé via l'axe A3 Sud pour éviter le trafic de 10h–12h.`
+                {activePipeline.length > 0
+                  ? `La livraison ${[...activePipeline].sort((a, b) => (b.volume_m3 || 0) - (a.volume_m3 || 0))[0]?.bl_id || '—'} (${activePipeline[0]?.volume_m3 || 0} m³) bénéficierait d'un départ anticipé via l'axe A3 Sud pour éviter le trafic de 10h–12h.`
                   : 'Aucune livraison planifiée — recommandations indisponibles.'}
               </li>
               <li style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.6 }}>
                 <strong style={{ color: T.textPri }}>Économie carburant :</strong>{' '}
-                {todayBons.length > 0
+                {activePipeline.length > 0
                   ? `Estimation −12% de consommation gasoil (≈${Math.round(totalVolumeLivre * 0.8)} DH/jour) en regroupant les livraisons par zone géographique vs itinéraires individuels.`
                   : 'Calcul en attente de données de livraison.'}
               </li>
@@ -544,7 +672,7 @@ export default function WorldClassDeliveries() {
                 Voir Recommandations
               </button>
             </div>
-          </div>
+          </GoldBorderCard>
         </section>
 
         {/* Pipeline */}
@@ -560,17 +688,25 @@ export default function WorldClassDeliveries() {
           </div>
         </section>
 
-        {/* Today's Deliveries */}
+        {/* Today's Deliveries / Week depending on tab */}
         <section>
-          <SectionHeader icon={Package} label="Livraisons Aujourd'hui" right={
+          <SectionHeader icon={Package} label={activeTab === 'semaine' ? 'Livraisons Cette Semaine' : "Livraisons Aujourd'hui"} right={
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2s infinite' }} />
               <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Live</span>
             </div>
           } />
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {(todayBons.length > 0 ? todayBons : SEEDED_DELIVERIES).map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)}
-          </div>
+
+          {activeTab === 'historique' ? (
+            <WorldClassDeliveryArchive />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {displayDeliveries.length > 0
+                ? displayDeliveries.map((d: any, i: number) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)
+                : SEEDED_DELIVERIES.map((d, i) => <DeliveryRow key={d.bl_id} d={d} delay={i * 60} />)
+              }
+            </div>
+          )}
         </section>
 
         {/* Fleet */}
@@ -583,23 +719,24 @@ export default function WorldClassDeliveries() {
           </section>
         )}
 
-        {/* Performance */}
+        {/* Performance — Dual axis chart with real dates */}
         <section>
           <SectionHeader icon={TrendingUp} label="Performance Hebdomadaire" right={
             <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 12, fontWeight: 700, color: T.gold }}>{weekTotal} livraisons • {weekVolume} m³</span>
           } />
-          <Card>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={perfData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+          <GoldBorderCard>
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={perfData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11 }} />
+                <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} label={{ value: 'Livraisons', angle: -90, position: 'insideLeft', fill: T.textDim, fontSize: 10, dx: 10 }} />
+                <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fill: '#D4A84380', fontSize: 11 }} label={{ value: 'm³', angle: 90, position: 'insideRight', fill: '#D4A84380', fontSize: 10, dx: -10 }} />
                 <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                <Bar dataKey="livraisons" name="Livraisons" fill="#D4A843" radius={[4, 4, 0, 0]} animationDuration={1000} />
-                <Bar dataKey="volume" name="Volume (m³)" fill="#D4A843" fillOpacity={0.55} radius={[4, 4, 0, 0]} animationDuration={1000} animationBegin={200} />
-              </BarChart>
+                <Bar yAxisId="left" dataKey="livraisons" name="Livraisons" fill="#D4A843" radius={[4, 4, 0, 0]} animationDuration={1000} />
+                <Line yAxisId="right" type="monotone" dataKey="volume" name="Volume (m³)" stroke="#D4A843" strokeWidth={2} strokeOpacity={0.6} dot={{ r: 3, fill: '#D4A843', strokeWidth: 0 }} animationDuration={1200} />
+              </ComposedChart>
             </ResponsiveContainer>
-          </Card>
+          </GoldBorderCard>
         </section>
 
         {/* Prévision Demande IA */}
@@ -611,7 +748,7 @@ export default function WorldClassDeliveries() {
               borderRadius: 4, padding: '2px 8px', letterSpacing: '0.06em',
             }}>Prévision IA</span>
           } />
-          <Card>
+          <GoldBorderCard>
             <ResponsiveContainer width="100%" height={280}>
               <ComposedChart data={FORECAST_14J} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.cardBorder} vertical={false} />
@@ -624,7 +761,7 @@ export default function WorldClassDeliveries() {
                 <Line dataKey="prévu" name="Prévu IA" type="monotone" stroke="#D4A843" strokeWidth={2} strokeDasharray="6 4" strokeOpacity={0.5} dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
-          </Card>
+          </GoldBorderCard>
         </section>
 
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
