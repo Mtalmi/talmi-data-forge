@@ -185,9 +185,9 @@ function usePaymentsLiveData() {
       { month: 'Mar', encaisse: 156, facture: 200 },
     ];
     const MOCK_AGING = [
-      { bracket: 'Courant',    amount: 89, color: T.success },
-      { bracket: '1-30 jours', amount: 15, color: T.warning },
-      { bracket: '31-60 j',    amount: 8, color: T.orange },
+      { bracket: 'Courant',    amount: 89, color: '#D4A843' },
+      { bracket: '1-30 jours', amount: 15, color: '#C49A35' },
+      { bracket: '31-60 j',    amount: 8, color: '#A07820' },
       { bracket: '61-90 j',    amount: 0, color: T.danger },
       { bracket: '>90 jours',  amount: 0, color: T.dangerDark },
     ];
