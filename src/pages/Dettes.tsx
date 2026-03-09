@@ -103,6 +103,7 @@ export default function Dettes() {
   const [paymentReference, setPaymentReference] = useState('');
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [processingAction, setProcessingAction] = useState(false);
+  const [reminderToggles, setReminderToggles] = useState({ email7j: true, whatsapp3j: true, push0j: false });
   const [expandedNego, setExpandedNego] = useState<Record<string, boolean>>({});
 
   const canManagePayables = isCeo || role === 'agent_administratif' || role === 'superviseur';
@@ -469,6 +470,127 @@ export default function Dettes() {
                   </span>
                 </div>
               </div>
+            </div>
+          );
+        })()}
+
+        {/* RAPPELS AUTOMATIQUES IA */}
+        {(() => {
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const reminders = [
+            { key: 'email7j' as const, label: 'Email automatique', trigger: '7 jours avant échéance', desc: 'Brouillon envoyé au service comptabilité', icon: '📧', color: '#D4A843' },
+            { key: 'whatsapp3j' as const, label: 'Alerte WhatsApp', trigger: '3 jours avant échéance', desc: 'Notification au directeur financier', icon: '💬', color: '#22c55e' },
+            { key: 'push0j' as const, label: 'Push notification', trigger: 'Jour de l\'échéance', desc: 'Alerte critique sur mobile', icon: '🔔', color: '#ef4444' },
+          ];
+
+          // Simulated last sent per supplier
+          const lastSent: Record<string, string> = {
+            'Sika Maroc': '08/03 à 09:14',
+            'Total Maroc': '07/03 à 14:30',
+            'Sopromat': '06/03 à 11:45',
+          };
+          const suppliersWithReminders = unpaid
+            .filter(p => p.days_until_due <= 7 || p.days_overdue > 0)
+            .slice(0, 5);
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: '3px solid #D4A843',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Clock size={16} color="#D4A843" />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Rappels Automatiques IA
+                  </span>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', animation: 'tbos-pulse 2s infinite' }} />
+                </div>
+                <Button size="sm" style={{
+                  background: 'linear-gradient(135deg, #D4A843, #b8922e)',
+                  color: '#000', fontWeight: 600, border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 12,
+                }}
+                  onClick={() => setReminderToggles({ email7j: true, whatsapp3j: true, push0j: true })}
+                >
+                  <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
+                  Activer Tous
+                </Button>
+              </div>
+
+              {/* Reminder pipeline */}
+              <div style={{ display: 'flex', gap: 12, marginBottom: 18 }}>
+                {reminders.map((rem) => {
+                  const isOn = reminderToggles[rem.key];
+                  return (
+                    <div key={rem.key} style={{
+                      flex: 1, padding: '14px 16px', borderRadius: 10,
+                      background: isOn ? `${rem.color}08` : 'rgba(255,255,255,0.02)',
+                      border: `1px solid ${isOn ? `${rem.color}30` : 'rgba(255,255,255,0.06)'}`,
+                      transition: 'all 200ms',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <span style={{ fontSize: 18 }}>{rem.icon}</span>
+                        {/* Toggle switch */}
+                        <div
+                          onClick={() => setReminderToggles(prev => ({ ...prev, [rem.key]: !prev[rem.key] }))}
+                          style={{
+                            width: 36, height: 20, borderRadius: 10, cursor: 'pointer',
+                            background: isOn ? rem.color : 'rgba(255,255,255,0.1)',
+                            position: 'relative', transition: 'background 200ms',
+                          }}
+                        >
+                          <div style={{
+                            width: 16, height: 16, borderRadius: '50%', background: '#fff',
+                            position: 'absolute', top: 2, left: isOn ? 18 : 2,
+                            transition: 'left 200ms', boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                          }} />
+                        </div>
+                      </div>
+                      <p style={{ fontSize: 12, fontWeight: 600, color: '#F1F5F9', marginBottom: 2 }}>{rem.label}</p>
+                      <p style={{ fontSize: 11, color: rem.color, fontWeight: 500, marginBottom: 4 }}>{rem.trigger}</p>
+                      <p style={{ fontSize: 10, color: '#6B7280' }}>{rem.desc}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Last reminders sent per supplier */}
+              {suppliersWithReminders.length > 0 && (
+                <div>
+                  <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6B7280', marginBottom: 8, display: 'block' }}>
+                    Derniers rappels envoyés
+                  </span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                    {suppliersWithReminders.map((p, i) => {
+                      const sent = lastSent[p.fournisseur_name];
+                      return (
+                        <div key={p.id} style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          borderBottom: i < suppliersWithReminders.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <div style={{ width: 6, height: 6, borderRadius: '50%', background: p.days_overdue > 0 ? '#ef4444' : '#f59e0b' }} />
+                            <span style={{ fontSize: 12, color: '#F1F5F9' }}>{p.fournisseur_name}</span>
+                            <span style={{ fontSize: 11, fontFamily: 'ui-monospace', color: '#D4A843' }}>
+                              {p.amount_due.toLocaleString('fr-MA')} DH
+                            </span>
+                          </div>
+                          <span style={{ fontSize: 10, fontFamily: 'ui-monospace', color: sent ? '#9CA3AF' : '#3f3f46' }}>
+                            {sent ? `Envoyé ${sent}` : 'Aucun rappel'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           );
         })()}
