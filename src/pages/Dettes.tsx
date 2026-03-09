@@ -56,6 +56,9 @@ import {
   Banknote,
   Timer,
   Zap,
+  Eye,
+  Check,
+  Handshake,
 } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -850,34 +853,68 @@ export default function Dettes() {
                           </TableCell>
                           {canManagePayables && (
                             <TableCell>
-                              <div className="flex gap-1">
+                              <div className="flex items-center gap-1.5">
+                                {/* Mark as paid */}
                                 {payable.status !== 'paid' && (
+                                  <Button
+                                    variant="ghost" size="icon" className="h-7 w-7"
+                                    title="Marquer comme payé"
+                                    onClick={() => {
+                                      setSelectedPayable(payable);
+                                      setPaymentAmount(payable.amount_due);
+                                      setPaymentDialogOpen(true);
+                                    }}
+                                  >
+                                    <Check className="h-3.5 w-3.5" style={{ color: '#22c55e' }} />
+                                  </Button>
+                                )}
+
+                                {/* Contextual actions by status */}
+                                {(payable.status === 'not_due') && (
                                   <>
                                     <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => {
-                                        setSelectedPayable(payable);
-                                        setPaymentAmount(payable.amount_due);
-                                        setPaymentDialogOpen(true);
-                                      }}
+                                      size="sm" title="Programmer le paiement"
+                                      style={{ fontSize: 11, fontWeight: 600, background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', borderRadius: 6, padding: '4px 10px', height: 28 }}
+                                      onClick={() => { setSelectedPayable(payable); setScheduledDate(parseISO(payable.due_date)); setScheduleDialogOpen(true); }}
                                     >
-                                      <Banknote className="h-4 w-4 text-success" />
+                                      <CalendarDays className="h-3 w-3 mr-1" />
+                                      Programmer
                                     </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className="h-8 w-8"
-                                      onClick={() => {
-                                        setSelectedPayable(payable);
-                                        setScheduledDate(parseISO(payable.due_date));
-                                        setScheduleDialogOpen(true);
-                                      }}
-                                    >
-                                      <CalendarDays className="h-4 w-4 text-primary" />
+                                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Voir détails">
+                                      <Eye className="h-3.5 w-3.5" style={{ color: '#9CA3AF' }} />
                                     </Button>
                                   </>
+                                )}
+
+                                {payable.status === 'overdue' && (
+                                  <>
+                                    <Button
+                                      size="sm" title="Payer immédiatement"
+                                      style={{ fontSize: 11, fontWeight: 600, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', borderRadius: 6, padding: '4px 10px', height: 28 }}
+                                      onClick={() => { setSelectedPayable(payable); setPaymentAmount(payable.amount_due); setPaymentDialogOpen(true); }}
+                                    >
+                                      <Banknote className="h-3 w-3 mr-1" />
+                                      Payer maintenant
+                                    </Button>
+                                    <Button
+                                      variant="ghost" size="sm" title="Négocier un délai"
+                                      style={{ fontSize: 11, color: '#f59e0b', padding: '4px 8px', height: 28 }}
+                                    >
+                                      <Handshake className="h-3 w-3 mr-1" style={{ color: '#f59e0b' }} />
+                                      Négocier
+                                    </Button>
+                                  </>
+                                )}
+
+                                {(payable.status === 'due_soon' || payable.status === 'due_today') && (
+                                  <Button
+                                    size="sm" className="animate-pulse" title="Paiement urgent requis"
+                                    style={{ fontSize: 11, fontWeight: 700, background: 'rgba(239,68,68,0.2)', border: '1px solid #ef4444', color: '#ef4444', borderRadius: 6, padding: '4px 12px', height: 28 }}
+                                    onClick={() => { setSelectedPayable(payable); setPaymentAmount(payable.amount_due); setPaymentDialogOpen(true); }}
+                                  >
+                                    <Zap className="h-3 w-3 mr-1" />
+                                    URGENT — Payer
+                                  </Button>
                                 )}
                               </div>
                             </TableCell>
