@@ -747,6 +747,7 @@ export default function Dettes() {
           </DialogContent>
         </Dialog>
       </div>
+      </div>
     </MainLayout>
   );
 }
