@@ -96,12 +96,10 @@ export function ClientChurnPredictorCard() {
             const bc = a.severity === 'high' ? T.danger : T.warning;
             return (
               <div key={i} style={{
-                borderLeft: `4px solid ${bc}`,
-                background: `${bc}06`,
-                border: `1px solid ${bc}20`,
-                borderLeftWidth: 4,
-                borderLeftColor: bc,
-                borderRadius: '0 10px 10px 0',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderLeft: `3px solid ${bc}`,
+                borderRadius: 8,
                 padding: '12px 16px',
               }}>
                 <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>{a.text}</p>
