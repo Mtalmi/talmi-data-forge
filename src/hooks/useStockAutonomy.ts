@@ -14,64 +14,36 @@ interface StockAutonomy {
 }
 
 /**
- * Oracle Logic Hook - Calculates estimated autonomy for each material
- * Divides current stock by average daily usage from last 7 days
+ * Reads autonomy data from the stock_autonomy_cache Supabase table
+ * and enriches it with stock metadata (seuil_alerte, unite, capacite_max).
  */
 export function useStockAutonomy() {
   const [autonomy, setAutonomy] = useState<StockAutonomy[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const calculateAutonomy = useCallback(async () => {
+  const fetchAutonomy = useCallback(async () => {
     try {
-      // 1. Fetch current stock levels
-      const { data: stocks, error: stockError } = await supabase
-        .from('stocks')
-        .select('*');
+      const [cacheRes, stocksRes] = await Promise.all([
+        supabase.from('stock_autonomy_cache').select('materiau, days_remaining, avg_daily_consumption, current_qty'),
+        supabase.from('stocks').select('materiau, quantite_actuelle, seuil_alerte, unite, capacite_max'),
+      ]);
 
-      if (stockError) throw stockError;
+      if (cacheRes.error) throw cacheRes.error;
+      if (stocksRes.error) throw stocksRes.error;
 
-      // 2. Fetch last 7 days of consumption movements
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const stockMap = new Map(
+        (stocksRes.data || []).map(s => [s.materiau, s])
+      );
 
-      const { data: mouvements, error: mouvementError } = await supabase
-        .from('mouvements_stock')
-        .select('materiau, quantite, type_mouvement, created_at')
-        .gte('created_at', sevenDaysAgo.toISOString())
-        .eq('type_mouvement', 'production');
-
-      if (mouvementError) throw mouvementError;
-
-      // 3. Calculate average daily usage per material
-      const usageByMaterial: Record<string, number[]> = {};
-      
-      (mouvements || []).forEach((m) => {
-        if (!usageByMaterial[m.materiau]) {
-          usageByMaterial[m.materiau] = [];
-        }
-        // Production consumption is stored as positive, but represents deduction
-        usageByMaterial[m.materiau].push(Math.abs(m.quantite));
-      });
-
-      // Group by day and calculate daily totals
-      const dailyUsage: Record<string, number> = {};
-      Object.entries(usageByMaterial).forEach(([mat, quantities]) => {
-        const totalWeek = quantities.reduce((sum, q) => sum + q, 0);
-        // Average over 7 days (or fewer if less data)
-        const daysWithData = Math.min(7, Math.max(1, quantities.length > 0 ? 7 : 1));
-        dailyUsage[mat] = totalWeek / daysWithData;
-      });
-
-      // 4. Calculate autonomy for each stock
-      const autonomyData: StockAutonomy[] = (stocks || []).map((stock) => {
-        const avgDaily = dailyUsage[stock.materiau] || 0;
-        const daysRemaining = avgDaily > 0 
-          ? Math.floor(stock.quantite_actuelle / avgDaily)
-          : 9999; // No consumption = infinite autonomy
+      const autonomyData: StockAutonomy[] = (cacheRes.data || []).map(cached => {
+        const stock = stockMap.get(cached.materiau);
+        const daysRemaining = cached.days_remaining ?? 9999;
         const hoursRemaining = daysRemaining * 24;
+        const currentQty = stock?.quantite_actuelle ?? cached.current_qty ?? 0;
+        const seuilAlerte = stock?.seuil_alerte ?? 0;
 
         let status: StockAutonomy['status'] = 'healthy';
-        if (stock.quantite_actuelle <= stock.seuil_alerte) {
+        if (currentQty <= seuilAlerte) {
           status = 'critical';
         } else if (daysRemaining <= 3) {
           status = 'critical';
@@ -80,34 +52,57 @@ export function useStockAutonomy() {
         }
 
         return {
-          materiau: stock.materiau,
-          quantite_actuelle: stock.quantite_actuelle,
-          seuil_alerte: stock.seuil_alerte,
-          unite: stock.unite,
-          capacite_max: stock.capacite_max,
-          avgDailyUsage: avgDaily,
+          materiau: cached.materiau,
+          quantite_actuelle: currentQty,
+          seuil_alerte: seuilAlerte,
+          unite: stock?.unite || 'kg',
+          capacite_max: stock?.capacite_max ?? null,
+          avgDailyUsage: cached.avg_daily_consumption ?? 0,
           daysRemaining,
           hoursRemaining,
           status,
         };
       });
 
+      // Also include stocks that have no cache entry
+      (stocksRes.data || []).forEach(stock => {
+        if (!cacheRes.data?.some(c => c.materiau === stock.materiau)) {
+          let status: StockAutonomy['status'] = 'healthy';
+          if (stock.quantite_actuelle <= stock.seuil_alerte) status = 'critical';
+
+          autonomyData.push({
+            materiau: stock.materiau,
+            quantite_actuelle: stock.quantite_actuelle,
+            seuil_alerte: stock.seuil_alerte,
+            unite: stock.unite,
+            capacite_max: stock.capacite_max,
+            avgDailyUsage: 0,
+            daysRemaining: 9999,
+            hoursRemaining: 9999 * 24,
+            status,
+          });
+        }
+      });
+
       setAutonomy(autonomyData);
     } catch (error) {
-      console.error('Error calculating stock autonomy:', error);
+      console.error('Error fetching stock autonomy:', error);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    calculateAutonomy();
+    fetchAutonomy();
 
-    // Refresh every 5 minutes
-    const interval = setInterval(calculateAutonomy, 5 * 60 * 1000);
+    const channel = supabase
+      .channel('stock-autonomy-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAutonomy())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAutonomy())
+      .subscribe();
 
-    return () => clearInterval(interval);
-  }, [calculateAutonomy]);
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchAutonomy]);
 
   const getAutonomyForMaterial = useCallback((materiau: string) => {
     return autonomy.find((a) => a.materiau === materiau);
@@ -124,7 +119,7 @@ export function useStockAutonomy() {
   return {
     autonomy,
     loading,
-    refresh: calculateAutonomy,
+    refresh: fetchAutonomy,
     getAutonomyForMaterial,
     getCriticalMaterials,
     getLowMaterials,
