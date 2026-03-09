@@ -202,6 +202,11 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
     if (!expanded && !brief) fetchBrief();
   };
 
+  const handleRowClick = () => {
+    onOpenDetail(client);
+    handleExpand();
+  };
+
   const handleGenerate = async () => {
     try {
       await triggerWorkflow('client_intelligence', { client_id: client.clientId });
@@ -211,7 +216,7 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
 
   return (
     <div>
-      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleExpand}
+      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleRowClick}
         style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
         <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
         <div style={{ minWidth: 170, flexShrink: 0 }}>
