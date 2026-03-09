@@ -112,6 +112,23 @@ export default function Logistique() {
     await fetchVehicules();
   }, [gpsDialogVehicle, fetchVehicules]);
 
+  // Delivery KPIs from bons_livraison_reels
+  const [deliveryKpis, setDeliveryKpis] = useState({ totalLivraisons: 0, volumeTotal: 0, chiffreAffaires: 0, clientsActifs: 0 });
+  useEffect(() => {
+    const fetchDeliveryKpis = async () => {
+      const { data, error } = await supabase
+        .from('bons_livraison_reels')
+        .select('volume_m3, prix_vente_m3, client_id');
+      if (error || !data) return;
+      const totalLivraisons = data.length;
+      const volumeTotal = data.reduce((s, r) => s + (r.volume_m3 || 0), 0);
+      const chiffreAffaires = data.reduce((s, r) => s + ((r.volume_m3 || 0) * (r.prix_vente_m3 || 0)), 0);
+      const clientsActifs = new Set(data.map(r => r.client_id).filter(Boolean)).size;
+      setDeliveryKpis({ totalLivraisons, volumeTotal, chiffreAffaires, clientsActifs });
+    };
+    fetchDeliveryKpis();
+  }, []);
+
   const canManage = isCeo || isDirecteurOperations;
 
   const resetForm = () => {
