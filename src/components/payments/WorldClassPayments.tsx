@@ -93,6 +93,13 @@ function usePaymentsLiveData() {
 
     const totalFacture = Math.round(thisMonthFactures.reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
 
+    // KPIs from factures
+    const encaisseThisMonth = Math.round(thisMonthFactures.filter(isPaid).reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
+    const enAttente = Math.round(allFactures.filter(isPending).reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
+    const enRetard = Math.round(allFactures.filter(isOverdue).reduce((s: number, f: any) => s + (f.total_ttc || 0), 0) / 1000);
+    const tauxDenom = encaisseThisMonth + enAttente;
+    const tauxEncaissement = tauxDenom > 0 ? Math.round((encaisseThisMonth / tauxDenom) * 100) : 0;
+
     // Trend data: last 6 months
     const trendData: { month: string; encaisse: number; facture: number }[] = [];
     const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
@@ -130,8 +137,7 @@ function usePaymentsLiveData() {
     const totalAR = agingData.reduce((s, a) => s + a.amount, 0);
 
     // Recent payments
-    const recentPaid = allFactures
-      .slice(0, 8);
+    const recentPaid = allFactures.slice(0, 8);
     const payments = recentPaid.map((f: any) => {
       let status = isPaid(f) ? 'Reçu' : isPending(f) ? 'En attente' : isOverdue(f) ? 'En retard' : 'Reçu';
       return {
@@ -144,16 +150,12 @@ function usePaymentsLiveData() {
       };
     });
 
-    // Payment methods breakdown from bons_livraison_reels
-    const { data: blForMethods } = await supabase
-      .from('bons_livraison_reels')
-      .select('mode_paiement, prix_vente_m3, volume_m3');
-
+    // Payment methods breakdown from factures
     const methodGroups: Record<string, { amount: number; count: number }> = {};
-    (blForMethods || []).forEach((bl: any) => {
-      const m = bl.mode_paiement || 'Virement';
+    allFactures.forEach((f: any) => {
+      const m = f.mode_paiement || 'Virement';
       if (!methodGroups[m]) methodGroups[m] = { amount: 0, count: 0 };
-      methodGroups[m].amount += (bl.prix_vente_m3 || 0) * (bl.volume_m3 || 0);
+      methodGroups[m].amount += f.total_ttc || 0;
       methodGroups[m].count += 1;
     });
     const totalAll = Object.values(methodGroups).reduce((s, g) => s + g.amount, 0) || 1;
