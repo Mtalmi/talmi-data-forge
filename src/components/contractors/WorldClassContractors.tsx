@@ -373,8 +373,17 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
            </span>
          )}
        </div>
-      {/* Arrow */}
-      <ChevronRight size={16} color={T.textDim} style={{ transition: 'transform 0.2s', transform: hov ? 'translateX(4px)' : 'none' }} />
+      {/* Actions */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          onClick={(e) => { e.stopPropagation(); onClick?.(); }}
+          style={{ border: '1px solid rgba(212,168,67,0.4)', color: '#D4A843', background: 'transparent', borderRadius: '6px', padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+        >Modifier</button>
+        <button
+          onClick={(e) => { e.stopPropagation(); }}
+          style={{ border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', background: 'transparent', borderRadius: '6px', padding: '4px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+        >Désactiver</button>
+      </div>
     </div>
   );
 }
