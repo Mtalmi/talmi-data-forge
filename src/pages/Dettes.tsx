@@ -252,6 +252,13 @@ export default function Dettes() {
             { label: 'EN RETARD', value: formatCurrency(stats.totalOverdue), color: '#ef4444', icon: AlertTriangle, pulse: true },
             { label: 'TAUX PAIEMENT', value: `${stats.paymentRate.toFixed(1)}%`, color: tauxColor, icon: CheckCircle, pulse: false },
             { label: 'PROGRAMMÉS', value: String(stats.scheduledPayments), color: '#4A9EFF', icon: CalendarDays, pulse: false },
+            (() => {
+              const totalPayables = payables.filter(p => p.status !== 'paid').reduce((s, p) => s + p.amount_due, 0);
+              const monthlyPurchases = totalPayables * 0.8 || 1;
+              const dpo = Math.round((totalPayables / monthlyPurchases) * 30);
+              const dpoColor = dpo >= 45 ? '#22c55e' : dpo >= 30 ? '#f59e0b' : '#ef4444';
+              return { label: 'DPO IA', value: `${dpo}j`, color: dpoColor, icon: Clock, pulse: false, benchmark: 45 };
+            })(),
           ];
           return (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
