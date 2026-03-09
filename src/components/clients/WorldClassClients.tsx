@@ -165,9 +165,9 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
   );
 }
 
-interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string }
+interface ClientDisplay { name: string; segment: string; ca: string; lastOrder: string; status: string; solde: number; clientId?: string; email?: string; telephone?: string; ville?: string }
 
-function ClientRow({ client, delay = 0 }: { client: ClientDisplay; delay?: number }) {
+function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay; delay?: number; onOpenDetail: (client: ClientDisplay) => void }) {
   const visible = useFadeIn(delay);
   const [hov, setHov] = useState(false);
   const [expanded, setExpanded] = useState(false);
