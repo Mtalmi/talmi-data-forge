@@ -470,6 +470,10 @@ function HealthCard({ label, value, color, desc, icon: Icon, delay = 0 }: { labe
 export default function WorldClassClients() {
   const [activeTab, setActiveTab] = useState('tous');
   const [search, setSearch] = useState('');
+  const [selectedClient, setSelectedClient] = useState<ClientDisplay | null>(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newClient, setNewClient] = useState({ nom_client: '', segment: 'Mid-Market', email: '', telephone: '', ville: '' });
+  const [creatingClient, setCreatingClient] = useState(false);
   const tabs = [{ id: 'tous', label: 'Tous' }, { id: 'actifs', label: 'Actifs' }, { id: 'inactifs', label: 'Inactifs' }];
 
   const { clients, factures, loading } = useClientsLiveData();
