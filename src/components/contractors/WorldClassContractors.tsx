@@ -235,12 +235,13 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
         opacity: vis ? 1 : 0,
         transition: 'opacity 0.5s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
         borderLeft: `4px solid ${color}`,
+        borderTop: '2px solid #D4A843',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon size={18} color="#F59E0B" />
+          <Icon size={18} color="#D4A843" />
         </div>
         <span style={{ color: '#9CA3AF', fontSize: 12, fontWeight: 500 }}>{trend}</span>
       </div>
