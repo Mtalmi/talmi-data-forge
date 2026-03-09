@@ -89,6 +89,7 @@ export default function Dettes() {
     'paid': { label: 'Payé', badgeStyle: { background: 'rgba(34,197,94,0.15)', border: '1px solid #22c55e', color: '#22c55e' }, icon: <CheckCircle className="h-3 w-3" /> },
   };
 
+  const [activeTab, setActiveTab] = useState('payables');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedPayable, setSelectedPayable] = useState<Payable | null>(null);
@@ -313,53 +314,94 @@ export default function Dettes() {
         )}
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="payables" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[500px]">
-            <TabsTrigger value="payables" className="gap-2">
-              <FileText className="h-4 w-4" />
-              {d.allPayables}
-            </TabsTrigger>
-            <TabsTrigger value="by-supplier" className="gap-2">
-              <Building2 className="h-4 w-4" />
-              {d.bySupplier}
-            </TabsTrigger>
-            <TabsTrigger value="calendar" className="gap-2">
-              <CalendarDays className="h-4 w-4" />
-              {d.calendar}
-            </TabsTrigger>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex" style={{ gap: 0, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              {[
+                { value: 'payables', label: d.allPayables, icon: FileText },
+                { value: 'by-supplier', label: d.bySupplier, icon: Building2 },
+                { value: 'calendar', label: d.calendar, icon: CalendarDays },
+              ].map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.value;
+                return (
+                  <button
+                    key={tab.value}
+                    onClick={() => setActiveTab(tab.value)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+                      fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                      background: isActive ? 'rgba(212,168,67,0.06)' : 'transparent',
+                      color: isActive ? '#D4A843' : '#9CA3AF',
+                      borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                      borderTop: 'none', borderLeft: 'none', borderRight: 'none',
+                      transition: 'all 150ms',
+                    }}
+                    onMouseEnter={(e) => { if (!isActive) (e.currentTarget.style.color = '#F1F5F9'); }}
+                    onMouseLeave={(e) => { if (!isActive) (e.currentTarget.style.color = '#9CA3AF'); }}
+                  >
+                    <Icon size={16} />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <Button
+              size="sm"
+              style={{
+                background: 'linear-gradient(135deg, #D4A843, #b8922e)',
+                color: '#000', fontWeight: 600, border: 'none',
+                borderRadius: 8, padding: '8px 16px', fontSize: 13,
+              }}
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Nouvelle Facture
+            </Button>
+          </div>
 
           {/* All Payables Tab */}
           <TabsContent value="payables" className="space-y-4">
             {/* Filters */}
-            <Card>
-              <CardContent className="pt-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder={d.searchPlaceholder}
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder={d.status} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{d.allStatuses}</SelectItem>
-                      <SelectItem value="not_due">{d.notDue}</SelectItem>
-                      <SelectItem value="due_soon">{d.dueSoonLabel}</SelectItem>
-                      <SelectItem value="due_today">{d.dueToday}</SelectItem>
-                      <SelectItem value="overdue">{d.overdue}</SelectItem>
-                      <SelectItem value="paid">{d.paid}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#6B7280' }} />
+                <Input
+                  placeholder={d.searchPlaceholder}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8,
+                    color: '#F1F5F9',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#D4A843'; e.currentTarget.style.boxShadow = '0 0 0 1px rgba(212,168,67,0.3)'; }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.boxShadow = 'none'; }}
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger
+                  className="w-[200px]"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 8,
+                    color: '#F1F5F9',
+                  }}
+                >
+                  <SelectValue placeholder={d.status} />
+                </SelectTrigger>
+                <SelectContent style={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <SelectItem value="all">{d.allStatuses}</SelectItem>
+                  <SelectItem value="not_due">{d.notDue}</SelectItem>
+                  <SelectItem value="due_soon">{d.dueSoonLabel}</SelectItem>
+                  <SelectItem value="due_today">{d.dueToday}</SelectItem>
+                  <SelectItem value="overdue">{d.overdue}</SelectItem>
+                  <SelectItem value="paid">{d.paid}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             {/* Payables Table */}
             <Card>
