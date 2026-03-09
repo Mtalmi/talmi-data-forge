@@ -590,6 +590,82 @@ export default function Dettes() {
           );
         })()}
 
+        {/* RÉSERVE TRÉSORERIE REQUISE */}
+        {(() => {
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const due7 = unpaid.filter(p => p.days_until_due >= 0 && p.days_until_due <= 7).reduce((s, p) => s + p.amount_due, 0)
+            + unpaid.filter(p => p.days_overdue > 0).reduce((s, p) => s + p.amount_due, 0);
+          const due14 = unpaid.filter(p => p.days_until_due >= 0 && p.days_until_due <= 14).reduce((s, p) => s + p.amount_due, 0)
+            + unpaid.filter(p => p.days_overdue > 0).reduce((s, p) => s + p.amount_due, 0);
+          const due30 = unpaid.reduce((s, p) => s + p.amount_due, 0);
+          const reserveNeeded = Math.round(due30 * 1.1);
+          // Simulated current balance
+          const currentBalance = 185000;
+          const isCovered = currentBalance >= reserveNeeded;
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <DollarSign size={16} color="#D4A843" />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                  Réserve Trésorerie Requise
+                </span>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, marginBottom: 18 }}>
+                {[
+                  { label: 'Prochains 7j', amount: due7, color: '#ef4444' },
+                  { label: 'Prochains 14j', amount: due14, color: '#f59e0b' },
+                  { label: 'Prochains 30j', amount: due30, color: '#D4A843' },
+                ].map((period, i) => (
+                  <div key={i} style={{
+                    background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '12px 14px',
+                    border: `1px solid ${period.color}20`,
+                  }}>
+                    <span style={{ fontSize: 9, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6B7280' }}>{period.label}</span>
+                    <p style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 20, fontWeight: 200, color: period.color, letterSpacing: '-0.02em', marginTop: 4,
+                    }}>
+                      {period.amount.toLocaleString('fr-MA')} <span style={{ fontSize: 11, color: '#6B7280' }}>DH</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{
+                background: isCovered ? 'rgba(34,197,94,0.06)' : 'rgba(239,68,68,0.06)',
+                border: `1px solid ${isCovered ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)'}`,
+                borderRadius: 8, padding: '12px 16px',
+                display: 'flex', alignItems: 'center', gap: 12,
+              }}>
+                {isCovered
+                  ? <CheckCircle size={18} color="#22c55e" />
+                  : <AlertTriangle size={18} color="#ef4444" className="animate-pulse" />
+                }
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 12, color: '#D1D5DB', lineHeight: 1.5 }}>
+                    Maintenir <strong style={{
+                      fontFamily: 'ui-monospace', color: '#D4A843',
+                    }}>{reserveNeeded.toLocaleString('fr-MA')} DH</strong> de réserve pour couvrir les échéances du mois.
+                  </p>
+                  <p style={{ fontSize: 11, color: '#6B7280', marginTop: 4 }}>
+                    Solde actuel : <span style={{ fontFamily: 'ui-monospace', color: isCovered ? '#22c55e' : '#ef4444' }}>{currentBalance.toLocaleString('fr-MA')} DH</span>
+                    {isCovered ? ' — Couverture suffisante' : ' — Couverture insuffisante'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {(() => {
           const agingBuckets = [
             { label: 'Courantes 0-30j', min: -Infinity, max: 30, color: '#D4A843', pulse: false },
