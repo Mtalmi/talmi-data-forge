@@ -162,7 +162,15 @@ export function PaymentRiskScorerCard() {
               </tr>
             </thead>
             <tbody>
-              {atRiskInvoices.map((inv, i) => {
+              {loading ? (
+                <tr><td colSpan={7} style={{ padding: 30, textAlign: 'center' }}>
+                  <Loader2 size={20} color={T.gold} style={{ animation: 'spin 1s linear infinite', margin: '0 auto' }} />
+                </td></tr>
+              ) : atRiskInvoices.length === 0 ? (
+                <tr><td colSpan={7} style={{ padding: 20, textAlign: 'center', color: T.textDim, fontSize: 12 }}>
+                  Aucune facture à risque détectée
+                </td></tr>
+              ) : atRiskInvoices.map((inv, i) => {
                 const probColor = getProbColor(inv.prob);
                 return (
                   <tr key={i} style={{
