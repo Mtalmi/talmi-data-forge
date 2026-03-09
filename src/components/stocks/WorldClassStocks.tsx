@@ -138,6 +138,7 @@ function useStocksLiveData() {
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
+  const [REORDER_RECS, setReorderRecs] = useState<{ id: string; materiau: string; recommended_qty: number; urgency: string; fournisseur: string | null; unite: string; days_remaining: number | null; created_at: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Amber gradient palette for value breakdown
@@ -153,7 +154,7 @@ function useStocksLiveData() {
   const fetchAll = useCallback(async () => {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
-      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes, reorderRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
@@ -169,11 +170,20 @@ function useStocksLiveData() {
           .select('id, materiau, alert_type, severity, message, created_at')
           .eq('is_active', true)
           .order('created_at', { ascending: false }),
+        supabase.from('reorder_recommendations')
+          .select('id, materiau, recommended_qty, urgency, fournisseur, unite, days_remaining, created_at')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false }),
       ]);
 
       // Stock alerts from DB
       if (stockAlertsRes.data) {
         setStockAlertsDb(stockAlertsRes.data);
+      }
+
+      // Reorder recommendations from DB
+      if (reorderRes.data) {
+        setReorderRecs(reorderRes.data as any);
       }
 
       // Autonomy map
@@ -289,11 +299,12 @@ function useStocksLiveData() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_alerts' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reorder_recommendations' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading };
 }
 
 // ─────────────────────────────────────────────────────
@@ -590,7 +601,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
@@ -729,20 +740,7 @@ export default function WorldClassStocks() {
           <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
           <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
             {(() => {
-              // Build reorder items sorted by days_remaining ascending
-              const items = STOCKS
-                .map(s => {
-                  const auto = AUTONOMY[s.name.toLowerCase()];
-                  const days = auto?.days ?? 999;
-                  const orderQty = Math.max(0, s.max - s.current);
-                  // Find most recent supplier for this material
-                  const mv = MOVEMENTS.find(m => m.material.toLowerCase() === s.name.toLowerCase());
-                  const supplier = mv?.resp || 'Fournisseur à définir';
-                  return { name: s.name, days, orderQty, unit: s.unit, supplier, pct: s.pct };
-                })
-                .filter(i => i.orderQty > 0)
-                .sort((a, b) => a.days - b.days)
-                .slice(0, 5);
+              const items = REORDER_RECS;
 
               if (items.length === 0) {
                 return (
@@ -753,9 +751,10 @@ export default function WorldClassStocks() {
               }
 
               return items.map((item, idx) => {
-                const isUrgent = item.days <= 2;
+                const isUrgent = item.urgency === 'urgent' || item.urgency === 'critique';
+                const days = item.days_remaining;
                 return (
-                  <div key={item.name} style={{
+                  <div key={item.id} style={{
                     minWidth: 240, flex: '0 0 auto',
                     background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
                     borderLeft: `3px solid ${isUrgent ? '#ef4444' : '#D4A843'}`,
@@ -765,7 +764,7 @@ export default function WorldClassStocks() {
                   }}>
                     {/* Header */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.name}</span>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
                       <span style={{
                         padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
                         background: isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
@@ -773,7 +772,7 @@ export default function WorldClassStocks() {
                         border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : 'rgba(212,168,67,0.4)'}`,
                         animation: isUrgent ? 'tbos-pulse 2s infinite' : 'none',
                       }}>
-                        {isUrgent ? 'URGENT' : 'PLANIFIÉ'}
+                        {item.urgency.toUpperCase()}
                       </span>
                     </div>
                     {/* Details */}
@@ -781,22 +780,24 @@ export default function WorldClassStocks() {
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                         <span style={{ color: T.textDim }}>Qté recommandée</span>
                         <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
-                          {item.orderQty.toLocaleString('fr-FR')} {item.unit}
+                          {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
                         </span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                         <span style={{ color: T.textDim }}>Fournisseur</span>
-                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.supplier}</span>
+                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                        <span style={{ color: T.textDim }}>Autonomie</span>
-                        <span style={{
-                          fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                          color: isUrgent ? '#ef4444' : item.days <= 5 ? '#f59e0b' : '#22c55e',
-                        }}>
-                          {item.days === 999 ? 'N/A' : `${item.days}j`}
-                        </span>
-                      </div>
+                      {days !== null && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                          <span style={{ color: T.textDim }}>Autonomie</span>
+                          <span style={{
+                            fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                            color: isUrgent ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                          }}>
+                            {Number(days)}j
+                          </span>
+                        </div>
+                      )}
                     </div>
                     {/* Action */}
                     <button style={{

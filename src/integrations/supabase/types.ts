@@ -6634,6 +6634,48 @@ export type Database = {
         }
         Relationships: []
       }
+      reorder_recommendations: {
+        Row: {
+          actioned_at: string | null
+          actioned_by: string | null
+          created_at: string
+          days_remaining: number | null
+          fournisseur: string | null
+          id: string
+          is_active: boolean
+          materiau: string
+          recommended_qty: number
+          unite: string
+          urgency: string
+        }
+        Insert: {
+          actioned_at?: string | null
+          actioned_by?: string | null
+          created_at?: string
+          days_remaining?: number | null
+          fournisseur?: string | null
+          id?: string
+          is_active?: boolean
+          materiau: string
+          recommended_qty?: number
+          unite?: string
+          urgency?: string
+        }
+        Update: {
+          actioned_at?: string | null
+          actioned_by?: string | null
+          created_at?: string
+          days_remaining?: number | null
+          fournisseur?: string | null
+          id?: string
+          is_active?: boolean
+          materiau?: string
+          recommended_qty?: number
+          unite?: string
+          urgency?: string
+        }
+        Relationships: []
+      }
       security_digest_recipients: {
         Row: {
           added_by: string | null
