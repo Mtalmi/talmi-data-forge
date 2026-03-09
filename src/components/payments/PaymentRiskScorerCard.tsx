@@ -3,7 +3,6 @@ import { Shield, Sparkles, TrendingDown, Mail, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrencyDH } from '@/lib/formatters';
 import { useToast } from '@/hooks/use-toast';
-import { formatCurrencyDH } from '@/lib/formatters';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
