@@ -162,7 +162,7 @@ function usePaymentsLiveData() {
       methodGroups[m].count += 1;
     });
     const totalAll = Object.values(methodGroups).reduce((s, g) => s + g.amount, 0) || 1;
-    const methodColors: Record<string, string> = { Virement: T.info, Chèque: T.purple, Espèces: T.success, Traite: T.warning };
+    const methodColors: Record<string, string> = { Virement: '#D4A843', Chèque: '#C49A35', Espèces: '#A07820', Traite: 'rgba(212,168,67,0.5)' };
     const methodIcons: Record<string, any> = { Virement: ArrowRightLeft, Chèque: FileText, Espèces: Banknote, Traite: Clock };
     const methods = Object.entries(methodGroups).slice(0, 4).map(([name, g]) => ({
       name,
