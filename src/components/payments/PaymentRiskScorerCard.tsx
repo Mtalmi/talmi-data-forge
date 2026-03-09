@@ -219,6 +219,7 @@ export function PaymentRiskScorerCard() {
                     <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec, fontWeight: 500 }}>{inv.action}</td>
                     <td style={{ padding: '10px 14px' }}>
                       <button
+                        onClick={() => handleRelance(inv, i)}
                         onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
                         onMouseLeave={e => (e.currentTarget.style.filter = 'none')}
                         style={{
