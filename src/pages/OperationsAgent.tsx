@@ -539,15 +539,19 @@ export default function OperationsAgent() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="rounded-xl border border-border bg-card overflow-hidden"
+                    style={{ borderTop: '2px solid #D4A843' }}
                   >
                     <button
                       className="w-full flex items-center gap-3 px-5 py-4 hover:bg-muted/20 transition-colors text-left"
                       onClick={() => setExpandedBriefing(expandedBriefing === b.id ? null : b.id)}
                     >
                       <div className="text-xl">{b.type === "morning_briefing" ? "🌅" : "🌙"}</div>
-                      <div>
-                        <div className="font-semibold text-sm">
-                          {b.type === "morning_briefing" ? "Morning Intelligence Brief" : "End-of-Day Operations Report"}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-semibold text-sm">
+                            {b.type === "morning_briefing" ? "Morning Intelligence Brief" : "End-of-Day Operations Report"}
+                          </span>
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ color: '#D4A843', background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843' }}>✨ Généré par IA · Claude Opus</span>
                         </div>
                         <div className="text-xs text-muted-foreground font-mono">{b.plant_name} · {timeAgo(b.generated_at)}</div>
                       </div>
