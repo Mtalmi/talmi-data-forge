@@ -131,10 +131,11 @@ export function CashFlowAIForecastCard() {
   return (
     <div style={{ background: T.cardBg, border: `1px solid rgba(212,168,67,0.15)`, borderLeft: `4px solid ${sc}`, borderRadius: 12, padding: 24 }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Brain size={18} color={T.gold} />
           <span style={{ fontWeight: 700, fontSize: 15, color: T.textPri }}>🧠 Prévision Trésorerie IA</span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843' }}>Généré par IA · Claude Opus</span>
           {forecast.score_sante && (
             <span style={{
               padding: '3px 12px', borderRadius: 999, fontSize: 11, fontWeight: 700,
