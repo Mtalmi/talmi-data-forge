@@ -81,12 +81,12 @@ export default function Dettes() {
     getOverdue,
   } = usePayables();
 
-  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-    'not_due': { label: d.notDue, color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-    'due_soon': { label: d.dueSoonLabel, color: 'bg-warning/10 text-warning border-warning/30', icon: <Timer className="h-3 w-3" /> },
-    'due_today': { label: d.dueToday, color: 'bg-accent/10 text-accent-foreground border-accent/30', icon: <CalendarIcon className="h-3 w-3" /> },
-    'overdue': { label: d.overdue, color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertTriangle className="h-3 w-3" /> },
-    'paid': { label: d.paid, color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  const STATUS_CONFIG: Record<string, { label: string; badgeStyle: React.CSSProperties; icon: React.ReactNode; pulse?: boolean }> = {
+    'not_due': { label: 'À payer', badgeStyle: { background: 'rgba(245,158,11,0.15)', border: '1px solid #f59e0b', color: '#f59e0b' }, icon: <Clock className="h-3 w-3" /> },
+    'due_soon': { label: 'Urgent', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <Zap className="h-3 w-3" />, pulse: true },
+    'due_today': { label: 'Urgent', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <Zap className="h-3 w-3" />, pulse: true },
+    'overdue': { label: 'En retard', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <AlertTriangle className="h-3 w-3" />, pulse: true },
+    'paid': { label: 'Payé', badgeStyle: { background: 'rgba(34,197,94,0.15)', border: '1px solid #22c55e', color: '#22c55e' }, icon: <CheckCircle className="h-3 w-3" /> },
   };
 
   const [searchTerm, setSearchTerm] = useState('');
