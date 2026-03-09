@@ -334,7 +334,7 @@ export default function Stocks() {
         )}
 
         {/* ── SMART REORDER BANNER (AI) ── */}
-        <SmartReorderBanner criticalMaterials={criticalAutonomyMaterials} />
+        <SmartReorderBanner />
 
         {/* ── STOCK SUMMARY TABLE ── */}
         <section>
