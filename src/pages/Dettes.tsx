@@ -655,6 +655,98 @@ export default function Dettes() {
           );
         })()}
 
+        {/* AGENT IA: ESCOMPTES DISPONIBLES */}
+        {(() => {
+          const unpaidAll = payables.filter(p => p.status !== 'paid' && p.days_until_due > 0);
+          // Simulate early payment discount opportunities per supplier
+          const discountData = [
+            { supplier: 'LafargeHolcim Maroc', pct: 2, deadline: '2026-03-15', condition: '2% si payé avant 15 mars' },
+            { supplier: 'Carrière Atlas Settat', pct: 1.5, deadline: '2026-03-20', condition: '1.5% si payé avant 20 mars' },
+            { supplier: 'Ciments du Maroc', pct: 2.5, deadline: '2026-03-14', condition: '2.5% si payé avant 14 mars' },
+            { supplier: 'ONEE', pct: 1, deadline: '2026-03-25', condition: '1% si payé avant 25 mars' },
+          ];
+
+          const today = new Date();
+          const enriched = discountData.map(d => {
+            const match = unpaidAll.find(p => p.fournisseur_name === d.supplier);
+            if (!match) return null;
+            const deadlineDate = new Date(d.deadline);
+            const daysLeft = Math.ceil((deadlineDate.getTime() - today.getTime()) / 86400000);
+            const saving = Math.round(match.amount_due * d.pct / 100);
+            return { ...d, amount: match.amount_due, saving, daysLeft };
+          }).filter(Boolean) as { supplier: string; pct: number; deadline: string; condition: string; amount: number; saving: number; daysLeft: number }[];
+
+          const totalSavings = enriched.reduce((s, e) => s + e.saving, 0);
+
+          if (enriched.length === 0) return null;
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: '3px solid #D4A843',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Zap size={16} color="#D4A843" />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Agent IA : Escomptes Disponibles
+                  </span>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', animation: 'tbos-pulse 2s infinite' }} />
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Économies potentielles ce mois</span>
+                  <p style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontSize: 22, fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em',
+                  }}>{totalSavings.toLocaleString('fr-MA')} DH</p>
+                </div>
+              </div>
+
+              {/* Rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {enriched.map((item, i) => (
+                  <div key={i} style={{
+                    display: 'grid', gridTemplateColumns: '1.2fr 1.5fr 100px 80px 150px',
+                    gap: 12, padding: '12px 0', alignItems: 'center',
+                    borderBottom: i < enriched.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                  }}>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>{item.supplier}</span>
+                    <span style={{ fontSize: 12, color: '#D1D5DB', fontStyle: 'italic' }}>{item.condition}</span>
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 14, fontWeight: 500, color: '#D4A843', textAlign: 'right',
+                    }}>
+                      {item.saving.toLocaleString('fr-MA')} DH
+                    </span>
+                    <span style={{
+                      fontFamily: 'ui-monospace', fontSize: 12, fontWeight: 600, textAlign: 'center',
+                      color: item.daysLeft <= 5 ? '#ef4444' : item.daysLeft <= 10 ? '#f59e0b' : '#9CA3AF',
+                      animation: item.daysLeft <= 5 ? 'tbos-pulse 2s infinite' : undefined,
+                    }}>
+                      {item.daysLeft}j
+                    </span>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                      <Button size="sm" style={{
+                        fontSize: 11, fontWeight: 600,
+                        background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
+                        color: '#D4A843', borderRadius: 6, padding: '4px 12px', height: 28,
+                      }}>
+                        Profiter de l'escompte
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* CALENDRIER PAIEMENTS IA */}
         {(() => {
           const unpaid = payables.filter(p => p.status !== 'paid');
