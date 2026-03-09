@@ -827,7 +827,7 @@ export default function WorldClassContractors() {
             {/* Renouvellement */}
             <PerformanceCard
               icon={RefreshCw}
-              iconColor={T.success}
+              iconColor={'#D4A843'}
               value={83}
               suffix="%"
               label="Taux de Renouvellement"
