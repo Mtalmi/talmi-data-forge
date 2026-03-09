@@ -1995,6 +1995,7 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
         ...cardStyle(hov),
         opacity: vis ? 1 : 0,
         borderLeft: `4px solid ${barColor}`,
+        borderTop: '2px solid #D4A843',
         transition: 'all 0.25s ease',
       }}
     >
@@ -2002,7 +2003,9 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
         <div style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{u.besoin}</div>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
-          background: `${barColor}22`, color: barColor, border: `1px solid ${barColor}44`,
+          background: isHaute ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
+          color: isHaute ? '#EF4444' : '#D4A843',
+          border: `1px solid ${isHaute ? 'rgba(239,68,68,0.3)' : 'rgba(212,168,67,0.3)'}`,
           borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700,
           animation: isHaute ? 'tbos-pulse 2s infinite' : 'none',
         }}>
@@ -2042,8 +2045,8 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
           onClick={onAssigner}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            background: T.gold, color: T.navy, border: 'none',
-            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+             background: '#D4A843', color: '#0F1629', border: 'none',
+             borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif",
           }}>
           <UserPlus size={14} /> Assigner
@@ -2052,8 +2055,8 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
           onClick={onAppelOffres}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
-            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+             background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+             borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif",
           }}>
           <FileText size={14} /> Créer Appel d'Offres
