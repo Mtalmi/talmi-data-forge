@@ -167,56 +167,54 @@ export default function Dettes() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Building2 className="h-6 w-6 text-primary" />
-              {d.title}
-            </h1>
-            <p className="text-muted-foreground">
-              {d.subtitle} {format(startDate, 'dd MMM yyyy', { locale: dateLocale || undefined })}
-              {hasData && ` • DPO: ${stats.dpoAverage} ${d.timeframe}`}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={refetch}>
-              <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
-              {d.refresh}
-            </Button>
-          </div>
-        </div>
+        {/* TBOS Header */}
+        <PageHeader
+          icon={Building2}
+          title="Dettes Fournisseurs"
+          subtitle="Données en temps réel"
+          loading={loading}
+        />
 
-        {/* Fresh Start Info Banner */}
-        {!hasData && (
-          <Card className="border-primary/30 bg-primary/5">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 rounded-lg bg-primary/10">
-                  <Building2 className="h-6 w-6 text-primary" />
+        <div style={{ maxWidth: 1400, margin: '0 auto', padding: '0 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+        {/* Premium Info Banner */}
+        <div style={{
+          background: 'rgba(212,168,67,0.06)',
+          border: '1px solid rgba(212,168,67,0.2)',
+          borderRadius: 12,
+          padding: '20px 24px',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 16,
+        }}>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Building2 size={20} color="#D4A843" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: '#F1F5F9', fontWeight: 600, fontSize: 16, marginBottom: 4 }}>Système de Paiements Fournisseurs</h3>
+            <p style={{ color: '#9CA3AF', fontSize: 13, marginBottom: 14 }}>
+              Suivi en temps réel — {format(new Date(), 'dd MMMM yyyy', { locale: dateLocale || undefined })}
+              {hasData && ` • DPO: ${stats.dpoAverage} jours`}
+            </p>
+            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+              {[
+                { label: 'Alerte 7j avant échéance', icon: Timer },
+                { label: 'Programmation automatique', icon: CalendarDays },
+                { label: 'Objectif 100% à temps', icon: CheckCircle },
+              ].map((pill, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#94A3B8' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#D4A843', flexShrink: 0 }} />
+                  <pill.icon size={14} color="#D4A843" />
+                  <span>{pill.label}</span>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg mb-1">{d.paymentSystem}</h3>
-                  <p className="text-muted-foreground mb-3">{d.paymentActive}</p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Timer className="h-4 w-4 text-warning" />
-                      <span>{d.alert7days}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-accent-foreground" />
-                      <span>{d.scheduling}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                      <span>{d.target}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              ))}
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={refetch} style={{ border: '1px solid rgba(212,168,67,0.3)', color: '#D4A843', background: 'rgba(212,168,67,0.08)' }}>
+            <RefreshCw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} />
+            Actualiser
+          </Button>
+        </div>
 
         {/* Urgent Alerts */}
         {hasData && (dueSoon.length > 0 || overdue.length > 0) && (
