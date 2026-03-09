@@ -190,11 +190,11 @@ const RESULTS = [
 ];
 
 const TYPE_DIST = [
-  { name: 'Slump',          count: 3, color: T.info   },
-  { name: 'Résistance 7j',  count: 2, color: T.gold   },
-  { name: 'Résistance 28j', count: 1, color: T.purple  },
-  { name: 'Température',    count: 1, color: T.orange  },
-  { name: 'Air occlus',     count: 1, color: T.cyan    },
+  { name: 'Slump',          count: 3, color: '#D4A843' },
+  { name: 'Résistance 7j',  count: 2, color: '#C49A35' },
+  { name: 'Résistance 28j', count: 1, color: '#A07820' },
+  { name: 'Température',    count: 1, color: '#7A5C18' },
+  { name: 'Air occlus',     count: 1, color: '#4A3810' },
 ];
 
 const BATCH_DIST = [
@@ -498,7 +498,7 @@ export default function WorldClassLaboratory() {
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 3fr', gap: 20 }}>
 
             {/* Gauge left */}
-            <Card className="tbos-card-stagger">
+            <Card className="tbos-card-stagger" style={{ borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
               <SectionHeader icon={CheckCircle} label="Conformité" sub="aujourd'hui" />
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <ConformityGauge value={87.5} />
@@ -512,7 +512,7 @@ export default function WorldClassLaboratory() {
             </Card>
 
             {/* Weekly trend right */}
-            <div style={chartStyle}>
+            <div style={{ ...chartStyle, borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
               <SectionHeader icon={TrendingUp} label="Tendance Conformité" sub="cette semaine" />
               <div style={{ display: 'flex', gap: 16, marginBottom: 12 }}>
                 {[[T.success, 'Conformes'], [T.danger, 'Non-conf.'], [T.gold, 'Taux %']].map(([c, l], i) => (
@@ -526,8 +526,8 @@ export default function WorldClassLaboratory() {
                 <AreaChart data={WEEKLY} margin={{ top: 4, right: 50, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="gradConf" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={T.success} stopOpacity={0.35} />
-                      <stop offset="95%" stopColor={T.success} stopOpacity={0.05} />
+                      <stop offset="5%" stopColor={T.success} stopOpacity={0.15} />
+                      <stop offset="95%" stopColor={T.success} stopOpacity={0.02} />
                     </linearGradient>
                     <linearGradient id="gradNon" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor={T.danger} stopOpacity={0.45} />
@@ -541,7 +541,7 @@ export default function WorldClassLaboratory() {
                   <RechartsTooltip content={<WeeklyTooltip />} />
                   <Area yAxisId="left" type="monotone" dataKey="conformes" name="Conformes" stroke={T.success} fill="url(#gradConf)" strokeWidth={2} isAnimationActive animationDuration={1200} />
                   <Area yAxisId="left" type="monotone" dataKey="non" name="Non-conf." stroke={T.danger} fill="url(#gradNon)" strokeWidth={2} isAnimationActive animationDuration={1200} />
-                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke={T.gold} fill="none" strokeWidth={1.5} strokeDasharray="4 3" dot={{ fill: T.gold, r: 3 }} isAnimationActive animationDuration={1200} />
+                  <Area yAxisId="right" type="monotone" dataKey="taux" name="Taux %" stroke="#D4A843" fill="none" strokeWidth={2.5} strokeDasharray="4 3" dot={{ fill: '#D4A843', r: 4, strokeWidth: 2, stroke: '#D4A843' }} isAnimationActive animationDuration={1200} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -575,7 +575,7 @@ export default function WorldClassLaboratory() {
 
         {/* ══════ AI RISK PREDICTION CARD ══════ */}
         <section>
-          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)' }}>
+          <Card style={{ borderLeft: `4px solid ${T.gold}`, background: 'rgba(255,255,255,0.04)', borderTop: '2px solid', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Zap size={14} color={T.gold} />
@@ -730,9 +730,21 @@ export default function WorldClassLaboratory() {
                   <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }} domain={[0, 1]} />
                   <YAxis type="category" dataKey="batch" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} width={80} />
                   <RechartsTooltip content={<BatchTooltip />} cursor={{ fill: `${T.gold}08` }} />
-                  <Bar dataKey="conf"      name="Conformes"   fill="#22c55e" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
-                  <Bar dataKey="nonConf"   name="Non-conf."   fill="#ef4444" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
-                  <Bar dataKey="enAttente" name="En attente"  fill="#f59e0b" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000} />
+                  <Bar dataKey="conf" name="Conformes" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
+                    {BATCH_DIST.map((d, i) => {
+                      const batchGoldMap: Record<string, string> = {
+                        'BN-0142': '#D4A843', 'BN-0141': '#D4A843',
+                        'BN-0139': '#C49A35', 'BN-0138': '#C49A35', 'BN-0137': '#C49A35', 'BN-0136': '#C49A35',
+                      };
+                      return <Cell key={i} fill={batchGoldMap[d.batch] || '#D4A843'} />;
+                    })}
+                  </Bar>
+                  <Bar dataKey="nonConf" name="Non-conf." radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
+                    {BATCH_DIST.map((d, i) => <Cell key={i} fill="#EF4444" />)}
+                  </Bar>
+                  <Bar dataKey="enAttente" name="En attente" radius={[0,4,4,0]} stackId="a" isAnimationActive animationDuration={1000}>
+                    {BATCH_DIST.map((d, i) => <Cell key={i} fill="rgba(212,168,67,0.4)" />)}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>

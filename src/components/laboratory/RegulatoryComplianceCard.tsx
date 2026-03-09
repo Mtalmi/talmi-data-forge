@@ -31,6 +31,8 @@ export function RegulatoryComplianceCard() {
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
       border: '1px solid rgba(245,158,11,0.15)',
+      borderTop: '2px solid',
+      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
       borderRadius: 12,
       overflow: 'hidden',
     }}>
@@ -54,11 +56,12 @@ export function RegulatoryComplianceCard() {
 
       <div style={{ padding: '0 20px 20px' }}>
         {/* Compliance Score */}
+        <style>{`@keyframes compliance-ring-pulse { 0%,100%{ filter: drop-shadow(0 0 8px rgba(212,168,67,0.25)); } 50%{ filter: drop-shadow(0 0 16px rgba(212,168,67,0.5)); } }`}</style>
         <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
-          <div style={{ position: 'relative', width: 88, height: 88, flexShrink: 0, filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.25))' }}>
+          <div style={{ position: 'relative', width: 88, height: 88, flexShrink: 0, animation: 'compliance-ring-pulse 3s ease-in-out infinite' }}>
             <svg width="88" height="88" viewBox="0 0 88 88">
               <circle cx="44" cy="44" r="37" fill="#0B1120" stroke="rgba(255,255,255,0.06)" strokeWidth="5" />
-              <circle cx="44" cy="44" r="37" fill="none" stroke="#D4A843" strokeWidth="5"
+              <circle cx="44" cy="44" r="37" fill="none" stroke={scoreColor} strokeWidth="5"
                 strokeDasharray={`${(score / 100) * 232.5} 232.5`}
                 strokeLinecap="round"
                 transform="rotate(-90 44 44)"
@@ -66,7 +69,7 @@ export function RegulatoryComplianceCard() {
               />
             </svg>
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: '#D4A843', lineHeight: 1, letterSpacing: '-0.02em' }}>{score}</span>
+              <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontSize: 32, fontWeight: 200, color: scoreColor, lineHeight: 1, letterSpacing: '-0.02em' }}>{score}</span>
               <span style={{ fontSize: 9, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: 3 }}>Score IA</span>
             </div>
           </div>

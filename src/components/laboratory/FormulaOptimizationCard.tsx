@@ -28,6 +28,8 @@ export function FormulaOptimizationCard() {
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
       border: '1px solid rgba(16,185,129,0.15)',
+      borderTop: '2px solid',
+      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
       borderRadius: 12,
       overflow: 'hidden',
     }}>

@@ -27,6 +27,8 @@ export function OperatorPerformanceSection() {
     <div style={{
       background: 'rgba(255,255,255,0.03)',
       border: `1px solid ${T.cardBorder}`,
+      borderTop: '2px solid',
+      borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1',
       borderRadius: 12,
       overflow: 'hidden',
     }}>
