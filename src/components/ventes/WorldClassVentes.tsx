@@ -80,8 +80,8 @@ function GoldTooltip({ active, payload, label, unit = '' }: any) {
 }
 
 /* ─── GLASS CARD ─── */
-function GCard({ children, className = '', style = {}, delay = 0, interactive = false }: {
-  children: React.ReactNode; className?: string; style?: React.CSSProperties; delay?: number; interactive?: boolean;
+function GCard({ children, className = '', style = {}, delay = 0, interactive = false, goldTop = false }: {
+  children: React.ReactNode; className?: string; style?: React.CSSProperties; delay?: number; interactive?: boolean; goldTop?: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -102,6 +102,7 @@ function GCard({ children, className = '', style = {}, delay = 0, interactive = 
         transition: 'all 300ms ease',
         transform: hovered && interactive ? 'translateY(-1px)' : 'translateY(0)',
         opacity: visible ? 1 : 0,
+        ...(goldTop ? { borderTop: '2px solid #D4A843', borderImage: 'linear-gradient(90deg, #D4A843, transparent) 1', borderImageSlice: '1 1 0 1' } : {}),
         ...style,
       }}
     >
