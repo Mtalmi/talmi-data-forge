@@ -395,7 +395,29 @@ function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSI
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
   const [riskTooltip, setRiskTooltip] = useState(false);
+  const [showAdviceModal, setShowAdviceModal] = useState(false);
   const vis = useFadeIn(delay);
+
+  // Live AI prolongation advice
+  const [advice, setAdvice] = useState<{ recommendation: string; confidence: number } | null>(null);
+  useEffect(() => {
+    if (m.progress <= 75) return;
+    const fetchAdvice = async () => {
+      try {
+        const { data } = await supabase
+          .from('mission_prolongation_advice' as any)
+          .select('recommendation, confidence')
+          .eq('mission_id', m.id)
+          .order('calculated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (data) {
+          setAdvice({ recommendation: (data as any).recommendation, confidence: (data as any).confidence });
+        }
+      } catch { /* no advice */ }
+    };
+    fetchAdvice();
+  }, [m.id, m.progress]);
 
   // Live risk data from mission_risk_alerts
   const [risk, setRisk] = useState<{ risk_level: string; risk_reason: string | null } | null>(null);
