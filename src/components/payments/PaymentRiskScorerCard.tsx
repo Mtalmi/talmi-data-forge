@@ -44,6 +44,25 @@ const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', '
 export function PaymentRiskScorerCard() {
   const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const handleRelance = async (inv: AtRiskInvoice, index: number) => {
+    const { error } = await supabase
+      .from('devis')
+      .update({ statut: 'relancé' })
+      .eq('devis_id', inv.devisId);
+
+    if (error) {
+      toast({ title: 'Erreur', description: 'Impossible de relancer cette facture.', variant: 'destructive' });
+      return;
+    }
+
+    const todayStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    setAtRiskInvoices(prev => prev.map((item, i) =>
+      i === index ? { ...item, action: `Relancé le ${todayStr}` } : item
+    ));
+    toast({ title: 'Relance envoyée ✓', description: `Facture ${inv.facture} relancée avec succès.`, style: { background: '#1a1f2e', border: '1px solid #D4A843', color: '#D4A843' } });
+  };
 
   useEffect(() => {
     async function fetchAtRisk() {
