@@ -394,9 +394,9 @@ export default function WorldClassDeliveries() {
   const { todayBons, weekBons, fleet, loading } = useDeliveriesLiveData();
 
   const totalDeliveries = todayBons.length;
-  const totalVolumeLivre = todayBons.reduce((s, b) => s + (b.volume_livre || b.volume_m3 || 0), 0);
-  const delivered = todayBons.filter(b => b.workflow_status === 'validation_technique').length;
-  const enRoute = todayBons.filter(b => b.workflow_status === 'production').length;
+  const totalVolumeLivre = Math.round(todayBons.reduce((s, b) => s + (b.volume_m3 || 0), 0));
+  const delivered = todayBons.filter(b => ['validation_technique', 'livre', 'livré', 'termine'].includes(b.workflow_status)).length;
+  const enRoute = todayBons.filter(b => b.workflow_status === 'en_livraison').length;
   const planned = todayBons.filter(b => b.workflow_status === 'planification').length;
   const punctuality = totalDeliveries > 0 ? Math.round((delivered / totalDeliveries) * 100) : 0;
 
