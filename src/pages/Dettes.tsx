@@ -104,6 +104,12 @@ export default function Dettes() {
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [processingAction, setProcessingAction] = useState(false);
   const [reminderToggles, setReminderToggles] = useState({ email7j: true, whatsapp3j: true, push0j: false });
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerPayable, setDrawerPayable] = useState<Payable | null>(null);
+  const [drawerMethod, setDrawerMethod] = useState('virement');
+  const [drawerDate, setDrawerDate] = useState<Date | undefined>(undefined);
+  const [drawerNote, setDrawerNote] = useState('');
+  const [drawerConfirmed, setDrawerConfirmed] = useState(false);
   const [expandedNego, setExpandedNego] = useState<Record<string, boolean>>({});
 
   const canManagePayables = isCeo || role === 'agent_administratif' || role === 'superviseur';
