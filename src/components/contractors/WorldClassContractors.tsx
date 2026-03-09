@@ -2055,8 +2055,8 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
           onClick={onAppelOffres}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
-            background: 'transparent', border: `1px solid ${T.gold}`, color: T.gold,
-            borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+             background: 'transparent', border: '1px solid #D4A843', color: '#D4A843',
+             borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer',
             fontFamily: "'DM Sans', sans-serif",
           }}>
           <FileText size={14} /> Créer Appel d'Offres
