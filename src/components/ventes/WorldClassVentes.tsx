@@ -223,7 +223,7 @@ function PipelineSection() {
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 11, color: T.textSec, width: 100, flexShrink: 0 }}>{f.stage}</span>
-                  <div style={{ flex: 1, position: 'relative', height: 28, background: `rgba(253,185,19,0.06)`, borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ flex: 1, position: 'relative', height: 28, background: `rgba(212,168,67,0.06)`, borderRadius: 6, overflow: 'hidden' }}>
                     <div style={{
                       position: 'absolute', left: 0, top: 0, bottom: 0,
                       width: barWidths[i] ? f.width : '0%',
