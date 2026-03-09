@@ -181,6 +181,11 @@ function useStocksLiveData() {
         setStockAlertsDb(stockAlertsRes.data);
       }
 
+      // Reorder recommendations from DB
+      if (reorderRes.data) {
+        setReorderRecs(reorderRes.data as any);
+      }
+
       // Autonomy map
       const autoMap: Record<string, { days: number | null; calculated_at: string | null }> = {};
       if (autonomyRes.data?.length) {
