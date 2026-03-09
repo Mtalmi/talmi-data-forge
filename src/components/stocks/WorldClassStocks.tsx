@@ -601,7 +601,7 @@ function ValueTooltip({ active, payload, label }: any) {
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
   const [activeTab, setActiveTab] = useState('overview');
-  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading } = useStocksLiveData();
+  const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
     { id: 'overview', label: "Vue d'ensemble" },
     { id: 'mouvements', label: 'Mouvements' },
