@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Shield, Sparkles, TrendingDown, Mail, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { formatCurrencyDH } from '@/lib/formatters';
+import { useToast } from '@/hooks/use-toast';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
@@ -18,6 +19,7 @@ const riskKpis = [
 ];
 
 interface AtRiskInvoice {
+  devisId: string;
   facture: string;
   client: string;
   montant: string;
@@ -42,6 +44,25 @@ const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', '
 export function PaymentRiskScorerCard() {
   const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+
+  const handleRelance = async (inv: AtRiskInvoice, index: number) => {
+    const { error } = await supabase
+      .from('devis')
+      .update({ statut: 'relancé' })
+      .eq('devis_id', inv.devisId);
+
+    if (error) {
+      toast({ title: 'Erreur', description: 'Impossible de relancer cette facture.', variant: 'destructive' });
+      return;
+    }
+
+    const todayStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+    setAtRiskInvoices(prev => prev.map((item, i) =>
+      i === index ? { ...item, action: `Relancé le ${todayStr}` } : item
+    ));
+    toast({ title: 'Relance envoyée ✓', description: `Facture ${inv.facture} relancée avec succès.`, style: { background: '#1a1f2e', border: '1px solid #D4A843', color: '#D4A843' } });
+  };
 
   useEffect(() => {
     async function fetchAtRisk() {
@@ -83,6 +104,7 @@ export function PaymentRiskScorerCard() {
           ? new Date(d.date_expiration).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
           : '—';
         return {
+          devisId: d.devis_id,
           facture: `#${d.devis_id}`,
           client: d.client_id ? (clientMap[d.client_id] || d.client_id) : '—',
           montant: formatCurrencyDH(d.total_ht),
@@ -197,6 +219,7 @@ export function PaymentRiskScorerCard() {
                     <td style={{ padding: '10px 14px', fontSize: 11, color: T.textSec, fontWeight: 500 }}>{inv.action}</td>
                     <td style={{ padding: '10px 14px' }}>
                       <button
+                        onClick={() => handleRelance(inv, i)}
                         onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.1)')}
                         onMouseLeave={e => (e.currentTarget.style.filter = 'none')}
                         style={{
