@@ -243,6 +243,100 @@ export default function Dettes() {
           </Card>
         )}
 
+        {/* TABLEAU DE BORD DIRECTEUR */}
+        {(() => {
+          const unpaidAll = payables.filter(p => p.status !== 'paid');
+          const overdueAll = unpaidAll.filter(p => p.days_overdue > 0);
+          const overdueRatio = unpaidAll.length > 0 ? overdueAll.length / unpaidAll.length : 0;
+          const avgOverdueDays = overdueAll.length > 0 ? overdueAll.reduce((s, p) => s + p.days_overdue, 0) / overdueAll.length : 0;
+          const healthScore = Math.max(0, Math.min(100, Math.round(100 - overdueRatio * 50 - avgOverdueDays * 0.8)));
+          const scoreColor = healthScore >= 75 ? '#22c55e' : healthScore >= 50 ? '#f59e0b' : '#ef4444';
+          const scoreLabel = healthScore >= 75 ? 'EXCELLENT' : healthScore >= 50 ? 'BON' : 'CRITIQUE';
+          const scoreBadgeBg = healthScore >= 75 ? 'rgba(34,197,94,0.15)' : healthScore >= 50 ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)';
+
+          const activeSuppliers = new Set(unpaidAll.map(p => p.fournisseur_name)).size;
+          const invoicesThisMonth = unpaidAll.length;
+          const savingsNego = Math.round(overdueAll.reduce((s, p) => s + p.amount_due * 0.06 * (p.days_overdue / 365), 0) * 0.7);
+          const retardsEvites = Math.max(0, unpaidAll.filter(p => p.days_until_due <= 3 && p.days_until_due >= 0).length);
+
+          const actions = [
+            overdueAll.length > 0 && { priority: 'URGENT', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', text: `Régulariser ${overdueAll.length} facture${overdueAll.length > 1 ? 's' : ''} en retard — ${overdueAll.reduce((s,p) => s + p.amount_due, 0).toLocaleString('fr-MA')} DH` },
+            retardsEvites > 0 && { priority: 'MOYEN', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', text: `Programmer ${retardsEvites} paiement${retardsEvites > 1 ? 's' : ''} à échéance cette semaine` },
+            { priority: 'PLANIFIÉ', color: '#D4A843', bg: 'rgba(212,168,67,0.15)', text: `Optimiser séquence paiements pour économiser ${savingsNego.toLocaleString('fr-MA')} DH en pénalités` },
+          ].filter(Boolean).slice(0, 3) as { priority: string; color: string; bg: string; text: string }[];
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderTop: '2px solid #D4A843',
+              borderRadius: 12,
+              padding: '28px 32px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1.1fr 1.3fr',
+              gap: 32,
+            }}>
+              {/* LEFT — Health Score */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>Santé Paiements IA</span>
+                <p style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                  fontWeight: 200, fontSize: 72, letterSpacing: '-0.03em', lineHeight: 1,
+                  color: scoreColor, WebkitFontSmoothing: 'antialiased',
+                }}>
+                  {healthScore}
+                </p>
+                <span style={{ fontSize: 12, color: '#6B7280' }}>/100</span>
+                <span style={{
+                  fontSize: 10, fontWeight: 700, padding: '4px 14px', borderRadius: 20,
+                  background: scoreBadgeBg, color: scoreColor, border: `1px solid ${scoreColor}40`,
+                  letterSpacing: '0.1em', marginTop: 4,
+                }}>
+                  {scoreLabel}
+                </span>
+              </div>
+
+              {/* CENTER — 2x2 Micro KPIs */}
+              <div style={{ borderLeft: '1px solid rgba(255,255,255,0.06)', borderRight: '1px solid rgba(255,255,255,0.06)', padding: '0 28px', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: 16 }}>
+                {[
+                  { label: 'Fournisseurs actifs', value: String(activeSuppliers), color: '#F1F5F9' },
+                  { label: 'Factures ce mois', value: String(invoicesThisMonth), color: '#F1F5F9' },
+                  { label: 'Économies négociées IA', value: `${savingsNego.toLocaleString('fr-MA')} DH`, color: '#D4A843' },
+                  { label: 'Retards évités', value: String(retardsEvites), color: '#22c55e' },
+                ].map((mk, i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <span style={{ fontSize: 9, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6B7280' }}>{mk.label}</span>
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontSize: 22, fontWeight: 200, color: mk.color, letterSpacing: '-0.02em',
+                    }}>{mk.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* RIGHT — AI Actions */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                  <Zap size={14} color="#D4A843" />
+                  <span style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>Actions prioritaires IA</span>
+                </div>
+                {actions.map((action, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 12,
+                      background: action.bg, color: action.color, border: `1px solid ${action.color}40`,
+                      whiteSpace: 'nowrap', flexShrink: 0, marginTop: 1,
+                    }}>
+                      {action.priority}
+                    </span>
+                    <span style={{ fontSize: 12, color: '#D1D5DB', lineHeight: 1.5 }}>{action.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* KPI Cards — Glassmorphism */}
         {(() => {
           const tauxColor = stats.paymentRate >= 80 ? '#22c55e' : stats.paymentRate >= 60 ? '#f59e0b' : '#ef4444';
