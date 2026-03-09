@@ -134,6 +134,7 @@ function useStocksLiveData() {
   const [MOVEMENT_DATA, setMovementData] = useState<{ day: string; entrees: number; sorties: number }[]>([]);
   const [ALERTS, setAlerts] = useState<{ name: string; current: string; min: string; deficit: string; urgency: string; color: string }[]>([]);
   const [MOVEMENTS, setMovements] = useState<{ date: string; type: string; material: string; qty: string; ref: string; resp: string }[]>([]);
+  const [STOCK_ALERTS_DB, setStockAlertsDb] = useState<{ id: string; materiau: string; alert_type: string; severity: string; message: string; created_at: string }[]>([]);
   const [VALUE_BREAKDOWN, setValueBreakdown] = useState<{ cat: string; value: number; color: string }[]>([]);
   const [AUTONOMY, setAutonomy] = useState<Record<string, { days: number | null; calculated_at: string | null }>>({});
   const [SPARKLINES, setSparklines] = useState<Record<string, number[]>>({});
@@ -152,7 +153,7 @@ function useStocksLiveData() {
   const fetchAll = useCallback(async () => {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
-      const [stocksRes, movementsRes, autonomyRes, consumptionRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
@@ -164,7 +165,16 @@ function useStocksLiveData() {
           .eq('type_mouvement', 'consumption')
           .gte('created_at', sevenDaysAgo)
           .order('created_at', { ascending: true }),
+        supabase.from('stock_alerts')
+          .select('id, materiau, alert_type, severity, message, created_at')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false }),
       ]);
+
+      // Stock alerts from DB
+      if (stockAlertsRes.data) {
+        setStockAlertsDb(stockAlertsRes.data);
+      }
 
       // Autonomy map
       const autoMap: Record<string, { days: number | null; calculated_at: string | null }> = {};
@@ -278,11 +288,12 @@ function useStocksLiveData() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stocks' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_alerts' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading };
 }
 
 // ─────────────────────────────────────────────────────
