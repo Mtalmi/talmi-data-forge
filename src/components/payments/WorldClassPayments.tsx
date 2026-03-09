@@ -38,6 +38,7 @@ const T = {
 // LIVE DATA HOOK
 // ─────────────────────────────────────────────────────
 function usePaymentsLiveData() {
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     encaisseThisMonth: 0,
     enAttente: 0,
