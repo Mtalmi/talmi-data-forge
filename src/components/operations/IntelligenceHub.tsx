@@ -134,6 +134,7 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
   const [stockAlerts, setStockAlerts] = useState<any[]>([]);
   const [forecast, setForecast] = useState<any>(null);
   const [dealScores, setDealScores] = useState<any[]>([]);
+  const [liveDevisStats, setLiveDevisStats] = useState<{ count: number; avgScore: number } | null>(null);
 
   const fetchAll = useCallback(async () => {
     const [
@@ -142,12 +143,14 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
       { data: stocks },
       { data: cashFlow },
       { data: deals },
+      { data: allScoredDevis },
     ] = await Promise.all([
       supabase.from('ai_briefings').select('*').order('generated_at', { ascending: false }).limit(10),
       supabase.from('client_intelligence').select('id, score_sante, nom_client'),
       supabase.from('stock_autonomy_cache').select('*').lte('days_remaining', 5),
       supabase.from('cash_flow_forecasts').select('*').order('generated_at', { ascending: false }).limit(1),
       supabase.from('devis').select('devis_id, score_ia, niveau_score, ai_recommandation, scored_at, client_id').not('score_ia', 'is', null).order('scored_at', { ascending: false }).limit(5),
+      supabase.from('devis').select('score_ia').not('score_ia', 'is', null),
     ]);
 
     // Briefings
@@ -178,9 +181,20 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
       setForecast(cashFlow[0]);
     }
 
-    // Deal scores
+    // Deal scores (top 5)
     if (deals?.length) {
       setDealScores(deals);
+    }
+
+    // Live devis stats (count + avg)
+    if (allScoredDevis && allScoredDevis.length > 0) {
+      const scores = allScoredDevis.map((d: any) => d.score_ia).filter((s: any) => s != null);
+      setLiveDevisStats({
+        count: scores.length,
+        avgScore: scores.length > 0 ? Math.round((scores.reduce((a: number, b: number) => a + b, 0) / scores.length) * 10) / 10 : 0,
+      });
+    } else {
+      setLiveDevisStats({ count: 0, avgScore: 0 });
     }
 
     setLoading(false);
@@ -379,12 +393,14 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
                 </div>
               ))}
             </div>
-          ) : devisStats && devisStats.count > 0 ? (
+          ) : liveDevisStats && liveDevisStats.count > 0 ? (
             <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
-              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{devisStats.count} devis scorés · Moy: {devisStats.avgScore}/100</span>
+              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{liveDevisStats.count} devis scorés · Score moyen: {liveDevisStats.avgScore}/100</span>
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground italic">🤖 Aucun devis scoré par l'IA...</p>
+            <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
+              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>0 devis scorés · Score moyen: 0/100</span>
+            </div>
           )}
         </SectionCard>
       </div>
