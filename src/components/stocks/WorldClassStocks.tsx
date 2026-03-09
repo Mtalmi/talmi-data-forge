@@ -299,11 +299,12 @@ function useStocksLiveData() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'mouvements_stock' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_autonomy_cache' }, () => fetchAll())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_alerts' }, () => fetchAll())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reorder_recommendations' }, () => fetchAll())
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [fetchAll]);
 
-  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, loading };
+  return { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading };
 }
 
 // ─────────────────────────────────────────────────────
