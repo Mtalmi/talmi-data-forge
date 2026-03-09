@@ -55,6 +55,7 @@ import {
   CalendarDays,
   Banknote,
   Timer,
+  Zap,
 } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -80,12 +81,12 @@ export default function Dettes() {
     getOverdue,
   } = usePayables();
 
-  const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-    'not_due': { label: d.notDue, color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
-    'due_soon': { label: d.dueSoonLabel, color: 'bg-warning/10 text-warning border-warning/30', icon: <Timer className="h-3 w-3" /> },
-    'due_today': { label: d.dueToday, color: 'bg-accent/10 text-accent-foreground border-accent/30', icon: <CalendarIcon className="h-3 w-3" /> },
-    'overdue': { label: d.overdue, color: 'bg-destructive/10 text-destructive border-destructive/30', icon: <AlertTriangle className="h-3 w-3" /> },
-    'paid': { label: d.paid, color: 'bg-success/10 text-success border-success/30', icon: <CheckCircle className="h-3 w-3" /> },
+  const STATUS_CONFIG: Record<string, { label: string; badgeStyle: React.CSSProperties; icon: React.ReactNode; pulse?: boolean }> = {
+    'not_due': { label: 'À payer', badgeStyle: { background: 'rgba(245,158,11,0.15)', border: '1px solid #f59e0b', color: '#f59e0b' }, icon: <Clock className="h-3 w-3" /> },
+    'due_soon': { label: 'Urgent', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <Zap className="h-3 w-3" />, pulse: true },
+    'due_today': { label: 'Urgent', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <Zap className="h-3 w-3" />, pulse: true },
+    'overdue': { label: 'En retard', badgeStyle: { background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444' }, icon: <AlertTriangle className="h-3 w-3" />, pulse: true },
+    'paid': { label: 'Payé', badgeStyle: { background: 'rgba(34,197,94,0.15)', border: '1px solid #22c55e', color: '#22c55e' }, icon: <CheckCircle className="h-3 w-3" /> },
   };
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -391,7 +392,13 @@ export default function Dettes() {
                     ) : filteredPayables.slice(0, 50).map((payable) => {
                       const statusConfig = STATUS_CONFIG[payable.status];
                       return (
-                        <TableRow key={payable.id}>
+                        <TableRow 
+                          key={payable.id}
+                          className="group transition-all duration-150"
+                          style={{ borderLeft: '3px solid transparent' }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = '#D4A843'; (e.currentTarget as HTMLElement).style.background = 'rgba(255, 215, 0, 0.04)'; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                        >
                           <TableCell>
                             <div>
                               <p className="font-medium">{payable.fournisseur_name}</p>
@@ -404,31 +411,42 @@ export default function Dettes() {
                             {payable.invoice_number}
                           </TableCell>
                           <TableCell>
-                            {format(parseISO(payable.due_date), 'dd MMM yyyy', { locale: dateLocale || undefined })}
+                            <span style={{
+                              color: payable.days_overdue > 0 ? '#ef4444' : payable.days_until_due <= 7 ? '#f59e0b' : '#F1F5F9',
+                              fontWeight: payable.days_overdue > 0 ? 500 : 400,
+                            }}>
+                              {format(parseISO(payable.due_date), 'dd MMM yyyy', { locale: dateLocale || undefined })}
+                            </span>
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCurrency(payable.amount_due)}
+                          <TableCell className="text-right">
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>
+                              {formatCurrency(payable.amount_due)}
+                            </span>
                           </TableCell>
                           <TableCell>
                             {payable.days_overdue > 0 ? (
-                              <span className="text-destructive font-medium">
+                              <span style={{ color: '#ef4444', fontWeight: 500, fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13 }}>
                                 +{payable.days_overdue}j
                               </span>
-                            ) : payable.days_until_due <= 7 ? (
-                              <span className="text-warning">
-                                {payable.days_until_due}j
-                              </span>
                             ) : (
-                              <span className="text-success">
+                              <span style={{
+                                color: payable.days_until_due > 14 ? '#22c55e' : payable.days_until_due > 7 ? '#f59e0b' : '#ef4444',
+                                fontWeight: 500,
+                                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                                fontSize: 13,
+                              }}>
                                 {payable.days_until_due}j
                               </span>
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                            <span
+                              className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium", statusConfig.pulse && "animate-pulse")}
+                              style={statusConfig.badgeStyle}
+                            >
                               {statusConfig.icon}
                               {statusConfig.label}
-                            </Badge>
+                            </span>
                           </TableCell>
                           {canManagePayables && (
                             <TableCell>
