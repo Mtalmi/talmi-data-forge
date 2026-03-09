@@ -2003,7 +2003,9 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOM
         <div style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{u.besoin}</div>
         <span style={{
           display: 'inline-flex', alignItems: 'center', gap: 5,
-          background: `${barColor}22`, color: barColor, border: `1px solid ${barColor}44`,
+          background: isHaute ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
+          color: isHaute ? '#EF4444' : '#D4A843',
+          border: `1px solid ${isHaute ? 'rgba(239,68,68,0.3)' : 'rgba(212,168,67,0.3)'}`,
           borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700,
           animation: isHaute ? 'tbos-pulse 2s infinite' : 'none',
         }}>
