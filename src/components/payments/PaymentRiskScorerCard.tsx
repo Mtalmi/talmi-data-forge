@@ -19,6 +19,7 @@ const riskKpis = [
 ];
 
 interface AtRiskInvoice {
+  devisId: string;
   facture: string;
   client: string;
   montant: string;
