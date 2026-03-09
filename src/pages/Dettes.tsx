@@ -287,7 +287,81 @@ export default function Dettes() {
           );
         })()}
 
-        {/* VIEILLISSEMENT DES DETTES */}
+        {/* AI Agent Banner */}
+        {(() => {
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const overdueItems = unpaid.filter(p => p.days_overdue > 0);
+          const thisWeekDue = unpaid.filter(p => p.days_until_due >= 0 && p.days_until_due <= 7);
+          const atRiskTotal = [...overdueItems, ...thisWeekDue].reduce((s, p) => s + p.amount_due, 0);
+          const atRiskSuppliers = new Set([...overdueItems, ...thisWeekDue].map(p => p.fournisseur_name)).size;
+          const mostUrgent = overdueItems.sort((a, b) => b.days_overdue - a.days_overdue)[0];
+          const sortedForCash = [...unpaid].sort((a, b) => a.days_until_due - b.days_until_due);
+          const top3 = sortedForCash.slice(0, 3).map(p => p.fournisseur_name);
+
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: '3px solid #D4A843',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Zap size={16} color="#D4A843" />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Agent IA — Gestion Dettes Fournisseurs
+                  </span>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', animation: 'tbos-pulse 2s infinite' }} />
+                </div>
+                <Button
+                  size="sm"
+                  style={{
+                    background: 'linear-gradient(135deg, #D4A843, #b8922e)',
+                    color: '#000', fontWeight: 600, border: 'none',
+                    borderRadius: 8, padding: '8px 16px', fontSize: 12,
+                  }}
+                >
+                  <Zap className="h-3.5 w-3.5 mr-1.5" />
+                  Optimiser Paiements IA
+                </Button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#D1D5DB' }}>
+                  <span style={{ color: '#D4A843', flexShrink: 0 }}>①</span>
+                  <span>
+                    <strong style={{ color: '#F1F5F9' }}>{atRiskTotal.toLocaleString('fr-MA')} DH</strong> à risque cette semaine
+                    — <span style={{ color: '#f59e0b' }}>{atRiskSuppliers} fournisseur{atRiskSuppliers !== 1 ? 's' : ''}</span> concerné{atRiskSuppliers !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#D1D5DB' }}>
+                  <span style={{ color: '#D4A843', flexShrink: 0 }}>②</span>
+                  <span>
+                    Urgence maximale : <strong style={{ color: '#ef4444' }}>{mostUrgent ? mostUrgent.fournisseur_name : '—'}</strong>
+                    {mostUrgent && <> — <span style={{ fontFamily: 'ui-monospace', color: '#ef4444' }}>{mostUrgent.days_overdue}j</span> de retard</>}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13, color: '#D1D5DB' }}>
+                  <span style={{ color: '#D4A843', flexShrink: 0 }}>③</span>
+                  <span>
+                    Séquence recommandée : {top3.length > 0
+                      ? top3.map((name, i) => (
+                          <span key={i}>
+                            {i > 0 && ' → '}
+                            <strong style={{ color: '#F1F5F9' }}>{name}</strong>
+                          </span>
+                        ))
+                      : '—'
+                    }
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         {(() => {
           const agingBuckets = [
             { label: 'Courantes 0-30j', min: -Infinity, max: 30, color: '#D4A843', pulse: false },
