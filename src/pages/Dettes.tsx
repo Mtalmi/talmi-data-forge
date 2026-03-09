@@ -1956,83 +1956,242 @@ export default function Dettes() {
           </DialogContent>
         </Dialog>
 
-        {/* Schedule Dialog */}
-        <Dialog open={scheduleDialogOpen} onOpenChange={setScheduleDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{d.schedulePayment}</DialogTitle>
-            </DialogHeader>
-            {selectedPayable && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-muted/50">
-                  <p className="font-medium">{selectedPayable.fournisseur_name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {d.invoice}: {selectedPayable.invoice_number}
-                  </p>
-                  <p className="text-lg font-bold mt-2">
-                    {formatCurrency(selectedPayable.amount_due)}
-                  </p>
+        {/* Premium Payment Drawer */}
+        {drawerOpen && (
+          <>
+            {/* Backdrop */}
+            <div
+              onClick={() => { setDrawerOpen(false); setDrawerConfirmed(false); }}
+              style={{
+                position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
+                zIndex: 9998, transition: 'opacity 300ms',
+              }}
+            />
+            {/* Drawer Panel */}
+            <div style={{
+              position: 'fixed', top: 0, right: 0, bottom: 0, width: 480,
+              background: '#0F1629', borderLeft: '4px solid #D4A843',
+              zIndex: 9999, overflowY: 'auto',
+              animation: 'slideInRight 300ms ease-out',
+              display: 'flex', flexDirection: 'column',
+            }}>
+              {/* Header */}
+              <div style={{ padding: '24px 28px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                    Programmer un Paiement
+                  </span>
+                  <button
+                    onClick={() => { setDrawerOpen(false); setDrawerConfirmed(false); }}
+                    style={{ background: 'none', border: 'none', color: '#6B7280', fontSize: 20, cursor: 'pointer' }}
+                  >✕</button>
                 </div>
 
-                <div className="space-y-3">
+                {drawerPayable && !drawerConfirmed && (
+                  <>
+                    {/* Supplier info */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+                      <div style={{
+                        width: 48, height: 48, borderRadius: 10,
+                        background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Building2 size={22} color="#D4A843" />
+                      </div>
+                      <div>
+                        <p style={{ fontSize: 16, fontWeight: 600, color: '#F1F5F9' }}>{drawerPayable.fournisseur_name}</p>
+                        <p style={{ fontSize: 12, fontFamily: 'ui-monospace', color: '#9CA3AF' }}>{drawerPayable.invoice_number}</p>
+                      </div>
+                    </div>
+
+                    {/* Amount */}
+                    <div style={{
+                      background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '20px 24px',
+                      border: '1px solid rgba(255,255,255,0.06)', textAlign: 'center', marginBottom: 4,
+                    }}>
+                      <span style={{ fontSize: 10, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Montant à régler</span>
+                      <p style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                        fontWeight: 200, fontSize: 48, letterSpacing: '-0.02em', lineHeight: 1,
+                        color: '#D4A843', WebkitFontSmoothing: 'antialiased', marginTop: 8,
+                      }}>
+                        {drawerPayable.amount_due.toLocaleString('fr-MA')}
+                      </p>
+                      <span style={{ fontSize: 14, fontFamily: 'ui-monospace', color: '#6B7280' }}>DH</span>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {drawerPayable && !drawerConfirmed && (
+                <div style={{ flex: 1, padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  {/* Payment Method */}
                   <div>
-                    <Label>{d.scheduledDate}</Label>
+                    <label style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9CA3AF', marginBottom: 10, display: 'block' }}>
+                      Mode de paiement
+                    </label>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      {[
+                        { value: 'virement', label: 'Virement', icon: '🏦' },
+                        { value: 'cheque', label: 'Chèque', icon: '📝' },
+                        { value: 'traite', label: 'Traite', icon: '📄' },
+                      ].map(m => (
+                        <div
+                          key={m.value}
+                          onClick={() => setDrawerMethod(m.value)}
+                          style={{
+                            flex: 1, padding: '14px 12px', borderRadius: 10, cursor: 'pointer',
+                            background: drawerMethod === m.value ? 'rgba(212,168,67,0.08)' : 'rgba(255,255,255,0.03)',
+                            border: `1px solid ${drawerMethod === m.value ? '#D4A843' : 'rgba(255,255,255,0.08)'}`,
+                            textAlign: 'center', transition: 'all 200ms',
+                          }}
+                        >
+                          <span style={{ fontSize: 20, display: 'block', marginBottom: 6 }}>{m.icon}</span>
+                          <span style={{ fontSize: 12, fontWeight: 500, color: drawerMethod === m.value ? '#D4A843' : '#9CA3AF' }}>{m.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Date Picker */}
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9CA3AF', marginBottom: 10, display: 'block' }}>
+                      Date de paiement
+                    </label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal mt-1",
-                            !scheduledDate && "text-muted-foreground"
-                          )}
+                          className={cn("w-full justify-start text-left font-normal", !drawerDate && "text-muted-foreground")}
+                          style={{
+                            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 8, color: '#F1F5F9', height: 44,
+                          }}
                         >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {scheduledDate ? format(scheduledDate, "PPP", { locale: dateLocale || undefined }) : d.selectDate}
+                          <CalendarIcon className="mr-2 h-4 w-4" style={{ color: '#D4A843' }} />
+                          {drawerDate ? format(drawerDate, "dd MMMM yyyy", { locale: dateLocale || undefined }) : 'Sélectionner une date'}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
+                      <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={scheduledDate}
-                          onSelect={setScheduledDate}
+                          selected={drawerDate}
+                          onSelect={setDrawerDate}
                           initialFocus
+                          className={cn("p-3 pointer-events-auto")}
                         />
                       </PopoverContent>
                     </Popover>
                   </div>
+
+                  {/* Note */}
                   <div>
-                    <Label>{d.plannedPaymentMode}</Label>
-                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="virement">{d.bankTransfer}</SelectItem>
-                        <SelectItem value="cheque">{d.check}</SelectItem>
-                        <SelectItem value="especes">{d.cash}</SelectItem>
-                        <SelectItem value="effet">{d.billOfExchange}</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <label style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9CA3AF', marginBottom: 10, display: 'block' }}>
+                      Note (optionnel)
+                    </label>
+                    <textarea
+                      value={drawerNote}
+                      onChange={e => setDrawerNote(e.target.value)}
+                      placeholder="Référence, commentaire..."
+                      rows={3}
+                      style={{
+                        width: '100%', background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
+                        color: '#F1F5F9', padding: '10px 14px', fontSize: 13,
+                        resize: 'none', outline: 'none', fontFamily: 'inherit',
+                      }}
+                      onFocus={e => { e.currentTarget.style.borderColor = '#D4A843'; }}
+                      onBlur={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                    />
+                  </div>
+
+                  {/* Invoice details */}
+                  <div style={{
+                    background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '12px 14px',
+                    border: '1px solid rgba(255,255,255,0.04)',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
+                      <span style={{ color: '#6B7280' }}>Échéance originale</span>
+                      <span style={{ color: '#F1F5F9', fontFamily: 'ui-monospace' }}>
+                        {format(parseISO(drawerPayable.due_date), 'dd/MM/yyyy')}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
+                      <span style={{ color: '#6B7280' }}>Statut</span>
+                      <span style={{ color: drawerPayable.days_overdue > 0 ? '#ef4444' : '#f59e0b' }}>
+                        {drawerPayable.days_overdue > 0 ? `+${drawerPayable.days_overdue}j retard` : `${drawerPayable.days_until_due}j restants`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                      <span style={{ color: '#6B7280' }}>Mode choisi</span>
+                      <span style={{ color: '#D4A843', textTransform: 'capitalize' }}>{drawerMethod}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setScheduleDialogOpen(false)}>
-                {d.cancel}
-              </Button>
-              <Button 
-                onClick={handleSchedulePayment}
-                disabled={processingAction || !scheduledDate}
-              >
-                {processingAction ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : null}
-                {d.scheduleBtn}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              )}
+
+              {/* Confirmed state */}
+              {drawerConfirmed && (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                  <div className="animate-pulse" style={{
+                    width: 80, height: 80, borderRadius: '50%',
+                    background: 'rgba(34,197,94,0.15)', border: '2px solid #22c55e',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <CheckCircle size={40} color="#22c55e" />
+                  </div>
+                  <p style={{ fontSize: 18, fontWeight: 600, color: '#F1F5F9' }}>Paiement programmé</p>
+                  <p style={{ fontSize: 13, color: '#9CA3AF', textAlign: 'center', maxWidth: 280 }}>
+                    {drawerPayable?.fournisseur_name} — {drawerPayable?.amount_due.toLocaleString('fr-MA')} DH
+                    {drawerDate && ` le ${format(drawerDate, 'dd/MM/yyyy')}`}
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() => { setDrawerOpen(false); setDrawerConfirmed(false); }}
+                    style={{ marginTop: 12, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: '#F1F5F9', borderRadius: 8 }}
+                  >
+                    Fermer
+                  </Button>
+                </div>
+              )}
+
+              {/* Footer */}
+              {!drawerConfirmed && (
+                <div style={{
+                  padding: '16px 28px', borderTop: '1px solid rgba(255,255,255,0.06)',
+                  display: 'flex', gap: 12,
+                }}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => { setDrawerOpen(false); setDrawerConfirmed(false); }}
+                    style={{ flex: 1, color: '#9CA3AF', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8 }}
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    disabled={!drawerDate}
+                    onClick={() => setDrawerConfirmed(true)}
+                    style={{
+                      flex: 2, background: 'linear-gradient(135deg, #D4A843, #b8922e)',
+                      color: '#000', fontWeight: 700, border: 'none', borderRadius: 8,
+                      opacity: drawerDate ? 1 : 0.5,
+                    }}
+                  >
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    Confirmer Paiement
+                  </Button>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        <style>{`
+          @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+          }
+        `}</style>
       </div>
       </div>
     </MainLayout>
