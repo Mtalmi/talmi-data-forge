@@ -48,8 +48,8 @@ const demoInvoices: AtRiskInvoice[] = [
 ];
 
 export function PaymentRiskScorerCard() {
-  const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>(demoInvoices);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   const handleRelance = async (inv: AtRiskInvoice, index: number) => {
