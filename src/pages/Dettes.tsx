@@ -55,6 +55,7 @@ import {
   CalendarDays,
   Banknote,
   Timer,
+  Zap,
 } from 'lucide-react';
 import { format, parseISO, addDays } from 'date-fns';
 import { cn } from '@/lib/utils';
