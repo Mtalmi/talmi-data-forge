@@ -535,33 +535,24 @@ export function DevisTable({
                       );
                     }
 
-                    const niveauUpper = (niveau || '').toUpperCase();
-                    const badgeColor = niveauUpper === 'ÉLEVÉ' || niveauUpper === 'ELEVE' ? '#10B981'
-                      : niveauUpper === 'MOYEN' ? '#D4A843'
-                      : '#EF4444';
-                    const badgeBg = niveauUpper === 'ÉLEVÉ' || niveauUpper === 'ELEVE' ? 'rgba(16,185,129,0.08)'
-                      : niveauUpper === 'MOYEN' ? 'rgba(212,168,67,0.08)'
-                      : 'rgba(239,68,68,0.08)';
+                    const badgeColor = score >= 80 ? '#22c55e' : score >= 60 ? '#f59e0b' : '#ef4444';
+                    const badgeBg = score >= 80 ? 'rgba(34,197,94,0.12)' : score >= 60 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
+                    const badgeBorder = score >= 80 ? 'rgba(34,197,94,0.4)' : score >= 60 ? 'rgba(245,158,11,0.4)' : 'rgba(239,68,68,0.4)';
+                    const emoji = score >= 80 ? '🟢' : score >= 60 ? '🟡' : '🔴';
 
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <div className="flex flex-col items-center gap-0.5">
-                            <div className="flex items-center gap-1.5">
-                              <span style={{
-                                display: 'inline-flex', alignItems: 'center', gap: 4,
-                                padding: '2px 8px', borderRadius: 6, fontSize: 10, fontWeight: 600,
-                                background: badgeBg, border: `1px solid ${badgeColor}25`,
-                                color: badgeColor,
-                              }}>
-                                {niveau || 'Scoré'}
-                              </span>
-                              <span style={{ fontSize: 12, fontWeight: 700, color: badgeColor }}>{score}</span>
-                            </div>
-                            {prob && (
-                              <span style={{ fontSize: 9, color: '#94A3B8' }}>{prob}%</span>
-                            )}
-                          </div>
+                          <span
+                            className="rounded-full px-2 py-0.5 text-xs font-medium inline-flex items-center gap-1"
+                            style={{
+                              background: badgeBg,
+                              border: `1px solid ${badgeBorder}`,
+                              color: badgeColor,
+                            }}
+                          >
+                            {score} {emoji}
+                          </span>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
                           <div className="space-y-1.5 text-xs">
