@@ -59,11 +59,12 @@ function PipelineStage({
           fontFamily: 'DM Sans, sans-serif',
         }}>{label}</span>
         <span style={{ fontSize: 10, color: isEmpty ? 'rgba(148,163,184,0.12)' : 'rgba(148,163,184,0.35)', display: 'block' }}>{sublabel}</span>
-        <div style={{
-          width: 8, height: 8, borderRadius: '50%', marginTop: 6, marginInline: 'auto',
-          background: isEmpty ? 'rgba(148,163,184,0.15)' : (status === 'active' ? color : 'rgba(148,163,184,0.3)'),
-          boxShadow: isEmpty ? 'none' : (status === 'active' ? `0 0 8px ${color}40` : 'none'),
-        }} />
+        <svg width="28" height="28" viewBox="0 0 28 28" style={{ marginTop: 6, marginInline: 'auto' }}>
+          {!isEmpty && (
+            <circle cx="14" cy="14" r="12" fill="none" stroke={color} strokeWidth="1.5" opacity="0.3" className="animate-ping" style={{ transformOrigin: 'center', animationDuration: '1.5s' }} />
+          )}
+          <circle cx="14" cy="14" r="4" fill={isEmpty ? 'rgba(148,163,184,0.15)' : color} />
+        </svg>
       </div>
     </button>
   );
@@ -114,10 +115,10 @@ export function FluxCommercialWidget({ stats, onStageClick }: FluxCommercialWidg
     : `${pipelineValue} DH`;
 
   const stages = [
-    { id: 'en_attente', count: stats.devisEnAttente, label: vt.quotesLabel, sublabel: vt.pendingSub, color: '#FDB913' },
-    { id: 'pret_production', count: stats.bcPretProduction, label: vt.validatedPOs, sublabel: vt.readyForProd, color: '#3B82F6' },
-    { id: 'en_production', count: stats.bcEnProduction, label: vt.inProduction, sublabel: vt.inProgressSub, color: '#00D9FF', route: '/production' },
-    { id: 'termine', count: stats.bcLivre, label: vt.completed, sublabel: vt.deliveredSub, color: '#10B981', route: '/journal' },
+    { id: 'en_attente', count: stats.devisEnAttente, label: vt.quotesLabel, sublabel: vt.pendingSub, color: '#D4A843' },
+    { id: 'pret_production', count: stats.bcPretProduction, label: vt.validatedPOs, sublabel: vt.readyForProd, color: '#f59e0b' },
+    { id: 'en_production', count: stats.bcEnProduction, label: vt.inProduction, sublabel: vt.inProgressSub, color: '#f97316', route: '/production' },
+    { id: 'termine', count: stats.bcLivre, label: vt.completed, sublabel: vt.deliveredSub, color: '#22c55e', route: '/journal' },
   ];
 
   const activeCount = stages.filter(s => s.count > 0).length;
