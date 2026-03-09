@@ -314,7 +314,7 @@ export default function Dettes() {
         )}
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="payables" className="space-y-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex" style={{ gap: 0, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               {[
