@@ -328,6 +328,26 @@ export default function Logistique() {
           </div>
         </div>
 
+        {/* Delivery KPIs */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+          <div className="p-3 sm:p-4 rounded-xl backdrop-blur-md" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255, 215, 0, 0.12)', borderLeft: '3px solid #D4A843' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">TOTAL LIVRAISONS</p>
+            <p className="text-xl sm:text-3xl mt-1" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200 }}>{deliveryKpis.totalLivraisons}</p>
+          </div>
+          <div className="p-3 sm:p-4 rounded-xl backdrop-blur-md" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255, 215, 0, 0.12)', borderLeft: '3px solid #D4A843' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">VOLUME TOTAL</p>
+            <p className="text-xl sm:text-3xl mt-1" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200 }}>{deliveryKpis.volumeTotal.toLocaleString('fr-MA')} <span className="text-sm font-normal text-muted-foreground">m³</span></p>
+          </div>
+          <div className="p-3 sm:p-4 rounded-xl backdrop-blur-md" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255, 215, 0, 0.12)', borderLeft: '3px solid #D4A843' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">CHIFFRE D'AFFAIRES</p>
+            <p className="text-xl sm:text-3xl mt-1" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200 }}>{deliveryKpis.chiffreAffaires.toLocaleString('fr-MA')} <span className="text-sm font-normal text-muted-foreground">DH</span></p>
+          </div>
+          <div className="p-3 sm:p-4 rounded-xl backdrop-blur-md" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255, 215, 0, 0.12)', borderLeft: '3px solid #D4A843' }}>
+            <p className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wide">CLIENTS ACTIFS</p>
+            <p className="text-xl sm:text-3xl mt-1" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200 }}>{deliveryKpis.clientsActifs}</p>
+          </div>
+        </div>
+
         {/* Fleet Status Summary */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-4">
           <div className="p-3 sm:p-4 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
