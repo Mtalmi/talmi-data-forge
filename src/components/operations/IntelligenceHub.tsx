@@ -393,12 +393,14 @@ export function IntelligenceHub({ devisStats }: IntelligenceHubProps) {
                 </div>
               ))}
             </div>
-          ) : devisStats && devisStats.count > 0 ? (
+          ) : liveDevisStats && liveDevisStats.count > 0 ? (
             <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
-              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{devisStats.count} devis scorés · Moy: {devisStats.avgScore}/100</span>
+              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>{liveDevisStats.count} devis scorés · Score moyen: {liveDevisStats.avgScore}/100</span>
             </div>
           ) : (
-            <p className="text-xs text-muted-foreground italic">🤖 Aucun devis scoré par l'IA...</p>
+            <div className="px-3 py-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.2)' }}>
+              <span className="text-xs font-semibold" style={{ color: '#D4A843' }}>0 devis scorés · Score moyen: 0/100</span>
+            </div>
           )}
         </SectionCard>
       </div>
