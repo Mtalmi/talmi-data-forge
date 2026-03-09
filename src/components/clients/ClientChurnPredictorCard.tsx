@@ -58,7 +58,7 @@ export function ClientChurnPredictorCard() {
         }}>
           <Users size={14} color={T.gold} />
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
           <Sparkles size={12} color={T.gold} />
           <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
             Agent IA: Prédiction Attrition Clients
