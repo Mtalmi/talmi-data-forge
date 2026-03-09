@@ -85,6 +85,7 @@ export function PaymentRiskScorerCard() {
           ? new Date(d.date_expiration).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
           : '—';
         return {
+          devisId: d.devis_id,
           facture: `#${d.devis_id}`,
           client: d.client_id ? (clientMap[d.client_id] || d.client_id) : '—',
           montant: formatCurrencyDH(d.total_ht),
