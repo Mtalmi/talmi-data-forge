@@ -638,10 +638,24 @@ export default function WorldClassPayments() {
         <section>
           <SectionHeader icon={Banknote} label="Indicateurs de Paiement" />
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            <KPICard label="Encaissé ce mois" value={live.encaisseThisMonth} suffix="K DH" color={T.gold} icon={Banknote} trend="+12% vs mois dernier" trendPositive delay={0} />
-            <KPICard label="En Attente" value={live.enAttente} suffix="K DH" color={T.warning} icon={Clock} trend={`${Math.max(1, Math.round(live.enAttente / 22))} factures`} delay={80} />
-            <KPICard label="En Retard" value={live.enRetard} suffix="K DH" color={T.danger} icon={AlertTriangle} trend={live.enRetard > 0 ? `${Math.max(1, Math.round(live.enRetard / 12))} factures >30j` : undefined} trendPositive={false} delay={160} />
-            <KPICard label="Taux d'Encaissement" value={live.tauxEncaissement} suffix="%" color={live.tauxEncaissement >= 70 ? T.success : T.warning} icon={TrendingUp} trend="Obj: 85%" delay={240} />
+            {live.loading ? (
+              <>
+                {[0,1,2,3].map(i => (
+                  <div key={i} style={{ borderTop: '2px solid #D4A843', background: 'linear-gradient(145deg, rgba(255,215,0,0.04) 0%, #111B2E 40%, #162036 100%)', borderRadius: 12, border: '1px solid #1E2D4A', padding: '16px 20px' }}>
+                    <div style={{ width: 80, height: 10, borderRadius: 4, background: 'rgba(255,215,0,0.1)', marginBottom: 12, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: 120, height: 28, borderRadius: 6, background: 'rgba(255,215,0,0.08)', marginBottom: 8, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                    <div style={{ width: 100, height: 10, borderRadius: 4, background: 'rgba(255,215,0,0.06)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                <KPICard label="Encaissé ce mois" value={live.encaisseThisMonth} suffix="K DH" color={T.gold} icon={Banknote} trend="+12% vs mois dernier" trendPositive delay={0} />
+                <KPICard label="En Attente" value={live.enAttente} suffix="K DH" color={T.warning} icon={Clock} trend={`${Math.max(1, Math.round(live.enAttente / 22))} factures`} delay={80} />
+                <KPICard label="En Retard" value={live.enRetard} suffix="K DH" color={T.danger} icon={AlertTriangle} trend={live.enRetard > 0 ? `${Math.max(1, Math.round(live.enRetard / 12))} factures >30j` : undefined} trendPositive={false} delay={160} />
+                <KPICard label="Taux d'Encaissement" value={live.tauxEncaissement} suffix="%" color={live.tauxEncaissement >= 70 ? T.success : T.warning} icon={TrendingUp} trend="Obj: 85%" delay={240} />
+              </>
+            )}
           </div>
         </section>
 
