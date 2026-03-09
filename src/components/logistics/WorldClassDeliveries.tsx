@@ -408,7 +408,7 @@ export default function WorldClassDeliveries() {
 
   // AI risk per pipeline stage — En Route uses avg distance vs remaining hours
   const hoursLeft = Math.max(1, 18 - new Date().getHours()); // assume 18h end-of-day
-  const enRouteWithTime = todayBons.filter(b => b.workflow_status === 'production');
+  const enRouteWithTime = todayBons.filter(b => b.workflow_status === 'en_livraison');
   const avgRotation = enRouteWithTime.length > 0
     ? enRouteWithTime.reduce((s, b) => s + (b.temps_rotation_minutes || 45), 0) / enRouteWithTime.length
     : 45;
