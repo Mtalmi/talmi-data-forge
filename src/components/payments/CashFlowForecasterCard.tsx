@@ -118,12 +118,15 @@ export function CashFlowForecasterCard() {
   }));
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24, boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 14, padding: 24, boxShadow: '0 4px 14px rgba(0,0,0,0.15)', position: 'relative', overflow: 'hidden' }}>
+      <style>{`@keyframes gold-shimmer-forecast2 { 0%,100%{border-color:rgba(212,168,67,0.15)} 50%{border-color:rgba(212,168,67,0.5)} }`}</style>
+      <div style={{ position: 'absolute', inset: 0, borderRadius: 14, border: '1px solid rgba(212,168,67,0.15)', animation: 'gold-shimmer-forecast2 4s ease-in-out infinite', pointerEvents: 'none' }} />
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <Brain size={18} color={T.gold} />
           <span style={{ fontWeight: 700, fontSize: 16, color: T.textPri }}>🧠 Prévisions Trésorerie — {forecast.period_days}j</span>
+          <span style={{ padding: '2px 10px', borderRadius: 999, fontSize: 10, fontWeight: 700, background: 'rgba(15,22,41,0.8)', border: '1px solid #D4A843', color: '#D4A843' }}>Généré par IA · Claude Opus</span>
           {forecast.confidence_pct && (
             <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 10, fontWeight: 700, background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', color: T.success }}>
               Confiance: {Math.round(forecast.confidence_pct)}%

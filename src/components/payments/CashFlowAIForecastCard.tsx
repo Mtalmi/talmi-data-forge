@@ -176,12 +176,12 @@ export function CashFlowAIForecastCard() {
         <div style={{ marginBottom: 18 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
             <span style={{ color: T.textSec, fontSize: 11, fontWeight: 600 }}>Taux de recouvrement</span>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: tauxNum >= 80 ? T.success : tauxNum >= 60 ? T.warning : T.danger }}>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 700, color: '#D4A843' }}>
               {forecast.taux_recouvrement}
             </span>
           </div>
           <div style={{ height: 6, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${Math.min(tauxNum, 100)}%`, borderRadius: 4, background: tauxNum >= 80 ? T.success : tauxNum >= 60 ? T.warning : T.danger, transition: 'width 800ms ease-out' }} />
+            <div style={{ height: '100%', width: `${Math.min(tauxNum, 100)}%`, borderRadius: 4, background: '#D4A843', transition: 'width 800ms ease-out' }} />
           </div>
         </div>
       )}

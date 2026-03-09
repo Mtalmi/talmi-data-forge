@@ -718,8 +718,8 @@ export default function WorldClassPayments() {
         <footer style={{ borderTop: `1px solid ${T.cardBorder}`, paddingTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ color: T.textDim, fontSize: 11 }}>TBOS Paiements v2.0 — {new Date().toLocaleDateString('fr-FR')}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: T.success, animation: 'tbos-pulse 2.5s infinite' }} />
-            <span style={{ color: T.success, fontSize: 11, fontWeight: 600 }}>Données en temps réel</span>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 6px rgba(16,185,129,0.6)', animation: 'tbos-pulse 2.5s infinite' }} />
+            <span style={{ color: '#10B981', fontSize: 11, fontWeight: 600 }}>Données en temps réel</span>
           </div>
         </footer>
       </div>
