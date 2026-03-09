@@ -154,7 +154,7 @@ function useStocksLiveData() {
   const fetchAll = useCallback(async () => {
     try {
       const sevenDaysAgo = startOfDay(subDays(new Date(), 7)).toISOString();
-      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes] = await Promise.all([
+      const [stocksRes, movementsRes, autonomyRes, consumptionRes, stockAlertsRes, reorderRes] = await Promise.all([
         supabase.from('stocks').select('*'),
         supabase.from('mouvements_stock')
           .select('id, materiau, type_mouvement, quantite, reference_id, created_by, created_at, fournisseur')
@@ -168,6 +168,10 @@ function useStocksLiveData() {
           .order('created_at', { ascending: true }),
         supabase.from('stock_alerts')
           .select('id, materiau, alert_type, severity, message, created_at')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false }),
+        supabase.from('reorder_recommendations')
+          .select('id, materiau, recommended_qty, urgency, fournisseur, unite, days_remaining, created_at')
           .eq('is_active', true)
           .order('created_at', { ascending: false }),
       ]);
