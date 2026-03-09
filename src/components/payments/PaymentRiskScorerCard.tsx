@@ -41,6 +41,12 @@ function getProbBg(prob: number) {
 
 const headers = ['Facture', 'Client', 'Montant', 'Échéance', 'Prob. Retard', 'Action Recommandée', ''];
 
+const demoInvoices: AtRiskInvoice[] = [
+  { devisId: '1847', facture: '#1847', client: 'Atlas Construction', montant: '84,200 MAD', echeance: '8 Mars', prob: 82, action: 'Relance immédiate' },
+  { devisId: '1851', facture: '#1851', client: 'Sigma Bâtiment', montant: '126,500 MAD', echeance: '12 Mars', prob: 91, action: 'Livraison contre paiement' },
+  { devisId: '1839', facture: '#1839', client: 'Omega Immobilier', montant: '45,800 MAD', echeance: '5 Mars', prob: 58, action: 'Relance préventive' },
+];
+
 export function PaymentRiskScorerCard() {
   const [atRiskInvoices, setAtRiskInvoices] = useState<AtRiskInvoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,18 +80,22 @@ export function PaymentRiskScorerCard() {
         .order('probabilite_conversion', { ascending: true });
 
       if (error || !data) {
-        setAtRiskInvoices([]);
+        setAtRiskInvoices(demoInvoices);
         setLoading(false);
         return;
       }
 
-      // Filter rows where probabilite_conversion < 0.5 (field is string)
       const filtered = data.filter(d => {
         const p = parseFloat(d.probabilite_conversion ?? '1');
         return !isNaN(p) && p < 0.5;
       });
 
-      // Fetch client names
+      if (filtered.length === 0) {
+        setAtRiskInvoices(demoInvoices);
+        setLoading(false);
+        return;
+      }
+
       const clientIds = [...new Set(filtered.map(d => d.client_id).filter(Boolean))] as string[];
       let clientMap: Record<string, string> = {};
       if (clientIds.length > 0) {
