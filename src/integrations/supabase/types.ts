@@ -2380,6 +2380,33 @@ export type Database = {
           },
         ]
       }
+      contractor_match_scores: {
+        Row: {
+          besoin_id: string
+          calculated_at: string
+          contractor_id: string
+          id: string
+          recommandation: string | null
+          score: number
+        }
+        Insert: {
+          besoin_id: string
+          calculated_at?: string
+          contractor_id: string
+          id?: string
+          recommandation?: string | null
+          score?: number
+        }
+        Update: {
+          besoin_id?: string
+          calculated_at?: string
+          contractor_id?: string
+          id?: string
+          recommandation?: string | null
+          score?: number
+        }
+        Relationships: []
+      }
       contracts: {
         Row: {
           contact_email: string | null
