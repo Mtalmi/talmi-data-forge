@@ -287,31 +287,71 @@ export default function Dettes() {
           );
         })()}
 
-        {/* Aging Chart */}
-        {hasData && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">{d.agingTitle}</CardTitle>
-            <CardDescription>{d.agingDescription}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={agingChartData}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="name" className="text-xs" />
-                  <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-xs" />
-                  <Tooltip 
-                    formatter={(value: number) => formatCurrency(value)}
-                    labelFormatter={(label) => `${d.period}: ${label}`}
-                  />
-                  <Bar dataKey="montant" radius={[4, 4, 0, 0]} fill="hsl(var(--primary))" />
-                </BarChart>
-              </ResponsiveContainer>
+        {/* VIEILLISSEMENT DES DETTES */}
+        {(() => {
+          const agingBuckets = [
+            { label: 'Courantes 0-30j', min: -Infinity, max: 30, color: '#D4A843', pulse: false },
+            { label: '31-60j', min: 31, max: 60, color: '#f59e0b', pulse: false },
+            { label: '61-90j', min: 61, max: 90, color: '#f97316', pulse: false },
+            { label: '90j+', min: 91, max: Infinity, color: '#ef4444', pulse: true },
+          ];
+          const unpaid = payables.filter(p => p.status !== 'paid');
+          const bucketData = agingBuckets.map(b => {
+            const items = unpaid.filter(p => {
+              const age = p.days_overdue > 0 ? p.days_overdue : 0;
+              return age >= (b.min < 0 ? 0 : b.min) && age <= b.max;
+            });
+            // For 0-30j bucket, also include items not yet overdue
+            const items030 = b.min === -Infinity
+              ? unpaid.filter(p => p.days_overdue <= 30)
+              : items;
+            const finalItems = b.min === -Infinity ? items030 : items;
+            return { ...b, count: finalItems.length, total: finalItems.reduce((s, p) => s + p.amount_due, 0) };
+          });
+          const maxTotal = Math.max(...bucketData.map(b => b.total), 1);
+          return (
+            <div style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 12,
+              padding: '20px 24px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <TrendingDown size={16} color="#D4A843" />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>Vieillissement des Dettes</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {bucketData.map((b, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <span style={{ width: 110, fontSize: 12, fontWeight: 500, color: b.color, flexShrink: 0 }}>{b.label}</span>
+                    <div style={{ flex: 1, height: 28, background: 'rgba(255,255,255,0.03)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
+                      <div style={{
+                        width: `${Math.max((b.total / maxTotal) * 100, 2)}%`,
+                        height: '100%',
+                        background: `${b.color}30`,
+                        borderLeft: `3px solid ${b.color}`,
+                        borderRadius: 6,
+                        transition: 'width 600ms ease',
+                        animation: b.pulse && b.total > 0 ? 'tbos-pulse 2.5s infinite' : undefined,
+                      }} />
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+                      <span style={{ fontSize: 11, color: '#9CA3AF', minWidth: 70 }}>{b.count} facture{b.count !== 1 ? 's' : ''}</span>
+                      <span style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                        fontSize: 14, fontWeight: 500, color: b.color, minWidth: 90, textAlign: 'right',
+                      }}>
+                        {b.total.toLocaleString('fr-MA')} DH
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </CardContent>
-        </Card>
-        )}
+          );
+        })()}
 
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
