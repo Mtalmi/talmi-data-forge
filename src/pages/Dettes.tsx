@@ -776,61 +776,154 @@ export default function Dettes() {
 
           {/* By Supplier Tab */}
           <TabsContent value="by-supplier" className="space-y-4">
-            {payablesBySupplier.length === 0 ? (
-              <Card>
-                <CardContent className="py-12">
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                    <Building2 className="h-12 w-12" />
-                    <p className="font-medium text-lg">{d.noSupplierDebts}</p>
-                    <p className="text-sm text-center max-w-md">
-                      {!hasData ? d.noSupplierDebtsNew : d.allInvoicesPaid}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {payablesBySupplier.slice(0, 12).map((supplier) => (
-                <Card key={supplier.fournisseur_name} className={supplier.total_overdue > 0 ? 'border-destructive/30' : ''}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-base flex items-center justify-between">
-                      <span className="truncate">{supplier.fournisseur_name}</span>
-                      <Badge variant="outline">{supplier.count} {d.invoice}</Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">{d.totalDue}</span>
-                        <span className="font-bold">{formatCurrency(supplier.total_due)}</span>
-                      </div>
-                      {supplier.total_overdue > 0 && (
-                        <div className="flex justify-between">
-                          <span className="text-sm text-destructive">{d.overdueAmount}</span>
-                          <span className="font-bold text-destructive">{formatCurrency(supplier.total_overdue)}</span>
-                        </div>
-                      )}
-                      <div className="space-y-1 mt-2">
-                        {supplier.payables.slice(0, 3).map(p => (
-                          <div key={p.id} className="flex justify-between text-xs">
-                            <span>{p.invoice_number}</span>
-                            <span className={p.status === 'overdue' ? 'text-destructive' : 'text-muted-foreground'}>
-                              {formatCurrency(p.amount_due)}
-                            </span>
-                          </div>
-                        ))}
-                        {supplier.payables.length > 3 && (
-                          <p className="text-xs text-muted-foreground">
-                            +{supplier.payables.length - 3} {d.otherInvoices}
-                          </p>
-                        )}
-                      </div>
+            {/* CLASSEMENT FOURNISSEURS */}
+            {(() => {
+              const ranked = [...payablesBySupplier].sort((a, b) => b.total_due - a.total_due);
+              const topThreshold = ranked.length > 0 ? ranked[0].total_due * 0.5 : 0;
+
+              return (
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 12,
+                  padding: '20px 24px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+                    <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Building2 size={16} color="#D4A843" />
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            )}
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#D4A843' }}>
+                      Classement Fournisseurs
+                    </span>
+                    <span style={{ fontSize: 11, color: '#6B7280', marginLeft: 'auto' }}>{ranked.length} fournisseur{ranked.length !== 1 ? 's' : ''}</span>
+                  </div>
+
+                  {ranked.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '32px 0', color: '#6B7280' }}>
+                      <Building2 size={40} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+                      <p style={{ fontSize: 14, fontWeight: 500 }}>Aucune dette fournisseur</p>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Header row */}
+                      <div style={{
+                        display: 'grid', gridTemplateColumns: '32px 1fr 120px 70px 70px 80px 80px 140px',
+                        gap: 8, padding: '8px 12px', fontSize: 10, fontWeight: 600, textTransform: 'uppercase',
+                        letterSpacing: '0.15em', color: '#6B7280', borderBottom: '1px solid rgba(255,255,255,0.06)',
+                      }}>
+                        <span>#</span>
+                        <span>Fournisseur</span>
+                        <span style={{ textAlign: 'right' }}>Total dû</span>
+                        <span style={{ textAlign: 'center' }}>Factures</span>
+                        <span style={{ textAlign: 'center' }}>Âge max</span>
+                        <span style={{ textAlign: 'center' }}>Fiabilité</span>
+                        <span style={{ textAlign: 'center' }}>Proch. éch.</span>
+                        <span style={{ textAlign: 'center' }}>Statut IA</span>
+                      </div>
+
+                      {ranked.map((supplier, i) => {
+                        const oldestAge = Math.max(...supplier.payables.map(p => Math.max(p.days_overdue, 0)));
+                        const maxOverdue = Math.max(...supplier.payables.map(p => p.days_overdue));
+                        const nextDue = supplier.payables
+                          .filter(p => p.status !== 'paid')
+                          .sort((a, b) => a.days_until_due - b.days_until_due)[0];
+                        // AI reliability score based on overdue patterns
+                        const reliabilityScore = Math.max(0, Math.min(100,
+                          100 - (maxOverdue > 0 ? maxOverdue * 2 : 0) - (supplier.total_overdue / Math.max(supplier.total_due, 1)) * 30
+                        ));
+                        const reliabilityColor = reliabilityScore >= 80 ? '#22c55e' : reliabilityScore >= 50 ? '#f59e0b' : '#ef4444';
+                        const isStrategic = supplier.total_due >= topThreshold;
+                        const isRiskRelation = maxOverdue > 30;
+
+                        return (
+                          <div
+                            key={supplier.fournisseur_name}
+                            style={{
+                              display: 'grid', gridTemplateColumns: '32px 1fr 120px 70px 70px 80px 80px 140px',
+                              gap: 8, padding: '12px', alignItems: 'center',
+                              borderBottom: '1px solid rgba(255,255,255,0.04)',
+                              borderLeft: '3px solid transparent',
+                              transition: 'all 150ms',
+                              cursor: 'pointer',
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.borderLeftColor = '#D4A843'; e.currentTarget.style.background = 'rgba(255,215,0,0.04)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.borderLeftColor = 'transparent'; e.currentTarget.style.background = 'transparent'; }}
+                          >
+                            {/* Rank */}
+                            <span style={{
+                              fontFamily: 'ui-monospace', fontSize: 14, fontWeight: 600,
+                              color: i < 3 ? '#D4A843' : '#6B7280',
+                            }}>
+                              {i + 1}
+                            </span>
+                            {/* Supplier name */}
+                            <span style={{ fontSize: 13, fontWeight: 500, color: '#F1F5F9' }}>
+                              {supplier.fournisseur_name}
+                            </span>
+                            {/* Total owed */}
+                            <span style={{
+                              fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                              fontSize: 14, fontWeight: 500, color: '#D4A843', textAlign: 'right',
+                            }}>
+                              {supplier.total_due.toLocaleString('fr-MA')} DH
+                            </span>
+                            {/* Invoice count */}
+                            <span style={{ textAlign: 'center', fontSize: 13, color: '#9CA3AF' }}>
+                              {supplier.count}
+                            </span>
+                            {/* Oldest age */}
+                            <span style={{
+                              textAlign: 'center', fontFamily: 'ui-monospace', fontSize: 13,
+                              color: oldestAge > 30 ? '#ef4444' : oldestAge > 14 ? '#f59e0b' : '#9CA3AF',
+                            }}>
+                              {oldestAge > 0 ? `${oldestAge}j` : '—'}
+                            </span>
+                            {/* Reliability score */}
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                              <div style={{
+                                width: 36, height: 36, borderRadius: '50%',
+                                border: `2px solid ${reliabilityColor}`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 11, fontWeight: 600, color: reliabilityColor,
+                                fontFamily: 'ui-monospace',
+                              }}>
+                                {Math.round(reliabilityScore)}
+                              </div>
+                            </div>
+                            {/* Next due */}
+                            <span style={{ textAlign: 'center', fontSize: 12, color: '#9CA3AF', fontFamily: 'ui-monospace' }}>
+                              {nextDue ? format(parseISO(nextDue.due_date), 'dd/MM', { locale: dateLocale || undefined }) : '—'}
+                            </span>
+                            {/* AI badge */}
+                            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                              {isRiskRelation ? (
+                                <span className="animate-pulse" style={{
+                                  fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 20,
+                                  background: 'rgba(239,68,68,0.15)', border: '1px solid #ef4444', color: '#ef4444',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  Risque relation
+                                </span>
+                              ) : isStrategic ? (
+                                <span style={{
+                                  fontSize: 10, fontWeight: 600, padding: '3px 10px', borderRadius: 20,
+                                  background: 'rgba(212,168,67,0.15)', border: '1px solid #D4A843', color: '#D4A843',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  Fournisseur stratégique
+                                </span>
+                              ) : (
+                                <span style={{ fontSize: 10, color: '#6B7280' }}>—</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </TabsContent>
 
           {/* Calendar Tab */}
