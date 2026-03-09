@@ -392,7 +392,13 @@ export default function Dettes() {
                     ) : filteredPayables.slice(0, 50).map((payable) => {
                       const statusConfig = STATUS_CONFIG[payable.status];
                       return (
-                        <TableRow key={payable.id}>
+                        <TableRow 
+                          key={payable.id}
+                          className="group transition-all duration-150"
+                          style={{ borderLeft: '3px solid transparent' }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = '#D4A843'; (e.currentTarget as HTMLElement).style.background = 'rgba(255, 215, 0, 0.04)'; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderLeftColor = 'transparent'; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                        >
                           <TableCell>
                             <div>
                               <p className="font-medium">{payable.fournisseur_name}</p>
@@ -405,31 +411,42 @@ export default function Dettes() {
                             {payable.invoice_number}
                           </TableCell>
                           <TableCell>
-                            {format(parseISO(payable.due_date), 'dd MMM yyyy', { locale: dateLocale || undefined })}
+                            <span style={{
+                              color: payable.days_overdue > 0 ? '#ef4444' : payable.days_until_due <= 7 ? '#f59e0b' : '#F1F5F9',
+                              fontWeight: payable.days_overdue > 0 ? 500 : 400,
+                            }}>
+                              {format(parseISO(payable.due_date), 'dd MMM yyyy', { locale: dateLocale || undefined })}
+                            </span>
                           </TableCell>
-                          <TableCell className="text-right font-medium">
-                            {formatCurrency(payable.amount_due)}
+                          <TableCell className="text-right">
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', color: '#D4A843', fontWeight: 500 }}>
+                              {formatCurrency(payable.amount_due)}
+                            </span>
                           </TableCell>
                           <TableCell>
                             {payable.days_overdue > 0 ? (
-                              <span className="text-destructive font-medium">
+                              <span style={{ color: '#ef4444', fontWeight: 500, fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 13 }}>
                                 +{payable.days_overdue}j
                               </span>
-                            ) : payable.days_until_due <= 7 ? (
-                              <span className="text-warning">
-                                {payable.days_until_due}j
-                              </span>
                             ) : (
-                              <span className="text-success">
+                              <span style={{
+                                color: payable.days_until_due > 14 ? '#22c55e' : payable.days_until_due > 7 ? '#f59e0b' : '#ef4444',
+                                fontWeight: 500,
+                                fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                                fontSize: 13,
+                              }}>
                                 {payable.days_until_due}j
                               </span>
                             )}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className={cn("gap-1", statusConfig.color)}>
+                            <span
+                              className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium", statusConfig.pulse && "animate-pulse")}
+                              style={statusConfig.badgeStyle}
+                            >
                               {statusConfig.icon}
                               {statusConfig.label}
-                            </Badge>
+                            </span>
                           </TableCell>
                           {canManagePayables && (
                             <TableCell>
