@@ -1564,6 +1564,30 @@ export type Database = {
           },
         ]
       }
+      budget_anomalies: {
+        Row: {
+          anomaly_type: string | null
+          contractor_id: string
+          detected_at: string
+          deviation_pct: number
+          id: string
+        }
+        Insert: {
+          anomaly_type?: string | null
+          contractor_id: string
+          detected_at?: string
+          deviation_pct?: number
+          id?: string
+        }
+        Update: {
+          anomaly_type?: string | null
+          contractor_id?: string
+          detected_at?: string
+          deviation_pct?: number
+          id?: string
+        }
+        Relationships: []
+      }
       camera_devices: {
         Row: {
           brand: string | null
