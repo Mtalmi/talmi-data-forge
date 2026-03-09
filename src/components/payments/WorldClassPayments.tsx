@@ -629,8 +629,8 @@ export default function WorldClassPayments() {
                 <AreaChart data={live.trendData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="pay-encGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={T.gold} stopOpacity={0.4} />
-                      <stop offset="100%" stopColor={T.gold} stopOpacity={0.02} />
+                      <stop offset="0%" stopColor="#D4A843" stopOpacity={0.08} />
+                      <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="pay-facGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#94A3B8" stopOpacity={0.25} />
