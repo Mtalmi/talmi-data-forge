@@ -369,6 +369,7 @@ export function TabletPlanningView({
                 bon={bon}
                 onStartProduction={() => onStartProduction(bon)}
                 onOpenDetails={() => onOpenDetails(bon)}
+                suggestions={getSuggestions(bon)}
               />
             ))
           )}
