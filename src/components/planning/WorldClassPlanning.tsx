@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { WeatherForecastCard } from './WeatherForecastCard';
 import { DeliveryOrchestrationPanel } from './DeliveryOrchestrationPanel';
+import { RouteOptimizationPanel } from './RouteOptimizationPanel';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
@@ -526,13 +527,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
     return map;
   }, [n8nResults]);
 
-  const handleOptimizeRoutes = async () => {
-    try {
-      await triggerWorkflow('delivery_orchestration', { date: new Date().toISOString() });
-      toast.success('Optimisation des routes lancée...');
-    } catch (e: any) {
-      toast.error(e.message || 'Erreur d\'optimisation');
-    }
+  const [routePanelOpen, setRoutePanelOpen] = useState(false);
+  const handleOptimizeRoutes = () => {
+    setRoutePanelOpen(true);
   };
   const tabs = [
     { id: 'semaine', label: 'Semaine' },
@@ -732,6 +729,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           </div>
         </footer>
       </div>
+      <RouteOptimizationPanel open={routePanelOpen} onClose={() => setRoutePanelOpen(false)} />
     </div>
   );
 }
