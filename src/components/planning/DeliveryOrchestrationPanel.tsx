@@ -25,28 +25,17 @@ const trucks = [
   { name: '🚛 Camion 5', statut: 'En route', statutColor: T.success, position: 'Km 3/15', chargement: 'B25S — 7m³', eta: '28 min', alerte: '⚠️ Béton > 45min' },
 ];
 
-const recommendations = [
-  {
-    priority: 'high',
-    borderColor: T.danger,
-    text: '⚠️ URGENT — Camion 5: béton en transit depuis 47 min. Temps restant avant prise: ~43 min. ETA chantier: 28 min. Marge de sécurité faible. Recommandation: prioriser déchargement à l\'arrivée, alerter chef de chantier.',
-  },
-  {
-    priority: 'medium',
-    borderColor: T.warning,
-    text: '💡 OPTIMISATION — Camion 4 en attente depuis 22 min. Prochaine gâchée B30 prête dans 8 min. Recommandation: charger Camion 4 avec commande Client Nexus BTP (6m³ B30, chantier Hay Riad, 11km) au lieu d\'attendre la commande initiale retardée.',
-  },
-  {
-    priority: 'info',
-    borderColor: T.info,
-    text: '📊 PRÉVISION — Pic de livraisons entre 14h-16h (5 livraisons planifiées). Avec 3 camions actifs, délai moyen estimé: 35 min. Recommandation: rappeler Camion 3 pour chargement anticipé.',
-  },
-];
-
 const headers = ['Camion', 'Statut', 'Position', 'Chargement', 'ETA Chantier', 'Alerte'];
+
+interface Recommendation {
+  priority: string;
+  borderColor: string;
+  text: string;
+}
 
 export function DeliveryOrchestrationPanel() {
   const [open, setOpen] = useState(false);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [kpis, setKpis] = useState([
     { label: 'Camions Actifs', value: '—' },
     { label: 'Temps Moyen Transit', value: '—' },
@@ -61,7 +50,7 @@ export function DeliveryOrchestrationPanel() {
       const [activeRes, totalRes, blRes] = await Promise.all([
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }).eq('actif', true),
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }),
-        supabase.from('bons_livraison_reels').select('temps_rotation_minutes').eq('date_livraison', todayStr),
+        supabase.from('bons_livraison_reels').select('bl_id, temps_rotation_minutes, workflow_status, updated_at, heure_prevue, date_livraison').eq('date_livraison', todayStr),
       ]);
 
       const activeTrucks = activeRes.count ?? 0;
@@ -84,6 +73,58 @@ export function DeliveryOrchestrationPanel() {
         { label: 'Taux Utilisation', value: `${utilization}%` },
         { label: "Livraisons Aujourd'hui", value: `${deliveryCount}` },
       ]);
+
+      // Build live recommendations
+      const now = new Date();
+      const recs: Recommendation[] = [];
+
+      // URGENT: en_livraison with updated_at > 40 min ago
+      const staleDeliveries = todayBLs.filter(bl => {
+        if (bl.workflow_status !== 'en_livraison' || !bl.updated_at) return false;
+        const updatedAt = new Date(bl.updated_at);
+        const diffMin = (now.getTime() - updatedAt.getTime()) / 60000;
+        return diffMin > 40;
+      });
+      for (const bl of staleDeliveries) {
+        const diffMin = Math.round((now.getTime() - new Date(bl.updated_at).getTime()) / 60000);
+        recs.push({
+          priority: 'high',
+          borderColor: T.danger,
+          text: `⚠️ URGENT — ${bl.bl_id}: en livraison depuis ${diffMin} min sans mise à jour. Vérifier le statut du camion et contacter le chauffeur.`,
+        });
+      }
+
+      // OPTIMISATION: planification with heure_prevue within next 2h
+      const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60000);
+      const nowTimeStr = format(now, 'HH:mm');
+      const twoHStr = format(twoHoursLater, 'HH:mm');
+      const upcoming = todayBLs.filter(bl => {
+        if (bl.workflow_status !== 'planification' || !bl.heure_prevue) return false;
+        const hp = bl.heure_prevue.slice(0, 5);
+        return hp >= nowTimeStr && hp <= twoHStr;
+      });
+      if (upcoming.length > 0) {
+        recs.push({
+          priority: 'medium',
+          borderColor: T.warning,
+          text: `💡 OPTIMISATION — ${upcoming.length} livraison${upcoming.length > 1 ? 's' : ''} encore en planification avec départ prévu dans les 2 prochaines heures. Lancer la production et l'assignation camion.`,
+        });
+      }
+
+      // PRÉVISION: deliveries after 14h
+      const after14h = todayBLs.filter(bl => {
+        if (!bl.heure_prevue) return false;
+        return bl.heure_prevue.slice(0, 2) >= '14';
+      });
+      if (after14h.length > 0) {
+        recs.push({
+          priority: 'info',
+          borderColor: T.info,
+          text: `📊 PRÉVISION — ${after14h.length} livraison${after14h.length > 1 ? 's' : ''} planifiée${after14h.length > 1 ? 's' : ''} après 14h. Anticiper la disponibilité des camions pour le pic d'après-midi.`,
+        });
+      }
+
+      setRecommendations(recs);
     }
     load();
   }, []);
@@ -190,19 +231,33 @@ export function DeliveryOrchestrationPanel() {
             <span style={{ color: T.textSec, fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Recommandations IA</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {recommendations.map((r, i) => (
-              <div key={i} style={{
-                borderLeft: `4px solid ${r.borderColor}`,
-                background: `${r.borderColor}08`,
+            {recommendations.length === 0 ? (
+              <div style={{
+                borderLeft: '4px solid #64748B',
+                background: 'rgba(100,116,139,0.08)',
                 borderRadius: '0 10px 10px 0',
                 padding: '12px 16px',
-                border: `1px solid ${r.borderColor}20`,
+                border: '1px solid rgba(100,116,139,0.2)',
                 borderLeftWidth: 4,
-                borderLeftColor: r.borderColor,
+                borderLeftColor: '#64748B',
               }}>
-                <p style={{ fontSize: 12, lineHeight: 1.6, color: T.textPri }}>{r.text}</p>
+                <p style={{ fontSize: 12, lineHeight: 1.6, color: T.textSec }}>✅ Aucune anomalie détectée — toutes les livraisons sont dans les délais normaux.</p>
               </div>
-            ))}
+            ) : (
+              recommendations.map((r, i) => (
+                <div key={i} style={{
+                  borderLeft: `4px solid ${r.borderColor}`,
+                  background: `${r.borderColor}08`,
+                  borderRadius: '0 10px 10px 0',
+                  padding: '12px 16px',
+                  border: `1px solid ${r.borderColor}20`,
+                  borderLeftWidth: 4,
+                  borderLeftColor: r.borderColor,
+                }}>
+                  <p style={{ fontSize: 12, lineHeight: 1.6, color: T.textPri }}>{r.text}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
