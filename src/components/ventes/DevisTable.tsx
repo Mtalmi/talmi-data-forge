@@ -537,7 +537,7 @@ export function DevisTable({
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
                           <div className="space-y-1.5 text-xs">
-                            <div style={{ fontWeight: 700, color: badgeColor }}>{niveau} — {score}/100</div>
+                            <div style={{ fontWeight: 700, color: dotColor }}>{niveau} — {score}/100</div>
                             {recommandation && (
                               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
                                 <span style={{ fontSize: 12, flexShrink: 0 }}>✨</span>
