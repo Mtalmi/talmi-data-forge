@@ -539,6 +539,30 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
   }, [n8nResults]);
 
   const [routePanelOpen, setRoutePanelOpen] = useState(false);
+  const [riskyClients, setRiskyClients] = useState<Set<string>>(new Set());
+
+  // Fetch clients with stale 'en_attente' devis (>30 days)
+  useEffect(() => {
+    async function loadRiskyClients() {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+      const { data: riskyDevis } = await supabase
+        .from('devis')
+        .select('client_id')
+        .eq('statut', 'en_attente')
+        .lt('created_at', thirtyDaysAgo);
+      if (!riskyDevis?.length) return;
+      const clientIds = [...new Set(riskyDevis.map(d => d.client_id).filter(Boolean))] as string[];
+      if (!clientIds.length) return;
+      const { data: clients } = await supabase
+        .from('clients')
+        .select('client_id, nom_client')
+        .in('client_id', clientIds);
+      if (clients?.length) {
+        setRiskyClients(new Set(clients.map(c => c.nom_client.toLowerCase())));
+      }
+    }
+    loadRiskyClients();
+  }, []);
   const handleOptimizeRoutes = () => {
     setRoutePanelOpen(true);
   };
