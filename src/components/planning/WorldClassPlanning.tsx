@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { WeatherAlertBanner } from './WeatherAlertBanner';
 import { WeatherForecastCard } from './WeatherForecastCard';
 import { DeliveryOrchestrationPanel } from './DeliveryOrchestrationPanel';
+import { RouteOptimizationPanel } from './RouteOptimizationPanel';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS (shared with Dashboard)
