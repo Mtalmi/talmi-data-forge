@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cloud } from 'lucide-react';
+import React from 'react';
 import { format, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
