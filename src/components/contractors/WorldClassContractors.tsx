@@ -2124,8 +2124,8 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
         display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
-      <div style={{ width: 40, height: 40, borderRadius: 10, background: `${iconColor}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Icon size={18} color={iconColor} />
+      <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon size={18} color="#D4A843" />
       </div>
       <div>
         <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 28, fontWeight: 800, color: iconColor }}>{displayVal}{suffix}</div>
