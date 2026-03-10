@@ -56,10 +56,12 @@ export function DriverDispatchCard({
   onRefresh,
   showActions = true,
   showProxyControls = true,
+  suggestions = null,
 }: DriverDispatchCardProps) {
   const { t } = useI18n();
   const d = t.driverDispatch;
   const c = t.common;
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
