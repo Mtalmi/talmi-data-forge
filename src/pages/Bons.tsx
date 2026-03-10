@@ -1404,16 +1404,20 @@ export default function Bons() {
         {bons.length > 0 && (() => {
           const clientCounts: Record<string, number> = {};
           bons.forEach(b => { clientCounts[b.client_id] = (clientCounts[b.client_id] || 0) + 1; });
-          const topClient = Object.entries(clientCounts).sort((a, b) => b[1] - a[1])[0];
+          const topClientEntry = Object.entries(clientCounts).sort((a, b) => b[1] - a[1])[0];
+          const topClientName = topClientEntry ? (clients.find(c => c.client_id === topClientEntry[0])?.nom_client || topClientEntry[0]) : '—';
+          const topClientCount = topClientEntry?.[1] || 0;
           const formulaVol: Record<string, number> = {};
           bons.forEach(b => { formulaVol[b.formule_id] = (formulaVol[b.formule_id] || 0) + b.volume_m3; });
           const totalVol = bons.reduce((s, b) => s + b.volume_m3, 0);
           const topFormula = Object.entries(formulaVol).sort((a, b) => b[1] - a[1])[0];
           const formulaPct = totalVol > 0 && topFormula ? ((topFormula[1] / totalVol) * 100).toFixed(0) : '0';
+          const topFormulaName = topFormula ? (formules.find(f => f.formule_id === topFormula[0])?.designation || topFormula[0]) : '—';
           const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
           const dayVol: number[] = [0, 0, 0, 0, 0, 0, 0];
-          bons.forEach(b => { dayVol[new Date(b.date_livraison).getDay()] += b.volume_m3; });
-          const peakDayIdx = dayVol.indexOf(Math.max(...dayVol));
+          const dayCounts: number[] = [0, 0, 0, 0, 0, 0, 0];
+          bons.forEach(b => { const d = new Date(b.date_livraison).getDay(); dayVol[d] += b.volume_m3; dayCounts[d]++; });
+          const peakDayIdx = dayCounts.indexOf(Math.max(...dayCounts));
           const cs: React.CSSProperties = { flex: 1, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: '16px 20px' };
           return (
             <div style={{ marginTop: 20 }}>
