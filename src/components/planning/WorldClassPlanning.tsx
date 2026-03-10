@@ -676,9 +676,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           <DeliveryOrchestrationPanel />
         </section>
 
-        {/* ── SECTION: WEATHER FORECAST ── */}
+        {/* ── SECTION: WEATHER FORECAST (collapsed by default) ── */}
         <section>
-          <WeatherForecastCard />
+          <WeatherForecastCollapsible />
         </section>
 
 
