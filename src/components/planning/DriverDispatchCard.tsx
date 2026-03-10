@@ -45,6 +45,7 @@ interface DriverDispatchCardProps {
   onRefresh?: () => void;
   showActions?: boolean;
   showProxyControls?: boolean;
+  suggestions?: { recommendedToupie: string | null; suggestedDeparture: string | null } | null;
 }
 
 export function DriverDispatchCard({ 
