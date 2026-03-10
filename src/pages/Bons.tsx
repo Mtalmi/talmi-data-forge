@@ -1242,7 +1242,7 @@ export default function Bons() {
                       {format(new Date(b.date_livraison), 'dd/MM/yyyy', { locale: dateLocale })}
                     </TableCell>
                     <TableCell style={{ color: '#FFFFFF' }}>{b.client_id}</TableCell>
-                    <TableCell className="font-mono text-sm" style={{ color: '#FFFFFF' }}>{b.formule_id}</TableCell>
+                    <TableCell className="font-mono text-sm" style={{ color: '#FFFFFF' }}>{b.formule_id?.replace('F-', '')}</TableCell>
                     <TableCell className="text-right" style={{ color: '#FFFFFF' }}>{b.volume_m3} m³</TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
                       {(() => {
