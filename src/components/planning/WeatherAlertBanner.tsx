@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Thermometer, X } from 'lucide-react';
+import { format, addDays } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const T = {
   gold: '#FFD700',
@@ -11,6 +13,8 @@ export function WeatherAlertBanner() {
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
+
+  const tomorrow = format(addDays(new Date(), 1), 'EEEE d MMMM', { locale: fr });
 
   return (
     <div style={{
@@ -33,7 +37,7 @@ export function WeatherAlertBanner() {
       </div>
       <div style={{ flex: 1 }}>
         <p style={{ color: T.textPri, fontSize: 13, fontWeight: 600, lineHeight: 1.5 }}>
-          ⛅ Alerte Météo IA — Demain 38°C prévu. Recommandation: utiliser adjuvant retardateur pour livraisons après 11h. 3 chantiers à risque identifiés.
+          ⛅ Alerte Météo IA — {tomorrow} 38°C prévu. Recommandation: utiliser adjuvant retardateur pour livraisons après 11h. 3 chantiers à risque identifiés.
         </p>
       </div>
       <button

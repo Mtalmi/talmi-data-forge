@@ -1,5 +1,7 @@
 import React from 'react';
 import { Cloud } from 'lucide-react';
+import { format, addDays } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const T = {
   gold: '#FFD700',
@@ -12,13 +14,24 @@ const T = {
   danger: '#EF4444',
 };
 
-const forecast = [
-  { jour: 'Lun 3 Mars', icon: '☀️', meteo: 'Ensoleillé', temp: '34°C', impact: '✅ Normal', impactColor: T.success, chantiers: 0 },
-  { jour: 'Mar 4 Mars', icon: '🌡️', meteo: 'Canicule', temp: '38°C', impact: '⚠️ Modéré', impactColor: T.warning, chantiers: 3 },
-  { jour: 'Mer 5 Mars', icon: '🌧️', meteo: 'Pluie', temp: '22°C', impact: '🔴 Élevé', impactColor: T.danger, chantiers: 5 },
+function formatDayLabel(date: Date): string {
+  const raw = format(date, 'EEE d MMM', { locale: fr });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+const baseForecast = [
+  { offset: 0, icon: '☀️', meteo: 'Ensoleillé', temp: '34°C', impact: '✅ Normal', impactColor: T.success, chantiers: 0 },
+  { offset: 1, icon: '🌡️', meteo: 'Canicule', temp: '38°C', impact: '⚠️ Modéré', impactColor: T.warning, chantiers: 3 },
+  { offset: 2, icon: '🌧️', meteo: 'Pluie', temp: '22°C', impact: '🔴 Élevé', impactColor: T.danger, chantiers: 5 },
 ];
 
 export function WeatherForecastCard() {
+  const today = new Date();
+  const forecast = baseForecast.map(f => ({
+    ...f,
+    jour: formatDayLabel(addDays(today, f.offset)),
+  }));
+
   return (
     <div style={{
       background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
