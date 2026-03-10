@@ -4,7 +4,7 @@ import {
   RadialBarChart, RadialBar, ResponsiveContainer,
 } from 'recharts';
 import {
-  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus,
+  FileText, BarChart3, Truck, Bell, CalendarDays, Clock, Plus, Cloud, ChevronDown, ChevronUp,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/layout/PageHeader';
@@ -462,6 +462,48 @@ function DeliveryCard({ d, delay = 0, routeData, weatherIndex = 0 }: { d: typeof
 }
 
 // ─────────────────────────────────────────────────────
+// WEATHER FORECAST COLLAPSIBLE WRAPPER
+// ─────────────────────────────────────────────────────
+function WeatherForecastCollapsible() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{
+      background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+      border: '1px solid rgba(245, 158, 11, 0.15)',
+      borderRadius: 12,
+      overflow: 'hidden',
+    }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+          padding: '16px 20px', background: 'transparent', border: 'none',
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <div style={{
+          width: 30, height: 30, borderRadius: 8,
+          background: 'rgba(255,215,0,0.15)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <Cloud size={14} color={T.gold} />
+        </div>
+        <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', flex: 1 }}>
+          Agent IA Météo
+        </span>
+        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+        {open ? <ChevronUp size={16} color={T.textSec} /> : <ChevronDown size={16} color={T.textSec} />}
+      </button>
+      {open && (
+        <div style={{ padding: '0 0 0 0' }}>
+          <WeatherForecastCard />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN COMPONENT
 // ─────────────────────────────────────────────────────
 export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPanelOpen?: boolean }) {
@@ -676,9 +718,9 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           <DeliveryOrchestrationPanel />
         </section>
 
-        {/* ── SECTION: WEATHER FORECAST ── */}
+        {/* ── SECTION: WEATHER FORECAST (collapsed by default) ── */}
         <section>
-          <WeatherForecastCard />
+          <WeatherForecastCollapsible />
         </section>
 
 
