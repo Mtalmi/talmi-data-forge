@@ -525,35 +525,34 @@ export function DevisTable({
                           style={{
                             display: 'inline-flex', alignItems: 'center', gap: 4,
                             padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 500,
-                            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+                            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
                             color: 'rgba(255,255,255,0.3)', cursor: 'pointer',
                           }}
                           className="transition-colors hover:border-[rgba(212,168,67,0.3)] hover:text-[#D4A843]"
                         >
-                          --
+                          —
                         </button>
                       );
                     }
 
                     const niveauLower = (niveau || '').toLowerCase();
                     const badgeColor = niveauLower === 'élevé' ? '#D4A843' : niveauLower === 'moyen' ? '#F59E0B' : '#EF4444';
-                    const badgeBg = niveauLower === 'élevé' ? 'rgba(212,168,67,0.12)' : niveauLower === 'moyen' ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
-                    const badgeBorder = niveauLower === 'élevé' ? 'rgba(212,168,67,0.4)' : niveauLower === 'moyen' ? 'rgba(245,158,11,0.4)' : 'rgba(239,68,68,0.4)';
                     const niveauLabel = niveauLower === 'élevé' ? 'Élevé' : niveauLower === 'moyen' ? 'Moyen' : 'Faible';
 
                     return (
                       <Tooltip>
                         <TooltipTrigger>
                           <span
-                            className="rounded-full px-2 py-0.5 text-xs font-medium inline-flex items-center gap-1.5"
+                            className="rounded-full px-2 py-0.5 text-[11px] inline-flex items-center gap-1.5"
                             style={{
-                              background: badgeBg,
-                              border: `1px solid ${badgeBorder}`,
+                              background: 'rgba(255,255,255,0.05)',
+                              border: `1px solid ${badgeColor}`,
                               color: badgeColor,
                             }}
                           >
-                            {niveauLabel}
-                            <span style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10, opacity: 0.85 }}>{score}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 11 }}>{score}</span>
+                            <span style={{ fontSize: 9, opacity: 0.6 }}>·</span>
+                            <span style={{ fontSize: 10 }}>{niveauLabel}</span>
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
