@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Truck, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
 
 const T = {
   gold: '#FFD700',
@@ -41,17 +43,52 @@ const recommendations = [
   },
 ];
 
-const kpis = [
-  { label: 'Camions Actifs', value: '5/7' },
-  { label: 'Temps Moyen Transit', value: '32 min' },
-  { label: 'Taux Utilisation', value: '71%' },
-  { label: 'Livraisons Aujourd\'hui', value: '8/12' },
-];
-
 const headers = ['Camion', 'Statut', 'Position', 'Chargement', 'ETA Chantier', 'Alerte'];
 
 export function DeliveryOrchestrationPanel() {
   const [open, setOpen] = useState(true);
+  const [kpis, setKpis] = useState([
+    { label: 'Camions Actifs', value: '—' },
+    { label: 'Temps Moyen Transit', value: '—' },
+    { label: 'Taux Utilisation', value: '—' },
+    { label: "Livraisons Aujourd'hui", value: '—' },
+  ]);
+
+  useEffect(() => {
+    async function load() {
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+
+      const [truckRes, blRes, totalTruckRes] = await Promise.all([
+        supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }).eq('actif', true),
+        supabase.from('bons_livraison_reels').select('volume_m3, temps_rotation_minutes').eq('date_livraison', todayStr),
+        supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }),
+      ]);
+
+      const activeTrucks = truckRes.count ?? 0;
+      const totalTrucks = totalTruckRes.count ?? 0;
+      const todayBLs = blRes.data ?? [];
+      const deliveryCount = todayBLs.length;
+
+      // Average transit time from today's deliveries
+      const rotations = todayBLs
+        .map(b => b.temps_rotation_minutes)
+        .filter((v): v is number => v != null && v > 0);
+      const avgTransit = rotations.length > 0
+        ? Math.round(rotations.reduce((s, v) => s + v, 0) / rotations.length)
+        : 0;
+
+      // Utilization = active / total
+      const utilization = totalTrucks > 0 ? Math.round((activeTrucks / totalTrucks) * 100) : 0;
+
+      setKpis([
+        { label: 'Camions Actifs', value: `${activeTrucks}/${totalTrucks}` },
+        { label: 'Temps Moyen Transit', value: avgTransit > 0 ? `${avgTransit} min` : '0 min' },
+        { label: 'Taux Utilisation', value: `${utilization}%` },
+        { label: "Livraisons Aujourd'hui", value: `${deliveryCount}` },
+      ]);
+    }
+    load();
+  }, []);
 
   return (
     <div style={{
