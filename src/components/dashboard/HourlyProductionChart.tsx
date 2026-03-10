@@ -1,18 +1,14 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   XAxis, Tooltip, ResponsiveContainer, Area, AreaChart,
 } from 'recharts';
 import { useI18n } from '@/i18n/I18nContext';
+import { supabase } from '@/integrations/supabase/client';
 
-const SAMPLE_HOURLY_DATA = [
-  { hour: '06h', volume: 12 }, { hour: '07h', volume: 28 },
-  { hour: '08h', volume: 45 }, { hour: '09h', volume: 67 },
-  { hour: '10h', volume: 82 }, { hour: '11h', volume: 91 },
-  { hour: '12h', volume: 78 }, { hour: '13h', volume: 88 },
-  { hour: '14h', volume: 95 }, { hour: '15h', volume: 84 },
-  { hour: '16h', volume: 71 }, { hour: '17h', volume: 58 },
-  { hour: '18h', volume: 34 }, { hour: '19h', volume: 18 },
-];
+interface HourlyPoint {
+  hour: string;
+  volume: number;
+}
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -33,16 +29,66 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function HourlyProductionChart() {
   const { t } = useI18n();
-  const data = useMemo(() => SAMPLE_HOURLY_DATA, []);
+  const [data, setData] = useState<HourlyPoint[]>([]);
+  const [loading, setLoading] = useState(true);
   const [animated, setAnimated] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setAnimated(true), 200);
-    return () => clearTimeout(timer);
+    async function fetch() {
+      // Get most recent date
+      const { data: latest } = await supabase
+        .from('bons_livraison_reels')
+        .select('date_livraison')
+        .order('date_livraison', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!latest) { setLoading(false); return; }
+
+      const targetDate = latest.date_livraison;
+
+      // Get all BLs for that date
+      const { data: bls } = await supabase
+        .from('bons_livraison_reels')
+        .select('volume_m3, heure_prevue, heure_depart_centrale')
+        .eq('date_livraison', targetDate);
+
+      if (!bls || bls.length === 0) { setLoading(false); return; }
+
+      // Aggregate by hour
+      const hourMap = new Map<number, number>();
+      bls.forEach(bl => {
+        const timeStr = bl.heure_depart_centrale || bl.heure_prevue;
+        let hour = 8; // default
+        if (timeStr) {
+          const parsed = parseInt(timeStr.split(':')[0], 10);
+          if (!isNaN(parsed)) hour = parsed;
+        }
+        hourMap.set(hour, (hourMap.get(hour) || 0) + bl.volume_m3);
+      });
+
+      // Build sorted array
+      const points: HourlyPoint[] = [];
+      const hours = Array.from(hourMap.keys()).sort((a, b) => a - b);
+      hours.forEach(h => {
+        points.push({ hour: `${String(h).padStart(2, '0')}h`, volume: Math.round(hourMap.get(h)! * 10) / 10 });
+      });
+
+      setData(points);
+      setLoading(false);
+    }
+    fetch();
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      const timer = setTimeout(() => setAnimated(true), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
+
   const totalToday = data.reduce((sum, d) => sum + d.volume, 0);
-  const peakHour = data.reduce((max, d) => (d.volume > max.volume ? d : max), data[0]);
+  const peakHour = data.length > 0 ? data.reduce((max, d) => (d.volume > max.volume ? d : max), data[0]) : null;
 
   return (
     <div className="space-y-4">
@@ -55,10 +101,10 @@ export function HourlyProductionChart() {
           <p className="text-[11px] text-slate-500 mt-0.5">{t.widgets.hourlyChart.subtitle}</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-[11px] text-slate-500">Peak: {peakHour.hour}</span>
+          {peakHour && <span className="text-[11px] text-slate-500">Peak: {peakHour.hour}</span>}
           <div className="text-right">
             <p className="text-xl font-extralight text-white tabular-nums" style={{ fontFamily: 'Inter, system-ui' }}>
-              {totalToday} <span className="text-sm text-slate-400">m³</span>
+              {Math.round(totalToday)} <span className="text-sm text-slate-400">m³</span>
             </p>
           </div>
         </div>
@@ -82,18 +128,20 @@ export function HourlyProductionChart() {
               tickLine={false}
             />
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.06)' }} />
-            <Area
-              type="monotone"
-              dataKey="volume"
-              stroke="rgb(234, 179, 8)"
-              strokeWidth={2}
-              fill="url(#goldGradient)"
-              dot={false}
-              activeDot={false}
-              isAnimationActive={true}
-              animationDuration={1500}
-              animationEasing="ease-out"
-            />
+            {data.length > 0 && (
+              <Area
+                type="monotone"
+                dataKey="volume"
+                stroke="rgb(234, 179, 8)"
+                strokeWidth={2}
+                fill="url(#goldGradient)"
+                dot={false}
+                activeDot={false}
+                isAnimationActive={true}
+                animationDuration={1500}
+                animationEasing="ease-out"
+              />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>
