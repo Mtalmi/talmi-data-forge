@@ -1139,33 +1139,22 @@ export default function Bons() {
         {/* AGENT IA: RECOUVREMENT */}
         {bons.length > 0 && (() => {
           const unpaid = bons
-            .filter(b => b.statut_paiement === 'En attente' || b.statut_paiement === 'Pending' || b.statut_paiement === 'en_attente')
+            .filter(b => b.statut_paiement === 'en_retard')
             .map(b => {
               const daysOverdue = differenceInDays(new Date(), new Date(b.date_livraison));
               const amount = (b.volume_m3 || 0) * (b.prix_vente_m3 || 0);
+              const clientName = clients.find(c => c.client_id === b.client_id)?.nom_client || b.client_id;
               let action: string;
               let actionIcon: typeof Phone;
               if (daysOverdue > 30) { action = 'Escalader au directeur'; actionIcon = ArrowUpRight; }
               else if (daysOverdue > 15) { action = 'Envoyer mise en demeure'; actionIcon = Mail; }
               else { action = 'Appel téléphonique recommandé'; actionIcon = Phone; }
-              return { ...b, daysOverdue, amount, action, actionIcon };
+              return { ...b, client_id: clientName, daysOverdue, amount, action, actionIcon };
             })
-            .sort((a, b) => b.amount - a.amount)
+            .sort((a, b) => a.date_livraison.localeCompare(b.date_livraison))
             .slice(0, 5);
 
-          // Seed fallback if no unpaid found
-          if (unpaid.length === 0) {
-            const seeds = [
-              { bl_id: 'BL-2026-0142', client_id: 'ATLAS CONSTRUCT', amount: 48500, daysOverdue: 34, action: 'Escalader au directeur', actionIcon: ArrowUpRight },
-              { bl_id: 'BL-2026-0138', client_id: 'MAROCBAT SARL', amount: 32000, daysOverdue: 22, action: 'Envoyer mise en demeure', actionIcon: Mail },
-              { bl_id: 'BL-2026-0155', client_id: 'OMAR BTP', amount: 24800, daysOverdue: 11, action: 'Appel téléphonique recommandé', actionIcon: Phone },
-              { bl_id: 'BL-2026-0161', client_id: 'SOGEA MAROC', amount: 18200, daysOverdue: 8, action: 'Appel téléphonique recommandé', actionIcon: Phone },
-              { bl_id: 'BL-2026-0149', client_id: 'AFRIC TRAVAUX', amount: 15600, daysOverdue: 45, action: 'Escalader au directeur', actionIcon: ArrowUpRight },
-            ];
-            return (
-              <RecoverySection items={seeds as any} />
-            );
-          }
+          if (unpaid.length === 0) return null;
           return <RecoverySection items={unpaid as any} />;
         })()}
 
