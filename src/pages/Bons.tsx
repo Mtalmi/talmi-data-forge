@@ -1231,19 +1231,19 @@ export default function Bons() {
                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = ''; }}
                   >
-                    <TableCell className="font-mono font-medium">
+                    <TableCell className="font-mono font-medium" style={{ color: '#FFFFFF' }}>
                       <div className="flex items-center gap-2">
                         {b.bl_id}
                         {b.alerte_ecart && <AlertCircle className="h-4 w-4 text-destructive" />}
                         {b.alerte_marge && <AlertCircle className="h-4 w-4 text-warning" />}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ color: '#FFFFFF' }}>
                       {format(new Date(b.date_livraison), 'dd/MM/yyyy', { locale: dateLocale })}
                     </TableCell>
-                    <TableCell>{b.client_id}</TableCell>
-                    <TableCell className="font-mono text-sm">{b.formule_id}</TableCell>
-                    <TableCell className="text-right">{b.volume_m3} m³</TableCell>
+                    <TableCell style={{ color: '#FFFFFF' }}>{b.client_id}</TableCell>
+                    <TableCell className="font-mono text-sm" style={{ color: '#FFFFFF' }}>{b.formule_id}</TableCell>
+                    <TableCell className="text-right" style={{ color: '#FFFFFF' }}>{b.volume_m3} m³</TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
                       {(() => {
                         const ws = b.workflow_status || 'planification';
