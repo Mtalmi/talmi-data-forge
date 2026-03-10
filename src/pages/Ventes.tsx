@@ -48,6 +48,7 @@ import { FacturesTable } from '@/components/ventes/FacturesTable';
 import { WorldClassVentes } from '@/components/ventes/WorldClassVentes';
 import { MarginOverviewCard } from '@/components/ventes/MarginOverviewCard';
 import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
+import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
