@@ -694,7 +694,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
                 {/* Slots */}
                 {row.slots.map((slot, si) => (
                   <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
-                    <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} />
+                    <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} />
                   </div>
                 ))}
               </div>
