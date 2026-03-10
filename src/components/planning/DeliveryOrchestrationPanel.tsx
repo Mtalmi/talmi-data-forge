@@ -58,31 +58,29 @@ export function DeliveryOrchestrationPanel() {
     async function load() {
       const todayStr = format(new Date(), 'yyyy-MM-dd');
 
-      const [truckRes, blRes, totalTruckRes] = await Promise.all([
+      const [activeRes, totalRes, blRes] = await Promise.all([
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }).eq('actif', true),
-        supabase.from('bons_livraison_reels').select('volume_m3, temps_rotation_minutes').eq('date_livraison', todayStr),
         supabase.from('prestataires_transport').select('id', { count: 'exact', head: true }),
+        supabase.from('bons_livraison_reels').select('temps_rotation_minutes').eq('date_livraison', todayStr),
       ]);
 
-      const activeTrucks = truckRes.count ?? 0;
-      const totalTrucks = totalTruckRes.count ?? 0;
+      const activeTrucks = activeRes.count ?? 0;
+      const totalTrucks = totalRes.count ?? 0;
       const todayBLs = blRes.data ?? [];
       const deliveryCount = todayBLs.length;
 
-      // Average transit time from today's deliveries
       const rotations = todayBLs
         .map(b => b.temps_rotation_minutes)
         .filter((v): v is number => v != null && v > 0);
       const avgTransit = rotations.length > 0
         ? Math.round(rotations.reduce((s, v) => s + v, 0) / rotations.length)
-        : 0;
+        : null;
 
-      // Utilization = active / total
       const utilization = totalTrucks > 0 ? Math.round((activeTrucks / totalTrucks) * 100) : 0;
 
       setKpis([
         { label: 'Camions Actifs', value: `${activeTrucks}/${totalTrucks}` },
-        { label: 'Temps Moyen Transit', value: avgTransit > 0 ? `${avgTransit} min` : '0 min' },
+        { label: 'Temps Moyen Transit', value: avgTransit != null ? `${avgTransit} min` : '--' },
         { label: 'Taux Utilisation', value: `${utilization}%` },
         { label: "Livraisons Aujourd'hui", value: `${deliveryCount}` },
       ]);
