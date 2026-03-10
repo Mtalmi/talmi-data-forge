@@ -784,7 +784,7 @@ export default function Ventes() {
               <div className="flex justify-end">
                 <BulkScorerButton devisList={filteredDevis} onDone={fetchData} />
               </div>
-              <Card>
+              <Card className="bg-transparent">
                 <CardContent className="pt-6">
                   <DevisTableResponsive
                     devisList={filteredDevis}
