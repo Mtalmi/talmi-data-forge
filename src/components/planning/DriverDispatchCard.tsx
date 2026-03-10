@@ -257,6 +257,7 @@ export function DriverDispatchCard({
         )}
 
 
+        {showActions && (
           <div className="flex gap-3 pt-2">
             {bon.workflow_status === 'planification' && onStartProduction && (
               <Button 
