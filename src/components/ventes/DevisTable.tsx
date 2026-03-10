@@ -527,12 +527,22 @@ export function DevisTable({
                     const niveauLower = (niveau || '').toLowerCase();
                     const dotColor = niveauLower === 'élevé' ? '#D4A843' : niveauLower === 'moyen' ? '#F59E0B' : '#EF4444';
 
+                    const label = niveauLower === 'élevé' ? 'Élevé' : niveauLower === 'moyen' ? 'Moyen' : 'Faible';
+
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <span className="inline-flex items-center gap-1.5">
-                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200, color: 'rgba(255,255,255,0.85)' }}>{score}</span>
-                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, display: 'inline-block', flexShrink: 0 }} />
+                          <span
+                            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold"
+                            style={{
+                              background: 'rgba(0,0,0,0.3)',
+                              border: `1px solid ${dotColor}`,
+                              color: dotColor,
+                              fontFamily: 'ui-monospace, SFMono-Regular, monospace',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {score} {label}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
