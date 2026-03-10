@@ -1428,14 +1428,14 @@ export default function Bons() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
                 <div style={cs}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Client le plus actif</div>
-                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topClient?.[0] || '—'}</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topClientName}</div>
                   <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 24, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
-                    {topClient?.[1] || 0}<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>commandes</span>
+                    {topClientCount}<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>commandes</span>
                   </div>
                 </div>
                 <div style={cs}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 8 }}>Formule dominante</div>
-                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topFormula?.[0] || '—'}</div>
+                  <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 16, fontWeight: 600, color: '#E2E8F0', marginBottom: 4 }}>{topFormulaName}</div>
                   <div style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontSize: 24, fontWeight: 200, color: '#D4A843', lineHeight: 1 }}>
                     {formulaPct}%<span style={{ fontSize: 12, fontWeight: 400, color: '#9CA3AF', marginLeft: 6 }}>du volume</span>
                   </div>
