@@ -150,7 +150,7 @@ export function RevenueForecastChart({ bcList, devisList }: RevenueForecastChart
         {/* Summary Stats — uniform glass cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
           {/* Confirmed */}
-          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: totalConfirmed === 0 ? '1px dashed rgba(212,168,67,0.3)' : '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
+          <div style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', border: totalConfirmed === 0 ? '1px dashed rgba(212,168,67,0.4)' : '1px solid rgba(255,255,255,0.08)', borderTop: '2px solid #D4A843', borderRadius: 12, padding: 20 }}>
             <div>
               <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace', fontWeight: 200, fontSize: 36, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#D4A843' }}>
                 <AnimatedKDH value={totalConfirmed} />
