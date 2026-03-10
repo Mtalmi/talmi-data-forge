@@ -520,7 +520,7 @@ export function DevisTable({
 
                     if (score == null) {
                       return (
-                        <span style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 12 }}>—</span>
+                        <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200 }}>—</span>
                       );
                     }
 
@@ -530,8 +530,8 @@ export function DevisTable({
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <span className="inline-flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                            <span className="text-foreground" style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 600, fontSize: '13px', letterSpacing: '-0.02em', lineHeight: 1, display: 'inline-block', minWidth: '18px', textAlign: 'right' }}>{score}</span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <span style={{ fontFamily: 'ui-monospace, SFMono-Regular, monospace', fontWeight: 200 }}>{score}</span>
                             <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, display: 'inline-block', flexShrink: 0 }} />
                           </span>
                         </TooltipTrigger>
