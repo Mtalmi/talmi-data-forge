@@ -872,8 +872,6 @@ export default function Ventes() {
           {/* ══ Pipeline Analysis AI ══ */}
           <PipelineAnalysisCard />
 
-          {/* ══ World-Class Sales Dashboard ══ */}
-          <WorldClassVentes />
         </div>
 
         {/* Convert to BC Dialog */}
