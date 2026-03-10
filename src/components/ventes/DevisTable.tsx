@@ -427,19 +427,19 @@ export function DevisTable({
                     aria-label={`Sélectionner ${devis.devis_id}`}
                   />
                 </TableCell>
-                <TableCell className="font-mono font-medium">{devis.devis_id}</TableCell>
-                <TableCell>
+                <TableCell className="font-mono font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.devis_id}</TableCell>
+                <TableCell style={{ color: 'rgba(255,255,255,0.9)' }}>
                   {devis.client ? (
                     <ClientHoverPreview clientId={devis.client_id || ''} clientName={devis.client.nom_client} />
                   ) : (
                     <span className="text-xs text-amber-400/60 bg-amber-400/10 rounded-full px-2 py-0.5">{dt.unassigned}</span>
                   )}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="text-center" style={{ color: 'rgba(255,255,255,0.9)' }}>
                   <span className="text-xs font-mono">{devis.formule_id}</span>
                 </TableCell>
-                <TableCell className="text-right font-mono">{devis.volume_m3}</TableCell>
-                <TableCell className="text-right font-mono font-semibold">
+                <TableCell className="text-right font-mono" style={{ color: 'rgba(255,255,255,0.9)' }}>{devis.volume_m3}</TableCell>
+                <TableCell className="text-right font-mono font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>
                   {Number(devis.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
