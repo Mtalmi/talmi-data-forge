@@ -8,9 +8,13 @@ import {
   MapPin,
   ArrowRight,
   Play,
-  CheckCircle
+  CheckCircle,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 import { DeliveryRotationProgress } from './DeliveryRotationProgress';
 import { ETATracker } from './ETATracker';
 import { DispatcherProxyControls } from './DispatcherProxyControls';
@@ -41,6 +45,7 @@ interface DriverDispatchCardProps {
   onRefresh?: () => void;
   showActions?: boolean;
   showProxyControls?: boolean;
+  suggestions?: { recommendedToupie: string | null; suggestedDeparture: string | null } | null;
 }
 
 export function DriverDispatchCard({ 
@@ -51,10 +56,12 @@ export function DriverDispatchCard({
   onRefresh,
   showActions = true,
   showProxyControls = true,
+  suggestions = null,
 }: DriverDispatchCardProps) {
   const { t } = useI18n();
   const d = t.driverDispatch;
   const c = t.common;
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -205,6 +212,50 @@ export function DriverDispatchCard({
             )}
           </div>
         )}
+
+        {/* Suggestion intelligente for planification cards */}
+        {bon.workflow_status === 'planification' && suggestions && (suggestions.recommendedToupie || suggestions.suggestedDeparture) && (
+          <div className="mb-4">
+            <button
+              onClick={(e) => { e.stopPropagation(); setSuggestionsOpen(!suggestionsOpen); }}
+              className="flex items-center gap-2 w-full p-2.5 rounded-lg transition-all"
+              style={{
+                background: 'rgba(255,215,0,0.06)',
+                border: '1px solid rgba(255,215,0,0.15)',
+              }}
+            >
+              <Sparkles className="h-3.5 w-3.5 shrink-0" style={{ color: '#FFD700' }} />
+              <span className="text-xs font-semibold flex-1 text-left" style={{ color: '#FFD700', letterSpacing: '0.05em' }}>
+                Suggestion intelligente
+              </span>
+              {suggestionsOpen
+                ? <ChevronUp className="h-3.5 w-3.5" style={{ color: 'rgba(255,215,0,0.5)' }} />
+                : <ChevronDown className="h-3.5 w-3.5" style={{ color: 'rgba(255,215,0,0.5)' }} />
+              }
+            </button>
+            {suggestionsOpen && (
+              <div className="mt-2 space-y-1.5 pl-1">
+                {suggestions.recommendedToupie && (
+                  <div className="flex items-center gap-2 p-2 rounded-md" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <Truck className="h-3.5 w-3.5 shrink-0" style={{ color: '#94A3B8' }} />
+                    <span className="text-xs" style={{ color: '#CBD5E1' }}>
+                      Toupie recommandée: <span className="font-bold font-mono" style={{ color: '#FFD700' }}>{suggestions.recommendedToupie}</span>
+                    </span>
+                  </div>
+                )}
+                {suggestions.suggestedDeparture && (
+                  <div className="flex items-center gap-2 p-2 rounded-md" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <Clock className="h-3.5 w-3.5 shrink-0" style={{ color: '#94A3B8' }} />
+                    <span className="text-xs" style={{ color: '#CBD5E1' }}>
+                      Départ suggéré: <span className="font-bold font-mono" style={{ color: '#FFD700' }}>{suggestions.suggestedDeparture}</span>
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
 
         {showActions && (
           <div className="flex gap-3 pt-2">

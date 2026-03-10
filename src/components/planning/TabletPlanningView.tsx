@@ -97,6 +97,39 @@ export function TabletPlanningView({
   const [activeTab, setActiveTab] = useState('produire');
   const [pendingOpen, setPendingOpen] = useState(true);
 
+  // Compute toupie with fewest assignments today for suggestions
+  const allTodayBons = [...pendingValidation, ...aProduire, ...enChargement, ...enLivraison, ...livresAujourdhui];
+  const toupieCountMap = new Map<string, number>();
+  allTodayBons.forEach(b => {
+    const tid = b.toupie_assignee || b.camion_assigne;
+    if (tid) toupieCountMap.set(tid, (toupieCountMap.get(tid) || 0) + 1);
+  });
+
+  // Find least-loaded toupie (from flotte data we know TOU-01..TOU-03 exist)
+  const knownToupies = ['TOU-01', 'TOU-02', 'TOU-03'];
+  knownToupies.forEach(tid => { if (!toupieCountMap.has(tid)) toupieCountMap.set(tid, 0); });
+  let leastLoadedToupie: string | null = null;
+  let minCount = Infinity;
+  toupieCountMap.forEach((count, tid) => {
+    if (count < minCount) { minCount = count; leastLoadedToupie = tid; }
+  });
+
+  const getSuggestions = (bon: BonLivraison) => {
+    if (bon.workflow_status !== 'planification') return null;
+    let suggestedDeparture: string | null = null;
+    if (bon.heure_prevue) {
+      const [h, m] = bon.heure_prevue.split(':').map(Number);
+      if (!isNaN(h) && !isNaN(m)) {
+        let totalMin = h * 60 + m - 30;
+        if (totalMin < 0) totalMin = 0;
+        const dh = Math.floor(totalMin / 60).toString().padStart(2, '0');
+        const dm = (totalMin % 60).toString().padStart(2, '0');
+        suggestedDeparture = `${dh}:${dm}`;
+      }
+    }
+    return { recommendedToupie: leastLoadedToupie, suggestedDeparture };
+  };
+
   const handleRefresh = useCallback(async () => {
     await new Promise<void>((resolve) => {
       onRefresh();
@@ -336,6 +369,7 @@ export function TabletPlanningView({
                 bon={bon}
                 onStartProduction={() => onStartProduction(bon)}
                 onOpenDetails={() => onOpenDetails(bon)}
+                suggestions={getSuggestions(bon)}
               />
             ))
           )}
