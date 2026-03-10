@@ -520,39 +520,19 @@ export function DevisTable({
 
                     if (score == null) {
                       return (
-                        <button
-                          onClick={() => scoreDevis(devis.devis_id, devis.id)}
-                          style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                            padding: '2px 8px', borderRadius: 9999, fontSize: 11, fontWeight: 500,
-                            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'rgba(255,255,255,0.3)', cursor: 'pointer',
-                          }}
-                          className="transition-colors hover:border-[rgba(212,168,67,0.3)] hover:text-[#D4A843]"
-                        >
-                          —
-                        </button>
+                        <span style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 12 }}>—</span>
                       );
                     }
 
                     const niveauLower = (niveau || '').toLowerCase();
-                    const badgeColor = niveauLower === 'élevé' ? '#D4A843' : niveauLower === 'moyen' ? '#F59E0B' : '#EF4444';
-                    const niveauLabel = niveauLower === 'élevé' ? 'Élevé' : niveauLower === 'moyen' ? 'Moyen' : 'Faible';
+                    const dotColor = niveauLower === 'élevé' ? '#D4A843' : niveauLower === 'moyen' ? '#F59E0B' : '#EF4444';
 
                     return (
                       <Tooltip>
                         <TooltipTrigger>
-                          <span
-                            className="rounded-full px-2 py-0.5 text-[11px] inline-flex items-center gap-1.5"
-                            style={{
-                              background: 'rgba(255,255,255,0.05)',
-                              border: `1px solid ${badgeColor}`,
-                              color: badgeColor,
-                            }}
-                          >
-                            <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 11 }}>{score}</span>
-                            <span style={{ fontSize: 9, opacity: 0.6 }}>·</span>
-                            <span style={{ fontSize: 10 }}>{niveauLabel}</span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 12, color: 'white' }}>{score}</span>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, display: 'inline-block', flexShrink: 0 }} />
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="left" className="max-w-[280px]" style={{ background: '#0D1220', border: '1px solid rgba(212,168,67,0.15)', borderRadius: 8, padding: '10px 14px' }}>
