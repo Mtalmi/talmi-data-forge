@@ -729,6 +729,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
           </div>
         </footer>
       </div>
+      <RouteOptimizationPanel open={routePanelOpen} onClose={() => setRoutePanelOpen(false)} />
     </div>
   );
 }
