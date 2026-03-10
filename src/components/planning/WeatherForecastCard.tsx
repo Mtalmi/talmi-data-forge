@@ -38,14 +38,6 @@ export function WeatherForecastCard() {
       border: '1px solid rgba(245, 158, 11, 0.15)',
       borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden',
     }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <Cloud size={14} color={T.gold} />
-        <span style={{ color: T.gold, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-          Agent IA Météo
-        </span>
-        <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
-      </div>
       <p style={{ color: T.textSec, fontSize: 12, fontWeight: 600, marginBottom: 14 }}>
         Prévisions Météo — Impact Chantiers
       </p>
