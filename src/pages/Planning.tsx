@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { createPortal } from 'react-dom';
+
 import WorldClassPlanning from '@/components/planning/WorldClassPlanning';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useI18n } from '@/i18n/I18nContext';
@@ -1451,8 +1451,9 @@ export default function Planning() {
   // Desktop view
   return (
     <MainLayout>
-      <WorldClassPlanning fleetPanelOpen={fleetPanelOpen && !isMobile} />
-      <div className="space-y-6 transition-all duration-300" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', paddingRight: fleetPanelOpen && !isMobile ? 'calc(24px + 272px)' : '24px', transition: 'padding-right 300ms ease-in-out' }}>
+      <WorldClassPlanning fleetPanelOpen={false} />
+      <div className="flex gap-4 transition-all duration-300" style={{ maxWidth: 1600, margin: '0 auto', padding: '32px 24px' }}>
+      <div className="flex-1 min-w-0 space-y-6">
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
             <Eye className="h-5 w-5 text-amber-500" />
@@ -2018,32 +2019,10 @@ export default function Planning() {
           }}
         />
 
+      </div>
         {/* Fleet Panel - Right Sidebar (Desktop and Tablet) */}
         {!isMobile && (
           <FleetPanel selectedDate={selectedDate} isOpen={fleetPanelOpen} onOpenChange={setFleetPanelOpen} />
-        )}
-
-        {!isMobile && !fleetPanelOpen && createPortal(
-          <button
-            onClick={() => setFleetPanelOpen(true)}
-            className="fixed right-0 top-1/2 -translate-y-1/2 z-[9999] flex flex-col items-center justify-center gap-1.5 cursor-pointer"
-            style={{
-              width: 40, height: 80,
-              background: 'rgba(245, 158, 11, 0.1)',
-              border: '1px solid rgba(245, 158, 11, 0.15)',
-              borderRight: 'none',
-              borderRadius: '8px 0 0 8px',
-              padding: 8,
-              transition: 'all 150ms ease',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.2)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
-          >
-            <Truck className="w-4 h-4" style={{ color: '#F59E0B' }} />
-            <ChevronLeft className="w-4 h-4" style={{ color: '#F59E0B' }} />
-          </button>,
-          document.body
         )}
       </div>
     </MainLayout>

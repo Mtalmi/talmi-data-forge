@@ -617,7 +617,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
       />
 
       {/* ── PAGE CONTENT ── */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 40, transition: 'padding-right 300ms ease-in-out' }} className="sm:!px-6 lg:!pr-[calc(24px+272px)]">
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 40 }} className="sm:!px-6">
 
         {/* ── WEATHER ALERT BANNER ── */}
         <WeatherAlertBanner />
