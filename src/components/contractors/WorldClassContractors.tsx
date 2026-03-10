@@ -235,7 +235,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, delay }: {
         opacity: vis ? 1 : 0,
         transition: 'opacity 0.5s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease',
         borderLeft: `4px solid ${color}`,
-        borderTop: '4px solid #FFD700',
+        borderTop: '2px solid #D4A843',
         display: 'flex', flexDirection: 'column', gap: 12,
       }}
     >
