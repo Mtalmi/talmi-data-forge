@@ -531,7 +531,7 @@ export function DevisTable({
                       <Tooltip>
                         <TooltipTrigger>
                           <span className="inline-flex items-center gap-1.5">
-                            <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 200, fontSize: 12, color: 'white' }}>{score}</span>
+                            <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 400, fontSize: 13, color: '#F1F5F9', letterSpacing: '-0.02em' }}>{score}</span>
                             <span style={{ width: 6, height: 6, borderRadius: '50%', background: dotColor, display: 'inline-block', flexShrink: 0 }} />
                           </span>
                         </TooltipTrigger>
