@@ -380,7 +380,7 @@ export function DevisTable({
 
   return (
     <>
-      <Table>
+      <Table className="table-fixed w-full">
         <TableHeader>
           <TableRow>
             <TableHead className="w-10">
@@ -391,15 +391,15 @@ export function DevisTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead>N° Devis</TableHead>
-            <TableHead>Client</TableHead>
-            <TableHead className="text-center">Formule</TableHead>
-            <TableHead className="text-right">Volume (m³)</TableHead>
-            <TableHead className="text-right">Total HT (DH)</TableHead>
-            <TableHead className="text-center">Statut</TableHead>
-            <TableHead className="text-center">Score IA</TableHead>
-            <TableHead className="text-center">Conversion</TableHead>
-            <TableHead className="text-center">Priorité</TableHead>
+            <TableHead className="w-24">N° Devis</TableHead>
+            <TableHead className="w-32">Client</TableHead>
+            <TableHead className="w-20 text-center">Formule</TableHead>
+            <TableHead className="w-16 text-right">Volume (m³)</TableHead>
+            <TableHead className="w-24 text-right">Total HT (DH)</TableHead>
+            <TableHead className="w-28 text-center">Statut</TableHead>
+            <TableHead className="w-20 text-center">Score IA</TableHead>
+            <TableHead className="w-20 text-center">Conversion</TableHead>
+            <TableHead className="w-16 text-center">Priorité</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
