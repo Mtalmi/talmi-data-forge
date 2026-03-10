@@ -193,7 +193,10 @@ function SectionHeader({ title, badge, badgeColor = T.gold }: { title: string; b
 
 const cardStyle = (hovered: boolean): React.CSSProperties => ({
   background: T.cardBg,
-  border: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
+  borderTop: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
+  borderRight: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
+  borderBottom: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
+  borderLeft: `1px solid ${hovered ? T.goldBorder : T.cardBorder}`,
   borderRadius: 12,
   padding: 20,
   transition: 'all 0.25s ease',
