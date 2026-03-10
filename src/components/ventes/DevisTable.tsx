@@ -615,14 +615,6 @@ export function DevisTable({
                           )}
                           {dt.validate}
                         </Button>
-                      ) : isCreator(devis) ? (
-                        <span className="text-xs text-amber-400 bg-amber-500/10 rounded-full px-2 py-0.5 whitespace-nowrap">
-                          {dt.awaitingThirdParty}
-                        </span>
-                      ) : isReadOnlyRole ? (
-                        <span className="text-xs text-amber-400 bg-amber-500/10 rounded-full px-2 py-0.5 whitespace-nowrap">
-                          {dt.awaitingValidation}
-                        </span>
                       ) : null
                     )}
                     
