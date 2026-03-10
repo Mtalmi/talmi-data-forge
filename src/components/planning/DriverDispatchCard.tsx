@@ -8,9 +8,13 @@ import {
   MapPin,
   ArrowRight,
   Play,
-  CheckCircle
+  CheckCircle,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 import { DeliveryRotationProgress } from './DeliveryRotationProgress';
 import { ETATracker } from './ETATracker';
 import { DispatcherProxyControls } from './DispatcherProxyControls';
