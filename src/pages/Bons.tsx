@@ -1241,7 +1241,10 @@ export default function Bons() {
                     <TableCell style={{ color: '#FFFFFF' }}>
                       {format(new Date(b.date_livraison), 'dd/MM/yyyy', { locale: dateLocale })}
                     </TableCell>
-                    <TableCell style={{ color: '#FFFFFF' }}>{b.client_id}</TableCell>
+                    <TableCell style={{ color: '#FFFFFF' }}>
+                      <div>{clients.find(c => c.client_id === b.client_id)?.nom_client || b.client_id}</div>
+                      <div className="text-xs" style={{ color: '#9ca3af' }}>{b.client_id}</div>
+                    </TableCell>
                     <TableCell className="font-mono text-sm" style={{ color: '#FFFFFF' }}>{b.formule_id?.replace('F-', '')}</TableCell>
                     <TableCell className="text-right" style={{ color: '#FFFFFF' }}>{b.volume_m3} m³</TableCell>
                     <TableCell onClick={e => e.stopPropagation()}>
