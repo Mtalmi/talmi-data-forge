@@ -878,6 +878,9 @@ export default function Ventes() {
           {/* ══ Margin Optimizer AI ══ */}
           <MarginOverviewCard />
 
+          {/* ══ Pipeline Analysis AI ══ */}
+          <PipelineAnalysisCard />
+
           {/* ══ World-Class Sales Dashboard ══ */}
           <WorldClassVentes />
         </div>
