@@ -1240,7 +1240,7 @@ export default function Bons() {
                       {(() => {
                         const ws = b.workflow_status || 'planification';
                         const wfStyles: Record<string, { bg: string; bc: string; label: string }> = {
-                          planification: { bg: 'rgba(59,130,246,0.15)', bc: '#3b82f6', label: 'Planning' },
+                          planification: { bg: 'rgba(59,130,246,0.15)', bc: '#3b82f6', label: 'Planification' },
                           production: { bg: 'rgba(245,158,11,0.15)', bc: '#f59e0b', label: 'Production' },
                           validation_technique: { bg: 'rgba(168,85,247,0.15)', bc: '#a855f7', label: 'Tech. Valid.' },
                           en_livraison: { bg: 'rgba(212,168,67,0.15)', bc: '#D4A843', label: 'En livraison' },
