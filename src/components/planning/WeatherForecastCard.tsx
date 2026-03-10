@@ -1,5 +1,4 @@
 import React from 'react';
-import React from 'react';
 import { format, addDays } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
