@@ -174,38 +174,36 @@ export function FleetPanel({ selectedDate, isOpen: controlledIsOpen, onOpenChang
   const onMissionCount = Object.keys(activeDeliveries).length;
   const maintenanceCount = vehicles.filter(v => v.statut === 'Maintenance' || v.statut === 'Hors Service').length;
 
+  // Collapsed state: slim vertical bar
   if (!isOpen) {
-    return null;
+    return (
+      <div
+        className="flex-shrink-0 w-10 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 self-stretch"
+        style={{
+          background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
+          border: '1px solid rgba(245, 158, 11, 0.15)',
+          borderRadius: 12,
+          minHeight: 200,
+        }}
+        onClick={() => setIsOpen(true)}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.08)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(to bottom right, #1a1f2e, #141824)'; }}
+      >
+        <ChevronLeft size={14} style={{ color: '#F59E0B' }} />
+        <span
+          className="text-[10px] font-bold tracking-[0.2em] uppercase"
+          style={{ color: '#D4A843', writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+        >
+          {fp.fleet}
+        </span>
+        <Truck size={14} style={{ color: '#F59E0B' }} />
+      </div>
+    );
   }
 
   return (
     <>
-      {/* Floating close toggle — always visible on screen edge */}
-      <button
-        onClick={() => setIsOpen(false)}
-        className="fixed z-[9999] cursor-pointer flex flex-col items-center justify-center gap-1.5"
-        style={{
-          right: 260,
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 36,
-          height: 72,
-          background: 'rgba(245, 158, 11, 0.1)',
-          border: '1px solid rgba(245, 158, 11, 0.15)',
-          borderRight: 'none',
-          borderRadius: '8px 0 0 8px',
-          color: '#F59E0B',
-          padding: 8,
-          transition: 'all 150ms ease',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.2)'; }}
-        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(245, 158, 11, 0.1)'; }}
-      >
-        <Truck size={16} />
-        <ChevronRight size={16} />
-      </button>
-    <div className="fixed right-0 top-20 bottom-4 w-64 z-40 flex flex-col overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderLeft: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: 12 }}>
+    <div className="flex-shrink-0 w-64 flex flex-col overflow-hidden transition-all duration-300 self-stretch" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)', borderLeft: '1px solid rgba(245, 158, 11, 0.2)', borderRadius: 12 }}>
       {/* Header */}
       <div className="p-3 border-b border-white/[0.06] flex items-center justify-between">
         <div className="flex items-center gap-2">
