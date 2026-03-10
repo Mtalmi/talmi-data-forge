@@ -342,7 +342,7 @@ function KPICard({ label, value, suffix, color, icon: Icon, trend, trendPositive
 // ─────────────────────────────────────────────────────
 // SCHEDULE BLOCK
 // ─────────────────────────────────────────────────────
-function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: number; client: string } | null; delay?: number }) {
+function ScheduleBlock({ slot, delay = 0, riskyClients }: { slot: { product: string; volume: number; client: string } | null; delay?: number; riskyClients?: Set<string> }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
@@ -360,6 +360,9 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
   }
 
   const color = PRODUCT_COLORS[slot.product] || T.gold;
+  const isRisky = riskyClients?.has(slot.client.toLowerCase()) ?? false;
+  const dotColor = isRisky ? T.danger : T.success;
+
   return (
     <div
       onMouseEnter={() => setHov(true)}
@@ -373,8 +376,16 @@ function ScheduleBlock({ slot, delay = 0 }: { slot: { product: string; volume: n
         borderLeft: `3px solid ${color}`,
         borderRadius: 8, padding: '8px 10px',
         cursor: 'default', minHeight: 58,
+        position: 'relative',
       }}
     >
+      {/* Payment status dot */}
+      <div style={{
+        position: 'absolute', top: 5, right: 5,
+        width: 7, height: 7, borderRadius: '50%',
+        background: dotColor,
+        boxShadow: `0 0 4px ${dotColor}60`,
+      }} />
       <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, fontWeight: 800, color, marginBottom: 2 }}>{slot.product}</p>
       <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: T.textPri }}>{slot.volume} m³</p>
       <p style={{ fontSize: 10, color: T.textDim, marginTop: 2 }}>{slot.client}</p>
@@ -528,6 +539,30 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
   }, [n8nResults]);
 
   const [routePanelOpen, setRoutePanelOpen] = useState(false);
+  const [riskyClients, setRiskyClients] = useState<Set<string>>(new Set());
+
+  // Fetch clients with stale 'en_attente' devis (>30 days)
+  useEffect(() => {
+    async function loadRiskyClients() {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+      const { data: riskyDevis } = await supabase
+        .from('devis')
+        .select('client_id')
+        .eq('statut', 'en_attente')
+        .lt('created_at', thirtyDaysAgo);
+      if (!riskyDevis?.length) return;
+      const clientIds = [...new Set(riskyDevis.map(d => d.client_id).filter(Boolean))] as string[];
+      if (!clientIds.length) return;
+      const { data: clients } = await supabase
+        .from('clients')
+        .select('client_id, nom_client')
+        .in('client_id', clientIds);
+      if (clients?.length) {
+        setRiskyClients(new Set(clients.map(c => c.nom_client.toLowerCase())));
+      }
+    }
+    loadRiskyClients();
+  }, []);
   const handleOptimizeRoutes = () => {
     setRoutePanelOpen(true);
   };
@@ -659,7 +694,7 @@ export default function WorldClassPlanning({ fleetPanelOpen = true }: { fleetPan
                 {/* Slots */}
                 {row.slots.map((slot, si) => (
                   <div key={si} style={{ padding: 8, borderLeft: `1px solid ${T.cardBorder}` }}>
-                    <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} />
+                    <ScheduleBlock slot={slot} delay={ri * 80 + si * 30} riskyClients={riskyClients} />
                   </div>
                 ))}
               </div>
