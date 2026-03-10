@@ -46,7 +46,7 @@ const recommendations = [
 const headers = ['Camion', 'Statut', 'Position', 'Chargement', 'ETA Chantier', 'Alerte'];
 
 export function DeliveryOrchestrationPanel() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [kpis, setKpis] = useState([
     { label: 'Camions Actifs', value: '—' },
     { label: 'Temps Moyen Transit', value: '—' },

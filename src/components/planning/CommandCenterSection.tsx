@@ -40,7 +40,7 @@ interface CommandCenterSectionProps {
 }
 
 export function CommandCenterSection({ bons, camions, demoMode = false }: CommandCenterSectionProps) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   
   // Calculate summary stats for the header
   const totalActive = bons.filter(b => 
