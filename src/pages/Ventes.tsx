@@ -619,6 +619,49 @@ export default function Ventes() {
             />
           )}
 
+          {/* ── PIPELINE COMMERCIAL Section Header + KPI Row ── */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-4 w-4 text-amber-400 flex-shrink-0" />
+              <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Pipeline Commercial</span>
+              <div className="flex-1 border-t border-amber-500/30" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>847K</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
+                </div>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Pipeline Total</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', marginTop: 4 }}>↑ 12% vs mois dernier</p>
+              </div>
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>34</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>%</span>
+                </div>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Taux de Conversion</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#9CA3AF', marginTop: 4 }}>~ stable</p>
+              </div>
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>42K</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
+                </div>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Taille Moyenne</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', marginTop: 4 }}>↑ 5%</p>
+              </div>
+              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
+                <div>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>28</span>
+                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>jours</span>
+                </div>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Cycle de Vente</p>
+                <p style={{ fontSize: 12, fontWeight: 500, color: '#EF4444', marginTop: 4 }}>↓ 3 jours</p>
+              </div>
+            </div>
+          </div>
+
 
           {/* Filters & Saved Views */}
           <div className="flex flex-col sm:flex-row gap-4">
