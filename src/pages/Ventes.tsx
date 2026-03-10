@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
@@ -47,6 +47,7 @@ import { FacturesTable } from '@/components/ventes/FacturesTable';
 import { WorldClassVentes } from '@/components/ventes/WorldClassVentes';
 import { MarginOverviewCard } from '@/components/ventes/MarginOverviewCard';
 import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
+import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -626,40 +627,7 @@ export default function Ventes() {
               <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Pipeline Commercial</span>
               <div className="flex-1 border-t border-amber-500/30" />
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
-                <div>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>847K</span>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
-                </div>
-                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Pipeline Total</p>
-                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', marginTop: 4 }}>↑ 12% vs mois dernier</p>
-              </div>
-              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
-                <div>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>34</span>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>%</span>
-                </div>
-                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Taux de Conversion</p>
-                <p style={{ fontSize: 12, fontWeight: 500, color: '#9CA3AF', marginTop: 4 }}>~ stable</p>
-              </div>
-              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
-                <div>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>42K</span>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>DH</span>
-                </div>
-                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Taille Moyenne</p>
-                <p style={{ fontSize: 12, fontWeight: 500, color: '#10B981', marginTop: 4 }}>↑ 5%</p>
-              </div>
-              <div className="border border-amber-500/20 bg-gradient-to-br from-[#1a1f2e] to-[#141824] rounded-xl p-5">
-                <div>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 700, fontSize: 36, letterSpacing: '-0.02em', color: 'white', lineHeight: 1 }}>28</span>
-                  <span style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontSize: 20, fontWeight: 400, color: '#9CA3AF', marginLeft: 4 }}>jours</span>
-                </div>
-                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF', marginTop: 6 }}>Cycle de Vente</p>
-                <p style={{ fontSize: 12, fontWeight: 500, color: '#EF4444', marginTop: 4 }}>↓ 3 jours</p>
-              </div>
-            </div>
+            <PipelineKpiCards devisList={devisList} />
           </div>
 
 
