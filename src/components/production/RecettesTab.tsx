@@ -48,7 +48,7 @@ function mapDbToFormula(row: any, index: number): Formula {
   const sable = row.sable_kg_m3 ?? row.sable_m3 ?? 0;
   const gravette = row.gravier_kg_m3 ?? row.gravette_m3 ?? 0;
   const ratioEC = ciment > 0 ? (eau / ciment).toFixed(3) : '—';
-  const resistance = row.resistance_cible_28j_mpa ? `${row.resistance_cible_28j_mpa} MPa` : '—';
+  const resistance = row.resistance ? `${row.resistance} MPa` : (row.resistance_cible_28j_mpa ? `${row.resistance_cible_28j_mpa} MPa` : '—');
   const slump = row.affaissement_cible_mm ? `${row.affaissement_cible_mm} mm` : '—';
   const prixRevient = row.cut_dh_m3 ?? 0;
 
@@ -65,8 +65,8 @@ function mapDbToFormula(row: any, index: number): Formula {
     eau,
     adjuvant: row.adjuvant_l_m3 ?? 0,
     prixRevient,
-    prixVenteMin: 0,
-    margeCible: '—',
+    prixVenteMin: row.prix_vente_min ?? 0,
+    margeCible: row.marge_cible ? `${row.marge_cible}%` : '—',
     usagePct: 0,
     color: COLORS[index % COLORS.length],
   };
