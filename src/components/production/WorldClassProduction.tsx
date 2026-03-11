@@ -20,6 +20,7 @@ import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { ProductionBriefingCard } from './ProductionBriefingCard';
 import { RendementOptimizerCard } from './RendementOptimizerCard';
+import { QualitePredictorCard } from './QualitePredictorCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -850,6 +851,9 @@ export default function WorldClassProduction() {
 
         {/* ── AGENT IA: OPTIMISEUR DE RENDEMENT ── */}
         <RendementOptimizerCard />
+
+        {/* ── AGENT IA: PRÉDICTEUR QUALITÉ ── */}
+        <QualitePredictorCard />
 
         {/* ── FOOTER ── */}
         <footer style={{ padding: '24px 0', textAlign: 'center' }}>
