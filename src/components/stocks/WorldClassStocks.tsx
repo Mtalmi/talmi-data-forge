@@ -513,15 +513,19 @@ function AlertCard({ alert, delay = 0 }: { alert: { name: string; current: strin
 // ─────────────────────────────────────────────────────
 // MOVEMENT ROW — truncate references
 // ─────────────────────────────────────────────────────
-function MovementRow({ m, delay = 0 }: { m: { date: string; type: string; material: string; qty: string; ref: string; resp: string }; delay?: number }) {
+function MovementRow({ m, delay = 0, isFirst = false }: { m: { date: string; type: string; material: string; qty: string; ref: string; resp: string }; delay?: number; isFirst?: boolean }) {
   const [visible, setVisible] = useState(false);
   const [hov, setHov] = useState(false);
+  const [showNew, setShowNew] = useState(isFirst);
   useEffect(() => { const t = setTimeout(() => setVisible(true), delay); return () => clearTimeout(t); }, [delay]);
+  useEffect(() => { if (isFirst) { const t = setTimeout(() => setShowNew(false), 10000); return () => clearTimeout(t); } }, [isFirst]);
   const isEntree = m.type === 'Entrée';
-  const typeColor = isEntree ? T.success : T.danger;
+  const isAjustement = m.type === 'Ajustement';
+  const leftBorder = isEntree ? '#22c55e' : isAjustement ? '#D4A843' : '#ef4444';
+  const typeColor = isEntree ? T.success : isAjustement ? T.amber : T.danger;
   const TypeIcon = isEntree ? ArrowUp : ArrowDown;
+  const qtyColor = isEntree ? '#22c55e' : '#ef4444';
 
-  // Display the pre-formatted 8-char UUID reference
   const displayRef = m.ref || '—';
 
   return (
@@ -532,17 +536,32 @@ function MovementRow({ m, delay = 0 }: { m: { date: string; type: string; materi
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : 'translateY(16px)',
         transition: 'all 350ms ease-out',
-        background: hov ? T.amberSubtle : 'transparent',
+        background: isFirst ? 'rgba(212,168,67,0.04)' : hov ? T.amberSubtle : 'transparent',
         border: `1px solid ${hov ? T.cardBorder : 'transparent'}`,
+        borderLeft: `2px solid ${leftBorder}`,
         borderRadius: 8, padding: '10px 14px',
         display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
+        position: 'relative',
       }}
     >
+      {/* NOUVEAU badge */}
+      {showNew && (
+        <span style={{
+          position: 'absolute', top: 6, right: 10,
+          fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em',
+          color: '#D4A843', background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
+          padding: '2px 6px', borderRadius: 4,
+          animation: 'nouveau-fade 10s forwards',
+        }}>
+          NOUVEAU
+        </span>
+      )}
+
       {/* Type badge */}
       <span style={{
         display: 'inline-flex', alignItems: 'center', gap: 4,
         padding: '3px 10px', borderRadius: 999,
-        background: isEntree ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+        background: isEntree ? 'rgba(16, 185, 129, 0.15)' : isAjustement ? 'rgba(212,168,67,0.15)' : 'rgba(239, 68, 68, 0.15)',
         border: `1px solid ${typeColor}30`,
         color: typeColor, fontSize: 10, fontWeight: 700, flexShrink: 0,
       }}>
@@ -556,8 +575,9 @@ function MovementRow({ m, delay = 0 }: { m: { date: string; type: string; materi
       {/* Material */}
       <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri, flex: 1 }}>{m.material}</span>
 
-      {/* Qty */}
-      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: isEntree ? T.success : T.danger, flexShrink: 0 }}>
+      {/* Qty with colored arrow */}
+      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 600, color: qtyColor, flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+        {isEntree ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
         {m.qty}
       </span>
 
