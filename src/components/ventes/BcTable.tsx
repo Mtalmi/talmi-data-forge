@@ -536,7 +536,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* DELIVERY DATE */}
-                <TableCell style={{ width: 100 }} className="text-center">{renderDeliveryDate(bc)}</TableCell>
+                <TableCell className="text-center">{renderDeliveryDate(bc)}</TableCell>
                 
                 {/* VOLUME */}
                 <TableCell style={{ width: 80 }} className="text-right">
