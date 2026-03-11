@@ -40,6 +40,7 @@ import {
 import { format, subDays, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useCallback } from 'react';
+const [wizardOpen, setWizardOpen] = useState(false);
 import { supabase } from '@/integrations/supabase/client';
 
 // ─── DESIGN TOKENS (unified) ───
