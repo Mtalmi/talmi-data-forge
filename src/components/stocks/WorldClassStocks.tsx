@@ -1301,12 +1301,22 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
                           {a.message}
                         </p>
-                        <button style={{
-                          padding: '8px 16px', borderRadius: 8,
-                          background: g.actionBg, border: `1px solid ${g.actionBorder}`,
-                          color: g.actionColor, fontWeight: 700, fontSize: 11,
-                          cursor: 'pointer', transition: 'all 200ms',
-                        }}
+                        <button
+                          onClick={() => {
+                            if (g.key === 'critical') {
+                              toast.error(`Action urgente: ${a.materiau} — ${a.message}`);
+                            } else if (g.key === 'warning') {
+                              toast.warning(`Surveillance: ${a.materiau} — ${a.message}`);
+                            } else {
+                              toast.info(`Détail: ${a.materiau} — ${a.message}`);
+                            }
+                          }}
+                          style={{
+                            padding: '8px 16px', borderRadius: 8,
+                            background: g.actionBg, border: `1px solid ${g.actionBorder}`,
+                            color: g.actionColor, fontWeight: 700, fontSize: 11,
+                            cursor: 'pointer', transition: 'all 200ms',
+                          }}
                           onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.2)'; }}
                           onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; }}
                         >
