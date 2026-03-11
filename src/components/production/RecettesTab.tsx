@@ -65,8 +65,8 @@ function mapDbToFormula(row: any, index: number): Formula {
     eau,
     adjuvant: row.adjuvant_l_m3 ?? 0,
     prixRevient,
-    prixVenteMin: 0,
-    margeCible: '—',
+    prixVenteMin: row.prix_vente_min ?? 0,
+    margeCible: row.marge_cible ? `${row.marge_cible}%` : '—',
     usagePct: 0,
     color: COLORS[index % COLORS.length],
   };
