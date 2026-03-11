@@ -20,6 +20,7 @@ import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { ProductionBriefingCard } from './ProductionBriefingCard';
 import { RendementOptimizerCard } from './RendementOptimizerCard';
+import { QualitePredictorCard } from './QualitePredictorCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
