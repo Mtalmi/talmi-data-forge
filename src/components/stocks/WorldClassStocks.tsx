@@ -364,7 +364,7 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
 
   // Autonomy badge logic
   const days = autonomy?.days;
-  const roundedDays = days != null ? Math.round(days) : null;
+  const roundedDays = days != null ? Math.round(days * 10) / 10 : null;
   const autoBadgeConfig = roundedDays == null
     ? { badge: 'N/A', color: '#64748B', bg: 'rgba(100, 116, 139, 0.15)', pulse: false }
     : roundedDays <= 2
