@@ -544,7 +544,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* TOTAL HT */}
-                <TableCell style={{ width: 100 }} className="text-right">
+                <TableCell className="text-right">
                   <span className="text-sm font-mono font-medium">
                     {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </span>
