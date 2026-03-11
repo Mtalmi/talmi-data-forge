@@ -178,14 +178,20 @@ export function SiloVisual({
 
       {/* Autonomy */}
       {displayAutonomy !== null && (
-        <div className={cn(
-          'mt-3 p-2 rounded-lg',
-          daysRemaining !== undefined && daysRemaining <= 3 
-            ? 'border border-destructive/50 bg-destructive/10' 
-            : daysRemaining !== undefined && daysRemaining <= 7 
-              ? 'border border-warning/50 bg-warning/10' 
-              : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
-        )}>
+        <div
+          className={cn(
+            'mt-3 p-2 rounded-lg',
+            daysRemaining !== undefined && daysRemaining <= 3 
+              ? 'border border-destructive/50 bg-destructive/10' 
+              : daysRemaining !== undefined && daysRemaining <= 7 
+                ? 'border border-warning/50 bg-warning/10' 
+                : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
+          )}
+          style={glowConfig ? {
+            animation: `silo-badge-glow ${glowConfig.speed} ease-in-out infinite alternate`,
+            ['--silo-glow-color' as string]: glowConfig.color,
+          } : undefined}
+        >
           <div className="flex items-center gap-1.5 justify-center">
             <Gauge className={cn(
               'h-3.5 w-3.5',
