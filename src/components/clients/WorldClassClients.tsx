@@ -219,9 +219,9 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
       <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} onClick={handleRowClick}
         style={{ opacity: visible ? 1 : 0, transform: visible ? (hov ? 'translateX(4px)' : 'translateY(0)') : 'translateY(20px)', transition: 'all 380ms ease-out', background: hov ? 'rgba(255,215,0,0.04)' : 'transparent', border: `1px solid ${hov ? T.cardBorder : 'transparent'}`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer' }}>
         <div style={{ width: 40, height: 40, borderRadius: '50%', flexShrink: 0, background: 'rgba(212,168,67,0.12)', border: '1px solid rgba(212,168,67,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: 16, color: '#D4A843' }}>{initial}</div>
-        <div style={{ minWidth: 170, flexShrink: 0 }}>
+        <div style={{ flex: '2 1 170px', minWidth: 170 }}>
           <p style={{ fontWeight: 700, fontSize: 14, color: T.textPri, marginBottom: 3 }}>{client.name}</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             <Badge label={client.segment} color={segColor} bg={`${segColor}18`} />
             {(() => {
               const RISK_DATA: Record<string, { level: 'high' | 'moderate' | 'low'; label: string; detail: string }> = {
@@ -289,24 +289,23 @@ function ClientRow({ client, delay = 0, onOpenDetail }: { client: ClientDisplay;
             })()}
           </div>
         </div>
-        <div style={{ minWidth: 90, flexShrink: 0 }}>
+        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>CA YTD</p>
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 15, fontWeight: 700, color: T.gold }}>{client.ca}</p>
         </div>
-        <div style={{ minWidth: 100, flexShrink: 0 }}>
+        <div style={{ flex: '1 1 100px', minWidth: 100 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Dernière cmd</p>
           <p style={{ color: T.textSec, fontSize: 12 }}>{client.lastOrder}</p>
         </div>
-        <div style={{ minWidth: 80, flexShrink: 0 }}>
+        <div style={{ flex: '0.5 1 80px', minWidth: 80 }}>
           <Badge label={client.status} color={isInactif ? T.warning : T.success} bg={isInactif ? `${T.warning}18` : `${T.success}18`} pulse={isInactif} />
         </div>
-        <div style={{ minWidth: 90, flexShrink: 0 }}>
+        <div style={{ flex: '1 1 90px', minWidth: 90 }}>
           <p style={{ color: T.textDim, fontSize: 10, marginBottom: 2 }}>Solde</p>
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 13, fontWeight: 700, color: client.solde === 0 ? T.success : T.danger }}>
             {client.solde === 0 ? '0 DH' : `${(client.solde / 1000).toFixed(0)}K DH`}
           </p>
         </div>
-        <div style={{ flex: 1 }} />
         <ChevronRight size={18} color={T.textDim} style={{ transition: 'transform 200ms', transform: expanded ? 'rotate(90deg)' : hov ? 'translateX(4px)' : 'none', flexShrink: 0 }} />
       </div>
 
