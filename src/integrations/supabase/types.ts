@@ -6319,6 +6319,27 @@ export type Database = {
           },
         ]
       }
+      production_briefing: {
+        Row: {
+          briefing_text: string | null
+          created_at: string | null
+          generated_at: string | null
+          id: string
+        }
+        Insert: {
+          briefing_text?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+        }
+        Update: {
+          briefing_text?: string | null
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
