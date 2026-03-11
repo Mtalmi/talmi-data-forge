@@ -478,7 +478,7 @@ export default function Dashboard() {
                   <div className="flex flex-wrap items-center gap-3 mt-4" style={{ paddingLeft: 5 }}>
                     <span className="relative flex h-2.5 w-2.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ boxShadow: '0 0 10px rgba(52,211,153,0.5)' }} />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
                     </span>
                     <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-400/80">Operational</span>
                     <span className="w-px h-3.5 bg-slate-600/50" />
