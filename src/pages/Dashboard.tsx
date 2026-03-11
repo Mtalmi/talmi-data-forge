@@ -437,8 +437,23 @@ export default function Dashboard() {
                   {/* CEO briefing subheader */}
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1" style={{ paddingLeft: 5, paddingRight: 5 }}>
                     <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
-                      <Factory className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,215,0,0.5)' }} strokeWidth={1.5} />
-                      <span className="font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>87%</span>
+                      <svg width="36" height="36" viewBox="0 0 60 60" className="flex-shrink-0">
+                        {/* Dark track */}
+                        <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
+                        {/* Gold arc */}
+                        <circle
+                          cx="30" cy="30" r="24" fill="none"
+                          stroke="#D4A843" strokeWidth="4"
+                          strokeLinecap="round"
+                          strokeDasharray={`${0.87 * 2 * Math.PI * 24} ${2 * Math.PI * 24}`}
+                          transform="rotate(-90 30 30)"
+                          style={{
+                            animation: 'capacityGaugeArc 1s cubic-bezier(0.22,1,0.36,1) forwards',
+                          }}
+                        />
+                        {/* Center text */}
+                        <text x="30" y="32" textAnchor="middle" fill="white" fontSize="13" fontWeight="200" fontFamily="ui-monospace, 'JetBrains Mono', monospace">87%</text>
+                      </svg>
                       <span style={{ color: 'rgba(255,255,255,0.5)' }}>capacity</span>
                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
