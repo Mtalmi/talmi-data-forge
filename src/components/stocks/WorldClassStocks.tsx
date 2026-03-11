@@ -495,13 +495,15 @@ function AlertCard({ alert, delay = 0 }: { alert: { name: string; current: strin
           </p>
         </div>
       </div>
-      <button style={{
-        width: '100%', padding: '7px 0', borderRadius: 8,
-        background: T.amber, color: T.navy,
-        fontWeight: 700, fontSize: 12,
-        border: 'none', cursor: 'pointer',
-        transition: 'filter 150ms',
-      }}
+      <button
+        onClick={() => toast.info(`Réapprovisionnement ${alert.name} — consultez le Plan de Réapprovisionnement IA dans l'onglet Vue d'ensemble.`)}
+        style={{
+          width: '100%', padding: '7px 0', borderRadius: 8,
+          background: T.amber, color: T.navy,
+          fontWeight: 700, fontSize: 12,
+          border: 'none', cursor: 'pointer',
+          transition: 'filter 150ms',
+        }}
         onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
         onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
       >
