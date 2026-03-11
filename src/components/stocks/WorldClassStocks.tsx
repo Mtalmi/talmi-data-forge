@@ -1061,7 +1061,10 @@ export default function WorldClassStocks() {
             })()}
           </div>
         </div>
+        </>)}
 
+        {/* ── TAB: MOUVEMENTS ── */}
+        {activeTab === 'mouvements' && (<>
         {/* ── MOUVEMENTS CHART ── */}
         <section>
           <SectionHeader icon={ArrowUpDown} label="Mouvements de Stock" />
@@ -1138,6 +1141,118 @@ export default function WorldClassStocks() {
             </ResponsiveContainer>
           </Card>
         </section>
+        </>)}
+
+        {/* ── TAB: ALERTES ── */}
+        {activeTab === 'alertes' && (() => {
+          const dbAlerts = STOCK_ALERTS_DB;
+          const critical = dbAlerts.filter(a => a.severity === 'critical');
+          const warning = dbAlerts.filter(a => a.severity === 'warning');
+          const info = dbAlerts.filter(a => a.severity === 'info');
+
+          const severityGroups = [
+            { key: 'critical', emoji: '🔴', label: 'CRITIQUE', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.3)', items: critical, actionLabel: 'Commander maintenant', actionBg: 'rgba(239,68,68,0.15)', actionBorder: 'rgba(239,68,68,0.4)', actionColor: '#ef4444' },
+            { key: 'warning', emoji: '🟡', label: 'AVERTISSEMENT', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', border: 'rgba(245,158,11,0.3)', items: warning, actionLabel: 'Surveiller', actionBg: 'rgba(212,168,67,0.15)', actionBorder: 'rgba(212,168,67,0.4)', actionColor: '#D4A843' },
+            { key: 'info', emoji: '🟢', label: 'INFO', color: '#22c55e', bg: 'rgba(34,197,94,0.15)', border: 'rgba(34,197,94,0.3)', items: info, actionLabel: 'Voir détails', actionBg: 'rgba(255,255,255,0.06)', actionBorder: 'rgba(255,255,255,0.12)', actionColor: T.textDim },
+          ];
+
+          return (
+            <>
+              {/* Summary strip */}
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                {severityGroups.map(g => (
+                  <div key={g.key} style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '6px 14px', borderRadius: 999,
+                    background: g.bg, border: `1px solid ${g.border}`,
+                    fontSize: 12, fontWeight: 700, color: g.color,
+                  }}>
+                    <span>{g.emoji}</span>
+                    <span>{g.items.length}</span>
+                    <span style={{ fontWeight: 500, opacity: 0.8 }}>{g.label}</span>
+                  </div>
+                ))}
+                <span style={{ marginLeft: 'auto', fontSize: 11, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
+                  {dbAlerts.length} alertes actives
+                </span>
+              </div>
+
+              {/* Grouped alerts */}
+              {severityGroups.map(g => g.items.length > 0 && (
+                <section key={g.key}>
+                  {/* Severity header */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+                    <span style={{ fontSize: 14 }}>{g.emoji}</span>
+                    <span style={{
+                      color: g.color, fontSize: 12, fontWeight: 700,
+                      textTransform: 'uppercase', letterSpacing: '0.2em',
+                    }}>
+                      {g.label}
+                    </span>
+                    <Badge label={`${g.items.length}`} color={g.color} bg={g.bg} pulse={g.key === 'critical'} />
+                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${g.color}33 0%, transparent 80%)` }} />
+                  </div>
+
+                  {/* Alert cards */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {g.items.map((a, i) => (
+                      <div key={a.id} style={{
+                        background: 'rgba(255,255,255,0.03)',
+                        backdropFilter: 'blur(12px)',
+                        border: `1px solid rgba(255,255,255,0.06)`,
+                        borderLeft: `3px solid ${g.color}`,
+                        borderRadius: 10,
+                        padding: '16px 20px',
+                        opacity: 0,
+                        animation: `fadeSlideIn 400ms ${i * 80}ms forwards${g.key === 'critical' ? ', critiqueBorderPulse 3s ease-in-out infinite' : ''}`,
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                          <span style={{ fontSize: 16, fontWeight: 600, color: T.textPri }}>{a.materiau}</span>
+                          <span style={{
+                            padding: '2px 8px', borderRadius: 999,
+                            fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
+                            background: g.bg, color: g.color, border: `1px solid ${g.border}`,
+                          }}>
+                            {a.alert_type}
+                          </span>
+                          <span style={{ marginLeft: 'auto', fontSize: 11, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
+                            {new Date(a.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
+                          {a.message}
+                        </p>
+                        <button style={{
+                          padding: '8px 16px', borderRadius: 8,
+                          background: g.actionBg, border: `1px solid ${g.actionBorder}`,
+                          color: g.actionColor, fontWeight: 700, fontSize: 11,
+                          cursor: 'pointer', transition: 'all 200ms',
+                        }}
+                          onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.2)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; }}
+                        >
+                          {g.actionLabel}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))}
+
+              {/* Empty state */}
+              {dbAlerts.length === 0 && (
+                <div style={{
+                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: 12, padding: '48px 24px', textAlign: 'center',
+                }}>
+                  <Bell size={48} style={{ margin: '0 auto 16px', opacity: 0.15, color: T.textDim }} />
+                  <p style={{ color: T.textPri, fontSize: 15, fontWeight: 600, marginBottom: 4 }}>Aucune alerte active</p>
+                  <p style={{ color: T.textDim, fontSize: 12 }}>Tous les stocks sont à niveau optimal</p>
+                </div>
+              )}
+            </>
+          );
+        })()}
 
         {/* ── FOOTER ── */}
         <footer style={{
