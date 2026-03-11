@@ -4479,6 +4479,9 @@ export type Database = {
           formule_id: string
           gravette_m3: number | null
           gravier_kg_m3: number | null
+          marge_cible: number | null
+          prix_vente_min: number | null
+          resistance: number | null
           resistance_cible_28j_mpa: number | null
           sable_kg_m3: number | null
           sable_m3: number | null
@@ -4496,6 +4499,9 @@ export type Database = {
           formule_id: string
           gravette_m3?: number | null
           gravier_kg_m3?: number | null
+          marge_cible?: number | null
+          prix_vente_min?: number | null
+          resistance?: number | null
           resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
@@ -4513,6 +4519,9 @@ export type Database = {
           formule_id?: string
           gravette_m3?: number | null
           gravier_kg_m3?: number | null
+          marge_cible?: number | null
+          prix_vente_min?: number | null
+          resistance?: number | null
           resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
