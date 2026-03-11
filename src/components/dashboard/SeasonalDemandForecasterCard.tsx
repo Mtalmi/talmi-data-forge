@@ -98,6 +98,13 @@ const headers = ['Période', 'Volume Prévu', 'vs 2025', 'Confiance', 'Facteur P
 
 export function SeasonalDemandForecasterCard() {
   const [open, setOpen] = useState(true);
+  const stockAlert = useStockAlertKpi();
+
+  const kpis = [
+    { label: 'Prévision 30j', value: '1,240 m³' },
+    { label: 'Capacité Disponible', value: '89%', valueColor: T.success },
+    { label: 'Alerte Stock', value: stockAlert.label, valueColor: stockAlert.color },
+  ];
 
   return (
     <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
