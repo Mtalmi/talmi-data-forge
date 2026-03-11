@@ -692,6 +692,7 @@ export default function WorldClassStocks() {
         @keyframes tbos-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.1);opacity:0.8} }
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @keyframes urgentGlow { 0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.15)} }
+        @keyframes critiqueBorderPulse { 0%,100%{border-color:rgba(239,68,68,0.3);box-shadow:0 0 0 rgba(239,68,68,0)} 50%{border-color:rgba(239,68,68,0.7);box-shadow:0 0 16px rgba(239,68,68,0.12)} }
       `}</style>
 
       {/* ── SEAMLESS HEADER ── */}
