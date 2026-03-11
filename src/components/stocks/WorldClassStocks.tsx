@@ -821,14 +821,53 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
 
         {activeTab === 'overview' && (<>
         {/* ── SECTION 1: KPIs ── */}
-        <section>
-          <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, alignItems: 'stretch' }}>
-            <KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} />
-            <KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert />
-            <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
-          </div>
-        </section>
+        {(() => {
+          const hsWeights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
+          const hsTierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
+          let hsTotalW = 0, hsWSum = 0;
+          for (const [mat, w] of Object.entries(hsWeights)) {
+            const auto = AUTONOMY[mat];
+            if (auto?.days != null) { hsWSum += hsTierScore(auto.days) * w; hsTotalW += w; }
+          }
+          const hsScore = hsTotalW > 0 ? Math.round(hsWSum / hsTotalW) : 0;
+          const hsColor = hsScore >= 80 ? '#D4A843' : hsScore >= 50 ? '#f59e0b' : '#ef4444';
+          return (
+            <section>
+              <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+                <KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} />
+                <KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert />
+                <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
+                {/* 4th KPI — Santé Stock IA */}
+                <div style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderTop: '2px solid #D4A843',
+                  borderRadius: 10,
+                  padding: '20px 16px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: 4,
+                  opacity: 0, animation: 'fadeSlideIn 500ms 240ms forwards',
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>
+                    SANTÉ STOCK IA
+                  </span>
+                  <span style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                    fontWeight: 200,
+                    fontSize: 36,
+                    lineHeight: 1,
+                    letterSpacing: '-0.02em',
+                    color: hsColor,
+                  }}>
+                    {hsScore}
+                  </span>
+                  <span style={{ fontSize: 11, color: '#64748B' }}>Score IA temps réel</span>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── INTELLIGENCE COMMAND CARD ── */}
         {(() => {
