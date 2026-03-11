@@ -397,17 +397,17 @@ export default function Dashboard() {
                     {/* Concentric ring */}
                     <span className="absolute rounded-full" style={{
                       width: 14, height: 14,
-                      border: '1px solid rgba(30,144,255,0.25)',
+                      border: '1px solid rgba(34,197,94,0.25)',
                       animation: 'tbos-ring-expand 2s ease-out infinite',
                     }} />
                     {/* Ping */}
                     <span className="absolute inline-flex rounded-full" style={{
                       width: 7, height: 7,
-                      backgroundColor: 'rgba(30,144,255,0.4)',
+                      backgroundColor: 'rgba(34,197,94,0.4)',
                       animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
                     }} />
                     {/* Core dot */}
-                    <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#1E90FF', boxShadow: '0 0 6px rgba(30,144,255,0.5)' }} />
+                    <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#22c55e', animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
                   </span>
                 </span>
               </div>
