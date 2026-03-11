@@ -509,7 +509,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* PO NO with priority dot */}
-                <TableCell style={{ width: 130 }}>
+                <TableCell>
                   <div className="flex items-center gap-1.5">
                     {renderPriorityDot(bc)}
                     <span className="font-mono text-xs font-medium whitespace-nowrap">{bc.bc_id}</span>
