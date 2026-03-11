@@ -175,7 +175,7 @@ export default function Paiements() {
         <CashFlowForecasterCard />
       </div>
       {/* 🧠 AI Cash Flow Forecast (cash_flow_forecasts table) */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <CashFlowAIForecastCard />
       </div>
       {/* 🛡️ AI Payment Risk Scorer */}
