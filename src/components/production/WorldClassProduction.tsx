@@ -18,6 +18,7 @@ import BatchesTab from './BatchesTab';
 import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { ProductionBriefingCard } from './ProductionBriefingCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
