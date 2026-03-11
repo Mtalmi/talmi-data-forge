@@ -647,50 +647,10 @@ export default function WorldClassStocks() {
         {/* ── SECTION 1: KPIs ── */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, alignItems: 'stretch' }}>
             <KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} />
             <KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert />
             <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
-            {/* SANTÉ STOCK IA */}
-            {(() => {
-              const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
-              const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
-
-              let totalWeight = 0;
-              let weightedSum = 0;
-              for (const [mat, w] of Object.entries(weights)) {
-                const auto = AUTONOMY[mat];
-                if (auto?.days != null) {
-                  weightedSum += tierScore(auto.days) * w;
-                  totalWeight += w;
-                }
-              }
-              const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
-              const scoreColor = score >= 80 ? '#D4A843' : score >= 50 ? '#f59e0b' : '#ef4444';
-
-              return (
-                <div style={{
-                  opacity: 1, height: '100%',
-                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 14, padding: '20px 18px',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  position: 'relative', gap: 4,
-                }}>
-                  <div style={{ position: 'absolute', top: 12, right: 12, width: 36, height: 36, borderRadius: 8, background: 'rgba(255,215,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Zap size={18} color="#FFD700" />
-                  </div>
-                  <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>Santé Stock IA</p>
-                  <p style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                    fontSize: 48, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
-                    WebkitFontSmoothing: 'antialiased' as any,
-                  }}>
-                    {score}
-                  </p>
-                  <span style={{ fontSize: 11, color: '#D4A843', marginTop: 4 }}>Score calculé par IA</span>
-                </div>
-              );
-            })()}
           </div>
         </section>
 
