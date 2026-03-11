@@ -438,7 +438,7 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: autoBadgeConfig.color, flexShrink: 0 }} />
           {autoBadgeConfig.badge}
         </span>
-        {days != null && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textSec, fontWeight: 600 }}>{days}j</span>}
+        {days != null && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textSec, fontWeight: 600 }}>{Math.round(days * 10) / 10}j</span>}
       </div>
       {/* Pct badge */}
       <div style={{ flexShrink: 0 }}>
