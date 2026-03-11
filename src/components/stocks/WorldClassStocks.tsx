@@ -698,6 +698,9 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         @keyframes urgentGlow { 0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.15)} }
         @keyframes critiqueBorderPulse { 0%,100%{border-color:rgba(239,68,68,0.3);box-shadow:0 0 0 rgba(239,68,68,0)} 50%{border-color:rgba(239,68,68,0.7);box-shadow:0 0 16px rgba(239,68,68,0.12)} }
         @keyframes gaugeArc { from{stroke-dashoffset:${2 * Math.PI * 85}} to{stroke-dashoffset:var(--gauge-offset)} }
+        @keyframes kpiShimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+        .kpi-shimmer { position:relative; border-radius:10px; padding:1px; background:linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.4) 50%, transparent 100%); background-size:200% 100%; animation:kpiShimmer 3s linear infinite; }
+        .kpi-shimmer > * { border-radius:9px; }
       `}</style>
 
       {/* ── STICKY TAB BAR ── */}
@@ -863,34 +866,35 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             <section>
               <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, alignItems: 'stretch' }}>
-                <KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} />
-                <KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert />
-                <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
+                <div className="kpi-shimmer"><KPICard label="Valeur Totale Stock"      value={2.4}  suffix="M DH" color={T.amber}   icon={Package}      trend="+5% vs mois dernier" trendPositive decimals={1} delay={0} /></div>
+                <div className="kpi-shimmer"><KPICard label="Articles en Alerte"       value={3}    suffix=""     color={T.danger}  icon={AlertTriangle} trend=""                    trendPositive={false} delay={80} isAlert /></div>
+                <div className="kpi-shimmer"><KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} /></div>
                 {/* 4th KPI — Santé Stock IA */}
-                <div style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderTop: '2px solid #D4A843',
-                  borderRadius: 10,
-                  padding: '20px 16px',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: 4,
-                  opacity: 0, animation: 'fadeSlideIn 500ms 240ms forwards',
-                }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>
-                    SANTÉ STOCK IA
-                  </span>
-                  <span style={{
-                    fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
-                    fontWeight: 200,
-                    fontSize: 36,
-                    lineHeight: 1,
-                    letterSpacing: '-0.02em',
-                    color: hsColor,
+                <div className="kpi-shimmer">
+                  <div style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    borderTop: '2px solid #D4A843',
+                    borderRadius: 9,
+                    padding: '20px 16px',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    gap: 4, height: '100%',
+                    opacity: 0, animation: 'fadeSlideIn 500ms 240ms forwards',
                   }}>
-                    {hsScore}
-                  </span>
-                  <span style={{ fontSize: 11, color: '#64748B' }}>Score IA temps réel</span>
+                    <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#9CA3AF' }}>
+                      SANTÉ STOCK IA
+                    </span>
+                    <span style={{
+                      fontFamily: 'ui-monospace, SFMono-Regular, SF Mono, Menlo, monospace',
+                      fontWeight: 200,
+                      fontSize: 36,
+                      lineHeight: 1,
+                      letterSpacing: '-0.02em',
+                      color: hsColor,
+                    }}>
+                      {hsScore}
+                    </span>
+                    <span style={{ fontSize: 11, color: '#64748B' }}>Score IA temps réel</span>
+                  </div>
                 </div>
               </div>
             </section>
