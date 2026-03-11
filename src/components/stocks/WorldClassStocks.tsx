@@ -598,6 +598,50 @@ function ValueTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// CRITIQUE COUNTDOWN
+// ─────────────────────────────────────────────────────
+function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
+  const targetMs = useRef(Date.now() + daysRemaining * 86400000);
+  const [remaining, setRemaining] = useState(() => Math.max(0, targetMs.current - Date.now()));
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRemaining(Math.max(0, targetMs.current - Date.now()));
+    }, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const totalMin = Math.floor(remaining / 60000);
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+
+  return (
+    <div style={{ marginTop: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{
+          width: 8, height: 8, borderRadius: '50%', background: '#ef4444',
+          animation: 'critique-blink 1s step-end infinite', flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          fontWeight: 200, fontSize: 24, lineHeight: 1, color: '#ef4444',
+          WebkitFontSmoothing: 'antialiased' as any,
+        }}>
+          Rupture dans {d}j {h}h {m}m
+        </span>
+      </div>
+      <p style={{
+        fontSize: 11, color: '#f87171', textTransform: 'uppercase',
+        letterSpacing: '0.1em', marginTop: 4,
+      }}>
+        Commande urgente requise
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
@@ -883,16 +927,19 @@ export default function WorldClassStocks() {
                             <span style={{ color: T.textDim }}>Fournisseur</span>
                             <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
                           </div>
-                          {days !== null && (
+                          {days !== null && !isCritique && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                               <span style={{ color: T.textDim }}>Autonomie</span>
                               <span style={{
                                 fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                                color: isCritique ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                                color: Number(days) <= 5 ? '#f59e0b' : '#22c55e',
                               }}>
                                 {Math.round(Number(days) * 10) / 10}j
                               </span>
                             </div>
+                          )}
+                          {isCritique && days !== null && (
+                            <CritiqueCountdown daysRemaining={Number(days)} />
                           )}
                         </div>
                         <button style={{
