@@ -676,13 +676,14 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
 // ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
-export default function WorldClassStocks() {
-  const [activeTab, setActiveTab] = useState('overview');
+export default function WorldClassStocks({ silosContent }: { silosContent?: React.ReactNode }) {
+  const [activeTab, setActiveTab] = useState('silos');
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
-    { id: 'overview', label: "Vue d'ensemble" },
-    { id: 'mouvements', label: 'Mouvements' },
-    { id: 'alertes', label: 'Alertes' },
+    { id: 'silos', label: 'SILOS' },
+    { id: 'overview', label: "VUE D'ENSEMBLE" },
+    { id: 'mouvements', label: 'MOUVEMENTS' },
+    { id: 'alertes', label: 'ALERTES' },
   ];
 
   return (
