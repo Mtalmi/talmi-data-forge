@@ -74,12 +74,14 @@ export function SiloVisual({
       {/* Silo Container */}
       <div
         className="relative w-24 h-48 flex flex-col"
-        style={glowConfig ? {
+        style={{
           borderRadius: 12,
-          boxShadow: `0 0 6px ${glowConfig.border}`,
-          border: `1px solid ${glowConfig.border}`,
+          boxShadow: glowConfig ? `0 0 ${daysRemaining !== undefined && daysRemaining < 3 ? '12px' : '6px'} ${glowConfig.border}` : undefined,
+          border: glowConfig ? `1px solid ${glowConfig.border}` : undefined,
           transition: 'box-shadow 0.3s ease',
-        } : undefined}
+          animation: daysRemaining !== undefined && daysRemaining < 3 ? 'silo-pulse-border 0.8s ease-in-out infinite' : undefined,
+          ['--silo-pulse-color' as string]: daysRemaining !== undefined && daysRemaining < 3 ? 'rgba(239,68,68,0.6)' : undefined,
+        }}
       >
         {/* Top cap */}
         <div className={cn(
@@ -102,8 +104,26 @@ export function SiloVisual({
               isCritical ? 'from-destructive to-destructive/80' : colors.fill,
               isCritical && 'animate-pulse'
             )}
-            style={{ height: `${percentage}%` }}
+            style={{
+              height: `${percentage}%`,
+              transformOrigin: 'bottom',
+              animation: daysRemaining !== undefined && daysRemaining < 3
+                ? 'silo-breathing 3s ease-in-out infinite'
+                : 'silo-breathing 3s ease-in-out infinite',
+            }}
           />
+          {/* Drain overlay for low autonomy */}
+          {daysRemaining !== undefined && daysRemaining < 3 && percentage > 0 && (
+            <div
+              className="absolute bottom-0 left-0 right-0 pointer-events-none"
+              style={{
+                height: `${percentage}%`,
+                background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 40%, transparent 60%)',
+                backgroundSize: '100% 200%',
+                animation: 'silo-drain-sweep 4s linear infinite',
+              }}
+            />
+          )}
           
           {/* Alert threshold line */}
           <div
