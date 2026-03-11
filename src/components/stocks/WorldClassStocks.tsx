@@ -954,7 +954,7 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
                 );
               }
               return (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
                   {items.map((item, idx) => {
                     const isCritique = item.urgency === 'critique' || item.urgency === 'urgent';
                     const isModere = item.urgency === 'modéré';
