@@ -905,14 +905,14 @@ export default function WorldClassStocks() {
                                 marginLeft: 'auto',
                                 padding: '2px 8px', borderRadius: 999,
                                 fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-                                background: isCritical ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-                                color: isCritical ? '#ef4444' : '#f59e0b',
-                                border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`,
+                                background: sevBg,
+                                color: sevColor,
+                                border: `1px solid ${sevBorder}`,
                               }}>
                                 {a.alert_type}
                               </span>
                             </div>
-                            <p style={{ fontSize: 11, color: isCritical ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)', marginBottom: 4 }}>
+                            <p style={{ fontSize: 11, color: `${sevColor}cc`, marginBottom: 4 }}>
                               {a.message}
                             </p>
                             <p style={{ fontSize: 10, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
