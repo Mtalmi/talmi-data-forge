@@ -336,75 +336,7 @@ export default function Stocks() {
         {/* ── SMART REORDER BANNER (AI) ── */}
         <SmartReorderBanner />
 
-        {/* ── STOCK SUMMARY TABLE ── */}
-        <section>
-          <SectionHeader icon={Activity} label={t.pages.stocks.stockSummary} />
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
-            <Table className="data-table-industrial">
-              <TableHeader>
-                <TableRow>
-                  <TableHead style={thStyle}>{t.pages.stocks.material}</TableHead>
-                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.currentStock}</TableHead>
-                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.alertThreshold}</TableHead>
-                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.maxCapacity}</TableHead>
-                  <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.daysRemaining}</TableHead>
-                  <TableHead style={thStyle}>{t.pages.stocks.lastReception}</TableHead>
-                  <TableHead style={thStyle}>{t.common.status}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stocks.map((stock) => {
-                  const days = getDaysRemaining(stock.materiau);
-                  const isCritical = stock.quantite_actuelle <= stock.seuil_alerte;
-                  
-                  return (
-                    <TableRow key={stock.materiau} className="table-row-hover" style={isCritical ? { background: 'rgba(239,68,68,0.04)' } : undefined}>
-                      <TableCell className="font-medium">{stock.materiau}</TableCell>
-                      <TableCell className="text-right font-mono">
-                        {stock.quantite_actuelle.toLocaleString()} {stock.unite}
-                      </TableCell>
-                      <TableCell className="text-right font-mono" style={{ color: T.gold }}>
-                        {stock.seuil_alerte.toLocaleString()} {stock.unite}
-                      </TableCell>
-                      <TableCell className="text-right font-mono" style={{ color: T.textDim }}>
-                        {stock.capacite_max?.toLocaleString() || '—'} {stock.unite}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span className="font-mono font-semibold" style={{
-                          color: days !== undefined && days <= 3 ? '#EF4444' :
-                                 days !== undefined && days <= 7 ? T.gold : T.textDim
-                        }}>
-                          {formatDaysRemaining(days)}
-                        </span>
-                      </TableCell>
-                      <TableCell style={{ color: T.textDim }}>
-                        {stock.derniere_reception_at
-                          ? format(new Date(stock.derniere_reception_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })
-                          : '—'}
-                      </TableCell>
-                      <TableCell>
-                        {isCritical ? (
-                          <span className="animate-pulse" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', color: '#EF4444', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
-                            <AlertTriangle size={10} />
-                            {t.pages.stocks.critical}
-                          </span>
-                        ) : stock.quantite_actuelle <= stock.seuil_alerte * 1.5 ? (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(255,215,0,0.12)', border: `1px solid rgba(255,215,0,0.3)`, color: T.gold, fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
-                            {t.pages.stocks.low}
-                          </span>
-                        ) : (
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 10px', borderRadius: 999, background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', color: '#10B981', fontSize: 10, fontWeight: 700, letterSpacing: '0.05em' }}>
-                            {t.pages.stocks.ok}
-                          </span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        </section>
+
 
         {/* ── RECENT MOVEMENTS TABLE ── */}
         <section>
