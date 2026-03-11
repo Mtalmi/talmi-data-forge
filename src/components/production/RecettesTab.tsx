@@ -4,6 +4,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 const T = {
   gold: '#FFD700',
@@ -12,6 +14,8 @@ const T = {
   cardBg: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
   cardBorder: '#1E2D4A',
 };
+
+const COLORS = [T.gold, T.goldDark, T.goldDeep];
 
 interface Formula {
   code: string;
@@ -32,11 +36,55 @@ interface Formula {
   color: string;
 }
 
-const FORMULAS: Formula[] = [
+const FALLBACK_FORMULAS: Formula[] = [
   { code: 'F-B25', name: 'Béton B25 Standard', resistance: '25 MPa', classe: 'C25/30', ratioEC: '0.502', slump: '18 cm', ciment: 350, sable: 780, gravette: 1050, eau: 176, adjuvant: 2.8, prixRevient: 620, prixVenteMin: 850, margeCible: '37%', usagePct: 45, color: T.gold },
   { code: 'F-B30', name: 'Béton B30 Structurel', resistance: '30 MPa', classe: 'C30/37', ratioEC: '0.465', slump: '16 cm', ciment: 400, sable: 750, gravette: 1080, eau: 186, adjuvant: 3.2, prixRevient: 710, prixVenteMin: 980, margeCible: '38%', usagePct: 35, color: T.goldDark },
   { code: 'F-B20', name: 'Béton B20 Fondation', resistance: '20 MPa', classe: 'C20/25', ratioEC: '0.550', slump: '20 cm', ciment: 300, sable: 820, gravette: 1020, eau: 165, adjuvant: 2.4, prixRevient: 540, prixVenteMin: 750, margeCible: '39%', usagePct: 20, color: T.goldDeep },
 ];
+
+function mapDbToFormula(row: any, index: number): Formula {
+  const ciment = row.ciment_kg_m3 ?? 0;
+  const eau = row.eau_l_m3 ?? 0;
+  const sable = row.sable_kg_m3 ?? row.sable_m3 ?? 0;
+  const gravette = row.gravier_kg_m3 ?? row.gravette_m3 ?? 0;
+  const ratioEC = ciment > 0 ? (eau / ciment).toFixed(3) : '—';
+  const resistance = row.resistance_cible_28j_mpa ? `${row.resistance_cible_28j_mpa} MPa` : '—';
+  const slump = row.affaissement_cible_mm ? `${row.affaissement_cible_mm} mm` : '—';
+  const prixRevient = row.cut_dh_m3 ?? 0;
+
+  return {
+    code: row.formule_id,
+    name: row.designation,
+    resistance,
+    classe: '—',
+    ratioEC,
+    slump,
+    ciment,
+    sable,
+    gravette,
+    eau,
+    adjuvant: row.adjuvant_l_m3 ?? 0,
+    prixRevient,
+    prixVenteMin: 0,
+    margeCible: '—',
+    usagePct: 0,
+    color: COLORS[index % COLORS.length],
+  };
+}
+
+function useFormulas() {
+  return useQuery({
+    queryKey: ['formules_theoriques'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('formules_theoriques')
+        .select('*')
+        .order('formule_id');
+      if (error) throw error;
+      return data;
+    },
+  });
+}
 
 const NORMES = [
   { label: 'Norme marocaine béton', value: 'NM 10.1.008', check: false },
