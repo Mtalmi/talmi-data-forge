@@ -1213,13 +1213,17 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             </div>
             <ResponsiveContainer width="100%" height={240}>
               <BarChart data={MOVEMENT_DATA} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
+                <defs>
+                  <filter id="goldGlow"><feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="rgba(212,168,67,0.3)" /></filter>
+                  <filter id="redGlow"><feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="rgba(239,68,68,0.3)" /></filter>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
                 <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }}
                   tickFormatter={(v) => v >= 1000 ? `${v / 1000}K` : v} />
                 <RechartsTooltip content={<DarkTooltip suffix=" kg" />} cursor={{ fill: T.amberSubtle }} />
-                <Bar dataKey="entrees" name="Entrées"  fill={T.success} radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} />
-                <Bar dataKey="sorties" name="Sorties"  fill={T.amber}   radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} animationBegin={150} />
+                <Bar dataKey="entrees" name="Entrées"  fill={T.success} radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} style={{ filter: 'url(#goldGlow)' }} />
+                <Bar dataKey="sorties" name="Sorties"  fill={T.amber}   radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} animationBegin={150} style={{ filter: 'url(#redGlow)' }} />
               </BarChart>
             </ResponsiveContainer>
           </Card>
