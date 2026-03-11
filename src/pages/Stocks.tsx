@@ -37,8 +37,10 @@ import {
   Lock,
   Activity,
 } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, subDays, startOfDay } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 // ─── DESIGN TOKENS (unified) ───
 const T = {
