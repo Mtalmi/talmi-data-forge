@@ -694,35 +694,107 @@ export default function WorldClassStocks() {
           </div>
         </section>
 
-        {/* ── AGENT IA INSIGHT ── */}
+        {/* ── INTELLIGENCE COMMAND CARD ── */}
         {(() => {
-          const critical = STOCKS
-            .map(s => ({ name: s.name, days: AUTONOMY[s.name.toLowerCase()]?.days ?? null, orderQty: Math.max(0, s.max - s.current), unit: s.unit }))
-            .filter(s => s.days !== null)
-            .sort((a, b) => a.days! - b.days!)
-            [0] || null;
+          // Santé Stock score
+          const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
+          const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
+          let totalWeight = 0;
+          let weightedSum = 0;
+          for (const [mat, w] of Object.entries(weights)) {
+            const auto = AUTONOMY[mat];
+            if (auto?.days != null) {
+              weightedSum += tierScore(auto.days) * w;
+              totalWeight += w;
+            }
+          }
+          const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
+          const scoreColor = score >= 80 ? '#D4A843' : score >= 50 ? '#f59e0b' : '#ef4444';
 
-          if (!critical) return null;
-          const isUrgent = critical.days! < 2;
+          // Top alert
+          const severityRank: Record<string, number> = { critical: 3, warning: 2, info: 1 };
+          const topAlert = [...STOCK_ALERTS_DB].sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0))[0] || null;
+          const alertColor = topAlert?.severity === 'critical' ? '#ef4444' : topAlert?.severity === 'warning' ? '#f59e0b' : '#22c55e';
+
+          const dividerStyle: React.CSSProperties = { width: 1, background: 'rgba(212,168,67,0.15)', alignSelf: 'stretch' };
 
           return (
             <div style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderLeft: '4px solid #D4A843',
+              background: 'rgba(212,168,67,0.06)',
+              border: '1px solid rgba(212,168,67,0.2)',
+              borderLeft: '3px solid #D4A843',
               borderRadius: 12,
-              padding: 16,
-              display: 'flex', alignItems: 'center', gap: 14,
-              animation: isUrgent ? 'urgentGlow 2s ease-in-out infinite' : undefined,
+              padding: '24px 32px',
+              display: 'grid',
+              gridTemplateColumns: '1fr auto 1fr auto 1fr',
+              gap: 0,
             }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(212,168,67,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Zap size={16} color="#D4A843" fill="#D4A843" />
+              {/* LEFT — Intelligence IA */}
+              <div style={{ paddingRight: 24 }}>
+                <p style={{ color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>INTELLIGENCE IA</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {REORDER_RECS.slice(0, 3).map((rec, i) => (
+                    <div key={rec.id} style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.55)' }}>
+                      <span style={{ color: '#D4A843' }}>⚡</span>{' '}
+                      <strong style={{ color: '#fff' }}>{rec.materiau}</strong>{' '}
+                      — commander {Number(rec.recommended_qty).toLocaleString('fr-FR')} {rec.unite} ({rec.urgency})
+                    </div>
+                  ))}
+                  {REORDER_RECS.length === 0 && (
+                    <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Aucune recommandation active</p>
+                  )}
+                </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>AGENT IA</span>
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5 }}>
-                  ⚡ <strong style={{ color: '#fff' }}>{critical.name}</strong> atteindra zéro dans <strong style={{ color: isUrgent ? '#ef4444' : '#f59e0b' }}>{Math.round(critical.days * 10) / 10}j</strong> — commande de <strong style={{ color: '#D4A843' }}>{critical.orderQty.toLocaleString('fr-FR')} {critical.unit}</strong> recommandée avant ce soir.
-                </span>
+
+              <div style={dividerStyle} />
+
+              {/* CENTER — Santé Stock */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
+                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>SANTÉ STOCK</p>
+                <p style={{
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                  fontSize: 60, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
+                  WebkitFontSmoothing: 'antialiased' as any,
+                }}>
+                  {score}
+                </p>
+                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>Score calculé par IA</span>
+              </div>
+
+              <div style={dividerStyle} />
+
+              {/* RIGHT — Alerte Prioritaire */}
+              <div style={{ paddingLeft: 24, display: 'flex', flexDirection: 'column' }}>
+                <p style={{ color: topAlert ? alertColor : '#9CA3AF', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>ALERTE PRIORITAIRE</p>
+                {topAlert ? (
+                  <>
+                    <p style={{ fontSize: 18, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{topAlert.materiau}</p>
+                    <span style={{
+                      display: 'inline-block', width: 'fit-content',
+                      padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                      background: `${alertColor}22`, color: alertColor, border: `1px solid ${alertColor}55`,
+                      marginBottom: 8,
+                    }}>
+                      {topAlert.alert_type}
+                    </span>
+                    <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
+                      {topAlert.message.length > 100 ? topAlert.message.slice(0, 100) + '…' : topAlert.message}
+                    </p>
+                    <button style={{
+                      marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
+                      background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
+                      color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                      transition: 'all 150ms',
+                    }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.12)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      → Agir maintenant
+                    </button>
+                  </>
+                ) : (
+                  <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>Aucune alerte active</p>
+                )}
               </div>
             </div>
           );
