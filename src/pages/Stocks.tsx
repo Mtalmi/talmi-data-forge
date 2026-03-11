@@ -360,6 +360,7 @@ export default function Stocks() {
                     daysRemaining={getDaysRemaining(stock.materiau)}
                     hoursRemaining={getHoursRemaining(stock.materiau)}
                     avgDailyUsage={getAvgDailyUsage(stock.materiau)}
+                    sparklineData={sparklines[stock.materiau]}
                   />
                 ))}
               </div>
