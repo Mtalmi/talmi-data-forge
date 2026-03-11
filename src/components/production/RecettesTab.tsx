@@ -158,11 +158,13 @@ function FormulaCard({ f }: { f: Formula }) {
 
 const INGREDIENTS = ['Ciment', 'Sable', 'Gravette', 'Eau', 'Adjuvant'] as const;
 
-function CompositionChart() {
+function CompositionChart({ formulas }: { formulas: Formula[] }) {
   const data = useMemo(() => INGREDIENTS.map(ing => {
     const key = ing.toLowerCase() as 'ciment' | 'sable' | 'gravette' | 'eau' | 'adjuvant';
-    return { name: ing, 'F-B25': FORMULAS[0][key], 'F-B30': FORMULAS[1][key], 'F-B20': FORMULAS[2][key] };
-  }), []);
+    const row: any = { name: ing };
+    formulas.forEach(f => { row[f.code] = f[key]; });
+    return row;
+  }), [formulas]);
 
   return (
     <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
@@ -188,14 +190,14 @@ function CompositionChart() {
                 );
               }}
             />
-            <Bar dataKey="F-B25" fill={T.gold} radius={[0, 3, 3, 0]} barSize={10} />
-            <Bar dataKey="F-B30" fill={T.goldDark} radius={[0, 3, 3, 0]} barSize={10} />
-            <Bar dataKey="F-B20" fill={T.goldDeep} radius={[0, 3, 3, 0]} barSize={10} />
+            {formulas.map((f, i) => (
+              <Bar key={f.code} dataKey={f.code} fill={f.color} radius={[0, 3, 3, 0]} barSize={10} />
+            ))}
           </BarChart>
         </ResponsiveContainer>
       </div>
       <div className="flex items-center justify-center gap-6 mt-4">
-        {FORMULAS.map(f => (
+        {formulas.map(f => (
           <div key={f.code} className="flex items-center gap-2">
             <span style={{ width: 8, height: 8, borderRadius: 2, background: f.color, display: 'inline-block' }} />
             <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.50)' }}>{f.code}</span>
@@ -207,6 +209,15 @@ function CompositionChart() {
 }
 
 export default function RecettesTab() {
+  const { data: dbFormulas } = useFormulas();
+
+  const FORMULAS = useMemo(() => {
+    if (dbFormulas && dbFormulas.length > 0) {
+      return dbFormulas.map((row, i) => mapDbToFormula(row, i));
+    }
+    return FALLBACK_FORMULAS;
+  }, [dbFormulas]);
+
   return (
     <div className="flex flex-col gap-8">
       {/* Header */}
@@ -216,7 +227,7 @@ export default function RecettesTab() {
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.40)', marginTop: -8 }}>Bibliothèque des formulations disponibles</p>
         </div>
         <span style={{ fontSize: 11, color: '#10B981', background: 'rgba(16,185,129,0.12)', borderRadius: 999, padding: '5px 12px' }}>
-          3 formules actives
+          {FORMULAS.length} formules actives
         </span>
       </div>
 
@@ -228,7 +239,7 @@ export default function RecettesTab() {
       {/* Composition Chart */}
       <div>
         <SectionHeader label="Composition Comparée" />
-        <CompositionChart />
+        <CompositionChart formulas={FORMULAS} />
       </div>
 
       {/* Normes */}
