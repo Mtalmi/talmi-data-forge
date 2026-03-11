@@ -677,7 +677,7 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
 // ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
-export default function WorldClassStocks({ silosContent }: { silosContent?: React.ReactNode }) {
+export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
   const [activeTab, setActiveTab] = useState('silos');
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
