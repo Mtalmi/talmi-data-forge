@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { toast } from 'sonner';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip,
   ResponsiveContainer, CartesianGrid, Cell,
@@ -494,13 +495,15 @@ function AlertCard({ alert, delay = 0 }: { alert: { name: string; current: strin
           </p>
         </div>
       </div>
-      <button style={{
-        width: '100%', padding: '7px 0', borderRadius: 8,
-        background: T.amber, color: T.navy,
-        fontWeight: 700, fontSize: 12,
-        border: 'none', cursor: 'pointer',
-        transition: 'filter 150ms',
-      }}
+      <button
+        onClick={() => toast.info(`Réapprovisionnement ${alert.name} — consultez le Plan de Réapprovisionnement IA dans l'onglet Vue d'ensemble.`)}
+        style={{
+          width: '100%', padding: '7px 0', borderRadius: 8,
+          background: T.amber, color: T.navy,
+          fontWeight: 700, fontSize: 12,
+          border: 'none', cursor: 'pointer',
+          transition: 'filter 150ms',
+        }}
         onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(1.15)')}
         onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
       >
@@ -676,7 +679,7 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
 // ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
-export default function WorldClassStocks({ silosContent }: { silosContent?: React.ReactNode }) {
+export default function WorldClassStocks({ silosContent, onNewMovement }: { silosContent?: React.ReactNode; onNewMovement?: () => void }) {
   const [activeTab, setActiveTab] = useState('silos');
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
@@ -736,6 +739,7 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
           border: 'none', cursor: 'pointer',
           transition: 'background 150ms',
         }}
+          onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
           onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
           onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
         >
@@ -956,12 +960,14 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
                     <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
                       {topAlert.message.length > 100 ? topAlert.message.slice(0, 100) + '…' : topAlert.message}
                     </p>
-                    <button style={{
-                      marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                      background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
-                      color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-                      transition: 'all 200ms',
-                    }}
+                    <button
+                      onClick={() => setActiveTab('alertes')}
+                      style={{
+                        marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
+                        background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
+                        color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                        transition: 'all 200ms',
+                      }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.color = '#0F1629'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
                     >
@@ -1052,12 +1058,14 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
                             <CritiqueCountdown daysRemaining={Number(days)} />
                           )}
                         </div>
-                        <button style={{
-                          marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                          background: '#D4A843', border: 'none',
-                          color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
-                          transition: 'all 150ms',
-                        }}
+                        <button
+                          onClick={() => toast.success(`Commande ${item.materiau} — ${Number(item.recommended_qty).toLocaleString('fr-FR')} ${item.unite} ajoutée à la file d'attente.`)}
+                          style={{
+                            marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
+                            background: '#D4A843', border: 'none',
+                            color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                            transition: 'all 150ms',
+                          }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.transform = 'scale(1.02)'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
@@ -1293,12 +1301,22 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
                         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
                           {a.message}
                         </p>
-                        <button style={{
-                          padding: '8px 16px', borderRadius: 8,
-                          background: g.actionBg, border: `1px solid ${g.actionBorder}`,
-                          color: g.actionColor, fontWeight: 700, fontSize: 11,
-                          cursor: 'pointer', transition: 'all 200ms',
-                        }}
+                        <button
+                          onClick={() => {
+                            if (g.key === 'critical') {
+                              toast.error(`Action urgente: ${a.materiau} — ${a.message}`);
+                            } else if (g.key === 'warning') {
+                              toast.warning(`Surveillance: ${a.materiau} — ${a.message}`);
+                            } else {
+                              toast.info(`Détail: ${a.materiau} — ${a.message}`);
+                            }
+                          }}
+                          style={{
+                            padding: '8px 16px', borderRadius: 8,
+                            background: g.actionBg, border: `1px solid ${g.actionBorder}`,
+                            color: g.actionColor, fontWeight: 700, fontSize: 11,
+                            cursor: 'pointer', transition: 'all 200ms',
+                          }}
                           onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.2)'; }}
                           onMouseLeave={e => { e.currentTarget.style.filter = 'brightness(1)'; }}
                         >

@@ -20,15 +20,22 @@ import { useAIDocumentVerification } from '@/hooks/useAIDocumentVerification';
 import { useI18n } from '@/i18n/I18nContext';
 
 interface Stock { materiau: string; unite: string; quantite_actuelle: number; }
-interface TwoStepReceptionWizardProps { stocks: Stock[]; onRefresh?: () => void; }
+interface TwoStepReceptionWizardProps { stocks: Stock[]; onRefresh?: () => void; externalOpen?: boolean; onExternalOpenChange?: (open: boolean) => void; }
 
 const MATERIAL_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   'Ciment': Shield, 'Sable': Package, 'Gravette': Truck,
 };
 
-export function TwoStepReceptionWizard({ stocks, onRefresh }: TwoStepReceptionWizardProps) {
+export function TwoStepReceptionWizard({ stocks, onRefresh, externalOpen, onExternalOpenChange }: TwoStepReceptionWizardProps) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (externalOpen) {
+      setOpen(true);
+      onExternalOpenChange?.(false);
+    }
+  }, [externalOpen, onExternalOpenChange]);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);

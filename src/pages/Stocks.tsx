@@ -88,6 +88,9 @@ export default function Stocks() {
   } = useStocks();
   const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
+  // Wizard external open trigger
+  const [wizardOpen, setWizardOpen] = useState(false);
+
   // Sparkline data: 7-day daily net stock per material
   const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
   const fetchSparklines = useCallback(async () => {
@@ -230,7 +233,7 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <WorldClassStocks silosContent={
+      <WorldClassStocks onNewMovement={() => setWizardOpen(true)} silosContent={
         <>
           {/* ── SILO DASHBOARD ── */}
           {loading ? (
@@ -313,7 +316,7 @@ export default function Stocks() {
                   <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
                 )}
                 {canAddStockReception && (
-                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
+                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} externalOpen={wizardOpen} onExternalOpenChange={setWizardOpen} />
                 )}
                 {canAdjustStockManually && (
                   <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
