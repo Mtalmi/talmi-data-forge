@@ -591,7 +591,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* ACTIONS (kebab) */}
-                <TableCell style={{ width: 44 }} className="text-center" onClick={(e) => e.stopPropagation()}>
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
                 </TableCell>
               </TableRow>
