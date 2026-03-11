@@ -1452,7 +1452,7 @@ export default function Planning() {
   return (
     <MainLayout>
       <WorldClassPlanning fleetPanelOpen={false} />
-      <div className="flex gap-4 transition-all duration-300" style={{ maxWidth: 1600, margin: '0 auto', padding: '32px 24px' }}>
+      <div className="flex w-full gap-4 transition-all duration-300" style={{ padding: '32px 24px' }}>
       <div className="flex-1 min-w-0 space-y-6">
         {isReadOnly && (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 flex items-center gap-3">
