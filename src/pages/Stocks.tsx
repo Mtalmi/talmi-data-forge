@@ -316,7 +316,7 @@ export default function Stocks() {
                   <QualityStockEntryDialog stocks={stocks} onRefresh={handleRefresh} />
                 )}
                 {canAddStockReception && (
-                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} />
+                  <TwoStepReceptionWizard stocks={stocks} onRefresh={handleRefresh} externalOpen={wizardOpen} onExternalOpenChange={setWizardOpen} />
                 )}
                 {canAdjustStockManually && (
                   <StockAdjustmentDialog stocks={stocks} onRefresh={handleRefresh} />
