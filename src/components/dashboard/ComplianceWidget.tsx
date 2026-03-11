@@ -20,6 +20,7 @@ export function ComplianceWidget() {
       style={{
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
+        borderTop: '1px solid rgba(212,168,67,0.3)',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 20,
       }}
@@ -31,6 +32,7 @@ export function ComplianceWidget() {
         <span style={{ color: T.gold, fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
           Agent IA: Conformité
         </span>
+        <span style={{ color: '#D4A843', fontSize: 11, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

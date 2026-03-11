@@ -22,6 +22,7 @@ export function EnergyCostAnomalyWidget() {
       style={{
         borderRadius: 8,
         border: `1px solid ${T.danger}25`,
+        borderTop: '1px solid rgba(212,168,67,0.3)',
         borderLeft: `4px solid ${T.danger}`,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 16,
@@ -34,6 +35,7 @@ export function EnergyCostAnomalyWidget() {
         <span style={{ color: T.gold, fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
           Agent IA: Détection Anomalies
         </span>
+        <span style={{ color: '#D4A843', fontSize: 11, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
       </div>
 
       {/* Status */}
