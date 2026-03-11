@@ -364,13 +364,14 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
 
   // Autonomy badge logic
   const days = autonomy?.days;
-  const autoBadgeConfig = days == null
+  const roundedDays = days != null ? Math.round(days) : null;
+  const autoBadgeConfig = roundedDays == null
     ? { badge: 'N/A', color: '#64748B', bg: 'rgba(100, 116, 139, 0.15)', pulse: false }
-    : days <= 2
-    ? { badge: 'CRITIQUE', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)', pulse: true }
-    : days <= 5
-    ? { badge: 'ATTENTION', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', pulse: false }
-    : { badge: 'OK', color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)', pulse: false };
+    : roundedDays <= 2
+    ? { badge: `${roundedDays}j`, color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)', pulse: true }
+    : roundedDays <= 5
+    ? { badge: `${roundedDays}j`, color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', pulse: false }
+    : { badge: `${roundedDays}j`, color: '#22c55e', bg: 'rgba(34, 197, 94, 0.15)', pulse: false };
 
   const relTime = autonomy?.calculated_at ? (() => {
     const mins = Math.floor((Date.now() - new Date(autonomy.calculated_at!).getTime()) / 60000);
