@@ -852,6 +852,9 @@ export default function WorldClassProduction() {
         {/* ── AGENT IA: OPTIMISEUR DE RENDEMENT ── */}
         <RendementOptimizerCard />
 
+        {/* ── AGENT IA: PRÉDICTEUR QUALITÉ ── */}
+        <QualitePredictorCard />
+
         {/* ── FOOTER ── */}
         <footer style={{ padding: '24px 0', textAlign: 'center' }}>
           <span style={{ color: 'rgba(255,255,255,0.15)', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }}>
