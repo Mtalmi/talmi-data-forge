@@ -18,6 +18,7 @@ import BatchesTab from './BatchesTab';
 import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { ProductionBriefingCard } from './ProductionBriefingCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -842,6 +843,9 @@ export default function WorldClassProduction() {
             </div>
           </div>
         </section>
+
+        {/* ── BRIEFING PRODUCTION ── */}
+        <ProductionBriefingCard />
 
         {/* ── FOOTER ── */}
         <footer style={{ padding: '24px 0', textAlign: 'center' }}>
