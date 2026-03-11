@@ -351,6 +351,37 @@
   pointer-events: none;
 }
 
+/* ─── Gold Shimmer Border for KPI Cards ─── */
+@keyframes goldBorderSweep {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.tbos-hero-card {
+  position: relative;
+}
+.tbos-hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 30%,
+    rgba(212,168,67,0.4) 50%,
+    transparent 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: goldBorderSweep 3s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
 /* ─── Breathing Glow ─── */
 @keyframes breatheGlow {
   0%,
