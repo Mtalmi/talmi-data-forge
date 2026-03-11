@@ -431,7 +431,7 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table style={{ tableLayout: 'fixed', width: '100%', minWidth: '900px' }}>
+      <Table style={{ width: '100%', minWidth: '900px' }}>
         <TableHeader>
           <TableRow>
             <TableHead style={{ width: 40 }}>

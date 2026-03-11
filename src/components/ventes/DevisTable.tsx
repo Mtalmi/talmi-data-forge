@@ -380,7 +380,7 @@ export function DevisTable({
 
   return (
     <>
-      <Table className="table-fixed w-full">
+      <Table className="w-full">
         <TableHeader>
           <TableRow>
             <TableHead className="w-10">
