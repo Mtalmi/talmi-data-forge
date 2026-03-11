@@ -883,34 +883,36 @@ export default function WorldClassStocks() {
                       </div>
                     ) : (
                       dbAlerts.map((a, i) => {
-                        const isCritical = a.severity === 'critical';
+                        const sevColor = a.severity === 'critical' ? '#ef4444' : a.severity === 'warning' ? '#f59e0b' : '#22c55e';
+                        const sevBg = a.severity === 'critical' ? 'rgba(239,68,68,0.15)' : a.severity === 'warning' ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)';
+                        const sevBorder = a.severity === 'critical' ? 'rgba(239,68,68,0.3)' : a.severity === 'warning' ? 'rgba(245,158,11,0.3)' : 'rgba(34,197,94,0.3)';
                         return (
                           <div key={a.id} style={{
                             background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
-                            borderLeft: `3px solid ${isCritical ? '#ef4444' : '#f59e0b'}`,
+                            borderLeft: `3px solid ${sevColor}`,
                             borderRadius: 10, padding: '12px 14px',
                             opacity: 0, animation: `fadeSlideIn 400ms ${i * 80}ms forwards`,
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
                               <div style={{
                                 width: 8, height: 8, borderRadius: '50%',
-                                background: isCritical ? '#ef4444' : '#f59e0b',
-                                boxShadow: `0 0 8px ${isCritical ? 'rgba(239,68,68,0.5)' : 'rgba(245,158,11,0.5)'}`,
-                                animation: isCritical ? 'tbos-pulse 2s infinite' : 'none',
+                                background: sevColor,
+                                boxShadow: `0 0 8px ${sevColor}80`,
+                                animation: a.severity === 'critical' ? 'tbos-pulse 2s infinite' : 'none',
                               }} />
                               <span style={{ fontWeight: 700, fontSize: 13, color: T.textPri }}>{a.materiau}</span>
                               <span style={{
                                 marginLeft: 'auto',
                                 padding: '2px 8px', borderRadius: 999,
                                 fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-                                background: isCritical ? 'rgba(239,68,68,0.15)' : 'rgba(245,158,11,0.15)',
-                                color: isCritical ? '#ef4444' : '#f59e0b',
-                                border: `1px solid ${isCritical ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`,
+                                background: sevBg,
+                                color: sevColor,
+                                border: `1px solid ${sevBorder}`,
                               }}>
                                 {a.alert_type}
                               </span>
                             </div>
-                            <p style={{ fontSize: 11, color: isCritical ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.8)', marginBottom: 4 }}>
+                            <p style={{ fontSize: 11, color: `${sevColor}cc`, marginBottom: 4 }}>
                               {a.message}
                             </p>
                             <p style={{ fontSize: 10, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>
