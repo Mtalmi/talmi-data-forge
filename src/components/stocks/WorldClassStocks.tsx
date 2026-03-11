@@ -698,6 +698,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         @keyframes urgentGlow { 0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.15)} }
         @keyframes critiqueBorderPulse { 0%,100%{border-color:rgba(239,68,68,0.3);box-shadow:0 0 0 rgba(239,68,68,0)} 50%{border-color:rgba(239,68,68,0.7);box-shadow:0 0 16px rgba(239,68,68,0.12)} }
         @keyframes gaugeArc { from{stroke-dashoffset:${2 * Math.PI * 85}} to{stroke-dashoffset:var(--gauge-offset)} }
+        @keyframes critiqueGlow { 0%,100%{box-shadow:0 0 20px rgba(239,68,68,0.3)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.6)} }
         @keyframes kpiShimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
         .kpi-shimmer { position:relative; border-radius:10px; padding:1px; background:linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.4) 50%, transparent 100%); background-size:200% 100%; animation:kpiShimmer 3s linear infinite; }
         .kpi-shimmer > * { border-radius:9px; }
@@ -1061,7 +1062,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                         borderRadius: 14, padding: '18px 16px',
                         display: 'flex', flexDirection: 'column', minHeight: 200,
                         position: 'relative',
-                        opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
+                        opacity: 0,
+                        animation: isCritique
+                          ? `fadeSlideIn 500ms ${idx * 80}ms forwards, critiqueGlow 2s ease-in-out ${idx * 80 + 500}ms infinite`
+                          : `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
                         {/* Header with absolute badge */}
                         <div style={{ marginBottom: 12 }}>
