@@ -48,6 +48,7 @@ import { WorldClassVentes } from '@/components/ventes/WorldClassVentes';
 import { MarginOverviewCard } from '@/components/ventes/MarginOverviewCard';
 import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
 import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
+import { PipelineBriefingCard } from '@/components/ventes/PipelineBriefingCard';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -814,6 +815,9 @@ export default function Ventes() {
             </TabsContent>
           </Tabs>
           </div>
+
+          {/* Pipeline Briefing IA */}
+          <PipelineBriefingCard />
 
           {/* Flux Commercial Widget */}
           <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />

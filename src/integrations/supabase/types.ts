@@ -7692,6 +7692,24 @@ export type Database = {
         }
         Relationships: []
       }
+      ventes_briefing: {
+        Row: {
+          briefing_text: string
+          generated_at: string
+          id: string
+        }
+        Insert: {
+          briefing_text: string
+          generated_at?: string
+          id?: string
+        }
+        Update: {
+          briefing_text?: string
+          generated_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       ws7_batches: {
         Row: {
           additives_liters: number
