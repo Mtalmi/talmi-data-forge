@@ -24,6 +24,7 @@ export function SiloVisual({
   daysRemaining,
   hoursRemaining,
   avgDailyUsage,
+  sparklineData,
   className,
 }: SiloVisualProps) {
   const { t } = useI18n();
