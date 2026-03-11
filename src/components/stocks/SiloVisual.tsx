@@ -114,6 +114,18 @@ export function SiloVisual({
                 : 'silo-breathing 3s ease-in-out infinite',
             }}
           />
+          {/* Liquid shimmer overlay */}
+          {percentage > 0 && (
+            <div
+              className="absolute bottom-0 left-0 right-0 pointer-events-none"
+              style={{
+                height: `${percentage}%`,
+                background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%)',
+                backgroundSize: '100% 200%',
+                animation: 'silo-liquid-shimmer 4s linear infinite',
+              }}
+            />
+          )}
           {/* Drain overlay for low autonomy */}
           {daysRemaining !== undefined && daysRemaining < 3 && percentage > 0 && (
             <div
