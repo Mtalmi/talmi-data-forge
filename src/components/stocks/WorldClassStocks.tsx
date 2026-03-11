@@ -904,12 +904,15 @@ export default function WorldClassStocks() {
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderLeft: `3px solid ${leftBorderColor}`,
                         borderRadius: 14, padding: '18px 16px',
-                        display: 'flex', flexDirection: 'column', gap: 10,
+                        display: 'flex', flexDirection: 'column', height: '100%',
+                        position: 'relative',
                         opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
+                        {/* Header with absolute badge */}
+                        <div style={{ marginBottom: 12 }}>
+                          <span style={{ fontWeight: 600, fontSize: 18, color: '#fff' }}>{item.materiau}</span>
                           <span style={{
+                            position: 'absolute', top: 16, right: 16,
                             padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
                             background: urgBg, color: urgColor, border: `1px solid ${urgBorder}`,
                             animation: isCritique ? 'tbos-pulse 2s infinite' : 'none',
@@ -917,19 +920,21 @@ export default function WorldClassStocks() {
                             {item.urgency.toUpperCase()}
                           </span>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                             <span style={{ color: T.textDim }}>Qté recommandée</span>
-                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
+                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, fontSize: 15, color: '#fff' }}>
                               {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
                             </span>
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                            <span style={{ color: T.textDim }}>Fournisseur</span>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, alignItems: 'center' }}>
+                            <span style={{ color: T.textDim, display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <Package size={11} style={{ opacity: 0.5 }} />Fournisseur
+                            </span>
                             <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
                           </div>
                           {days !== null && !isCritique && (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                               <span style={{ color: T.textDim }}>Autonomie</span>
                               <span style={{
                                 fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
@@ -944,7 +949,7 @@ export default function WorldClassStocks() {
                           )}
                         </div>
                         <button style={{
-                          marginTop: 'auto', padding: 10, borderRadius: 8, width: '100%',
+                          marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
                           background: '#D4A843', border: 'none',
                           color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
                           transition: 'all 150ms',
