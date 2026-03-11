@@ -88,7 +88,39 @@ export default function Stocks() {
   } = useStocks();
   const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
-  // SECURITY: Centraliste is BLOCKED from Stocks module (separation of powers / anti-fraud)
+  // Sparkline data: 7-day daily net stock per material
+  const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
+  const fetchSparklines = useCallback(async () => {
+    try {
+      const sevenAgo = startOfDay(subDays(new Date(), 7)).toISOString();
+      const { data } = await supabase
+        .from('mouvements_stock')
+        .select('materiau, quantite, type_mouvement, created_at')
+        .gte('created_at', sevenAgo)
+        .order('created_at', { ascending: true });
+      if (!data) return;
+      // Group by material → day → net change
+      const byMat: Record<string, Record<string, number>> = {};
+      data.forEach(m => {
+        const mat = m.materiau;
+        const day = m.created_at.slice(0, 10);
+        if (!byMat[mat]) byMat[mat] = {};
+        const sign = m.type_mouvement === 'consommation' || m.type_mouvement === 'sortie' ? -1 : 1;
+        byMat[mat][day] = (byMat[mat][day] || 0) + m.quantite * sign;
+      });
+      // Build cumulative series per material
+      const result: Record<string, number[]> = {};
+      for (const [mat, days] of Object.entries(byMat)) {
+        const sorted = Object.entries(days).sort(([a], [b]) => a.localeCompare(b));
+        let cum = 0;
+        result[mat] = sorted.map(([, v]) => { cum += v; return cum; });
+      }
+      setSparklines(result);
+    } catch (e) { console.error('Sparkline fetch error:', e); }
+  }, []);
+  useEffect(() => { fetchSparklines(); }, [fetchSparklines]);
+
+
   const canViewStocks = isCeo || isSuperviseur || isAgentAdministratif || isResponsableTechnique;
   const canCreateStockReception = isCeo || isSuperviseur || isAgentAdministratif;
   const canCreateStockAdjustment = isCeo || isSuperviseur || isAgentAdministratif;
