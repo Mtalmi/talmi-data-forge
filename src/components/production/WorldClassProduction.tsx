@@ -19,6 +19,7 @@ import RecettesTab from './RecettesTab';
 import PlanningTab from './PlanningTab';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { ProductionBriefingCard } from './ProductionBriefingCard';
+import { RendementOptimizerCard } from './RendementOptimizerCard';
 
 // ─────────────────────────────────────────────────────
 // DESIGN TOKENS
@@ -846,6 +847,9 @@ export default function WorldClassProduction() {
 
         {/* ── BRIEFING PRODUCTION ── */}
         <ProductionBriefingCard />
+
+        {/* ── AGENT IA: OPTIMISEUR DE RENDEMENT ── */}
+        <RendementOptimizerCard />
 
         {/* ── FOOTER ── */}
         <footer style={{ padding: '24px 0', textAlign: 'center' }}>
