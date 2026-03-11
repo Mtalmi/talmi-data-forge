@@ -198,6 +198,45 @@ export function SiloVisual({
         </p>
       </div>
 
+      {/* Sparkline */}
+      {sparklineData && sparklineData.length >= 2 && (() => {
+        const sparkColor = daysRemaining !== undefined && daysRemaining < 3 ? '#ef4444'
+          : daysRemaining !== undefined && daysRemaining <= 7 ? '#f97316' : '#22c55e';
+        const W = 80, H = 24, pad = 2;
+        const min = Math.min(...sparklineData);
+        const max = Math.max(...sparklineData);
+        const range = max - min || 1;
+        const pts = sparklineData.map((v, i) => ({
+          x: pad + (i / (sparklineData.length - 1)) * (W - pad * 2),
+          y: pad + (1 - (v - min) / range) * (H - pad * 2),
+        }));
+        const line = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+        const area = `${line} L${pts[pts.length - 1].x},${H} L${pts[0].x},${H} Z`;
+        // Trend: compare last 3 days
+        const last3 = sparklineData.slice(-3);
+        const trend = last3.length >= 2
+          ? last3[last3.length - 1] - last3[0] < -range * 0.05 ? 'down'
+          : last3[last3.length - 1] - last3[0] > range * 0.05 ? 'up' : 'flat'
+          : 'flat';
+        const uid = `spark-${materiau.replace(/\s/g, '')}`;
+        return (
+          <div className="mt-2 flex items-center justify-center gap-1">
+            <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
+              <defs>
+                <linearGradient id={uid} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={sparkColor} stopOpacity={0.2} />
+                  <stop offset="100%" stopColor={sparkColor} stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <path d={area} fill={`url(#${uid})`} />
+              <path d={line} fill="none" stroke={sparkColor} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            {trend === 'down' && <span className="text-xs text-destructive font-bold">↓</span>}
+            {trend === 'up' && <span className="text-xs text-emerald-400 font-bold">↑</span>}
+          </div>
+        );
+      })()}
+
       {/* Autonomy */}
       {displayAutonomy !== null && (
         <div
