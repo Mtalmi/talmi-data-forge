@@ -531,7 +531,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* FORMULA */}
-                <TableCell style={{ width: 70 }} className="text-center">
+                <TableCell className="text-center">
                   <span className="text-xs font-mono">{bc.formule_id}</span>
                 </TableCell>
                 
