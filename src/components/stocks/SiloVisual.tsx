@@ -104,8 +104,26 @@ export function SiloVisual({
               isCritical ? 'from-destructive to-destructive/80' : colors.fill,
               isCritical && 'animate-pulse'
             )}
-            style={{ height: `${percentage}%` }}
+            style={{
+              height: `${percentage}%`,
+              transformOrigin: 'bottom',
+              animation: daysRemaining !== undefined && daysRemaining < 3
+                ? 'silo-breathing 3s ease-in-out infinite'
+                : 'silo-breathing 3s ease-in-out infinite',
+            }}
           />
+          {/* Drain overlay for low autonomy */}
+          {daysRemaining !== undefined && daysRemaining < 3 && percentage > 0 && (
+            <div
+              className="absolute bottom-0 left-0 right-0 pointer-events-none"
+              style={{
+                height: `${percentage}%`,
+                background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.25) 40%, transparent 60%)',
+                backgroundSize: '100% 200%',
+                animation: 'silo-drain-sweep 4s linear infinite',
+              }}
+            />
+          )}
           
           {/* Alert threshold line */}
           <div
