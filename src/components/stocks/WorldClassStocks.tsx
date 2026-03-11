@@ -763,137 +763,93 @@ export default function WorldClassStocks() {
 
 
 
-        {/* ── PLAN DE RÉAPPROVISIONNEMENT IA ── */}
-        <section>
-          <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
-          <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 8 }}>
+        {/* ── PLAN DE RÉAPPROVISIONNEMENT + ALERTES — Two-column layout ── */}
+        <div style={{ display: 'flex', gap: 24 }}>
+          {/* LEFT — 60% Plan de Réapprovisionnement IA */}
+          <div style={{ flex: '0 0 60%', minWidth: 0 }}>
+            <SectionHeader icon={ShoppingCart} label="Plan de Réapprovisionnement IA" />
             {(() => {
               const items = REORDER_RECS;
-
               if (items.length === 0) {
                 return (
-                  <Card style={{ flex: 1, textAlign: 'center', padding: '40px 20px' }}>
+                  <Card style={{ textAlign: 'center', padding: '40px 20px' }}>
                     <p style={{ color: T.textDim, fontSize: 13 }}>Tous les stocks sont à niveau optimal</p>
                   </Card>
                 );
               }
-
-              return items.map((item, idx) => {
-                const urgColor = item.urgency === 'critique' || item.urgency === 'urgent'
-                  ? '#ef4444'
-                  : item.urgency === 'modéré'
-                  ? '#f59e0b'
-                  : '#22c55e';
-                const urgBg = item.urgency === 'critique' || item.urgency === 'urgent'
-                  ? 'rgba(239,68,68,0.15)'
-                  : item.urgency === 'modéré'
-                  ? 'rgba(245,158,11,0.15)'
-                  : 'rgba(34,197,94,0.15)';
-                const urgBorder = item.urgency === 'critique' || item.urgency === 'urgent'
-                  ? 'rgba(239,68,68,0.4)'
-                  : item.urgency === 'modéré'
-                  ? 'rgba(245,158,11,0.4)'
-                  : 'rgba(34,197,94,0.4)';
-                const isUrgent = item.urgency === 'critique' || item.urgency === 'urgent';
-                const days = item.days_remaining;
-                return (
-                  <div key={item.id} style={{
-                    minWidth: 240, flex: '0 0 auto',
-                    background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
-                    borderLeft: `3px solid ${urgColor}`,
-                    borderRadius: 14, padding: '18px 16px',
-                    display: 'flex', flexDirection: 'column', gap: 10,
-                    opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
-                  }}>
-                    {/* Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
-                      <span style={{
-                        padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                        background: urgBg,
-                        color: urgColor,
-                        border: `1px solid ${urgBorder}`,
-                        animation: isUrgent ? 'tbos-pulse 2s infinite' : 'none',
+              return (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  {items.map((item, idx) => {
+                    const isCritique = item.urgency === 'critique' || item.urgency === 'urgent';
+                    const isModere = item.urgency === 'modéré';
+                    const leftBorderColor = isCritique ? '#ef4444' : isModere ? '#D4A843' : '#22c55e';
+                    const urgColor = isCritique ? '#ef4444' : isModere ? '#f59e0b' : '#22c55e';
+                    const urgBg = isCritique ? 'rgba(239,68,68,0.15)' : isModere ? 'rgba(245,158,11,0.15)' : 'rgba(34,197,94,0.15)';
+                    const urgBorder = isCritique ? 'rgba(239,68,68,0.4)' : isModere ? 'rgba(245,158,11,0.4)' : 'rgba(34,197,94,0.4)';
+                    const days = item.days_remaining;
+                    return (
+                      <div key={item.id} style={{
+                        background: isCritique ? 'rgba(239,68,68,0.04)' : 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderLeft: `3px solid ${leftBorderColor}`,
+                        borderRadius: 14, padding: '18px 16px',
+                        display: 'flex', flexDirection: 'column', gap: 10,
+                        opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
-                        {item.urgency.toUpperCase()}
-                      </span>
-                    </div>
-                    {/* Details */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                        <span style={{ color: T.textDim }}>Qté recommandée</span>
-                        <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
-                          {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                        <span style={{ color: T.textDim }}>Fournisseur</span>
-                        <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
-                      </div>
-                      {days !== null && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                          <span style={{ color: T.textDim }}>Autonomie</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
                           <span style={{
-                            fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                            color: isUrgent ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                            padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                            background: urgBg, color: urgColor, border: `1px solid ${urgBorder}`,
+                            animation: isCritique ? 'tbos-pulse 2s infinite' : 'none',
                           }}>
-                            {Math.round(Number(days) * 10) / 10}j
+                            {item.urgency.toUpperCase()}
                           </span>
                         </div>
-                      )}
-                    </div>
-                    {/* Action */}
-                    <button style={{
-                      marginTop: 'auto', padding: '8px 0', borderRadius: 8,
-                      background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
-                      color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-                      transition: 'all 150ms',
-                    }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
-                    >
-                      Créer Commande
-                    </button>
-                  </div>
-                );
-              });
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                            <span style={{ color: T.textDim }}>Qté recommandée</span>
+                            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, color: T.textPri }}>
+                              {Number(item.recommended_qty).toLocaleString('fr-FR')} {item.unite}
+                            </span>
+                          </div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                            <span style={{ color: T.textDim }}>Fournisseur</span>
+                            <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
+                          </div>
+                          {days !== null && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                              <span style={{ color: T.textDim }}>Autonomie</span>
+                              <span style={{
+                                fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
+                                color: isCritique ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                              }}>
+                                {Math.round(Number(days) * 10) / 10}j
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <button style={{
+                          marginTop: 'auto', padding: '8px 0', borderRadius: 8,
+                          background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
+                          color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                          transition: 'all 150ms',
+                        }}
+                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                        >
+                          Créer Commande
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
             })()}
           </div>
-        </section>
-        <section>
-          <SectionHeader icon={ArrowUpDown} label="Mouvements & Alertes" />
-          <div style={{ display: 'grid', gridTemplateColumns: '60% 40%', gap: 24 }}>
 
-            {/* Movement chart */}
-            <Card>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <div>
-                  <p style={{ color: T.textPri, fontWeight: 700, fontSize: 14 }}>Mouvements de Stock</p>
-                  <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>7 derniers jours</p>
-                </div>
-                <div style={{ display: 'flex', gap: 16 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: 2, background: T.success, display: 'inline-block' }} />Entrées
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: 2, background: T.amber, display: 'inline-block' }} />Sorties
-                  </span>
-                </div>
-              </div>
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={MOVEMENT_DATA} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }}
-                    tickFormatter={(v) => v >= 1000 ? `${v / 1000}K` : v} />
-                  <RechartsTooltip content={<DarkTooltip suffix=" kg" />} cursor={{ fill: T.amberSubtle }} />
-                  <Bar dataKey="entrees" name="Entrées"  fill={T.success} radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} />
-                  <Bar dataKey="sorties" name="Sorties"  fill={T.amber}   radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} animationBegin={150} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-
-            {/* Alerts — from stock_alerts Supabase table */}
+          {/* RIGHT — 40% Alertes Stock */}
+          <div style={{ flex: '0 0 calc(40% - 24px)', position: 'sticky', top: 16, alignSelf: 'flex-start', maxHeight: 'calc(100vh - 120px)', overflowY: 'auto' }}>
             {(() => {
               const dbAlerts = STOCK_ALERTS_DB;
               return (
@@ -932,9 +888,7 @@ export default function WorldClassStocks() {
                                 marginLeft: 'auto',
                                 padding: '2px 8px', borderRadius: 999,
                                 fontSize: 10, fontWeight: 700, letterSpacing: '0.05em',
-                                background: sevBg,
-                                color: sevColor,
-                                border: `1px solid ${sevBorder}`,
+                                background: sevBg, color: sevColor, border: `1px solid ${sevBorder}`,
                               }}>
                                 {a.alert_type}
                               </span>
@@ -954,6 +908,38 @@ export default function WorldClassStocks() {
               );
             })()}
           </div>
+        </div>
+
+        {/* ── MOUVEMENTS CHART ── */}
+        <section>
+          <SectionHeader icon={ArrowUpDown} label="Mouvements de Stock" />
+          <Card>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div>
+                <p style={{ color: T.textPri, fontWeight: 700, fontSize: 14 }}>Mouvements de Stock</p>
+                <p style={{ color: T.textDim, fontSize: 11, marginTop: 2 }}>7 derniers jours</p>
+              </div>
+              <div style={{ display: 'flex', gap: 16 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, background: T.success, display: 'inline-block' }} />Entrées
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 5, color: T.textSec, fontSize: 11 }}>
+                  <span style={{ width: 10, height: 10, borderRadius: 2, background: T.amber, display: 'inline-block' }} />Sorties
+                </span>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={MOVEMENT_DATA} margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={T.amberGrid} vertical={false} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 11 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: T.textDim, fontSize: 10 }}
+                  tickFormatter={(v) => v >= 1000 ? `${v / 1000}K` : v} />
+                <RechartsTooltip content={<DarkTooltip suffix=" kg" />} cursor={{ fill: T.amberSubtle }} />
+                <Bar dataKey="entrees" name="Entrées"  fill={T.success} radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} />
+                <Bar dataKey="sorties" name="Sorties"  fill={T.amber}   radius={[3, 3, 0, 0]} isAnimationActive animationDuration={1000} animationBegin={150} />
+              </BarChart>
+            </ResponsiveContainer>
+          </Card>
         </section>
 
         {/* ── SECTION 5: RECENT MOVEMENTS ── */}
