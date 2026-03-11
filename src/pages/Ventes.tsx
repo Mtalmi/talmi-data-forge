@@ -49,6 +49,7 @@ import { MarginOverviewCard } from '@/components/ventes/MarginOverviewCard';
 import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
 import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
 import { PipelineBriefingCard } from '@/components/ventes/PipelineBriefingCard';
+import { ConversionPredictorCard } from '@/components/ventes/ConversionPredictorCard';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
@@ -843,6 +844,9 @@ export default function Ventes() {
 
           {/* ══ Pipeline Analysis AI ══ */}
           <PipelineAnalysisCard />
+
+          {/* ══ Conversion Predictor AI ══ */}
+          <ConversionPredictorCard />
 
         </div>
 
