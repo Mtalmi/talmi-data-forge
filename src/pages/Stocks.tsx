@@ -88,6 +88,9 @@ export default function Stocks() {
   } = useStocks();
   const { autonomy, getAutonomyForMaterial, getCriticalMaterials } = useStockAutonomy();
 
+  // Wizard external open trigger
+  const [wizardOpen, setWizardOpen] = useState(false);
+
   // Sparkline data: 7-day daily net stock per material
   const [sparklines, setSparklines] = useState<Record<string, number[]>>({});
   const fetchSparklines = useCallback(async () => {
