@@ -752,13 +752,28 @@ export default function WorldClassStocks() {
               }
 
               return items.map((item, idx) => {
-                const isUrgent = item.urgency === 'urgent' || item.urgency === 'critique';
+                const urgColor = item.urgency === 'critique' || item.urgency === 'urgent'
+                  ? '#ef4444'
+                  : item.urgency === 'modéré'
+                  ? '#f59e0b'
+                  : '#22c55e';
+                const urgBg = item.urgency === 'critique' || item.urgency === 'urgent'
+                  ? 'rgba(239,68,68,0.15)'
+                  : item.urgency === 'modéré'
+                  ? 'rgba(245,158,11,0.15)'
+                  : 'rgba(34,197,94,0.15)';
+                const urgBorder = item.urgency === 'critique' || item.urgency === 'urgent'
+                  ? 'rgba(239,68,68,0.4)'
+                  : item.urgency === 'modéré'
+                  ? 'rgba(245,158,11,0.4)'
+                  : 'rgba(34,197,94,0.4)';
+                const isUrgent = item.urgency === 'critique' || item.urgency === 'urgent';
                 const days = item.days_remaining;
                 return (
                   <div key={item.id} style={{
                     minWidth: 240, flex: '0 0 auto',
                     background: 'rgba(255,255,255,0.04)', border: `1px solid rgba(255,255,255,0.08)`,
-                    borderLeft: `3px solid ${isUrgent ? '#ef4444' : '#D4A843'}`,
+                    borderLeft: `3px solid ${urgColor}`,
                     borderRadius: 14, padding: '18px 16px',
                     display: 'flex', flexDirection: 'column', gap: 10,
                     opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
@@ -768,9 +783,9 @@ export default function WorldClassStocks() {
                       <span style={{ fontWeight: 700, fontSize: 14, color: T.textPri }}>{item.materiau}</span>
                       <span style={{
                         padding: '3px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                        background: isUrgent ? 'rgba(239,68,68,0.15)' : 'rgba(212,168,67,0.15)',
-                        color: isUrgent ? '#ef4444' : '#D4A843',
-                        border: `1px solid ${isUrgent ? 'rgba(239,68,68,0.4)' : 'rgba(212,168,67,0.4)'}`,
+                        background: urgBg,
+                        color: urgColor,
+                        border: `1px solid ${urgBorder}`,
                         animation: isUrgent ? 'tbos-pulse 2s infinite' : 'none',
                       }}>
                         {item.urgency.toUpperCase()}
