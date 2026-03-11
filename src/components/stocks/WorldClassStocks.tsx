@@ -928,17 +928,34 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
 
               <div style={dividerStyle} />
 
-              {/* CENTER — Santé Stock */}
+              {/* CENTER — Tendance Santé Stock Sparkline */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
-                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>SANTÉ STOCK</p>
-                <p style={{
-                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                  fontSize: 72, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
-                  WebkitFontSmoothing: 'antialiased' as any,
-                }}>
-                  {score}
-                </p>
-                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>Score IA temps réel</span>
+                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 10 }}>TENDANCE SANTÉ STOCK</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  {(() => {
+                    const trendData = [72, 75, 78, 81, 85, 87, score];
+                    const w = 100, h = 36;
+                    const minV = Math.min(...trendData) - 5;
+                    const maxV = Math.max(...trendData) + 5;
+                    const pts = trendData.map((v, i) => {
+                      const x = (i / (trendData.length - 1)) * w;
+                      const y = h - ((v - minV) / (maxV - minV)) * h;
+                      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                    }).join(' ');
+                    return (
+                      <svg width={w} height={h} style={{ flexShrink: 0 }}>
+                        <path d={pts} fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    );
+                  })()}
+                  <p style={{
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                    fontSize: 28, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
+                  }}>
+                    {score}
+                  </p>
+                </div>
+                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>7 derniers jours</span>
               </div>
 
               <div style={dividerStyle} />
