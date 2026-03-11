@@ -1206,7 +1206,7 @@ export default function Dashboard() {
         </div>{/* end hero zone wrapper */}
 
         {/* Alert Strip — Intelligent Urgency */}
-        {!alertDismissed && (
+        {!alertDismissed && stats.tauxECMoyen > 0 && (
           <div
             className="flex items-center justify-between px-4 py-2 rounded-xl mt-0 mb-3"
             style={{
