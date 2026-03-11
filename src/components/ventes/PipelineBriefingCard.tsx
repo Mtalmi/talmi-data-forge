@@ -18,9 +18,8 @@ export function PipelineBriefingCard() {
       .order('generated_at', { ascending: false })
       .limit(1)
       .then(({ data }) => {
-        if (data && data.length > 0) setBriefing(data[0]);
-      })
-      .catch(() => {});
+        if (data && data.length > 0) setBriefing(data[0] as Briefing);
+      }, () => {});
   }, []);
 
   if (!briefing) return null;
