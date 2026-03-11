@@ -2896,6 +2896,12 @@
   100% { background-position: 0 100%; }
 }
 
+/* ── Silo Liquid Shimmer Animation ──────────────────────── */
+@keyframes silo-liquid-shimmer {
+  0% { background-position: 0 100%; }
+  100% { background-position: 0 -100%; }
+}
+
 /* ── Silo Pulse Border Animation ──────────────────────── */
 @keyframes silo-pulse-border {
   0%, 100% { box-shadow: 0 0 8px var(--silo-pulse-color, transparent); }
