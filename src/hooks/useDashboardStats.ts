@@ -172,24 +172,24 @@ export function useDashboardStats() {
       // Generate CEO alerts
       const alerts: DashboardAlert[] = [];
 
-      // Alert: Deliveries down > 20%
-      if (deliveriesTrend < -20) {
+      // Alert: Deliveries down > 20% (only if previous period data exists)
+      if (!isNaN(deliveriesTrend) && deliveriesTrend < -20) {
         alerts.push({
           id: 'deliveries-down',
           type: 'critical',
           title: 'Baisse des Livraisons',
-          message: `Les livraisons sont en baisse de ${Math.abs(deliveriesTrend).toFixed(0)}% ce mois-ci`,
+          message: `Les livraisons sont en baisse de ${Math.abs(deliveriesTrend).toFixed(0)}% vs même période mois dernier`,
           timestamp: new Date().toISOString(),
         });
       }
 
-      // Alert: Volume down > 15%
-      if (volumeTrend < -15) {
+      // Alert: Volume down > 15% (only if previous period data exists)
+      if (!isNaN(volumeTrend) && volumeTrend < -15) {
         alerts.push({
           id: 'volume-down',
           type: 'critical',
           title: 'Baisse du Volume',
-          message: `Le volume total est en baisse de ${Math.abs(volumeTrend).toFixed(0)}% ce mois-ci`,
+          message: `Le volume total est en baisse de ${Math.abs(volumeTrend).toFixed(0)}% vs même période mois dernier`,
           timestamp: new Date().toISOString(),
         });
       }
