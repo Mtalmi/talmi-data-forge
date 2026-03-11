@@ -800,7 +800,7 @@ export default function Dashboard() {
           <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
             </span>
             <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">
               LIVE PRODUCTION DU JOUR
