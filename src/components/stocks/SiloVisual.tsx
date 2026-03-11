@@ -11,6 +11,7 @@ interface SiloVisualProps {
   daysRemaining?: number;
   hoursRemaining?: number;
   avgDailyUsage?: number;
+  sparklineData?: number[];
   className?: string;
 }
 
