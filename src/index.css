@@ -2884,6 +2884,24 @@
   }
 }
 
+/* ── Silo Breathing Animation ──────────────────────── */
+@keyframes silo-breathing {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.995); }
+}
+
+/* ── Silo Drain Sweep Animation ──────────────────────── */
+@keyframes silo-drain-sweep {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
+}
+
+/* ── Silo Pulse Border Animation ──────────────────────── */
+@keyframes silo-pulse-border {
+  0%, 100% { box-shadow: 0 0 8px var(--silo-pulse-color, transparent); }
+  50% { box-shadow: 0 0 20px var(--silo-pulse-color, transparent); }
+}
+
 /* ── Tab content fade ────────────────────────────────────── */
 @keyframes tab-fade-in {
   from {

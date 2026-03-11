@@ -74,12 +74,14 @@ export function SiloVisual({
       {/* Silo Container */}
       <div
         className="relative w-24 h-48 flex flex-col"
-        style={glowConfig ? {
+        style={{
           borderRadius: 12,
-          boxShadow: `0 0 6px ${glowConfig.border}`,
-          border: `1px solid ${glowConfig.border}`,
+          boxShadow: glowConfig ? `0 0 ${daysRemaining !== undefined && daysRemaining < 3 ? '12px' : '6px'} ${glowConfig.border}` : undefined,
+          border: glowConfig ? `1px solid ${glowConfig.border}` : undefined,
           transition: 'box-shadow 0.3s ease',
-        } : undefined}
+          animation: daysRemaining !== undefined && daysRemaining < 3 ? 'silo-pulse-border 0.8s ease-in-out infinite' : undefined,
+          ['--silo-pulse-color' as string]: daysRemaining !== undefined && daysRemaining < 3 ? 'rgba(239,68,68,0.6)' : undefined,
+        }}
       >
         {/* Top cap */}
         <div className={cn(
