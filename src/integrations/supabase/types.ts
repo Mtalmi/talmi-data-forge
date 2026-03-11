@@ -4472,6 +4472,7 @@ export type Database = {
           affaissement_cible_mm: number | null
           affaissement_tolerance_mm: number | null
           ciment_kg_m3: number
+          classe: string | null
           created_at: string
           cut_dh_m3: number | null
           designation: string
@@ -4485,6 +4486,7 @@ export type Database = {
           resistance_cible_28j_mpa: number | null
           sable_kg_m3: number | null
           sable_m3: number | null
+          slump_cible: number | null
           updated_at: string
         }
         Insert: {
@@ -4492,6 +4494,7 @@ export type Database = {
           affaissement_cible_mm?: number | null
           affaissement_tolerance_mm?: number | null
           ciment_kg_m3: number
+          classe?: string | null
           created_at?: string
           cut_dh_m3?: number | null
           designation: string
@@ -4505,6 +4508,7 @@ export type Database = {
           resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
+          slump_cible?: number | null
           updated_at?: string
         }
         Update: {
@@ -4512,6 +4516,7 @@ export type Database = {
           affaissement_cible_mm?: number | null
           affaissement_tolerance_mm?: number | null
           ciment_kg_m3?: number
+          classe?: string | null
           created_at?: string
           cut_dh_m3?: number | null
           designation?: string
@@ -4525,6 +4530,7 @@ export type Database = {
           resistance_cible_28j_mpa?: number | null
           sable_kg_m3?: number | null
           sable_m3?: number | null
+          slump_cible?: number | null
           updated_at?: string
         }
         Relationships: []
