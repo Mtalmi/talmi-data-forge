@@ -920,8 +920,8 @@ export default function Dashboard() {
                 {/* Area fill — past section */}
                 <path d={pastAreaPath} fill="url(#sparkGlow)" className="area-fill" />
 
-                {/* Core gold line — past (thin, precise, no glow) */}
-                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+                {/* Core gold line — past (thin, precise, with glow) */}
+                <path d={pastLinePath} fill="none" stroke="url(#lineGrad)" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" filter="url(#goldLineGlow)" />
 
                 {/* Forecast line (dashed, faded) */}
                 <path d={forecastLinePath} fill="none" stroke="rgba(201,168,76,0.20)" strokeWidth="1.5" strokeDasharray="4 6" strokeLinejoin="round" strokeLinecap="round" />
