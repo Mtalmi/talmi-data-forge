@@ -16,7 +16,8 @@ export function PipelineBriefingCard() {
     supabase
       .from('ventes_briefing')
       .select('briefing_text, generated_at')
-      .eq('id', '1')
+      .order('generated_at', { ascending: false })
+      .limit(1)
       .maybeSingle()
       .then(({ data }) => {
         if (data) setBriefing(data as Briefing);
