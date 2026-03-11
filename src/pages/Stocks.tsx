@@ -184,7 +184,7 @@ export default function Stocks() {
   const formatDaysRemaining = (days: number | undefined): string => {
     if (days === undefined) return '—';
     if (days > 365) return '—';
-    return `~${days}j`;
+    return `~${Math.round(days * 10) / 10}j`;
   };
 
   const truncateRef = (ref: string | null | undefined): string => {

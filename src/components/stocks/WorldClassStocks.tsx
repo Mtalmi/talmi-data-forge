@@ -810,7 +810,7 @@ export default function WorldClassStocks() {
                             fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
                             color: isUrgent ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
                           }}>
-                            {Number(days)}j
+                            {Math.round(Number(days) * 10) / 10}j
                           </span>
                         </div>
                       )}
