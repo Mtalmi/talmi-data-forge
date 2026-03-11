@@ -751,7 +751,7 @@ export default function WorldClassStocks({ silosContent }: { silosContent?: Reac
       )}
 
       {/* ── HERO SECTION (VUE D'ENSEMBLE only) ── */}
-      {(() => {
+      {activeTab === 'overview' && (() => {
         const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
         const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
         let tw = 0, ws = 0;
