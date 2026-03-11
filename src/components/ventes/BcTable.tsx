@@ -539,7 +539,7 @@ export function BcTable({
                 <TableCell className="text-center">{renderDeliveryDate(bc)}</TableCell>
                 
                 {/* VOLUME */}
-                <TableCell style={{ width: 80 }} className="text-right">
+                <TableCell className="text-right">
                   <span className="text-xs font-mono">{bc.volume_m3}</span>
                 </TableCell>
                 
