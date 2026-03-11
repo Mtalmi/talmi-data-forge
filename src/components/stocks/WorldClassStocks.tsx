@@ -438,7 +438,7 @@ function StockRow({ stock, index, autonomy, sparkline }: { stock: { name: string
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: autoBadgeConfig.color, flexShrink: 0 }} />
           {autoBadgeConfig.badge}
         </span>
-        {days != null && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textSec, fontWeight: 600 }}>{days}j</span>}
+        {days != null && <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 11, color: T.textSec, fontWeight: 600 }}>{Math.round(days * 10) / 10}j</span>}
       </div>
       {/* Pct badge */}
       <div style={{ flexShrink: 0 }}>
@@ -720,7 +720,7 @@ export default function WorldClassStocks() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <span style={{ fontSize: 10, fontWeight: 700, color: '#D4A843', textTransform: 'uppercase', letterSpacing: '0.15em' }}>AGENT IA</span>
                 <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 1.5 }}>
-                  ⚡ <strong style={{ color: '#fff' }}>{critical.name}</strong> atteindra zéro dans <strong style={{ color: isUrgent ? '#ef4444' : '#f59e0b' }}>{critical.days}j</strong> — commande de <strong style={{ color: '#D4A843' }}>{critical.orderQty.toLocaleString('fr-FR')} {critical.unit}</strong> recommandée avant ce soir.
+                  ⚡ <strong style={{ color: '#fff' }}>{critical.name}</strong> atteindra zéro dans <strong style={{ color: isUrgent ? '#ef4444' : '#f59e0b' }}>{Math.round(critical.days * 10) / 10}j</strong> — commande de <strong style={{ color: '#D4A843' }}>{critical.orderQty.toLocaleString('fr-FR')} {critical.unit}</strong> recommandée avant ce soir.
                 </span>
               </div>
             </div>
@@ -810,7 +810,7 @@ export default function WorldClassStocks() {
                             fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
                             color: isUrgent ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
                           }}>
-                            {Number(days)}j
+                            {Math.round(Number(days) * 10) / 10}j
                           </span>
                         </div>
                       )}
