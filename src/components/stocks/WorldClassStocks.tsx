@@ -641,6 +641,72 @@ export default function WorldClassStocks() {
         }
       />
 
+      {/* ── HERO SECTION ── */}
+      {(() => {
+        const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
+        const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
+        let tw = 0, ws = 0;
+        for (const [mat, w] of Object.entries(weights)) {
+          const auto = AUTONOMY[mat];
+          if (auto?.days != null) { ws += tierScore(auto.days) * w; tw += w; }
+        }
+        const heroScore = tw > 0 ? Math.round(ws / tw) : 0;
+        const heroScoreColor = heroScore >= 80 ? '#D4A843' : heroScore >= 50 ? '#f97316' : '#ef4444';
+
+        const criticalCount = STOCK_ALERTS_DB.filter(a => a.severity === 'critical').length;
+        const suggestedCount = REORDER_RECS.length;
+
+        const allAutonomyDays = Object.values(AUTONOMY).map(a => a?.days).filter((d): d is number => d != null);
+        const minAutonomy = allAutonomyDays.length > 0 ? Math.min(...allAutonomyDays) : 0;
+
+        const severityRank: Record<string, number> = { critical: 3, warning: 2, info: 1 };
+        const topRec = [...REORDER_RECS].sort((a, b) => {
+          const urgRank: Record<string, number> = { CRITIQUE: 3, URGENT: 3, 'MODÉRÉ': 2, OK: 1 };
+          return (urgRank[b.urgency] || 0) - (urgRank[a.urgency] || 0);
+        })[0];
+        const verdictText = topRec
+          ? `${topRec.materiau} — commander ${Number(topRec.recommended_qty).toLocaleString('fr-FR')} ${topRec.unite} (${topRec.urgency})`
+          : 'Tous les stocks sont à niveau optimal';
+
+        const pillStyle: React.CSSProperties = {
+          border: '1px solid rgba(212,168,67,0.3)', padding: '12px 20px', borderRadius: 999,
+          fontSize: 13, color: '#fff', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8, whiteSpace: 'nowrap',
+        };
+        const dot = (color: string): React.CSSProperties => ({
+          width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0,
+        });
+
+        return (
+          <div style={{
+            background: 'rgba(212,168,67,0.04)',
+            borderBottom: '1px solid rgba(212,168,67,0.12)',
+            padding: '32px 40px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <div>
+              <p style={{ color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>
+                ÉTAT GÉNÉRAL DES STOCKS
+              </p>
+              <p style={{
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                fontSize: 96, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: heroScoreColor,
+                WebkitFontSmoothing: 'antialiased' as any,
+              }}>
+                {heroScore}
+              </p>
+              <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 8 }}>
+                ⚡ {verdictText}
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <div style={pillStyle}><span style={dot('#ef4444')} />{criticalCount} matériaux critiques</div>
+              <div style={pillStyle}><span style={dot('#D4A843')} />{suggestedCount} commandes suggérées</div>
+              <div style={pillStyle}><span style={dot('#f97316')} />Autonomie min: {minAutonomy}j</div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ── CONTENT ── */}
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
