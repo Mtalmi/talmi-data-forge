@@ -1062,7 +1062,10 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                         borderRadius: 14, padding: '18px 16px',
                         display: 'flex', flexDirection: 'column', minHeight: 200,
                         position: 'relative',
-                        opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
+                        opacity: 0,
+                        animation: isCritique
+                          ? `fadeSlideIn 500ms ${idx * 80}ms forwards, critiqueGlow 2s ease-in-out ${idx * 80 + 500}ms infinite`
+                          : `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
                         {/* Header with absolute badge */}
                         <div style={{ marginBottom: 12 }}>
