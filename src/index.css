@@ -357,6 +357,12 @@
   100% { left: 100%; }
 }
 
+/* ─── Agent IA Sparkle Pulse ─── */
+@keyframes agentSparkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
 /* ─── Gold Shimmer Border for KPI Cards ─── */
 @keyframes goldBorderSweep {
   0% { background-position: -200% 0; }
