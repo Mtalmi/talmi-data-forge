@@ -47,7 +47,8 @@ export function SiloVisual({
   const displayAutonomy = (() => {
     if (daysRemaining === undefined) return null;
     if (daysRemaining > 365) return '—';
-    return `${daysRemaining}j${hoursRemaining !== undefined ? ` ${hoursRemaining % 24}h` : ''}`;
+    const rounded = Math.round(daysRemaining * 10) / 10;
+    return `${rounded}j${hoursRemaining !== undefined ? ` ${Math.round(hoursRemaining % 24)}h` : ''}`;
   })();
 
   return (
