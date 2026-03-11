@@ -596,7 +596,7 @@ export default function WorldClassDeliveries() {
       />
 
       {/* Content */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
         {/* Live badge + header accent */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

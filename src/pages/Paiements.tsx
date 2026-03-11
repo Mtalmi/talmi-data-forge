@@ -171,15 +171,15 @@ export default function Paiements() {
     <MainLayout>
       <WorldClassPayments />
       {/* 🧠 AI Cash Flow Forecaster */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <CashFlowForecasterCard />
       </div>
       {/* 🧠 AI Cash Flow Forecast (cash_flow_forecasts table) */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <CashFlowAIForecastCard />
       </div>
       {/* 🛡️ AI Payment Risk Scorer */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <PaymentRiskScorerCard />
       </div>
       <div className="space-y-6" style={{ display: 'none' }}>

@@ -178,19 +178,19 @@ export default function Laboratoire() {
       {/* ══ Premium Lab UI ══ */}
       <WorldClassLaboratory />
       {/* 🤖 AI Quality Analysis */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <AIAnalysisSection />
       </div>
       {/* 🧪 AI Formula Optimization */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <FormulaOptimizationCard />
       </div>
       {/* 🛡️ AI Regulatory Compliance */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <RegulatoryComplianceCard />
       </div>
       {/* 🧑‍🔬 Performance Opérateurs IA */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <OperatorPerformanceSection />
       </div>
       {/* Legacy section removed — WorldClassLaboratory is the primary UI */}

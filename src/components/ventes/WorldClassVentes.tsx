@@ -898,7 +898,7 @@ export function WorldClassVentes() {
         background: 'transparent',
         border: 'none',
       }}>
-        <div style={{ maxWidth: 1400, margin: '0 auto', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div style={{ width: '100%', height: 60, display: 'flex', alignItems: 'center', gap: 20 }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #D4A843, #B8860B)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
