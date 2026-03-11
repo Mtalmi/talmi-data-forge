@@ -830,13 +830,13 @@ export default function WorldClassStocks() {
                           )}
                         </div>
                         <button style={{
-                          marginTop: 'auto', padding: '8px 0', borderRadius: 8,
-                          background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)',
-                          color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                          marginTop: 'auto', padding: 10, borderRadius: 8, width: '100%',
+                          background: '#D4A843', border: 'none',
+                          color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
                           transition: 'all 150ms',
                         }}
-                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; }}
+                          onMouseEnter={e => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
                           Créer Commande
                         </button>
