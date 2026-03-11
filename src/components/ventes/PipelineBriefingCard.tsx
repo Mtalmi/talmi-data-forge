@@ -1,31 +1,32 @@
 import { useEffect, useState } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 
 interface Briefing {
-  briefing_text: string;
-  generated_at: string;
+  briefing_text: string | null;
+  generated_at: string | null;
 }
 
 export function PipelineBriefingCard() {
   const [briefing, setBriefing] = useState<Briefing | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     supabase
       .from('ventes_briefing')
       .select('briefing_text, generated_at')
-      .order('generated_at', { ascending: false })
-      .limit(1)
+      .eq('id', 1)
+      .maybeSingle()
       .then(({ data }) => {
-        if (data && data.length > 0) setBriefing(data[0] as Briefing);
-      }, () => {});
+        if (data) setBriefing(data as Briefing);
+        setLoaded(true);
+      }, () => setLoaded(true));
   }, []);
 
-  if (!briefing) return null;
+  if (!loaded) return null;
 
-  const dt = new Date(briefing.generated_at);
-  const formatted = `Généré le ${format(dt, 'dd/MM/yyyy')} à ${format(dt, 'HH:mm')}`;
+  const hasBriefing = briefing && briefing.briefing_text;
 
   return (
     <div style={{
@@ -58,7 +59,7 @@ export function PipelineBriefingCard() {
           <Zap size={14} color="#D4A843" />
         </div>
         <span style={{ color: '#D4A843', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-          Agent IA · Briefing Pipeline
+          Briefing Pipeline
         </span>
         <div style={{ flex: 1 }} />
         <div style={{
@@ -72,15 +73,23 @@ export function PipelineBriefingCard() {
         </div>
       </div>
 
-      {/* Body */}
-      <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14, lineHeight: 1.7, margin: 0, marginBottom: 10 }}>
-        {briefing.briefing_text}
-      </p>
-
-      {/* Timestamp */}
-      <p style={{ color: 'rgba(212,168,67,0.4)', fontSize: 12, margin: 0 }}>
-        {formatted}
-      </p>
+      {hasBriefing ? (
+        <>
+          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 14, lineHeight: 1.7, margin: 0, marginBottom: 10 }}>
+            {briefing.briefing_text}
+          </p>
+          {briefing.generated_at && (
+            <p style={{ color: 'rgba(212,168,67,0.4)', fontSize: 12, margin: 0, textAlign: 'right' }}>
+              {`Généré le ${format(new Date(briefing.generated_at), 'dd/MM')} à ${format(new Date(briefing.generated_at), 'HH:mm')}`}
+            </p>
+          )}
+        </>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 0' }}>
+          <Sparkles size={16} color="rgba(212,168,67,0.4)" />
+          <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>Briefing IA en attente de génération…</span>
+        </div>
+      )}
     </div>
   );
 }
