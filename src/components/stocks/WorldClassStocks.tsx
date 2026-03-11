@@ -1058,12 +1058,14 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                             <CritiqueCountdown daysRemaining={Number(days)} />
                           )}
                         </div>
-                        <button style={{
-                          marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                          background: '#D4A843', border: 'none',
-                          color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
-                          transition: 'all 150ms',
-                        }}
+                        <button
+                          onClick={() => toast.success(`Commande ${item.materiau} — ${Number(item.recommended_qty).toLocaleString('fr-FR')} ${item.unite} ajoutée à la file d'attente.`)}
+                          style={{
+                            marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
+                            background: '#D4A843', border: 'none',
+                            color: '#0F1629', fontWeight: 600, fontSize: 12, cursor: 'pointer',
+                            transition: 'all 150ms',
+                          }}
                           onMouseEnter={e => { e.currentTarget.style.background = '#FFD700'; e.currentTarget.style.transform = 'scale(1.02)'; }}
                           onMouseLeave={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.transform = 'scale(1)'; }}
                         >
