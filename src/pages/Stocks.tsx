@@ -230,7 +230,46 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <WorldClassStocks />
+      <WorldClassStocks silosContent={
+        <>
+          {/* ── SILO DASHBOARD ── */}
+          {loading ? (
+            <div className="p-12 text-center">
+              <Loader2 className="h-8 w-8 mx-auto animate-spin" style={{ color: '#64748B' }} />
+            </div>
+          ) : (
+            <section>
+              <div className="flex items-center gap-2.5 mb-4">
+                <TrendingDown size={16} strokeWidth={1.5} style={{ color: '#FFD700', flexShrink: 0 }} />
+                <span style={{ color: '#FFD700', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.2em', whiteSpace: 'nowrap' }}>
+                  {t.pages.stocks.siloLevels}
+                </span>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, #FFD70033 0%, transparent 80%)' }} />
+              </div>
+              <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 12, padding: 20 }}>
+                <div className="flex flex-nowrap justify-evenly gap-6 overflow-x-auto">
+                  {stocks.map((stock) => (
+                    <SiloVisual
+                      key={stock.materiau}
+                      materiau={stock.materiau}
+                      quantite={stock.quantite_actuelle}
+                      capacite={stock.capacite_max || stock.quantite_actuelle * 2}
+                      seuil={stock.seuil_alerte}
+                      unite={stock.unite}
+                      daysRemaining={getDaysRemaining(stock.materiau)}
+                      hoursRemaining={getHoursRemaining(stock.materiau)}
+                      avgDailyUsage={getAvgDailyUsage(stock.materiau)}
+                      sparklineData={sparklines[stock.materiau]}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+          {/* ── SMART REORDER BANNER (AI) ── */}
+          <SmartReorderBanner />
+        </>
+      } />
       <div className="space-y-6" style={{ width: '100%', padding: '32px 24px' }}>
 
         {/* ── HEADER — transparent, no card wrapper ── */}
@@ -340,37 +379,6 @@ export default function Stocks() {
           </div>
         )}
 
-        {/* ── SILO DASHBOARD ── */}
-        {loading ? (
-          <div className="p-12 text-center">
-            <Loader2 className="h-8 w-8 mx-auto animate-spin" style={{ color: T.textDim }} />
-          </div>
-        ) : (
-          <section>
-            <SectionHeader icon={TrendingDown} label={t.pages.stocks.siloLevels} />
-            <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
-              <div className="flex flex-nowrap justify-evenly gap-6 overflow-x-auto">
-                {stocks.map((stock) => (
-                  <SiloVisual
-                    key={stock.materiau}
-                    materiau={stock.materiau}
-                    quantite={stock.quantite_actuelle}
-                    capacite={stock.capacite_max || stock.quantite_actuelle * 2}
-                    seuil={stock.seuil_alerte}
-                    unite={stock.unite}
-                    daysRemaining={getDaysRemaining(stock.materiau)}
-                    hoursRemaining={getHoursRemaining(stock.materiau)}
-                    avgDailyUsage={getAvgDailyUsage(stock.materiau)}
-                    sparklineData={sparklines[stock.materiau]}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ── SMART REORDER BANNER (AI) ── */}
-        <SmartReorderBanner />
 
 
 

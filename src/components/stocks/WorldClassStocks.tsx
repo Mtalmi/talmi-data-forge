@@ -7,7 +7,7 @@ import {
   Package, AlertTriangle, ArrowUpDown, ShoppingCart,
   Droplets, Bell, ArrowUp, ArrowDown, TrendingUp, Zap,
 } from 'lucide-react';
-import { PageHeader } from '@/components/layout/PageHeader';
+// PageHeader removed — using custom sticky tab bar
 import { supabase } from '@/integrations/supabase/client';
 import { format, subDays, startOfDay } from 'date-fns';
 
@@ -676,13 +676,14 @@ function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
 // ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
-export default function WorldClassStocks() {
-  const [activeTab, setActiveTab] = useState('overview');
+export default function WorldClassStocks({ silosContent }: { silosContent?: React.ReactNode }) {
+  const [activeTab, setActiveTab] = useState('silos');
   const { STOCKS, MOVEMENT_DATA, ALERTS, MOVEMENTS, VALUE_BREAKDOWN, AUTONOMY, SPARKLINES, STOCK_ALERTS_DB, REORDER_RECS, loading } = useStocksLiveData();
   const tabs = [
-    { id: 'overview', label: "Vue d'ensemble" },
-    { id: 'mouvements', label: 'Mouvements' },
-    { id: 'alertes', label: 'Alertes' },
+    { id: 'silos', label: 'SILOS' },
+    { id: 'overview', label: "VUE D'ENSEMBLE" },
+    { id: 'mouvements', label: 'MOUVEMENTS' },
+    { id: 'alertes', label: 'ALERTES' },
   ];
 
   return (
@@ -695,31 +696,62 @@ export default function WorldClassStocks() {
         @keyframes critiqueBorderPulse { 0%,100%{border-color:rgba(239,68,68,0.3);box-shadow:0 0 0 rgba(239,68,68,0)} 50%{border-color:rgba(239,68,68,0.7);box-shadow:0 0 16px rgba(239,68,68,0.12)} }
       `}</style>
 
-      {/* ── SEAMLESS HEADER ── */}
-      <PageHeader
-        icon={Package}
-        title="Stocks"
-        subtitle="Gestion des stocks et inventaire"
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        actions={
-          <button style={{
-            padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
-            fontWeight: 700, fontSize: 12,
-            border: 'none', cursor: 'pointer',
-            transition: 'background 150ms',
-          }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
-          >
-            + Nouveau Mouvement
-          </button>
-        }
-      />
+      {/* ── STICKY TAB BAR ── */}
+      <div style={{
+        position: 'sticky', top: 0, zIndex: 20,
+        background: 'linear-gradient(145deg, #11182E, #162036)',
+        borderBottom: '1px solid rgba(212,168,67,0.12)',
+        padding: '0 24px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', gap: 0 }}>
+          {tabs.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  padding: '14px 20px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                  color: isActive ? '#D4A843' : T.textDim,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: '0.1em',
+                  cursor: 'pointer',
+                  transition: 'all 200ms',
+                  fontFamily: 'DM Sans, sans-serif',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+        <button style={{
+          padding: '7px 16px', borderRadius: 8, background: '#F59E0B', color: '#000000',
+          fontWeight: 700, fontSize: 12,
+          border: 'none', cursor: 'pointer',
+          transition: 'background 150ms',
+        }}
+          onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
+          onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
+        >
+          + Nouveau Mouvement
+        </button>
+      </div>
 
-      {/* ── HERO SECTION ── */}
-      {(() => {
+      {/* ── TAB: SILOS ── */}
+      {activeTab === 'silos' && silosContent && (
+        <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {silosContent}
+        </div>
+      )}
+
+      {/* ── HERO SECTION (VUE D'ENSEMBLE only) ── */}
+      {activeTab === 'overview' && (() => {
         const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
         const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
         let tw = 0, ws = 0;
