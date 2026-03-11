@@ -697,6 +697,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         @keyframes urgentGlow { 0%,100%{box-shadow:0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 20px rgba(239,68,68,0.15)} }
         @keyframes critiqueBorderPulse { 0%,100%{border-color:rgba(239,68,68,0.3);box-shadow:0 0 0 rgba(239,68,68,0)} 50%{border-color:rgba(239,68,68,0.7);box-shadow:0 0 16px rgba(239,68,68,0.12)} }
+        @keyframes gaugeArc { from{stroke-dashoffset:${2 * Math.PI * 85}} to{stroke-dashoffset:var(--gauge-offset)} }
       `}</style>
 
       {/* ── STICKY TAB BAR ── */}
@@ -796,18 +797,41 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
             padding: '32px 40px',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
-            <div>
-              <p style={{ color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>
-                ÉTAT GÉNÉRAL DES STOCKS
-              </p>
-              <p style={{
-                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                fontSize: 96, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: heroScoreColor,
-                WebkitFontSmoothing: 'antialiased' as any,
-              }}>
-                {heroScore}
-              </p>
-              <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {(() => {
+                const size = 180;
+                const strokeW = 10;
+                const r = (size - strokeW) / 2;
+                const circ = 2 * Math.PI * r;
+                const pct = Math.min(heroScore, 100) / 100;
+                const offset = circ * (1 - pct);
+                return (
+                  <div style={{ position: 'relative', width: size, height: size }}>
+                    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
+                      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(15,22,41,0.8)" strokeWidth={strokeW} />
+                      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#D4A843" strokeWidth={strokeW}
+                        strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
+                        style={{
+                          animation: 'gaugeArc 1.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards',
+                          ['--gauge-offset' as any]: offset,
+                        }}
+                      />
+                    </svg>
+                    <div style={{
+                      position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                        fontSize: 60, fontWeight: 200, lineHeight: 1, letterSpacing: '-0.02em', color: '#fff',
+                      }}>
+                        {heroScore}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
+              <p style={{ fontSize: 14, color: '#9CA3AF', marginTop: 10 }}>État Général des Stocks</p>
+              <p style={{ fontSize: 13, color: '#9CA3AF', marginTop: 6 }}>
                 ⚡ {verdictText}
               </p>
             </div>
