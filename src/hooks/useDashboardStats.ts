@@ -133,13 +133,13 @@ export function useDashboardStats() {
       const lastVolume = lastDeliveries?.reduce((sum, b) => sum + (b.volume_m3 || 0), 0) || 0;
       const lastUniqueClients = new Set(lastDeliveries?.map(b => b.client_id) || []).size;
 
-      // Trends
+      // Trends — use NaN to signal "no previous data" (hide alert)
       const deliveriesTrend = lastDeliveriesCount > 0 
         ? ((totalDeliveries - lastDeliveriesCount) / lastDeliveriesCount) * 100 
-        : 0;
+        : NaN;
       const volumeTrend = lastVolume > 0 
         ? ((totalVolume - lastVolume) / lastVolume) * 100 
-        : 0;
+        : NaN;
       const clientsTrend = lastUniqueClients > 0 
         ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
         : 0;
