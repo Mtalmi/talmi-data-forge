@@ -598,6 +598,50 @@ function ValueTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// CRITIQUE COUNTDOWN
+// ─────────────────────────────────────────────────────
+function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
+  const targetMs = useRef(Date.now() + daysRemaining * 86400000);
+  const [remaining, setRemaining] = useState(() => Math.max(0, targetMs.current - Date.now()));
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRemaining(Math.max(0, targetMs.current - Date.now()));
+    }, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  const totalMin = Math.floor(remaining / 60000);
+  const d = Math.floor(totalMin / 1440);
+  const h = Math.floor((totalMin % 1440) / 60);
+  const m = totalMin % 60;
+
+  return (
+    <div style={{ marginTop: 4 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span style={{
+          width: 8, height: 8, borderRadius: '50%', background: '#ef4444',
+          animation: 'critique-blink 1s step-end infinite', flexShrink: 0,
+        }} />
+        <span style={{
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+          fontWeight: 200, fontSize: 24, lineHeight: 1, color: '#ef4444',
+          WebkitFontSmoothing: 'antialiased' as any,
+        }}>
+          Rupture dans {d}j {h}h {m}m
+        </span>
+      </div>
+      <p style={{
+        fontSize: 11, color: '#f87171', textTransform: 'uppercase',
+        letterSpacing: '0.1em', marginTop: 4,
+      }}>
+        Commande urgente requise
+      </p>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────
 // MAIN
 // ─────────────────────────────────────────────────────
 export default function WorldClassStocks() {
