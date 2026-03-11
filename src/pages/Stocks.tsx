@@ -375,7 +375,6 @@ export default function Stocks() {
 
 
       </div>
-      <WorldClassStocks />
     </MainLayout>
   );
 }
