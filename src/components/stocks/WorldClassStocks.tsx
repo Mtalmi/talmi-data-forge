@@ -7,7 +7,7 @@ import {
   Package, AlertTriangle, ArrowUpDown, ShoppingCart,
   Droplets, Bell, ArrowUp, ArrowDown, TrendingUp, Zap,
 } from 'lucide-react';
-import { PageHeader } from '@/components/layout/PageHeader';
+// PageHeader removed — using custom sticky tab bar
 import { supabase } from '@/integrations/supabase/client';
 import { format, subDays, startOfDay } from 'date-fns';
 
