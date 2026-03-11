@@ -348,7 +348,7 @@ export default function Stocks() {
           <section>
             <SectionHeader icon={TrendingDown} label={t.pages.stocks.siloLevels} />
             <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: 20 }}>
-              <div className="flex flex-nowrap justify-evenly gap-6 overflow-x-auto">
+              <div className="flex flex-nowrap justify-center gap-6 overflow-x-auto">
                 {stocks.map((stock) => (
                   <SiloVisual
                     key={stock.materiau}
