@@ -230,6 +230,7 @@ export default function Stocks() {
 
   return (
     <MainLayout>
+      <WorldClassStocks />
       <div className="space-y-6" style={{ width: '100%', padding: '32px 24px' }}>
 
         {/* ── HEADER — transparent, no card wrapper ── */}
