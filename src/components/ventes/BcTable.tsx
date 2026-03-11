@@ -431,10 +431,22 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table style={{ width: '100%', minWidth: '900px' }}>
+      <Table className="w-full table-fixed" style={{ minWidth: '900px' }}>
+        <colgroup>
+          <col style={{ width: '3%' }} />
+          <col style={{ width: '12%' }} />
+          <col style={{ width: '22%' }} />
+          <col style={{ width: '8%' }} />
+          <col style={{ width: '11%' }} />
+          <col style={{ width: '7%' }} />
+          <col style={{ width: '11%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '6%' }} />
+        </colgroup>
         <TableHeader>
           <TableRow>
-            <TableHead style={{ width: 40 }}>
+            <TableHead>
               <Checkbox 
                 checked={allSelected}
                 onCheckedChange={handleSelectAll}
@@ -442,15 +454,15 @@ export function BcTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead style={{ width: 130 }}>{bt.bcNumber}</TableHead>
-            <TableHead style={{ width: 140 }}>{bt.client}</TableHead>
-            <TableHead style={{ width: 70 }} className="text-center">{bt.formula}</TableHead>
-            <TableHead style={{ width: 100 }} className="text-center">{bt.deliveryDate}</TableHead>
-            <TableHead style={{ width: 80 }} className="text-right">{bt.volume}</TableHead>
-            <TableHead style={{ width: 100 }} className="text-right">{bt.totalHt}</TableHead>
-            <TableHead style={{ width: 110 }} className="text-center">{bt.status}</TableHead>
-            <TableHead style={{ width: 120 }} className="text-center">Suivi</TableHead>
-            <TableHead style={{ width: 44 }} className="text-center"></TableHead>
+            <TableHead>{bt.bcNumber}</TableHead>
+            <TableHead>{bt.client}</TableHead>
+            <TableHead className="text-center">{bt.formula}</TableHead>
+            <TableHead className="text-center">{bt.deliveryDate}</TableHead>
+            <TableHead className="text-right">{bt.volume}</TableHead>
+            <TableHead className="text-right">{bt.totalHt}</TableHead>
+            <TableHead className="text-center">{bt.status}</TableHead>
+            <TableHead className="text-center">Suivi</TableHead>
+            <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
