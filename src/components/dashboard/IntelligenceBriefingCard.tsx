@@ -51,9 +51,11 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
   if (!briefing) {
     return (
       <div style={{
-        background: 'linear-gradient(145deg, rgba(17,27,46,0.8) 0%, rgba(22,32,54,0.9) 100%)',
-        backdropFilter: 'blur(12px)',
+        background: 'rgba(255,255,255,0.05)',
+        backdropFilter: 'blur(4px)',
         border: '1px solid rgba(212,168,67,0.1)',
+        borderLeft: `3px solid ${accentColor}`,
+        boxShadow: `0 0 12px ${isMorning ? 'rgba(212,168,67,0.2)' : 'rgba(139,159,204,0.2)'}`,
         borderRadius: 10, padding: '14px 16px',
         flex: 1, minWidth: 0,
       }}>
@@ -73,10 +75,11 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
 
   return (
     <div style={{
-      background: 'linear-gradient(145deg, rgba(17,27,46,0.8) 0%, rgba(22,32,54,0.9) 100%)',
-      backdropFilter: 'blur(12px)',
+      background: 'rgba(255,255,255,0.05)',
+      backdropFilter: 'blur(4px)',
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
       borderLeft: `3px solid ${accentColor}`,
+      boxShadow: `0 0 12px ${isMorning ? 'rgba(212,168,67,0.2)' : 'rgba(139,159,204,0.2)'}`,
       borderRadius: 10, padding: '14px 16px',
       flex: 1, minWidth: 0,
     }}>
