@@ -1083,7 +1083,7 @@ export default function WorldClassStocks() {
 
         {/* ── SECTION 5: RECENT MOVEMENTS ── */}
         <section>
-          <SectionHeader icon={ArrowUpDown} label="Derniers Mouvements" />
+          <SectionHeader icon={ArrowUpDown} label="Derniers Mouvements" right={<LastUpdateTimer />} />
           <Card>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {/* Header row */}
@@ -1092,7 +1092,7 @@ export default function WorldClassStocks() {
                   <span key={h} style={{ color: T.textDim, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>{h}</span>
                 ))}
               </div>
-              {MOVEMENTS.map((m, i) => <MovementRow key={i} m={m} delay={i * 60} />)}
+              {MOVEMENTS.map((m, i) => <MovementRow key={i} m={m} delay={i * 60} isFirst={i === 0} />)}
             </div>
           </Card>
         </section>
