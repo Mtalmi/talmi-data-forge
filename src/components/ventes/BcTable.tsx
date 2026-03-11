@@ -520,7 +520,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* CLIENT - truncate */}
-                <TableCell style={{ width: 140 }}>
+                <TableCell>
                   {bc.client ? (
                     <div className="truncate text-sm">
                       <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />
