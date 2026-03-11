@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
   ReferenceLine, Tooltip as RechartsTooltip,
 } from 'recharts';
+import { supabase } from '@/integrations/supabase/client';
+import { addDays, format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const T = {
   gold: '#FFD700', goldDim: 'rgba(255,215,0,0.15)',
@@ -47,11 +50,49 @@ const insights = [
   { color: T.info, text: '📊 Tendance Client: 3 nouveaux projets identifiés (permis déposés Q1 2026) dans un rayon de 20km. Potentiel additionnel: +180 m³/mois à partir d\'Avril.' },
 ];
 
-const kpis = [
-  { label: 'Prévision 30j', value: '1,240 m³' },
-  { label: 'Capacité Disponible', value: '89%', valueColor: T.success },
-  { label: 'Alerte Stock', value: 'Ciment avant 10 Mars', valueColor: T.warning },
-];
+function useStockAlertKpi() {
+  const [label, setLabel] = useState('Chargement...');
+  const [color, setColor] = useState(T.textDim);
+
+  useEffect(() => {
+    async function fetch() {
+      try {
+        const { data } = await supabase
+          .from('stock_autonomy_cache')
+          .select('materiau, days_remaining')
+          .order('days_remaining', { ascending: true });
+
+        if (!data || data.length === 0) {
+          setLabel('Aucune rupture prévue');
+          setColor(T.success);
+          return;
+        }
+
+        // Find the material with the lowest days_remaining that is within 30 days
+        const critical = data.find(d => d.days_remaining != null && d.days_remaining <= 30);
+
+        if (!critical) {
+          setLabel('Aucune rupture prévue');
+          setColor(T.success);
+          return;
+        }
+
+        const stockoutDate = addDays(new Date(), Math.floor(critical.days_remaining));
+        const formatted = format(stockoutDate, 'd MMM', { locale: fr });
+        const matName = critical.materiau.charAt(0).toUpperCase() + critical.materiau.slice(1);
+
+        setLabel(`${matName} avant ${formatted}`);
+        setColor(critical.days_remaining <= 5 ? T.danger : T.warning);
+      } catch {
+        setLabel('Aucune rupture prévue');
+        setColor(T.success);
+      }
+    }
+    fetch();
+  }, []);
+
+  return { label, color };
+}
 
 const headers = ['Période', 'Volume Prévu', 'vs 2025', 'Confiance', 'Facteur Principal'];
 
