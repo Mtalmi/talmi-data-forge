@@ -903,6 +903,9 @@ export default function Dashboard() {
                     <stop offset="50%" stopColor="#D4B060" />
                     <stop offset="100%" stopColor="#C9A84C" />
                   </linearGradient>
+                  <filter id="goldLineGlow">
+                    <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="rgba(212,168,67,0.4)" />
+                  </filter>
                 </defs>
 
                 {/* Reference lines — monochromatic whispers */}
