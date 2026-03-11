@@ -1228,8 +1228,14 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                   tickFormatter={(v) => `${v}K`} />
                 <YAxis dataKey="cat" type="category" axisLine={false} tickLine={false} tick={{ fill: T.textSec, fontSize: 12, fontFamily: 'JetBrains Mono, monospace' }} width={70} />
                 <RechartsTooltip content={<ValueTooltip />} cursor={{ fill: T.amberSubtle }} />
-                <Bar dataKey="value" name="Valeur" radius={[0, 4, 4, 0]} isAnimationActive animationDuration={1000}>
-                  {VALUE_BREAKDOWN.map((entry, index) => (
+                <Bar dataKey="value" name="Valeur" radius={[0, 4, 4, 0]} isAnimationActive animationDuration={1000} minPointSize={40}
+                  label={({ x, y, width, height, value }: any) => (
+                    <text x={x + width + 6} y={y + height / 2} dominantBaseline="central" fill="#fff" fontSize={11} fontFamily="JetBrains Mono, monospace">
+                      {Number(value).toLocaleString('fr-FR')} DH
+                    </text>
+                  )}
+                >
+                  {[...VALUE_BREAKDOWN].sort((a, b) => b.value - a.value).map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Bar>
