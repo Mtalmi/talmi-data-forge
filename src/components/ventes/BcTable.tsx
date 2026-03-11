@@ -586,7 +586,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* SUIVI (merged Invoice + Progress) */}
-                <TableCell style={{ width: 120 }} className="text-center">
+                <TableCell className="text-center">
                   {renderSuivi(bc)}
                 </TableCell>
                 
