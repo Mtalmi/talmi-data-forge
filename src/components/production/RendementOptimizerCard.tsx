@@ -138,7 +138,7 @@ function EmptyMetric() {
         fontSize: 30, fontWeight: 200, color: 'rgba(255,255,255,0.20)',
         WebkitFontSmoothing: 'antialiased', letterSpacing: '-0.02em', lineHeight: 1,
       }}>—</p>
-      <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, marginTop: 6 }}>Données insuffisantes</p>
+      <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, marginTop: 6 }}>En attente des données batch — disponible dès la première production enregistrée.</p>
     </div>
   );
 }

@@ -210,7 +210,7 @@ export function QualitePredictorCard() {
         ) : (
           <div style={{ padding: '24px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
             <Sparkles size={16} color="rgba(212,168,67,0.4)" />
-            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>Aucun batch enregistré aujourd'hui — analyse qualité en attente…</span>
+            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>En attente des données batch — disponible dès la première production enregistrée.</span>
           </div>
         )}
       </div>
