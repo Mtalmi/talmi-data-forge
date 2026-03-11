@@ -1031,7 +1031,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderLeft: `3px solid ${leftBorderColor}`,
                         borderRadius: 14, padding: '18px 16px',
-                        display: 'flex', flexDirection: 'column', height: '100%',
+                        display: 'flex', flexDirection: 'column', minHeight: 200,
                         position: 'relative',
                         opacity: 0, animation: `fadeSlideIn 500ms ${idx * 80}ms forwards`,
                       }}>
