@@ -397,17 +397,17 @@ export default function Dashboard() {
                     {/* Concentric ring */}
                     <span className="absolute rounded-full" style={{
                       width: 14, height: 14,
-                      border: '1px solid rgba(30,144,255,0.25)',
+                      border: '1px solid rgba(34,197,94,0.25)',
                       animation: 'tbos-ring-expand 2s ease-out infinite',
                     }} />
                     {/* Ping */}
                     <span className="absolute inline-flex rounded-full" style={{
                       width: 7, height: 7,
-                      backgroundColor: 'rgba(30,144,255,0.4)',
+                      backgroundColor: 'rgba(34,197,94,0.4)',
                       animation: 'ping 1.5s cubic-bezier(0,0,0.2,1) infinite',
                     }} />
                     {/* Core dot */}
-                    <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#1E90FF', boxShadow: '0 0 6px rgba(30,144,255,0.5)' }} />
+                    <span className="relative inline-flex rounded-full" style={{ width: 5, height: 5, backgroundColor: '#22c55e', animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
                   </span>
                 </span>
               </div>
@@ -478,7 +478,7 @@ export default function Dashboard() {
                   <div className="flex flex-wrap items-center gap-3 mt-4" style={{ paddingLeft: 5 }}>
                     <span className="relative flex h-2.5 w-2.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ boxShadow: '0 0 10px rgba(52,211,153,0.5)' }} />
+                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
                     </span>
                     <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-400/80">Operational</span>
                     <span className="w-px h-3.5 bg-slate-600/50" />
@@ -800,7 +800,7 @@ export default function Dashboard() {
           <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
             <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
             </span>
             <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em]">
               LIVE PRODUCTION DU JOUR
