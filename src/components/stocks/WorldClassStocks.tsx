@@ -786,15 +786,16 @@ export default function WorldClassStocks() {
           const topAlert = [...STOCK_ALERTS_DB].sort((a, b) => (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0))[0] || null;
           const alertColor = topAlert?.severity === 'critical' ? '#ef4444' : topAlert?.severity === 'warning' ? '#f59e0b' : '#22c55e';
 
-          const dividerStyle: React.CSSProperties = { width: 1, background: 'rgba(212,168,67,0.15)', alignSelf: 'stretch' };
+          const dividerStyle: React.CSSProperties = { width: 1, background: 'rgba(212,168,67,0.12)', alignSelf: 'stretch' };
 
           return (
             <div style={{
               background: 'rgba(212,168,67,0.06)',
-              border: '1px solid rgba(212,168,67,0.2)',
-              borderLeft: '3px solid #D4A843',
+              border: '1px solid rgba(212,168,67,0.15)',
+              borderLeft: '4px solid #D4A843',
               borderRadius: 12,
-              padding: '24px 32px',
+              padding: '28px 32px',
+              marginBottom: 24,
               display: 'grid',
               gridTemplateColumns: '1fr auto 1fr auto 1fr',
               gap: 0,
@@ -803,10 +804,10 @@ export default function WorldClassStocks() {
               <div style={{ paddingRight: 24 }}>
                 <p style={{ color: '#D4A843', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 12 }}>INTELLIGENCE IA</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {REORDER_RECS.slice(0, 3).map((rec, i) => (
+                  {REORDER_RECS.slice(0, 3).map((rec) => (
                     <div key={rec.id} style={{ fontSize: 13, lineHeight: 1.5, color: 'rgba(255,255,255,0.55)' }}>
                       <span style={{ color: '#D4A843' }}>⚡</span>{' '}
-                      <strong style={{ color: '#fff' }}>{rec.materiau}</strong>{' '}
+                      <span style={{ color: '#fff', fontWeight: 600 }}>{rec.materiau}</span>{' '}
                       — commander {Number(rec.recommended_qty).toLocaleString('fr-FR')} {rec.unite} ({rec.urgency})
                     </div>
                   ))}
@@ -820,15 +821,15 @@ export default function WorldClassStocks() {
 
               {/* CENTER — Santé Stock */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 24px' }}>
-                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 8 }}>SANTÉ STOCK</p>
+                <p style={{ color: '#9CA3AF', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: 4 }}>SANTÉ STOCK</p>
                 <p style={{
                   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
-                  fontSize: 60, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
+                  fontSize: 72, fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1, color: scoreColor,
                   WebkitFontSmoothing: 'antialiased' as any,
                 }}>
                   {score}
                 </p>
-                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>Score calculé par IA</span>
+                <span style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>Score IA temps réel</span>
               </div>
 
               <div style={dividerStyle} />
@@ -854,10 +855,10 @@ export default function WorldClassStocks() {
                       marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
                       background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
                       color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-                      transition: 'all 150ms',
+                      transition: 'all 200ms',
                     }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.12)'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.color = '#0F1629'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
                     >
                       → Agir maintenant
                     </button>
