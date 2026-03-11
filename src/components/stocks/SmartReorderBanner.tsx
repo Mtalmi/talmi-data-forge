@@ -57,7 +57,7 @@ export function SmartReorderBanner() {
             </p>
             <p style={{ fontSize: 11, color: '#94A3B8' }}>
               {rec.days_remaining !== null && (
-                <>Stock estimé à <strong style={{ color: '#EF4444' }}>{Number(rec.days_remaining)}j</strong>. </>
+                <>Stock estimé à <strong style={{ color: '#EF4444' }}>{Math.round(Number(rec.days_remaining) * 10) / 10}j</strong>. </>
               )}
               Commande suggérée: <strong style={{ color: '#FFD700' }}>{Number(rec.recommended_qty).toLocaleString()} {rec.unite}</strong>
               {rec.fournisseur && <> — {rec.fournisseur}</>}
