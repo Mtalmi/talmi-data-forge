@@ -78,8 +78,7 @@ export function PageHeader({
     >
       <div
         style={{
-          maxWidth: 1400,
-          margin: '0 auto',
+          width: '100%',
           minHeight: 60,
           display: 'flex',
           alignItems: 'center',

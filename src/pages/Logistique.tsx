@@ -214,7 +214,7 @@ export default function Logistique() {
   return (
     <MainLayout>
       <WorldClassDeliveries />
-      <div className="space-y-4 sm:space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
+      <div className="space-y-4 sm:space-y-6" style={{ width: '100%', padding: '32px 24px' }}>
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">

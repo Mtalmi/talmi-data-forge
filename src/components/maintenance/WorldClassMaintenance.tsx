@@ -980,7 +980,7 @@ export default function WorldClassMaintenance() {
       />
 
       {/* ── CONTENT ── */}
-      <div style={{ padding: '28px 24px', maxWidth: 1400, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
+      <div style={{ padding: '28px 24px', width: '100%', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
         {/* ── SECTION 1: KPIs ── */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>

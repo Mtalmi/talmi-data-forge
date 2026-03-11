@@ -611,7 +611,7 @@ export default function Bons() {
           "space-y-6",
           (isMobile || isTablet) && "overflow-y-auto"
         )}
-        style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}
+        style={{ width: '100%', padding: '32px 24px' }}
       >
         {/* Pull to Refresh Indicator - Mobile/Tablet only */}
         {(isMobile || isTablet) && (

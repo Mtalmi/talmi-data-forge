@@ -366,7 +366,7 @@ export default function Creances() {
 
   return (
     <MainLayout>
-      <div className="space-y-6" style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 24px' }}>
+      <div className="space-y-6" style={{ width: '100%', padding: '32px 24px' }}>
         {/* TBOS Header Bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

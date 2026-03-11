@@ -190,7 +190,7 @@ export default function Laboratoire() {
         <RegulatoryComplianceCard />
       </div>
       {/* 🧑‍🔬 Performance Opérateurs IA */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <OperatorPerformanceSection />
       </div>
       {/* Legacy section removed — WorldClassLaboratory is the primary UI */}
