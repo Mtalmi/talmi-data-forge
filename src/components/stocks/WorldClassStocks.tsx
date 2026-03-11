@@ -737,6 +737,7 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
           border: 'none', cursor: 'pointer',
           transition: 'background 150ms',
         }}
+          onClick={() => onNewMovement ? onNewMovement() : toast.info('Utilisez les boutons d\'action dans l\'en-tête pour créer un mouvement.')}
           onMouseEnter={e => (e.currentTarget.style.background = '#D97706')}
           onMouseLeave={e => (e.currentTarget.style.background = '#F59E0B')}
         >
