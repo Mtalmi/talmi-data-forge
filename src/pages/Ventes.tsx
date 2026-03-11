@@ -845,6 +845,9 @@ export default function Ventes() {
           {/* ══ Pipeline Analysis AI ══ */}
           <PipelineAnalysisCard />
 
+          {/* ══ Conversion Predictor AI ══ */}
+          <ConversionPredictorCard />
+
         </div>
 
         {/* Convert to BC Dialog */}
