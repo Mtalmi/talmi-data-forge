@@ -618,6 +618,18 @@ function ValueTooltip({ active, payload, label }: any) {
 }
 
 // ─────────────────────────────────────────────────────
+// LAST UPDATE TIMER
+// ─────────────────────────────────────────────────────
+function LastUpdateTimer() {
+  const [mounted] = useState(() => Date.now());
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 60000); return () => clearInterval(id); }, []);
+  const mins = Math.floor((now - mounted) / 60000);
+  const label = mins < 1 ? "à l'instant" : `il y a ${mins}m`;
+  return <span style={{ fontSize: 11, color: T.textDim, fontFamily: 'JetBrains Mono, monospace' }}>dernière mise à jour: {label}</span>;
+}
+
+// ─────────────────────────────────────────────────────
 // CRITIQUE COUNTDOWN
 // ─────────────────────────────────────────────────────
 function CritiqueCountdown({ daysRemaining }: { daysRemaining: number }) {
