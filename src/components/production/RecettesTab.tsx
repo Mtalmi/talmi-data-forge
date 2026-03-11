@@ -49,16 +49,15 @@ function mapDbToFormula(row: any, index: number): Formula {
   const gravette = row.gravier_kg_m3 ?? row.gravette_m3 ?? 0;
   const ratioEC = ciment > 0 ? (eau / ciment).toFixed(3) : '—';
   const resistance = row.resistance ? `${row.resistance} MPa` : (row.resistance_cible_28j_mpa ? `${row.resistance_cible_28j_mpa} MPa` : '—');
-  const slump = row.affaissement_cible_mm ? `${row.affaissement_cible_mm} mm` : '—';
   const prixRevient = row.cut_dh_m3 ?? 0;
 
   return {
     code: row.formule_id,
     name: row.designation,
     resistance,
-    classe: '—',
+    classe: row.classe ?? '—',
     ratioEC,
-    slump,
+    slump: row.slump_cible ? `${row.slump_cible / 10} cm` : (row.affaissement_cible_mm ? `${row.affaissement_cible_mm / 10} cm` : '—'),
     ciment,
     sable,
     gravette,
