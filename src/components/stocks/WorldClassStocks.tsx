@@ -883,16 +883,19 @@ export default function WorldClassStocks() {
                             <span style={{ color: T.textDim }}>Fournisseur</span>
                             <span style={{ color: T.textSec, fontWeight: 500 }}>{item.fournisseur || 'À définir'}</span>
                           </div>
-                          {days !== null && (
+                          {days !== null && !isCritique && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                               <span style={{ color: T.textDim }}>Autonomie</span>
                               <span style={{
                                 fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
-                                color: isCritique ? '#ef4444' : Number(days) <= 5 ? '#f59e0b' : '#22c55e',
+                                color: Number(days) <= 5 ? '#f59e0b' : '#22c55e',
                               }}>
                                 {Math.round(Number(days) * 10) / 10}j
                               </span>
                             </div>
+                          )}
+                          {isCritique && days !== null && (
+                            <CritiqueCountdown daysRemaining={Number(days)} />
                           )}
                         </div>
                         <button style={{
