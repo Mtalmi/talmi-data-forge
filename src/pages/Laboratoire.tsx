@@ -182,7 +182,7 @@ export default function Laboratoire() {
         <AIAnalysisSection />
       </div>
       {/* 🧪 AI Formula Optimization */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <FormulaOptimizationCard />
       </div>
       {/* 🛡️ AI Regulatory Compliance */}
