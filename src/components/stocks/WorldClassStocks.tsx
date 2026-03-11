@@ -653,19 +653,20 @@ export default function WorldClassStocks() {
             <KPICard label="Mouvements Aujourd'hui"   value={12}   suffix=""     color={T.amber}   icon={ArrowUpDown}  trend="+4 vs hier"          trendPositive delay={160} />
             {/* SANTÉ STOCK IA */}
             {(() => {
-              // 40% — avg days_remaining (capped at 30 days = 100%)
-              const autoVals = Object.values(AUTONOMY).filter(a => a.days != null).map(a => a.days!);
-              const avgDays = autoVals.length > 0 ? autoVals.reduce((s, d) => s + d, 0) / autoVals.length : 0;
-              const dayScore = Math.min(100, Math.round((avgDays / 30) * 100));
+              const weights: Record<string, number> = { ciment: 0.30, gravette: 0.25, sable: 0.20, eau: 0.15, adjuvant: 0.10 };
+              const tierScore = (d: number) => d >= 7 ? 100 : d >= 5 ? 75 : d >= 3 ? 50 : d >= 1 ? 25 : 0;
 
-              // 40% — % of materials above alert threshold
-              const aboveThreshold = STOCKS.length > 0 ? Math.round((STOCKS.filter(s => s.pct > 20).length / STOCKS.length) * 100) : 0;
-
-              // 20% — reorder completion (inverse of alert ratio)
-              const reorderRate = STOCKS.length > 0 ? Math.round(((STOCKS.length - ALERTS.length) / STOCKS.length) * 100) : 100;
-
-              const score = Math.round(dayScore * 0.4 + aboveThreshold * 0.4 + reorderRate * 0.2);
-              const scoreColor = score >= 80 ? '#22c55e' : score >= 50 ? '#f59e0b' : '#ef4444';
+              let totalWeight = 0;
+              let weightedSum = 0;
+              for (const [mat, w] of Object.entries(weights)) {
+                const auto = AUTONOMY[mat];
+                if (auto?.days != null) {
+                  weightedSum += tierScore(auto.days) * w;
+                  totalWeight += w;
+                }
+              }
+              const score = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0;
+              const scoreColor = score >= 80 ? '#D4A843' : score >= 50 ? '#f59e0b' : '#ef4444';
 
               return (
                 <div style={{
