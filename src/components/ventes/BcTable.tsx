@@ -500,7 +500,7 @@ export function BcTable({
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
                 onClick={() => onOpenDetail(bc)}
               >
-                <TableCell onClick={(e) => e.stopPropagation()} style={{ width: 40 }}>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <Checkbox 
                     checked={isSelected}
                     onCheckedChange={(checked) => handleSelectOne(bc.id, !!checked)}
