@@ -431,10 +431,22 @@ export function BcTable({
 
   return (
     <div className="w-full overflow-x-auto">
-      <Table style={{ width: '100%', minWidth: '900px' }}>
+      <Table className="w-full table-fixed" style={{ minWidth: '900px' }}>
+        <colgroup>
+          <col style={{ width: '3%' }} />
+          <col style={{ width: '12%' }} />
+          <col style={{ width: '22%' }} />
+          <col style={{ width: '8%' }} />
+          <col style={{ width: '11%' }} />
+          <col style={{ width: '7%' }} />
+          <col style={{ width: '11%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '6%' }} />
+        </colgroup>
         <TableHeader>
           <TableRow>
-            <TableHead style={{ width: 40 }}>
+            <TableHead>
               <Checkbox 
                 checked={allSelected}
                 onCheckedChange={handleSelectAll}
@@ -442,15 +454,15 @@ export function BcTable({
                 className={cn(someSelected && "data-[state=checked]:bg-primary/50")}
               />
             </TableHead>
-            <TableHead style={{ width: 130 }}>{bt.bcNumber}</TableHead>
-            <TableHead style={{ width: 140 }}>{bt.client}</TableHead>
-            <TableHead style={{ width: 70 }} className="text-center">{bt.formula}</TableHead>
-            <TableHead style={{ width: 100 }} className="text-center">{bt.deliveryDate}</TableHead>
-            <TableHead style={{ width: 80 }} className="text-right">{bt.volume}</TableHead>
-            <TableHead style={{ width: 100 }} className="text-right">{bt.totalHt}</TableHead>
-            <TableHead style={{ width: 110 }} className="text-center">{bt.status}</TableHead>
-            <TableHead style={{ width: 120 }} className="text-center">Suivi</TableHead>
-            <TableHead style={{ width: 44 }} className="text-center"></TableHead>
+            <TableHead>{bt.bcNumber}</TableHead>
+            <TableHead>{bt.client}</TableHead>
+            <TableHead className="text-center">{bt.formula}</TableHead>
+            <TableHead className="text-center">{bt.deliveryDate}</TableHead>
+            <TableHead className="text-right">{bt.volume}</TableHead>
+            <TableHead className="text-right">{bt.totalHt}</TableHead>
+            <TableHead className="text-center">{bt.status}</TableHead>
+            <TableHead className="text-center">Suivi</TableHead>
+            <TableHead className="text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -488,7 +500,7 @@ export function BcTable({
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = ''; }}
                 onClick={() => onOpenDetail(bc)}
               >
-                <TableCell onClick={(e) => e.stopPropagation()} style={{ width: 40 }}>
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <Checkbox 
                     checked={isSelected}
                     onCheckedChange={(checked) => handleSelectOne(bc.id, !!checked)}
@@ -497,7 +509,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* PO NO with priority dot */}
-                <TableCell style={{ width: 130 }}>
+                <TableCell>
                   <div className="flex items-center gap-1.5">
                     {renderPriorityDot(bc)}
                     <span className="font-mono text-xs font-medium whitespace-nowrap">{bc.bc_id}</span>
@@ -508,7 +520,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* CLIENT - truncate */}
-                <TableCell style={{ width: 140 }}>
+                <TableCell>
                   {bc.client ? (
                     <div className="truncate text-sm">
                       <ClientHoverPreview clientId={bc.client_id} clientName={bc.client.nom_client} />
@@ -519,27 +531,27 @@ export function BcTable({
                 </TableCell>
                 
                 {/* FORMULA */}
-                <TableCell style={{ width: 70 }} className="text-center">
+                <TableCell className="text-center">
                   <span className="text-xs font-mono">{bc.formule_id}</span>
                 </TableCell>
                 
                 {/* DELIVERY DATE */}
-                <TableCell style={{ width: 100 }} className="text-center">{renderDeliveryDate(bc)}</TableCell>
+                <TableCell className="text-center">{renderDeliveryDate(bc)}</TableCell>
                 
                 {/* VOLUME */}
-                <TableCell style={{ width: 80 }} className="text-right">
+                <TableCell className="text-right">
                   <span className="text-xs font-mono">{bc.volume_m3}</span>
                 </TableCell>
                 
                 {/* TOTAL HT */}
-                <TableCell style={{ width: 100 }} className="text-right">
+                <TableCell className="text-right">
                   <span className="text-sm font-mono font-medium">
                     {Number(bc.total_ht).toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                   </span>
                 </TableCell>
                 
                 {/* STATUS */}
-                <TableCell style={{ width: 110 }} className="text-center">
+                <TableCell className="text-center">
                   <div className="flex flex-col gap-1 items-center">
                     <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
                       {statusConfig.icon}
@@ -574,12 +586,12 @@ export function BcTable({
                 </TableCell>
                 
                 {/* SUIVI (merged Invoice + Progress) */}
-                <TableCell style={{ width: 120 }} className="text-center">
+                <TableCell className="text-center">
                   {renderSuivi(bc)}
                 </TableCell>
                 
                 {/* ACTIONS (kebab) */}
-                <TableCell style={{ width: 44 }} className="text-center" onClick={(e) => e.stopPropagation()}>
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                   {renderKebabMenu(bc)}
                 </TableCell>
               </TableRow>
