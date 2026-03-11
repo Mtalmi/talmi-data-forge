@@ -815,6 +815,9 @@ export default function Ventes() {
           </Tabs>
           </div>
 
+          {/* Pipeline Briefing IA */}
+          <PipelineBriefingCard />
+
           {/* Flux Commercial Widget */}
           <FluxCommercialWidget stats={stats} onStageClick={handleStageClick} />
 
