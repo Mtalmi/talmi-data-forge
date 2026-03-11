@@ -51,6 +51,15 @@ export function SiloVisual({
     return `${rounded}j${hoursRemaining !== undefined ? ` ${Math.round(hoursRemaining % 24)}h` : ''}`;
   })();
 
+  // Glow color/speed based on autonomy
+  const glowConfig = daysRemaining === undefined
+    ? null
+    : daysRemaining < 3
+    ? { color: 'rgba(239,68,68,0.8)', border: 'rgba(239,68,68,0.4)', speed: '0.8s' }
+    : daysRemaining <= 7
+    ? { color: 'rgba(251,146,60,0.6)', border: 'rgba(251,146,60,0.35)', speed: '1.5s' }
+    : { color: 'rgba(34,197,94,0.6)', border: 'rgba(34,197,94,0.3)', speed: '1.5s' };
+
   return (
     <div className={cn('flex flex-col items-center', className)}>
       {isCritical && (
@@ -63,7 +72,15 @@ export function SiloVisual({
       )}
 
       {/* Silo Container */}
-      <div className="relative w-24 h-48 flex flex-col">
+      <div
+        className="relative w-24 h-48 flex flex-col"
+        style={glowConfig ? {
+          borderRadius: 12,
+          boxShadow: `0 0 6px ${glowConfig.border}`,
+          border: `1px solid ${glowConfig.border}`,
+          transition: 'box-shadow 0.3s ease',
+        } : undefined}
+      >
         {/* Top cap */}
         <div className={cn(
           'h-4 rounded-t-full border-2 border-b-0',
@@ -161,14 +178,20 @@ export function SiloVisual({
 
       {/* Autonomy */}
       {displayAutonomy !== null && (
-        <div className={cn(
-          'mt-3 p-2 rounded-lg',
-          daysRemaining !== undefined && daysRemaining <= 3 
-            ? 'border border-destructive/50 bg-destructive/10' 
-            : daysRemaining !== undefined && daysRemaining <= 7 
-              ? 'border border-warning/50 bg-warning/10' 
-              : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
-        )}>
+        <div
+          className={cn(
+            'mt-3 p-2 rounded-lg',
+            daysRemaining !== undefined && daysRemaining <= 3 
+              ? 'border border-destructive/50 bg-destructive/10' 
+              : daysRemaining !== undefined && daysRemaining <= 7 
+                ? 'border border-warning/50 bg-warning/10' 
+                : 'border border-[#FFD700]/20 bg-[#FFD700]/5'
+          )}
+          style={glowConfig ? {
+            animation: `silo-badge-glow ${glowConfig.speed} ease-in-out infinite alternate`,
+            ['--silo-glow-color' as string]: glowConfig.color,
+          } : undefined}
+        >
           <div className="flex items-center gap-1.5 justify-center">
             <Gauge className={cn(
               'h-3.5 w-3.5',
