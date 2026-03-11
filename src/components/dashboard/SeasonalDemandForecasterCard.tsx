@@ -107,7 +107,7 @@ export function SeasonalDemandForecasterCard() {
   ];
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '1px solid rgba(212,168,67,0.3)', borderRadius: 12, overflow: 'hidden' }}>
       {/* Header */}
       <button
         onClick={() => setOpen(!open)}
@@ -128,6 +128,7 @@ export function SeasonalDemandForecasterCard() {
           <span style={{ color: T.gold, fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
             Agent IA: Prévision Demande
           </span>
+          <span style={{ color: '#D4A843', fontSize: 13, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
         </div>
         {open ? <ChevronUp size={14} color={T.textDim} /> : <ChevronDown size={14} color={T.textDim} />}
