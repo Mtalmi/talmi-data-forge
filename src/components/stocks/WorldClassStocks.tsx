@@ -960,12 +960,14 @@ export default function WorldClassStocks({ silosContent, onNewMovement }: { silo
                     <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.5, marginBottom: 12 }}>
                       {topAlert.message.length > 100 ? topAlert.message.slice(0, 100) + '…' : topAlert.message}
                     </p>
-                    <button style={{
-                      marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
-                      background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
-                      color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
-                      transition: 'all 200ms',
-                    }}
+                    <button
+                      onClick={() => setActiveTab('alertes')}
+                      style={{
+                        marginTop: 'auto', padding: '10px 0', borderRadius: 8, width: '100%',
+                        background: 'transparent', border: '1px solid rgba(212,168,67,0.4)',
+                        color: '#D4A843', fontWeight: 700, fontSize: 12, cursor: 'pointer',
+                        transition: 'all 200ms',
+                      }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#D4A843'; e.currentTarget.style.color = '#0F1629'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D4A843'; }}
                     >
