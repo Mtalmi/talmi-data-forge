@@ -1005,16 +1005,39 @@ export default function Dashboard() {
                   background: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px)',
                 }} />
 
-                {/* Camera icon placeholder */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-3">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ background: 'rgba(255,215,0,0.06)', border: '1px solid rgba(255,215,0,0.1)' }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/>
-                      <rect x="2" y="6" width="14" height="12" rx="2"/>
-                    </svg>
+                {/* Radar sweep + connection status */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
+                  {/* Radar container */}
+                  <div className="relative" style={{ width: 96, height: 96 }}>
+                    {/* Outer ring */}
+                    <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
+                    {/* Middle ring */}
+                    <div className="absolute rounded-full" style={{ inset: 12, border: '1px solid rgba(212,168,67,0.10)' }} />
+                    {/* Inner ring */}
+                    <div className="absolute rounded-full" style={{ inset: 24, border: '1px solid rgba(212,168,67,0.08)' }} />
+                    {/* Cross hairs */}
+                    <div className="absolute top-0 bottom-0 left-1/2 w-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                    <div className="absolute left-0 right-0 top-1/2 h-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                    {/* Rotating sweep */}
+                    <div className="absolute inset-0 rounded-full overflow-hidden" style={{ animation: 'radarSweep 4s linear infinite' }}>
+                      <div className="absolute left-1/2 top-1/2 origin-top-left" style={{
+                        width: 48, height: 48,
+                        marginLeft: 0, marginTop: -48,
+                        background: 'conic-gradient(from 0deg at 0% 100%, rgba(212,168,67,0.25) 0deg, rgba(212,168,67,0) 40deg, transparent 40deg)',
+                      }} />
+                    </div>
+                    {/* Center pulsing gold dot */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ background: 'rgba(212,168,67,0.5)' }} />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: '#D4A843' }} />
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-[10px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    Feed en attente
+
+                  {/* Status text */}
+                  <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    Caméra en connexion...
                   </span>
 
                   {/* PTZ Control hints */}
