@@ -787,6 +787,7 @@ export default function WorldClassStocks() {
       {/* ── CONTENT ── */}
       <div style={{ width: '100%', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 40 }}>
 
+        {activeTab === 'overview' && (<>
         {/* ── SECTION 1: KPIs ── */}
         <section>
           <SectionHeader icon={TrendingUp} label="Indicateurs Clés" />
