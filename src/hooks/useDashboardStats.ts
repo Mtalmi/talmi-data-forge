@@ -71,12 +71,18 @@ export function useDashboardStats() {
 
       if (currentError) throw currentError;
 
-      // Fetch last month deliveries for comparison
+      // Fetch last month same-period deliveries for fair comparison
+      // e.g., if today is March 11, compare March 1-11 vs Feb 1-11
+      const dayOfMonth = now.getDate();
+      const lastMonthSamePeriodEnd = new Date(lastMonthStart.getFullYear(), lastMonthStart.getMonth(), dayOfMonth);
+      // Clamp to end of last month if current day exceeds last month's length
+      const clampedLastMonthEnd = lastMonthSamePeriodEnd > lastMonthEnd ? lastMonthEnd : lastMonthSamePeriodEnd;
+
       const { data: lastDeliveries, error: lastError } = await supabase
         .from('bons_livraison_reels')
         .select('volume_m3, client_id')
         .gte('date_livraison', format(lastMonthStart, 'yyyy-MM-dd'))
-        .lte('date_livraison', format(lastMonthEnd, 'yyyy-MM-dd'));
+        .lte('date_livraison', format(clampedLastMonthEnd, 'yyyy-MM-dd'));
 
       if (lastError) throw lastError;
 
