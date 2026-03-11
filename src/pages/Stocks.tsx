@@ -373,61 +373,6 @@ export default function Stocks() {
 
 
 
-        {/* ── RECENT MOVEMENTS TABLE ── */}
-        <section>
-          <SectionHeader icon={Activity} label={t.pages.stocks.recentMovements} />
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
-            {mouvements.length === 0 ? (
-              <div style={{ padding: 48, textAlign: 'center', color: T.textDim, fontSize: 13 }}>
-                {t.pages.stocks.noMovements}
-              </div>
-            ) : (
-              <Table className="data-table-industrial">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead style={thStyle}>{t.common.date}</TableHead>
-                    <TableHead style={thStyle}>{t.pages.stocks.type}</TableHead>
-                    <TableHead style={thStyle}>{t.pages.stocks.material}</TableHead>
-                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.quantity}</TableHead>
-                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.before}</TableHead>
-                    <TableHead style={{ ...thStyle, textAlign: 'right' }}>{t.pages.stocks.after}</TableHead>
-                    <TableHead style={thStyle}>{t.pages.stocks.reference}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {mouvements.slice(0, 20).map((m) => (
-                    <TableRow key={m.id} className="table-row-hover">
-                      <TableCell style={{ color: T.textDim }}>
-                        {format(new Date(m.created_at), 'dd/MM/yyyy HH:mm', { locale: dateLocale || undefined })}
-                      </TableCell>
-                      <TableCell>
-                        <span className="inline-flex items-center gap-1">
-                          {getMovementIcon(m.type_mouvement)}
-                          <span style={{ fontSize: 12 }}>{getMovementLabel(m.type_mouvement)}</span>
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-medium">{m.materiau}</TableCell>
-                      <TableCell className="text-right font-mono font-semibold" style={{
-                        color: m.type_mouvement === 'reception' ? '#10B981' : '#EF4444'
-                      }}>
-                        {m.type_mouvement === 'reception' ? '+' : '-'}{Math.abs(m.quantite).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right font-mono" style={{ color: T.textDim }}>
-                        {m.quantite_avant.toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right font-mono">
-                        {m.quantite_apres.toLocaleString()}
-                      </TableCell>
-                      <TableCell style={{ color: T.textDim, fontFamily: 'JetBrains Mono, monospace', fontSize: 11 }}>
-                        {truncateRef(m.fournisseur || m.reference_id)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </section>
 
       </div>
       <WorldClassStocks />
