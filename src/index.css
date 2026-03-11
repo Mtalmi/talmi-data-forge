@@ -2874,6 +2874,16 @@
   }
 }
 
+/* ── Silo Badge Glow Animation ──────────────────────── */
+@keyframes silo-badge-glow {
+  0% {
+    box-shadow: 0 0 4px var(--silo-glow-color, transparent);
+  }
+  100% {
+    box-shadow: 0 0 14px var(--silo-glow-color, transparent);
+  }
+}
+
 /* ── Tab content fade ────────────────────────────────────── */
 @keyframes tab-fade-in {
   from {
