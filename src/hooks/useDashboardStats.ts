@@ -71,12 +71,18 @@ export function useDashboardStats() {
 
       if (currentError) throw currentError;
 
-      // Fetch last month deliveries for comparison
+      // Fetch last month same-period deliveries for fair comparison
+      // e.g., if today is March 11, compare March 1-11 vs Feb 1-11
+      const dayOfMonth = now.getDate();
+      const lastMonthSamePeriodEnd = new Date(lastMonthStart.getFullYear(), lastMonthStart.getMonth(), dayOfMonth);
+      // Clamp to end of last month if current day exceeds last month's length
+      const clampedLastMonthEnd = lastMonthSamePeriodEnd > lastMonthEnd ? lastMonthEnd : lastMonthSamePeriodEnd;
+
       const { data: lastDeliveries, error: lastError } = await supabase
         .from('bons_livraison_reels')
         .select('volume_m3, client_id')
         .gte('date_livraison', format(lastMonthStart, 'yyyy-MM-dd'))
-        .lte('date_livraison', format(lastMonthEnd, 'yyyy-MM-dd'));
+        .lte('date_livraison', format(clampedLastMonthEnd, 'yyyy-MM-dd'));
 
       if (lastError) throw lastError;
 
@@ -127,13 +133,13 @@ export function useDashboardStats() {
       const lastVolume = lastDeliveries?.reduce((sum, b) => sum + (b.volume_m3 || 0), 0) || 0;
       const lastUniqueClients = new Set(lastDeliveries?.map(b => b.client_id) || []).size;
 
-      // Trends
+      // Trends — use NaN to signal "no previous data" (hide alert)
       const deliveriesTrend = lastDeliveriesCount > 0 
         ? ((totalDeliveries - lastDeliveriesCount) / lastDeliveriesCount) * 100 
-        : 0;
+        : NaN;
       const volumeTrend = lastVolume > 0 
         ? ((totalVolume - lastVolume) / lastVolume) * 100 
-        : 0;
+        : NaN;
       const clientsTrend = lastUniqueClients > 0 
         ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
         : 0;
@@ -166,24 +172,24 @@ export function useDashboardStats() {
       // Generate CEO alerts
       const alerts: DashboardAlert[] = [];
 
-      // Alert: Deliveries down > 20%
-      if (deliveriesTrend < -20) {
+      // Alert: Deliveries down > 20% (only if previous period data exists)
+      if (!isNaN(deliveriesTrend) && deliveriesTrend < -20) {
         alerts.push({
           id: 'deliveries-down',
           type: 'critical',
           title: 'Baisse des Livraisons',
-          message: `Les livraisons sont en baisse de ${Math.abs(deliveriesTrend).toFixed(0)}% ce mois-ci`,
+          message: `Les livraisons sont en baisse de ${Math.abs(deliveriesTrend).toFixed(0)}% vs même période mois dernier`,
           timestamp: new Date().toISOString(),
         });
       }
 
-      // Alert: Volume down > 15%
-      if (volumeTrend < -15) {
+      // Alert: Volume down > 15% (only if previous period data exists)
+      if (!isNaN(volumeTrend) && volumeTrend < -15) {
         alerts.push({
           id: 'volume-down',
           type: 'critical',
           title: 'Baisse du Volume',
-          message: `Le volume total est en baisse de ${Math.abs(volumeTrend).toFixed(0)}% ce mois-ci`,
+          message: `Le volume total est en baisse de ${Math.abs(volumeTrend).toFixed(0)}% vs même période mois dernier`,
           timestamp: new Date().toISOString(),
         });
       }
@@ -252,8 +258,8 @@ export function useDashboardStats() {
         marginAlerts: marginAlerts || 0,
         curMoyen7j,
         tauxECMoyen,
-        deliveriesTrend,
-        volumeTrend,
+        deliveriesTrend: isNaN(deliveriesTrend) ? 0 : deliveriesTrend,
+        volumeTrend: isNaN(volumeTrend) ? 0 : volumeTrend,
         clientsTrend,
         curTrend,
         alerts,
