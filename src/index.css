@@ -2908,6 +2908,12 @@
   50%, 100% { opacity: 0; }
 }
 
+/* ── Nouveau badge fade out ──────────────────────── */
+@keyframes nouveau-fade {
+  0%, 70% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 /* ── Tab content fade ────────────────────────────────────── */
 @keyframes tab-fade-in {
   from {
