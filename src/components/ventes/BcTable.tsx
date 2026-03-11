@@ -551,7 +551,7 @@ export function BcTable({
                 </TableCell>
                 
                 {/* STATUS */}
-                <TableCell style={{ width: 110 }} className="text-center">
+                <TableCell className="text-center">
                   <div className="flex flex-col gap-1 items-center">
                     <span className={cn("inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-medium whitespace-nowrap", statusConfig.color)}>
                       {statusConfig.icon}
