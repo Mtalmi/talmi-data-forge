@@ -233,7 +233,7 @@ export default function Stocks() {
 
   return (
     <MainLayout>
-      <WorldClassStocks silosContent={
+      <WorldClassStocks onNewMovement={() => setWizardOpen(true)} silosContent={
         <>
           {/* ── SILO DASHBOARD ── */}
           {loading ? (
