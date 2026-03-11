@@ -178,7 +178,7 @@ export default function Laboratoire() {
       {/* ══ Premium Lab UI ══ */}
       <WorldClassLaboratory />
       {/* 🤖 AI Quality Analysis */}
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px 24px 0' }}>
+      <div style={{ width: '100%', padding: '24px 24px 0' }}>
         <AIAnalysisSection />
       </div>
       {/* 🧪 AI Formula Optimization */}
