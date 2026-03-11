@@ -61,6 +61,17 @@ export default function PlantFlowSchematic() {
 
       {/* Flow Strip */}
       <div className="flex items-stretch relative overflow-x-auto max-w-full">
+        {/* Animated scan line */}
+        <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-xl">
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            width: '30%',
+            background: 'linear-gradient(90deg, rgba(212,168,67,0) 0%, rgba(212,168,67,0.15) 50%, rgba(212,168,67,0) 100%)',
+            animation: 'fluxScanSweep 4s linear infinite',
+          }} />
+        </div>
 
         {/* ── STAGE 1: SILOS ── */}
         <div className="flex-1 min-w-0 p-3 rounded-l-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}>

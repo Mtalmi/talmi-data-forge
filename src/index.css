@@ -351,6 +351,12 @@
   pointer-events: none;
 }
 
+/* ─── Flux Usine Scan Line ─── */
+@keyframes fluxScanSweep {
+  0% { left: -30%; }
+  100% { left: 100%; }
+}
+
 /* ─── Gold Shimmer Border for KPI Cards ─── */
 @keyframes goldBorderSweep {
   0% { background-position: -200% 0; }
