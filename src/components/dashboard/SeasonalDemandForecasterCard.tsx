@@ -172,8 +172,8 @@ export function SeasonalDemandForecasterCard() {
                   const cc = getConfColor(r.confiance);
                   return (
                     <tr key={i}
-                      style={{ borderBottom: i < forecastTable.length - 1 ? `1px solid ${T.cardBorder}60` : 'none' }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.03)')}
+                      style={{ borderBottom: i < forecastTable.length - 1 ? `1px solid ${T.cardBorder}60` : 'none', transition: 'background 0.2s ease' }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.04)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <td style={{ padding: '10px 14px', fontSize: 12, fontWeight: 600, color: T.textPri }}>{r.periode}</td>
