@@ -1153,7 +1153,7 @@ export default function Dashboard() {
                       if (idx === -1) return null;
                       const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
                       return (
-                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="4.5" fontFamily="monospace" fontWeight="500">
+                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="#8899aa" fontSize="4.5" fontFamily="monospace" fontWeight="500">
                           {label}
                         </text>
                       );
