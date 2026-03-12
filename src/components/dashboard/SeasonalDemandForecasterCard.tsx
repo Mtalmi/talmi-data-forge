@@ -196,8 +196,13 @@ export function SeasonalDemandForecasterCard() {
 
           {/* Demand Curve Chart */}
           <div style={{
-            background: 'rgba(0,0,0,0.2)', borderRadius: 10,
-            border: `1px solid ${T.cardBorder}`, padding: '16px 12px 8px', marginBottom: 20,
+            background: 'linear-gradient(to bottom, rgba(255,255,255,0.03), transparent)',
+            borderRadius: 12,
+            border: '1px solid rgba(255,255,255,0.06)',
+            padding: '20px 12px 8px',
+            marginBottom: 20,
+            position: 'relative',
+            overflow: 'hidden',
           }}>
             <p style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, paddingLeft: 8 }}>
               Courbe de Demande — 90 jours
@@ -207,9 +212,12 @@ export function SeasonalDemandForecasterCard() {
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="forecastGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={T.info} stopOpacity={0.25} />
-                      <stop offset="100%" stopColor={T.info} stopOpacity={0} />
+                      <stop offset="0%" stopColor="#D4A843" stopOpacity={0.15} />
+                      <stop offset="100%" stopColor="#D4A843" stopOpacity={0} />
                     </linearGradient>
+                    <filter id="forecastGlow">
+                      <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="rgba(212,168,67,0.3)" />
+                    </filter>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={`${T.cardBorder}80`} />
                   <XAxis dataKey="week" tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
@@ -218,20 +226,16 @@ export function SeasonalDemandForecasterCard() {
                     contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, fontSize: 11, backdropFilter: 'blur(12px)', color: '#fff' }}
                     labelStyle={{ color: '#fff', fontWeight: 600 }}
                   />
-                  {/* Capacity band */}
                   <ReferenceLine y={350} stroke={T.success} strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Capacité', fill: T.success, fontSize: 9, position: 'right' }} />
-                  {/* Ramadan marker — approximate at S2 Mai */}
                   <ReferenceLine x="S2 Mai" stroke={T.danger} strokeDasharray="4 3" strokeOpacity={0.6} label={{ value: 'Ramadan', fill: T.danger, fontSize: 9, position: 'top' }} />
-                  {/* Last year */}
                   <Area type="monotone" dataKey="lastYear" name="2025" stroke={T.textDim} strokeWidth={1.5} strokeDasharray="5 3" fill="none" dot={false} />
-                  {/* Forecast */}
-                  <Area type="monotone" dataKey="forecast" name="Prévision 2026" stroke={T.info} strokeWidth={2} fill="url(#forecastGrad)" dot={false} />
+                  <Area type="monotone" dataKey="forecast" name="Prévision 2026" stroke="#D4A843" strokeWidth={2} fill="url(#forecastGrad)" dot={false} filter="url(#forecastGlow)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 6 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, color: T.textSec }}>
-                <span style={{ width: 12, height: 3, borderRadius: 2, background: T.info, display: 'inline-block' }} /> Prévision 2026
+                <span style={{ width: 12, height: 3, borderRadius: 2, background: '#D4A843', display: 'inline-block' }} /> Prévision 2026
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 9, color: T.textSec }}>
                 <span style={{ width: 12, height: 1, borderTop: `2px dashed ${T.textDim}`, display: 'inline-block' }} /> 2025
@@ -240,6 +244,8 @@ export function SeasonalDemandForecasterCard() {
                 <span style={{ width: 12, height: 1, borderTop: `2px dashed ${T.success}`, display: 'inline-block' }} /> Capacité
               </span>
             </div>
+            {/* Bottom fade */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48, background: 'linear-gradient(to top, rgba(10,15,26,0.6), transparent)', pointerEvents: 'none' }} />
           </div>
 
           {/* Actionable Insights */}
