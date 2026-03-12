@@ -2152,7 +2152,7 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
 // ─────────────────────────────────────────────────────
 // HISTORY ROW
 // ─────────────────────────────────────────────────────
-function HistoryRow({ h, delay, last }: { h: typeof HISTORY[0]; delay: number; last: boolean }) {
+function HistoryRow({ h, delay, last }: { h: LiveHistoryItem; delay: number; last: boolean }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   return (
