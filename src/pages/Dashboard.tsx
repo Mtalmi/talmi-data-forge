@@ -999,7 +999,8 @@ export default function Dashboard() {
           <div className="flex items-center gap-8 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl backdrop-blur-sm px-8 py-5 w-full mb-6" style={{ boxShadow: '0 0 20px rgba(212, 168, 67, 0.04)' }}>
             {/* Taux de Réussite */}
             <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-              <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212,168,67,0.3)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+              <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+              <div className="w-12 h-[2px] bg-gradient-to-r from-[#D4A843]/60 to-transparent mt-1 mx-auto" />
               <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '94%' }} />
               </div>
