@@ -199,9 +199,10 @@ export function IntelligenceBriefingCard() {
 
   return (
     <div style={{
-      background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-      border: '1px solid rgba(212,168,67,0.12)',
+      background: 'rgba(15,23,41,0.8)',
+      border: '1px solid rgba(255,255,255,0.06)',
       borderRadius: 12, overflow: 'hidden',
+      backdropFilter: 'blur(4px)',
     }}>
       {/* Header */}
       <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
