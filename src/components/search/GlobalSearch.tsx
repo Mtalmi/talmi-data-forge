@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Users, Truck, FileText, Loader2, X } from 'lucide-react';
+import { Search, Users, Truck, FileText, Loader2, X, Sparkles } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 
 interface SearchResult {
