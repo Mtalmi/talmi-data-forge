@@ -191,11 +191,11 @@ export default function RecentDeliveries() {
       </div>
       
       {/* Table Header */}
-      <div className="flex items-center gap-4 py-2 mb-1 border-b border-white/5">
-        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[60px]">Heure</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 flex-1">Client</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[80px] text-right">Volume</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[80px] text-right">Statut</span>
+      <div className="flex items-center gap-4 py-2 mb-1">
+        <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.08em', color:'rgba(255,255,255,0.4)', paddingBottom:'8px', borderBottom:'1px solid rgba(255,255,255,0.05)' }} className="w-[60px]">Heure</span>
+        <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.08em', color:'rgba(255,255,255,0.4)', paddingBottom:'8px', borderBottom:'1px solid rgba(255,255,255,0.05)' }} className="flex-1">Client</span>
+        <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.08em', color:'rgba(255,255,255,0.4)', paddingBottom:'8px', borderBottom:'1px solid rgba(255,255,255,0.05)' }} className="w-[80px] text-right">Volume</span>
+        <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.08em', color:'rgba(255,255,255,0.4)', paddingBottom:'8px', borderBottom:'1px solid rgba(255,255,255,0.05)' }} className="w-[80px] text-right">Statut</span>
       </div>
 
       {/* Table Rows */}
