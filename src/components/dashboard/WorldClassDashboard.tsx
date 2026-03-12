@@ -698,10 +698,12 @@ function useWorldClassLiveData() {
 
       if (blTodayRes.data?.length) {
         const hourBuckets: Record<string, number> = {};
-        for (let h = 6; h <= 18; h++) hourBuckets[`${h.toString().padStart(2, '0')}h`] = 0;
+        for (let h = 6; h <= 18; h += 2) hourBuckets[`${h}h`] = 0;
         blTodayRes.data.forEach(bl => {
           if (bl.created_at) {
-            const hour = `${new Date(bl.created_at).getHours().toString().padStart(2, '0')}h`;
+            const rawHour = new Date(bl.created_at).getHours();
+            const bucketHour = rawHour % 2 === 0 ? rawHour : rawHour - 1;
+            const hour = `${bucketHour}h`;
             if (hourBuckets[hour] !== undefined) hourBuckets[hour] += bl.volume_m3 || 0;
           }
         });
@@ -999,7 +1001,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                         <stop offset="100%" stopColor={T.gold} stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="hour" tick={{ fill: 'rgba(148,163,184,0.2)', fontSize: 8, fontFamily: 'JetBrains Mono' }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="hour" tick={{ fill: '#8899aa', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
                     <Tooltip content={(p) => <RichTooltip {...p} unit=" m³" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
                     {/* Single crisp line — no glow layers */}
                     <Area type="monotone" dataKey="volume" stroke="#C9A84C" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 2, fill: '#C9A84C', stroke: 'none' }} animationDuration={1200} />
