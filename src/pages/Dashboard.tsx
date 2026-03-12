@@ -1535,7 +1535,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
           <span style={{ color: '#D4A843', fontSize: 14 }}>⚡</span>
           <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap" style={{ color: '#D4A843' }}>Opérations du Jour</span>
-          <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)', margin: '0 16px' }} />
           <span className="text-xs text-white/40 font-mono">12/03/2026</span>
         </div>
         <div className="mt-0">
