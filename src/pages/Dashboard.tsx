@@ -684,11 +684,11 @@ export default function Dashboard() {
                       <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-medium" style={{ marginTop: 2 }}>CAPACITÉ</span>
                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
-                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
-                      <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(251,191,36,0.6)' }} strokeWidth={1.5} />
-                      <span className="font-medium" style={{ color: 'rgba(251,191,36,0.85)' }}>2</span>
-                      <span style={{ color: 'rgba(251,191,36,0.6)' }}>urgent</span>
-                    </span>
+                      <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
+                       <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(248,113,113,0.8)' }} strokeWidth={1.5} />
+                       <span className="font-medium" style={{ color: '#f87171' }}>2</span>
+                       <span className="font-medium" style={{ color: '#f87171' }}>urgent</span>
+                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
                     <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
                       <Package className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} strokeWidth={1.5} />
