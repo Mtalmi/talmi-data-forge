@@ -70,7 +70,8 @@ export default function PlantFlowSchematic() {
           Flux Usine
         </span>
         <span className="relative flex h-2 w-2">
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
         </span>
         <span className="text-emerald-400 text-[11px]">Temps réel</span>
         <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
