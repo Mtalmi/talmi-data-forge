@@ -1132,12 +1132,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div className="bg-white/[0.03] border border-white/10 rounded-xl px-6 py-4 mb-4 relative z-[1] w-full flex items-center justify-between">
-            <div style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", fontWeight: 200, fontSize: '1.5rem', color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
+          <div className="bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-emerald-500/[0.03] border border-white/[0.06] rounded-xl px-6 py-4 mb-4 relative z-[1] w-full flex items-center justify-between border-l-2 border-l-[#D4A843]/50">
+            <div className="text-2xl font-bold text-white font-mono" style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", letterSpacing: '-0.02em', lineHeight: 1, textShadow: '0 0 20px rgba(255, 255, 255, 0.08)' }}>
               +18.4K DH
             </div>
             <div className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.5)' }}>marge nette estimée</div>
-            <div className="text-sm" style={{ color: 'rgb(52,211,153)' }}>+12% vs hier</div>
+            <div className="bg-emerald-500/10 text-emerald-400 text-sm font-semibold px-3 py-1 rounded-full">↗ +12% vs hier</div>
           </div>
         )}
         </>
