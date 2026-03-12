@@ -669,19 +669,45 @@ export default function Dashboard() {
                   <div className="mt-3 mb-2.5" style={{ height: '1px', background: 'linear-gradient(90deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.04) 70%, transparent 100%)' }} />
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1" style={{ paddingLeft: 5, paddingRight: 5 }}>
                     <span className="flex flex-col items-center" style={{ fontSize: '0.95rem', fontWeight: 400, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
-                      <svg width="36" height="36" viewBox="0 0 60 60" className="flex-shrink-0">
-                        <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
-                        <circle
-                          cx="30" cy="30" r="24" fill="none"
-                          stroke="#D4A843" strokeWidth="4"
-                          strokeLinecap="round"
-                          strokeDasharray={`${0.87 * 2 * Math.PI * 24} ${2 * Math.PI * 24}`}
-                          transform="rotate(-90 30 30)"
-                          style={{ animation: 'capacityGaugeArc 1s cubic-bezier(0.22,1,0.36,1) forwards' }}
-                        />
-                        <text x="30" y="32" textAnchor="middle" fill="white" fontSize="13" fontWeight="200" fontFamily="ui-monospace, 'JetBrains Mono', monospace">87%</text>
-                      </svg>
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-medium" style={{ marginTop: 2 }}>CAPACITÉ</span>
+                      <div className="relative flex-shrink-0" style={{ width: 56, height: 56 }}>
+                        {/* Outer glow ring */}
+                        <div className="absolute inset-0 rounded-full" style={{ 
+                          background: 'radial-gradient(circle, rgba(212,168,67,0.12) 0%, transparent 70%)',
+                          filter: 'blur(4px)',
+                          animation: 'heroGlow 4s ease-in-out infinite',
+                        }} />
+                        <svg width="56" height="56" viewBox="0 0 60 60" className="relative">
+                          {/* Track ring */}
+                          <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="3.5" />
+                          {/* Subtle tick marks */}
+                          {[0, 90, 180, 270].map(angle => (
+                            <line key={angle} x1="30" y1="3" x2="30" y2="5.5" stroke="rgba(212,168,67,0.15)" strokeWidth="0.8" transform={`rotate(${angle} 30 30)`} />
+                          ))}
+                          {/* Gold progress arc */}
+                          <circle
+                            cx="30" cy="30" r="25" fill="none"
+                            stroke="url(#capacityGoldGrad)" strokeWidth="3.5"
+                            strokeLinecap="round"
+                            strokeDasharray={`${0.87 * 2 * Math.PI * 25} ${2 * Math.PI * 25}`}
+                            transform="rotate(-90 30 30)"
+                            style={{ 
+                              animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards',
+                              filter: 'drop-shadow(0 0 3px rgba(212,168,67,0.4))',
+                            }}
+                          />
+                          <defs>
+                            <linearGradient id="capacityGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#FFD700" />
+                              <stop offset="50%" stopColor="#D4A843" />
+                              <stop offset="100%" stopColor="#C4933B" />
+                            </linearGradient>
+                          </defs>
+                          {/* Center value */}
+                          <text x="30" y="29" textAnchor="middle" fill="white" fontSize="15" fontWeight="200" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" letterSpacing="-0.02em">87</text>
+                          <text x="30" y="40" textAnchor="middle" fill="rgba(212,168,67,0.6)" fontSize="8" fontWeight="500" fontFamily="ui-monospace, monospace" letterSpacing="0.05em">%</text>
+                        </svg>
+                      </div>
+                      <span className="text-[9px] uppercase tracking-[0.2em] font-semibold" style={{ marginTop: 4, color: 'rgba(212,168,67,0.5)' }}>CAPACITÉ</span>
                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
                       <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
