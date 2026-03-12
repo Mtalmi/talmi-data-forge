@@ -846,7 +846,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
