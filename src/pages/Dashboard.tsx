@@ -1197,24 +1197,31 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Environment footer */}
-            <div className="flex items-center justify-center px-5 pt-3 mt-2 z-10 relative border-t border-white/5">
-              <div className="flex items-center justify-center gap-4 bg-white/[0.02] border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-muted-foreground/40">Température</span>
-                  <span className="text-[11px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
-                  <span className="text-[11px] text-emerald-400/60">Optimal</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-muted-foreground/40">Humidité</span>
-                  <span className="text-[11px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
-                  <span className="text-[11px] text-emerald-400/60">Optimal</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-[#D4A843] font-medium">Prochain camion</span>
-                  <span className="text-[11px] text-[#D4A843] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
-                  <span className="text-[11px] text-[#D4A843]/60">→ Constructions Modernes · 20 m³</span>
-                </div>
+            {/* Environmental Monitoring Strip */}
+            <div className="flex items-center justify-center gap-6 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-3 mx-6 my-4 backdrop-blur-sm">
+              {/* Température */}
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Température</span>
+                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
+                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Optimal</span>
+              </div>
+
+              <div className="w-px h-6 bg-white/[0.06]" />
+
+              {/* Humidité */}
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Humidité</span>
+                <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
+                <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Optimal</span>
+              </div>
+
+              <div className="w-px h-6 bg-white/[0.06]" />
+
+              {/* Prochain camion */}
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Prochain camion</span>
+                <span className="text-sm text-[#D4A843] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                <span className="text-xs text-muted-foreground/50">→ Constructions Modernes · 20 m³</span>
               </div>
             </div>
           </div>
