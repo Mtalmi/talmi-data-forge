@@ -643,6 +643,14 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
       `}</style>
 
       <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
+        {showOnlyIntel ? (
+          <div className="space-y-4 mb-5 relative z-[1] w-full max-w-[1400px] mx-auto">
+            <AIAnalystBrief />
+            <ComplianceWidget />
+            <EnergyCostAnomalyWidget />
+            <SeasonalDemandForecasterCard />
+          </div>
+        ) : (
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}

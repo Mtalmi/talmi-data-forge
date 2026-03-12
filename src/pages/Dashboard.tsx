@@ -1439,6 +1439,22 @@ export default function Dashboard() {
         </>
         )}
 
+        {/* ═══ INTELLIGENCE IA TAB CONTENT ═══ */}
+        {activeTab === 'intelligence' && (
+        <>
+        <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
+          <Sparkles size={16} className="text-amber-400" />
+          <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Intelligence IA</span>
+          <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
+        </div>
+        <div className="mt-0">
+          <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
+            <WorldClassDashboard hideProductionWidgets showOnlyIntel />
+          </Suspense>
+        </div>
+        </>
+        )}
+
         {/* FINANCE & CONFORMITÉ — Hidden for CEO demo (no content yet) */}
 
         {/* Bottom spacing for mobile nav */}
