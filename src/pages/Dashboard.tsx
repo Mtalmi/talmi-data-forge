@@ -1230,7 +1230,7 @@ export default function Dashboard() {
               <div className="w-px h-6 bg-white/[0.06]" />
 
               {/* Humidité */}
-              <div className="flex flex-col items-center gap-0.5">
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Humidité</span>
                 <span className="text-sm text-white font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
                 <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded-full font-medium">Optimal</span>
