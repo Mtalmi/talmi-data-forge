@@ -736,16 +736,16 @@ export default function Dashboard() {
                   <span className="text-sm font-semibold" style={{ color: '#f87171' }}>2 urgent</span>
                 </div>
                 {/* Chip 2: Output (white) */}
-                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                <div className="flex items-center gap-2 rounded-lg px-4 py-2 bg-white/10 border border-white/20">
                   <Package size={14} style={{ color: 'rgba(255,255,255,0.5)' }} />
                   <span className="text-sm font-semibold text-white">{prodVolume} m³</span>
-                  <span className="text-xs text-muted-foreground/40">output</span>
+                  <span className="text-xs text-white/50">output</span>
                 </div>
                 {/* Chip 3: Margin (gold) */}
-                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(212,168,67,0.10)', border: '1px solid rgba(212,168,67,0.20)' }}>
+                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(212,168,67,0.10)', border: '1px solid rgba(212,168,67,0.30)' }}>
                   <TrendingUp size={14} style={{ color: '#D4A843' }} />
                   <span className="text-sm font-semibold" style={{ color: '#D4A843' }}>{marge}%</span>
-                  <span className="text-xs text-muted-foreground/40">margin</span>
+                  <span className="text-xs" style={{ color: 'rgba(212,168,67,0.50)' }}>margin</span>
                 </div>
               </div>
 
@@ -801,7 +801,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Vertical divider */}
-                <div className="hidden md:block w-px h-8 mx-3 self-center" style={{ background: 'rgba(255,255,255,0.10)' }} />
+                <div className="hidden md:block w-px h-10 bg-white/10 mx-4 self-center" />
 
                 {/* Prochaine Livraison */}
                 <div className="hidden md:flex items-center gap-2.5 rounded-lg px-4 py-2.5 flex-shrink-0" style={{
