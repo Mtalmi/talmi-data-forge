@@ -555,8 +555,19 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <div className="hidden md:flex flex-col items-end">
+                <div className="hidden md:flex flex-col items-end gap-2">
                   <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
+                  {/* Prochaine Livraison countdown card */}
+                  <div className="flex items-center gap-2.5 rounded-lg px-4 py-2" style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.10)',
+                  }}>
+                    <Truck size={15} style={{ color: '#D4A843', flexShrink: 0 }} />
+                    <div className="flex flex-col">
+                      <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
+                      <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>47 min</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
