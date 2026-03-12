@@ -78,6 +78,7 @@ export default function Dashboard() {
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
   const [nextDelivery, setNextDelivery] = useState<{ client: string; volume: number; minutesLeft: number } | null>(null);
   // ─── Sync countdown ───
   const [syncCountdown, setSyncCountdown] = useState(30);
