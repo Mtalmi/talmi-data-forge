@@ -745,10 +745,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
   const prodTotal = useAnimatedCounter(Math.round(stats.totalVolume) || 851);
 
   const prodChartData = hourlyProductionData.length ? hourlyProductionData : [
-    { hour: '06h', volume: 12 }, { hour: '07h', volume: 28 }, { hour: '08h', volume: 65 },
-    { hour: '09h', volume: 82 }, { hour: '10h', volume: 95 }, { hour: '11h', volume: 78 },
-    { hour: '12h', volume: 45 }, { hour: '13h', volume: 68 }, { hour: '14h', volume: 110 },
-    { hour: '15h', volume: 98 }, { hour: '16h', volume: 85 }, { hour: '17h', volume: 72 },
+    { hour: '6h', volume: 12 }, { hour: '8h', volume: 65 }, { hour: '10h', volume: 95 },
+    { hour: '12h', volume: 45 }, { hour: '14h', volume: 110 }, { hour: '16h', volume: 85 },
     { hour: '18h', volume: 38 },
   ];
 
