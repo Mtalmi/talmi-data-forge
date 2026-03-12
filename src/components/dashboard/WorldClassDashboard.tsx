@@ -584,8 +584,8 @@ function PipelineFunnel() {
                   transition: 'all 200ms ease-out',
                 }}
               >
-                <span className="text-center block" style={{ fontFamily: 'monospace', fontSize: isEmpty ? '28px' : '30px', color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, fontWeight: '300', lineHeight: 1 }}>
-                  {s.value}
+                <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'rgba(255,255,255,0.25)', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
+                  {isEmpty ? '0' : s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
@@ -965,7 +965,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               { role: 'Maintenance', value: '2/2', full: true },
             ].map(t => (
               <div key={t.role} className="flex flex-col items-center">
-                <span className="text-[9px] text-muted-foreground/30">{t.role}</span>
+                <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
                 <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
               </div>
             ))}
