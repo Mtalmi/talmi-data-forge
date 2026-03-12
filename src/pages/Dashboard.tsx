@@ -772,7 +772,7 @@ export default function Dashboard() {
                       {/* RAPPORT DU JOUR — gold intelligence */}
                       <button
                         onClick={() => navigate('/rapports')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(212,168,67,0.08)',
                           border: '1px solid rgba(212,168,67,0.20)',
@@ -782,7 +782,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <FileText size={16} className="opacity-60" />
-                        Rapport du Jour
+                        RAPPORT DU JOUR
                         <span
                           className="absolute flex items-center justify-center rounded-md z-10"
                           style={{
