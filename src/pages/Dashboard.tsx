@@ -1117,7 +1117,7 @@ export default function Dashboard() {
           </div>
 
           {/* Additional Production Widgets */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5 relative z-[1]">
+          <div className="grid grid-cols-3 gap-4 mt-5 relative z-[1]" style={{ alignItems: 'stretch' }}>
             <div className="min-w-0">
               <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
                 <LiveBatchProgress />
@@ -1128,7 +1128,14 @@ export default function Dashboard() {
                 <span className="relative flex h-1.5 w-1.5"><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" /></span>
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
               </div>
-              <div className="space-y-2">
+              {/* Header row */}
+              <div className="flex items-center justify-between px-2 pb-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <span className="text-[10px] uppercase tracking-wider font-medium w-[70px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Batch</span>
+                <span className="text-[10px] uppercase tracking-wider font-medium flex-1 text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Formule</span>
+                <span className="text-[10px] uppercase tracking-wider font-medium w-[50px] text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Volume</span>
+                <span className="text-[10px] uppercase tracking-wider font-medium w-[45px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Heure</span>
+              </div>
+              <div className="space-y-1">
                 {[
                   { id: '#403-068', formula: 'F-B25', vol: '8 m³', time: '15:42', status: 'ok' },
                   { id: '#403-067', formula: 'F-B30', vol: '12 m³', time: '14:28', status: 'ok' },
@@ -1137,12 +1144,13 @@ export default function Dashboard() {
                   { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
                 ].map((b) => (
                   <div key={b.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-white/[0.02] transition-colors">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-[70px]">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.status === 'ok' ? '#34D399' : '#FBBF24' }} />
                       <span className="text-[10px] font-mono text-slate-400">{b.id}</span>
                     </div>
-                    <span className="text-[10px] text-slate-500">{b.formula} · {b.vol}</span>
-                    <span className="text-[9px] font-mono text-slate-600">{b.time}</span>
+                    <span className="text-[10px] text-slate-500 flex-1 text-center">{b.formula}</span>
+                    <span className="text-[10px] text-slate-500 w-[50px] text-center">{b.vol}</span>
+                    <span className="text-[9px] font-mono text-slate-600 w-[45px] text-right">{b.time}</span>
                   </div>
                 ))}
               </div>
@@ -1158,11 +1166,20 @@ export default function Dashboard() {
                   <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
                     <div className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
-                      <span className="text-[11px] font-mono text-slate-400 tabular-nums">{q.id}</span>
+                      <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px]">
+                    <div className="flex items-center gap-2 text-sm">
                       <span className="text-slate-500">{q.test}</span>
-                      <span className="text-[10px] font-mono tabular-nums" style={{ color: q.ok ? 'rgb(148,163,184)' : 'rgba(251,191,36,0.7)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                      <span
+                        className="text-[10px] font-mono font-medium tabular-nums inline-flex items-center justify-center rounded min-w-[48px] py-0.5"
+                        style={{
+                          background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)',
+                          border: `1px solid ${q.ok ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)'}`,
+                          color: q.ok ? '#34D399' : 'rgba(251,191,36,0.8)',
+                        }}
+                      >
+                        {q.ok ? 'OK' : 'VAR'}
+                      </span>
                       <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
                     </div>
                   </div>
