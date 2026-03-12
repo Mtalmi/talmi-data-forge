@@ -138,7 +138,7 @@ export default function LiveBatchProgress() {
       <div className="text-[11px] mb-3" style={{ color: 'rgba(148,163,184,0.6)' }}>
         <span className="text-white/80 font-medium">{batch.formule_name}</span>
         {' · '}{batch.volume_m3} m³{' · '}
-        <span className="text-white/70">{batch.client_name}</span>
+        <span className="text-[#D4A843] font-medium">{batch.client_name}</span>
       </div>
 
       {/* Progress bar */}
