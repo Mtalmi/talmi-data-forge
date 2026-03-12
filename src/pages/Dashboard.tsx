@@ -340,14 +340,11 @@ export default function Dashboard() {
               0 8px 32px rgba(0,0,0,0.15);
           }
           .tbos-hero-card:hover {
-            border-color: rgba(255,255,255,0.14);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
             box-shadow:
-              inset 0 1px 0 rgba(255,255,255,0.12),
-              inset 0 0 60px rgba(253,185,19,0.03),
-              0 4px 8px rgba(0,0,0,0.15),
-              0 24px 64px rgba(0,0,0,0.25),
-              0 0 0 1px rgba(253,185,19,0.1);
-            transform: translateY(-4px);
+              inset 0 1px 0 rgba(255,255,255,0.08),
+              0 2px 8px rgba(0,0,0,0.2);
           }
           .tbos-hero-card::before {
             display: none !important;

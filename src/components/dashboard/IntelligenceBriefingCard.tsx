@@ -74,7 +74,9 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
   const isActive = briefing.type === 'active' || briefing.briefing_type === 'active';
 
   return (
-    <div style={{
+    <div
+      className="tbos-briefing-card"
+      style={{
       background: 'rgba(255,255,255,0.05)',
       backdropFilter: 'blur(4px)',
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
@@ -82,6 +84,17 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       boxShadow: `0 0 12px ${isMorning ? 'rgba(212,168,67,0.2)' : 'rgba(139,159,204,0.2)'}`,
       borderRadius: 10, padding: '14px 16px',
       flex: 1, minWidth: 0,
+      transition: 'all 200ms ease-out',
+    }}
+    onMouseEnter={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'translateY(-1px)';
+      el.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+    }}
+    onMouseLeave={e => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.transform = 'translateY(0)';
+      el.style.borderColor = isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)';
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         {icon}

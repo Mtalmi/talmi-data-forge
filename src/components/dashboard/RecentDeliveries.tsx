@@ -159,13 +159,13 @@ export default function RecentDeliveries() {
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(-2px)';
-        el.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        el.style.transform = 'translateY(-1px)';
+        el.style.borderColor = 'rgba(255, 255, 255, 0.2)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
         el.style.transform = 'translateY(0)';
-        el.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+        el.style.borderColor = 'rgba(245, 158, 11, 0.15)';
       }}
     >
 
