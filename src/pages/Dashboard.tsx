@@ -1006,7 +1006,7 @@ export default function Dashboard() {
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="flex items-center gap-8 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl backdrop-blur-sm px-8 py-5 w-full mb-6" style={{ boxShadow: '0 0 20px rgba(212, 168, 67, 0.04)' }}>
+          <div className="flex items-center gap-8 px-6 py-4 w-full mb-6" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', borderRadius: '8px', border: '1px solid rgba(212,168,67,0.08)' }}>
             {/* Taux de Réussite */}
             <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
               <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
