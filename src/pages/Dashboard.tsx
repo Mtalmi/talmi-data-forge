@@ -1107,6 +1107,7 @@ export default function Dashboard() {
                   )}
                   <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                 </svg>
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
               </div>
 
               {/* Camera panel */}
