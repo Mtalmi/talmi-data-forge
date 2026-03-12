@@ -103,54 +103,55 @@ function useContractorsLiveData() {
   return { kpis, contractors };
 }
 
-// (Mock CONTRACTORS array removed — live data only)
+// (All mock data removed — live data only)
 
-const MISSIONS = [
-  { id: 'MST-2024-012', contractor: 'Atlas Pompage', client: 'ONCF — Rabat Gare',        debut: '12 Fév', fin: '28 Fév', joursActuel: 8, joursTotal: 12, coutEstime: '42,000 DH', tarif: '3,500', total: 12, progress: 67, initials: 'AP', avatarBg: T.gold,    avatarText: T.navy },
-  { id: 'MST-2024-011', contractor: 'Transport Express', client: 'Jet Contractors — Tanger', debut: '15 Fév', fin: '22 Fév', joursActuel: 5, joursTotal: 6,  coutEstime: '16,800 DH', tarif: '2,800', total: 6,  progress: 83, initials: 'TE', avatarBg: T.info,    avatarText: '#fff' },
-  { id: 'MST-2024-010', contractor: 'Grue Maroc', client: 'Addoha — Casa Sidi Moumen', debut: '17 Fév', fin: '25 Fév', joursActuel: 4, joursTotal: 7,  coutEstime: '35,000 DH', tarif: '5,000', total: 7,  progress: 57, initials: 'GM', avatarBg: T.success, avatarText: '#fff' },
-];
+// Mission interface derived from live contractors
+interface LiveMission {
+  id: string;
+  contractor: string;
+  client: string;
+  debut: string;
+  fin: string;
+  joursActuel: number;
+  joursTotal: number;
+  coutEstime: string;
+  tarif: string;
+  total: number;
+  progress: number;
+  initials: string;
+  avatarBg: string;
+  avatarText: string;
+}
 
-const COST_DONUT = [
-  { name: 'Atlas Pompage',    value: 28,  color: '#D4A843' },
-  { name: 'Grue Maroc',       value: 20,  color: '#C49A35' },
-  { name: 'Transport Express',value: 14,  color: '#A07820' },
-  { name: 'Sécurité Plus',    value: 8,   color: 'rgba(212,168,67,0.7)' },
-  { name: 'Nettoyage Pro',    value: 7.2, color: 'rgba(212,168,67,0.45)' },
-  { name: 'Électricité MB',   value: 2.5, color: 'rgba(212,168,67,0.25)' },
-];
+interface LiveHistoryItem {
+  id: string;
+  contractor: string;
+  client: string;
+  duree: string;
+  cout: string;
+  rating: number;
+  initials: string;
+  avatarBg: string;
+}
 
-const TREND_DATA = [
-  { month: 'Sep', cout: 52 },
-  { month: 'Oct', cout: 65 },
-  { month: 'Nov', cout: 58 },
-  { month: 'Déc', cout: 72 },
-  { month: 'Jan', cout: 68 },
-  { month: 'Fév', cout: 78 },
-];
+interface LiveUpcomingItem {
+  besoin: string;
+  specialty: string;
+  specialtyColor: string;
+  chantier: string;
+  date: string;
+  duree: string;
+  budget: string;
+  priority: string;
+}
 
-const RELIABILITY = [
-  { name: 'LafargeHolcim', pct: 96 },
-  { name: 'Carrière Atlas', pct: 92 },
-  { name: 'Sika Maroc',     pct: 98 },
-  { name: 'CIMAT',          pct: 88 },
-  { name: 'Sablière Nord',  pct: 85 },
-  { name: 'ONEE',           pct: 100 },
-];
+interface CostDonutItem {
+  name: string;
+  value: number;
+  color: string;
+}
 
-const HISTORY = [
-  { id: 'MST-2024-009', contractor: 'Atlas Pompage',    client: 'Ciments du Maroc', duree: '10 j', cout: '35,000 DH', rating: 5, initials: 'AP', avatarBg: T.gold    },
-  { id: 'MST-2024-008', contractor: 'Grue Maroc',       client: 'Tgcc',             duree: '5 j',  cout: '25,000 DH', rating: 5, initials: 'GM', avatarBg: T.success },
-  { id: 'MST-2024-007', contractor: 'Transport Express',client: 'Alliances',        duree: '3 j',  cout: '8,400 DH',  rating: 4, initials: 'TE', avatarBg: T.info    },
-  { id: 'MST-2024-006', contractor: 'Nettoyage Pro',    client: 'ONCF',             duree: '4 j',  cout: '4,800 DH',  rating: 4, initials: 'NP', avatarBg: T.purple  },
-  { id: 'MST-2024-005', contractor: 'Sécurité Plus',    client: 'Addoha',           duree: '15 j', cout: '12,000 DH', rating: 3, initials: 'SP', avatarBg: T.warning },
-  { id: 'MST-2024-004', contractor: 'Électricité MB',   client: 'Ciments du Maroc', duree: '2 j',  cout: '5,000 DH',  rating: 4, initials: 'EM', avatarBg: T.cyan    },
-];
-
-const UPCOMING = [
-  { besoin: 'Pompage gros volume',    specialty: 'Pompage béton',    specialtyColor: T.gold,  chantier: 'ONCF — Kénitra',       date: '01 Mars', duree: '5 jours', budget: '17,500 DH', priority: 'Haute'   },
-  { besoin: 'Installation électrique',specialty: 'Électricité',      specialtyColor: T.cyan,  chantier: 'Tgcc — Mohammedia',    date: '10 Mars', duree: '3 jours', budget: '7,500 DH',  priority: 'Normale' },
-];
+const DONUT_COLORS = ['#D4A843', '#C49A35', '#A07820', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.45)', 'rgba(212,168,67,0.25)', 'rgba(212,168,67,0.15)'];
 
 // ─────────────────────────────────────────────────────
 // SHARED COMPONENTS
