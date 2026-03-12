@@ -395,9 +395,16 @@ function AIAnalystBrief() {
           <div className="flex items-start gap-2">
             <span className="text-sm mt-0.5">💡</span>
             <div>
-              <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
-              <p className="mt-1" style={{ color: 'rgba(148,163,184,0.7)', fontSize: '12.5px', lineHeight: 1.5 }}>
-                Relancez les devis DEV-2602-316 et DEV-2602-895 pour diversifier le portefeuille client avant fin de mois.
+              <p className="mt-1 text-sm leading-relaxed">
+                {(() => {
+                  const recoText = 'Relancez les devis DEV-2602-316 et DEV-2602-895 — diversifiez le portefeuille client avant fin de mois.';
+                  const { headline, detail } = splitHeadlineDetail(recoText);
+                  return <>
+                    <span className="font-medium text-white">{headline}</span>
+                    {detail && <span className="font-normal text-muted-foreground/60"> {detail}</span>}
+                  </>;
+                })()}
+              </p>
               </p>
             </div>
           </div>
