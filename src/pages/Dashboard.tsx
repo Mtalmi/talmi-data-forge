@@ -1310,7 +1310,7 @@ export default function Dashboard() {
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                 <div className="mb-3">
                   <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
-                  <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 12px rgba(212,168,67,0.08)' }}>
+                  <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
@@ -1334,7 +1334,7 @@ export default function Dashboard() {
                       { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
                       { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
                     ].map((batch) => (
-                      <div key={batch.id} className="flex items-center gap-1.5 hover:bg-white/5 transition-all duration-200 cursor-pointer rounded px-2 py-1 -mx-2">
+                      <div key={batch.id} className="flex items-center gap-1.5 rounded px-2 py-1 -mx-2" style={{ cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }} onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}>
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
                         <div className="min-w-0">
                           <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
@@ -1354,7 +1354,7 @@ export default function Dashboard() {
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
                       <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
-                      <div className="text-sm font-medium text-white">{m.value}</div>
+                      <div className="text-sm font-medium text-white">{m.label === 'Cadence' ? <>{m.value.split(' ')[0]} <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>m³/h</span></> : m.value}</div>
                     </div>
                   ))}
                 </div>
