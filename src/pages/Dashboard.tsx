@@ -438,9 +438,9 @@ export default function Dashboard() {
             <div style={{ display: 'flex', gap: 0 }}>
               {([
                 { id: 'command', label: 'COMMAND CENTER', icon: <LayoutDashboard size={13} /> },
-                { id: 'production', label: 'PRODUCTION LIVE', icon: <Factory size={13} />, live: true },
-                { id: 'operations', label: 'OPÉRATIONS', icon: <Activity size={13} /> },
-                { id: 'intelligence', label: 'INTELLIGENCE IA', icon: <Sparkles size={13} /> },
+                { id: 'production', label: 'PRODUCTION LIVE', icon: <Factory size={13} />, live: true, badge: 2 },
+                { id: 'operations', label: 'OPÉRATIONS', icon: <Activity size={13} />, badge: 5 },
+                { id: 'intelligence', label: 'INTELLIGENCE IA', icon: <Sparkles size={13} />, badge: 3 },
               ] as const).map(tab => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -467,6 +467,11 @@ export default function Dashboard() {
                       <span className="relative flex h-1.5 w-1.5 ml-1">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                      </span>
+                    )}
+                    {'badge' in tab && tab.badge > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground" style={{ fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, padding: '0 4px', lineHeight: 1 }}>
+                        {tab.badge}
                       </span>
                     )}
                   </button>
