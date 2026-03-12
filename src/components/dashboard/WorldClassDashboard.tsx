@@ -369,7 +369,15 @@ function AIAnalystBrief() {
                 }}
               >
                 <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
-                <span className="text-[11px] leading-relaxed" style={{ color: 'rgba(148,163,184,0.8)' }}>{insight.text}</span>
+                <span className="text-sm leading-relaxed">
+                  {(() => {
+                    const { headline, detail } = splitHeadlineDetail(insight.text);
+                    return <>
+                      <span className="font-medium text-white">{headline}</span>
+                      {detail && <span className="font-normal text-muted-foreground/60"> {detail}</span>}
+                    </>;
+                  })()}
+                </span>
               </div>
             );
           })}
