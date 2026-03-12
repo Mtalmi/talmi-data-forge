@@ -592,7 +592,7 @@ export default function Dashboard() {
               ref={tabBarRef}
             >
               {([
-                { id: 'command', label: 'COMMAND CENTER', liveGreenDot: true },
+                { id: 'command', label: 'COMMAND CENTER' },
                 { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2, badgeBg: '#D4A843', badgeText: '#000' },
                 { id: 'operations', label: 'OPÉRATIONS', badge: 5, badgeBg: '#D4A843', badgeText: '#000' },
                 { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3, badgeBg: '#EF4444', badgeText: '#FFF' },
