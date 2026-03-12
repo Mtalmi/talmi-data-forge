@@ -811,7 +811,7 @@ export default function Dashboard() {
           </Suspense>
 
           {/* (6) Niveaux de Stock — stock only */}
-          <div className="mt-5">
+          <div className="mt-5" style={{ animation: 'ccSectionIn 300ms ease-out 650ms both' }}>
             {/* Section Header */}
             <div className="flex items-center gap-2.5 mb-3">
               <span style={{ fontSize: 14 }}>📦</span>
