@@ -168,7 +168,7 @@ export default function RecentDeliveries() {
         el.style.borderColor = 'rgba(245, 158, 11, 0.15)';
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.7),transparent)', zIndex:50 }} />
 
 
 
