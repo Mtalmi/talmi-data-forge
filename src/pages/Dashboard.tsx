@@ -859,7 +859,7 @@ export default function Dashboard() {
 
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
           {activeTab === 'production' && (
-          <>
+          <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Taux de Réussite compact gauge */}
           <div className="mb-5 flex flex-col items-start">
             <div className="rounded-lg px-5 py-4 flex flex-col items-center" style={{
