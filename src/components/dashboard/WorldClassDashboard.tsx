@@ -357,7 +357,11 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
             <div
               key={i}
               className="flex flex-col items-center cursor-pointer relative"
-              style={{ minWidth: 60, animation: `tbos-fade-up 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 * i + 0.2}s both` }}
+              style={{
+                minWidth: 60,
+                animation: `tbos-fade-up 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 * i + 0.2}s both`,
+                ...(b.status !== 'complete' ? { borderLeft: '2px solid rgba(212,168,67,0.5)', paddingLeft: '8px', background: 'rgba(212,168,67,0.03)' } : {}),
+              }}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
             >
