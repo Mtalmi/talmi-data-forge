@@ -1301,7 +1301,8 @@ export default function Dashboard() {
               </div>
 
               {/* Batch queue panel */}
-              <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+              <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col relative overflow-hidden">
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                 <div className="mb-3">
                   <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
                   <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 12px rgba(212,168,67,0.08)' }}>
