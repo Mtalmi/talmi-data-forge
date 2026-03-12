@@ -1202,7 +1202,7 @@ export default function Dashboard() {
 
         {/* ═══ INTELLIGENCE IA TAB CONTENT ═══ */}
         {activeTab === 'intelligence' && (
-        <div key="tab-intelligence" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
+        <div key="tab-intelligence" style={{ animation: 'tabFadeIn 200ms ease-in-out', background: 'transparent', border: 'none' }}>
         <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
           <Sparkles size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Intelligence IA</span>
