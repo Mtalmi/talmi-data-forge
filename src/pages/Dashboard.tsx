@@ -733,7 +733,7 @@ export default function Dashboard() {
                     <span className="text-2xl font-bold text-white">{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">m³</span>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">PRODUCTION DU JOUR</span>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
 
                 {/* Divider */}
