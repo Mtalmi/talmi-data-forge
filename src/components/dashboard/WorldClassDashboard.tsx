@@ -556,7 +556,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
-export function WorldClassDashboard() {
+export function WorldClassDashboard({ hideProductionWidgets = false }: { hideProductionWidgets?: boolean } = {}) {
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
