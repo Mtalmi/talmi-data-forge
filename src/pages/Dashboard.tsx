@@ -1073,10 +1073,10 @@ export default function Dashboard() {
                         <span className="font-medium" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Target</span>
                       </div>
                   </div>
-                  <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
+                  <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '4px', padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    TEMPS RÉEL
-                  </span>
+                    <span className="text-[9px] text-emerald-400/70 font-medium">TEMPS RÉEL</span>
+                  </div>
                 </div>
                 <div className="relative">
                   <svg
