@@ -654,7 +654,7 @@ export default function Dashboard() {
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
           <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
-          {/* (1) Hero — Premium Executive Command Deck */}
+          {/* (1) Hero — Command Cockpit Strip */}
           <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
               className="rounded-[10px]"
@@ -664,95 +664,93 @@ export default function Dashboard() {
                 padding: '24px 32px',
               }}
             >
-              {/* ── COCKPIT STRIP: 3-column layout ── */}
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-8">
-
-                {/* LEFT COLUMN — Greeting (understated) */}
-                <div className="text-left self-center">
-                  <h1 className="text-xl font-semibold text-white tracking-tight" style={{ lineHeight: 1.2 }}>
+              {/* ── ROW 1: GREETING (compact, understated) ── */}
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h1 className="text-lg font-semibold text-white tracking-tight" style={{ lineHeight: 1.2 }}>
                     {greeting} {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
-                    {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
+                    {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
-                  <div className="text-xs text-muted-foreground/40 tracking-wide mt-1">
-                    {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · Casablanca
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-muted-foreground/50">
+                  <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
                     <span className="flex items-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
                       </span>
-                      <span className="font-semibold uppercase tracking-[0.15em] text-emerald-400/80" style={{ fontSize: 10 }}>Operational</span>
+                      <span className="font-semibold uppercase tracking-wide text-emerald-400">OPERATIONAL</span>
                     </span>
                     <span className="text-muted-foreground/20">|</span>
-                    <span className="text-sm">☀️</span>
-                    <span className="text-white/70 font-mono tabular-nums">22°C</span>
-                    <span>Ensoleillé · 45%</span>
-                    <span className="font-semibold" style={{ color: 'rgba(52,211,153,0.8)' }}>● Optimal</span>
-                  </div>
-                </div>
-
-                {/* CENTER COLUMN — Gauge (the star) */}
-                <div className="flex flex-col items-center justify-center">
-                  <div className="relative w-[100px] h-[100px]" style={{ filter: 'drop-shadow(0 0 16px rgba(212,168,67,0.3))' }}>
-                    {/* Ambient glow */}
-                    <div className="absolute inset-[-16px] rounded-full" style={{ 
-                      background: 'radial-gradient(circle, rgba(212,168,67,0.18) 0%, rgba(212,168,67,0.06) 50%, transparent 70%)',
-                      animation: 'heroGlow 4s ease-in-out infinite',
-                    }} />
-                    <svg width="100" height="100" viewBox="0 0 100 100" className="relative">
-                      {/* Background track */}
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="#1a2332" strokeWidth="8" />
-                      {/* Glow halo arc */}
-                      <circle
-                        cx="50" cy="50" r="40" fill="none"
-                        stroke="rgba(212,168,67,0.12)" strokeWidth="14"
-                        strokeLinecap="round"
-                        strokeDasharray={`${0.87 * 2 * Math.PI * 40} ${2 * Math.PI * 40}`}
-                        transform="rotate(-90 50 50)"
-                        style={{ animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards' }}
-                      />
-                      {/* Gold progress arc */}
-                      <circle
-                        cx="50" cy="50" r="40" fill="none"
-                        stroke="#D4A843" strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeDasharray={`${0.87 * 2 * Math.PI * 40} ${2 * Math.PI * 40}`}
-                        transform="rotate(-90 50 50)"
-                        style={{ 
-                          animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards',
-                          filter: 'drop-shadow(0 0 6px rgba(212,168,67,0.5))',
-                        }}
-                      />
-                      {/* Center value */}
-                      <text x="50" y="50" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="28" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" letterSpacing="-0.02em">87<tspan fill="rgba(255,255,255,0.5)" fontSize="17" fontWeight="500">%</tspan></text>
-                    </svg>
-                  </div>
-                  <span className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 text-center mt-1">CAPACITÉ</span>
-                </div>
-
-                {/* RIGHT COLUMN — 3 Instrument Readouts */}
-                <div className="flex flex-row gap-6 items-center justify-end">
-                  {/* Instrument 1: urgent */}
-                  <div className="flex flex-col items-center border-l-2 border-red-500/30 pl-4">
-                    <span className="text-2xl font-bold text-red-400">2</span>
-                    <span className="text-[9px] tracking-[0.15em] uppercase text-red-400/50">urgent</span>
-                  </div>
-                  {/* Instrument 2: output */}
-                  <div className="flex flex-col items-center border-l border-white/10 pl-4">
-                    <span className="text-2xl font-bold text-white">{prodVolume}<span className="text-sm font-normal text-white/40">m³</span></span>
-                    <span className="text-[9px] tracking-[0.15em] uppercase text-muted-foreground/40">output</span>
-                  </div>
-                  {/* Instrument 3: margin */}
-                  <div className="flex flex-col items-center border-l pl-4" style={{ borderColor: 'rgba(212,168,67,0.2)' }}>
-                    <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}<span className="text-sm font-normal" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span></span>
-                    <span className="text-[9px] tracking-[0.15em] uppercase" style={{ color: 'rgba(212,168,67,0.4)' }}>margin</span>
+                    <span className="text-muted-foreground/40">
+                      {now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · Casablanca
+                    </span>
+                    <span className="text-muted-foreground/20">|</span>
+                    <span className="text-muted-foreground/40">
+                      <span className="text-sm">☀️</span> 22°C Ensoleillé · 45% · <span className="text-emerald-400/80 font-semibold">● Optimal</span>
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* ── BELOW COCKPIT: Action Bar + Prochaine Livraison ── */}
-              <div className="border-t border-white/5 mt-5 pt-4">
+              {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
+              <div className="flex items-center gap-8 py-3">
+                {/* Gauge */}
+                <div className="flex flex-col items-center flex-shrink-0">
+                  <div className="relative w-[56px] h-[56px]" style={{ filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.2))' }}>
+                    <svg width="56" height="56" viewBox="0 0 56 56">
+                      <circle cx="28" cy="28" r="22" fill="none" stroke="#1a2332" strokeWidth="5" />
+                      <circle
+                        cx="28" cy="28" r="22" fill="none"
+                        stroke="#D4A843" strokeWidth="5"
+                        strokeLinecap="round"
+                        strokeDasharray={`${0.87 * 2 * Math.PI * 22} ${2 * Math.PI * 22}`}
+                        transform="rotate(-90 28 28)"
+                        style={{ filter: 'drop-shadow(0 0 4px rgba(212,168,67,0.5))' }}
+                      />
+                      <text x="28" y="28" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="16" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace">87<tspan fill="rgba(255,255,255,0.5)" fontSize="9" fontWeight="500">%</tspan></text>
+                    </svg>
+                  </div>
+                  <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/40 mt-1">CAPACITÉ</span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-10 bg-white/10 flex-shrink-0" />
+
+                {/* Alertes */}
+                <div className="flex flex-col">
+                  <div className="flex items-baseline">
+                    <span className="text-2xl font-bold text-red-400">2</span>
+                    <span className="text-sm text-red-400/60 ml-1">urgent</span>
+                  </div>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">ALERTES ACTIVES</span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-10 bg-white/10 flex-shrink-0" />
+
+                {/* Production */}
+                <div className="flex flex-col">
+                  <div className="flex items-baseline">
+                    <span className="text-2xl font-bold text-white">{prodVolume}</span>
+                    <span className="text-sm text-white/40 ml-1">m³</span>
+                  </div>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">PRODUCTION DU JOUR</span>
+                </div>
+
+                {/* Divider */}
+                <div className="w-px h-10 bg-white/10 flex-shrink-0" />
+
+                {/* Marge */}
+                <div className="flex flex-col">
+                  <div className="flex items-baseline">
+                    <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
+                    <span className="text-sm ml-1" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
+                  </div>
+                  <span className="text-[9px] tracking-[0.12em] uppercase" style={{ color: 'rgba(212,168,67,0.4)' }}>MARGE BRUTE</span>
+                </div>
+              </div>
+
+              {/* ── ROW 3: ACTION BAR ── */}
+              <div className="border-t border-white/5 mt-4 pt-4">
                 <div className="flex items-center justify-between">
                   {/* LEFT: Action Buttons */}
                   <div className="flex flex-wrap items-center gap-3">
