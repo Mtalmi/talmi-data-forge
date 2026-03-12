@@ -1130,6 +1130,20 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           </div>
         )}
 
+        {/* ─── Agent IA Intelligence Bar ─── */}
+        {!hideOpsWidgets && (
+          <div className="bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-transparent border border-[#D4A843]/10 rounded-xl px-5 py-3 flex items-center justify-between mb-4 relative z-[1] w-full">
+            <div className="flex items-center min-w-0">
+              <span className="text-[#D4A843] animate-pulse mr-2 flex-shrink-0">✦</span>
+              <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — Constructions Modernes SA (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+              <button className="bg-[#D4A843]/10 border border-[#D4A843]/30 text-[#D4A843] text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[#D4A843]/20 transition-colors">Alerter Client</button>
+              <span className="text-xs text-muted-foreground/40 hover:text-muted-foreground/60 px-3 py-1.5 cursor-pointer transition-colors">Ignorer</span>
+            </div>
+          </div>
+        )}
+
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
           <div className="bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-emerald-500/[0.03] border border-white/[0.06] rounded-xl px-6 py-4 mb-4 relative z-[1] w-full flex items-center justify-between border-l-2 border-l-[#D4A843]/50">
