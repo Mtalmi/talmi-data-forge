@@ -40,7 +40,8 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
       {/* Mobile overlay */}
       {isMobile && sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/60 z-30 lg:hidden"
+          className="fixed inset-0 z-40 lg:hidden"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
           onClick={() => setSidebarOpen(false)}
         />
       )}
