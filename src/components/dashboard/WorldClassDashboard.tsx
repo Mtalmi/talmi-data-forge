@@ -911,6 +911,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
             <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
             <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 vs hier</span>
+            <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>MARGE +12%</span></div>
           </div>
 
           {/* Middle: Micro-metrics */}
