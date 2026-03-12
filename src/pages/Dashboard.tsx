@@ -650,224 +650,184 @@ export default function Dashboard() {
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
           <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
-          {/* (1) Greeting — Cinematic Hero Moment */}
+          {/* (1) Hero — Premium Executive Command Deck */}
           <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
               className="rounded-[10px]"
               style={{
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.1)',
-                padding: 20,
+                padding: '20px 24px',
               }}
             >
-              <div className="flex items-end justify-between">
-                <div>
-                  <h1 className="tracking-tight" style={{ fontSize: '1.5625rem', fontWeight: 700, color: '#FFD700', lineHeight: 1, marginBottom: 5 }}>
+              {/* ── ZONE 1: Greeting + Gauge ── */}
+              <div className="flex items-center justify-between py-5">
+                {/* Left: Greeting + status line */}
+                <div className="min-w-0">
+                  <h1 className="text-2xl font-semibold text-white tracking-tight" style={{ lineHeight: 1.2 }}>
                     {greeting} {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
                     {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
-                  <div className="mt-3 mb-2.5" style={{ height: '1px', background: 'linear-gradient(90deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.04) 70%, transparent 100%)' }} />
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1" style={{ paddingLeft: 5, paddingRight: 5 }}>
-                    <span className="flex flex-col items-center">
-                      <div className="relative w-[72px] h-[72px] flex-shrink-0">
-                        {/* Ambient glow */}
-                        <div className="absolute inset-[-10px] rounded-full" style={{ 
-                          background: 'radial-gradient(circle, rgba(212,168,67,0.18) 0%, rgba(212,168,67,0.06) 50%, transparent 70%)',
-                          animation: 'heroGlow 4s ease-in-out infinite',
-                        }} />
-                        <svg width="72" height="72" viewBox="0 0 72 72" className="relative">
-                          {/* Background track */}
-                          <circle cx="36" cy="36" r="28" fill="none" stroke="#1a2332" strokeWidth="8" />
-                          {/* Glow halo arc behind gold */}
-                          <circle
-                            cx="36" cy="36" r="28" fill="none"
-                            stroke="rgba(212,168,67,0.15)" strokeWidth="12"
-                            strokeLinecap="round"
-                            strokeDasharray={`${0.87 * 2 * Math.PI * 28} ${2 * Math.PI * 28}`}
-                            transform="rotate(-90 36 36)"
-                            style={{ animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards' }}
-                          />
-                          {/* Gold progress arc */}
-                          <circle
-                            cx="36" cy="36" r="28" fill="none"
-                            stroke="#D4A843" strokeWidth="8"
-                            strokeLinecap="round"
-                            strokeDasharray={`${0.87 * 2 * Math.PI * 28} ${2 * Math.PI * 28}`}
-                            transform="rotate(-90 36 36)"
-                            style={{ 
-                              animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards',
-                              filter: 'drop-shadow(0 0 6px rgba(212,168,67,0.5))',
-                            }}
-                          />
-                          {/* Center value */}
-                          <text x="36" y="36" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="20" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" letterSpacing="-0.02em">87<tspan fill="rgba(255,255,255,0.5)" fontSize="13" fontWeight="500">%</tspan></text>
-                        </svg>
-                      </div>
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 text-center" style={{ marginTop: 5 }}>CAPACITÉ</span>
+                  {/* Status line: OPERATIONAL + date + city + weather */}
+                  <div className="flex flex-wrap items-center gap-2.5 mt-2.5">
+                    <span className="flex items-center gap-1.5">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
+                      </span>
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400/80">Operational</span>
                     </span>
-                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
-                      <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
-                       <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(248,113,113,0.8)' }} strokeWidth={1.5} />
-                       <span className="font-medium" style={{ color: '#f87171' }}>2</span>
-                       <span className="font-medium" style={{ color: '#f87171' }}>urgent</span>
-                     </span>
-                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
-                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
-                      <Package className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} strokeWidth={1.5} />
-                      <span className="font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{prodVolume} m³</span>
-                      <span style={{ color: 'rgba(255,255,255,0.45)' }}>output</span>
-                    </span>
-                    <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
-                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
-                      <TrendingUp className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(52,211,153,0.6)' }} strokeWidth={1.5} />
-                      <span className="font-medium" style={{ color: 'rgba(52,211,153,0.85)' }}>{marge}%</span>
-                      <span style={{ color: 'rgba(52,211,153,0.5)' }}>margin</span>
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-3 mt-4" style={{ paddingLeft: 5 }}>
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" style={{ animation: 'liveGlowPulse 2s ease-in-out infinite' }} />
-                    </span>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-emerald-400/80">Operational</span>
-                    <span className="w-px h-3.5 bg-slate-600/50" />
-                    <span className="text-[11px] text-slate-400/70 tracking-wider font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-                    <span className="w-px h-3.5 bg-slate-600/50" />
-                    <span className="text-[11px] text-slate-400/70 tracking-wider">Casablanca</span>
-                    <span className="w-px h-3.5 bg-slate-600/50" />
-                    <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground/50 font-mono">{now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · Casablanca</span>
+                    <span className="text-muted-foreground/20">|</span>
+                    <div className="flex items-center gap-1.5">
                       <span className="text-sm">☀️</span>
                       <span className="text-[11px] text-white/80 font-mono tabular-nums font-medium">22°C</span>
-                      <span className="text-[11px] text-slate-400/60">Ensoleillé · 45%</span>
+                      <span className="text-[11px] text-muted-foreground/50">Ensoleillé · 45%</span>
                       <span className="text-[11px] font-semibold" style={{ color: 'rgba(52,211,153,0.8)' }}>● Optimal</span>
-                    </div>
-                   </div>
-                  {/* Quick Action Bar + Prochaine Livraison */}
-                  <div className="flex items-center gap-3 mt-4">
-                    {/* Action Buttons Container */}
-                    <div className="flex flex-wrap items-center gap-3 flex-1 rounded-xl px-4 py-3" style={{
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.06)',
-                    }}>
-                      {/* NOUVEAU DEVIS — neutral */}
-                      <button
-                        onClick={() => navigate('/ventes')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                        style={{
-                          background: 'rgba(255,255,255,0.04)',
-                          border: '1px solid rgba(255,255,255,0.10)',
-                          color: 'rgba(255,255,255,0.8)',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = '#fff'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
-                      >
-                        <PlusCircle size={16} className="opacity-60" />
-                        NOUVEAU DEVIS
-                      </button>
-
-                      {/* RELANCER CLIENTS — red urgency */}
-                      <button
-                        onClick={() => navigate('/recouvrement')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                        style={{
-                          background: 'rgba(239,68,68,0.08)',
-                          border: '1px solid rgba(239,68,68,0.20)',
-                          color: 'rgba(255,255,255,0.8)',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
-                      >
-                        <PhoneCall size={16} className="opacity-60" />
-                        RELANCER CLIENTS
-                        <span
-                          className="absolute flex items-center justify-center rounded-full z-10"
-                          style={{
-                            top: -8, right: -8,
-                            minWidth: 20, height: 20,
-                            fontSize: 10, fontWeight: 700,
-                            background: '#EF4444', color: '#fff',
-                            boxShadow: '0 0 8px rgba(239,68,68,0.5)',
-                          }}
-                        >2</span>
-                      </button>
-
-                      {/* RAPPORT DU JOUR — gold intelligence */}
-                      <button
-                        onClick={() => navigate('/rapports')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                        style={{
-                          background: 'rgba(212,168,67,0.08)',
-                          border: '1px solid rgba(212,168,67,0.20)',
-                          color: 'rgba(255,255,255,0.8)',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
-                      >
-                        <FileText size={16} className="opacity-60" />
-                        RAPPORT DU JOUR
-                        <span
-                          className="absolute flex items-center justify-center rounded-md z-10"
-                          style={{
-                            top: -8, right: -8,
-                            padding: '2px 6px',
-                            fontSize: 9, fontWeight: 700, letterSpacing: '0.05em',
-                            background: '#D4A843', color: '#000',
-                            boxShadow: '0 0 8px rgba(212,168,67,0.5)',
-                          }}
-                        >NEW</span>
-                      </button>
-
-                      {/* LANCER PRODUCTION — green go */}
-                      <button
-                        onClick={() => navigate('/production')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                        style={{
-                          background: 'rgba(16,185,129,0.08)',
-                          border: '1px solid rgba(16,185,129,0.20)',
-                          color: 'rgba(255,255,255,0.8)',
-                        }}
-                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
-                      >
-                        <BarChart3 size={16} className="opacity-60" />
-                        LANCER PRODUCTION
-                      </button>
-                    </div>
-
-                    {/* Vertical divider + Prochaine Livraison */}
-                    <div className="hidden md:flex items-center gap-3">
-                      <div className="w-px h-12" style={{ background: 'rgba(255,255,255,0.08)' }} />
-                      <div className="flex items-center gap-2.5 rounded-lg px-4 py-2.5" style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.10)',
-                      }}>
-                        <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
-                        <div className="flex flex-col">
-                          <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
-                          {nextDelivery ? (
-                            <>
-                              <span className="text-xs text-white truncate max-w-[140px]">{nextDelivery.client}</span>
-                              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-                                {nextDelivery.minutesLeft} min
-                              </span>
-                              <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
-                              <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
                     </div>
                   </div>
                 </div>
-                <div className="hidden md:flex flex-col items-end gap-2 flex-shrink-0">
-                  <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
-                  <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.3)' }}>dernière mise à jour: à l'instant</span>
+
+                {/* Right: 96px Capacity Gauge */}
+                <div className="flex flex-col items-center flex-shrink-0">
+                  <div className="relative w-[96px] h-[96px]" style={{ filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.25))' }}>
+                    {/* Ambient glow */}
+                    <div className="absolute inset-[-14px] rounded-full" style={{ 
+                      background: 'radial-gradient(circle, rgba(212,168,67,0.18) 0%, rgba(212,168,67,0.06) 50%, transparent 70%)',
+                      animation: 'heroGlow 4s ease-in-out infinite',
+                    }} />
+                    <svg width="96" height="96" viewBox="0 0 96 96" className="relative">
+                      {/* Background track */}
+                      <circle cx="48" cy="48" r="38" fill="none" stroke="#1a2332" strokeWidth="8" />
+                      {/* Glow halo arc */}
+                      <circle
+                        cx="48" cy="48" r="38" fill="none"
+                        stroke="rgba(212,168,67,0.15)" strokeWidth="12"
+                        strokeLinecap="round"
+                        strokeDasharray={`${0.87 * 2 * Math.PI * 38} ${2 * Math.PI * 38}`}
+                        transform="rotate(-90 48 48)"
+                        style={{ animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards' }}
+                      />
+                      {/* Gold progress arc */}
+                      <circle
+                        cx="48" cy="48" r="38" fill="none"
+                        stroke="#D4A843" strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray={`${0.87 * 2 * Math.PI * 38} ${2 * Math.PI * 38}`}
+                        transform="rotate(-90 48 48)"
+                        style={{ 
+                          animation: 'capacityGaugeArc 1.2s cubic-bezier(0.22,1,0.36,1) forwards',
+                          filter: 'drop-shadow(0 0 6px rgba(212,168,67,0.5))',
+                        }}
+                      />
+                      {/* Center value */}
+                      <text x="48" y="48" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="26" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" letterSpacing="-0.02em">87<tspan fill="rgba(255,255,255,0.5)" fontSize="16" fontWeight="500">%</tspan></text>
+                    </svg>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 text-center mt-1">CAPACITÉ</span>
                 </div>
+              </div>
+
+              {/* ── ZONE 2: Hero Metric Chips ── */}
+              <div className="flex items-center gap-3 mt-1 mb-4">
+                {/* Chip 1: Urgent (red) */}
+                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(239,68,68,0.10)', border: '1px solid rgba(239,68,68,0.20)' }}>
+                  <AlertTriangle size={14} style={{ color: '#f87171' }} />
+                  <span className="text-sm font-semibold" style={{ color: '#f87171' }}>2 urgent</span>
+                </div>
+                {/* Chip 2: Output (white) */}
+                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
+                  <Package size={14} style={{ color: 'rgba(255,255,255,0.5)' }} />
+                  <span className="text-sm font-semibold text-white">{prodVolume} m³</span>
+                  <span className="text-xs text-muted-foreground/40">output</span>
+                </div>
+                {/* Chip 3: Margin (gold) */}
+                <div className="flex items-center gap-2 rounded-lg px-4 py-2" style={{ background: 'rgba(212,168,67,0.10)', border: '1px solid rgba(212,168,67,0.20)' }}>
+                  <TrendingUp size={14} style={{ color: '#D4A843' }} />
+                  <span className="text-sm font-semibold" style={{ color: '#D4A843' }}>{marge}%</span>
+                  <span className="text-xs text-muted-foreground/40">margin</span>
+                </div>
+              </div>
+
+              {/* ── ZONE 3: Action Bar + Prochaine Livraison ── */}
+              <div className="flex items-center gap-0">
+                {/* Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3 flex-1 rounded-xl px-4 py-3" style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}>
+                  <button
+                    onClick={() => navigate('/ventes')}
+                    className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.10)', color: 'rgba(255,255,255,0.8)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                  >
+                    <PlusCircle size={16} className="opacity-60" />
+                    NOUVEAU DEVIS
+                  </button>
+                  <button
+                    onClick={() => navigate('/recouvrement')}
+                    className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                    style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.20)', color: 'rgba(255,255,255,0.8)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                  >
+                    <PhoneCall size={16} className="opacity-60" />
+                    RELANCER CLIENTS
+                    <span className="absolute flex items-center justify-center rounded-full z-10" style={{ top: -8, right: -8, minWidth: 20, height: 20, fontSize: 10, fontWeight: 700, background: '#EF4444', color: '#fff', boxShadow: '0 0 8px rgba(239,68,68,0.5)' }}>2</span>
+                  </button>
+                  <button
+                    onClick={() => navigate('/rapports')}
+                    className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                    style={{ background: 'rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.20)', color: 'rgba(255,255,255,0.8)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                  >
+                    <FileText size={16} className="opacity-60" />
+                    RAPPORT DU JOUR
+                    <span className="absolute flex items-center justify-center rounded-md z-10" style={{ top: -8, right: -8, padding: '2px 6px', fontSize: 9, fontWeight: 700, letterSpacing: '0.05em', background: '#D4A843', color: '#000', boxShadow: '0 0 8px rgba(212,168,67,0.5)' }}>NEW</span>
+                  </button>
+                  <button
+                    onClick={() => navigate('/production')}
+                    className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                    style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.20)', color: 'rgba(255,255,255,0.8)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                  >
+                    <BarChart3 size={16} className="opacity-60" />
+                    LANCER PRODUCTION
+                  </button>
+                </div>
+
+                {/* Vertical divider */}
+                <div className="hidden md:block w-px h-8 mx-3 self-center" style={{ background: 'rgba(255,255,255,0.10)' }} />
+
+                {/* Prochaine Livraison */}
+                <div className="hidden md:flex items-center gap-2.5 rounded-lg px-4 py-2.5 flex-shrink-0" style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.10)',
+                }}>
+                  <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
+                    {nextDelivery ? (
+                      <>
+                        <span className="text-xs text-white truncate max-w-[140px]">{nextDelivery.client}</span>
+                        <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                          {nextDelivery.minutesLeft} min
+                        </span>
+                        <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
+                        <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
