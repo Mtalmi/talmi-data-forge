@@ -484,10 +484,10 @@ export default function Dashboard() {
           }}>
             <div style={{ display: 'flex', gap: 0 }}>
               {([
-                { id: 'command', label: 'COMMAND CENTER', icon: <LayoutDashboard size={13} /> },
-                { id: 'production', label: 'PRODUCTION LIVE', icon: <Factory size={13} />, live: true, badge: 2 },
-                { id: 'operations', label: 'OPÉRATIONS', icon: <Activity size={13} />, badge: 5 },
-                { id: 'intelligence', label: 'INTELLIGENCE IA', icon: <Sparkles size={13} />, badge: 3 },
+                { id: 'command', label: 'COMMAND CENTER' },
+                { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2 },
+                { id: 'operations', label: 'OPÉRATIONS', badge: 5 },
+                { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3 },
               ] as const).map(tab => {
                 const isActive = activeTab === tab.id;
                 return (
