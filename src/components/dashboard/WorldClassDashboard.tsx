@@ -556,7 +556,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
-export function WorldClassDashboard() {
+export function WorldClassDashboard({ hideProductionWidgets = false }: { hideProductionWidgets?: boolean } = {}) {
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
@@ -687,9 +687,10 @@ export function WorldClassDashboard() {
             </Card>
 
             {/* Live Batch Progress */}
-            <LiveBatchProgress />
+            {!hideProductionWidgets && <LiveBatchProgress />}
 
             {/* Batch Timeline */}
+            {!hideProductionWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-2" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
@@ -702,6 +703,7 @@ export function WorldClassDashboard() {
               </div>
               <BatchTimeline batches={batches} />
             </Card>
+            )}
 
             {/* AI Analyst Brief */}
             <AIAnalystBrief />
@@ -778,6 +780,7 @@ export function WorldClassDashboard() {
             <PipelineFunnel />
 
             {/* Quality feed — Compact */}
+            {!hideProductionWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-6" style={{ borderRadius: 8, padding: 20, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
@@ -800,6 +803,7 @@ export function WorldClassDashboard() {
                 ))}
               </div>
             </Card>
+            )}
           </div>
 
           {/* ─── Col 3: Créances & Deliveries ─── */}

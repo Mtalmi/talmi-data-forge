@@ -13,13 +13,14 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
 const ExecutiveSummaryView = lazy(() => import('@/components/dashboard/ExecutiveSummaryView').then(m => ({ default: m.ExecutiveSummaryView })));
 const PlantFlowSchematic = lazy(() => import('@/components/dashboard/PlantFlowSchematic'));
+const LiveBatchProgress = lazy(() => import('@/components/dashboard/LiveBatchProgress'));
 
 // Finance zone lazy widgets
 const CircularBudgetGauge = lazy(() => import('@/components/dashboard/CircularBudgetGauge').then(m => ({ default: m.CircularBudgetGauge })));
@@ -71,7 +72,7 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
-
+  const [activeTab, setActiveTab] = useState<'command' | 'production'>('command');
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -797,6 +798,41 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* ═══ TAB BAR — Command Center / Production Live ═══ */}
+        <div className="flex items-center gap-1 mb-5 relative z-[1] p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <button
+            onClick={() => setActiveTab('command')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'command' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'command' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'command' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <LayoutDashboard size={14} />
+            Command Center
+          </button>
+          <button
+            onClick={() => setActiveTab('production')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'production' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'production' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'production' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <Factory size={14} />
+            Production Live
+            <span className="relative flex h-1.5 w-1.5 ml-1">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            </span>
+          </button>
+        </div>
+
+        {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
+        {activeTab === 'production' && (
+        <>
         {/* ═══════════════════════════════════════════════════════════ */}
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
@@ -1231,8 +1267,75 @@ export default function Dashboard() {
           </div>
         </div>{/* end production command center */}
 
+        {/* ═══ Additional Production Widgets ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5 relative z-[1]">
+          {/* Batch en Cours */}
+          <div className="min-w-0">
+            <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
+              <LiveBatchProgress />
+            </Suspense>
+          </div>
+
+          {/* Derniers Batches */}
+          <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />
+              </span>
+              <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
+            </div>
+            <div className="space-y-2">
+              {[
+                { id: '#403-068', formula: 'F-B25', vol: '8 m³', time: '15:42', status: 'ok' },
+                { id: '#403-067', formula: 'F-B30', vol: '12 m³', time: '14:28', status: 'ok' },
+                { id: '#403-066', formula: 'F-B25', vol: '8 m³', time: '13:15', status: 'warn' },
+                { id: '#403-065', formula: 'F-B35', vol: '10 m³', time: '12:03', status: 'ok' },
+                { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
+              ].map((b) => (
+                <div key={b.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.status === 'ok' ? '#34D399' : '#FBBF24' }} />
+                    <span className="text-[10px] font-mono text-slate-400">{b.id}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-500">{b.formula} · {b.vol}</span>
+                  <span className="text-[9px] font-mono text-slate-600">{b.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Contrôle Qualité */}
+          <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
+            <div className="flex flex-col gap-1">
+              {[
+                { id: 'BL-2602-070', test: 'Slump 18cm', ok: true, time: '20:41' },
+                { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
+                { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
+              ].map((q, i) => (
+                <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
+                    <span className="text-[11px] font-mono text-slate-400 tabular-nums">{q.id}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <span className="text-slate-500">{q.test}</span>
+                    <span className="text-[10px] font-mono tabular-nums" style={{ color: q.ok ? 'rgb(148,163,184)' : 'rgba(251,191,36,0.7)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                    <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        </>
+        )}
+
         </div>{/* end hero zone wrapper */}
 
+        {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
+        {activeTab === 'command' && (
+        <>
         {/* Alert Strip — Intelligent Urgency */}
         {!alertDismissed && stats.tauxECMoyen > 0 && (
           <div
@@ -1286,13 +1389,15 @@ export default function Dashboard() {
         </div>
 
         {/* ══════════════════════════════════════════════════
-            ZONE 2 — OPERATIONS (always visible)
+            ZONE 2 — OPERATIONS
         ══════════════════════════════════════════════════ */}
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
-            <WorldClassDashboard />
+            <WorldClassDashboard hideProductionWidgets />
           </Suspense>
         </div>
+        </>
+        )}
 
         {/* FINANCE & CONFORMITÉ — Hidden for CEO demo (no content yet) */}
 
