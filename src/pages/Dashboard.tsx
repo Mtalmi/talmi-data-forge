@@ -701,10 +701,10 @@ export default function Dashboard() {
               </div>
 
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
-              <div className="flex items-center gap-8 py-3">
+              <div className="flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
                 {/* Capacity */}
                 <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212,168,67,0.3)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 30px rgba(212, 168, 67, 0.2)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
                   <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                     <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '87%' }} />
                   </div>
@@ -717,7 +717,7 @@ export default function Dashboard() {
                 {/* Alertes */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl text-red-400" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200 }}>2</span>
+                    <span className="text-2xl text-red-400 font-bold" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", textShadow: '0 0 12px rgba(239, 68, 68, 0.3)' }}>2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
@@ -729,7 +729,7 @@ export default function Dashboard() {
                 {/* Production */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200 }}>{prodVolume}</span>
+                    <span className="text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">m³</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
