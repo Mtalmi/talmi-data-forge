@@ -103,54 +103,55 @@ function useContractorsLiveData() {
   return { kpis, contractors };
 }
 
-// (Mock CONTRACTORS array removed — live data only)
+// (All mock data removed — live data only)
 
-const MISSIONS = [
-  { id: 'MST-2024-012', contractor: 'Atlas Pompage', client: 'ONCF — Rabat Gare',        debut: '12 Fév', fin: '28 Fév', joursActuel: 8, joursTotal: 12, coutEstime: '42,000 DH', tarif: '3,500', total: 12, progress: 67, initials: 'AP', avatarBg: T.gold,    avatarText: T.navy },
-  { id: 'MST-2024-011', contractor: 'Transport Express', client: 'Jet Contractors — Tanger', debut: '15 Fév', fin: '22 Fév', joursActuel: 5, joursTotal: 6,  coutEstime: '16,800 DH', tarif: '2,800', total: 6,  progress: 83, initials: 'TE', avatarBg: T.info,    avatarText: '#fff' },
-  { id: 'MST-2024-010', contractor: 'Grue Maroc', client: 'Addoha — Casa Sidi Moumen', debut: '17 Fév', fin: '25 Fév', joursActuel: 4, joursTotal: 7,  coutEstime: '35,000 DH', tarif: '5,000', total: 7,  progress: 57, initials: 'GM', avatarBg: T.success, avatarText: '#fff' },
-];
+// Mission interface derived from live contractors
+interface LiveMission {
+  id: string;
+  contractor: string;
+  client: string;
+  debut: string;
+  fin: string;
+  joursActuel: number;
+  joursTotal: number;
+  coutEstime: string;
+  tarif: string;
+  total: number;
+  progress: number;
+  initials: string;
+  avatarBg: string;
+  avatarText: string;
+}
 
-const COST_DONUT = [
-  { name: 'Atlas Pompage',    value: 28,  color: '#D4A843' },
-  { name: 'Grue Maroc',       value: 20,  color: '#C49A35' },
-  { name: 'Transport Express',value: 14,  color: '#A07820' },
-  { name: 'Sécurité Plus',    value: 8,   color: 'rgba(212,168,67,0.7)' },
-  { name: 'Nettoyage Pro',    value: 7.2, color: 'rgba(212,168,67,0.45)' },
-  { name: 'Électricité MB',   value: 2.5, color: 'rgba(212,168,67,0.25)' },
-];
+interface LiveHistoryItem {
+  id: string;
+  contractor: string;
+  client: string;
+  duree: string;
+  cout: string;
+  rating: number;
+  initials: string;
+  avatarBg: string;
+}
 
-const TREND_DATA = [
-  { month: 'Sep', cout: 52 },
-  { month: 'Oct', cout: 65 },
-  { month: 'Nov', cout: 58 },
-  { month: 'Déc', cout: 72 },
-  { month: 'Jan', cout: 68 },
-  { month: 'Fév', cout: 78 },
-];
+interface LiveUpcomingItem {
+  besoin: string;
+  specialty: string;
+  specialtyColor: string;
+  chantier: string;
+  date: string;
+  duree: string;
+  budget: string;
+  priority: string;
+}
 
-const RELIABILITY = [
-  { name: 'LafargeHolcim', pct: 96 },
-  { name: 'Carrière Atlas', pct: 92 },
-  { name: 'Sika Maroc',     pct: 98 },
-  { name: 'CIMAT',          pct: 88 },
-  { name: 'Sablière Nord',  pct: 85 },
-  { name: 'ONEE',           pct: 100 },
-];
+interface CostDonutItem {
+  name: string;
+  value: number;
+  color: string;
+}
 
-const HISTORY = [
-  { id: 'MST-2024-009', contractor: 'Atlas Pompage',    client: 'Ciments du Maroc', duree: '10 j', cout: '35,000 DH', rating: 5, initials: 'AP', avatarBg: T.gold    },
-  { id: 'MST-2024-008', contractor: 'Grue Maroc',       client: 'Tgcc',             duree: '5 j',  cout: '25,000 DH', rating: 5, initials: 'GM', avatarBg: T.success },
-  { id: 'MST-2024-007', contractor: 'Transport Express',client: 'Alliances',        duree: '3 j',  cout: '8,400 DH',  rating: 4, initials: 'TE', avatarBg: T.info    },
-  { id: 'MST-2024-006', contractor: 'Nettoyage Pro',    client: 'ONCF',             duree: '4 j',  cout: '4,800 DH',  rating: 4, initials: 'NP', avatarBg: T.purple  },
-  { id: 'MST-2024-005', contractor: 'Sécurité Plus',    client: 'Addoha',           duree: '15 j', cout: '12,000 DH', rating: 3, initials: 'SP', avatarBg: T.warning },
-  { id: 'MST-2024-004', contractor: 'Électricité MB',   client: 'Ciments du Maroc', duree: '2 j',  cout: '5,000 DH',  rating: 4, initials: 'EM', avatarBg: T.cyan    },
-];
-
-const UPCOMING = [
-  { besoin: 'Pompage gros volume',    specialty: 'Pompage béton',    specialtyColor: T.gold,  chantier: 'ONCF — Kénitra',       date: '01 Mars', duree: '5 jours', budget: '17,500 DH', priority: 'Haute'   },
-  { besoin: 'Installation électrique',specialty: 'Électricité',      specialtyColor: T.cyan,  chantier: 'Tgcc — Mohammedia',    date: '10 Mars', duree: '3 jours', budget: '7,500 DH',  priority: 'Normale' },
-];
+const DONUT_COLORS = ['#D4A843', '#C49A35', '#A07820', 'rgba(212,168,67,0.7)', 'rgba(212,168,67,0.45)', 'rgba(212,168,67,0.25)', 'rgba(212,168,67,0.15)'];
 
 // ─────────────────────────────────────────────────────
 // SHARED COMPONENTS
@@ -437,7 +438,7 @@ function ContractorRow({ c, delay, colorIndex, onClick }: { c: { id: string; cod
 // ─────────────────────────────────────────────────────
 // SECTION: MISSION CARD
 // ─────────────────────────────────────────────────────
-function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: typeof MISSIONS[0]; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
+function MissionCard({ m, delay, onViewDetails, onProlonger }: { m: LiveMission; delay: number; onViewDetails?: () => void; onProlonger?: () => void }) {
   const [hov, setHov] = useState(false);
   const [progW, setProgW] = useState(0);
   const [riskTooltip, setRiskTooltip] = useState(false);
@@ -692,7 +693,7 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 export default function WorldClassContractors() {
   const [activeTab, setActiveTab] = useState('tous');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [missionDrawer, setMissionDrawer] = useState<(typeof MISSIONS[0]) | null>(null);
+  const [missionDrawer, setMissionDrawer] = useState<LiveMission | null>(null);
   const [formData, setFormData] = useState({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -704,11 +705,11 @@ export default function WorldClassContractors() {
   const [raisonProlongation, setRaisonProlongation] = useState('');
   const [prolongerLoading, setProlongerLoading] = useState(false);
   const [prolongerError, setProlongerError] = useState('');
-  const [assignerBesoin, setAssignerBesoin] = useState<typeof UPCOMING[0] | null>(null);
+  const [assignerBesoin, setAssignerBesoin] = useState<LiveUpcomingItem | null>(null);
   const [selectedPrestataire, setSelectedPrestataire] = useState('');
   const [assignerLoading, setAssignerLoading] = useState(false);
   const [assignerError, setAssignerError] = useState('');
-  const [appelsOffres, setAppelsOffres] = useState<typeof UPCOMING[0] | null>(null);
+  const [appelsOffres, setAppelsOffres] = useState<LiveUpcomingItem | null>(null);
   const [aoForm, setAoForm] = useState({ titre: '', description: '', specialite: '', budget_max: '', date_limite: '', priorite: 'normale', chantier: '', duree_estimee: '' });
   const [aoLoading, setAoLoading] = useState(false);
   const [aoError, setAoError] = useState('');
@@ -813,8 +814,61 @@ export default function WorldClassContractors() {
     console.log('[WC-KPI] contractors.length =', actifCount, '| missionsEnCours =', missionsEnCours, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
   }, [actifCount, missionsEnCours, coutMTDTotal, coutMTDK]);
 
-  // Donut total
-  const totalCost = COST_DONUT.reduce((s, d) => s + d.value, 0);
+  // Derive cost donut from live contractor data
+  const costDonut: CostDonutItem[] = useMemo(() => {
+    return contractors
+      .filter((c: any) => (c.cout_mtd || 0) > 0)
+      .sort((a: any, b: any) => (b.cout_mtd || 0) - (a.cout_mtd || 0))
+      .map((c: any, i: number) => ({
+        name: c.nom || 'Inconnu',
+        value: Math.round((c.cout_mtd || 0) / 1000 * 10) / 10,
+        color: DONUT_COLORS[i % DONUT_COLORS.length],
+      }));
+  }, [contractors]);
+  const totalCost = costDonut.reduce((s, d) => s + d.value, 0);
+
+  // Derive active missions from contractors with statut='mission'
+  const liveMissions: LiveMission[] = useMemo(() => {
+    return contractors
+      .filter((c: any) => c.statut === 'mission')
+      .map((c: any, i: number) => {
+        const jours = c.jours_travailles || 0;
+        const tarif = c.tarif_journalier || 0;
+        const totalJours = jours > 0 ? Math.max(jours + 4, Math.round(jours * 1.3)) : 10;
+        const progress = totalJours > 0 ? Math.min(Math.round((jours / totalJours) * 100), 99) : 0;
+        const initials = (c.code_prestataire || c.nom || '??').slice(0, 2).toUpperCase();
+        const colors = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan];
+        const debut = c.date_debut ? new Date(c.date_debut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+        const fin = c.date_fin ? new Date(c.date_fin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+        return {
+          id: `MST-${c.id.slice(0, 8)}`,
+          contractor: c.nom || '—',
+          client: c.mission_actuelle || '—',
+          debut,
+          fin,
+          joursActuel: jours,
+          joursTotal: totalJours,
+          coutEstime: `${(jours * tarif).toLocaleString('fr-FR')} DH`,
+          tarif: tarif.toLocaleString('fr-FR'),
+          total: totalJours,
+          progress,
+          initials,
+          avatarBg: colors[i % colors.length],
+          avatarText: colors[i % colors.length] === T.gold ? T.navy : '#fff',
+        };
+      });
+  }, [contractors]);
+
+  // Derive AI banner text from live data
+  const aiBannerText = useMemo(() => {
+    const enMission = contractors.filter((c: any) => c.statut === 'mission');
+    const disponibles = contractors.filter((c: any) => c.statut === 'disponible');
+    if (contractors.length === 0) return 'Chargement des données sous-traitants…';
+    const parts: string[] = [];
+    parts.push(`${enMission.length} mission${enMission.length !== 1 ? 's' : ''} active${enMission.length !== 1 ? 's' : ''}`);
+    if (disponibles.length > 0) parts.push(`${disponibles.length} sous-traitant${disponibles.length !== 1 ? 's' : ''} disponible${disponibles.length !== 1 ? 's' : ''}`);
+    return parts.join(' · ');
+  }, [contractors]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: T.textPri, paddingBottom: 60 }}>
@@ -859,7 +913,7 @@ export default function WorldClassContractors() {
         }}>
           <Zap size={16} color="#D4A843" strokeWidth={2.5} />
           <span style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.85)', fontWeight: 400 }}>
-            3 missions actives · Atlas Pompage termine dans 4 jours · 2 sous-traitants disponibles correspondent aux besoins en attente
+            {aiBannerText}
           </span>
         </div>
 
@@ -885,22 +939,28 @@ export default function WorldClassContractors() {
         <div>
           <SectionHeader
             title="Missions en Cours"
-            badge="3 actives"
+            badge={`${liveMissions.length} active${liveMissions.length !== 1 ? 's' : ''}`}
             badgeColor={T.info}
           />
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-             {MISSIONS.map((m, i) => {
-               const liveContractor = contractors.find((c: any) => c.nom === m.contractor || m.contractor.toLowerCase().includes((c.nom || '').toLowerCase()));
-               return (
-                 <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => {
-                   setProlongerMission({ ...m, id: liveContractor?.id, tarif_journalier: liveContractor?.tarif_journalier || Number((m.tarif || '0').replace(/[^0-9]/g, '')), date_fin: '2025-02-28', nom: m.contractor, mission_actuelle: m.client });
-                   setNouvelleFinDate('');
-                   setRaisonProlongation('');
-                   setProlongerError('');
-                 }} />
-               );
-             })}
+          {liveMissions.length === 0 ? (
+            <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+              <Briefcase size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+              <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucune mission active</div>
+              <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>Assignez un sous-traitant pour démarrer une mission</div>
+            </div>
+          ) : (
+           <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(liveMissions.length, 3)}, 1fr)`, gap: 16 }}>
+             {liveMissions.map((m, i) => (
+               <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => {
+                 const liveC = contractors.find((c: any) => c.nom === m.contractor);
+                 setProlongerMission({ ...m, id: liveC?.id, tarif_journalier: liveC?.tarif_journalier || Number((m.tarif || '0').replace(/[^0-9]/g, '')), date_fin: liveC?.date_fin || new Date().toISOString().split('T')[0], nom: m.contractor, mission_actuelle: m.client });
+                 setNouvelleFinDate('');
+                 setRaisonProlongation('');
+                 setProlongerError('');
+               }} />
+             ))}
            </div>
+          )}
         </div>
 
         {/* ══════════════════════════ SECTION 4: COST ANALYSIS ══════════════════════════ */}
@@ -914,12 +974,12 @@ export default function WorldClassContractors() {
                   <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Répartition des Coûts</h3>
                 </div>
               </div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>78K DH</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>{totalCost > 0 ? `${Math.round(totalCost)}K DH` : '0 DH'}</span>
             </div>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
-                  data={COST_DONUT}
+                  data={costDonut.length > 0 ? costDonut : [{ name: 'Aucun', value: 1, color: T.cardBorder }]}
                   cx="50%"
                   cy="50%"
                   innerRadius={65}
@@ -930,7 +990,7 @@ export default function WorldClassContractors() {
                   animationDuration={800}
                   label={false}
                 >
-                  {COST_DONUT.map((entry, i) => (
+                  {(costDonut.length > 0 ? costDonut : [{ name: 'Aucun', value: 1, color: T.cardBorder }]).map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
                   ))}
                 </Pie>
@@ -940,7 +1000,7 @@ export default function WorldClassContractors() {
             </ResponsiveContainer>
             {/* Legend */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-              {COST_DONUT.map((d, i) => (
+              {costDonut.length > 0 ? costDonut.map((d, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color }} />
@@ -948,7 +1008,9 @@ export default function WorldClassContractors() {
                   </div>
                   <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: T.gold }}>{d.value}K DH</span>
                 </div>
-              ))}
+              )) : (
+                <div style={{ color: T.textDim, fontSize: 12, textAlign: 'center', padding: 12 }}>Aucune donnée de coût disponible</div>
+              )}
             </div>
           </div>
 
@@ -959,27 +1021,14 @@ export default function WorldClassContractors() {
                 <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
                 <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Tendance Mensuelle</h3>
               </div>
-              <span style={{
-                background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`,
-                borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700,
-              }}>+50% depuis Sep</span>
             </div>
-            <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={TREND_DATA} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.gold} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke={T.cardBorder} strokeDasharray="3 3" />
-                <XAxis dataKey="month" tick={{ fill: T.textDim, fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: T.textDim, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}K`} domain={[40, 90]} />
-                <RechartsTooltip content={<DarkTooltip suffix="K DH" />} />
-                <ReferenceLine y={65.5} stroke={T.textDim} strokeDasharray="4 4" strokeOpacity={0.5} />
-                <Area type="monotone" dataKey="cout" stroke={T.gold} strokeWidth={2.5} fill="url(#trendGrad)" dot={{ fill: T.gold, r: 4, strokeWidth: 0 }} animationDuration={1000} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 260, color: T.textDim, fontSize: 13 }}>
+              <div style={{ textAlign: 'center' }}>
+                <Calendar size={36} color={T.textDim} style={{ margin: '0 auto 8px', opacity: 0.3 }} />
+                <div>Données de tendance non disponibles</div>
+                <div style={{ fontSize: 11, color: T.textDim, marginTop: 4 }}>L'historique sera alimenté par les missions futures</div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1026,21 +1075,21 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 6: MISSION HISTORY ══════════════════════════ */}
         <div>
-          <SectionHeader title="Historique des Missions" badge="6 terminées" badgeColor={T.success} />
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
-            {HISTORY.map((h, i) => (
-              <HistoryRow key={h.id} h={h} delay={i * 60} last={i === HISTORY.length - 1} />
-            ))}
+          <SectionHeader title="Historique des Missions" badge="0 terminée" badgeColor={T.success} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+            <Clock size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucun historique de mission</div>
+            <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>L'historique s'alimentera automatiquement à la fin des missions</div>
           </div>
         </div>
 
         {/* ══════════════════════════ SECTION 7: UPCOMING NEEDS ══════════════════════════ */}
         <div>
-          <SectionHeader title="Besoins à Venir" badge="2 demandes" badgeColor={T.info} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            {UPCOMING.map((u, i) => (
-              <UpcomingCard key={i} u={u} delay={i * 100} onAssigner={() => { setAssignerBesoin(u); setSelectedPrestataire(''); setAssignerError(''); }} onAppelOffres={() => { setAppelsOffres(u); setAoForm({ titre: u.besoin || '', description: '', specialite: u.specialty || '', budget_max: u.budget?.replace(/[^0-9]/g, '') || '', date_limite: '', priorite: u.priority?.toLowerCase() || 'normale', chantier: u.chantier || '', duree_estimee: (u.duree || '').replace(/[^0-9]/g, '') || '' }); setAoError(''); setAoSuccess(false); }} />
-            ))}
+          <SectionHeader title="Besoins à Venir" badge="0 demande" badgeColor={T.info} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+            <Calendar size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucun besoin planifié</div>
+            <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>Les besoins à venir seront listés ici dès leur création</div>
           </div>
         </div>
 
@@ -2151,7 +2200,7 @@ function PerformanceCard({ icon: Icon, iconColor, value, suffix, label, desc, sh
 // ─────────────────────────────────────────────────────
 // HISTORY ROW
 // ─────────────────────────────────────────────────────
-function HistoryRow({ h, delay, last }: { h: typeof HISTORY[0]; delay: number; last: boolean }) {
+function HistoryRow({ h, delay, last }: { h: LiveHistoryItem; delay: number; last: boolean }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   return (
@@ -2191,7 +2240,7 @@ function HistoryRow({ h, delay, last }: { h: typeof HISTORY[0]; delay: number; l
 // ─────────────────────────────────────────────────────
 // UPCOMING CARD
 // ─────────────────────────────────────────────────────
-function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOMING[0]; delay: number; onAssigner?: () => void; onAppelOffres?: () => void }) {
+function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: LiveUpcomingItem; delay: number; onAssigner?: () => void; onAppelOffres?: () => void }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   const isHaute = u.priority === 'Haute';
