@@ -1160,7 +1160,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
               <div className="p-6">
               {/* Satisfaction Client */}
-              <div className="border-b border-white/[0.04] pb-3 mb-3">
+              <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px', marginBottom: '12px' }}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
                   <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★</span></span>
@@ -1185,7 +1185,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
                   const barStyle = i === 0
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.8 }
+                    ? { background: 'linear-gradient(to right, rgba(74,222,128,0.8), rgba(74,222,128,0.6))' }
                     : i === 1
                     ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
                     : i === 2
