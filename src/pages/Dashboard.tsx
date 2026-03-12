@@ -72,7 +72,7 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'command' | 'production'>('command');
+  const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations'>('command');
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
