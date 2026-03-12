@@ -148,13 +148,13 @@ export default function LiveBatchProgress() {
           <span className="text-[10px] font-mono tabular-nums" style={{ color: '#D4A843', fontWeight: '500' }}>{progress}%</span>
         </div>
         <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
-        <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+        <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(212,168,67,0.1)' }}>
           <div
             className="relative overflow-hidden"
             style={{
               width: '10%',
               height: '100%',
-              background: '#D4A843',
+              background: 'linear-gradient(90deg, rgba(212,168,67,0.8), #D4A843)',
               boxShadow: '0 0 8px rgba(212,168,67,0.5)',
               borderRadius: '9999px',
             }}
