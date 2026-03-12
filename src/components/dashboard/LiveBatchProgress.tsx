@@ -180,18 +180,34 @@ export default function LiveBatchProgress() {
               />
             )}
             <span
-              className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-              style={{
-                background: p.active ? 'rgba(212,168,67,0.2)' : p.done ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${p.active ? '#D4A843' : p.done ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
-                boxShadow: p.active ? '0 0 12px rgba(212, 168, 67, 0.4)' : 'none',
-                opacity: 1,
-              }}
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                !p.active && !p.done ? 'border border-white/15 bg-white/[0.03] text-white/20' : ''
+              }`}
+              style={
+                p.active
+                  ? {
+                      background: 'rgba(212,168,67,0.2)',
+                      border: '1px solid #D4A843',
+                      boxShadow: '0 0 12px rgba(212, 168, 67, 0.4)',
+                    }
+                  : p.done
+                  ? {
+                      background: 'rgba(52,211,153,0.1)',
+                      border: '1px solid rgba(52,211,153,0.2)',
+                    }
+                  : undefined
+              }
             >
               {p.done ? '✅' : p.active ? '⏳' : '○'}
             </span>
             <span
-              className={p.active ? 'text-xs font-medium text-[#D4A843]' : p.done ? 'text-xs font-medium' : 'text-xs text-muted-foreground/30'}
+              className={
+                p.active
+                  ? 'text-xs font-medium text-[#D4A843]'
+                  : p.done
+                  ? 'text-xs font-medium'
+                  : 'text-xs text-white/30 mt-1 text-center'
+              }
               style={p.done ? { color: 'rgba(148,163,184,0.6)' } : undefined}
             >
               {p.label}
