@@ -75,6 +75,8 @@ export default function Dashboard() {
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
   const [nextDelivery, setNextDelivery] = useState<{ client: string; volume: number; minutesLeft: number } | null>(null);
+  // ─── Sync countdown ───
+  const [syncCountdown, setSyncCountdown] = useState(30);
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -101,6 +103,14 @@ export default function Dashboard() {
     const interval = setInterval(() => { refreshPeriod(); }, 60000);
     return () => clearInterval(interval);
   }, [isCeo]);
+
+  // ─── Sync countdown timer (30s loop) ───
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSyncCountdown(prev => (prev <= 1 ? 30 : prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ─── Fetch next upcoming delivery ───
   useEffect(() => {
@@ -1220,6 +1230,10 @@ export default function Dashboard() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
             </span>
             Synchronisé en temps réel
+            <span style={{ display: 'inline-flex', animation: 'spin 4s linear infinite', fontSize: 12, marginLeft: 4 }}>↻</span>
+            <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(148,163,184,0.25)', marginLeft: 2 }}>
+              Prochaine sync: {syncCountdown}s
+            </span>
           </span>
           <span>✦ Propulsé par Claude Opus · Atlas Concrete Morocco</span>
         </div>
