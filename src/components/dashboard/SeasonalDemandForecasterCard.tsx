@@ -141,9 +141,11 @@ export function SeasonalDemandForecasterCard() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
             {kpis.map((k, i) => (
               <div key={i} style={{
+                position: 'relative', overflow: 'hidden',
                 background: 'rgba(0,0,0,0.2)', borderRadius: 8,
                 border: `1px solid ${T.cardBorder}`, padding: '10px 12px',
               }}>
+                <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
                 <p style={{ fontSize: 9, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>{k.label}</p>
                 <span style={{ fontSize: 14, fontWeight: 800, color: k.valueColor || T.textPri, fontFamily: 'JetBrains Mono, monospace' }}>{k.value}</span>
               </div>
