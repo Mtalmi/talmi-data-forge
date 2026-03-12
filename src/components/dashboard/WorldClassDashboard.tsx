@@ -852,18 +852,22 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           >
                             {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
                           </span>
-                          {item.daysLeft <= 3 && (
+                          {item.daysLeft <= 3 ? (
                             <button
-                              className="px-1.5 py-0.5 rounded text-[8px] font-medium whitespace-nowrap flex-shrink-0"
+                              className="px-3 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider whitespace-nowrap flex-shrink-0 transition-all duration-200"
                               style={{
-                                background: 'rgba(212,175,55,0.08)',
-                                border: '1px solid rgba(212,175,55,0.2)',
-                                color: '#D4AF37',
+                                background: 'rgba(212,168,67,0.10)',
+                                border: '1px solid rgba(212,168,67,0.30)',
+                                color: '#D4A843',
                               }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.20)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.10)'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
                             </button>
+                          ) : (
+                            <span className="text-[10px] text-emerald-500 flex-shrink-0">✓</span>
                           )}
                         </div>
                       </div>
