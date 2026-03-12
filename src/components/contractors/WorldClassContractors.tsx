@@ -1075,11 +1075,11 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 6: MISSION HISTORY ══════════════════════════ */}
         <div>
-          <SectionHeader title="Historique des Missions" badge="6 terminées" badgeColor={T.success} />
-          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, overflow: 'hidden' }}>
-            {HISTORY.map((h, i) => (
-              <HistoryRow key={h.id} h={h} delay={i * 60} last={i === HISTORY.length - 1} />
-            ))}
+          <SectionHeader title="Historique des Missions" badge="0 terminée" badgeColor={T.success} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+            <Clock size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucun historique de mission</div>
+            <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>L'historique s'alimentera automatiquement à la fin des missions</div>
           </div>
         </div>
 
