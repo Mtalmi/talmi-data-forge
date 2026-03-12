@@ -407,6 +407,54 @@ export default function Dashboard() {
           .tbos-hero-card .scanline-overlay {
             display: none !important;
           }
+
+          /* ── Mobile Dashboard Card Spacing ── */
+          @media (max-width: 767px) {
+            .tbos-dashboard-scroll {
+              padding-left: 12px !important;
+              padding-right: 12px !important;
+            }
+            .tbos-dashboard-scroll > * {
+              max-width: 100% !important;
+              overflow-x: hidden;
+            }
+            .tbos-dashboard-scroll .tbos-hero-card {
+              padding: 16px !important;
+            }
+            .tbos-mobile-card-stack > * {
+              margin-bottom: 12px !important;
+            }
+            .tbos-mobile-card-stack > *:last-child {
+              margin-bottom: 0 !important;
+            }
+            .tbos-hero-stat-number {
+              font-size: clamp(24px, 5vw, 36px) !important;
+            }
+            .tbos-stats-bar {
+              flex-wrap: wrap !important;
+              gap: 12px !important;
+            }
+            .tbos-stats-bar .w-px {
+              display: none !important;
+            }
+            .tbos-hero-cockpit {
+              padding: 16px !important;
+            }
+            .tbos-kpi-grid {
+              grid-template-columns: 1fr 1fr !important;
+              gap: 12px !important;
+            }
+            .tbos-prod-stats-bar {
+              flex-wrap: wrap !important;
+              gap: 12px !important;
+              padding: 12px !important;
+            }
+            .tbos-prod-stats-bar > div {
+              border-right: none !important;
+              padding-right: 0 !important;
+              margin-right: 0 !important;
+            }
+          }
         `}</style>
 
         {/* Noise/grain texture overlay — concrete materiality */}
