@@ -16,6 +16,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Command Center staggered section entrance */
+@keyframes ccSectionIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Sparkline draw */
 @keyframes drawLine {
   from { stroke-dashoffset: 3000; }
