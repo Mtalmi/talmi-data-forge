@@ -965,7 +965,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               { role: 'Maintenance', value: '2/2', full: true },
             ].map(t => (
               <div key={t.role} className="flex flex-col items-center">
-                <span className="text-[9px] text-muted-foreground/30">{t.role}</span>
+                <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
                 <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
               </div>
             ))}
