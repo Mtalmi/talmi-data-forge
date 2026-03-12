@@ -776,6 +776,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             </div>
           </div>
         ) : (
+        <>
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
