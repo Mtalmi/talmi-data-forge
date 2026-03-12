@@ -1222,7 +1222,8 @@ export default function Dashboard() {
                       <>
                         {/* Top row: Primary KPIs */}
                         <div className="grid grid-cols-2 gap-3 mt-3">
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
                             <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
                             <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
@@ -1230,7 +1231,8 @@ export default function Dashboard() {
                               <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)' }} />
                             </div>
                           </div>
-                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
                             <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
                             <div className="text-[10px] text-muted-foreground/40"><span className="text-emerald-400">↗</span> vs 91% hier</div>
@@ -1238,12 +1240,14 @@ export default function Dashboard() {
                         </div>
                         {/* Bottom row: Secondary KPIs */}
                         <div className="grid grid-cols-2 gap-3 border-t border-white/[0.04] pt-3 mt-3 flex-1">
-                          <div>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
                             <div className="text-xl text-white font-semibold font-mono">96.2%</div>
                             <div className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR · 0 CRIT</div>
                           </div>
-                          <div>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
+                            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
                             <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
                             <div className="text-[10px] text-muted-foreground/40">4 restantes aujourd'hui</div>
