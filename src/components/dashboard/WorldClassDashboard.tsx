@@ -946,7 +946,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         </div>
 
         {/* ─── Team Status Strip ─── */}
-        <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.04] rounded-lg px-5 py-2.5 mb-4 relative z-[1] w-full">
+        <div className="mb-4 relative z-[1] w-full" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '24px', position: 'relative', overflow: 'hidden', marginTop: '8px' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.5), transparent)' }} />
           <div className="flex items-center">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-2" />
             <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Équipe en Service</span>
@@ -964,6 +965,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               </div>
             ))}
           </div>
+          <div className="flex-1" />
           <span style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: 'rgba(212,168,67,0.8)' }}>Prochain shift: 14h00 — 3 opérateurs</span>
         </div>
 
