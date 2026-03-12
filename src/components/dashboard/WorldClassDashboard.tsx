@@ -1155,7 +1155,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div className="border-b border-white/[0.04] pb-3 mb-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
-                  <span className="text-lg font-bold text-[#D4A843] font-mono">4.6/5 <span className="text-[#D4A843]">★</span></span>
+                  <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★</span></span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">12 livraisons à l'heure</span>
@@ -1166,7 +1166,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
-                  <div className="text-[11px] text-slate-600">Vieillissement</div>
+                  <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
                   <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR} K DH</span>
