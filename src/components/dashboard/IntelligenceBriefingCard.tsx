@@ -104,12 +104,8 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
             {briefing.score_journee}
           </span>
         )}
-        <span style={{
-          fontSize: 10, fontWeight: 400, marginLeft: 'auto',
-          color: '#64748B',
-          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-        }}>
-          {isMorning ? 'il y a 6h' : 'il y a 12h'}
+        <span className="text-xs text-white/40" style={{ marginLeft: 'auto' }}>
+          {isMorning ? 'Aujourd\'hui · 06h00' : 'Hier · 20h00'}
         </span>
       </div>
 
