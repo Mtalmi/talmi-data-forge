@@ -943,12 +943,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
           {/* Right: Progress Ring */}
           <div className="flex flex-col items-center">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-              <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
-              <circle cx="24" cy="24" r="20" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
-                strokeDasharray={`${2 * Math.PI * 20 * 0.87} ${2 * Math.PI * 20 * 0.13}`}
-                transform="rotate(-90 24 24)" />
-              <text x="24" y="25" textAnchor="middle" dominantBaseline="central" fontSize="11" fontFamily="ui-monospace, SFMono-Regular, monospace" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 12px rgba(212,168,67,0.3)' }} fill="#D4A843" fontWeight="500">87%</text>
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+              <circle cx="40" cy="40" r="34" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 34 * 0.87} ${2 * Math.PI * 34 * 0.13}`}
+                transform="rotate(-90 40 40)" />
+              <text x="40" y="41" textAnchor="middle" dominantBaseline="central" fontSize="18" fontFamily="ui-monospace, SFMono-Regular, monospace" style={{ textShadow: '0 0 12px rgba(212,168,67,0.3)' }} fill="#D4A843" fontWeight="500">87%</text>
             </svg>
             <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '4px' }}>Capacité</div>
           </div>
