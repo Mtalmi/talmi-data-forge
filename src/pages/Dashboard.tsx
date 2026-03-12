@@ -576,79 +576,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ═══ SEARCH BAR ═══ */}
-          <div className="relative z-[2] mx-auto my-4" style={{ maxWidth: 480 }} ref={searchRef}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search metrics, KPIs, reports..."
-                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white/70 placeholder:text-muted-foreground/30 outline-none focus:border-white/20 transition-colors duration-200"
-                onFocus={() => setSearchFocused(true)}
-                onBlur={(e) => {
-                  if (!searchRef.current?.contains(e.relatedTarget as Node)) {
-                    setSearchFocused(false);
-                  }
-                }}
-                onKeyDown={(e) => { if (e.key === 'Escape') { setSearchFocused(false); (e.target as HTMLElement).blur(); } }}
-                readOnly
-              />
-            </div>
-            {searchFocused && (
-              <div
-                className="absolute top-full left-0 right-0 mt-1 z-50 overflow-hidden"
-                style={{
-                  background: '#0d1528',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 12,
-                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-                  animation: 'searchDropIn 200ms ease-out',
-                }}
-              >
-                {/* AI Search Preview Bar */}
-                <div className="flex items-center gap-2 px-4 py-3" style={{ background: 'rgba(212,168,67,0.05)', borderBottom: '1px solid rgba(212,168,67,0.1)' }}>
-                  <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Recherche IA</span>
-                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>— Bientôt disponible</span>
-                </div>
 
-                {/* Quick Navigation */}
-                <div className="px-4 pt-3 pb-1">
-                  <span style={{ fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', fontWeight: 500, textTransform: 'uppercase' }}>NAVIGATION RAPIDE</span>
-                </div>
-                <div className="flex flex-col">
-                  {[
-                    { label: 'Stocks', path: '/stocks', icon: Package },
-                    { label: 'Production', path: '/production', icon: Factory },
-                    { label: 'Ventes', path: '/ventes', icon: TrendingUp },
-                    { label: 'Clients', path: '/clients', icon: Bell },
-                    { label: 'Logistique', path: '/logistique', icon: Truck },
-                  ].map(link => {
-                    const Icon = link.icon;
-                    return (
-                      <button
-                        key={link.path}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 text-left group"
-                        style={{ color: 'rgba(255,255,255,0.6)' }}
-                        onMouseDown={(e) => { e.preventDefault(); navigate(link.path); setSearchFocused(false); }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'; }}
-                      >
-                        <Icon size={14} style={{ opacity: 0.5 }} />
-                        <span>→ {link.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Keyboard Hints */}
-                <div className="px-4 py-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.15)', fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>
-                    ↑↓ naviguer · ↵ ouvrir · esc fermer
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
 
 
           <div className="relative z-[1] mb-5" style={{
