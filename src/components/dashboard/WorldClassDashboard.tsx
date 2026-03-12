@@ -1166,7 +1166,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
-                  <div className="text-[11px] text-slate-600">Vieillissement</div>
+                  <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
                   <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR} K DH</span>
