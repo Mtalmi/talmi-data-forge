@@ -931,9 +931,27 @@ export default function Dashboard() {
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <svg width="130" height="44" viewBox="0 0 130 36" className="min-w-[130px] min-h-[44px]">
-                      <polyline fill="none" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={kpi.sparkline} style={{ opacity: 0.6 }} />
-                      {(() => { const pts = kpi.sparkline.split(' '); const last = pts[pts.length - 1]?.split(','); return last ? <circle cx={last[0]} cy={last[1]} r="2" fill="#D4A843" style={{ opacity: 0.8 }} /> : null; })()}
+                    <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]">
+                      {(() => {
+                        // Parse original points and rescale to fill 130x44
+                        const rawPts = kpi.sparkline.split(' ').map(p => { const [x, y] = p.split(',').map(Number); return { x, y }; });
+                        const maxX = Math.max(...rawPts.map(p => p.x));
+                        const maxY = Math.max(...rawPts.map(p => p.y));
+                        const minY = Math.min(...rawPts.map(p => p.y));
+                        const pad = 4;
+                        const scaled = rawPts.map(p => ({
+                          x: (p.x / (maxX || 1)) * (130 - pad * 2) + pad,
+                          y: pad + ((p.y - minY) / ((maxY - minY) || 1)) * (44 - pad * 2),
+                        }));
+                        const polyStr = scaled.map(p => `${p.x},${p.y}`).join(' ');
+                        const last = scaled[scaled.length - 1];
+                        return (
+                          <>
+                            <polyline fill="none" stroke="#D4A843" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" points={polyStr} style={{ opacity: 0.7 }} />
+                            {last && <circle cx={last.x} cy={last.y} r="2.5" fill="#D4A843" style={{ opacity: 0.9 }} />}
+                          </>
+                        );
+                      })()}
                     </svg>
                     <div className="text-right flex flex-col">
                       <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>{kpi.secondaryLabel}</span>
