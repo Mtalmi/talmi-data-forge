@@ -105,7 +105,7 @@ export default function LiveBatchProgress() {
 
   return (
     <div
-      className="relative overflow-hidden p-5 transition-all duration-500"
+      className="relative overflow-hidden p-5 transition-all duration-500 h-full flex flex-col"
       style={{
         borderRadius: 8,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
