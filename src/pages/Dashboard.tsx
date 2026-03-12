@@ -482,7 +482,7 @@ export default function Dashboard() {
             padding: '0 24px',
             display: 'flex', alignItems: 'center',
           }}>
-            <div style={{ display: 'flex', gap: 0 }}>
+            <div className="overflow-x-auto scrollbar-hide" style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap' }}>
               {([
                 { id: 'command', label: 'COMMAND CENTER' },
                 { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2 },
