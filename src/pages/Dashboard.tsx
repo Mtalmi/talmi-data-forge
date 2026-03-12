@@ -1163,7 +1163,7 @@ export default function Dashboard() {
             <WorldClassDashboard hideProductionWidgets showOnlyOps />
           </Suspense>
         </div>
-        </>
+        </div>
         )}
 
         {/* ═══ INTELLIGENCE IA TAB CONTENT ═══ */}
