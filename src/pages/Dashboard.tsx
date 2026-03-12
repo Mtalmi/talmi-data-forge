@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2 } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 
@@ -75,6 +75,8 @@ export default function Dashboard() {
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
   const [searchFocused, setSearchFocused] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
+  const bellRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const [nextDelivery, setNextDelivery] = useState<{ client: string; volume: number; minutesLeft: number } | null>(null);
   // ─── Sync countdown ───
@@ -178,6 +180,15 @@ export default function Dashboard() {
     return () => clearTimeout(delay);
   }, [firstName]);
 
+  // Close bell dropdown on outside click
+  useEffect(() => {
+    if (!bellOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [bellOpen]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -389,6 +400,42 @@ export default function Dashboard() {
           >
             <RefreshCw className={`h-3.5 w-3.5 text-slate-500 ${refreshing ? 'animate-spin' : ''}`} />
           </button>
+          {/* Notification Bell */}
+          <div className="relative" ref={bellRef}>
+            <button
+              onClick={() => setBellOpen(prev => !prev)}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300 relative"
+              title="Notifications"
+            >
+              <Bell className="h-3.5 w-3.5 text-slate-500" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />
+            </button>
+            {bellOpen && (
+              <div
+                className="absolute top-full right-0 mt-2 bg-[#0f1729] border border-white/10 rounded-xl shadow-2xl w-[320px] z-50"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                <div className="text-[10px] tracking-[0.15em] text-muted-foreground/50 font-medium px-4 pt-3 pb-2 uppercase">
+                  Notifications
+                </div>
+                {[
+                  { text: 'Alerte Fuite — BL-2026-0312', time: 'il y a 2h', dotColor: 'bg-red-500' },
+                  { text: 'Stock Adjuvant critique — Commande recommandée', time: 'il y a 4h', dotColor: 'bg-amber-500' },
+                ].map((n, i) => (
+                  <div
+                    key={i}
+                    className="px-4 py-3 border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors duration-150 flex items-start gap-3"
+                  >
+                    <span className={`w-2 h-2 rounded-full ${n.dotColor} mt-1.5 shrink-0`} />
+                    <div className="min-w-0">
+                      <div className="text-sm text-white/80 leading-tight">{n.text}</div>
+                      <div className="text-[10px] text-muted-foreground/40 font-mono mt-1">{n.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ══════════════════════════════════════════════════
