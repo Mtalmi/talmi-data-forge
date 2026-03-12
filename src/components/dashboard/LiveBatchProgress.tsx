@@ -153,8 +153,8 @@ export default function LiveBatchProgress() {
             className="h-full rounded-full transition-all duration-1000 relative overflow-hidden"
             style={{
               width: `${progress}%`,
-              background: `linear-gradient(90deg, ${T.dotWarn}, ${T.dotOk})`,
-              boxShadow: `-2px 0 8px rgba(212,168,67,0.3), 0 0 8px rgba(52,211,153,0.2)`,
+              background: 'linear-gradient(to right, rgba(212,168,67,0.8), rgba(212,168,67,1))',
+              boxShadow: '0 0 8px rgba(212,168,67,0.4)',
             }}
           >
             <div className="absolute inset-0" style={{
