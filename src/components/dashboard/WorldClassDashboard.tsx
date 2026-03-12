@@ -556,7 +556,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
-export function WorldClassDashboard({ hideProductionWidgets = false }: { hideProductionWidgets?: boolean } = {}) {
+export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean } = {}) {
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
@@ -648,6 +648,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
           {/* ─── Col 1: Production + Batch Timeline ─── */}
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
+            {!hideOpsWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
@@ -685,6 +686,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 </ResponsiveContainer>
               </div>
             </Card>
+            )}
 
             {/* Live Batch Progress */}
             {!hideProductionWidgets && <LiveBatchProgress />}
@@ -706,28 +708,26 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
             )}
 
             {/* AI Analyst Brief */}
-            <AIAnalystBrief />
+            {!showOnlyOps && <AIAnalystBrief />}
 
             {/* Compliance Widget */}
-            <ComplianceWidget />
+            {!showOnlyOps && <ComplianceWidget />}
 
             {/* Energy & Cost Anomaly Widget */}
-            <EnergyCostAnomalyWidget />
+            {!showOnlyOps && <EnergyCostAnomalyWidget />}
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
           <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
+            {!showOnlyOps && (
             <Card className="ops-enter ops-surface-card tbos-stagger-4" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-
-
               <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
               <div className="flex flex-col">
                 {stockData.slice(0, 6).map((s, i) => (
                   <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
                 ))}
               </div>
-
               {/* ── Predictive Stock Alerts ── */}
               <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className="flex items-center gap-1.5 mb-2">
@@ -775,9 +775,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 </div>
               </div>
             </Card>
+            )}
 
             {/* Pipeline Funnel */}
-            <PipelineFunnel />
+            {!hideOpsWidgets && <PipelineFunnel />}
 
             {/* Quality feed — Compact */}
             {!hideProductionWidgets && (
@@ -809,9 +810,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
           {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
+            {!hideOpsWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-
-
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
@@ -825,7 +825,6 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 {arAgingData.map((d, i) => {
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
-                  // Monochrome gold aging system
                   const barStyle = i === 0
                     ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.8 }
                     : i === 1
@@ -850,17 +849,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 })}
               </div>
             </Card>
+            )}
 
             {/* Recent Deliveries */}
-            <RecentDeliveries />
+            {!hideOpsWidgets && <RecentDeliveries />}
 
             {/* Daily P&L Signature Metric */}
+            {!hideOpsWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-9" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-
-
               <div className="text-center py-4 relative">
-                {/* Golden ambient behind number */}
-                
                 <div className="relative z-[1]">
                   <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-3 font-medium">P&L du jour</div>
                   <div className="text-[2.5rem] font-extralight font-mono text-white tabular-nums leading-none" style={{
@@ -879,13 +876,16 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 </div>
               </div>
             </Card>
+            )}
           </div>
         </div>
 
         {/* ── Seasonal Demand Forecaster ── */}
+        {!showOnlyOps && (
         <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
           <SeasonalDemandForecasterCard />
         </div>
+        )}
       </div>
     </div>
   );
