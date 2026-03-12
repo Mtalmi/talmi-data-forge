@@ -1019,7 +1019,7 @@ export default function Dashboard() {
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 mx-6 mb-6 flex items-center gap-8">
+          <div className="flex items-center gap-8 bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 w-full mb-6">
             {/* Taux de Réussite inline circular gauge */}
             <div className="flex items-center gap-3 flex-shrink-0">
               <svg width="56" height="56" viewBox="0 0 60 60">
@@ -1042,20 +1042,20 @@ export default function Dashboard() {
                 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.35)' }}>7 derniers jours</span>
               </div>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-lg" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
             </div>
           </div>
           <style>{`
@@ -1230,7 +1230,7 @@ export default function Dashboard() {
                 {/* Metrics */}
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Rendement', value: '94%', color: '#34D399' },
+                    { label: 'Disponibilité', value: '97%', color: '#34D399' },
                     { label: 'Cadence', value: '47 m³/h', color: '#C9A84C' },
                     { label: 'Batches', value: '23', color: '#94A3B8' },
                     { label: 'Attente', value: '12 min', color: '#FBBF24' },
@@ -1244,8 +1244,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Status bar */}
-            <div className="flex items-center justify-between px-5 py-2 mt-1 rounded-b-lg z-10 relative" style={{ background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            {/* Environment footer */}
+            <div className="flex items-center justify-between px-5 pt-2 mt-2 z-10 relative border-t border-white/5">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[9px] text-slate-500">Température</span>
@@ -1284,6 +1284,11 @@ export default function Dashboard() {
                 <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium flex-1 text-center">Formule</span>
                 <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[50px] text-center">Volume</span>
                 <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[45px] text-right">Heure</span>
+              </div>
+              {/* Dot legend */}
+              <div className="flex gap-4 px-2 mb-2">
+                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground/40"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />Terminé</span>
+                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground/40"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />En cours</span>
               </div>
               <div className="space-y-1">
                 {[
@@ -1335,6 +1340,12 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              {/* Quality summary */}
+              <div className="border-t border-white/5 pt-3 mt-3">
+                <span className="text-[11px] text-muted-foreground/40" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>
+                  Moyenne: 19cm · 2 OK · 1 VAR
+                </span>
+              </div>
             </div>
           </div>
 
@@ -1356,7 +1367,7 @@ export default function Dashboard() {
               <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }}>
                 Lancer
               </button>
-              <button className="px-4 py-1.5 rounded-md text-xs font-medium transition-all hover:bg-white/[0.06]" style={{ background: 'transparent', border: '1px solid rgba(148,163,184,0.2)', color: 'rgba(148,163,184,0.6)' }}>
+              <button className="border border-white/20 text-white/50 hover:text-white/80 hover:border-white/30 px-4 py-1.5 rounded-lg text-sm transition-all">
                 Ignorer
               </button>
             </div>
