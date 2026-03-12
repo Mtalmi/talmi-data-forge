@@ -18,6 +18,8 @@ export function ComplianceWidget() {
     <div
       className="ops-enter ops-surface-card"
       style={{
+        position: 'relative',
+        overflow: 'hidden',
         borderRadius: 8,
         border: '1px solid rgba(245, 158, 11, 0.15)',
         borderTop: '1px solid rgba(212,168,67,0.3)',
@@ -28,6 +30,7 @@ export function ComplianceWidget() {
       onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '1px solid rgba(212,168,67,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
     >
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -46,17 +49,17 @@ export function ComplianceWidget() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         {/* Mini circular score */}
-        <div style={{ position: 'relative', width: 52, height: 52, flexShrink: 0 }}>
+        <div style={{ position: 'relative', width: 52, height: 52, flexShrink: 0, filter: 'drop-shadow(0 0 8px rgba(212,168,67,0.3))' }}>
           <svg width="52" height="52" viewBox="0 0 52 52">
             <circle cx="26" cy="26" r="22" fill="none" stroke={`${T.cardBorder}`} strokeWidth="4" />
-            <circle cx="26" cy="26" r="22" fill="none" stroke={scoreColor} strokeWidth="4"
+            <circle cx="26" cy="26" r="22" fill="none" stroke="#D4A843" strokeWidth="4"
               strokeDasharray={`${(score / 100) * 138.2} 138.2`}
               strokeLinecap="round"
               transform="rotate(-90 26 26)"
             />
           </svg>
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 800, color: scoreColor }}>{score}%</span>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: 14, fontWeight: 800, color: '#D4A843' }}>{score}%</span>
           </div>
         </div>
 
