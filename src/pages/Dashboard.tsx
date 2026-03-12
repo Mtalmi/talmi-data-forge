@@ -1070,9 +1070,8 @@ export default function Dashboard() {
                 <div className="relative">
                   {/* Y-axis labels */}
                   <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none" style={{ height: 220 }}>
-                    {[0, 20, 40, 60].map(val => {
+                    {[0, 25, 50, 75, 100].map(val => {
                       const pct = (val / allMax) * 0.85;
-                      const topPct = (1 - pct) * 100 - (5 / 100 * 100);
                       return (
                         <span key={val} className="absolute text-[9px] text-muted-foreground/20 font-mono" style={{ bottom: `${(pct * 100) + 2.3}%`, left: 0 }}>
                           {val}
