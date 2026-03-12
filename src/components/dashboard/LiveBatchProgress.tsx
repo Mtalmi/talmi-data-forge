@@ -203,14 +203,13 @@ export default function LiveBatchProgress() {
               {p.done ? '✅' : p.active ? '⏳' : '○'}
             </span>
             <span
-              className={
+              style={
                 p.active
-                  ? 'text-xs font-medium text-[#D4A843]'
+                  ? { fontSize: '10px', color: '#D4A843', fontWeight: '500', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginTop: '4px', textAlign: 'center' as const }
                   : p.done
-                  ? 'text-xs font-medium'
-                  : 'text-xs text-white/30 mt-1 text-center'
+                  ? { fontSize: '10px', color: 'rgba(148,163,184,0.6)', fontWeight: '500', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginTop: '4px', textAlign: 'center' as const }
+                  : { fontSize: '10px', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase' as const, letterSpacing: '0.05em', marginTop: '4px', textAlign: 'center' as const }
               }
-              style={p.done ? { color: 'rgba(148,163,184,0.6)' } : undefined}
             >
               {p.label}
             </span>
