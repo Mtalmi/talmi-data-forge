@@ -1019,9 +1019,9 @@ export default function Dashboard() {
           `}</style>
 
           <div
-            className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
+            className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-white/[0.06] p-5"
+            style={{ boxShadow: '0 0 20px rgba(212, 168, 67, 0.03)' }}
           >
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
             <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
               <Radio size={14} className="text-amber-400" />
               <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Live Production du Jour</span>
