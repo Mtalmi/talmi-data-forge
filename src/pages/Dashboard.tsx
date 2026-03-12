@@ -1091,11 +1091,11 @@ export default function Dashboard() {
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
               </div>
               {/* Header row */}
-              <div className="flex items-center justify-between px-2 pb-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[70px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Batch</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium flex-1 text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Formule</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[50px] text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Volume</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[45px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Heure</span>
+              <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-white/5">
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[70px]">Batch</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium flex-1 text-center">Formule</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[50px] text-center">Volume</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[45px] text-right">Heure</span>
               </div>
               <div className="space-y-1">
                 {[
@@ -1133,7 +1133,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-slate-500">{q.test}</span>
                       <span
-                        className="text-[10px] font-mono font-medium tabular-nums inline-flex items-center justify-center rounded min-w-[48px] py-0.5"
+                        className="text-xs font-bold font-mono tabular-nums inline-flex items-center justify-center rounded-md min-w-[48px] px-2 py-0.5"
                         style={{
                           background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)',
                           border: `1px solid ${q.ok ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)'}`,
