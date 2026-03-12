@@ -925,10 +925,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
               <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR</span></div>
             </div>
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
               <span className="text-lg font-semibold font-mono" style={{ color: '#D4A843', fontWeight: '500' }}>+18.4K</span>
               <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
+            </div>
+            <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
+              <span className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Batches</span>
+              <span className="text-2xl font-light text-white">23</span>
+              <span className="text-[10px] text-white/30">Aujourd'hui</span>
             </div>
           </div>
 
