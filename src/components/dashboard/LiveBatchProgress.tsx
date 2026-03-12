@@ -184,7 +184,7 @@ export default function LiveBatchProgress() {
               style={{
                 background: p.active ? 'rgba(212,168,67,0.2)' : p.done ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
                 border: `1px solid ${p.active ? '#D4A843' : p.done ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
-                boxShadow: p.active ? '0 0 8px rgba(212, 168, 67, 0.4)' : 'none',
+                boxShadow: p.active ? '0 0 12px rgba(212, 168, 67, 0.4)' : 'none',
                 opacity: 1,
               }}
             >
