@@ -1502,7 +1502,7 @@ export default function Dashboard() {
           </div>
 
           {/* Agent IA Production Banner */}
-          <div className="mt-5 gap-3 backdrop-blur-sm" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.08), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="mt-5 gap-3 backdrop-blur-sm" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.12) 0%, rgba(212,168,67,0.04) 50%, transparent 100%)', borderTop: '1px solid rgba(212,168,67,0.25)', borderLeft: '1px solid rgba(212,168,67,0.25)', borderRight: '1px solid rgba(212,168,67,0.25)', borderBottom: '1px solid rgba(212,168,67,0.25)', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span className="text-[#D4A843] animate-pulse" style={{ fontSize: 14 }}>✦</span>
             <div className="flex-1 min-w-0">
               <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#D4A843' }}>Agent IA: </span>
