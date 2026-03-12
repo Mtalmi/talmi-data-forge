@@ -995,25 +995,26 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               </div>
             </Card>
             )}
-
-            {/* Recent Deliveries */}
-            {!hideOpsWidgets && <RecentDeliveries />}
-
-            {/* Daily P&L Signature Metric */}
-            {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-9" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              <div className="py-4 px-4">
-                <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-1.5 font-medium">P&L du jour</div>
-                <div style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", fontWeight: 200, fontSize: '1.5rem', color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
-                  +18.4K DH
-                </div>
-                <div className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.5)' }}>marge nette estimée</div>
-                <div className="text-xs mt-1" style={{ color: 'rgb(52,211,153)' }}>+12% vs hier</div>
-              </div>
-            </Card>
-            )}
           </div>
         </div>
+
+        {/* ─── Full-width: Livraisons du Jour ─── */}
+        {!hideOpsWidgets && (
+          <div className="mt-4 mb-4 relative z-[1] w-full">
+            <RecentDeliveries />
+          </div>
+        )}
+
+        {/* ─── Full-width: P&L du Jour ─── */}
+        {!hideOpsWidgets && (
+          <div className="bg-white/[0.03] border border-white/10 rounded-xl px-6 py-4 mb-4 relative z-[1] w-full flex items-center justify-between">
+            <div style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", fontWeight: 200, fontSize: '1.5rem', color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
+              +18.4K DH
+            </div>
+            <div className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.5)' }}>marge nette estimée</div>
+            <div className="text-sm" style={{ color: 'rgb(52,211,153)' }}>+12% vs hier</div>
+          </div>
+        )}
         )}
 
         {/* ── Seasonal Demand Forecaster ── */}
