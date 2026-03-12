@@ -852,17 +852,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                                 border: '1px solid rgba(212,175,55,0.2)',
                                 color: '#D4AF37',
                               }}
-                              onClick={() => toast(`Commande en préparation — ${item.name} · ${item.dailyRate}%/j`, {
-                                duration: 3000,
-                                style: {
-                                  background: '#0f1729',
-                                  border: '1px solid rgba(212,168,67,0.3)',
-                                  borderLeft: '2px solid #D4A843',
-                                  borderRadius: '8px',
-                                  color: '#F1F5F9',
-                                  boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)',
-                                },
-                              })}
+                              onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
                             </button>
