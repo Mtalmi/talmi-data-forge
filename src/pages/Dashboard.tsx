@@ -674,7 +674,6 @@ export default function Dashboard() {
                   <button
                     key={tab.id}
                     data-tab={tab.id}
-                    data-tab={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className="flex items-center gap-2 transition-all duration-200 min-h-[44px] flex-shrink-0 whitespace-nowrap"
                     style={{
