@@ -54,12 +54,9 @@ export default function LeakageAlertBanner() {
 
   if (visibleLeakages.length === 0) {
     return (
-      <div className="rounded-lg flex items-center gap-3 px-4 py-3" style={{
-        background: 'rgba(34,197,94,0.05)',
-        border: '1px solid rgba(34,197,94,0.2)',
-      }}>
-        <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: '#22c55e' }} />
-        <span className="text-sm" style={{ color: '#22c55e' }}>Aucune alerte active — Opérations normales</span>
+      <div className="rounded-lg flex items-center gap-2.5 px-4 py-2.5 bg-green-500/5 border border-green-500/20">
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-green-400" />
+        <span className="text-sm text-green-400 font-medium">Aucune alerte active — Opérations normales</span>
       </div>
     );
   }
