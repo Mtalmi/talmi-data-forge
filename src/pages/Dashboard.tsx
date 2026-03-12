@@ -676,7 +676,7 @@ export default function Dashboard() {
             display: 'flex', alignItems: 'center',
           }}>
             <div
-              className="overflow-x-auto scrollbar-hide md:overflow-x-visible flex-1"
+              className="tbos-tab-bar-scroll overflow-x-auto scrollbar-hide md:overflow-x-visible flex-1"
               style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
               ref={tabBarRef}
             >
