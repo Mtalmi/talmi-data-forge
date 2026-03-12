@@ -729,20 +729,7 @@ export default function Dashboard() {
           </div>
 
           {/* Résumé IA one-liner */}
-          <div className="relative z-[1] mb-5 px-4 py-2.5 rounded-lg" style={{
-            background: 'rgba(212,168,67,0.04)',
-            border: '1px solid rgba(212,168,67,0.08)',
-            borderLeft: '3px solid #D4A843',
-          }}>
-            <div className="flex items-center gap-2 min-w-0">
-              <Sparkles size={12} style={{ color: '#D4A843', flexShrink: 0 }} />
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#D4A843', flexShrink: 0 }}>Résumé IA</span>
-              <span className="w-px h-3 flex-shrink-0" style={{ background: 'rgba(212,168,67,0.2)' }} />
-              <span className="text-[11px] truncate" style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}>
-                Optimiser le dosage ciment sur F-B25 pour réduire les écarts de conformité détectés ce matin — marge récupérable estimée à +1.8%
-              </span>
-            </div>
-          </div>
+          <ResumeIABar />
 
           {/* (5) Flux Usine ribbon */}
           <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" />}>
