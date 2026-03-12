@@ -191,7 +191,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 5: QUALITÉ ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3 rounded-r-xl"
+          className="flux-panel group flex-1 min-w-0 p-3 rounded-r-xl"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/laboratoire')}
         >
