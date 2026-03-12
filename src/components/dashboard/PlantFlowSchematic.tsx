@@ -84,7 +84,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 1: SILOS ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3 rounded-l-xl"
+          className="flux-panel group flex-1 min-w-0 p-3 rounded-l-xl"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/stocks')}
         >
