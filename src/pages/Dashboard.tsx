@@ -565,7 +565,15 @@ export default function Dashboard() {
           </div>
 
           {/* (2) Alerte Fuite Détectée */}
-          {(isCeo || isAccounting) && <LeakageAlertBanner />}
+          {(isCeo || isAccounting) && (
+            <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
+              borderLeft: '3px solid #F97316',
+              boxShadow: '0 0 12px rgba(249,115,22,0.2)',
+              animation: 'leakAlertPulse 2s ease-in-out infinite',
+            }}>
+              <LeakageAlertBanner />
+            </div>
+          )}
 
           {/* (3) 4 KPI Cards Row */}
           <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
@@ -719,8 +727,24 @@ export default function Dashboard() {
           </div>
 
           {/* (4) Intelligence IA section */}
-          <div className="relative z-[1] mb-5" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}>
+          <div className="relative z-[1] mb-2" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}>
             <IntelligenceBriefingCard />
+          </div>
+
+          {/* Résumé IA one-liner */}
+          <div className="relative z-[1] mb-5 px-4 py-2.5 rounded-lg" style={{
+            background: 'rgba(212,168,67,0.04)',
+            border: '1px solid rgba(212,168,67,0.08)',
+            borderLeft: '3px solid #D4A843',
+          }}>
+            <div className="flex items-center gap-2 min-w-0">
+              <Sparkles size={12} style={{ color: '#D4A843', flexShrink: 0 }} />
+              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#D4A843', flexShrink: 0 }}>Résumé IA</span>
+              <span className="w-px h-3 flex-shrink-0" style={{ background: 'rgba(212,168,67,0.2)' }} />
+              <span className="text-[11px] truncate" style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}>
+                Optimiser le dosage ciment sur F-B25 pour réduire les écarts de conformité détectés ce matin — marge récupérable estimée à +1.8%
+              </span>
+            </div>
           </div>
 
           {/* (5) Flux Usine ribbon */}
