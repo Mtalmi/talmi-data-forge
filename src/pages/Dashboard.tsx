@@ -1165,6 +1165,23 @@ export default function Dashboard() {
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
                 </div>
+                  {/* Hover tooltip */}
+                  {hoveredPoint && chartMousePos && (
+                    <div
+                      className="absolute pointer-events-none z-20 rounded-md px-2 py-1 font-mono text-[11px] text-white shadow-lg"
+                      style={{
+                        left: chartMousePos.x + 12,
+                        top: chartMousePos.y - 40,
+                        background: '#0f1729',
+                        border: '1px solid rgba(212,168,67,0.4)',
+                      }}
+                    >
+                      <div className="font-semibold" style={{ color: '#D4A843' }}>{hoveredPoint.h} — {hoveredPoint.v} m³/h</div>
+                      <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
+                        {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
+                      </div>
+                    </div>
+                  )}
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
               </div>
 
