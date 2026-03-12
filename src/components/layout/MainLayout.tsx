@@ -32,6 +32,17 @@ export default function MainLayout({ children, hideBottomNav = false }: MainLayo
     setSidebarOpen(!isMobile);
   }, [isMobile]);
 
+  // Close sidebar on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && sidebarOpen && isMobile) {
+        setSidebarOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [sidebarOpen, isMobile]);
+
   return (
     <div
       className="relative flex h-screen w-full overflow-hidden"
