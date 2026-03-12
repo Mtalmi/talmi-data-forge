@@ -957,16 +957,19 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-2" />
             <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Équipe en Service</span>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             {[
               { role: 'Opérateurs', value: '3/3', full: true },
               { role: 'Chauffeurs', value: '4/5', full: false },
               { role: 'Lab', value: '1/1', full: true },
               { role: 'Maintenance', value: '2/2', full: true },
-            ].map(t => (
-              <div key={t.role} className="flex flex-col items-center">
-                <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
-                <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
+            ].map((t, i, arr) => (
+              <div key={t.role} className="flex items-center gap-3">
+                <div className="flex flex-col items-center">
+                  <span style={{ fontSize:'10px', textTransform:'uppercase', letterSpacing:'0.05em', color:'rgba(255,255,255,0.4)', display:'block', marginTop:'2px' }}>{t.role}</span>
+                  <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
+                </div>
+                {i < arr.length - 1 && <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>}
               </div>
             ))}
           </div>
