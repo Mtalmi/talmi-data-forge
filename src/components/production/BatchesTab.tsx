@@ -66,24 +66,21 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('tous');
 
-  // Use live data if available, otherwise fallback
-  const rows: FallbackRow[] = useMemo(() => {
-    if (bons.length > 0) {
-      return bons.map(b => ({
-        bl_id: b.bl_id,
-        client: b.chauffeur_nom || b.client_id || '—',
-        formule: b.formule_id || '—',
-        volume: b.volume_m3 || 0,
-        heure: (b.heure_prevue || b.production_batch_time || '—').slice(0, 5),
-        status: (b.variance_ciment_pct || 0) > 5 ? 'ecart' as const :
-          b.workflow_status === 'planification' ? 'planifie' as const :
-          b.workflow_status === 'production' ? 'production' as const :
-          'valide' as const,
-        progress: b.workflow_status === 'validation_technique' ? 100 :
-          b.workflow_status === 'production' ? 55 : 0,
-      }));
-    }
-    return FALLBACK_ROWS;
+  // Live data only — no fallback
+  const rows: BatchRow[] = useMemo(() => {
+    return bons.map(b => ({
+      bl_id: b.bl_id,
+      client: b.chauffeur_nom || b.client_id || '—',
+      formule: b.formule_id || '—',
+      volume: b.volume_m3 || 0,
+      heure: (b.heure_prevue || b.production_batch_time || '—').slice(0, 5),
+      status: (b.variance_ciment_pct || 0) > 5 ? 'ecart' as const :
+        b.workflow_status === 'planification' ? 'planifie' as const :
+        b.workflow_status === 'production' ? 'production' as const :
+        'valide' as const,
+      progress: b.workflow_status === 'validation_technique' ? 100 :
+        b.workflow_status === 'production' ? 55 : 0,
+    }));
   }, [bons]);
 
   // Counts
