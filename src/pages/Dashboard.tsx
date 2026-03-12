@@ -538,6 +538,7 @@ export default function Dashboard() {
                     setSearchFocused(false);
                   }
                 }}
+                onKeyDown={(e) => { if (e.key === 'Escape') { setSearchFocused(false); (e.target as HTMLElement).blur(); } }}
                 readOnly
               />
             </div>
