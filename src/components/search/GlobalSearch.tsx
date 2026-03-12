@@ -141,169 +141,155 @@ export function GlobalSearch() {
     return acc;
   }, {} as Record<string, SearchResult[]>);
 
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          role="combobox"
-          aria-expanded={open}
-          className="tbos-search-trigger group flex items-center gap-2.5 w-full md:w-[340px] h-10 px-4 rounded-lg cursor-pointer transition-all duration-250"
-          style={{
-            background: 'rgba(0,0,0,0.45)',
-            border: '1.5px solid rgba(255, 215, 0, 0.15)',
-            borderRadius: 8,
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.4)';
-            (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.6)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.15)';
-            (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.45)';
-          }}
-        >
-          {/* Search icon */}
-          <Search
-            className="h-[18px] w-[18px] flex-shrink-0 transition-all duration-200 group-hover:scale-110"
-            style={{ color: '#FFD700' }}
-            strokeWidth={1.8}
-          />
-          {/* Placeholder */}
-          <span
-            className="hidden sm:inline text-[14px] flex-1 text-left truncate"
-            style={{
-              fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-              fontWeight: 400,
-              color: 'rgba(160, 160, 160, 0.7)',
-              letterSpacing: '0.01em',
-            }}
-          >
-            Search metrics, KPIs, reports...
-          </span>
-          <span
-            className="sm:hidden text-[14px]"
-            style={{ color: 'rgba(160, 160, 160, 0.7)' }}
-          >
-            {gs.search}
-          </span>
+  const quickLinks = [
+    { emoji: '📊', label: 'Tableau de Bord', path: '/dashboard' },
+    { emoji: '📦', label: 'Production', path: '/production' },
+    { emoji: '💰', label: 'Ventes', path: '/ventes' },
+    { emoji: '👥', label: 'Clients', path: '/clients' },
+    { emoji: '📋', label: 'Devis', path: '/devis' },
+    { emoji: '🚛', label: 'Livraisons', path: '/livraisons' },
+  ];
 
-          {/* Keyboard shortcut badges */}
-          <div className="flex items-center gap-0.5 flex-shrink-0">
-            <kbd
-              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
-              style={{
-                color: 'rgba(255, 215, 0, 0.4)',
-                background: 'rgba(255, 215, 0, 0.06)',
-                border: '1px solid rgba(255, 215, 0, 0.1)',
-              }}
-            >⌘</kbd>
-            <kbd
-              className="text-[10px] px-1.5 py-0.5 rounded font-mono"
-              style={{
-                color: 'rgba(255, 215, 0, 0.4)',
-                background: 'rgba(255, 215, 0, 0.06)',
-                border: '1px solid rgba(255, 215, 0, 0.1)',
-              }}
-            >K</kbd>
-          </div>
-        </button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-[380px] md:w-[520px] p-0"
-        align="start"
+  return (
+    <>
+      <button
+        role="combobox"
+        aria-expanded={open}
+        onClick={() => setOpen(true)}
+        className="tbos-search-trigger group flex items-center gap-2.5 w-full md:w-[340px] h-10 px-4 rounded-lg cursor-pointer transition-all duration-250"
         style={{
-          background: '#0d1220',
-          border: '1.5px solid rgba(255, 215, 0, 0.2)',
-          borderRadius: 10,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.05)',
+          background: 'rgba(0,0,0,0.45)',
+          border: '1.5px solid rgba(255, 215, 0, 0.15)',
+          borderRadius: 8,
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.4)';
+          (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.6)';
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255, 215, 0, 0.15)';
+          (e.currentTarget as HTMLElement).style.background = 'rgba(0,0,0,0.45)';
         }}
       >
-        <Command shouldFilter={false}>
+        <Search
+          className="h-[18px] w-[18px] flex-shrink-0 transition-all duration-200 group-hover:scale-110"
+          style={{ color: '#FFD700' }}
+          strokeWidth={1.8}
+        />
+        <span
+          className="hidden sm:inline text-[14px] flex-1 text-left truncate"
+          style={{
+            fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
+            fontWeight: 400,
+            color: 'rgba(160, 160, 160, 0.7)',
+            letterSpacing: '0.01em',
+          }}
+        >
+          Search metrics, KPIs, reports...
+        </span>
+        <span
+          className="sm:hidden text-[14px]"
+          style={{ color: 'rgba(160, 160, 160, 0.7)' }}
+        >
+          {gs.search}
+        </span>
+        <div className="flex items-center gap-0.5 flex-shrink-0">
+          <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ color: 'rgba(255, 215, 0, 0.4)', background: 'rgba(255, 215, 0, 0.06)', border: '1px solid rgba(255, 215, 0, 0.1)' }}>⌘</kbd>
+          <kbd className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ color: 'rgba(255, 215, 0, 0.4)', background: 'rgba(255, 215, 0, 0.06)', border: '1px solid rgba(255, 215, 0, 0.1)' }}>K</kbd>
+        </div>
+      </button>
+
+      {open && (
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '15vh', background: 'rgba(0,0,0,0.6)' }}
+          onClick={(e) => { if (e.target === e.currentTarget) { setOpen(false); setQuery(''); } }}
+        >
           <div
-            className="flex items-center px-4"
-            style={{ borderBottom: '1px solid rgba(255, 215, 0, 0.08)' }}
+            style={{
+              width: '100%',
+              maxWidth: 520,
+              background: '#0d1220',
+              border: '1.5px solid rgba(255, 215, 0, 0.2)',
+              borderRadius: 12,
+              boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.05)',
+              overflow: 'hidden',
+            }}
           >
-            <Search className="mr-3 h-[18px] w-[18px] shrink-0" style={{ color: '#FFD700' }} strokeWidth={1.8} />
-            <input
-              ref={inputRef}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={gs.searchPlaceholder}
-              className="flex h-12 w-full bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              style={{
-                fontFamily: "'Inter', 'Helvetica Neue', sans-serif",
-                fontSize: '14px',
-                color: 'rgba(255,255,255,0.9)',
-              }}
-            />
-            {query && (
-              <button
-                onClick={() => setQuery('')}
-                className="h-7 w-7 flex items-center justify-center rounded-md transition-colors duration-150"
-                style={{ color: 'rgba(255,255,255,0.4)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#FFD700'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; }}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-          <CommandList className="max-h-[400px]">
-            {loading && (
-              <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#FFD700' }} />
-              </div>
-            )}
-            {!loading && query.length >= 2 && results.length === 0 && (
-              <CommandEmpty>{gs.noResultsFound}</CommandEmpty>
-            )}
-            {!loading && query.length < 2 && (
-              <div className="px-4 py-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-3.5 w-3.5" style={{ color: '#D4A843' }} />
-                  <span className="text-sm" style={{ color: 'rgba(148,163,184,0.5)' }}>Recherche IA — Bientôt disponible</span>
+            {/* Search input */}
+            <div className="flex items-center px-4" style={{ borderBottom: '1px solid rgba(255, 215, 0, 0.08)' }}>
+              <Search className="mr-3 h-[18px] w-[18px] shrink-0" style={{ color: '#FFD700' }} strokeWidth={1.8} />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Escape') { setOpen(false); setQuery(''); } }}
+                placeholder="Rechercher clients, devis, livraisons, KPIs..."
+                autoFocus
+                className="flex h-12 w-full bg-transparent py-3 text-sm outline-none"
+                style={{ fontFamily: "'Inter', 'Helvetica Neue', sans-serif", fontSize: 14, color: 'rgba(255,255,255,0.9)' }}
+              />
+              {query && (
+                <button onClick={() => setQuery('')} className="h-7 w-7 flex items-center justify-center rounded-md" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+
+            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+              {loading && (
+                <div className="flex items-center justify-center py-6">
+                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: '#FFD700' }} />
                 </div>
-                <div className="space-y-0.5">
-                  {[
-                    { label: '→ Stocks', path: '/stocks' },
-                    { label: '→ Production', path: '/production' },
-                    { label: '→ Ventes', path: '/ventes' },
-                  ].map(link => (
+              )}
+
+              {!loading && query.length >= 2 && results.length === 0 && (
+                <div className="px-4 py-6 text-center text-sm" style={{ color: 'rgba(148,163,184,0.6)' }}>Aucun résultat trouvé</div>
+              )}
+
+              {!loading && query.length >= 2 && Object.entries(groupedResults).map(([type, items]) => (
+                <div key={type} className="px-2 py-2">
+                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase" style={{ color: 'rgba(148,163,184,0.5)', letterSpacing: '0.1em' }}>{getTypeLabel(type)}</div>
+                  {items.map((result) => (
                     <button
-                      key={link.path}
-                      className="w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-150"
-                      style={{ color: 'rgba(255,255,255,0.6)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#D4A843'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
-                      onClick={() => { setOpen(false); setQuery(''); navigate(link.path); }}
+                      key={`${result.type}-${result.id}`}
+                      onClick={() => handleSelect(result)}
+                      className="w-full flex items-center gap-3 text-left"
+                      style={{ padding: '10px 16px', borderRadius: 6, cursor: 'pointer', color: 'rgba(255,255,255,0.8)', transition: 'all 0.15s ease' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                     >
-                      {link.label}
+                      {getIcon(result.type)}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">{result.title}</div>
+                        <div className="text-xs truncate" style={{ color: 'rgba(148,163,184,0.6)' }}>{result.subtitle}</div>
+                      </div>
                     </button>
                   ))}
                 </div>
-              </div>
-            )}
-            {!loading && Object.entries(groupedResults).map(([type, items]) => (
-              <CommandGroup key={type} heading={getTypeLabel(type)}>
-                {items.map((result) => (
-                  <CommandItem
-                    key={`${result.type}-${result.id}`}
-                    value={result.id}
-                    onSelect={() => handleSelect(result)}
-                    className="cursor-pointer min-h-[44px]"
-                  >
-                    {getIcon(result.type)}
-                    <div className="ml-3 flex-1">
-                      <p className="font-medium">{result.title}</p>
-                      <p className="text-xs text-muted-foreground">{result.subtitle}</p>
-                    </div>
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            ))}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+              ))}
+
+              {!loading && query.length < 2 && (
+                <div className="px-2 py-2">
+                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase" style={{ color: 'rgba(148,163,184,0.5)', letterSpacing: '0.15em' }}>ACCÈS RAPIDE</div>
+                  {quickLinks.map(link => (
+                    <button
+                      key={link.path}
+                      onClick={() => { setOpen(false); setQuery(''); navigate(link.path); }}
+                      className="w-full flex items-center gap-3 text-left text-sm"
+                      style={{ padding: '10px 16px', borderRadius: 6, cursor: 'pointer', color: 'rgba(255,255,255,0.8)', transition: 'all 0.15s ease' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.06)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <span style={{ fontSize: 16 }}>{link.emoji}</span>
+                      <span>{link.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
