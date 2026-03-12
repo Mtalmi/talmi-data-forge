@@ -962,11 +962,11 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             ].map(t => (
               <div key={t.role} className="flex flex-col items-center">
                 <span className="text-[9px] text-muted-foreground/30">{t.role}</span>
-                <span className={`text-sm font-semibold font-mono ${t.full ? 'text-emerald-400' : 'text-amber-400'}`}>{t.value}</span>
+                <span className={`text-sm font-mono ${t.full ? 'text-green-400 font-medium' : 'text-amber-400 font-medium animate-pulse'}`}>{t.value}</span>
               </div>
             ))}
           </div>
-          <span className="text-[10px] text-muted-foreground/30 font-medium">Prochain shift: 14h00 — 3 opérateurs</span>
+          <span style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', color: 'rgba(212,168,67,0.8)' }}>Prochain shift: 14h00 — 3 opérateurs</span>
         </div>
 
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start', borderRadius: 0, overflow: 'visible' }}>
