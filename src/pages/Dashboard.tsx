@@ -86,6 +86,8 @@ export default function Dashboard() {
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const [showLancerToast, setShowLancerToast] = useState(false);
+  const [lancerToastVisible, setLancerToastVisible] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
 
