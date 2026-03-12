@@ -1227,11 +1227,11 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div className="bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-emerald-500/[0.03] border border-white/[0.06] rounded-xl px-6 py-4 mb-4 relative z-[1] w-full flex items-center justify-between border-l-2 border-l-[#D4A843]/50">
-            <div className="text-2xl font-bold text-white font-mono" style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", letterSpacing: '-0.02em', lineHeight: 1, textShadow: '0 0 20px rgba(255, 255, 255, 0.08)' }}>
+          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.08), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ color: '#D4A843', fontSize: '20px', fontWeight: '500', fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
               +18.4K DH
             </div>
-            <div className="text-xs uppercase tracking-[0.15em]" style={{ color: 'rgba(148,163,184,0.5)' }}>marge nette estimée</div>
+            <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.4)' }}>marge nette estimée</div>
             <div className="bg-emerald-500/10 text-emerald-400 text-sm font-semibold px-3 py-1 rounded-full">↗ +12% vs hier</div>
           </div>
         )}
