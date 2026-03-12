@@ -84,7 +84,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 1: SILOS ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3 rounded-l-xl"
+          className="flux-panel group flex-1 min-w-0 p-3 rounded-l-xl"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/stocks')}
         >
@@ -95,8 +95,9 @@ export default function PlantFlowSchematic() {
             <MiniBar label="Gravette" pct={34} warn />
             <MiniBar label="Eau" pct={30} />
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Stocks</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
@@ -104,7 +105,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 2: MALAXEUR ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3"
+          className="flux-panel group flex-1 min-w-0 p-3"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/production')}
         >
@@ -119,8 +120,9 @@ export default function PlantFlowSchematic() {
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Volume <span className="text-white/80">8 m³</span></div>
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Temps <span className="font-mono" style={{ color: T.dotWarn }}>02:47</span></div>
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Production</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
@@ -128,7 +130,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 3: CAMIONS ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3"
+          className="flux-panel group flex-1 min-w-0 p-3"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/logistique')}
         >
@@ -147,8 +149,9 @@ export default function PlantFlowSchematic() {
               <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.6)' }}><span className="text-white/80 font-medium">1</span> en attente</span>
             </div>
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Logistique</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
@@ -156,7 +159,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 4: CHANTIERS ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3"
+          className="flux-panel group flex-1 min-w-0 p-3"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/bons-de-commande')}
         >
@@ -178,8 +181,9 @@ export default function PlantFlowSchematic() {
               <span className="text-[8px] font-mono ml-auto" style={{ color: 'rgba(148,163,184,0.4)' }}>20 m³</span>
             </div>
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Livraisons</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
@@ -187,7 +191,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 5: QUALITÉ ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3 rounded-r-xl"
+          className="flux-panel group flex-1 min-w-0 p-3 rounded-r-xl"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/laboratoire')}
         >
@@ -210,8 +214,9 @@ export default function PlantFlowSchematic() {
             <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.4)' }}>E/C: </span>
             <span className="text-[9px] font-mono" style={{ color: T.dotOk }}>0.502</span>
           </div>
-          <div className="mt-1.5 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-1.5 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Contrôle</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
       </div>
