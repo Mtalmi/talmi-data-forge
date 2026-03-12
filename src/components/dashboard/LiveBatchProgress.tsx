@@ -173,18 +173,17 @@ export default function LiveBatchProgress() {
             <span
               className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
               style={{
-                background: p.active ? 'rgba(212,168,67,0.15)' : p.done ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
-                border: `1px solid ${p.active ? 'rgba(212,168,67,0.3)' : p.done ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
-                opacity: p.active ? 1 : p.done ? 0.9 : 0.4,
+                background: p.active ? 'rgba(212,168,67,0.2)' : p.done ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${p.active ? '#D4A843' : p.done ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
+                boxShadow: p.active ? '0 0 8px rgba(212, 168, 67, 0.4)' : 'none',
+                opacity: 1,
               }}
             >
               {p.done ? '✅' : p.active ? '⏳' : '○'}
             </span>
             <span
-              className="text-xs font-medium"
-              style={{
-                color: p.active ? T.dotWarn : p.done ? 'rgba(148,163,184,0.6)' : 'rgba(148,163,184,0.3)',
-              }}
+              className={p.active ? 'text-xs font-medium text-[#D4A843]' : p.done ? 'text-xs font-medium' : 'text-xs text-muted-foreground/30'}
+              style={p.done ? { color: 'rgba(148,163,184,0.6)' } : undefined}
             >
               {p.label}
             </span>
@@ -196,8 +195,7 @@ export default function LiveBatchProgress() {
       <div className="flex items-center gap-0 mx-4 -mt-6 mb-3">
         {phases.slice(1).map((p, i) => (
           <div key={i} className="flex-1 h-px" style={{
-            background: p.done ? T.dotOk : p.active ? `linear-gradient(90deg, ${T.dotWarn}60, rgba(255,255,255,0.06))` : 'rgba(255,255,255,0.06)',
-            opacity: p.done ? 0.3 : 1,
+            background: p.done ? 'rgba(212,168,67,0.4)' : 'rgba(255,255,255,0.06)',
           }} />
         ))}
       </div>
