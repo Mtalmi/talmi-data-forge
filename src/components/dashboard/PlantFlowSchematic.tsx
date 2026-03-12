@@ -52,7 +52,7 @@ export default function PlantFlowSchematic() {
   const navigate = useNavigate();
 
   return (
-    <div className="mx-auto pt-5 mb-5">
+    <div className="mx-auto pt-5 mb-5" style={{ animation: 'ccSectionIn 300ms ease-out 550ms both' }}>
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
         <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">

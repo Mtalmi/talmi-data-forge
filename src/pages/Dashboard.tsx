@@ -530,7 +530,7 @@ export default function Dashboard() {
           {activeTab === 'command' && (
           <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* (1) Greeting — Cinematic Hero Moment */}
-          <div className="relative z-[1]" style={{ marginBottom: 20 }}>
+          <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
               className="rounded-[10px]"
               style={{
@@ -675,16 +675,16 @@ export default function Dashboard() {
           {/* (2) Alerte Fuite Détectée */}
           {(isCeo || isAccounting) && (
             <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
+              animation: 'ccSectionIn 300ms ease-out 100ms both, leakAlertPulse 2s ease-in-out infinite 400ms',
               borderLeft: '3px solid #F97316',
               boxShadow: '0 0 12px rgba(249,115,22,0.2)',
-              animation: 'leakAlertPulse 2s ease-in-out infinite',
             }}>
               <LeakageAlertBanner />
             </div>
           )}
 
           {/* (3) 4 KPI Cards Row */}
-          <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
+          <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
@@ -748,7 +748,7 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
+                animation: `ccSectionIn 300ms ease-out ${200 + i * 50}ms both`,
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
                   borderColor: 'rgba(34,197,94,0.12)',
@@ -797,7 +797,7 @@ export default function Dashboard() {
           </div>
 
           {/* (4) Intelligence IA section */}
-          <div className="relative z-[1] mb-2" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}>
+          <div className="relative z-[1] mb-2" style={{ animation: 'ccSectionIn 300ms ease-out 450ms both' }}>
             <IntelligenceBriefingCard />
           </div>
 
@@ -805,12 +805,12 @@ export default function Dashboard() {
           <ResumeIABar />
 
           {/* (5) Flux Usine ribbon */}
-          <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" />}>
+          <Suspense fallback={<div className="h-32 rounded-lg bg-white/[0.02] animate-pulse mt-2" style={{ animation: 'ccSectionIn 300ms ease-out 550ms both' }} />}>
             <PlantFlowSchematic />
           </Suspense>
 
           {/* (6) Niveaux de Stock — stock only */}
-          <div className="mt-5">
+          <div className="mt-5" style={{ animation: 'ccSectionIn 300ms ease-out 650ms both' }}>
             {/* Section Header */}
             <div className="flex items-center gap-2.5 mb-3">
               <span style={{ fontSize: 14 }}>📦</span>
