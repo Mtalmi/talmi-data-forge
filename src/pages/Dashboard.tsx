@@ -831,13 +831,10 @@ export default function Dashboard() {
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="mb-5 flex items-center gap-6 w-full rounded-lg p-3 backdrop-blur-sm" style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.10)',
-          }}>
-            {/* Taux de Réussite mini gauge */}
+          <div className="mb-5 flex items-center gap-6 w-full rounded-xl px-6 py-3 backdrop-blur-sm bg-white/[0.05] border border-white/10">
+            {/* Taux de Réussite inline circular gauge */}
             <div className="flex items-center gap-3 flex-shrink-0">
-              <svg width="48" height="48" viewBox="0 0 60 60">
+              <svg width="56" height="56" viewBox="0 0 60 60">
                 <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
                 <circle
                   cx="30" cy="30" r="24" fill="none"
@@ -853,24 +850,24 @@ export default function Dashboard() {
                 <text x="30" y="33" textAnchor="middle" fill="white" fontSize="14" fontWeight="200" fontFamily="ui-monospace, SFMono-Regular, monospace">94%</text>
               </svg>
               <div className="flex flex-col">
-                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Taux de Réussite</span>
+                <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Taux de Réussite</span>
                 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.35)' }}>7 derniers jours</span>
               </div>
             </div>
-            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="w-px h-8 bg-white/10" />
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>14</span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
             </div>
-            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="w-px h-8 bg-white/10" />
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
             </div>
-            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="w-px h-8 bg-white/10" />
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
             </div>
           </div>
           <style>{`
