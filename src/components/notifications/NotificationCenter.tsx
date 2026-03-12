@@ -174,7 +174,7 @@ export default function NotificationCenter() {
         boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.04)',
       }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid rgba(255,215,0,0.08)' }}>
           <div>
             <h3 className="font-semibold">{n.title}</h3>
             <p className="text-xs text-muted-foreground">
