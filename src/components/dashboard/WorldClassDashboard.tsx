@@ -292,7 +292,6 @@ function SkeletonCard({ height = 200 }: { height?: number }) {
 // ═══════════════════════════════════════════════════════
 function HorizontalStockBar({ name, current, max, unit }: { name: string; current: number; max: number; unit: string }) {
   const pct = Math.min(Math.round((current / max) * 100), 100);
-  const nameLower = name.toLowerCase();
 
   let barBg: string;
   let barShadow: string;
@@ -326,9 +325,6 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
             boxShadow: barShadow,
           }}
         />
-      </div>
-    </div>
-  );
       </div>
     </div>
   );
