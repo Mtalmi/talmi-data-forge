@@ -918,7 +918,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Livraisons</span>
               <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(251,191,36)', fontWeight: '500' }}>3/5</span>
-              <span className="text-[10px] text-emerald-400">60%</span>
+              <div className="flex items-center gap-1"><span className="text-[10px] uppercase tracking-wider text-green-400/70">3 LIVRÉES</span><span className="text-[10px] uppercase tracking-wider text-amber-400/70">· 2 EN COURS</span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
