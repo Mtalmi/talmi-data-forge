@@ -60,7 +60,7 @@ export const DashboardInlineCharts = memo(function DashboardInlineCharts() {
       </div>
 
       {/* Chart 2: Stock Levels Horizontal Bars */}
-      <div className="tbos-card tbos-card-stagger p-4 rounded-xl">
+      <div className="tbos-card tbos-card-stagger p-4 rounded-xl" style={{ background: 'rgba(212,168,67,0.02)', border: '1px solid rgba(212,168,67,0.08)', borderRadius: '8px' }}>
         <div className="text-sm font-medium text-white/90 mb-3">Niveaux de Stock</div>
         <div style={{ height: 200 }}>
           <ResponsiveContainer width="100%" height="100%">
