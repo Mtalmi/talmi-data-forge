@@ -705,7 +705,7 @@ export default function WorldClassContractors() {
   const [raisonProlongation, setRaisonProlongation] = useState('');
   const [prolongerLoading, setProlongerLoading] = useState(false);
   const [prolongerError, setProlongerError] = useState('');
-  const [assignerBesoin, setAssignerBesoin] = useState<typeof UPCOMING[0] | null>(null);
+  const [assignerBesoin, setAssignerBesoin] = useState<LiveUpcomingItem | null>(null);
   const [selectedPrestataire, setSelectedPrestataire] = useState('');
   const [assignerLoading, setAssignerLoading] = useState(false);
   const [assignerError, setAssignerError] = useState('');
