@@ -939,22 +939,28 @@ export default function WorldClassContractors() {
         <div>
           <SectionHeader
             title="Missions en Cours"
-            badge="3 actives"
+            badge={`${liveMissions.length} active${liveMissions.length !== 1 ? 's' : ''}`}
             badgeColor={T.info}
           />
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
-             {MISSIONS.map((m, i) => {
-               const liveContractor = contractors.find((c: any) => c.nom === m.contractor || m.contractor.toLowerCase().includes((c.nom || '').toLowerCase()));
-               return (
-                 <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => {
-                   setProlongerMission({ ...m, id: liveContractor?.id, tarif_journalier: liveContractor?.tarif_journalier || Number((m.tarif || '0').replace(/[^0-9]/g, '')), date_fin: '2025-02-28', nom: m.contractor, mission_actuelle: m.client });
-                   setNouvelleFinDate('');
-                   setRaisonProlongation('');
-                   setProlongerError('');
-                 }} />
-               );
-             })}
+          {liveMissions.length === 0 ? (
+            <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+              <Briefcase size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+              <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucune mission active</div>
+              <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>Assignez un sous-traitant pour démarrer une mission</div>
+            </div>
+          ) : (
+           <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(liveMissions.length, 3)}, 1fr)`, gap: 16 }}>
+             {liveMissions.map((m, i) => (
+               <MissionCard key={m.id} m={m} delay={i * 100} onViewDetails={() => setMissionDrawer(m)} onProlonger={() => {
+                 const liveC = contractors.find((c: any) => c.nom === m.contractor);
+                 setProlongerMission({ ...m, id: liveC?.id, tarif_journalier: liveC?.tarif_journalier || Number((m.tarif || '0').replace(/[^0-9]/g, '')), date_fin: liveC?.date_fin || new Date().toISOString().split('T')[0], nom: m.contractor, mission_actuelle: m.client });
+                 setNouvelleFinDate('');
+                 setRaisonProlongation('');
+                 setProlongerError('');
+               }} />
+             ))}
            </div>
+          )}
         </div>
 
         {/* ══════════════════════════ SECTION 4: COST ANALYSIS ══════════════════════════ */}
