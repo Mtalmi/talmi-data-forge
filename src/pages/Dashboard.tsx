@@ -1330,7 +1330,7 @@ export default function Dashboard() {
                       { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
                       { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
                     ].map((batch) => (
-                      <div key={batch.id} className="flex items-center gap-1.5 hover:bg-white/5 transition-all duration-200 cursor-pointer rounded-md px-2 py-1">
+                      <div key={batch.id} className="flex items-center gap-1.5 hover:bg-white/5 transition-all duration-200 cursor-pointer rounded px-2 py-1 -mx-2">
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
                         <div className="min-w-0">
                           <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
@@ -1349,7 +1349,7 @@ export default function Dashboard() {
                     { label: 'Attente', value: '12 min', color: '#FBBF24' },
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <div className="text-[10px] uppercase tracking-wider text-white/40 mb-0.5">{m.label}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
                       <div className="text-sm font-medium text-white">{m.value}</div>
                     </div>
                   ))}
