@@ -584,8 +584,8 @@ function PipelineFunnel() {
                   transition: 'all 200ms ease-out',
                 }}
               >
-                <span className="font-mono font-light text-3xl text-center block" style={{ color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, lineHeight: 1 }}>
-                  {s.value}
+                <span className="text-center block" style={{ fontFamily: 'monospace', fontSize: isEmpty ? '28px' : undefined, color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, fontWeight: isEmpty ? '300' : '300', lineHeight: 1 }}>
+                  {isEmpty ? '0' : s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
