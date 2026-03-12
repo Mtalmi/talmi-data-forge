@@ -213,7 +213,7 @@ export function SeasonalDemandForecasterCard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={`${T.cardBorder}80`} />
                   <XAxis dataKey="week" tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[95, 'auto']} tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <RechartsTooltip
                     contentStyle={{ background: '#141824', border: `1px solid ${T.cardBorder}`, borderRadius: 8, fontSize: 11 }}
                     labelStyle={{ color: T.textPri, fontWeight: 600 }}
