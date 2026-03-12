@@ -652,14 +652,16 @@ export default function Dashboard() {
                     <Truck size={15} style={{ color: '#D4A843', flexShrink: 0, alignSelf: 'center' }} />
                     <div className="flex flex-col">
                       <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
-                      {nextDelivery && (
-                        <span className="text-sm text-white truncate max-w-[140px]">{nextDelivery.client}</span>
-                      )}
-                      <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-                        {nextDelivery ? `${nextDelivery.minutesLeft} min` : '47 min'}
-                      </span>
-                      {nextDelivery && (
-                        <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
+                      {nextDelivery ? (
+                        <>
+                          <span className="text-xs text-white truncate max-w-[140px]">{nextDelivery.client}</span>
+                          <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                            {nextDelivery.minutesLeft} min
+                          </span>
+                          <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
+                        </>
+                      ) : (
+                        <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>Aucune livraison</span>
                       )}
                     </div>
                   </div>
