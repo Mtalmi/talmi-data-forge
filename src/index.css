@@ -4956,6 +4956,17 @@ div.bg-card.ops-surface-card {
   overflow: visible !important;
 }
 
+/* ═══ OPERATIONS TOP-ROW CARDS — NUCLEAR 4px RADIUS ═══ */
+.ops-enter[class*="tbos-stagger"],
+.ops-enter.group {
+  border-radius: 4px !important;
+  overflow: visible !important;
+}
+.tbos-grid-3col > div > div.ops-enter {
+  border-radius: 4px !important;
+  overflow: visible !important;
+}
+
 /* ═══ HIDE LOVABLE BADGE ═══ */
 #lovable-badge, aside[aria-label="Edit with Lovable"] {
   display: none !important;
