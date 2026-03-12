@@ -123,7 +123,7 @@ export default function PlantFlowSchematic() {
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
-            <span className="text-[10px] font-medium" style={{ color: T.dotOk }}>ACTIF</span>
+            <span className="text-[10px] font-medium animate-pulse" style={{ color: T.dotOk, textShadow: '0 0 8px rgba(34, 197, 94, 0.3)' }}>ACTIF</span>
           </div>
           <div className="space-y-0.5">
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Batch <span className="text-white/80 font-mono">#403-068</span></div>
