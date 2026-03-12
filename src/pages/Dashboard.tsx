@@ -102,6 +102,52 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [isCeo]);
 
+  // ─── Fetch next upcoming delivery ───
+  useEffect(() => {
+    const fetchNextDelivery = async () => {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const nowTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      const { data } = await supabase
+        .from('bons_livraison_reels')
+        .select('client_id, volume_m3, heure_prevue, heure_depart_centrale')
+        .eq('date_livraison', todayStr)
+        .order('heure_prevue', { ascending: true })
+        .limit(50);
+      
+      if (data?.length) {
+        // Find next delivery with a scheduled time after now
+        const upcoming = data.find(d => {
+          const t = d.heure_prevue || d.heure_depart_centrale;
+          return t && t > nowTime;
+        });
+        
+        if (upcoming) {
+          const t = upcoming.heure_prevue || upcoming.heure_depart_centrale || '';
+          const [h, m] = t.split(':').map(Number);
+          const diffMin = Math.max(0, (h * 60 + m) - (now.getHours() * 60 + now.getMinutes()));
+          
+          // Fetch client name
+          const { data: clientData } = await supabase
+            .from('clients')
+            .select('nom_client')
+            .eq('client_id', upcoming.client_id)
+            .maybeSingle();
+          
+          setNextDelivery({
+            client: clientData?.nom_client || upcoming.client_id,
+            volume: upcoming.volume_m3,
+            minutesLeft: diffMin,
+          });
+        }
+      }
+    };
+    fetchNextDelivery();
+    const interval = setInterval(fetchNextDelivery, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ─── Typewriter boot sequence ───
   useEffect(() => {
     const name = firstName;
