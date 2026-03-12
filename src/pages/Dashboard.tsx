@@ -508,7 +508,6 @@ export default function Dashboard() {
                       fontFamily: "'DM Sans', sans-serif",
                     }}
                   >
-                    {tab.icon}
                     {tab.label}
                     {'live' in tab && tab.live && (
                       <span className="relative flex h-1.5 w-1.5 ml-1">
