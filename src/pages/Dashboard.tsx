@@ -427,60 +427,52 @@ export default function Dashboard() {
             <div className="mx-auto mt-3" style={{ maxWidth: 320, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)' }} />
           </div>
 
-          {/* ═══ TAB BAR — right after header ═══ */}
-          <div className="flex items-center gap-1 mb-5 relative z-[1] p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <button
-              onClick={() => setActiveTab('command')}
-              className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
-              style={{
-                background: activeTab === 'command' ? 'rgba(212,168,67,0.12)' : 'transparent',
-                border: activeTab === 'command' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
-                color: activeTab === 'command' ? '#D4A843' : 'rgba(148,163,184,0.5)',
-              }}
-            >
-              <LayoutDashboard size={14} />
-              Command Center
-            </button>
-            <button
-              onClick={() => setActiveTab('production')}
-              className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
-              style={{
-                background: activeTab === 'production' ? 'rgba(212,168,67,0.12)' : 'transparent',
-                border: activeTab === 'production' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
-                color: activeTab === 'production' ? '#D4A843' : 'rgba(148,163,184,0.5)',
-              }}
-            >
-              <Factory size={14} />
-              Production Live
-              <span className="relative flex h-1.5 w-1.5 ml-1">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-              </span>
-            </button>
-            <button
-              onClick={() => setActiveTab('operations')}
-              className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
-              style={{
-                background: activeTab === 'operations' ? 'rgba(212,168,67,0.12)' : 'transparent',
-                border: activeTab === 'operations' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
-                color: activeTab === 'operations' ? '#D4A843' : 'rgba(148,163,184,0.5)',
-              }}
-            >
-              <Activity size={14} />
-              Opérations
-            </button>
-            <button
-              onClick={() => setActiveTab('intelligence')}
-              className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
-              style={{
-                background: activeTab === 'intelligence' ? 'rgba(212,168,67,0.12)' : 'transparent',
-                border: activeTab === 'intelligence' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
-                color: activeTab === 'intelligence' ? '#D4A843' : 'rgba(148,163,184,0.5)',
-              }}
-            >
-              <Sparkles size={14} />
-              Intelligence IA
-            </button>
+          {/* ═══ TAB BAR — Stocks-style gold underline ═══ */}
+          <div className="relative z-[1] mb-5" style={{
+            background: 'linear-gradient(145deg, #11182E, #162036)',
+            borderBottom: '1px solid rgba(212,168,67,0.12)',
+            borderRadius: '10px 10px 0 0',
+            padding: '0 24px',
+            display: 'flex', alignItems: 'center',
+          }}>
+            <div style={{ display: 'flex', gap: 0 }}>
+              {([
+                { id: 'command', label: 'COMMAND CENTER', icon: <LayoutDashboard size={13} /> },
+                { id: 'production', label: 'PRODUCTION LIVE', icon: <Factory size={13} />, live: true },
+                { id: 'operations', label: 'OPÉRATIONS', icon: <Activity size={13} /> },
+                { id: 'intelligence', label: 'INTELLIGENCE IA', icon: <Sparkles size={13} /> },
+              ] as const).map(tab => {
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className="flex items-center gap-2 transition-all duration-200"
+                    style={{
+                      padding: '14px 20px',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                      color: isActive ? '#D4A843' : 'rgba(148,163,184,0.5)',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      letterSpacing: '0.1em',
+                      cursor: 'pointer',
+                      fontFamily: "'DM Sans', sans-serif",
+                    }}
+                  >
+                    {tab.icon}
+                    {tab.label}
+                    {'live' in tab && tab.live && (
+                      <span className="relative flex h-1.5 w-1.5 ml-1">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
