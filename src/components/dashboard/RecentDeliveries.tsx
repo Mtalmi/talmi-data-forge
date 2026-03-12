@@ -31,12 +31,14 @@ const statusColors = {
   done: '#22c55e',
   enRoute: '#eab308',
   planned: '#374151',
+  late: '#ef4444',
 };
 
 const statusIcons = {
   done: '✅',
   enRoute: '🔶',
   planned: '⏳',
+  late: '🔴',
 };
 
 export default function RecentDeliveries() {
