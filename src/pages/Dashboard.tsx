@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3 } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2 } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 
@@ -682,16 +682,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* (2) Alerte Fuite Détectée */}
-          {(isCeo || isAccounting) && (
-            <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
-              animation: 'ccSectionIn 300ms ease-out 100ms both, leakAlertPulse 2s ease-in-out infinite 400ms',
-              borderLeft: '3px solid #F97316',
-              boxShadow: '0 0 12px rgba(249,115,22,0.2)',
-            }}>
-              <LeakageAlertBanner />
-            </div>
-          )}
+          {/* (2) Alerte Fuite Détectée or All-Clear */}
+          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
+            animation: 'ccSectionIn 300ms ease-out 100ms both',
+          }}>
+            <LeakageAlertBanner />
+          </div>
 
           {/* (3) 4 KPI Cards Row */}
           <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>

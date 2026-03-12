@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { AlertTriangle, X, ChevronRight, Droplets } from 'lucide-react';
+import { AlertTriangle, X, ChevronRight, Droplets, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -50,8 +50,18 @@ export default function LeakageAlertBanner() {
 
   const visibleLeakages = leakages.filter(l => !dismissed.includes(l.bl_id));
 
-  if (loading || visibleLeakages.length === 0) {
-    return null;
+  if (loading) return null;
+
+  if (visibleLeakages.length === 0) {
+    return (
+      <div className="rounded-lg flex items-center gap-3 px-4 py-3" style={{
+        background: 'rgba(34,197,94,0.05)',
+        border: '1px solid rgba(34,197,94,0.2)',
+      }}>
+        <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: '#22c55e' }} />
+        <span className="text-sm" style={{ color: '#22c55e' }}>Aucune alerte active — Opérations normales</span>
+      </div>
+    );
   }
 
   return (
