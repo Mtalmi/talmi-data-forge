@@ -142,7 +142,7 @@ export function useDashboardStats() {
         : NaN;
       const clientsTrend = lastUniqueClients > 0 
         ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
-        : 0;
+        : NaN;
 
       // CUR Moyen (7 days) - only from validated BLs (livre or facture)
       const validatedBLs = sevenDayData?.filter(d => d.cur_reel && d.cur_reel > 0) || [];
