@@ -1000,7 +1000,7 @@ export default function WorldClassContractors() {
             </ResponsiveContainer>
             {/* Legend */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 8 }}>
-              {COST_DONUT.map((d, i) => (
+              {costDonut.length > 0 ? costDonut.map((d, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 8, height: 8, borderRadius: '50%', background: d.color }} />
@@ -1008,7 +1008,9 @@ export default function WorldClassContractors() {
                   </div>
                   <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, color: T.gold }}>{d.value}K DH</span>
                 </div>
-              ))}
+              )) : (
+                <div style={{ color: T.textDim, fontSize: 12, textAlign: 'center', padding: 12 }}>Aucune donnée de coût disponible</div>
+              )}
             </div>
           </div>
 
