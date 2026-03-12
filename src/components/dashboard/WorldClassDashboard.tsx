@@ -296,7 +296,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
 
   // Hardcoded color overrides by material name
   const isGravette = nameLower.includes('gravette') || nameLower.includes('gravier');
-  const isEau = nameLower === 'eau';
+  const isEau = nameLower.includes('eau');
   const isAdjuvant = nameLower.includes('adjuvant');
 
   let barBg: string;
