@@ -320,7 +320,7 @@ function AIAnalystBrief() {
   }, []);
 
   return (
-      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
       <div className="flex items-center justify-between mb-4">
