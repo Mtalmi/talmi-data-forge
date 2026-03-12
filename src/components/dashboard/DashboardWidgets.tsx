@@ -148,11 +148,12 @@ const AR_TOOLTIP = ({ active, payload, label }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: '#0F172A',
-        border: '1px solid rgba(255,215,0,0.25)',
+        background: 'rgba(15,23,42,0.95)',
+        border: '1px solid rgba(212,168,67,0.3)',
         borderRadius: 8,
         padding: '8px 12px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(12px)',
       }}>
         <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
         <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
@@ -298,11 +299,12 @@ export function StockLevelsWidget() {
     if (active && payload?.length) {
       return (
         <div style={{
-          background: '#0F172A',
-          border: '1px solid rgba(255,215,0,0.25)',
+          background: 'rgba(15,23,42,0.95)',
+          border: '1px solid rgba(212,168,67,0.3)',
           borderRadius: 8,
           padding: '8px 12px',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          backdropFilter: 'blur(12px)',
         }}>
           <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{label}</p>
           <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>
@@ -370,11 +372,12 @@ const DONUT_TOOLTIP = ({ active, payload }: any) => {
   if (active && payload?.length) {
     return (
       <div style={{
-        background: '#0F172A',
-        border: '1px solid rgba(255,215,0,0.25)',
+        background: 'rgba(15,23,42,0.95)',
+        border: '1px solid rgba(212,168,67,0.3)',
         borderRadius: 8,
         padding: '8px 12px',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.5), 0 0 16px rgba(255,215,0,0.08)',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        backdropFilter: 'blur(12px)',
       }}>
         <p style={{ color: '#94A3B8', fontSize: 11, marginBottom: 2 }}>{payload[0]?.name}</p>
         <p style={{ color: '#FFD700', fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: 14 }}>

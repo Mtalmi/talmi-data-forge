@@ -14,8 +14,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: '#1E293B', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-        padding: '6px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+        background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8,
+        padding: '6px 12px', boxShadow: '0 8px 32px rgba(0,0,0,0.5)', backdropFilter: 'blur(12px)',
       }}>
         <p style={{ color: '#475569', fontSize: 10, marginBottom: 2 }}>{label}</p>
         <p style={{ fontFamily: 'Inter, system-ui', fontWeight: 300, fontSize: 14, color: '#fff', fontVariantNumeric: 'tabular-nums' }}>

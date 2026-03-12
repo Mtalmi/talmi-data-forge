@@ -215,8 +215,8 @@ export function SeasonalDemandForecasterCard() {
                   <XAxis dataKey="week" tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <YAxis domain={[95, 'auto']} tick={{ fill: T.textDim, fontSize: 9 }} axisLine={false} tickLine={false} />
                   <RechartsTooltip
-                    contentStyle={{ background: '#141824', border: `1px solid ${T.cardBorder}`, borderRadius: 8, fontSize: 11 }}
-                    labelStyle={{ color: T.textPri, fontWeight: 600 }}
+                    contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, fontSize: 11, backdropFilter: 'blur(12px)', color: '#fff' }}
+                    labelStyle={{ color: '#fff', fontWeight: 600 }}
                   />
                   {/* Capacity band */}
                   <ReferenceLine y={350} stroke={T.success} strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Capacité', fill: T.success, fontSize: 9, position: 'right' }} />
