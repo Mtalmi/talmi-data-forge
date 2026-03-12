@@ -54,8 +54,8 @@ const panelHoverHandlers = {
     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
   },
   onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.background = 'rgba(255,255,255,0.025)';
-    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+    e.currentTarget.style.background = 'rgba(15,23,41,0.8)';
+    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
   },
 };
 
@@ -96,7 +96,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 1: SILOS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/stocks')}
           {...panelHoverHandlers}
         >
@@ -115,7 +115,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 2: MALAXEUR ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/production')}
           {...panelHoverHandlers}
         >
@@ -138,7 +138,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 3: CAMIONS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/logistique')}
           {...panelHoverHandlers}
         >
@@ -165,7 +165,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 4: CHANTIERS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/bons-de-commande')}
           {...panelHoverHandlers}
         >
@@ -195,7 +195,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 5: QUALITÉ ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/laboratoire')}
           {...panelHoverHandlers}
         >

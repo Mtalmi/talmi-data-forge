@@ -191,7 +191,7 @@ export function IntelligenceBriefingCard() {
   };
 
   if (loading) return (
-    <div style={{ background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)', border: '1px solid #1E2D4A', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, backdropFilter: 'blur(4px)' }}>
       <Loader2 size={16} className="animate-spin" style={{ color: '#D4A843' }} />
       <span style={{ color: '#64748B', fontSize: 12 }}>Chargement des briefings...</span>
     </div>
@@ -199,9 +199,10 @@ export function IntelligenceBriefingCard() {
 
   return (
     <div style={{
-      background: 'linear-gradient(145deg, #111B2E 0%, #162036 100%)',
-      border: '1px solid rgba(212,168,67,0.12)',
+      background: 'rgba(15,23,41,0.8)',
+      border: '1px solid rgba(255,255,255,0.06)',
       borderRadius: 12, overflow: 'hidden',
+      backdropFilter: 'blur(4px)',
     }}>
       {/* Header */}
       <div style={{ padding: '14px 18px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>

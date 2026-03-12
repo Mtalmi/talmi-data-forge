@@ -826,7 +826,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
       <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
         {stockOnly ? (
           <div className="w-full mb-5 relative z-[1]">
-            <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card" style={{ borderRadius: 12, border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(15,23,41,0.8)', backdropFilter: 'blur(4px)' }}>
               <div className="grid grid-cols-5 gap-5" style={{ alignItems: 'stretch' }}>
                 {/* Left: Stock Bars (60%) */}
                 <div className="col-span-3 flex flex-col">

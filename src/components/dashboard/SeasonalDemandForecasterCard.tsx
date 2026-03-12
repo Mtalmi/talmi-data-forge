@@ -107,7 +107,7 @@ export function SeasonalDemandForecasterCard() {
   ];
 
   return (
-    <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '1px solid rgba(212,168,67,0.3)', borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{ background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden', backdropFilter: 'blur(4px)' }}>
       {/* Header */}
       <button
         onClick={() => setOpen(!open)}
