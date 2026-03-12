@@ -1058,10 +1058,10 @@ export default function Dashboard() {
                       Production (m³/h) vs Target
                     </div>
                     {/* Target legend */}
-                    <div className="flex items-center mt-1">
-                      <div className="w-3 h-px border-t border-dashed border-white/30 inline-block mr-1.5" />
-                      <span className="text-[9px] text-muted-foreground/30 font-medium">Target</span>
-                    </div>
+                      <div className="flex items-center mt-1">
+                        <div className="w-3 h-px border-t border-dashed inline-block mr-1.5" style={{ borderColor: 'rgba(255,255,255,0.35)' }} />
+                        <span className="font-medium" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Target</span>
+                      </div>
                   </div>
                   <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -1143,17 +1143,14 @@ export default function Dashboard() {
                       if (idx === -1) return null;
                       const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
                       return (
-                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(148,163,184,0.3)" fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace">
+                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="4.5" fontFamily="monospace" fontWeight="500">
                           {label}
                         </text>
                       );
                     })}
-                    {/* Hover point */}
+                    {/* Hover — vertical line only, no dot */}
                     {hoveredPoint && (
-                      <>
-                        <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#D4A843" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
-                      </>
+                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
