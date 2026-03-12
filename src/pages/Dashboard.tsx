@@ -1015,20 +1015,19 @@ export default function Dashboard() {
               <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">TAUX DE RÉUSSITE</span>
               <span className="text-[9px] text-muted-foreground/30">7 derniers jours</span>
             </div>
-            <div className="w-px h-10 bg-white/[0.06] flex-shrink-0" />
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
-            </div>
-            <div className="w-px h-10 bg-white/[0.06] flex-shrink-0" />
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
-            </div>
-            <div className="w-px h-10 bg-white/[0.06] flex-shrink-0" />
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-lg" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+            <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center' }}>
+              <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
+                <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
+                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
+              </div>
+              <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
+                <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
+                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
+                <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-lg" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+              </div>
             </div>
           </div>
           <style>{`
