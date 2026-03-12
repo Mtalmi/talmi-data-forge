@@ -542,24 +542,57 @@ export default function Dashboard() {
               />
             </div>
             {searchFocused && (
-              <div className="absolute top-full left-0 right-0 bg-[#0f1729] border border-white/10 rounded-lg shadow-xl p-4 mt-1 w-full z-50">
-                <div className="text-sm text-muted-foreground/40 italic flex items-center gap-2 mb-3">
-                  <span style={{ color: '#D4A843' }}>✦</span> Recherche IA — Bientôt disponible
+              <div
+                className="absolute top-full left-0 right-0 mt-1 z-50 overflow-hidden"
+                style={{
+                  background: '#0d1528',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 12,
+                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                  animation: 'searchDropIn 200ms ease-out',
+                }}
+              >
+                {/* AI Search Preview Bar */}
+                <div className="flex items-center gap-2 px-4 py-3" style={{ background: 'rgba(212,168,67,0.05)', borderBottom: '1px solid rgba(212,168,67,0.1)' }}>
+                  <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Recherche IA</span>
+                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>— Bientôt disponible</span>
                 </div>
-                <div className="flex flex-col gap-1.5">
+
+                {/* Quick Navigation */}
+                <div className="px-4 pt-3 pb-1">
+                  <span style={{ fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', fontWeight: 500, textTransform: 'uppercase' }}>NAVIGATION RAPIDE</span>
+                </div>
+                <div className="flex flex-col">
                   {[
-                    { label: 'Stocks', path: '/stocks' },
-                    { label: 'Production', path: '/production' },
-                    { label: 'Ventes', path: '/ventes' },
-                  ].map(link => (
-                    <button
-                      key={link.path}
-                      className="text-sm text-white/70 hover:text-[#D4A843] cursor-pointer text-left px-2 py-1 rounded transition-colors duration-150"
-                      onMouseDown={(e) => { e.preventDefault(); navigate(link.path); }}
-                    >
-                      → {link.label}
-                    </button>
-                  ))}
+                    { label: 'Stocks', path: '/stocks', icon: Package },
+                    { label: 'Production', path: '/production', icon: Factory },
+                    { label: 'Ventes', path: '/ventes', icon: TrendingUp },
+                    { label: 'Clients', path: '/clients', icon: Bell },
+                    { label: 'Logistique', path: '/logistique', icon: Truck },
+                  ].map(link => {
+                    const Icon = link.icon;
+                    return (
+                      <button
+                        key={link.path}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 text-left group"
+                        style={{ color: 'rgba(255,255,255,0.6)' }}
+                        onMouseDown={(e) => { e.preventDefault(); navigate(link.path); setSearchFocused(false); }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'; }}
+                      >
+                        <Icon size={14} style={{ opacity: 0.5 }} />
+                        <span>→ {link.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Keyboard Hints */}
+                <div className="px-4 py-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.15)', fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>
+                    ↑↓ naviguer · ↵ ouvrir · esc fermer
+                  </span>
                 </div>
               </div>
             )}
