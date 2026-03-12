@@ -528,7 +528,7 @@ export default function Dashboard() {
 
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
-          <>
+          <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* (1) Greeting — Cinematic Hero Moment */}
           <div className="relative z-[1]" style={{ marginBottom: 20 }}>
             <div
