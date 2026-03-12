@@ -1497,8 +1497,8 @@ export default function Dashboard() {
           </div>
 
           {/* Agent IA Production Banner */}
-          <div className="mt-5 rounded-lg flex items-center gap-3 px-5 py-3.5 bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-transparent border-t border-[#D4A843]/10 backdrop-blur-sm">
-            <span style={{ color: '#D4A843', fontSize: 14, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
+          <div className="mt-5 flex items-center gap-3 backdrop-blur-sm" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.1), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 16px' }}>
+            <span className="text-[#D4A843] animate-pulse" style={{ fontSize: 14 }}>✦</span>
             <div className="flex-1 min-w-0">
               <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#D4A843' }}>Agent IA: </span>
               <span className="text-xs" style={{ color: 'rgba(241,245,249,0.8)' }}>
