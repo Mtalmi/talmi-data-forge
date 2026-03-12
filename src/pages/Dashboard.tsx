@@ -76,6 +76,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
   const [searchFocused, setSearchFocused] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
+  const [bellSeen, setBellSeen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const tabBarRef = useRef<HTMLDivElement>(null);
