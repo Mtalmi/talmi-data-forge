@@ -294,26 +294,19 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
   const pct = Math.min(Math.round((current / max) * 100), 100);
   const nameLower = name.toLowerCase();
 
-  // Hardcoded color overrides by material name
-  const isGravette = nameLower.includes('gravette') || nameLower.includes('gravier');
-  const isEau = nameLower === 'eau' || nameLower.includes('eau') || unit === 'L' && max >= 40000;
-  const isAdjuvant = nameLower.includes('adjuvant');
-
   let barBg: string;
   let barShadow: string;
-  if (isAdjuvant || pct < 20) {
-    barBg = 'linear-gradient(90deg, #dc2626, #ef4444)';
-    barShadow = '0 0 6px rgba(239,68,68,0.25)';
-  } else if (isGravette || isEau) {
+
+  if (pct > 50) {
+    barBg = 'linear-gradient(90deg, #16a34a, #22c55e)';
+    barShadow = '0 0 6px rgba(34,197,94,0.15)';
+  } else if (pct >= 20) {
     barBg = 'linear-gradient(90deg, #ca8a04, #eab308)';
     barShadow = '0 0 6px rgba(234,179,8,0.2)';
   } else {
-    barBg = 'linear-gradient(90deg, #16a34a, #22c55e)';
-    barShadow = '0 0 6px rgba(34,197,94,0.15)';
+    barBg = 'linear-gradient(90deg, #dc2626, #ef4444)';
+    barShadow = '0 0 6px rgba(239,68,68,0.25)';
   }
-
-  // Hardcode Eau bar to amber via inline style override
-  const isEauBar = nameLower === 'eau' || (nameLower.includes('eau') && !nameLower.includes('niveau'));
 
   return (
     <div className="py-2">
@@ -328,12 +321,14 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
           className="h-full rounded-full transition-all duration-1000"
           style={{
             width: `max(40px, ${Math.max(pct, 3)}%)`,
-            background: isEauBar ? 'linear-gradient(90deg, #ca8a04, #eab308)' : barBg,
-            backgroundColor: isEauBar ? '#eab308' : undefined,
+            background: barBg,
             opacity: 0.7,
-            boxShadow: isEauBar ? '0 0 6px rgba(234,179,8,0.2)' : barShadow,
+            boxShadow: barShadow,
           }}
         />
+      </div>
+    </div>
+  );
       </div>
     </div>
   );
