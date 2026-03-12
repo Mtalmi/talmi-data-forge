@@ -429,9 +429,9 @@ export default function Dashboard() {
             </button>
             {bellOpen && (
               <div
-                className="absolute top-full right-0 mt-2 w-[380px] max-h-[400px] overflow-y-auto z-50 overflow-hidden"
+                className="absolute top-full right-0 mt-2 w-[320px] z-50 overflow-hidden"
                 style={{
-                  background: '#0d1528',
+                  background: '#0f1729',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 12,
                   boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
@@ -440,47 +440,51 @@ export default function Dashboard() {
                 onMouseDown={(e) => e.preventDefault()}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-3" style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <span style={{ fontSize: 10, letterSpacing: '0.2em', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>NOTIFICATIONS</span>
-                  <span style={{ fontSize: 11, color: '#D4A843', fontWeight: 500 }}>2 nouvelles</span>
+                <div className="px-4 pt-3 pb-2">
+                  <span className="text-[10px] tracking-[0.15em] text-muted-foreground/50 font-medium uppercase">NOTIFICATIONS</span>
                 </div>
 
                 {/* Entry 1 — Critical */}
                 <div
-                  className="flex items-start gap-3 px-5 py-4 cursor-pointer transition-colors duration-150"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Alerte Fuite Détectée</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>BL-2026-0312 · Constructions Modernes SA · Perte: 1,450 DH</div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', fontFamily: "ui-monospace, 'JetBrains Mono', monospace", marginTop: 4 }}>il y a 2h</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Alerte Fuite — BL-2026-0312</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Constructions Modernes SA · il y a 2h</div>
                   </div>
-                  <ChevronRight size={16} style={{ color: 'rgba(255,255,255,0.1)', marginTop: 2, flexShrink: 0 }} />
                 </div>
 
                 {/* Entry 2 — Warning */}
                 <div
-                  className="flex items-start gap-3 px-5 py-4 cursor-pointer transition-colors duration-150"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
                   onClick={() => setBellOpen(false)}
                 >
                   <span className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Stock Adjuvant Critique</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Rupture estimée demain · Commande recommandée · 500L</div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', fontFamily: "ui-monospace, 'JetBrains Mono', monospace", marginTop: 4 }}>il y a 4h</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Stock Adjuvant critique</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Commande recommandée · il y a 4h</div>
                   </div>
-                  <ChevronRight size={16} style={{ color: 'rgba(255,255,255,0.1)', marginTop: 2, flexShrink: 0 }} />
+                </div>
+
+                {/* Entry 3 — Info */}
+                <div
+                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
+                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  onClick={() => setBellOpen(false)}
+                >
+                  <span className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5" style={{ background: '#D4A843' }} />
+                  <div className="flex-1 min-w-0">
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Rapport du Soir disponible</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Score: 9.1/10 · il y a 7h</div>
+                  </div>
                 </div>
 
                 {/* Footer */}
-                <div className="text-center px-5 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div className="text-center px-4 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <button
                     className="transition-colors duration-150"
                     style={{ fontSize: 11, color: 'rgba(212,168,67,0.6)', fontWeight: 500 }}
