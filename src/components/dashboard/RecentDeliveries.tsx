@@ -183,24 +183,29 @@ export default function RecentDeliveries() {
         </div>
       </div>
       
-      {/* Timeline */}
+      {/* Table Header */}
+      <div className="flex items-center gap-4 py-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[60px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Heure</span>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold flex-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Client</span>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[80px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Volume</span>
+        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[80px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Statut</span>
+      </div>
+
+      {/* Table Rows */}
       <div className="space-y-0">
-        {timeline.map((d, i) => (
+        {timeline.map((d) => (
           <div
             key={d.id}
-            className="flex items-center gap-3 py-2"
-            style={{
-              borderLeft: `2px solid ${statusColors[d.status]}`,
-              paddingLeft: '12px',
-              marginLeft: '4px',
-            }}
+            className="flex items-center gap-4 py-2 transition-colors duration-150"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255, 215, 0, 0.04)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
           >
-            <span className="text-[10px] text-slate-500 w-10 font-mono tabular-nums shrink-0">{d.time}</span>
-            <span className="text-xs shrink-0">{statusIcons[d.status]}</span>
-            <span className="text-[11px] text-white/80 flex-1 truncate min-w-0">{d.client}</span>
-            <span className="text-[10px] text-slate-400 font-mono tabular-nums shrink-0 whitespace-nowrap">{d.volume} m³</span>
+            <span className="text-xs text-muted-foreground/50 font-mono tabular-nums w-[60px]">{d.time}</span>
+            <span className="text-sm text-white flex-1 truncate min-w-0">{d.client}</span>
+            <span className="text-sm font-mono tabular-nums text-right w-[80px]" style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", color: 'rgba(226,232,240,0.8)' }}>{d.volume} m³</span>
             <span
-              className="text-[10px] font-medium shrink-0 min-w-[60px] text-right whitespace-nowrap"
+              className="text-xs font-medium text-right w-[80px]"
               style={{ color: statusColors[d.status] }}
             >
               {d.statusLabel}
