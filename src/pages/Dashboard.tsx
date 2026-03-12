@@ -891,7 +891,7 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <TiltCard
               key={i}
-              className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0"
+              className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out"
               style={{
                 height: '100%',
                 display: 'flex',
