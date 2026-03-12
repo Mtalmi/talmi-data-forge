@@ -779,7 +779,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             </Card>
 
             {/* Pipeline Funnel */}
-            <PipelineFunnel />
+            {!hideOpsWidgets && <PipelineFunnel />}
 
             {/* Quality feed — Compact */}
             {!hideProductionWidgets && (
