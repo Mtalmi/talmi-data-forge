@@ -1220,7 +1220,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — Constructions Modernes SA (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-              <button className="bg-[#D4A843]/10 border border-[#D4A843]/30 text-[#D4A843] text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[#D4A843]/20 transition-colors">Alerter Client</button>
+              <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
               <span className="text-xs text-muted-foreground/40 hover:text-muted-foreground/60 px-3 py-1.5 cursor-pointer transition-colors">Ignorer</span>
             </div>
           </div>
