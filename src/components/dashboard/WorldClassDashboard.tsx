@@ -720,7 +720,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
           <div className="space-y-4 min-w-0">
             {/* Stock Levels — Horizontal Bars */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-4" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            {!showOnlyOps && (
 
 
               <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
