@@ -264,8 +264,8 @@ export function SeasonalDemandForecasterCard() {
                 padding: '12px 16px',
                 transition: 'all 200ms ease-out',
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; e.currentTarget.style.background = `${ins.color}06`; }}
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                   <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: ins.color }} />
