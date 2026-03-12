@@ -107,7 +107,7 @@ export function SeasonalDemandForecasterCard() {
   ];
 
   return (
-    <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.10)', borderRadius: 8, overflow: 'hidden', backdropFilter: 'blur(4px)' }}>
+    <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.10)', borderRadius: 8, padding: 20, overflow: 'hidden', backdropFilter: 'blur(4px)' }}>
       {/* Header */}
       <button
         onClick={() => setOpen(!open)}
