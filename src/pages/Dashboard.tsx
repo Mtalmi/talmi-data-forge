@@ -798,7 +798,7 @@ export default function Dashboard() {
                       {/* LANCER PRODUCTION — green go */}
                       <button
                         onClick={() => navigate('/production')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(16,185,129,0.08)',
                           border: '1px solid rgba(16,185,129,0.20)',
@@ -808,7 +808,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <BarChart3 size={16} className="opacity-60" />
-                        Lancer Production
+                        LANCER PRODUCTION
                       </button>
                     </div>
 
