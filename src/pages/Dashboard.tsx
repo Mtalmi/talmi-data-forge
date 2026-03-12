@@ -530,7 +530,7 @@ export default function Dashboard() {
           {activeTab === 'command' && (
           <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* (1) Greeting — Cinematic Hero Moment */}
-          <div className="relative z-[1]" style={{ marginBottom: 20 }}>
+          <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
               className="rounded-[10px]"
               style={{
