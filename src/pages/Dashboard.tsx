@@ -853,7 +853,10 @@ export default function Dashboard() {
                               <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
                             </>
                           ) : (
-                            <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>Aucune livraison</span>
+                            <>
+                              <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
+                              <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
+                            </>
                           )}
                         </div>
                       </div>
@@ -974,7 +977,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <svg width="100" height="32" viewBox="0 0 120 32" className="w-[100px] h-[32px]">
+                    <svg width="110" height="36" viewBox="0 0 120 32" className="min-w-[110px] min-h-[36px]">
                       <polyline fill="none" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={kpi.sparkline} style={{ opacity: 0.6 }} />
                       {(() => { const pts = kpi.sparkline.split(' '); const last = pts[pts.length - 1]?.split(','); return last ? <circle cx={last[0]} cy={last[1]} r="2" fill="#D4A843" style={{ opacity: 0.8 }} /> : null; })()}
                     </svg>

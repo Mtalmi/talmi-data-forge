@@ -69,7 +69,7 @@ export default function PlantFlowSchematic() {
       </div>
 
       {/* Flow Strip */}
-      <div className="flex items-stretch relative overflow-x-auto max-w-full">
+      <div className="grid grid-cols-5 gap-3 relative max-w-full">
         {/* Animated scan line */}
         <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-xl">
           <div style={{
@@ -84,7 +84,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 1: SILOS ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3 rounded-l-xl"
+          className="flux-panel group min-w-0 p-3 rounded-xl"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/stocks')}
         >
@@ -101,12 +101,10 @@ export default function PlantFlowSchematic() {
           </div>
         </div>
 
-        <FlowArrow />
-
         {/* ── STAGE 2: MALAXEUR ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          className="flux-panel group min-w-0 p-3 rounded-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/production')}
         >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
@@ -126,12 +124,10 @@ export default function PlantFlowSchematic() {
           </div>
         </div>
 
-        <FlowArrow />
-
         {/* ── STAGE 3: CAMIONS ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          className="flux-panel group min-w-0 p-3 rounded-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/logistique')}
         >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Camions</div>
@@ -155,12 +151,10 @@ export default function PlantFlowSchematic() {
           </div>
         </div>
 
-        <FlowArrow />
-
         {/* ── STAGE 4: CHANTIERS ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          className="flux-panel group min-w-0 p-3 rounded-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/bons-de-commande')}
         >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Chantiers</div>
@@ -187,12 +181,10 @@ export default function PlantFlowSchematic() {
           </div>
         </div>
 
-        <FlowArrow />
-
         {/* ── STAGE 5: QUALITÉ ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3 rounded-r-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          className="flux-panel group min-w-0 p-3 rounded-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/laboratoire')}
         >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Qualité</div>
