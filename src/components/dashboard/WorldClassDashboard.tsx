@@ -426,7 +426,7 @@ function PipelineFunnel() {
                   color: 'white',
                   lineHeight: 1,
                 }}>
-                  {isEmpty ? '—' : s.value}
+                  {isEmpty ? '0' : s.value}
                 </span>
                 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{s.label}</span>
               </div>
