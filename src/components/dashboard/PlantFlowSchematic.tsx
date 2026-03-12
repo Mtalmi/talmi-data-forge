@@ -52,6 +52,19 @@ const panelHoverHandlers = {
   onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
+    e.currentTarget.style.transform = 'translateY(-1px)';
+  },
+  onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.background = 'rgba(15,23,41,0.8)';
+    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+    e.currentTarget.style.transform = 'translateY(0)';
+  },
+};
+
+const panelHoverHandlers = {
+  onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
   },
   onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.background = 'rgba(15,23,41,0.8)';
