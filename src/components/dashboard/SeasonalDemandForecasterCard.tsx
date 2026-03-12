@@ -264,15 +264,20 @@ export function SeasonalDemandForecasterCard() {
               onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
               onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; }}
               >
-                <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
-                  {(() => {
-                    const dotIdx = ins.text.indexOf('.');
-                    if (dotIdx === -1) return <span className="font-semibold">{ins.text}</span>;
-                    const first = ins.text.slice(0, dotIdx + 1);
-                    const rest = ins.text.slice(dotIdx + 1);
-                    return <><span className="font-semibold">{first}</span>{rest}</>;
-                  })()}
-                </p>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                  <div className="rounded-sm flex-shrink-0 mt-[3px]" style={{ width: 10, height: 10, background: ins.color }} />
+                  <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
+                    {(() => {
+                      // Strip leading emoji
+                      const cleaned = ins.text.replace(/^[\p{Emoji}\uFE0F\u200D]+\s*/u, '');
+                      const dotIdx = cleaned.indexOf('.');
+                      if (dotIdx === -1) return <span className="font-semibold">{cleaned}</span>;
+                      const first = cleaned.slice(0, dotIdx + 1);
+                      const rest = cleaned.slice(dotIdx + 1);
+                      return <><span className="font-semibold">{first}</span>{rest}</>;
+                    })()}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
