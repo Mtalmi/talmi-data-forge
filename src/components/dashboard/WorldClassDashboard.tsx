@@ -552,7 +552,7 @@ function PipelineFunnel() {
   ];
 
   return (
-    <div className="relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out rounded-lg group" style={{ minHeight: 420, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <div className="relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out group" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
       <div className="ops-enter ops-surface-card flex flex-col p-6" style={{ minHeight: 420 }}>
       <div className="flex justify-between items-center mb-4">
@@ -970,7 +970,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             {!hideOpsWidgets && (
-            <div className="ops-enter tbos-stagger-1 relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out rounded-lg" style={{ minHeight: 420, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <div className="ops-enter tbos-stagger-1 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
               <div className="p-6">
 
@@ -1143,7 +1143,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <div className="ops-enter tbos-stagger-7 relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out rounded-lg" style={{ minHeight: 420, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <div className="ops-enter tbos-stagger-7 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
               <div className="p-6">
               {/* Satisfaction Client */}
