@@ -871,7 +871,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     <div key={i}>
                       <div className="flex justify-between mb-1">
                         <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.5)' }}>{d.label}</span>
-                        <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.6)' }}>{(d.value / 1000).toFixed(0)}K</span>
+                        <span className="text-sm font-medium" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.7)' }}>{(d.value / 1000).toFixed(0)}K DH</span>
                       </div>
                       <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
                         <div
