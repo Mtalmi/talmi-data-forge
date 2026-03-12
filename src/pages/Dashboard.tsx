@@ -825,7 +825,7 @@ export default function Dashboard() {
               <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.4), rgba(212,168,67,0.05))' }} />
             </div>
             <Suspense fallback={<div className="h-[300px] rounded-lg bg-white/[0.02] animate-pulse" />}>
-              <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
+              <WorldClassDashboard stockOnly />
             </Suspense>
           </div>
           </div>
