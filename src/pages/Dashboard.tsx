@@ -353,18 +353,16 @@ export default function Dashboard() {
             100% { transform: translateY(100%); }
           }
           .tbos-hero-card {
-            background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 40%, rgba(255,255,255,0.02) 100%);
+            background: rgba(15,23,41,0.8);
             border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 28px 28px 24px;
             position: relative;
             overflow: hidden;
-            backdrop-filter: blur(24px) saturate(1.3);
-            -webkit-backdrop-filter: blur(24px) saturate(1.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow:
-              inset 0 1px 0 rgba(255,255,255,0.05),
-              inset 0 0 30px rgba(253,185,19,0.01),
               0 1px 3px rgba(0,0,0,0.12),
               0 8px 32px rgba(0,0,0,0.15);
           }
