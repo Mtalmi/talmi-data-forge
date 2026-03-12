@@ -904,7 +904,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         ) : (
         <>
         {/* ─── Hero Score Bar ─── */}
-        <div className="bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-4 mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full">
+        <div className="mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.1)', borderRadius: '8px', padding: '16px 20px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.6), transparent)' }} />
           {/* Left: Score */}
           <div className="flex flex-col">
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
