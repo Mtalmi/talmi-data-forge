@@ -1124,6 +1124,15 @@
     }
   }
 
+  @keyframes leakAlertPulse {
+    0%, 100% {
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
+    }
+  }
+
   /* ===== OBSIDIAN MOBILE NAVIGATION ===== */
   .mobile-bottom-nav {
     @apply fixed bottom-0 left-0 right-0 z-50;
