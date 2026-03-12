@@ -384,37 +384,49 @@ function AIAnalystBrief() {
 // ═══════════════════════════════════════════════════════
 function PipelineFunnel() {
   const stages = [
-    { label: 'Devis', value: 6, pct: 100 },
-    { label: 'BC Validés', value: 3, pct: 50 },
-    { label: 'Production', value: 0, pct: 0 },
-    { label: 'Facturé', value: 1, pct: 17 },
+    { label: 'Devis', value: 6 },
+    { label: 'BC Validés', value: 3 },
+    { label: 'Production', value: 0 },
+    { label: 'Facturé', value: 1 },
   ];
 
   return (
     <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-
-
-      <div className="flex justify-between items-center mb-5">
+      <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
-        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.75rem', color: 'white', textShadow: '0 0 25px rgba(253,185,19,0.15)' }}>50<span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', marginLeft: 2 }}>%</span></span>
       </div>
-      
-      <div className="flex items-end gap-1" style={{ height: 80 }}>
-        {stages.map((s, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center gap-1.5" style={{ opacity: s.value === 0 ? 0.25 : 1, transition: 'opacity 0.3s ease' }}>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 300, fontSize: '1.5rem', color: 'white' }}>{s.value}</span>
-            <div
-              className="w-full rounded-sm transition-all duration-1000"
-              style={{
-                height: `${s.pct * 0.6}px`,
-                background: `linear-gradient(180deg, ${T.gold}${Math.round(0.15 + (1 - i/stages.length) * 0.45).toString(16).padStart(2,'0').slice(-2)}, ${T.gold}08)`,
-                border: `1px solid ${T.gold}${Math.round(0.06 + (1 - i/stages.length) * 0.12).toString(16).padStart(2,'0').slice(-2)}`,
-                animation: `tbos-bar-grow 1s cubic-bezier(0.4,0,0.2,1) ${0.15 * i}s both`,
-              }}
-            />
-            <span style={{ fontSize: '8px', fontWeight: 500, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: 'rgba(148,163,184,0.4)' }}>{s.label}</span>
-          </div>
-        ))}
+
+      <div className="flex items-center">
+        {stages.map((s, i) => {
+          const isEmpty = s.value === 0;
+          return (
+            <div key={i} className="contents">
+              <div
+                className="flex-1 flex flex-col items-center gap-1 rounded-lg py-3 px-2"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  opacity: isEmpty ? 0.4 : 1,
+                  transition: 'opacity 0.3s ease',
+                }}
+              >
+                <span style={{
+                  fontFamily: "ui-monospace, SFMono-Regular, monospace",
+                  fontWeight: 200,
+                  fontSize: '1.5rem',
+                  color: 'white',
+                  lineHeight: 1,
+                }}>
+                  {isEmpty ? '—' : s.value}
+                </span>
+                <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{s.label}</span>
+              </div>
+              {i < stages.length - 1 && (
+                <span className="mx-1 flex-shrink-0" style={{ color: 'rgba(148,163,184,0.25)', fontSize: 18, fontWeight: 300 }}>›</span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </Card>
   );
