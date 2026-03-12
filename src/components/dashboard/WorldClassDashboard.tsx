@@ -204,6 +204,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
           className="h-full rounded-full transition-all duration-1000"
           style={{
             width: `${Math.max(pct, 3)}%`,
+            minWidth: 30,
             background: 'linear-gradient(90deg, #C4933B, #FDB913)',
             opacity: 0.7,
             boxShadow: '0 0 6px rgba(253,185,19,0.15)',

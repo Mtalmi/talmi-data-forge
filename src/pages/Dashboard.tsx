@@ -790,6 +790,12 @@ export default function Dashboard() {
 
           {/* (6) Niveaux de Stock — stock only */}
           <div className="mt-5">
+            {/* Section Header */}
+            <div className="flex items-center gap-2.5 mb-3">
+              <span style={{ fontSize: 14 }}>📦</span>
+              <span className="text-xs uppercase tracking-wider font-medium" style={{ color: '#D4A843' }}>Niveaux de Stock</span>
+              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.4), rgba(212,168,67,0.05))' }} />
+            </div>
             <Suspense fallback={<div className="h-[300px] rounded-lg bg-white/[0.02] animate-pulse" />}>
               <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
             </Suspense>
