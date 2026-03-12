@@ -1198,23 +1198,23 @@ export default function Dashboard() {
             </div>
 
             {/* Environment footer */}
-            <div className="flex items-center justify-between px-5 pt-2 mt-2 z-10 relative border-t border-white/5">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center px-5 pt-3 mt-2 z-10 relative border-t border-white/5">
+              <div className="flex items-center justify-center gap-4 bg-white/[0.02] border border-white/[0.04] rounded-lg px-4 py-2 w-fit">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] text-slate-500">Température</span>
-                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
-                  <span className="text-[9px] text-emerald-400">Optimal</span>
+                  <span className="text-[11px] text-muted-foreground/40">Température</span>
+                  <span className="text-[11px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
+                  <span className="text-[11px] text-emerald-400/60">Optimal</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[9px] text-slate-500">Humidité</span>
-                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
-                  <span className="text-[9px] text-emerald-400">Optimal</span>
+                  <span className="text-[11px] text-muted-foreground/40">Humidité</span>
+                  <span className="text-[11px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
+                  <span className="text-[11px] text-emerald-400/60">Optimal</span>
                 </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-[#D4A843] font-medium">Prochain camion</span>
-                <span className="text-[11px] text-[#D4A843] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
-                <span className="text-[11px] text-[#D4A843]/60">→ Constructions Modernes · 20 m³</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-[#D4A843] font-medium">Prochain camion</span>
+                  <span className="text-[11px] text-[#D4A843] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                  <span className="text-[11px] text-[#D4A843]/60">→ Constructions Modernes · 20 m³</span>
+                </div>
               </div>
             </div>
           </div>
