@@ -217,10 +217,17 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
-  // Auto-scroll active tab into view on mobile
+  // Auto-scroll active tab into view on mobile (horizontal only)
   useEffect(() => {
     const el = tabBarRef.current?.querySelector(`[data-tab="${activeTab}"]`) as HTMLElement | null;
-    el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    if (el && tabBarRef.current) {
+      const container = tabBarRef.current;
+      const elLeft = el.offsetLeft;
+      const elWidth = el.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const scrollTarget = elLeft - (containerWidth / 2) + (elWidth / 2);
+      container.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+    }
   }, [activeTab]);
 
   // Animated KPI values — locked for CEO demo determinism
@@ -667,7 +674,6 @@ export default function Dashboard() {
                   <button
                     key={tab.id}
                     data-tab={tab.id}
-                    ref={el => { if (isActive && el) { el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }}
                     onClick={() => setActiveTab(tab.id)}
                     className="flex items-center gap-2 transition-all duration-200 min-h-[44px] flex-shrink-0 whitespace-nowrap"
                     style={{
