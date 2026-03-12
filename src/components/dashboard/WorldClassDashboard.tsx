@@ -512,15 +512,18 @@ function AIAnalystBrief() {
         <div
           className="col-span-2 transition-all duration-700 rounded-lg p-3"
           style={{
+            position: 'relative',
+            overflow: 'hidden',
             borderLeft: '1px solid rgba(255,255,255,0.06)',
             opacity: showReco ? 1 : 0,
             transform: showReco ? 'translateY(0)' : 'translateY(8px)',
           }}
         >
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
           <div className="flex items-start gap-2">
             <span className="text-sm mt-0.5">💡</span>
             <div>
-              <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
+              <span className="text-[10px] tracking-wider uppercase" style={{ color: '#D4A843', fontWeight: 600 }}>Recommandation</span>
               <p className="mt-1 text-sm leading-relaxed">
                 {(() => {
                   const recoText = 'Relancez les devis DEV-2602-316 et DEV-2602-895 — diversifiez le portefeuille client avant fin de mois.';
