@@ -1256,7 +1256,7 @@ export default function Dashboard() {
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
                             <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
-                            <div className="text-[10px] text-muted-foreground/40">4 restantes aujourd'hui</div>
+                            <div className="text-xs text-white/60 mt-1">4 restantes aujourd'hui</div>
                           </div>
                         </div>
                         {/* Bottom next delivery */}
