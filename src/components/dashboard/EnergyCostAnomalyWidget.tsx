@@ -58,7 +58,10 @@ export function EnergyCostAnomalyWidget() {
       {/* Anomaly list */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
         {anomalies.map((a, i) => (
-          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 8, borderLeft: `2px solid ${i === 0 ? T.danger : T.warning}40` }}>
+          <p key={i} style={{ fontSize: 10, lineHeight: 1.5, color: T.textSec, paddingLeft: 12, marginBottom: 8, borderLeft: '2px solid rgba(251,191,36,0.5)', borderRadius: 2, transition: 'all 0.2s ease', cursor: 'default' }}
+            onMouseEnter={e => { e.currentTarget.style.borderLeftColor = 'rgba(212,168,67,0.8)'; e.currentTarget.style.background = 'rgba(212,168,67,0.03)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderLeftColor = 'rgba(251,191,36,0.5)'; e.currentTarget.style.background = 'transparent'; }}
+          >
             {a}
           </p>
         ))}
