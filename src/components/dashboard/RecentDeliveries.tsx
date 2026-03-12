@@ -180,7 +180,7 @@ export default function RecentDeliveries() {
           </p>
         </div>
         <div className="text-right">
-          <span className="text-[11px] text-slate-400">{timeline.length} livraisons · <span className="text-white/70">{totalVolume} m³</span></span>
+          <span className="text-xs font-mono text-white/40">{timeline.length} livraisons · <span className="text-white/70">{totalVolume} m³</span></span>
         </div>
       </div>
       
