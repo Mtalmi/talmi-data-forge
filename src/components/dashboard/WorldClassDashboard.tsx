@@ -300,6 +300,22 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
 // ═══════════════════════════════════════════════════════
 // AI ANALYST BRIEF — Private Advisor Card
 // ═══════════════════════════════════════════════════════
+function splitHeadlineDetail(text: string): { headline: string; detail: string } {
+  // Split at first period or em-dash
+  const periodIdx = text.indexOf('.');
+  const dashIdx = text.indexOf('—');
+  let splitIdx = -1;
+  if (periodIdx >= 0 && dashIdx >= 0) splitIdx = Math.min(periodIdx, dashIdx);
+  else if (periodIdx >= 0) splitIdx = periodIdx;
+  else if (dashIdx >= 0) splitIdx = dashIdx;
+  if (splitIdx < 0) return { headline: text, detail: '' };
+  const sep = text[splitIdx];
+  return {
+    headline: text.slice(0, splitIdx + (sep === '.' ? 1 : 0)).trim(),
+    detail: text.slice(splitIdx + (sep === '.' ? 1 : 1)).trim(),
+  };
+}
+
 function AIAnalystBrief() {
   const [visibleLines, setVisibleLines] = useState(0);
   const [showReco, setShowReco] = useState(false);
