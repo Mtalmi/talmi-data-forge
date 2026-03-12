@@ -421,6 +421,7 @@ function AIAnalystBrief() {
         <div className="ml-4 mt-1 w-[6px] h-[14px] rounded-sm" style={{ background: T.gold, opacity: 0.6, animation: 'blink 1s step-end infinite' }} />
       )}
     </Card>
+    </div>
   );
 }
 
