@@ -95,8 +95,9 @@ export default function PlantFlowSchematic() {
             <MiniBar label="Gravette" pct={34} warn />
             <MiniBar label="Eau" pct={30} />
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Stocks</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
