@@ -828,7 +828,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          </div>
 
           {/* (2) Alerte Fuite Détectée or All-Clear */}
           <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
