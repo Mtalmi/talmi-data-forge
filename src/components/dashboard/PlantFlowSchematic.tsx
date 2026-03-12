@@ -69,7 +69,7 @@ export default function PlantFlowSchematic() {
       </div>
 
       {/* Flow Strip */}
-      <div className="flex items-stretch relative overflow-x-auto max-w-full">
+      <div className="grid grid-cols-5 gap-3 relative max-w-full">
         {/* Animated scan line */}
         <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden rounded-xl">
           <div style={{
