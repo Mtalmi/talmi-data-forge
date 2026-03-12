@@ -698,7 +698,7 @@ function useWorldClassLiveData() {
 
       if (blTodayRes.data?.length) {
         const hourBuckets: Record<string, number> = {};
-        for (let h = 6; h <= 18; h++) hourBuckets[`${h.toString().padStart(2, '0')}h`] = 0;
+        for (let h = 6; h <= 18; h += 2) hourBuckets[`${h}h`] = 0;
         blTodayRes.data.forEach(bl => {
           if (bl.created_at) {
             const hour = `${new Date(bl.created_at).getHours().toString().padStart(2, '0')}h`;
