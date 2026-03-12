@@ -695,9 +695,9 @@ export default function Dashboard() {
               trend: '↗ +12%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,26 20,22 40,28 60,18 80,14 100,8 120,4',
-              sparkStroke: '#22c55e',
-              monthlyTarget: { current: 671, target: 3200, daysLeft: 5 },
+              sparkline: '0,28 20,24 40,20 60,26 80,18 100,14 120,10',
+              secondaryLabel: 'Obj. mensuel',
+              secondaryValue: '671 / 3 200 m³',
             },
             {
               label: 'REVENUE',
@@ -708,9 +708,9 @@ export default function Dashboard() {
               trend: '↗ +8.2%',
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,22 20,24 40,18 60,16 80,12 100,8 120,4',
-              sparkStroke: '#22c55e',
-              revenueGauge: { current: 75.6, target: 250, pct: 30 },
+              sparkline: '0,26 20,22 40,28 60,20 80,16 100,12 120,8',
+              secondaryLabel: 'Objectif',
+              secondaryValue: '250K DH · 30%',
             },
             {
               label: 'MARGE',
@@ -722,9 +722,9 @@ export default function Dashboard() {
               healthyGlow: true,
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
-              sparkline: '0,22 20,18 40,20 60,14 80,12 100,10 120,6',
-              sparkStroke: '#22c55e',
-              costBreakdown: true,
+              sparkline: '0,24 20,20 40,22 60,18 80,16 100,14 120,10',
+              secondaryLabel: 'Matières',
+              secondaryValue: '28.1% du CA',
             },
             {
               label: 'TRÉSORERIE',
@@ -737,8 +737,8 @@ export default function Dashboard() {
               accentColor: '#FDB913',
               labelColor: 'rgba(253,185,19,0.6)',
               sparkline: '0,26 20,22 40,24 60,18 80,14 100,10 120,4',
-              sparkStroke: '#22c55e',
-              cashFlow: true,
+              secondaryLabel: 'Net',
+              secondaryValue: '+49K DH',
             },
           ].map((kpi, i) => (
             <TiltCard
@@ -780,54 +780,16 @@ export default function Dashboard() {
                   )}
                 </div>
                 <div style={{ marginTop: 'auto' }}>
-                  {kpi.sparkline && (
-                    <svg width="120" height="32" viewBox="0 0 120 32" className="mt-auto pt-3">
-                      <polyline fill="none" stroke={kpi.sparkStroke || '#22c55e'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={kpi.sparkline} style={{ opacity: 0.6 }} />
-                      {(() => { const pts = kpi.sparkline.split(' '); const last = pts[pts.length - 1]?.split(','); return last ? <circle cx={last[0]} cy={last[1]} r="2" fill={kpi.sparkStroke || '#22c55e'} style={{ opacity: 0.8 }} /> : null; })()}
+                  <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <svg width="100" height="28" viewBox="0 0 120 32">
+                      <polyline fill="none" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={kpi.sparkline} style={{ opacity: 0.6 }} />
+                      {(() => { const pts = kpi.sparkline.split(' '); const last = pts[pts.length - 1]?.split(','); return last ? <circle cx={last[0]} cy={last[1]} r="2" fill="#D4A843" style={{ opacity: 0.8 }} /> : null; })()}
                     </svg>
-                  )}
-                  {kpi.costBreakdown && (
-                    <div className="flex items-end gap-6 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                      <div><div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Matières</div><div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>28.1%</div></div>
-                      <div><div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Transport</div><div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>12.4%</div></div>
-                      <div><div className="text-[10px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Main-d'œuvre</div><div className="text-xs font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.6)' }}>9.4%</div></div>
+                    <div className="text-right flex flex-col">
+                      <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>{kpi.secondaryLabel}</span>
+                      <span className="text-xs font-mono" style={{ color: 'rgba(203,213,225,0.6)' }}>{kpi.secondaryValue}</span>
                     </div>
-                  )}
-                  {kpi.cashFlow && (
-                    <div className="flex items-end gap-6 flex-nowrap mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                      <div><div className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Entrées</div><div className="text-[11px] font-mono mt-0.5" style={{ color: 'rgba(52,211,153,0.7)' }}>+92K</div></div>
-                      <div><div className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Sorties</div><div className="text-[11px] font-mono mt-0.5" style={{ color: 'rgba(248,113,113,0.7)' }}>-43K</div></div>
-                      <div><div className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>Net</div><div className="text-[11px] font-mono mt-0.5" style={{ color: 'rgba(52,211,153,0.7)' }}>+49K</div></div>
-                    </div>
-                  )}
-                  {kpi.revenueGauge && (
-                    <div className="flex flex-col items-center mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                      <svg width="90" height="50" viewBox="0 0 100 55">
-                        <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="5" strokeLinecap="round" />
-                        <path d="M 10 50 A 40 40 0 0 1 36.3 14.2" fill="none" stroke="rgba(239,68,68,0.25)" strokeWidth="5" strokeLinecap="round" />
-                        <path d="M 36.3 14.2 A 40 40 0 0 1 63.7 14.2" fill="none" stroke="rgba(234,179,8,0.25)" strokeWidth="5" strokeLinecap="round" />
-                        <path d="M 63.7 14.2 A 40 40 0 0 1 90 50" fill="none" stroke="rgba(34,197,94,0.25)" strokeWidth="5" strokeLinecap="round" />
-                        <path d={`M 10 50 A 40 40 0 0 1 ${10 + Math.min(kpi.revenueGauge.pct / 100, 1) * 80} ${50 - Math.sin(Math.min(kpi.revenueGauge.pct / 100, 1) * Math.PI) * 40}`} fill="none" stroke={kpi.revenueGauge.pct < 33 ? '#ef4444' : kpi.revenueGauge.pct < 66 ? '#eab308' : '#22c55e'} strokeWidth="5" strokeLinecap="round" />
-                        <text x="50" y="44" textAnchor="middle" fill="white" fontSize="10" fontWeight="500" style={{ fontFamily: "'JetBrains Mono'" }}>{kpi.revenueGauge.pct}%</text>
-                        <text x="50" y="53" textAnchor="middle" fill="rgba(148,163,184,0.4)" fontSize="6">de l'objectif</text>
-                      </svg>
-                      <div className="text-[9px] mt-0.5" style={{ color: 'rgba(148,163,184,0.4)' }}>Objectif: <span className="text-white/60">{kpi.revenueGauge.target}K DH</span></div>
-                    </div>
-                  )}
-                  {kpi.monthlyTarget && (
-                    <div className="flex items-center gap-2.5 mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                      <svg width="36" height="36" viewBox="0 0 36 36" className="shrink-0">
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2.5" />
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="#D4A843" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={`${Math.min((kpi.monthlyTarget.current / kpi.monthlyTarget.target), 1) * 88} 88`} transform="rotate(-90 18 18)" style={{ transition: 'stroke-dasharray 1s ease-out' }} />
-                        <text x="18" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{Math.round((kpi.monthlyTarget.current / kpi.monthlyTarget.target) * 100)}%</text>
-                      </svg>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] uppercase tracking-wider" style={{ color: 'rgba(148,163,184,0.4)' }}>Objectif mensuel</span>
-                        <span className="text-[10px]" style={{ color: 'rgba(203,213,225,0.6)' }}><span className="text-white/70 font-medium">{kpi.monthlyTarget.current}</span><span className="text-slate-600"> / {kpi.monthlyTarget.target.toLocaleString()} m³</span></span>
-                        <span className="text-[9px]" style={{ color: 'rgba(251,191,36,0.7)' }}>{kpi.monthlyTarget.daysLeft} jours restants</span>
-                      </div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             </TiltCard>
