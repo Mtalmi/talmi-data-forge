@@ -173,14 +173,18 @@ export default function RecentDeliveries() {
 
 
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-sm font-medium text-white/90">Livraisons du Jour</h3>
-          <p className="text-xs font-mono text-white/30 mt-0.5 tabular-nums">
-            {format(lastUpdate, 'HH:mm:ss', { locale: dateFnsLocale })}
-          </p>
+        <div className="flex items-center">
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ade80', display: 'inline-block', marginRight: '8px', animation: 'pulse 2s infinite' }} />
+          <div>
+            <h3 className="text-sm font-medium text-white/90">Livraisons du Jour</h3>
+            <p className="text-xs font-mono text-white/30 mt-0.5 tabular-nums">
+              {format(lastUpdate, 'HH:mm:ss', { locale: dateFnsLocale })}
+            </p>
+          </div>
         </div>
-        <div className="text-right">
-          <span className="text-xs font-mono text-white/40">{timeline.length} livraisons · <span className="text-white/70">{totalVolume} m³</span></span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs bg-white/5 border border-white/10 rounded px-2 py-0.5 text-white/50 font-mono">{timeline.length} livraisons</span>
+          <span className="text-xs bg-[#D4A843]/10 border border-[#D4A843]/20 rounded px-2 py-0.5 text-[#D4A843]/70 font-mono">{totalVolume} m³</span>
         </div>
       </div>
       
