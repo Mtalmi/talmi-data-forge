@@ -801,7 +801,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Vertical divider */}
-                <div className="hidden md:block w-px h-8 mx-3 self-center" style={{ background: 'rgba(255,255,255,0.10)' }} />
+                <div className="hidden md:block w-px h-10 bg-white/10 mx-4 self-center" />
 
                 {/* Prochaine Livraison */}
                 <div className="hidden md:flex items-center gap-2.5 rounded-lg px-4 py-2.5 flex-shrink-0" style={{
