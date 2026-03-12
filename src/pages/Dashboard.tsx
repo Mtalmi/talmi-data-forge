@@ -1285,6 +1285,11 @@ export default function Dashboard() {
                 <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[50px] text-center">Volume</span>
                 <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[45px] text-right">Heure</span>
               </div>
+              {/* Dot legend */}
+              <div className="flex gap-4 px-2 mb-2">
+                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground/40"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />Terminé</span>
+                <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground/40"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />En cours</span>
+              </div>
               <div className="space-y-1">
                 {[
                   { id: '#403-068', formula: 'F-B25', vol: '8 m³', time: '15:42', status: 'ok' },
