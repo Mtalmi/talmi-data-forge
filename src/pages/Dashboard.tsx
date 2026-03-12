@@ -495,9 +495,9 @@ export default function Dashboard() {
             <div className="overflow-x-auto scrollbar-hide" style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap' }}>
               {([
                 { id: 'command', label: 'COMMAND CENTER' },
-                { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2 },
-                { id: 'operations', label: 'OPÉRATIONS', badge: 5 },
-                { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3 },
+                { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2, badgeColor: '#D4A843' },
+                { id: 'operations', label: 'OPÉRATIONS', badge: 5, badgeColor: '#D4A843' },
+                { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3, badgeColor: '#D4A843' },
               ] as const).map(tab => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -526,7 +526,7 @@ export default function Dashboard() {
                       </span>
                     )}
                     {'badge' in tab && tab.badge > 0 && (
-                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full bg-destructive text-destructive-foreground" style={{ fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, padding: '0 4px', lineHeight: 1 }}>
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full" style={{ fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, padding: '0 4px', lineHeight: 1, background: tab.badgeColor, color: tab.badgeColor === '#D4A843' ? '#0F1419' : '#FFFFFF', boxShadow: `0 0 6px ${tab.badgeColor}60` }}>
                         {tab.badge}
                       </span>
                     )}
