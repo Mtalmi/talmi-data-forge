@@ -1469,7 +1469,7 @@ export default function Dashboard() {
                 ].map((q, i) => (
                   <div key={i} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03]">
                     <div className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
+                      <span className={`w-2 h-2 rounded-full inline-block mr-2 flex-shrink-0 ${q.ok ? 'bg-green-400' : 'bg-amber-400 animate-pulse'}`} />
                       <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
