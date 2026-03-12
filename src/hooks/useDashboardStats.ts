@@ -172,8 +172,8 @@ export function useDashboardStats() {
       // Generate CEO alerts
       const alerts: DashboardAlert[] = [];
 
-      // Alert: Deliveries down > 20% (only if previous period data exists)
-      if (!isNaN(deliveriesTrend) && deliveriesTrend < -20) {
+      // Alert: Deliveries down > 20% (only if both periods have data > 0)
+      if (!isNaN(deliveriesTrend) && totalDeliveries > 0 && lastDeliveriesCount > 0 && deliveriesTrend < -20) {
         alerts.push({
           id: 'deliveries-down',
           type: 'critical',
@@ -183,8 +183,8 @@ export function useDashboardStats() {
         });
       }
 
-      // Alert: Volume down > 15% (only if previous period data exists)
-      if (!isNaN(volumeTrend) && volumeTrend < -15) {
+      // Alert: Volume down > 15% (only if both periods have data > 0)
+      if (!isNaN(volumeTrend) && totalVolume > 0 && lastVolume > 0 && volumeTrend < -15) {
         alerts.push({
           id: 'volume-down',
           type: 'critical',
@@ -194,8 +194,8 @@ export function useDashboardStats() {
         });
       }
 
-      // Alert: Clients down > 10%
-      if (!isNaN(clientsTrend) && clientsTrend < -10) {
+      // Alert: Clients down > 10% (only if both periods have data > 0)
+      if (!isNaN(clientsTrend) && uniqueClients > 0 && lastUniqueClients > 0 && clientsTrend < -10) {
         alerts.push({
           id: 'clients-down',
           type: 'warning',
