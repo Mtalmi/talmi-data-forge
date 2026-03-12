@@ -756,7 +756,248 @@ export default function Dashboard() {
               </div>
             </div>
 
-        {/* ═══ OPÉRATIONS TAB CONTENT ═══ */}
+            {/* ── Production Chart ── */}
+            <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
+              {/* Chart panel */}
+              <div className="flex-[4] min-w-0">
+                <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  Production (m³/h) vs Target
+                </div>
+                <svg
+                  width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
+                  className="cursor-crosshair"
+                  onMouseMove={handleChartMouseMove}
+                  onMouseLeave={handleChartMouseLeave}
+                >
+                  {/* Grid lines */}
+                  {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
+                    <line key={i} x1="0" y1={svgH * (1 - pct)} x2={svgW} y2={svgH * (1 - pct)} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+                  ))}
+                  {/* Target line */}
+                  <polyline
+                    fill="none"
+                    stroke="rgba(212,175,55,0.2)"
+                    strokeWidth="1"
+                    strokeDasharray="4,3"
+                    points={TARGET_DATA.map((d, i) => {
+                      const x = (i / (TARGET_DATA.length - 1)) * svgW;
+                      const y = svgH - (d.t / allMax) * svgH * 0.85 - 5;
+                      return `${x},${y}`;
+                    }).join(' ')}
+                  />
+                  {/* Area fill */}
+                  <path d={`M${SPARKLINE_DATA.map((d, i) => {
+                    const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                    const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                    return `${x},${y}`;
+                  }).join(' L')} L${svgW},${svgH} L0,${svgH} Z`} fill="url(#prodAreaGrad)" />
+                  <defs>
+                    <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(253,185,19,0.15)" />
+                      <stop offset="100%" stopColor="rgba(253,185,19,0)" />
+                    </linearGradient>
+                  </defs>
+                  {/* Main line */}
+                  <polyline
+                    fill="none"
+                    stroke="#C9A84C"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    points={SPARKLINE_DATA.map((d, i) => {
+                      const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                      const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                      return `${x},${y}`;
+                    }).join(' ')}
+                  />
+                  {/* Now line */}
+                  <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="rgba(52,211,153,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+                  {/* Hover point */}
+                  {hoveredPoint && (
+                    <>
+                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
+                      <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
+                    </>
+                  )}
+                  <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
+                </svg>
+              </div>
+
+              {/* Camera panel */}
+              <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra Centrale</div>
+                  <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" /><span className="text-[8px] text-red-400/80 font-medium uppercase tracking-wider">LIVE</span></div>
+                </div>
+                <div className="flex-1 rounded-lg relative overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }} onClick={() => window.location.href = '/surveillance'}>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
+                    <div className="relative" style={{ width: 96, height: 96 }}>
+                      <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
+                      <div className="absolute rounded-full" style={{ inset: 12, border: '1px solid rgba(212,168,67,0.10)' }} />
+                      <div className="absolute rounded-full" style={{ inset: 24, border: '1px solid rgba(212,168,67,0.08)' }} />
+                      <div className="absolute top-0 bottom-0 left-1/2 w-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                      <div className="absolute left-0 right-0 top-1/2 h-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                      <div className="absolute inset-0 rounded-full overflow-hidden" style={{ animation: 'radarSweep 4s linear infinite' }}>
+                        <div className="absolute left-1/2 top-1/2 origin-top-left" style={{ width: 48, height: 48, marginLeft: 0, marginTop: -48, background: 'conic-gradient(from 0deg at 0% 100%, rgba(212,168,67,0.25) 0deg, rgba(212,168,67,0) 40deg, transparent 40deg)' }} />
+                      </div>
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ background: 'rgba(212,168,67,0.5)' }} />
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: '#D4A843' }} />
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra en connexion...</span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                        <span className="w-px h-3 bg-white/10" />
+                        <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
+                      </div>
+                      <span className="text-[9px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
+                    </div>
+                  </div>
+                  <div className="absolute top-2 left-2 z-[4] px-2 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.5)' }}>
+                    <span className="text-[8px] text-white/60 uppercase tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace" }}>CAM-01 · Centrale</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Batch queue panel */}
+              <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
+                <div className="mb-3">
+                  <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
+                  <div className="mb-2 p-2 rounded-lg" style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.12)' }}>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                      <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
+                      <span className="ml-auto text-[8px] text-emerald-400/60">Déchargement</span>
+                    </div>
+                    <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: '72%', background: 'linear-gradient(90deg, #f59e0b, #22c55e)', transition: 'width 1s ease-out' }} />
+                      </div>
+                      <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                      <span className="text-[9px] text-amber-400/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>⏱ 01:47</span>
+                    </div>
+                  </div>
+                  <div className="space-y-0.5">
+                    {[
+                      { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
+                      { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
+                    ].map((batch) => (
+                      <div key={batch.id} className="flex items-center gap-1.5 p-1 rounded hover:bg-white/[0.02] transition-colors">
+                        <span className="w-1 h-1 bg-slate-600 rounded-full" />
+                        <div className="min-w-0">
+                          <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
+                          <div className="text-[7px] text-slate-600 truncate">{batch.formula} · {batch.client}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Metrics */}
+                <div className="mt-auto grid grid-cols-2 gap-2">
+                  {[
+                    { label: 'Rendement', value: '94%', color: '#34D399' },
+                    { label: 'Cadence', value: '47 m³/h', color: '#C9A84C' },
+                    { label: 'Batches', value: '23', color: '#94A3B8' },
+                    { label: 'Attente', value: '12 min', color: '#FBBF24' },
+                  ].map((m) => (
+                    <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
+                      <div className="text-[7px] text-slate-600 uppercase tracking-wider">{m.label}</div>
+                      <div className="text-[11px] font-medium font-mono tabular-nums" style={{ color: m.color }}>{m.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Status bar */}
+            <div className="flex items-center justify-between px-5 py-2 mt-1 rounded-b-lg z-10 relative" style={{ background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[9px] text-slate-500">Température</span>
+                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>22°C</span>
+                  <span className="text-[9px] text-emerald-400">Optimal</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[9px] text-slate-500">Humidité</span>
+                  <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>45%</span>
+                  <span className="text-[9px] text-emerald-400">Optimal</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-slate-600">Prochain camion</span>
+                <span className="text-[9px] text-amber-400 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                <span className="text-[9px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Production Widgets */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-5 relative z-[1]">
+            <div className="min-w-0">
+              <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
+                <LiveBatchProgress />
+              </Suspense>
+            </div>
+            <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="relative flex h-1.5 w-1.5"><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" /></span>
+                <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { id: '#403-068', formula: 'F-B25', vol: '8 m³', time: '15:42', status: 'ok' },
+                  { id: '#403-067', formula: 'F-B30', vol: '12 m³', time: '14:28', status: 'ok' },
+                  { id: '#403-066', formula: 'F-B25', vol: '8 m³', time: '13:15', status: 'warn' },
+                  { id: '#403-065', formula: 'F-B35', vol: '10 m³', time: '12:03', status: 'ok' },
+                  { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
+                ].map((b) => (
+                  <div key={b.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-white/[0.02] transition-colors">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.status === 'ok' ? '#34D399' : '#FBBF24' }} />
+                      <span className="text-[10px] font-mono text-slate-400">{b.id}</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500">{b.formula} · {b.vol}</span>
+                    <span className="text-[9px] font-mono text-slate-600">{b.time}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+              <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
+              <div className="flex flex-col gap-1">
+                {[
+                  { id: 'BL-2602-070', test: 'Slump 18cm', ok: true, time: '20:41' },
+                  { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
+                  { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
+                ].map((q, i) => (
+                  <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
+                      <span className="text-[11px] font-mono text-slate-400 tabular-nums">{q.id}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px]">
+                      <span className="text-slate-500">{q.test}</span>
+                      <span className="text-[10px] font-mono tabular-nums" style={{ color: q.ok ? 'rgb(148,163,184)' : 'rgba(251,191,36,0.7)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          </>
+          )}
+
+        </div>{/* end hero zone wrapper */}
         {activeTab === 'operations' && (
         <>
         <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
