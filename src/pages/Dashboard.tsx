@@ -681,7 +681,7 @@ export default function Dashboard() {
                     {showCursor && <span className="inline-block w-[2px] h-[20px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   <div className="flex flex-wrap items-center gap-1.5 mt-1" style={{ fontSize: 11 }}>
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 px-2 py-0.5 rounded-full" style={{ background: 'rgba(34, 197, 94, 0.08)', boxShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400/50" />
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" />

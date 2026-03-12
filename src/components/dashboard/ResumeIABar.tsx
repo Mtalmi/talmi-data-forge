@@ -44,10 +44,9 @@ export const ResumeIABar = () => {
 
   return (
     <div
-      className="relative z-[1] mb-5 px-4 py-2.5 rounded-lg backdrop-blur-sm"
+      className="relative z-[1] mb-5 px-4 py-2.5 rounded-lg backdrop-blur-sm bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-transparent"
       style={{
-        background: 'rgba(255,255,255,0.05)',
-        border: '1px solid rgba(255,255,255,0.10)',
+        border: '1px solid rgba(212, 168, 67, 0.1)',
         borderLeft: '3px solid #D4A843',
       }}
     >
