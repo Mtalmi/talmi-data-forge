@@ -1123,7 +1123,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                                 borderRadius: '6px',
                                 fontSize: '11px',
                                 fontWeight: 500,
-                                padding: '4px 10px',
+                                padding: '4px 12px',
                                 transition: 'all 0.2s ease',
                                 cursor: 'pointer',
                               }}
