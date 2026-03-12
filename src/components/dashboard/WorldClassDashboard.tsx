@@ -648,6 +648,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           {/* ─── Col 1: Production + Batch Timeline ─── */}
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
+            {!hideOpsWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
@@ -685,6 +686,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 </ResponsiveContainer>
               </div>
             </Card>
+            )}
 
             {/* Live Batch Progress */}
             {!hideProductionWidgets && <LiveBatchProgress />}
@@ -706,13 +708,13 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             )}
 
             {/* AI Analyst Brief */}
-            <AIAnalystBrief />
+            {!showOnlyOps && <AIAnalystBrief />}
 
             {/* Compliance Widget */}
-            <ComplianceWidget />
+            {!showOnlyOps && <ComplianceWidget />}
 
             {/* Energy & Cost Anomaly Widget */}
-            <EnergyCostAnomalyWidget />
+            {!showOnlyOps && <EnergyCostAnomalyWidget />}
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
