@@ -666,7 +666,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
       <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
         {showOnlyIntel ? (
-          <div className="space-y-4 mb-5 relative z-[1] w-full max-w-[1400px] mx-auto">
+          <div className="space-y-4 mb-5 relative z-[1] w-full">
             <AIAnalystBrief />
             <div className="grid grid-cols-2 gap-4">
               <ComplianceWidget />
