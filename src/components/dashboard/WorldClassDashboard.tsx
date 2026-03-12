@@ -687,9 +687,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
             </Card>
 
             {/* Live Batch Progress */}
-            <LiveBatchProgress />
+            {!hideProductionWidgets && <LiveBatchProgress />}
 
             {/* Batch Timeline */}
+            {!hideProductionWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-2" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
@@ -702,6 +703,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
               </div>
               <BatchTimeline batches={batches} />
             </Card>
+            )}
 
             {/* AI Analyst Brief */}
             <AIAnalystBrief />
