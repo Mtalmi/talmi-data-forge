@@ -31,12 +31,14 @@ const statusColors = {
   done: '#22c55e',
   enRoute: '#eab308',
   planned: '#374151',
+  late: '#ef4444',
 };
 
 const statusIcons = {
   done: '✅',
   enRoute: '🔶',
   planned: '⏳',
+  late: '🔴',
 };
 
 export default function RecentDeliveries() {
@@ -106,8 +108,19 @@ export default function RecentDeliveries() {
     return () => { supabase.removeChannel(channel); };
   }, [fetchDeliveries]);
 
-  // Use timeline mock data, enriched by real data if available
-  const timeline = TODAY_TIMELINE;
+  // Compute effective status: planned deliveries past their time become "late"
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const timeline = TODAY_TIMELINE.map(d => {
+    if (d.status === 'planned') {
+      const [h, m] = d.time.split(':').map(Number);
+      const scheduledMinutes = h * 60 + m;
+      if (currentMinutes > scheduledMinutes) {
+        return { ...d, status: 'late' as const, statusLabel: 'En Retard' };
+      }
+    }
+    return d;
+  });
   const doneCount = timeline.filter(d => d.status === 'done').length;
   const totalVolume = timeline.reduce((s, d) => s + d.volume, 0);
   const progressPct = Math.round((doneCount / timeline.length) * 100);
