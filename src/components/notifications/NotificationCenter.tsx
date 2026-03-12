@@ -166,7 +166,13 @@ export default function NotificationCenter() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-96 p-0" align="end">
+      <PopoverContent className="w-96 p-0" align="end" style={{
+        background: 'rgba(13,18,32,0.95)',
+        backdropFilter: 'blur(20px)',
+        border: '1.5px solid rgba(255,215,0,0.12)',
+        borderRadius: 12,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.04)',
+      }}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <div>
