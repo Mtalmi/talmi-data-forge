@@ -82,6 +82,16 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Max';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
+  // Time-aware greeting (Casablanca UTC+1)
+  const getGreeting = () => {
+    const now = new Date();
+    const casablancaHour = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Casablanca' })).getHours();
+    if (casablancaHour < 12) return 'Bonjour';
+    if (casablancaHour < 18) return 'Bon après-midi';
+    return 'Bonsoir';
+  };
+  const greeting = getGreeting();
+
   // Auto-refresh — useDashboardStats already polls every 30s + has realtime,
   // so we only need to check payment delays and refresh period stats
   useEffect(() => {
@@ -429,7 +439,7 @@ export default function Dashboard() {
               <div className="flex items-end justify-between">
                 <div>
                   <h1 className="tracking-tight" style={{ fontSize: '1.5625rem', fontWeight: 700, color: '#FFD700', lineHeight: 1, marginBottom: 5 }}>
-                    Bonjour {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
+                    {greeting} {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
                     {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   {/* Divider */}
