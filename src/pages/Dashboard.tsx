@@ -1505,7 +1505,7 @@ export default function Dashboard() {
               }}>
                 Lancer
               </button>
-              <button className="border border-white/20 text-white/50 hover:text-white/80 hover:border-white/30 px-4 py-1.5 rounded-lg text-sm transition-all">
+              <button className="border border-white/10 text-white/40 hover:text-white/60 rounded px-3 py-1 text-xs transition-all">
                 Ignorer
               </button>
             </div>
