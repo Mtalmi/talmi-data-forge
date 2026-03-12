@@ -1057,9 +1057,9 @@ export default function Dashboard() {
                       Production (m³/h) vs Target
                     </div>
                     {/* Target legend */}
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <svg width="8" height="2" className="inline-block"><line x1="0" y1="1" x2="8" y2="1" stroke="rgba(148,163,184,0.3)" strokeWidth="1" strokeDasharray="2,1" /></svg>
-                      <span className="text-[9px] text-muted-foreground/30 font-mono">Target</span>
+                    <div className="flex items-center mt-1">
+                      <div className="w-3 h-px border-t border-dashed border-white/30 inline-block mr-1.5" />
+                      <span className="text-[9px] text-muted-foreground/30 font-medium">Target</span>
                     </div>
                   </div>
                   <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
@@ -1070,9 +1070,8 @@ export default function Dashboard() {
                 <div className="relative">
                   {/* Y-axis labels */}
                   <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none" style={{ height: 220 }}>
-                    {[0, 20, 40, 60].map(val => {
+                    {[0, 25, 50, 75, 100].map(val => {
                       const pct = (val / allMax) * 0.85;
-                      const topPct = (1 - pct) * 100 - (5 / 100 * 100);
                       return (
                         <span key={val} className="absolute text-[9px] text-muted-foreground/20 font-mono" style={{ bottom: `${(pct * 100) + 2.3}%`, left: 0 }}>
                           {val}
@@ -1087,12 +1086,8 @@ export default function Dashboard() {
                     onMouseLeave={handleChartMouseLeave}
                     style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
                   >
-                    {/* Grid lines */}
-                    {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-                      <line key={i} x1="0" y1={svgH * (1 - pct)} x2={svgW} y2={svgH * (1 - pct)} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-                    ))}
-                    {/* Y-axis grid lines at 0, 20, 40, 60 */}
-                    {[20, 40, 60].map(val => {
+                    {/* Grid lines at 25, 50, 75, 100 */}
+                    {[25, 50, 75, 100].map(val => {
                       const y = svgH - (val / allMax) * svgH * 0.85 - 5;
                       return <line key={`yg-${val}`} x1="0" y1={y} x2={svgW} y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />;
                     })}
@@ -1148,15 +1143,26 @@ export default function Dashboard() {
                     >
                       MAINTENANT
                     </text>
-                    {/* Current value callout at now intersection */}
+                    {/* Current value callout + performance badge at now intersection */}
                     {(() => {
                       const nx = (NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW;
                       const ny = svgH - (SPARKLINE_DATA[NOW_INDEX].v / allMax) * svgH * 0.85 - 5;
+                      // Find target value at NOW_INDEX
+                      const targetVal = TARGET_DATA[NOW_INDEX]?.t || 0;
+                      const actualVal = SPARKLINE_DATA[NOW_INDEX].v;
+                      const diffPct = targetVal > 0 ? Math.round(((actualVal - targetVal) / targetVal) * 100) : 0;
+                      const isAbove = diffPct >= 0;
                       return (
                         <g>
+                          {/* Callout box */}
                           <rect x={nx - 11} y={ny - 10} width="22" height="7" rx="1.5" fill="#0f1729" stroke="rgba(212,168,67,0.4)" strokeWidth="0.4" />
                           <text x={nx} y={ny - 5} textAnchor="middle" fill="#D4A843" fontSize="3.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
-                            {SPARKLINE_DATA[NOW_INDEX].v} m³/h
+                            {actualVal} m³/h
+                          </text>
+                          {/* Performance badge */}
+                          <rect x={nx + 12} y={ny - 10} width="16" height="7" rx="3.5" fill={isAbove ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'} />
+                          <text x={nx + 20} y={ny - 5} textAnchor="middle" fill={isAbove ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)'} fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
+                            {isAbove ? '▲' : '▼'} {isAbove ? '+' : ''}{diffPct}%
                           </text>
                         </g>
                       );
@@ -1176,7 +1182,7 @@ export default function Dashboard() {
                     {hoveredPoint && (
                       <>
                         <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
+                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
                       </>
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
