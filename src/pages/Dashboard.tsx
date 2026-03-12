@@ -1058,10 +1058,10 @@ export default function Dashboard() {
                       Production (m³/h) vs Target
                     </div>
                     {/* Target legend */}
-                    <div className="flex items-center mt-1">
-                      <div className="w-3 h-px border-t border-dashed border-white/30 inline-block mr-1.5" />
-                      <span className="text-[9px] text-muted-foreground/30 font-medium">Target</span>
-                    </div>
+                      <div className="flex items-center mt-1">
+                        <div className="w-3 h-px border-t border-dashed inline-block mr-1.5" style={{ borderColor: 'rgba(255,255,255,0.35)' }} />
+                        <span className="font-medium" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Target</span>
+                      </div>
                   </div>
                   <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
