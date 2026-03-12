@@ -1204,15 +1204,17 @@ export default function Dashboard() {
                       <div className="flex items-center bg-white/[0.04] rounded-full p-0.5">
                         <button
                           onClick={() => setMidPanelView('data')}
-                          className={`px-2 py-1 rounded-full text-[10px] transition-all duration-200 ${midPanelView === 'data' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                          className={`flex items-center justify-center rounded-full transition-all duration-200 ${midPanelView === 'data' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                          style={{ minWidth: 44, minHeight: 44, padding: '8px' }}
                         >
-                          <BarChart3 className="h-3 w-3" />
+                          <BarChart3 className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => setMidPanelView('camera')}
-                          className={`px-2 py-1 rounded-full text-[10px] transition-all duration-200 ${midPanelView === 'camera' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                          className={`flex items-center justify-center rounded-full transition-all duration-200 ${midPanelView === 'camera' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                          style={{ minWidth: 44, minHeight: 44, padding: '8px' }}
                         >
-                          <Camera className="h-3 w-3" />
+                          <Camera className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
