@@ -223,9 +223,15 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
   
   return (
     <div className="relative">
+      {/* Header row */}
+      <div className="flex items-center justify-between px-2 mb-2 pb-1.5" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        {['BATCH', 'FORMULE', 'VOLUME', 'HEURE'].map(label => (
+          <span key={label} className="text-xs font-medium uppercase tracking-wider text-muted-foreground" style={{ flex: 1, textAlign: 'center' }}>
+            {label}
+          </span>
+        ))}
+      </div>
 
-
-      
       <div className="flex items-start justify-between px-2 relative z-10">
         {batches.slice(0, 6).map((b, i) => {
           const isOk = b.quality === 'OK';
