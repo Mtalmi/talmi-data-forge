@@ -15,6 +15,7 @@ import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
 import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
+import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 
 // Lazy-loaded heavy widgets
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
