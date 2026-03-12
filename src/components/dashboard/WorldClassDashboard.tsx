@@ -992,7 +992,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </div>
                 </div>
                 <div>
-                  <span className="text-3xl font-extralight text-white font-mono tracking-tight tabular-nums" style={{ textShadow: '0 0 15px rgba(212, 168, 67, 0.15)' }}>{prodTotal}</span>
+                  <span className="text-3xl font-extralight font-mono tracking-tight tabular-nums" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 12px rgba(212,168,67,0.2)' }}>{prodTotal}</span>
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
