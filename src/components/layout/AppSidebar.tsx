@@ -178,7 +178,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
 
   const handleNav = (url: string) => {
     navigate(url);
-    if (window.innerWidth < 1024) onClose();
+    if (window.innerWidth < 768) onClose();
   };
 
   const userEmail = user?.email || '';
