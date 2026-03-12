@@ -214,6 +214,11 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
+  // Auto-scroll active tab into view on mobile
+  useEffect(() => {
+    const el = tabBarRef.current?.querySelector(`[data-tab="${activeTab}"]`) as HTMLElement | null;
+    el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }, [activeTab]);
 
   // Animated KPI values — locked for CEO demo determinism
   const prodVolume = useCountUp(671, 1800, 200);
