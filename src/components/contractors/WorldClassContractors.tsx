@@ -814,8 +814,61 @@ export default function WorldClassContractors() {
     console.log('[WC-KPI] contractors.length =', actifCount, '| missionsEnCours =', missionsEnCours, '| coutMTDTotal =', coutMTDTotal, '| coutMTDK =', coutMTDK);
   }, [actifCount, missionsEnCours, coutMTDTotal, coutMTDK]);
 
-  // Donut total
-  const totalCost = COST_DONUT.reduce((s, d) => s + d.value, 0);
+  // Derive cost donut from live contractor data
+  const costDonut: CostDonutItem[] = useMemo(() => {
+    return contractors
+      .filter((c: any) => (c.cout_mtd || 0) > 0)
+      .sort((a: any, b: any) => (b.cout_mtd || 0) - (a.cout_mtd || 0))
+      .map((c: any, i: number) => ({
+        name: c.nom || 'Inconnu',
+        value: Math.round((c.cout_mtd || 0) / 1000 * 10) / 10,
+        color: DONUT_COLORS[i % DONUT_COLORS.length],
+      }));
+  }, [contractors]);
+  const totalCost = costDonut.reduce((s, d) => s + d.value, 0);
+
+  // Derive active missions from contractors with statut='mission'
+  const liveMissions: LiveMission[] = useMemo(() => {
+    return contractors
+      .filter((c: any) => c.statut === 'mission')
+      .map((c: any, i: number) => {
+        const jours = c.jours_travailles || 0;
+        const tarif = c.tarif_journalier || 0;
+        const totalJours = jours > 0 ? Math.max(jours + 4, Math.round(jours * 1.3)) : 10;
+        const progress = totalJours > 0 ? Math.min(Math.round((jours / totalJours) * 100), 99) : 0;
+        const initials = (c.code_prestataire || c.nom || '??').slice(0, 2).toUpperCase();
+        const colors = [T.gold, T.info, T.success, T.warning, T.purple, T.cyan];
+        const debut = c.date_debut ? new Date(c.date_debut).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+        const fin = c.date_fin ? new Date(c.date_fin).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }) : '—';
+        return {
+          id: `MST-${c.id.slice(0, 8)}`,
+          contractor: c.nom || '—',
+          client: c.mission_actuelle || '—',
+          debut,
+          fin,
+          joursActuel: jours,
+          joursTotal: totalJours,
+          coutEstime: `${(jours * tarif).toLocaleString('fr-FR')} DH`,
+          tarif: tarif.toLocaleString('fr-FR'),
+          total: totalJours,
+          progress,
+          initials,
+          avatarBg: colors[i % colors.length],
+          avatarText: colors[i % colors.length] === T.gold ? T.navy : '#fff',
+        };
+      });
+  }, [contractors]);
+
+  // Derive AI banner text from live data
+  const aiBannerText = useMemo(() => {
+    const enMission = contractors.filter((c: any) => c.statut === 'mission');
+    const disponibles = contractors.filter((c: any) => c.statut === 'disponible');
+    if (contractors.length === 0) return 'Chargement des données sous-traitants…';
+    const parts: string[] = [];
+    parts.push(`${enMission.length} mission${enMission.length !== 1 ? 's' : ''} active${enMission.length !== 1 ? 's' : ''}`);
+    if (disponibles.length > 0) parts.push(`${disponibles.length} sous-traitant${disponibles.length !== 1 ? 's' : ''} disponible${disponibles.length !== 1 ? 's' : ''}`);
+    return parts.join(' · ');
+  }, [contractors]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', sans-serif", color: T.textPri, paddingBottom: 60 }}>
