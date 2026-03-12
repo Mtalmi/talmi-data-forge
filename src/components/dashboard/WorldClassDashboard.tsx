@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
+import { toast } from 'sonner';
 import {
   AreaChart, Area,
   XAxis, Tooltip, ResponsiveContainer,
@@ -798,6 +799,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                                 border: '1px solid rgba(212,175,55,0.2)',
                                 color: '#D4AF37',
                               }}
+                              onClick={() => toast(`Commande en préparation — ${item.name} · ${item.dailyRate}%/j`, {
+                                duration: 3000,
+                                style: {
+                                  background: '#1a1f2e',
+                                  border: '1px solid rgba(255,255,255,0.08)',
+                                  borderLeft: '3px solid #D4A843',
+                                  color: '#F1F5F9',
+                                },
+                              })}
                             >
                               Commander
                             </button>
