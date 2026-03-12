@@ -455,11 +455,12 @@ function AIAnalystBrief() {
 
   return (
       <div
-        style={{ transition: 'all 200ms ease-out', borderRadius: 8 }}
-        onMouseEnter={e => { const el = e.currentTarget.firstElementChild as HTMLElement; if (el) { el.style.borderColor = 'rgba(255,255,255,0.2)'; el.style.transform = 'translateY(-1px)'; }}}
-        onMouseLeave={e => { const el = e.currentTarget.firstElementChild as HTMLElement; if (el) { el.style.borderColor = 'rgba(255,255,255,0.08)'; el.style.transform = 'translateY(0)'; }}}
+        style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', border: '1px solid rgba(212,168,67,0.12)', borderRadius: 8, transition: 'all 200ms ease-out' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
       >
-      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', transition: 'all 200ms ease-out' }}>
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
+      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: 'none', background: 'transparent', transition: 'all 200ms ease-out' }}>
 
 
       <div className="flex items-center justify-between mb-4">
