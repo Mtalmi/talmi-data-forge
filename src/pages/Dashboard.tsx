@@ -1108,7 +1108,7 @@ export default function Dashboard() {
                   <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra Centrale</div>
                   <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" /><span className="text-[8px] text-red-400/80 font-medium uppercase tracking-wider">LIVE</span></div>
                 </div>
-                <div className="flex-1 rounded-lg relative overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }} onClick={() => window.location.href = '/surveillance'}>
+                <div className="flex-1 rounded-lg relative overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px', boxShadow: '0 0 15px rgba(239, 68, 68, 0.03)' }} onClick={() => window.location.href = '/surveillance'}>
                   <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
                     <div className="relative" style={{ width: 96, height: 96 }}>
                       <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
@@ -1126,8 +1126,8 @@ export default function Dashboard() {
                         </span>
                       </div>
                     </div>
-                    <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra en connexion...</span>
-                    <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)' }}>Dernière capture: il y a 4h</span>
+                    <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Recherche du signal...</span>
+                    <span className="text-[10px] tracking-[0.08em] uppercase text-muted-foreground/30 font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>Dernière capture: il y a 4h</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
                     <div className="flex items-center justify-between">
