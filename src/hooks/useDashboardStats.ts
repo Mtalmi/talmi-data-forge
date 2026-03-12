@@ -142,7 +142,7 @@ export function useDashboardStats() {
         : NaN;
       const clientsTrend = lastUniqueClients > 0 
         ? ((uniqueClients - lastUniqueClients) / lastUniqueClients) * 100 
-        : 0;
+        : NaN;
 
       // CUR Moyen (7 days) - only from validated BLs (livre or facture)
       const validatedBLs = sevenDayData?.filter(d => d.cur_reel && d.cur_reel > 0) || [];
@@ -195,7 +195,7 @@ export function useDashboardStats() {
       }
 
       // Alert: Clients down > 10%
-      if (clientsTrend < -10) {
+      if (!isNaN(clientsTrend) && clientsTrend < -10) {
         alerts.push({
           id: 'clients-down',
           type: 'warning',
@@ -260,7 +260,7 @@ export function useDashboardStats() {
         tauxECMoyen,
         deliveriesTrend: isNaN(deliveriesTrend) ? 0 : deliveriesTrend,
         volumeTrend: isNaN(volumeTrend) ? 0 : volumeTrend,
-        clientsTrend,
+        clientsTrend: isNaN(clientsTrend) ? 0 : clientsTrend,
         curTrend,
         alerts,
       });
