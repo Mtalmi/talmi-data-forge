@@ -1159,7 +1159,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
                   <span className="text-lg font-bold text-[#D4A843] font-mono">4.6/5 <span className="text-[#D4A843]">★</span></span>
                 </div>
-                <div className="text-[10px] text-muted-foreground/40">12 livraisons à l'heure · 0 réclamation cette semaine</div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">12 livraisons à l'heure</span>
+                  <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">0 réclamation cette semaine</span>
+                </div>
               </div>
 
               <div className="flex justify-between items-start mb-4">
