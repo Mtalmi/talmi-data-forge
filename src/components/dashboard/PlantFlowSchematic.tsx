@@ -52,12 +52,15 @@ const panelHoverHandlers = {
   onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
+    e.currentTarget.style.transform = 'translateY(-1px)';
   },
   onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.background = 'rgba(15,23,41,0.8)';
     e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)';
+    e.currentTarget.style.transform = 'translateY(0)';
   },
 };
+
 
 export default function PlantFlowSchematic() {
   const navigate = useNavigate();
@@ -70,7 +73,8 @@ export default function PlantFlowSchematic() {
           Flux Usine
         </span>
         <span className="relative flex h-2 w-2">
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
         </span>
         <span className="text-emerald-400 text-[11px]">Temps réel</span>
         <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
@@ -122,7 +126,7 @@ export default function PlantFlowSchematic() {
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
-            <span className="text-[10px] font-medium" style={{ color: T.dotOk }}>ACTIF</span>
+            <span className="text-[10px] font-medium animate-pulse" style={{ color: T.dotOk, textShadow: '0 0 8px rgba(34, 197, 94, 0.3)' }}>ACTIF</span>
           </div>
           <div className="space-y-0.5">
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Batch <span className="text-white/80 font-mono">#403-068</span></div>
@@ -216,7 +220,7 @@ export default function PlantFlowSchematic() {
           </div>
           <div className="mt-1.5">
             <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.4)' }}>E/C: </span>
-            <span className="text-[9px] font-mono" style={{ color: T.dotOk }}>0.502</span>
+            <span className="text-[9px] font-mono font-semibold text-[#D4A843]">0.502</span>
           </div>
           <div className="mt-1.5 pt-1.5 flex items-center justify-end" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
