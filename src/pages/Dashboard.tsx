@@ -1575,7 +1575,7 @@ export default function Dashboard() {
             Synchronisé en temps réel
             <span style={{ display: 'inline-flex', animation: 'spin 4s linear infinite', fontSize: 12, marginLeft: 4 }}>↻</span>
             <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 10, color: 'rgba(148,163,184,0.25)', marginLeft: 2 }}>
-              Prochaine sync: {syncCountdown}s
+              Prochaine sync: <span style={{ color: '#D4A843', fontFamily: 'monospace', fontWeight: '500' }}>{syncCountdown}s</span>
             </span>
           </span>
           <span>✦ Propulsé par Claude Opus · Atlas Concrete Morocco</span>
