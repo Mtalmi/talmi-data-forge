@@ -798,7 +798,7 @@ export default function Dashboard() {
           </div>
 
           {/* (4) Intelligence IA section */}
-          <div className="relative z-[1] mb-2" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.5s both' }}>
+          <div className="relative z-[1] mb-2" style={{ animation: 'ccSectionIn 300ms ease-out 450ms both' }}>
             <IntelligenceBriefingCard />
           </div>
 
