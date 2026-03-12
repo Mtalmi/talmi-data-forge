@@ -730,7 +730,7 @@ export default function Dashboard() {
                 {/* Marge */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                     <span className="text-2xl inline-flex items-baseline" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em' }}>{marge}<span className="text-sm inline-block -ml-[0.5px]" style={{ color: 'rgba(212,168,67,0.5)', marginLeft: 0, paddingLeft: 0 }}>%</span></span>
+                     <span className="text-2xl" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em' }}>{marge}<span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)', margin: 0, padding: 0, letterSpacing: 0 }}>%</span></span>
                    </div>
                    <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
