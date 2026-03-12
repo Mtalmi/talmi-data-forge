@@ -593,7 +593,8 @@ function PipelineFunnel() {
           );
         })}
       </div>
-    </Card>
+    </div>
+    </div>
   );
 }
 
