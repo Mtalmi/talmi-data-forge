@@ -1,32 +1,40 @@
 import { useEffect, useState } from 'react';
-import { Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+
+function extractFirstSentence(content: string): string {
+  let text = content;
+  try {
+    const parsed = JSON.parse(content);
+    if (parsed.resume_journee) text = parsed.resume_journee;
+    else if (parsed.resume) text = parsed.resume;
+    else if (parsed.content) text = parsed.content;
+    else if (typeof parsed === 'string') text = parsed;
+    else if (parsed.sections?.[0]?.content) text = parsed.sections[0].content;
+  } catch {
+    // Not JSON — use raw content
+  }
+  // Strip markdown headers
+  text = text.replace(/^#+\s+.*\n?/, '').trim();
+  // Extract first sentence (ending with . ! or ?)
+  const match = text.match(/^[^.!?]+[.!?]/);
+  return match ? match[0].trim() : text.split('\n')[0]?.trim() || text;
+}
 
 export const ResumeIABar = () => {
   const [recommendation, setRecommendation] = useState<string>('');
 
   useEffect(() => {
     const fetchMorningBriefing = async () => {
-      const today = new Date().toISOString().split('T')[0];
       const { data } = await supabase
         .from('ai_briefings')
         .select('content')
-        .eq('type', 'matin')
-        .gte('date', today)
+        .eq('briefing_type', 'morning')
         .order('generated_at', { ascending: false })
         .limit(1)
         .maybeSingle();
 
       if (data?.content) {
-        try {
-          const parsed = JSON.parse(data.content);
-          const rec = parsed?.recommandations?.[0] || parsed?.recommandation || parsed?.resume || data.content;
-          setRecommendation(typeof rec === 'string' ? rec : JSON.stringify(rec));
-        } catch {
-          // Raw text — extract first meaningful line
-          const lines = data.content.split('\n').filter((l: string) => l.trim().length > 10);
-          setRecommendation(lines[0] || data.content);
-        }
+        setRecommendation(extractFirstSentence(data.content));
       }
     };
     fetchMorningBriefing();
@@ -56,7 +64,7 @@ export const ResumeIABar = () => {
           style={{ background: 'rgba(212,168,67,0.2)' }}
         />
         <span
-          className="text-[11px] truncate"
+          className="text-[11px] overflow-hidden whitespace-nowrap text-ellipsis"
           style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}
         >
           {displayText}
