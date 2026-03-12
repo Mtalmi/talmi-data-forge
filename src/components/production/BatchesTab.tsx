@@ -19,9 +19,9 @@ const T = {
 };
 
 // ─────────────────────────────────────────────────────
-// FALLBACK DATA — 14 realistic batches
+// ROW TYPE
 // ─────────────────────────────────────────────────────
-interface FallbackRow {
+interface BatchRow {
   bl_id: string;
   client: string;
   formule: string;
@@ -30,33 +30,6 @@ interface FallbackRow {
   status: 'valide' | 'production' | 'planifie' | 'ecart';
   progress: number;
 }
-
-const FALLBACK_ROWS: FallbackRow[] = [
-  { bl_id: 'BL-2602-001', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '07:15', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-002', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 45, heure: '07:42', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-003', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 12, heure: '08:20', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-004', client: 'Constructions Modernes SA', formule: 'F-B20', volume: 80, heure: '08:55', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-005', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 30, heure: '09:30', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-006', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 8, heure: '10:10', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-007', client: 'Saudi Readymix Co.', formule: 'F-B25', volume: 50, heure: '10:45', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-008', client: 'Constructions Modernes SA', formule: 'F-B30', volume: 20, heure: '11:30', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-009', client: 'BTP Maroc SARL', formule: 'F-B20', volume: 35, heure: '12:15', status: 'valide', progress: 100 },
-  { bl_id: 'BL-2602-010', client: 'Ciments & Béton du Sud', formule: 'F-B25', volume: 45, heure: '13:40', status: 'production', progress: 72 },
-  { bl_id: 'BL-2602-011', client: 'BTP Maroc SARL', formule: 'F-B30', volume: 8, heure: '14:20', status: 'production', progress: 34 },
-  { bl_id: 'BL-2602-012', client: 'Constructions Modernes SA', formule: 'F-B25', volume: 20, heure: '15:00', status: 'planifie', progress: 0 },
-  { bl_id: 'BL-2602-013', client: 'Saudi Readymix Co.', formule: 'F-B20', volume: 10, heure: '15:30', status: 'planifie', progress: 0 },
-  { bl_id: 'BL-2602-014', client: 'Ciments & Béton du Sud', formule: 'F-B30', volume: 20, heure: '16:00', status: 'planifie', progress: 0 },
-  { bl_id: 'BL-2602-015', client: 'BTP Maroc SARL', formule: 'F-B25', volume: 12, heure: '16:30', status: 'ecart', progress: 88 },
-];
-
-const FEED_ITEMS = [
-  { id: '011', num: '#2602-011', info: 'F-B30 · 8 m³ · BTP Maroc', pct: '34%', time: '14:20', active: true },
-  { id: '010', num: '#2602-010', info: 'F-B25 · 45 m³ · Ciments & Béton du Sud', pct: '72%', time: '13:40', active: true },
-  { id: '009', num: '#2602-009', info: 'F-B20 · 35 m³ · BTP Maroc', pct: null, time: '12:15', active: false },
-  { id: '008', num: '#2602-008', info: 'F-B30 · 20 m³ · Constructions Modernes', pct: null, time: '11:30', active: false },
-  { id: '007', num: '#2602-007', info: 'F-B25 · 50 m³ · Saudi Readymix', pct: null, time: '10:45', active: false },
-  { id: '006', num: '#2602-006', info: 'F-B25 · 8 m³ · BTP Maroc', pct: null, time: '10:10', active: false },
-];
 
 function statusStyle(s: FallbackRow['status']) {
   switch (s) {
