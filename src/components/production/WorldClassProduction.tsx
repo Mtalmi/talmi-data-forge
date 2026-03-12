@@ -416,23 +416,16 @@ export default function WorldClassProduction() {
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
 
-  const FALLBACK_PRODUCTS = [
-    { name: 'F-B25 Standard', volume: 285, color: '#D4A843' },
-    { name: 'F-B30 Structurel', volume: 221, color: '#B8922E' },
-    { name: 'F-B20 Fondation', volume: 165, color: '#8B6914' },
-  ];
-
   const productData = useMemo(() => {
     const formulaMap: Record<string, number> = {};
     bons.forEach(b => {
       const fId = b.formule_id || 'Autre';
       formulaMap[fId] = (formulaMap[fId] || 0) + (b.volume_m3 || 0);
     });
-    const live = Object.entries(formulaMap)
+    return Object.entries(formulaMap)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
-    return live.length > 0 ? live : FALLBACK_PRODUCTS;
   }, [bons]);
 
   const FALLBACK_QUALITY = [
