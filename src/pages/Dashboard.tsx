@@ -808,10 +808,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* RIGHT: Prochaine Livraison */}
-                  <div className="hidden md:flex items-center gap-2.5 rounded-lg px-4 py-2.5 flex-shrink-0" style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.10)',
-                  }}>
+                  <div className="hidden md:flex flex-col flex-shrink-0 rounded-lg bg-white/5 border border-white/10 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 overflow-hidden">
+                    <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
+                    <div className="flex items-center gap-2.5 px-4 py-3">
                     <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
                     <div className="flex flex-col">
                       <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
