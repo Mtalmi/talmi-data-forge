@@ -1047,7 +1047,7 @@ export default function Dashboard() {
               <Radio size={14} className="text-[#D4A843] animate-pulse" />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30 mr-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />LIVE</span>
               <span className="text-[#D4A843] text-[11px] font-medium uppercase tracking-wider whitespace-nowrap">Live Production du Jour</span>
-              <div className="flex-1 h-[1px] bg-gradient-to-r from-[#D4A843]/30 to-transparent mx-4" />
+              <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)', margin: '0 16px' }} />
               <div className="flex items-center gap-1.5" style={{ boxShadow: '0 0 12px rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
