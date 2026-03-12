@@ -250,7 +250,7 @@
 
 /* ─── Operations surface card — dashboard-specific ─── */
 .ops-surface-card {
-  border-radius: 8px !important;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   background: linear-gradient(to bottom right, #1a1f2e, #141824) !important;
   box-shadow: none !important;
