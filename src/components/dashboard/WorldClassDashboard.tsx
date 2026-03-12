@@ -296,7 +296,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
 
   // Hardcoded color overrides by material name
   const isGravette = nameLower.includes('gravette') || nameLower.includes('gravier');
-  const isEau = nameLower.includes('eau');
+  const isEau = nameLower === 'eau' || nameLower.includes('eau') || unit === 'L' && max >= 40000;
   const isAdjuvant = nameLower.includes('adjuvant');
 
   let barBg: string;
@@ -312,6 +312,9 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
     barShadow = '0 0 6px rgba(34,197,94,0.15)';
   }
 
+  // Hardcode Eau bar to amber via inline style override
+  const isEauBar = nameLower === 'eau' || (nameLower.includes('eau') && !nameLower.includes('niveau'));
+
   return (
     <div className="py-2">
       <div className="flex justify-between items-baseline mb-1.5">
@@ -325,9 +328,10 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
           className="h-full rounded-full transition-all duration-1000"
           style={{
             width: `max(40px, ${Math.max(pct, 3)}%)`,
-            background: barBg,
+            background: isEauBar ? 'linear-gradient(90deg, #ca8a04, #eab308)' : barBg,
+            backgroundColor: isEauBar ? '#eab308' : undefined,
             opacity: 0.7,
-            boxShadow: barShadow,
+            boxShadow: isEauBar ? '0 0 6px rgba(234,179,8,0.2)' : barShadow,
           }}
         />
       </div>
