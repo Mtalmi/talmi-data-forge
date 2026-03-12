@@ -716,7 +716,7 @@ export default function Dashboard() {
                 {/* Alertes */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl font-bold text-red-400">2</span>
+                    <span className="text-2xl text-red-400" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200 }}>2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
@@ -728,7 +728,7 @@ export default function Dashboard() {
                 {/* Production */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl font-bold text-white">{prodVolume}</span>
+                    <span className="text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200 }}>{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">m³</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
@@ -740,8 +740,7 @@ export default function Dashboard() {
                 {/* Marge */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                     <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
-                     <span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
+                     <span className="text-2xl" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843' }}>{marge}<span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span></span>
                    </div>
                    <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
