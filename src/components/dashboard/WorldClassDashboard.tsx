@@ -335,7 +335,10 @@ function AIAnalystBrief() {
   }, []);
 
   return (
-      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+      <Card className="ops-enter ops-surface-card tbos-hover-card-subtle" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', transition: 'all 200ms ease-out', cursor: 'default' }}
+        onMouseEnter={e => { const el = e.currentTarget; el.style.borderColor = 'rgba(255,255,255,0.2)'; el.style.transform = 'translateY(-1px)'; }}
+        onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor = 'rgba(255,255,255,0.08)'; el.style.transform = 'translateY(0)'; }}
+      >
 
 
       <div className="flex items-center justify-between mb-4">
