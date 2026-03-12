@@ -1313,13 +1313,13 @@ export default function Dashboard() {
           </div>
 
           {/* Additional Production Widgets */}
-          <div className="grid grid-cols-3 gap-4 mt-5 relative z-[1]" style={{ alignItems: 'stretch' }}>
-            <div className="min-w-0">
+          <div className="grid grid-cols-3 gap-4 mt-5 relative z-[1] items-stretch">
+            <div className="min-w-0 h-full">
               <Suspense fallback={<div className="h-48 rounded-lg bg-white/[0.02] animate-pulse" />}>
                 <LiveBatchProgress />
               </Suspense>
             </div>
-            <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="min-w-0 h-full rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5"><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" /></span>
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
@@ -1351,7 +1351,7 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            <div className="min-w-0 rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="min-w-0 h-full rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[

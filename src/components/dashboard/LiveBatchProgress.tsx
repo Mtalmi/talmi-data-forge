@@ -88,7 +88,7 @@ export default function LiveBatchProgress() {
   if (!batch) {
     return (
       <div
-        className="relative overflow-hidden p-5"
+        className="relative overflow-hidden p-5 h-full flex flex-col"
         style={{ borderRadius: 8, background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(255,255,255,0.08)' }}
       >
         <div className="flex items-center gap-2 mb-2">
@@ -105,7 +105,7 @@ export default function LiveBatchProgress() {
 
   return (
     <div
-      className="relative overflow-hidden p-5 transition-all duration-500"
+      className="relative overflow-hidden p-5 transition-all duration-500 h-full flex flex-col"
       style={{
         borderRadius: 8,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
@@ -157,7 +157,7 @@ export default function LiveBatchProgress() {
       </div>
 
       {/* Phase indicators */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="mt-auto flex items-center justify-between mb-3">
         {phases.map((p, i) => (
           <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
             {i > 0 && (
