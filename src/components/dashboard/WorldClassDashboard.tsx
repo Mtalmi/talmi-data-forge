@@ -1146,6 +1146,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="ops-enter tbos-stagger-7 relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out rounded-lg" style={{ minHeight: 420, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
               <div className="p-6">
+              {/* Satisfaction Client */}
+              <div className="border-b border-white/[0.04] pb-3 mb-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
+                  <span className="text-lg font-bold text-[#D4A843] font-mono">4.6/5 <span className="text-[#D4A843]">★</span></span>
+                </div>
+                <div className="text-[10px] text-muted-foreground/40">12 livraisons à l'heure · 0 réclamation cette semaine</div>
+              </div>
+
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
