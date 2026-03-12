@@ -1108,8 +1108,8 @@ export default function Dashboard() {
               <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '94%' }} />
               </div>
-              <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">TAUX DE RÉUSSITE</span>
-              <span className="text-[9px] text-muted-foreground/30">7 derniers jours</span>
+              <span style={{ fontSize: '10px', letterSpacing: '1px', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }} className="mt-1.5">TAUX DE RÉUSSITE</span>
+              <span style={{ fontSize: '10px', letterSpacing: '1px', color: 'rgba(255,255,255,0.35)' }}>7 derniers jours</span>
             </div>
             <div className="tbos-prod-stats-bar" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center' }}>
               <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
