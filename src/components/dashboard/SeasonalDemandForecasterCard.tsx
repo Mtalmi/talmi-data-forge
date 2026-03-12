@@ -254,7 +254,15 @@ export function SeasonalDemandForecasterCard() {
                 borderRadius: '0 10px 10px 0',
                 padding: '12px 16px',
               }}>
-                <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>{ins.text}</p>
+                <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
+                  {(() => {
+                    const dotIdx = ins.text.indexOf('.');
+                    if (dotIdx === -1) return <span className="font-semibold">{ins.text}</span>;
+                    const first = ins.text.slice(0, dotIdx + 1);
+                    const rest = ins.text.slice(dotIdx + 1);
+                    return <><span className="font-semibold">{first}</span>{rest}</>;
+                  })()}
+                </p>
               </div>
             ))}
           </div>
