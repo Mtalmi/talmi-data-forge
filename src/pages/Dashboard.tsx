@@ -1111,7 +1111,8 @@ export default function Dashboard() {
               <span style={{ fontSize: '10px', letterSpacing: '1px', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }} className="mt-1.5">TAUX DE RÉUSSITE</span>
               <span style={{ fontSize: '10px', letterSpacing: '1px', color: 'rgba(255,255,255,0.35)' }}>7 derniers jours</span>
             </div>
-            <div className="tbos-prod-stats-bar" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center' }}>
+            <div className="tbos-prod-stats-bar" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
               <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
                 <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
