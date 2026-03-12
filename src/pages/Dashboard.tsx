@@ -1212,9 +1212,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] text-slate-600">Prochain camion</span>
-                <span className="text-[9px] text-amber-400 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
-                <span className="text-[9px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+                <span className="text-[11px] text-[#D4A843] font-medium">Prochain camion</span>
+                <span className="text-[11px] text-[#D4A843] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                <span className="text-[11px] text-[#D4A843]/60">→ Constructions Modernes · 20 m³</span>
               </div>
             </div>
           </div>
