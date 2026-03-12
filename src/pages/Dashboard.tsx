@@ -675,10 +675,9 @@ export default function Dashboard() {
           {/* (2) Alerte Fuite Détectée */}
           {(isCeo || isAccounting) && (
             <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
-              animation: 'ccSectionIn 300ms ease-out 100ms both',
+              animation: 'ccSectionIn 300ms ease-out 100ms both, leakAlertPulse 2s ease-in-out infinite 400ms',
               borderLeft: '3px solid #F97316',
               boxShadow: '0 0 12px rgba(249,115,22,0.2)',
-              animation: 'leakAlertPulse 2s ease-in-out infinite',
             }}>
               <LeakageAlertBanner />
             </div>
