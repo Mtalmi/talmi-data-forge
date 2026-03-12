@@ -727,7 +727,7 @@ export default function Dashboard() {
           {/* (1) Hero — Command Cockpit Strip */}
           <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
-              className="rounded-xl backdrop-blur-sm"
+              className="tbos-hero-cockpit rounded-xl backdrop-blur-sm"
               style={{
                 background: 'rgba(15,23,41,0.8)',
                 border: '1px solid rgba(255,255,255,0.06)',
