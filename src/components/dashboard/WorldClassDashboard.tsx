@@ -1176,7 +1176,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR} K DH</span>
+                  <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR}K DH</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
