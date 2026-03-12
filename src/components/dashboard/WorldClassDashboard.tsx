@@ -780,6 +780,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
             <PipelineFunnel />
 
             {/* Quality feed — Compact */}
+            {!hideProductionWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-6" style={{ borderRadius: 8, padding: 20, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
@@ -802,6 +803,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false }: { hidePro
                 ))}
               </div>
             </Card>
+            )}
           </div>
 
           {/* ─── Col 3: Créances & Deliveries ─── */}
