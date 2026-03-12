@@ -1355,6 +1355,11 @@ export default function Dashboard() {
 
             {/* Environmental Monitoring Strip */}
             <div className="flex items-center justify-center gap-6 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-3 mx-6 my-4 backdrop-blur-sm">
+              {/* Live indicator */}
+              <div className="flex items-center gap-1.5 pr-4 mr-4 border-r border-white/10">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-[10px] uppercase tracking-wider text-green-400/70">EN DIRECT</span>
+              </div>
               {/* Pression */}
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Pression</span>
