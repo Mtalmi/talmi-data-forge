@@ -50,7 +50,7 @@ export function EnergyCostAnomalyWidget() {
       </div>
 
       {/* Status */}
-      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: `${T.danger}18`, border: `1px solid ${T.danger}30`, marginBottom: 10 }}>
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 999, background: `${T.danger}18`, border: `1px solid ${T.danger}30`, marginBottom: 10, animation: 'anomalyPulse 3s ease-in-out infinite' }}>
         <span style={{ fontSize: 10 }}>🔴</span>
         <span style={{ fontSize: 10, fontWeight: 700, color: T.danger }}>2 Anomalies Détectées</span>
       </div>
