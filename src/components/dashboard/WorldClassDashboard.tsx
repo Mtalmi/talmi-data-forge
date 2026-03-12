@@ -887,9 +887,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             )}
           </div>
         </div>
+        )}
 
         {/* ── Seasonal Demand Forecaster ── */}
-        {!showOnlyOps && (
+        {!showOnlyOps && !hideIntelWidgets && !showOnlyIntel && (
         <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
           <SeasonalDemandForecasterCard />
         </div>
