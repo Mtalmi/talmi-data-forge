@@ -1228,14 +1228,14 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
               <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
-              <span className="text-xs text-muted-foreground/40 hover:text-muted-foreground/60 px-3 py-1.5 cursor-pointer transition-colors">Ignorer</span>
+              <span style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)', borderRadius: '4px', padding: '4px 12px', fontSize: '12px', cursor: 'pointer' }} className="hover:text-white/60 transition-colors">Ignorer</span>
             </div>
           </div>
         )}
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.08), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.06), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ color: '#D4A843', fontSize: '20px', fontWeight: '500', fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
               +18.4K DH
             </div>
