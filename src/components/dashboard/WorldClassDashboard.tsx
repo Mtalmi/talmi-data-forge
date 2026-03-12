@@ -1235,7 +1235,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
 
         {/* ─── Full-width: P&L du Jour ─── */}
         {!hideOpsWidgets && (
-          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.08), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.06), transparent)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '8px', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ color: '#D4A843', fontSize: '20px', fontWeight: '500', fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
               +18.4K DH
             </div>
