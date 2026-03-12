@@ -185,11 +185,11 @@ export default function RecentDeliveries() {
       </div>
       
       {/* Table Header */}
-      <div className="flex items-center gap-4 py-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[60px]">Heure</span>
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium flex-1">Client</span>
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[80px] text-right">Volume</span>
-        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[80px] text-right">Statut</span>
+      <div className="flex items-center gap-4 py-2 mb-1 border-b border-white/5">
+        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[60px]">Heure</span>
+        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 flex-1">Client</span>
+        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[80px] text-right">Volume</span>
+        <span className="text-[10px] uppercase tracking-wider text-white/40 pb-2 w-[80px] text-right">Statut</span>
       </div>
 
       {/* Table Rows */}
