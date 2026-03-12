@@ -717,7 +717,7 @@ export default function Dashboard() {
                 {/* Alertes */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl text-red-400" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200 }}>2</span>
+                    <span className="text-2xl text-red-400 font-bold" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", textShadow: '0 0 12px rgba(239, 68, 68, 0.3)' }}>2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
