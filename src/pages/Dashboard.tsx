@@ -202,45 +202,6 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
-          {/* ═══ SEARCH BAR ═══ */}
-          <div className="relative z-[2] mx-auto my-4" style={{ maxWidth: 480 }} ref={searchRef}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search metrics, KPIs, reports..."
-                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white/70 placeholder:text-muted-foreground/30 outline-none focus:border-white/20 transition-colors duration-200"
-                onFocus={() => setSearchFocused(true)}
-                onBlur={(e) => {
-                  if (!searchRef.current?.contains(e.relatedTarget as Node)) {
-                    setSearchFocused(false);
-                  }
-                }}
-                readOnly
-              />
-            </div>
-            {searchFocused && (
-              <div className="absolute top-full left-0 right-0 bg-[#0f1729] border border-white/10 rounded-lg shadow-xl p-4 mt-1 w-full z-50">
-                <div className="text-sm text-muted-foreground/40 italic flex items-center gap-2 mb-3">
-                  <span style={{ color: '#D4A843' }}>✦</span> Recherche IA — Bientôt disponible
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  {[
-                    { label: 'Stocks', path: '/stocks' },
-                    { label: 'Production', path: '/production' },
-                    { label: 'Ventes', path: '/ventes' },
-                  ].map(link => (
-                    <button
-                      key={link.path}
-                      className="text-sm text-white/70 hover:text-[#D4A843] cursor-pointer text-left px-2 py-1 rounded transition-colors duration-150"
-                      onMouseDown={(e) => { e.preventDefault(); navigate(link.path); }}
-                    >
-                      → {link.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
 
   // Animated KPI values — locked for CEO demo determinism
   const prodVolume = useCountUp(671, 1800, 200);
