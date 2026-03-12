@@ -217,7 +217,7 @@ export default function PlantFlowSchematic() {
           </div>
           <div className="mt-1.5">
             <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.4)' }}>E/C: </span>
-            <span className="text-[9px] font-mono" style={{ color: T.dotOk }}>0.502</span>
+            <span className="text-[9px] font-mono font-semibold text-[#D4A843]">0.502</span>
           </div>
           <div className="mt-1.5 pt-1.5 flex items-center justify-end" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
