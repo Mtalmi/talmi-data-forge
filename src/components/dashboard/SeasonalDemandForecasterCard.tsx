@@ -226,7 +226,7 @@ export function SeasonalDemandForecasterCard() {
                     contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, fontSize: 11, backdropFilter: 'blur(12px)', color: '#fff' }}
                     labelStyle={{ color: '#fff', fontWeight: 600 }}
                   />
-                  <ReferenceLine y={350} stroke={T.success} strokeDasharray="6 4" strokeOpacity={0.4} label={{ value: 'Capacité', fill: T.success, fontSize: 9, position: 'right' }} />
+                  <ReferenceLine y={350} stroke={T.success} strokeDasharray="6 4" strokeOpacity={0.4} />
                   <ReferenceLine x="S2 Mai" stroke={T.danger} strokeDasharray="4 3" strokeOpacity={0.6} label={{ value: 'Ramadan', fill: T.danger, fontSize: 9, position: 'top' }} />
                   <Area type="monotone" dataKey="lastYear" name="2025" stroke={T.textDim} strokeWidth={1.5} strokeDasharray="5 3" fill="none" dot={false} />
                   <Area type="monotone" dataKey="forecast" name="Prévision 2026" stroke="#D4A843" strokeWidth={2} fill="url(#forecastGrad)" dot={false} filter="url(#forecastGlow)" />
