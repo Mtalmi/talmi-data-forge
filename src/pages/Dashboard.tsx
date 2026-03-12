@@ -565,7 +565,15 @@ export default function Dashboard() {
           </div>
 
           {/* (2) Alerte Fuite Détectée */}
-          {(isCeo || isAccounting) && <LeakageAlertBanner />}
+          {(isCeo || isAccounting) && (
+            <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
+              borderLeft: '3px solid #F97316',
+              boxShadow: '0 0 12px rgba(249,115,22,0.2)',
+              animation: 'leakAlertPulse 2s ease-in-out infinite',
+            }}>
+              <LeakageAlertBanner />
+            </div>
+          )}
 
           {/* (3) 4 KPI Cards Row */}
           <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch' }}>
