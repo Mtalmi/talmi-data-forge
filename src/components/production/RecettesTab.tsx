@@ -210,7 +210,7 @@ export default function RecettesTab() {
     if (dbFormulas && dbFormulas.length > 0) {
       return dbFormulas.map((row, i) => mapDbToFormula(row, i));
     }
-    return FALLBACK_FORMULAS;
+    return [] as Formula[];
   }, [dbFormulas]);
 
   return (

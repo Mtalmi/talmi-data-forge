@@ -428,15 +428,6 @@ export default function WorldClassProduction() {
       .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
   }, [bons]);
 
-  const FALLBACK_QUALITY = [
-    { day: 'Lun', ok: 8, variances: 1, critical: 0 },
-    { day: 'Mar', ok: 10, variances: 0, critical: 0 },
-    { day: 'Mer', ok: 12, variances: 2, critical: 0 },
-    { day: 'Jeu', ok: 9, variances: 1, critical: 1 },
-    { day: 'Ven', ok: 14, variances: 0, critical: 0 },
-    { day: 'Sam', ok: 6, variances: 0, critical: 0 },
-  ];
-
   const qualityData = useMemo(() => {
     const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
     const dayMap: Record<string, { ok: number; variances: number; critical: number }> = {};
@@ -453,9 +444,7 @@ export default function WorldClassProduction() {
       else dayMap[dayName].ok++;
     });
 
-    const live = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
-    const hasData = live.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);
-    return hasData ? live : FALLBACK_QUALITY;
+    return ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
   }, [weekBons]);
 
   const hasQualityData = qualityData.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);

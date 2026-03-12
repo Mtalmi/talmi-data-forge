@@ -382,38 +382,48 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
               <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 4 }}>Suivi temps réel des batches</p>
             </div>
 
-            {/* Feed */}
+            {/* Feed — live from rows */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
-              {FEED_ITEMS.map(item => (
-                <div key={item.id} style={{
-                  padding: '10px 16px',
-                  borderLeft: `2px solid ${item.active ? 'rgba(96,165,250,0.70)' : 'rgba(52,211,153,0.50)'}`,
-                  margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
-                  transition: 'background 150ms',
-                }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.num}</span>
-                    <div className="flex items-center gap-2">
-                      {item.pct ? (
-                        <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{item.pct}</span>
-                      ) : (
-                        <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
-                      )}
-                      <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.time}</span>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.info}</p>
+              {rows.length === 0 ? (
+                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'rgba(255,255,255,0.30)', fontSize: 12 }}>
+                  Aucun batch en cours
                 </div>
-              ))}
+              ) : (
+                rows.slice(0, 6).map(item => {
+                  const isActive = item.status === 'production';
+                  const pct = item.progress > 0 && item.progress < 100 ? `${item.progress}%` : null;
+                  return (
+                    <div key={item.bl_id} style={{
+                      padding: '10px 16px',
+                      borderLeft: `2px solid ${isActive ? 'rgba(96,165,250,0.70)' : 'rgba(52,211,153,0.50)'}`,
+                      margin: '0 12px 4px 12px', borderRadius: '0 8px 8px 0',
+                      transition: 'background 150ms',
+                    }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,215,0,0.04)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span style={{ fontFamily: mono, fontSize: 13, fontWeight: 500, color: '#fff' }}>{item.bl_id}</span>
+                        <div className="flex items-center gap-2">
+                          {pct ? (
+                            <span style={{ fontFamily: mono, fontSize: 11, color: '#60a5fa' }}>{pct}</span>
+                          ) : (
+                            <span style={{ color: '#34d399', fontSize: 11 }}>✓</span>
+                          )}
+                          <span style={{ fontFamily: mono, fontSize: 10, color: 'rgba(255,255,255,0.20)' }}>{item.heure}</span>
+                        </div>
+                      </div>
+                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.40)' }}>{item.formule} · {item.volume} m³ · {item.client}</p>
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             {/* Footer */}
             <div style={{ padding: 12, borderTop: `1px solid ${T.cardBorder}` }}>
               <span style={{ fontFamily: mono, fontSize: 11, color: 'rgba(255,255,255,0.30)' }}>
-                Total file: 186 m³ restants
+                Total file: {rows.filter(r => r.status === 'planifie').reduce((s, r) => s + r.volume, 0)} m³ restants
               </span>
             </div>
           </div>
