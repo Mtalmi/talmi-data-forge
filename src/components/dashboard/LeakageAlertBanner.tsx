@@ -89,7 +89,7 @@ export default function LeakageAlertBanner() {
     )}>
       {/* Header */}
       <div 
-        className="flex items-center justify-between p-3 cursor-pointer hover:bg-destructive/5 transition-colors"
+        className="group flex items-center justify-between p-3 cursor-pointer hover:bg-destructive/5 transition-colors"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center gap-3">
@@ -101,13 +101,13 @@ export default function LeakageAlertBanner() {
               <AlertTriangle className="h-4 w-4" />
               Alerte Fuite Détectée
             </p>
-            <p className="text-sm text-muted-foreground">
-              {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-medium">Perte estimée: 1,450 DH</span>
-            </p>
+             <p className="text-sm text-muted-foreground">
+               {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-semibold">Perte estimée: 1,450 DH</span>
+             </p>
           </div>
         </div>
         <ChevronRight className={cn(
-          "h-5 w-5 text-muted-foreground transition-transform",
+          "w-5 h-5 text-red-400 transition-all duration-200 ease-out group-hover:translate-x-1",
           expanded && "rotate-90"
         )} />
       </div>
