@@ -1332,7 +1332,14 @@ export default function Dashboard() {
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }}>
+              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }} onClick={() => {
+                setShowLancerToast(true);
+                setLancerToastVisible(true);
+                setTimeout(() => {
+                  setLancerToastVisible(false);
+                  setTimeout(() => setShowLancerToast(false), 300);
+                }, 3000);
+              }}>
                 Lancer
               </button>
               <button className="border border-white/20 text-white/50 hover:text-white/80 hover:border-white/30 px-4 py-1.5 rounded-lg text-sm transition-all">
