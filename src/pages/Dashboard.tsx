@@ -496,6 +496,13 @@ export default function Dashboard() {
             </button>
           )}
           <button
+            onClick={() => navigate('/settings')}
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300"
+            title="Paramètres"
+          >
+            <Settings className="h-3.5 w-3.5 text-slate-500" />
+          </button>
+          <button
             onClick={handleRefresh}
             disabled={refreshing}
             className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300"
