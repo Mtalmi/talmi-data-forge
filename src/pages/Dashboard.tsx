@@ -1047,7 +1047,7 @@ export default function Dashboard() {
               <Radio size={14} className="text-[#D4A843] animate-pulse" />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30 mr-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />LIVE</span>
               <span className="text-[#D4A843] text-[11px] font-medium uppercase tracking-wider whitespace-nowrap">Live Production du Jour</span>
-              <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)', margin: '0 16px' }} />
+              <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, rgba(212,168,67,0.4), transparent)', margin: '0 16px', minWidth: '100px' }} />
               <div className="flex items-center gap-1.5" style={{ boxShadow: '0 0 12px rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -1073,10 +1073,10 @@ export default function Dashboard() {
                         <span className="font-medium" style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>Target</span>
                       </div>
                   </div>
-                  <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
+                  <div style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: '4px', padding: '2px 8px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    TEMPS RÉEL
-                  </span>
+                    <span className="text-[9px] text-emerald-400/70 font-medium">TEMPS RÉEL</span>
+                  </div>
                 </div>
                 <div className="relative">
                   <svg
