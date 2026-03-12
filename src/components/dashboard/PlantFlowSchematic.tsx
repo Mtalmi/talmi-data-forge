@@ -100,10 +100,11 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 1: SILOS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, position:'relative', overflow:'hidden', background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/stocks')}
           {...panelHoverHandlers}
         >
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Silos</div>
           <div className="space-y-1">
             <MiniBar label="Ciment" pct={53} />
@@ -119,10 +120,11 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 2: MALAXEUR ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, position:'relative', overflow:'hidden', background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/production')}
           {...panelHoverHandlers}
         >
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
@@ -142,10 +144,11 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 3: CAMIONS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, position:'relative', overflow:'hidden', background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/logistique')}
           {...panelHoverHandlers}
         >
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Camions</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -169,10 +172,11 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 4: CHANTIERS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: '#0f1929', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, position:'relative', overflow:'hidden', background: '#0f1929', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/bons-de-commande')}
           {...panelHoverHandlers}
         >
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Chantiers</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -199,10 +203,11 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 5: QUALITÉ ── */}
         <div
           className="flux-panel group min-w-0 p-3 pr-4 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, position:'relative', overflow:'hidden', background: 'rgba(15,23,41,0.8)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/laboratoire')}
           {...panelHoverHandlers}
         >
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Qualité</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
