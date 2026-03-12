@@ -169,7 +169,7 @@ export default function PlantFlowSchematic() {
         {/* ── STAGE 4: CHANTIERS ── */}
         <div
           className="flux-panel group min-w-0 p-3 rounded-xl"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
+          style={{ ...panelHoverStyle, background: '#0f1929', border: '1px solid rgba(255,255,255,0.06)', backdropFilter: 'blur(4px)' }}
           onClick={() => navigate('/bons-de-commande')}
           {...panelHoverHandlers}
         >
