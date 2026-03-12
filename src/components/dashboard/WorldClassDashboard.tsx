@@ -596,7 +596,7 @@ function PipelineFunnel() {
           );
         })}
       </div>
-      <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span className="text-[#D4A843] font-medium">{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span></div>
+      <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span className="text-[#D4A843] font-medium">{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span><div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div></div>
     </div>
     </div>
   );
@@ -1176,7 +1176,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="text-[10px] uppercase tracking-wider text-white/40">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR} K DH</span>
+                  <span className="text-xl font-extralight tabular-nums font-mono whitespace-nowrap" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 15px rgba(212,168,67,0.15)' }}>{totalAR}K DH</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
@@ -1193,7 +1193,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
-                        <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{d.label}</span>
+                        <span className="text-[10px] uppercase tracking-wider text-white/40" style={{ fontFamily: "'JetBrains Mono', monospace", ...(d.label === '>90j' ? { color: 'rgb(248,113,113)', fontWeight: '500' } : {}) }}>{d.label}</span>
                         <span style={{ fontSize: '13px', fontWeight: '500', color: 'white', fontFamily: "'JetBrains Mono', monospace" }}>{(d.value / 1000).toFixed(0)}K DH</span>
                       </div>
                       <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
