@@ -912,11 +912,11 @@ export default function Dashboard() {
                     {kpi.label}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
-                    <span className="text-3xl font-mono tracking-tight text-white" style={{
-                      fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-                      fontWeight: 200, lineHeight: 1,
-                      textShadow: '0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
-                    }}>
+                     <span className="text-3xl font-mono tracking-tight text-white" style={{
+                       fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+                       fontWeight: 200, lineHeight: 1,
+                       textShadow: '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
+                     }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
                     <span className="text-lg font-mono text-muted-foreground ml-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{kpi.unit}</span>
@@ -924,14 +924,14 @@ export default function Dashboard() {
                   <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
                   {kpi.trend && (
                     <div className="mt-2 flex items-center gap-1.5">
-                      <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
+                      <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)', textShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>{kpi.trend}</span>
                       <span className="text-[11px] text-muted-foreground/40 ml-1">vs hier</span>
                     </div>
                   )}
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]">
+                    <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.2))' }}>
                       {(() => {
                         // Parse original points and rescale to fill 130x44
                         const rawPts = kpi.sparkline.split(' ').map(p => { const [x, y] = p.split(',').map(Number); return { x, y }; });
