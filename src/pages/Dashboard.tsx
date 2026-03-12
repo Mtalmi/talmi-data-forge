@@ -658,7 +658,7 @@ export default function Dashboard() {
                       </span>
                     )}
                     {'badge' in tab && tab.badge > 0 && (
-                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full shadow-sm shadow-black/30" style={{ fontSize: 10, fontWeight: 700, minWidth: 20, height: 20, padding: '0 5px', lineHeight: 1, background: tab.badgeBg, color: tab.badgeText }}>
+                      <span className="ml-1.5" style={{ width: 20, height: 20, fontSize: 11, fontWeight: 600, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: tab.badgeBg, color: tab.badgeText, boxShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>
                         {tab.badge}
                       </span>
                     )}
