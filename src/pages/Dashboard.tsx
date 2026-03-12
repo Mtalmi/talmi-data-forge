@@ -579,10 +579,10 @@ export default function Dashboard() {
               ref={tabBarRef}
             >
               {([
-                { id: 'command', label: 'COMMAND CENTER' },
-                { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2, badgeColor: '#D4A843' },
-                { id: 'operations', label: 'OPÉRATIONS', badge: 5, badgeColor: '#D4A843' },
-                { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3, badgeColor: '#D4A843' },
+                { id: 'command', label: 'COMMAND CENTER', liveGreenDot: true },
+                { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2, badgeBg: '#D4A843', badgeText: '#000' },
+                { id: 'operations', label: 'OPÉRATIONS', badge: 5, badgeBg: '#D4A843', badgeText: '#000' },
+                { id: 'intelligence', label: 'INTELLIGENCE IA', badge: 3, badgeBg: '#EF4444', badgeText: '#FFF' },
               ] as const).map(tab => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -607,6 +607,12 @@ export default function Dashboard() {
                     }}
                   >
                     {tab.label}
+                    {'liveGreenDot' in tab && tab.liveGreenDot && (
+                      <span className="relative flex h-2 w-2 ml-1.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                      </span>
+                    )}
                     {'live' in tab && tab.live && (
                       <span className="relative flex h-1.5 w-1.5 ml-1">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -614,7 +620,7 @@ export default function Dashboard() {
                       </span>
                     )}
                     {'badge' in tab && tab.badge > 0 && (
-                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full" style={{ fontSize: 9, fontWeight: 700, minWidth: 16, height: 16, padding: '0 4px', lineHeight: 1, background: tab.badgeColor, color: tab.badgeColor === '#D4A843' ? '#0F1419' : '#FFFFFF', boxShadow: `0 0 6px ${tab.badgeColor}60` }}>
+                      <span className="ml-1.5 inline-flex items-center justify-center rounded-full shadow-sm shadow-black/30" style={{ fontSize: 10, fontWeight: 700, minWidth: 20, height: 20, padding: '0 5px', lineHeight: 1, background: tab.badgeBg, color: tab.badgeText }}>
                         {tab.badge}
                       </span>
                     )}
