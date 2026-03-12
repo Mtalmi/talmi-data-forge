@@ -1213,7 +1213,7 @@ export default function Dashboard() {
 
         {/* Footer */}
         <div className="mt-8 mb-6 px-4 flex items-center justify-between" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 11, color: 'rgba(148,163,184,0.15)' }}>
-          <span>TBOS COMMAND CENTER v2.0 — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+          <span>TBOS {activeTab === 'command' ? 'COMMAND CENTER' : activeTab === 'production' ? 'PRODUCTION LIVE' : activeTab === 'operations' ? 'OPÉRATIONS' : 'INTELLIGENCE IA'} v2.0 — {new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
           <span className="flex items-center gap-2">
             <span className="relative flex h-1.5 w-1.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
