@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 
 // Lazy-loaded heavy widgets
