@@ -481,34 +481,25 @@ export default function Dashboard() {
           <div className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none" style={{ zIndex: 1, background: 'linear-gradient(to top, #080C14, transparent)' }} />
 
           {/* Branded Header — World-Class */}
-          <div className="relative z-[1]" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both', padding: '24px 0' }}>
+          <div className="relative z-[1] border-b border-white/[0.04] pb-4 mb-2" style={{ animation: 'fadeSlideIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both', padding: '24px 0 16px' }}>
             <div className="flex items-center justify-center gap-4">
-              <LayoutDashboard size={30} style={{ color: '#FFD700', filter: 'drop-shadow(0 0 6px rgba(255,215,0,0.3))' }} />
-              <div className="flex items-baseline gap-3 flex-wrap justify-center">
-                {/* Animated gradient title */}
-                <h2 style={{
-                  fontFamily: "'Inter', 'DM Sans', sans-serif",
-                  fontWeight: 900,
-                  fontSize: 'clamp(1.4rem, 2.2vw, 1.95rem)',
-                  letterSpacing: '0.06em',
-                  background: 'linear-gradient(135deg, #FFD700 0%, #B87333 40%, #FFD700 80%, #B87333 100%)',
-                  backgroundSize: '300% 100%',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  animation: 'tbos-gradient-shift 6s ease-in-out infinite',
-                  lineHeight: 1.1,
-                }}>
-                  <span className="font-bold tracking-[0.2em] uppercase">TBOS</span> <span className="font-light tracking-wide">Tableau de Bord</span>
+              <LayoutDashboard size={28} style={{ color: '#D4A843', opacity: 0.8 }} />
+              <div className="flex flex-col items-start">
+                {/* Title row */}
+                <h2 style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", lineHeight: 1.1, fontSize: 28 }}>
+                  <span style={{ fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#fff', textShadow: '0 0 20px rgba(212,168,67,0.15)' }}>TBOS</span>
+                  {' '}
+                  <span style={{ fontWeight: 200, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.7)' }}>Tableau de Bord</span>
                 </h2>
                 {/* Subtitle with data pulse */}
                 <span className="flex items-center gap-1" style={{
                   fontFamily: "'Inter', 'DM Sans', sans-serif",
                   fontWeight: 500,
-                  fontStyle: 'italic',
-                  fontSize: 'clamp(0.65rem, 1vw, 0.85rem)',
-                  color: 'rgba(148,163,184,0.55)',
-                  letterSpacing: '0.06em',
-                  marginLeft: 8,
+                  fontSize: 11,
+                  color: 'rgba(255,255,255,0.3)',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  marginTop: 4,
                 }}>
                   Données en temps réel
                   {/* Live pulse indicator — after text */}
@@ -531,8 +522,6 @@ export default function Dashboard() {
                 </span>
               </div>
             </div>
-            {/* Subtle gold hairline */}
-            <div className="mx-auto mt-3" style={{ maxWidth: 320, height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)' }} />
           </div>
 
           {/* ═══ SEARCH BAR ═══ */}
