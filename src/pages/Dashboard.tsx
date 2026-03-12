@@ -1091,11 +1091,11 @@ export default function Dashboard() {
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
               </div>
               {/* Header row */}
-              <div className="flex items-center justify-between px-2 pb-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[70px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Batch</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium flex-1 text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Formule</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[50px] text-center" style={{ color: 'rgba(148,163,184,0.4)' }}>Volume</span>
-                <span className="text-[10px] uppercase tracking-wider font-medium w-[45px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Heure</span>
+              <div className="flex items-center justify-between px-2 pb-2 mb-2 border-b border-white/5">
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[70px]">Batch</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium flex-1 text-center">Formule</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[50px] text-center">Volume</span>
+                <span className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50 font-medium w-[45px] text-right">Heure</span>
               </div>
               <div className="space-y-1">
                 {[
