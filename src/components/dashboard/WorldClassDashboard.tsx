@@ -400,7 +400,7 @@ function PipelineFunnel() {
   ];
 
   return (
-    <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <Card className="ops-enter ops-surface-card" style={{ minHeight: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
@@ -846,7 +846,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
@@ -871,7 +871,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     <div key={i}>
                       <div className="flex justify-between mb-1">
                         <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.5)' }}>{d.label}</span>
-                        <span style={{ fontSize: '10px', fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.6)' }}>{(d.value / 1000).toFixed(0)}K</span>
+                        <span className="text-sm font-medium" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(148,163,184,0.7)' }}>{(d.value / 1000).toFixed(0)}K DH</span>
                       </div>
                       <div className="h-[5px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)' }}>
                         <div
