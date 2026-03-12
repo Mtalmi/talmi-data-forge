@@ -1018,7 +1018,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             {/* Batch Timeline */}
             {!hideProductionWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-2" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)', zIndex: 10 }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.7) 50%, transparent 100%)', zIndex: 50 }} />
 
 
               <div className="flex items-center gap-2 mb-4">
@@ -1117,7 +1117,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           {/* Quality feed — Full width row */}
           {!hideProductionWidgets && (
           <Card className="ops-enter ops-surface-card tbos-stagger-6 lg:col-span-3" style={{ borderRadius: 8, padding: 20, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)', zIndex: 10 }} />
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.7) 50%, transparent 100%)', zIndex: 50 }} />
             <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
             <div className="flex flex-col gap-1">
               {[
