@@ -54,9 +54,30 @@ export default function LeakageAlertBanner() {
 
   if (visibleLeakages.length === 0) {
     return (
-      <div className="rounded-lg flex items-center gap-2.5 px-4 py-2.5 bg-green-500/5 border border-green-500/20">
-        <CheckCircle2 className="h-4 w-4 shrink-0 text-green-400" />
-        <span className="text-sm text-green-400 font-medium">Aucune alerte active — Opérations normales</span>
+      <div
+        className="rounded-xl flex items-center gap-4 px-6 py-3.5"
+        style={{
+          background: 'rgba(16,185,129,0.04)',
+          border: '1px solid rgba(16,185,129,0.12)',
+        }}
+      >
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: 'rgba(16,185,129,0.12)' }}
+        >
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+        </div>
+        <div className="flex items-center gap-2 flex-wrap min-w-0">
+          <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(52,211,153,0.9)' }}>Aucune alerte active</span>
+          <span style={{ color: 'rgba(52,211,153,0.3)' }}>—</span>
+          <span style={{ fontSize: 12, color: 'rgba(52,211,153,0.4)' }}>Opérations normales · Dernière vérification: il y a 12 min</span>
+        </div>
+        <div className="ml-auto flex-shrink-0">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+          </span>
+        </div>
       </div>
     );
   }
