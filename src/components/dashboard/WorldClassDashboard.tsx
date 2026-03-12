@@ -943,7 +943,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </Card>
+            </div>
+            </div>
             )}
 
             {/* Live Batch Progress */}
