@@ -964,7 +964,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <span className="text-[10px] text-muted-foreground/30 font-medium">Prochain shift: 14h00 — 3 opérateurs</span>
         </div>
 
-        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
+        <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start', borderRadius: 0, overflow: 'visible' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
             <div className="space-y-4 min-w-0">
