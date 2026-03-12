@@ -576,7 +576,7 @@ function PipelineFunnel() {
           return (
             <div key={i} className="contents">
               <div
-                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2"
+                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer"
                 style={{
                   background: isEmpty ? 'rgba(255,255,255,0.03)' : st.bg,
                   border: isEmpty ? '1px solid rgba(255,255,255,0.1)' : `1px solid ${st.border}`,
@@ -584,10 +584,10 @@ function PipelineFunnel() {
                   transition: 'all 200ms ease-out',
                 }}
               >
-                <span className={`font-bold font-mono ${isEmpty ? 'text-2xl text-white/20' : 'text-2xl'}`} style={{ color: isEmpty ? undefined : st.color, lineHeight: 1 }}>
+                <span className="font-mono font-light text-3xl text-center block" style={{ color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, lineHeight: 1 }}>
                   {s.value}
                 </span>
-                <span className="text-[9px] tracking-[0.1em] uppercase" style={{ color: isEmpty ? 'rgba(255,255,255,0.3)' : st.color, opacity: isEmpty ? 1 : 0.7 }}>{s.label}</span>
+                <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
                 <span className="flex-shrink-0 text-lg text-muted-foreground/20">›</span>
