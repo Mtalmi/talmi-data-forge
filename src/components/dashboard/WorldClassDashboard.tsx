@@ -1015,6 +1015,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="text-sm" style={{ color: 'rgb(52,211,153)' }}>+12% vs hier</div>
           </div>
         )}
+        </>
         )}
 
         {/* ── Seasonal Demand Forecaster ── */}
