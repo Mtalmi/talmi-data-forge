@@ -557,7 +557,7 @@ function PipelineFunnel() {
 
   return (
     <div className="relative hover:-translate-y-[1px] hover:border-[#D4A843]/20 cursor-pointer transition-all duration-200 ease-out group" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
       <div className="ops-enter ops-surface-card flex flex-col p-6" style={{ minHeight: 420 }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
