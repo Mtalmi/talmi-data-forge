@@ -1055,7 +1055,6 @@ export default function Dashboard() {
                   onMouseLeave={handleChartMouseLeave}
                   style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
                 >
-                >
                   {/* Grid lines */}
                   {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
                     <line key={i} x1="0" y1={svgH * (1 - pct)} x2={svgW} y2={svgH * (1 - pct)} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
