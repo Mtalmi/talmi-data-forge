@@ -1044,9 +1044,9 @@ export default function Dashboard() {
             style={{ boxShadow: '0 0 30px rgba(212, 168, 67, 0.05), inset 0 1px 0 rgba(255,255,255,0.04)' }}
           >
             <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
-              <Radio size={14} className="text-amber-400" />
+              <Radio size={14} className="text-[#D4A843] animate-pulse" />
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30 mr-2"><span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse inline-block" />LIVE</span>
-              <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Live Production du Jour</span>
+              <span className="text-[#D4A843] text-[11px] font-medium uppercase tracking-wider whitespace-nowrap">Live Production du Jour</span>
               <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
               <div className="flex items-center gap-1.5" style={{ boxShadow: '0 0 12px rgba(34,197,94,0.3)', background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', borderRadius: '4px', padding: '2px 8px' }}>
                 <span className="relative flex h-2 w-2">
