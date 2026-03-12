@@ -1349,7 +1349,7 @@ export default function Dashboard() {
                     { label: 'Attente', value: '12 min', color: '#FBBF24' },
                   ].map((m) => (
                     <div key={m.label} className="p-1.5 rounded" style={{ background: 'rgba(255,255,255,0.02)' }}>
-                      <div className="text-[10px] uppercase tracking-wider text-white/40 mb-0.5">{m.label}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-white/40 block mb-0.5">{m.label}</div>
                       <div className="text-sm font-medium text-white">{m.value}</div>
                     </div>
                   ))}
