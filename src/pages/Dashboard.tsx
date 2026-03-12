@@ -828,6 +828,18 @@ export default function Dashboard() {
               <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
             </span>
           </button>
+          <button
+            onClick={() => setActiveTab('operations')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'operations' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'operations' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'operations' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <Activity size={14} />
+            Opérations
+          </button>
         </div>
 
         {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
