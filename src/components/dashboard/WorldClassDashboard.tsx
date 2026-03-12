@@ -754,56 +754,58 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             {/* Stock Levels — Horizontal Bars */}
             {!showOnlyOps && (
             <Card className="ops-enter ops-surface-card tbos-stagger-4" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              
-              <div className="flex flex-col">
-                {stockData.slice(0, 6).map((s, i) => (
-                  <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
-                ))}
-              </div>
-              {/* ── Predictive Stock Alerts ── */}
-              <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                <div className="flex items-center gap-1.5 mb-2">
-                  <span className="text-[9px] uppercase tracking-[0.12em] font-medium" style={{ color: 'rgba(148,163,184,0.5)' }}>
-                    Prévision de Rupture
-                  </span>
+              <div className="grid grid-cols-5 gap-5" style={{ alignItems: 'stretch' }}>
+                {/* Left: Stock Bars (60%) */}
+                <div className="col-span-3 flex flex-col">
+                  {stockData.slice(0, 6).map((s, i) => (
+                    <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
+                  ))}
                 </div>
-                <div className="space-y-1">
-                  {[
-                    { name: 'Adjuvant', dailyRate: 5.0, daysLeft: 1 },
-                    { name: 'Eau', dailyRate: 3.5, daysLeft: 2 },
-                    { name: 'Gravette', dailyRate: 2.1, daysLeft: 3 },
-                    { name: 'Ciment', dailyRate: 1.8, daysLeft: 5 },
-                    { name: 'Sable', dailyRate: 0.9, daysLeft: 8 },
-                  ].map((item) => (
-                    <div key={item.name} className="flex items-center justify-between gap-2 w-full min-w-0 text-[9px]">
-                      <div className="flex items-center gap-2 min-w-0 flex-shrink">
-                        <span className="w-14 truncate" style={{ color: 'rgba(148,163,184,0.5)' }}>{item.name}</span>
-                        <span className="truncate" style={{ color: 'rgba(148,163,184,0.35)' }}>▼ {item.dailyRate}%/j</span>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap">
-                        <span
-                          className="font-medium"
-                          style={{
-                            color: item.daysLeft <= 1 ? '#F87171' : item.daysLeft <= 3 ? '#FBBF24' : 'rgba(148,163,184,0.4)',
-                          }}
-                        >
-                          {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
-                        </span>
-                        {item.daysLeft <= 3 && (
-                          <button
-                            className="px-1.5 py-0.5 rounded text-[8px] font-medium whitespace-nowrap flex-shrink-0"
+                {/* Right: Prévision de Rupture (40%) */}
+                <div className="col-span-2 flex flex-col" style={{ borderLeft: '1px solid rgba(255,255,255,0.05)', paddingLeft: 20 }}>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="text-[9px] uppercase tracking-[0.12em] font-medium" style={{ color: 'rgba(148,163,184,0.5)' }}>
+                      Prévision de Rupture
+                    </span>
+                  </div>
+                  <div className="space-y-1 flex-1 flex flex-col justify-center">
+                    {[
+                      { name: 'Adjuvant', dailyRate: 5.0, daysLeft: 1 },
+                      { name: 'Eau', dailyRate: 3.5, daysLeft: 2 },
+                      { name: 'Gravette', dailyRate: 2.1, daysLeft: 3 },
+                      { name: 'Ciment', dailyRate: 1.8, daysLeft: 5 },
+                      { name: 'Sable', dailyRate: 0.9, daysLeft: 8 },
+                    ].map((item) => (
+                      <div key={item.name} className="flex items-center justify-between gap-2 w-full min-w-0 text-[9px]">
+                        <div className="flex items-center gap-2 min-w-0 flex-shrink">
+                          <span className="w-14 truncate" style={{ color: 'rgba(148,163,184,0.5)' }}>{item.name}</span>
+                          <span className="truncate" style={{ color: 'rgba(148,163,184,0.35)' }}>▼ {item.dailyRate}%/j</span>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap">
+                          <span
+                            className="font-medium"
                             style={{
-                              background: 'rgba(212,175,55,0.08)',
-                              border: '1px solid rgba(212,175,55,0.2)',
-                              color: '#D4AF37',
+                              color: item.daysLeft <= 1 ? '#F87171' : item.daysLeft <= 3 ? '#FBBF24' : 'rgba(148,163,184,0.4)',
                             }}
                           >
-                            Commander
-                          </button>
-                        )}
+                            {item.daysLeft <= 1 ? '🔴 Demain' : item.daysLeft <= 3 ? `⚠️ ${item.daysLeft}j` : `${item.daysLeft}j`}
+                          </span>
+                          {item.daysLeft <= 3 && (
+                            <button
+                              className="px-1.5 py-0.5 rounded text-[8px] font-medium whitespace-nowrap flex-shrink-0"
+                              style={{
+                                background: 'rgba(212,175,55,0.08)',
+                                border: '1px solid rgba(212,175,55,0.2)',
+                                color: '#D4AF37',
+                              }}
+                            >
+                              Commander
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </Card>
