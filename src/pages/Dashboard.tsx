@@ -1536,7 +1536,7 @@ export default function Dashboard() {
           <span style={{ color: '#D4A843', fontSize: 14 }}>⚡</span>
           <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap" style={{ color: '#D4A843' }}>Opérations du Jour</span>
           <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
-          <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '11px', color: 'rgba(148,163,184,0.4)' }}>{new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+          <span className="text-xs text-white/40 font-mono">12/03/2026</span>
         </div>
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
