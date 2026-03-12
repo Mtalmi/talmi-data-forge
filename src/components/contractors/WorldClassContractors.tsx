@@ -2192,7 +2192,7 @@ function HistoryRow({ h, delay, last }: { h: LiveHistoryItem; delay: number; las
 // ─────────────────────────────────────────────────────
 // UPCOMING CARD
 // ─────────────────────────────────────────────────────
-function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: typeof UPCOMING[0]; delay: number; onAssigner?: () => void; onAppelOffres?: () => void }) {
+function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: LiveUpcomingItem; delay: number; onAssigner?: () => void; onAppelOffres?: () => void }) {
   const [hov, setHov] = useState(false);
   const vis = useFadeIn(delay);
   const isHaute = u.priority === 'Haute';
