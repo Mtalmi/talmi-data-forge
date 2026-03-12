@@ -1148,12 +1148,9 @@ export default function Dashboard() {
                         </text>
                       );
                     })}
-                    {/* Hover point */}
+                    {/* Hover — vertical line only, no dot */}
                     {hoveredPoint && (
-                      <>
-                        <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#D4A843" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
-                      </>
+                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(212,168,67,0.25)" strokeWidth="0.5" strokeDasharray="2,2" />
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
