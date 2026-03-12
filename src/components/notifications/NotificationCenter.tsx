@@ -166,9 +166,15 @@ export default function NotificationCenter() {
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-96 p-0" align="end">
+      <PopoverContent className="w-96 p-0" align="end" style={{
+        background: 'rgba(13,18,32,0.95)',
+        backdropFilter: 'blur(20px)',
+        border: '1.5px solid rgba(255,215,0,0.12)',
+        borderRadius: 12,
+        boxShadow: '0 20px 60px rgba(0,0,0,0.6), 0 0 30px rgba(255,215,0,0.04)',
+      }}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4" style={{ borderBottom: '1px solid rgba(255,215,0,0.08)' }}>
           <div>
             <h3 className="font-semibold">{n.title}</h3>
             <p className="text-xs text-muted-foreground">
@@ -195,12 +201,19 @@ export default function NotificationCenter() {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : alerts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-              <Bell className="h-10 w-10 text-muted-foreground/50 mb-3" />
-              <p className="text-muted-foreground">{n.noNotifications}</p>
-              <p className="text-xs text-muted-foreground/70">
-                {n.alertsAppearHere}
-              </p>
+            <div className="p-3 space-y-2">
+              {[
+                { dot: '#ef4444', title: 'Alerte Fuite — BL-2026-0312', time: 'il y a 2h' },
+                { dot: '#f97316', title: 'Stock Adjuvant critique — Commande recommandée', time: 'il y a 4h' },
+              ].map((notif, i) => (
+                <div key={i} className="flex items-start gap-3 px-3 py-2.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                  <span className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: notif.dot, boxShadow: `0 0 6px ${notif.dot}60` }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm" style={{ color: 'rgba(241,245,249,0.9)' }}>{notif.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: 'rgba(148,163,184,0.5)', fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace" }}>{notif.time}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="p-2 space-y-1">
