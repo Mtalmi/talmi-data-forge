@@ -101,9 +101,9 @@ export default function LeakageAlertBanner() {
               <AlertTriangle className="h-4 w-4" />
               Alerte Fuite Détectée
             </p>
-            <p className="text-sm text-muted-foreground">
-              {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-medium">Perte estimée: 1,450 DH</span>
-            </p>
+             <p className="text-sm text-muted-foreground">
+               {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-semibold">Perte estimée: 1,450 DH</span>
+             </p>
           </div>
         </div>
         <ChevronRight className={cn(
