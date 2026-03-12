@@ -383,10 +383,10 @@ export default function WorldClassProduction() {
     if (hasData) {
       return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
     }
-    // Realistic fallbacks matching Dashboard story
+    // No data — show zeros
     return {
-      produced: 438, inProgress: 47, planned: 186,
-      totalVolume: 671, completedBatches: 12, conformity: 94, totalBatches: 14,
+      produced: 0, inProgress: 0, planned: 0,
+      totalVolume: 0, completedBatches: 0, conformity: 100, totalBatches: 0,
     };
   }, [bons, batches]);
 
