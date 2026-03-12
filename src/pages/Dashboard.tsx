@@ -1002,6 +1002,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra en connexion...</span>
+                    <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)' }}>Dernière capture: il y a 4h</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
                     <div className="flex items-center justify-between">
