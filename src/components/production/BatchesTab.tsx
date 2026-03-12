@@ -31,7 +31,7 @@ interface BatchRow {
   progress: number;
 }
 
-function statusStyle(s: FallbackRow['status']) {
+function statusStyle(s: BatchRow['status']) {
   switch (s) {
     case 'valide': return { label: 'Validé', bg: 'rgba(52,211,153,0.12)', color: '#34d399', dot: '#34d399' };
     case 'production': return { label: 'En Production', bg: 'rgba(96,165,250,0.12)', color: '#60a5fa', dot: '#60a5fa' };
