@@ -1243,12 +1243,13 @@ export default function Dashboard() {
                       );
                     })()}
                     {/* X-axis time labels */}
-                    {['6h', '8h', '10h', '12h', '14h', '16h', '18h'].map(label => {
-                      const idx = SPARKLINE_DATA.findIndex(d => d.h === label.replace(/^(\d)h/, '0$1h'));
+                    {['7h', '9h', '11h', '13h', '15h', '17h'].map(label => {
+                      const padded = label.replace(/^(\d)h/, '0$1h');
+                      const idx = SPARKLINE_DATA.findIndex(d => d.h === padded);
                       if (idx === -1) return null;
                       const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
                       return (
-                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="4.5" fontFamily="monospace" fontWeight="500">
+                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="#8899aa" fontSize="5.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="500">
                           {label}
                         </text>
                       );
