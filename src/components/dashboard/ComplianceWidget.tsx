@@ -23,7 +23,10 @@ export function ComplianceWidget() {
         borderTop: '1px solid rgba(212,168,67,0.3)',
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 20,
+        transition: 'all 200ms ease-out',
       }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,168,67,0.2)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '1px solid rgba(212,168,67,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
     >
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
