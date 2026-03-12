@@ -20,7 +20,7 @@ import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBri
 const WorldClassDashboard = lazy(() => import('@/components/dashboard/WorldClassDashboard').then(m => ({ default: m.WorldClassDashboard })));
 const ExecutiveSummaryView = lazy(() => import('@/components/dashboard/ExecutiveSummaryView').then(m => ({ default: m.ExecutiveSummaryView })));
 const PlantFlowSchematic = lazy(() => import('@/components/dashboard/PlantFlowSchematic'));
-const LiveBatchProgress = lazy(() => import('@/components/dashboard/LiveBatchProgress').then(m => ({ default: m.default || m.LiveBatchProgress || (m as any) })));
+const LiveBatchProgress = lazy(() => import('@/components/dashboard/LiveBatchProgress'));
 
 // Finance zone lazy widgets
 const CircularBudgetGauge = lazy(() => import('@/components/dashboard/CircularBudgetGauge').then(m => ({ default: m.CircularBudgetGauge })));
