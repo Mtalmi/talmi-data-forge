@@ -225,21 +225,21 @@ export default function RecentDeliveries() {
         const latePct = (lateCount / total) * 100;
         return (
           <div className="mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-            <div className="h-1.5 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.06)' }}>
+            <div className="h-1.5 rounded-full overflow-hidden flex gap-px" style={{ background: 'rgba(255,255,255,0.06)' }}>
               {livrePct > 0 && (
-                <div className="h-full transition-all duration-1000" style={{ width: `${livrePct}%`, background: '#22c55e' }} />
+                <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${livrePct}%`, background: '#22c55e' }} />
               )}
               {enRoutePct > 0 && (
-                <div className="h-full transition-all duration-1000" style={{ width: `${enRoutePct}%`, background: '#eab308' }} />
+                <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${enRoutePct}%`, background: '#eab308' }} />
               )}
               {latePct > 0 && (
-                <div className="h-full transition-all duration-1000" style={{ width: `${latePct}%`, background: '#ef4444' }} />
+                <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${latePct}%`, background: '#ef4444' }} />
               )}
             </div>
             <div className="flex items-center gap-3 mt-1.5">
-              <span className="text-[10px] font-mono tabular-nums" style={{ color: '#22c55e' }}>{livreCount} Livré</span>
-              {enRouteCount > 0 && <span className="text-[10px] font-mono tabular-nums" style={{ color: '#eab308' }}>{enRouteCount} En Route</span>}
-              {lateCount > 0 && <span className="text-[10px] font-mono tabular-nums" style={{ color: '#ef4444' }}>{lateCount} En Retard</span>}
+              <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#22c55e' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#22c55e' }} />{livreCount} Livré</span>
+              {enRouteCount > 0 && <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#eab308' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#eab308' }} />{enRouteCount} En Route</span>}
+              {lateCount > 0 && <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#ef4444' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#ef4444' }} />{lateCount} En Retard</span>}
               <span className="ml-auto text-[10px] text-slate-500 font-mono tabular-nums">{livreCount}/{timeline.length}</span>
             </div>
           </div>
