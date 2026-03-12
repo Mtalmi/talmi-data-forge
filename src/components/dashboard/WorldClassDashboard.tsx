@@ -590,7 +590,7 @@ function PipelineFunnel() {
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span className="flex-shrink-0 text-lg text-muted-foreground/20">›</span>
+                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px' }}>›</span>
               )}
             </div>
           );
@@ -923,7 +923,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
               <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
-              <span className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR</span>
+              <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR</span></div>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
