@@ -556,7 +556,7 @@ function PipelineFunnel() {
   ];
 
   return (
-    <div className="relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out group" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <div className="relative hover:-translate-y-[1px] hover:border-[#D4A843]/20 cursor-pointer transition-all duration-200 ease-out group" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.7),transparent)', zIndex:50 }} />
       <div className="ops-enter ops-surface-card flex flex-col p-6" style={{ minHeight: 420 }}>
       <div className="flex justify-between items-center mb-4">
@@ -584,7 +584,7 @@ function PipelineFunnel() {
                   transition: 'all 200ms ease-out',
                 }}
               >
-                <span className="font-mono font-light text-3xl text-center block" style={{ color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, lineHeight: 1 }}>
+                <span className="text-center block" style={{ fontFamily: 'monospace', fontSize: isEmpty ? '28px' : '30px', color: isEmpty ? 'rgba(255,255,255,0.2)' : st.color, fontWeight: '300', lineHeight: 1 }}>
                   {s.value}
                 </span>
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
