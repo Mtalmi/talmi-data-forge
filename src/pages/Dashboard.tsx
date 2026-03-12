@@ -1458,7 +1458,7 @@ export default function Dashboard() {
             </div>
 
             {/* Environmental Monitoring Strip */}
-            <div className="flex items-center justify-center gap-6 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-3 mx-6 my-4 backdrop-blur-sm" style={{ position: 'relative', overflow: 'hidden' }}>
+            <div className="flex items-center justify-center gap-6 px-6 py-3 mx-6 my-4 backdrop-blur-sm" style={{ position: 'relative', overflow: 'hidden', background: 'linear-gradient(to right, rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.08)', borderRadius: '8px' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
               {/* Live indicator */}
               <div className="flex items-center gap-1.5 pr-4 mr-4 border-r border-white/10">
