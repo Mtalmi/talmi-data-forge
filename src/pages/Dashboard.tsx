@@ -528,7 +528,7 @@ export default function Dashboard() {
 
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
-          <>
+          <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* (1) Greeting — Cinematic Hero Moment */}
           <div className="relative z-[1]" style={{ marginBottom: 20 }}>
             <div
@@ -854,12 +854,12 @@ export default function Dashboard() {
               <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
             </Suspense>
           </div>
-          </>
+          </div>
           )}
 
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
           {activeTab === 'production' && (
-          <>
+          <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Taux de Réussite compact gauge */}
           <div className="mb-5 flex flex-col items-start">
             <div className="rounded-lg px-5 py-4 flex flex-col items-center" style={{
@@ -1147,12 +1147,12 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          </>
+          </div>
           )}
 
         </div>{/* end hero zone wrapper */}
         {activeTab === 'operations' && (
-        <>
+        <div key="tab-operations" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
         <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
           <Activity size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Opérations</span>
@@ -1163,12 +1163,12 @@ export default function Dashboard() {
             <WorldClassDashboard hideProductionWidgets showOnlyOps />
           </Suspense>
         </div>
-        </>
+        </div>
         )}
 
         {/* ═══ INTELLIGENCE IA TAB CONTENT ═══ */}
         {activeTab === 'intelligence' && (
-        <>
+        <div key="tab-intelligence" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
         <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
           <Sparkles size={16} className="text-amber-400" />
           <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Intelligence IA</span>
@@ -1179,7 +1179,7 @@ export default function Dashboard() {
             <WorldClassDashboard hideProductionWidgets showOnlyIntel />
           </Suspense>
         </div>
-        </>
+        </div>
         )}
 
         {/* FINANCE & CONFORMITÉ — Hidden for CEO demo (no content yet) */}

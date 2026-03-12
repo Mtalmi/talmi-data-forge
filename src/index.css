@@ -4295,6 +4295,10 @@ textarea.valid {
   0%, 100% { box-shadow: 0 0 8px rgba(34,197,94,0.3); }
   50% { box-shadow: 0 0 8px rgba(34,197,94,0.8); }
 }
+@keyframes tabFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 /* ══════════════════════════════════════════════════════════════
    RESPONSIVE POLISH
