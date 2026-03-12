@@ -1129,7 +1129,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                 { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
               ].map((q, i) => (
-                <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200" style={!q.ok ? { borderLeft: '2px solid rgba(245,158,11,0.4)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: q.ok ? T.dotOk : T.dotWarn }} />
                     <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
