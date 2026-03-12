@@ -314,7 +314,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
             opacity: 0.7,
             boxShadow: pct < 20
               ? '0 0 6px rgba(239,68,68,0.25)'
-              : pct <= 40
+              : pct < 40
                 ? '0 0 6px rgba(234,179,8,0.2)'
                 : '0 0 6px rgba(34,197,94,0.15)',
           }}
