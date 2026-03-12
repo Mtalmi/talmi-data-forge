@@ -539,7 +539,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-start">
                 {/* Title row */}
                 <h2 style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", lineHeight: 1.1, fontSize: 28 }}>
-                  <span style={{ fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#fff', textShadow: '0 0 20px rgba(212,168,67,0.15)' }}>TBOS</span>
+                  <span style={{ fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fff', textShadow: '0 0 20px rgba(212,168,67,0.15)' }}>TBOS</span>
                   {' '}
                   <span style={{ fontWeight: 200, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.7)' }}>Tableau de Bord</span>
                 </h2>
@@ -576,79 +576,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ═══ SEARCH BAR ═══ */}
-          <div className="relative z-[2] mx-auto my-4" style={{ maxWidth: 480 }} ref={searchRef}>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search metrics, KPIs, reports..."
-                className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white/70 placeholder:text-muted-foreground/30 outline-none focus:border-white/20 transition-colors duration-200"
-                onFocus={() => setSearchFocused(true)}
-                onBlur={(e) => {
-                  if (!searchRef.current?.contains(e.relatedTarget as Node)) {
-                    setSearchFocused(false);
-                  }
-                }}
-                onKeyDown={(e) => { if (e.key === 'Escape') { setSearchFocused(false); (e.target as HTMLElement).blur(); } }}
-                readOnly
-              />
-            </div>
-            {searchFocused && (
-              <div
-                className="absolute top-full left-0 right-0 mt-1 z-50 overflow-hidden"
-                style={{
-                  background: '#0d1528',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 12,
-                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-                  animation: 'searchDropIn 200ms ease-out',
-                }}
-              >
-                {/* AI Search Preview Bar */}
-                <div className="flex items-center gap-2 px-4 py-3" style={{ background: 'rgba(212,168,67,0.05)', borderBottom: '1px solid rgba(212,168,67,0.1)' }}>
-                  <span style={{ color: '#D4A843', fontSize: 14 }}>✦</span>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: '#D4A843', letterSpacing: '0.05em' }}>Recherche IA</span>
-                  <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' }}>— Bientôt disponible</span>
-                </div>
 
-                {/* Quick Navigation */}
-                <div className="px-4 pt-3 pb-1">
-                  <span style={{ fontSize: 9, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', fontWeight: 500, textTransform: 'uppercase' }}>NAVIGATION RAPIDE</span>
-                </div>
-                <div className="flex flex-col">
-                  {[
-                    { label: 'Stocks', path: '/stocks', icon: Package },
-                    { label: 'Production', path: '/production', icon: Factory },
-                    { label: 'Ventes', path: '/ventes', icon: TrendingUp },
-                    { label: 'Clients', path: '/clients', icon: Bell },
-                    { label: 'Logistique', path: '/logistique', icon: Truck },
-                  ].map(link => {
-                    const Icon = link.icon;
-                    return (
-                      <button
-                        key={link.path}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 text-left group"
-                        style={{ color: 'rgba(255,255,255,0.6)' }}
-                        onMouseDown={(e) => { e.preventDefault(); navigate(link.path); setSearchFocused(false); }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.color = '#fff'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)'; }}
-                      >
-                        <Icon size={14} style={{ opacity: 0.5 }} />
-                        <span>→ {link.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Keyboard Hints */}
-                <div className="px-4 py-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.15)', fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>
-                    ↑↓ naviguer · ↵ ouvrir · esc fermer
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
 
 
           <div className="relative z-[1] mb-5" style={{
@@ -756,11 +684,11 @@ export default function Dashboard() {
                       <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-medium" style={{ marginTop: 2 }}>CAPACITÉ</span>
                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
-                    <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
-                      <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(251,191,36,0.6)' }} strokeWidth={1.5} />
-                      <span className="font-medium" style={{ color: 'rgba(251,191,36,0.85)' }}>2</span>
-                      <span style={{ color: 'rgba(251,191,36,0.6)' }}>urgent</span>
-                    </span>
+                      <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
+                       <Truck className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(248,113,113,0.8)' }} strokeWidth={1.5} />
+                       <span className="font-medium" style={{ color: '#f87171' }}>2</span>
+                       <span className="font-medium" style={{ color: '#f87171' }}>urgent</span>
+                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
                     <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
                       <Package className="w-3.5 h-3.5 flex-shrink-0" style={{ color: 'rgba(255,255,255,0.35)' }} strokeWidth={1.5} />
@@ -802,7 +730,7 @@ export default function Dashboard() {
                       {/* NOUVEAU DEVIS — neutral */}
                       <button
                         onClick={() => navigate('/ventes')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(255,255,255,0.04)',
                           border: '1px solid rgba(255,255,255,0.10)',
@@ -812,13 +740,13 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <PlusCircle size={16} className="opacity-60" />
-                        Nouveau Devis
+                        NOUVEAU DEVIS
                       </button>
 
                       {/* RELANCER CLIENTS — red urgency */}
                       <button
                         onClick={() => navigate('/recouvrement')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(239,68,68,0.08)',
                           border: '1px solid rgba(239,68,68,0.20)',
@@ -828,7 +756,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <PhoneCall size={16} className="opacity-60" />
-                        Relancer Clients
+                        RELANCER CLIENTS
                         <span
                           className="absolute flex items-center justify-center rounded-full z-10"
                           style={{
@@ -844,7 +772,7 @@ export default function Dashboard() {
                       {/* RAPPORT DU JOUR — gold intelligence */}
                       <button
                         onClick={() => navigate('/rapports')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(212,168,67,0.08)',
                           border: '1px solid rgba(212,168,67,0.20)',
@@ -854,7 +782,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <FileText size={16} className="opacity-60" />
-                        Rapport du Jour
+                        RAPPORT DU JOUR
                         <span
                           className="absolute flex items-center justify-center rounded-md z-10"
                           style={{
@@ -870,7 +798,7 @@ export default function Dashboard() {
                       {/* LANCER PRODUCTION — green go */}
                       <button
                         onClick={() => navigate('/production')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(16,185,129,0.08)',
                           border: '1px solid rgba(16,185,129,0.20)',
@@ -880,7 +808,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <BarChart3 size={16} className="opacity-60" />
-                        Lancer Production
+                        LANCER PRODUCTION
                       </button>
                     </div>
 
@@ -1018,13 +946,13 @@ export default function Dashboard() {
                   {kpi.trend && (
                     <div className="mt-2 flex items-center gap-1.5">
                       <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
-                      <span className="text-[10px] text-muted-foreground/30 ml-1">vs hier</span>
+                      <span className="text-[11px] text-muted-foreground/40 ml-1">vs hier</span>
                     </div>
                   )}
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <svg width="100" height="28" viewBox="0 0 120 32">
+                    <svg width="100" height="32" viewBox="0 0 120 32" className="w-[100px] h-[32px]">
                       <polyline fill="none" stroke="#D4A843" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" points={kpi.sparkline} style={{ opacity: 0.6 }} />
                       {(() => { const pts = kpi.sparkline.split(' '); const last = pts[pts.length - 1]?.split(','); return last ? <circle cx={last[0]} cy={last[1]} r="2" fill="#D4A843" style={{ opacity: 0.8 }} /> : null; })()}
                     </svg>
