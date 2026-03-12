@@ -979,7 +979,7 @@ export default function WorldClassContractors() {
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
-                  data={COST_DONUT}
+                  data={costDonut.length > 0 ? costDonut : [{ name: 'Aucun', value: 1, color: T.cardBorder }]}
                   cx="50%"
                   cy="50%"
                   innerRadius={65}
@@ -990,7 +990,7 @@ export default function WorldClassContractors() {
                   animationDuration={800}
                   label={false}
                 >
-                  {COST_DONUT.map((entry, i) => (
+                  {(costDonut.length > 0 ? costDonut : [{ name: 'Aucun', value: 1, color: T.cardBorder }]).map((entry, i) => (
                     <Cell key={i} fill={entry.color} />
                   ))}
                 </Pie>
