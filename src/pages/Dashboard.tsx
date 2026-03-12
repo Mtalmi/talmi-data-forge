@@ -1244,8 +1244,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Status bar */}
-            <div className="flex items-center justify-between px-5 py-2 mt-1 rounded-b-lg z-10 relative" style={{ background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            {/* Environment footer */}
+            <div className="flex items-center justify-between px-5 pt-2 mt-2 z-10 relative border-t border-white/5">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[9px] text-slate-500">Température</span>
