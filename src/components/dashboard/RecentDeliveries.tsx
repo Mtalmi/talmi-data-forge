@@ -196,9 +196,9 @@ export default function RecentDeliveries() {
         {timeline.map((d) => (
           <div
             key={d.id}
-            className="flex items-center gap-4 py-2 transition-colors duration-150"
+            className="group flex items-center gap-4 py-2 transition-all duration-150"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255, 215, 0, 0.04)'; }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.03)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
           >
             <span className="text-xs text-muted-foreground/50 font-mono tabular-nums w-[60px]">{d.time}</span>
