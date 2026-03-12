@@ -986,7 +986,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="flex items-center gap-2 text-[11px] mt-1">
                     <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotOk }} /> {qualityData[0].ok} OK</span>
                     <span className="text-slate-700">·</span>
-                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotWarn }} /> {qualityData[0].var} Var</span>
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: T.dotWarn }} /> {qualityData[0].var} Var</span>
                     <span className="text-slate-700">·</span>
                     <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full" style={{ background: T.dotCrit }} /> {qualityData[0].crit} Crit</span>
                   </div>
