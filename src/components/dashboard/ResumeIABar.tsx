@@ -44,30 +44,36 @@ export const ResumeIABar = () => {
 
   return (
     <div
-      className="relative z-[1] mb-5 px-4 py-2.5 rounded-lg backdrop-blur-sm bg-gradient-to-r from-[#D4A843]/[0.04] via-transparent to-transparent"
-      style={{
-        border: '1px solid rgba(212, 168, 67, 0.1)',
-        borderLeft: '3px solid #D4A843',
-      }}
+      className="relative z-[1] mb-5 px-4 py-3 rounded-lg bg-gradient-to-r from-[#D4A843]/10 via-transparent to-transparent border border-[#D4A843]/20"
     >
-      <div className="flex items-center gap-2 min-w-0">
-        <span className="flex-shrink-0 animate-pulse" style={{ color: '#D4A843', fontSize: '12px', animationDuration: '3s' }}>✦</span>
-        <span
-          className="text-[10px] font-semibold uppercase tracking-wider flex-shrink-0"
-          style={{ color: '#D4A843' }}
-        >
-          Résumé IA
-        </span>
-        <span
-          className="w-px h-3 flex-shrink-0"
-          style={{ background: 'rgba(212,168,67,0.2)' }}
-        />
-        <span
-          className="text-[11px] overflow-hidden whitespace-nowrap text-ellipsis"
-          style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}
-        >
-          {displayText}
-        </span>
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="flex-shrink-0 animate-pulse text-[#D4A843]" style={{ fontSize: '14px', animationDuration: '3s' }}>✦</span>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span
+            className="text-[10px] font-semibold uppercase tracking-wider flex-shrink-0"
+            style={{ color: '#D4A843' }}
+          >
+            Résumé IA
+          </span>
+          <span
+            className="w-px h-3 flex-shrink-0"
+            style={{ background: 'rgba(212,168,67,0.2)' }}
+          />
+          <span
+            className="text-[11px] overflow-hidden whitespace-nowrap text-ellipsis"
+            style={{ color: 'rgba(203,213,225,0.7)', fontStyle: 'italic' }}
+          >
+            {displayText}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button className="border border-[#D4A843]/40 text-[#D4A843] hover:bg-[#D4A843]/10 rounded px-3 py-1 text-xs transition-colors duration-200">
+            Voir Rapport
+          </button>
+          <button className="border border-white/10 text-white/40 hover:text-white/60 rounded px-3 py-1 text-xs transition-colors duration-200">
+            Ignorer
+          </button>
+        </div>
       </div>
     </div>
   );
