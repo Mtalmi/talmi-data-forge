@@ -195,7 +195,7 @@ export function useDashboardStats() {
       }
 
       // Alert: Clients down > 10%
-      if (clientsTrend < -10) {
+      if (!isNaN(clientsTrend) && clientsTrend < -10) {
         alerts.push({
           id: 'clients-down',
           type: 'warning',
