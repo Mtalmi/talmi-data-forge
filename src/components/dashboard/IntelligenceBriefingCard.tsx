@@ -103,7 +103,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
         {icon}
         <span style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>{label}</span>
         {briefing.score_journee && (
-          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 6, background: 'rgba(212,168,67,0.15)', color: '#D4A843' }}>
+          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 6, background: 'rgba(212,168,67,0.15)', color: '#D4A843', textShadow: '0 0 8px rgba(212,168,67,0.4)' }}>
             {briefing.score_journee}
           </span>
         )}
