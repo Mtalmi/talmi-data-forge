@@ -1340,6 +1340,12 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              {/* Quality summary */}
+              <div className="border-t border-white/5 pt-3 mt-3">
+                <span className="text-[11px] text-muted-foreground/40" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>
+                  Moyenne: 19cm · 2 OK · 1 VAR
+                </span>
+              </div>
             </div>
           </div>
 
