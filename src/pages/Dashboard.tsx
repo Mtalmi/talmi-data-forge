@@ -1193,110 +1193,109 @@ export default function Dashboard() {
 
               {/* Performance / Camera panel */}
               <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
-                {/* Performance du Jour (default when no camera URL) */}
-                {(() => {
-                  const hasCameraUrl = false; // Set to true when camera feed is configured
-                  if (hasCameraUrl) {
-                    return (
-                      <>
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Caméra Centrale</div>
-                          <div className="flex items-center gap-1"><span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" /><span className="text-[8px] text-red-400/80 font-medium uppercase tracking-wider">LIVE</span></div>
-                        </div>
-                        <div className="flex-1 rounded-lg relative overflow-hidden cursor-pointer group" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px', boxShadow: '0 0 15px rgba(239, 68, 68, 0.03)' }} onClick={() => window.location.href = '/surveillance'}>
-                          <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
-                            <div className="relative" style={{ width: 96, height: 96 }}>
-                              <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
-                              <div className="absolute rounded-full" style={{ inset: 12, border: '1px solid rgba(212,168,67,0.10)' }} />
-                              <div className="absolute rounded-full" style={{ inset: 24, border: '1px solid rgba(212,168,67,0.08)' }} />
-                              <div className="absolute top-0 bottom-0 left-1/2 w-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
-                              <div className="absolute left-0 right-0 top-1/2 h-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
-                              <div className="absolute inset-0 rounded-full overflow-hidden" style={{ animation: 'radarSweep 4s linear infinite' }}>
-                                <div className="absolute left-1/2 top-1/2 origin-top-left" style={{ width: 48, height: 48, marginLeft: 0, marginTop: -48, background: 'conic-gradient(from 0deg at 0% 100%, rgba(212,168,67,0.25) 0deg, rgba(212,168,67,0) 40deg, transparent 40deg)' }} />
-                              </div>
-                              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                                <span className="relative flex h-2.5 w-2.5">
-                                  <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ background: 'rgba(212,168,67,0.5)' }} />
-                                  <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: '#D4A843' }} />
-                                </span>
-                              </div>
-                            </div>
-                            <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Recherche du signal...</span>
-                            <span className="text-[10px] tracking-[0.08em] uppercase text-muted-foreground/30 font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>Dernière capture: il y a 4h</span>
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
-                                <span className="w-px h-3 bg-white/10" />
-                                <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
-                              </div>
-                              <span className="text-[9px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
-                            </div>
-                          </div>
-                          <div className="absolute top-2 left-2 z-[4] px-2 py-0.5 rounded" style={{ background: 'rgba(0,0,0,0.5)' }}>
-                            <span className="text-[8px] text-white/60 uppercase tracking-wider" style={{ fontFamily: "'JetBrains Mono', monospace" }}>CAM-01 · Centrale</span>
-                          </div>
-                        </div>
-                      </>
-                    );
-                  }
-
-                  return (
-                    <div className="flex-1 rounded-lg p-4 flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }}>
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          Performance du jour
-                        </div>
+                <div className="flex-1 rounded-lg p-4 flex flex-col" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }}>
+                  {/* Header with toggle */}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      {midPanelView === 'data' ? 'Performance du jour' : 'Caméra Centrale'}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {midPanelView === 'data' && (
                         <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium">
                           EN AVANCE
                         </span>
-                      </div>
-
-                      {/* 2×2 KPI Grid */}
-                      <div className="grid grid-cols-2 gap-4 mt-4 flex-1">
-                        {/* PRODUIT */}
-                        <div>
-                          <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
-                          <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
-                          <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
-                          <div className="h-[3px] rounded-full bg-white/[0.06] w-full">
-                            <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843' }} />
-                          </div>
-                        </div>
-
-                        {/* RENDEMENT */}
-                        <div>
-                          <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
-                          <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
-                          <div className="text-[10px] text-muted-foreground/40">vs 91% hier</div>
-                        </div>
-
-                        {/* QUALITÉ */}
-                        <div>
-                          <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
-                          <div className="text-xl text-white font-semibold font-mono">96.2%</div>
-                          <div className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR · 0 CRIT</div>
-                        </div>
-
-                        {/* LIVRAISONS */}
-                        <div>
-                          <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
-                          <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
-                          <div className="text-[10px] text-muted-foreground/40">4 restantes aujourd'hui</div>
-                        </div>
-                      </div>
-
-                      {/* Bottom next delivery */}
-                      <div className="border-t border-white/[0.04] pt-2 mt-2">
-                        <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                          ⏱ Prochain: BL-2603-009 · Ciments du Sud · 14h30
-                        </span>
+                      )}
+                      {/* Segmented toggle */}
+                      <div className="flex items-center bg-white/[0.04] rounded-full p-0.5">
+                        <button
+                          onClick={() => setMidPanelView('data')}
+                          className={`px-2 py-1 rounded-full text-[10px] transition-all duration-200 ${midPanelView === 'data' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                        >
+                          <BarChart3 className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => setMidPanelView('camera')}
+                          className={`px-2 py-1 rounded-full text-[10px] transition-all duration-200 ${midPanelView === 'camera' ? 'bg-white/[0.08] text-white' : 'text-muted-foreground/40 hover:text-muted-foreground/60'}`}
+                        >
+                          <Camera className="h-3 w-3" />
+                        </button>
                       </div>
                     </div>
-                  );
-                })()}
+                  </div>
+
+                  {/* Content with fade transition */}
+                  <div className="flex-1 flex flex-col" style={{ transition: 'opacity 150ms ease', opacity: 1 }}>
+                    {midPanelView === 'data' ? (
+                      <>
+                        {/* 2×2 KPI Grid */}
+                        <div className="grid grid-cols-2 gap-4 mt-4 flex-1">
+                          <div>
+                            <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
+                            <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
+                            <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
+                            <div className="h-[3px] rounded-full bg-white/[0.06] w-full">
+                              <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843' }} />
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
+                            <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
+                            <div className="text-[10px] text-muted-foreground/40">vs 91% hier</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
+                            <div className="text-xl text-white font-semibold font-mono">96.2%</div>
+                            <div className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR · 0 CRIT</div>
+                          </div>
+                          <div>
+                            <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Livraisons</div>
+                            <div className="text-xl font-semibold font-mono" style={{ color: '#D4A843' }}>8/12</div>
+                            <div className="text-[10px] text-muted-foreground/40">4 restantes aujourd'hui</div>
+                          </div>
+                        </div>
+                        {/* Bottom next delivery */}
+                        <div className="border-t border-white/[0.04] pt-2 mt-2">
+                          <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                            ⏱ Prochain: BL-2603-009 · Ciments du Sud · 14h30
+                          </span>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex-1 relative overflow-hidden rounded-lg mt-2 cursor-pointer" onClick={() => window.location.href = '/surveillance'} style={{ boxShadow: '0 0 15px rgba(239, 68, 68, 0.03)' }}>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-[2] gap-4">
+                          <div className="relative" style={{ width: 96, height: 96 }}>
+                            <div className="absolute inset-0 rounded-full" style={{ border: '1px solid rgba(212,168,67,0.15)' }} />
+                            <div className="absolute rounded-full" style={{ inset: 12, border: '1px solid rgba(212,168,67,0.10)' }} />
+                            <div className="absolute rounded-full" style={{ inset: 24, border: '1px solid rgba(212,168,67,0.08)' }} />
+                            <div className="absolute top-0 bottom-0 left-1/2 w-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                            <div className="absolute left-0 right-0 top-1/2 h-px" style={{ background: 'rgba(212,168,67,0.06)' }} />
+                            <div className="absolute inset-0 rounded-full overflow-hidden" style={{ animation: 'radarSweep 4s linear infinite' }}>
+                              <div className="absolute left-1/2 top-1/2 origin-top-left" style={{ width: 48, height: 48, marginLeft: 0, marginTop: -48, background: 'conic-gradient(from 0deg at 0% 100%, rgba(212,168,67,0.25) 0deg, rgba(212,168,67,0) 40deg, transparent 40deg)' }} />
+                            </div>
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                              <span className="relative flex h-2.5 w-2.5">
+                                <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ background: 'rgba(212,168,67,0.5)' }} />
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5" style={{ background: '#D4A843' }} />
+                              </span>
+                            </div>
+                          </div>
+                          <span className="text-sm text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Recherche du signal...</span>
+                          <span className="text-[10px] tracking-[0.08em] uppercase text-muted-foreground/30 font-medium" style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace" }}>Dernière capture: il y a 4h</span>
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 z-[3] p-2.5" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <span className="text-[10px] text-white/80 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>47 m³/h</span>
+                              <span className="w-px h-3 bg-white/10" />
+                              <span className="text-[10px] text-emerald-400/80" style={{ fontFamily: "'JetBrains Mono', monospace" }}>94%</span>
+                            </div>
+                            <span className="text-[9px] text-slate-500" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{timeStr}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Batch queue panel */}
