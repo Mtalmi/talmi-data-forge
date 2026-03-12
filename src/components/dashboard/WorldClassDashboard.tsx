@@ -1,5 +1,106 @@
-import { useEffect, useRef, useState, useCallback, forwardRef } from 'react';
+import { useEffect, useRef, useState, useCallback, forwardRef, createElement } from 'react';
 import { toast } from 'sonner';
+import { CheckCircle2 } from 'lucide-react';
+
+const MATERIAL_QTY: Record<string, string> = {
+  Adjuvant: '500L',
+  Eau: '10 000L',
+  Gravette: '25T',
+  Ciment: '30T',
+  Sable: '20T',
+};
+
+function fireCommanderToast(name: string, daysLeft: number) {
+  const qty = MATERIAL_QTY[name] || '—';
+  const urgency = daysLeft <= 1 ? 'Critique — Demain' : daysLeft <= 2 ? `Urgent — ${daysLeft}j` : `Attention — ${daysLeft}j`;
+
+  toast.custom(
+    (id) =>
+      createElement(
+        'div',
+        {
+          onClick: () => toast.dismiss(id),
+          className: 'tbos-commander-toast',
+          style: {
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 14,
+            background: '#0d1528',
+            border: '1px solid rgba(212,168,67,0.3)',
+            borderLeft: '3px solid #D4A843',
+            borderRadius: 12,
+            padding: '16px 20px',
+            minWidth: 360,
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)',
+            cursor: 'pointer',
+            animation: 'toastSlideIn 300ms ease-out',
+          },
+        },
+        createElement(
+          'div',
+          { style: { flex: 1 } },
+          createElement(
+            'div',
+            {
+              style: {
+                fontSize: 10,
+                letterSpacing: '0.15em',
+                fontWeight: 700,
+                color: '#D4A843',
+                textTransform: 'uppercase' as const,
+                marginBottom: 6,
+              },
+            },
+            'COMMANDE INITIÉE'
+          ),
+          createElement(
+            'div',
+            { style: { fontSize: 14, color: 'rgba(255,255,255,0.8)', fontWeight: 500, marginBottom: 4 } },
+            `${name} · ${qty} · ${urgency}`
+          ),
+          createElement(
+            'div',
+            { style: { fontSize: 11, color: 'rgba(255,255,255,0.3)', fontStyle: 'italic' } },
+            'Fournisseur notifié automatiquement'
+          )
+        ),
+        createElement(
+          'svg',
+          {
+            width: 28,
+            height: 28,
+            viewBox: '0 0 28 28',
+            fill: 'none',
+            style: { flexShrink: 0, marginTop: 4 },
+          },
+          createElement('circle', {
+            cx: 14,
+            cy: 14,
+            r: 12,
+            stroke: '#D4A843',
+            strokeWidth: 1.5,
+            opacity: 0.4,
+          }),
+          createElement('path', {
+            d: 'M9 14.5L12.5 18L19 11',
+            stroke: '#D4A843',
+            strokeWidth: 2,
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round',
+            style: {
+              strokeDasharray: 20,
+              strokeDashoffset: 20,
+              animation: 'toastCheckDraw 0.5s ease-out 0.2s forwards',
+            },
+          })
+        )
+      ),
+    {
+      duration: 4000,
+      position: 'top-right',
+    }
+  );
+}
 import {
   AreaChart, Area,
   XAxis, Tooltip, ResponsiveContainer,
