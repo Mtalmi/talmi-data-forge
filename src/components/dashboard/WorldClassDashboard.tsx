@@ -714,7 +714,11 @@ function useWorldClassLiveData() {
             if (hourBuckets[hour] !== undefined) hourBuckets[hour] += bl.volume_m3 || 0;
           }
         });
-        setHourlyProductionData(Object.entries(hourBuckets).map(([hour, volume]) => ({ hour, volume: Math.round(volume) })));
+        setHourlyProductionData(
+          Object.entries(hourBuckets)
+            .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+            .map(([hour, volume]) => ({ hour, volume: Math.round(volume) }))
+        );
         const okCount = blTodayRes.data.filter(b => b.quality_status === 'conforme' || b.affaissement_conforme).length;
         const varCount = blTodayRes.data.filter(b => b.quality_status === 'non_conforme' || b.affaissement_conforme === false).length;
         if (okCount > 0 || varCount > 0) {
