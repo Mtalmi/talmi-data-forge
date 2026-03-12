@@ -52,7 +52,7 @@ export const ResumeIABar = () => {
       }}
     >
       <div className="flex items-center gap-2 min-w-0">
-        <span className="flex-shrink-0" style={{ color: '#D4A843', fontSize: '12px' }}>✦</span>
+        <span className="flex-shrink-0 animate-pulse" style={{ color: '#D4A843', fontSize: '12px', animationDuration: '3s' }}>✦</span>
         <span
           className="text-[10px] font-semibold uppercase tracking-wider flex-shrink-0"
           style={{ color: '#D4A843' }}
