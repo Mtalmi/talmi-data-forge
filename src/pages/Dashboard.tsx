@@ -1314,7 +1314,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
-                      <span className="ml-auto text-[8px] text-emerald-400/60">Déchargement</span>
+                      <span className="ml-auto text-xs px-2 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30 font-medium">Déchargement</span>
                     </div>
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
