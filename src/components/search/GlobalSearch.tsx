@@ -258,8 +258,29 @@ export function GlobalSearch() {
               <CommandEmpty>{gs.noResultsFound}</CommandEmpty>
             )}
             {!loading && query.length < 2 && (
-              <div className="py-6 text-center text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                {gs.typeMinChars}
+              <div className="px-4 py-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-3.5 w-3.5" style={{ color: '#D4A843' }} />
+                  <span className="text-sm" style={{ color: 'rgba(148,163,184,0.5)' }}>Recherche IA — Bientôt disponible</span>
+                </div>
+                <div className="space-y-0.5">
+                  {[
+                    { label: '→ Stocks', path: '/stocks' },
+                    { label: '→ Production', path: '/production' },
+                    { label: '→ Ventes', path: '/ventes' },
+                  ].map(link => (
+                    <button
+                      key={link.path}
+                      className="w-full text-left px-3 py-2 rounded-md text-sm transition-colors duration-150"
+                      style={{ color: 'rgba(255,255,255,0.6)' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.color = '#D4A843'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
+                      onClick={() => { setOpen(false); setQuery(''); navigate(link.path); }}
+                    >
+                      {link.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {!loading && Object.entries(groupedResults).map(([type, items]) => (
