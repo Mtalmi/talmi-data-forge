@@ -205,7 +205,7 @@ export default function RecentDeliveries() {
             <span className="text-sm text-white flex-1 truncate min-w-0">{d.client}</span>
             <span className="text-sm font-mono tabular-nums text-right w-[80px]" style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", color: 'rgba(226,232,240,0.8)' }}>{d.volume} m³</span>
             <span
-              className="text-xs font-medium text-right w-[80px]"
+              className="text-xs font-medium text-right w-[80px] transition-opacity duration-150 opacity-80 group-hover:opacity-100"
               style={{ color: statusColors[d.status] }}
             >
               {d.statusLabel}
