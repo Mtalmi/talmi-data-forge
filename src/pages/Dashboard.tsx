@@ -746,7 +746,7 @@ export default function Dashboard() {
                       {/* RELANCER CLIENTS — red urgency */}
                       <button
                         onClick={() => navigate('/recouvrement')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(239,68,68,0.08)',
                           border: '1px solid rgba(239,68,68,0.20)',
@@ -756,7 +756,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <PhoneCall size={16} className="opacity-60" />
-                        Relancer Clients
+                        RELANCER CLIENTS
                         <span
                           className="absolute flex items-center justify-center rounded-full z-10"
                           style={{
