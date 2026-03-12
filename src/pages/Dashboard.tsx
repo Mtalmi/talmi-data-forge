@@ -1069,33 +1069,17 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="relative">
-                  {/* Y-axis labels */}
-                  <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none" style={{ height: 220 }}>
-                    {[0, 25, 50, 75, 100].map(val => {
-                      const pct = (val / allMax) * 0.85;
-                      return (
-                        <span key={val} className="absolute text-[9px] text-muted-foreground/20 font-mono" style={{ bottom: `${(pct * 100) + 2.3}%`, left: 0 }}>
-                          {val}
-                        </span>
-                      );
-                    })}
-                  </div>
                   <svg
                     width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
                     className="cursor-crosshair"
                     onMouseMove={handleChartMouseMove}
                     onMouseLeave={handleChartMouseLeave}
-                    style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
+                    style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.3))' }}
                   >
-                    {/* Grid lines at 25, 50, 75, 100 */}
-                    {[25, 50, 75, 100].map(val => {
-                      const y = svgH - (val / allMax) * svgH * 0.85 - 5;
-                      return <line key={`yg-${val}`} x1="0" y1={y} x2={svgW} y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />;
-                    })}
                     {/* Target line */}
                     <polyline
                       fill="none"
-                      stroke="rgba(212,175,55,0.2)"
+                      stroke="rgba(255,255,255,0.15)"
                       strokeWidth="1"
                       strokeDasharray="4,3"
                       points={TARGET_DATA.map((d, i) => {
@@ -1104,23 +1088,11 @@ export default function Dashboard() {
                         return `${x},${y}`;
                       }).join(' ')}
                     />
-                    {/* Area fill */}
-                    <path d={`M${SPARKLINE_DATA.map((d, i) => {
-                      const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
-                      const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
-                      return `${x},${y}`;
-                    }).join(' L')} L${svgW},${svgH} L0,${svgH} Z`} fill="url(#prodAreaGrad)" />
-                    <defs>
-                      <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgba(253,185,19,0.15)" />
-                        <stop offset="100%" stopColor="rgba(253,185,19,0)" />
-                      </linearGradient>
-                    </defs>
                     {/* Main line */}
                     <polyline
                       fill="none"
-                      stroke="#C9A84C"
-                      strokeWidth="1.5"
+                      stroke="#D4A843"
+                      strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       points={SPARKLINE_DATA.map((d, i) => {
@@ -1148,19 +1120,16 @@ export default function Dashboard() {
                     {(() => {
                       const nx = (NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW;
                       const ny = svgH - (SPARKLINE_DATA[NOW_INDEX].v / allMax) * svgH * 0.85 - 5;
-                      // Find target value at NOW_INDEX
                       const targetVal = TARGET_DATA[NOW_INDEX]?.t || 0;
                       const actualVal = SPARKLINE_DATA[NOW_INDEX].v;
                       const diffPct = targetVal > 0 ? Math.round(((actualVal - targetVal) / targetVal) * 100) : 0;
                       const isAbove = diffPct >= 0;
                       return (
                         <g>
-                          {/* Callout box */}
                           <rect x={nx - 11} y={ny - 10} width="22" height="7" rx="1.5" fill="#0f1729" stroke="rgba(212,168,67,0.4)" strokeWidth="0.4" />
                           <text x={nx} y={ny - 5} textAnchor="middle" fill="#D4A843" fontSize="3.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
                             {actualVal} m³/h
                           </text>
-                          {/* Performance badge */}
                           <rect x={nx + 12} y={ny - 10} width="16" height="7" rx="3.5" fill={isAbove ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'} />
                           <text x={nx + 20} y={ny - 5} textAnchor="middle" fill={isAbove ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)'} fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
                             {isAbove ? '▲' : '▼'} {isAbove ? '+' : ''}{diffPct}%
@@ -1183,7 +1152,7 @@ export default function Dashboard() {
                     {hoveredPoint && (
                       <>
                         <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
+                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#D4A843" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
                       </>
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
