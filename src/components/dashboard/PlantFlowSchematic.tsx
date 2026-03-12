@@ -120,8 +120,9 @@ export default function PlantFlowSchematic() {
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Volume <span className="text-white/80">8 m³</span></div>
             <div className="text-[9px]" style={{ color: 'rgba(148,163,184,0.5)' }}>Temps <span className="font-mono" style={{ color: T.dotWarn }}>02:47</span></div>
           </div>
-          <div className="mt-2 pt-1.5" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+          <div className="mt-2 pt-1.5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
             <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-slate-400">Production</span>
+            <span className="text-[10px] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#D4A843' }}>VOIR →</span>
           </div>
         </div>
 
