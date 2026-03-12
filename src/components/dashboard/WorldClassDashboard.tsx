@@ -332,41 +332,44 @@ function AIAnalystBrief() {
         </div>
       </div>
       
-      <div className="flex flex-col gap-2.5">
-        {insights.map((insight, i) => {
-          const color = insight.tone === 'positive' ? T.dotOk : insight.tone === 'warning' ? T.dotWarn : T.dotCrit;
-          return (
-            <div
-              key={i}
-              className="flex items-start gap-2.5 transition-all duration-500"
-              style={{
-                opacity: i < visibleLines ? 1 : 0,
-                transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
-              <span className="text-[11px] leading-relaxed" style={{ color: 'rgba(148,163,184,0.8)' }}>{insight.text}</span>
+      <div className="grid grid-cols-5 gap-4">
+        {/* Left column: insights (60%) */}
+        <div className="col-span-3 flex flex-col gap-2.5">
+          {insights.map((insight, i) => {
+            const color = insight.tone === 'positive' ? T.dotOk : insight.tone === 'warning' ? T.dotWarn : T.dotCrit;
+            return (
+              <div
+                key={i}
+                className="flex items-start gap-2.5 transition-all duration-500"
+                style={{
+                  opacity: i < visibleLines ? 1 : 0,
+                  transform: i < visibleLines ? 'translateY(0)' : 'translateY(8px)',
+                }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full mt-[6px] shrink-0" style={{ background: color, boxShadow: `0 0 8px ${color}50` }} />
+                <span className="text-[11px] leading-relaxed" style={{ color: 'rgba(148,163,184,0.8)' }}>{insight.text}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Right column: recommendation (40%) */}
+        <div
+          className="col-span-2 transition-all duration-700 rounded-lg p-3"
+          style={{
+            borderLeft: '1px solid rgba(255,255,255,0.06)',
+            opacity: showReco ? 1 : 0,
+            transform: showReco ? 'translateY(0)' : 'translateY(8px)',
+          }}
+        >
+          <div className="flex items-start gap-2">
+            <span className="text-sm mt-0.5">💡</span>
+            <div>
+              <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
+              <p className="mt-1" style={{ color: 'rgba(148,163,184,0.7)', fontSize: '12.5px', lineHeight: 1.5 }}>
+                Relancez les devis DEV-2602-316 et DEV-2602-895 pour diversifier le portefeuille client avant fin de mois.
+              </p>
             </div>
-          );
-        })}
-      </div>
-      
-      {/* Recommendation — AI Advisor */}
-      <div
-        className="mt-4 pt-3 transition-all duration-700"
-        style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          opacity: showReco ? 1 : 0,
-          transform: showReco ? 'translateY(0)' : 'translateY(8px)',
-        }}
-      >
-        <div className="flex items-start gap-2">
-          <span className="text-sm mt-0.5">💡</span>
-          <div>
-            <span className="text-[10px] font-medium tracking-wider uppercase" style={{ color: T.dotWarn }}>Recommandation</span>
-            <p className="mt-1" style={{ color: 'rgba(148,163,184,0.7)', fontSize: '12.5px', lineHeight: 1.5 }}>
-              Relancez les devis DEV-2602-316 et DEV-2602-895 pour diversifier le portefeuille client avant fin de mois.
-            </p>
           </div>
         </div>
       </div>
