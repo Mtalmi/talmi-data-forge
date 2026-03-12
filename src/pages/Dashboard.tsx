@@ -986,27 +986,14 @@ export default function Dashboard() {
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
           <div className="flex items-center gap-8 bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 w-full mb-6">
-            {/* Taux de Réussite inline circular gauge */}
-            <div className="flex items-center gap-3 flex-shrink-0">
-              <svg width="56" height="56" viewBox="0 0 60 60">
-                <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
-                <circle
-                  cx="30" cy="30" r="24" fill="none"
-                  stroke="#D4A843" strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeDasharray={`${0.94 * 2 * Math.PI * 24} ${2 * Math.PI * 24}`}
-                  transform="rotate(-90 30 30)"
-                  style={{
-                    animation: 'tauxGaugeArc 1.5s cubic-bezier(0.25,0.1,0.25,1) forwards',
-                    strokeDashoffset: `${0.94 * 2 * Math.PI * 24}`,
-                  }}
-                />
-                <text x="30" y="33" textAnchor="middle" fill="white" fontSize="14" fontWeight="200" fontFamily="ui-monospace, SFMono-Regular, monospace">94%</text>
-              </svg>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Taux de Réussite</span>
-                <span className="text-xs" style={{ color: 'rgba(148,163,184,0.35)' }}>7 derniers jours</span>
+            {/* Taux de Réussite */}
+            <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
+              <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212,168,67,0.3)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+              <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
+                <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '94%' }} />
               </div>
+              <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">TAUX DE RÉUSSITE</span>
+              <span className="text-[9px] text-muted-foreground/30">7 derniers jours</span>
             </div>
             <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
