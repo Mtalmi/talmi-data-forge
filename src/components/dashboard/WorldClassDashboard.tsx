@@ -1155,8 +1155,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <div className="ops-enter tbos-stagger-7 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.7),transparent)', zIndex:50 }} />
+            <div className="ops-enter tbos-stagger-7 relative hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ position:'relative', overflow:'hidden', minHeight: 420, borderRadius: 4, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+              <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
               <div className="p-6">
               {/* Satisfaction Client */}
               <div className="border-b border-white/[0.04] pb-3 mb-3">
