@@ -447,7 +447,7 @@ export default function Dashboard() {
                   animation: 'tbos-gradient-shift 6s ease-in-out infinite',
                   lineHeight: 1.1,
                 }}>
-                  <span className="font-bold tracking-wider">TBOS</span> <span className="font-light tracking-wide">Tableau de Bord</span>
+                  <span className="font-bold tracking-[0.2em] uppercase">TBOS</span> <span className="font-light tracking-wide">Tableau de Bord</span>
                 </h2>
                 {/* Subtitle with data pulse */}
                 <span className="flex items-center gap-1" style={{
