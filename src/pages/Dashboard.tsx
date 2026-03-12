@@ -1057,7 +1057,7 @@ export default function Dashboard() {
           <div className="tbos-prod-stats-bar flex items-center gap-8 px-6 py-4 w-full mb-6" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', borderRadius: '8px', border: '1px solid rgba(212,168,67,0.08)' }}>
             {/* Taux de Réussite */}
             <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-              <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+              <span className="tbos-hero-stat-number text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
               <div style={{ background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.8), transparent)', height: '2px', width: '48px', margin: '4px auto 0' }} />
               <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '94%' }} />
