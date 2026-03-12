@@ -106,9 +106,24 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
         </span>
       </div>
 
-      <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.65, marginBottom: 8 }}>
-        {resume}{resume.length >= 200 ? '...' : ''}
-      </p>
+      {(() => {
+        const dotIdx = resume.indexOf('.');
+        if (dotIdx > 0 && dotIdx < resume.length - 1) {
+          const first = resume.slice(0, dotIdx + 1);
+          const rest = resume.slice(dotIdx + 1).trim();
+          return (
+            <p style={{ fontSize: 12, lineHeight: 1.65, marginBottom: 8 }}>
+              <span style={{ color: '#fff', fontWeight: 500 }}>{first}</span>
+              {rest && <span style={{ color: 'rgba(148,163,184,0.7)', fontWeight: 400 }}> {rest}{resume.length >= 200 ? '...' : ''}</span>}
+            </p>
+          );
+        }
+        return (
+          <p style={{ fontSize: 12, color: '#CBD5E1', lineHeight: 1.65, marginBottom: 8 }}>
+            {resume}{resume.length >= 200 ? '...' : ''}
+          </p>
+        );
+      })()}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         <Clock size={10} color="#64748B" />
