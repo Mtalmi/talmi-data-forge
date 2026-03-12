@@ -754,7 +754,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             {/* Stock Levels — Horizontal Bars */}
             {!showOnlyOps && (
             <Card className="ops-enter ops-surface-card tbos-stagger-4" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              <div className="text-[14px] font-medium text-white/90 mb-3">Niveaux de Stock</div>
+              
               <div className="flex flex-col">
                 {stockData.slice(0, 6).map((s, i) => (
                   <HorizontalStockBar key={i} name={s.name} current={s.current} max={s.max} unit={s.unit} />
