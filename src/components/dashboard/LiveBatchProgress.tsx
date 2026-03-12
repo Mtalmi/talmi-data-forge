@@ -92,7 +92,7 @@ export default function LiveBatchProgress() {
         className="relative overflow-hidden p-5 h-full flex flex-col"
         style={{ borderRadius: 8, background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(255,255,255,0.08)' }}
       >
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.7) 50%, transparent 100%)', zIndex: 50 }} />
         <div className="flex items-center gap-2 mb-2">
           <span className="w-2 h-2 rounded-full" style={{ background: 'rgba(148,163,184,0.3)' }} />
           <span className="text-[11px] font-medium text-white/60 uppercase tracking-[0.1em]">Batch en Cours</span>
