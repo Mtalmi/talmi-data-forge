@@ -563,25 +563,27 @@ function PipelineFunnel() {
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
 
-      <div className="flex items-center flex-1 justify-center gap-2">
+      <div className="relative flex items-center flex-1 justify-center gap-2">
+        <div style={{ position:'absolute', top:'50%', left:'5%', right:'5%', height:'1px', background:'linear-gradient(to right, rgba(212,168,67,0.15), rgba(212,168,67,0.08), transparent)', zIndex:0 }} />
         {stages.map((s, i) => {
           const stageStyles = [
-            { bg: 'rgba(212,168,67,0.1)', border: 'rgba(212,168,67,0.2)', color: '#D4A843' },
-            { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', color: 'rgb(96,165,250)' },
-            { bg: 'rgba(148,163,184,0.05)', border: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.4)' },
-            { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)', color: 'rgb(52,211,153)' },
+            { bg: 'rgba(212,168,67,0.1)', border: 'rgba(212,168,67,0.2)', color: '#D4A843', wash: 'rgba(212,168,67,0.04)' },
+            { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', color: 'rgb(96,165,250)', wash: 'rgba(59,130,246,0.04)' },
+            { bg: 'rgba(148,163,184,0.05)', border: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.4)', wash: undefined },
+            { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)', color: 'rgb(52,211,153)', wash: 'rgba(34,197,94,0.04)' },
           ];
           const st = stageStyles[i];
           const isEmpty = s.value === 0;
           return (
             <div key={i} className="contents">
               <div
-                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer"
+                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2 hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 cursor-pointer relative z-[1]"
                 style={{
                   background: isEmpty ? 'rgba(255,255,255,0.03)' : st.bg,
                   border: isEmpty ? '1px solid rgba(255,255,255,0.1)' : `1px solid ${st.border}`,
                   opacity: 1,
                   transition: 'all 200ms ease-out',
+                  ...(st.wash && !isEmpty ? { backgroundColor: st.wash } : {}),
                 }}
               >
                 <span className="text-center block" style={isEmpty ? { fontFamily:'ui-monospace,monospace', fontSize:'28px', fontWeight:'300', color:'rgba(255,255,255,0.25)', display:'block', textAlign:'center', lineHeight: 1 } : { fontFamily: 'ui-monospace,monospace', fontSize: '30px', color: st.color, fontWeight: '300', lineHeight: 1 }}>
@@ -590,7 +592,7 @@ function PipelineFunnel() {
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px' }}>›</span>
+                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px', position:'relative', zIndex:1 }}>›</span>
               )}
             </div>
           );
