@@ -105,7 +105,7 @@ export default function PlantFlowSchematic() {
 
         {/* ── STAGE 2: MALAXEUR ── */}
         <div
-          className="flux-panel flex-1 min-w-0 p-3"
+          className="flux-panel group flex-1 min-w-0 p-3"
           style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
           onClick={() => navigate('/production')}
         >
