@@ -1019,7 +1019,7 @@ export default function Dashboard() {
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 mx-6 mb-6 flex items-center gap-8">
+          <div className="flex items-center gap-8 bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 w-full mb-6">
             {/* Taux de Réussite inline circular gauge */}
             <div className="flex items-center gap-3 flex-shrink-0">
               <svg width="56" height="56" viewBox="0 0 60 60">
@@ -1042,20 +1042,20 @@ export default function Dashboard() {
                 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.35)' }}>7 derniers jours</span>
               </div>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
             </div>
-            <div className="w-px h-10 bg-white/10 self-center" />
+            <div className="w-px h-10 bg-white/10 flex-shrink-0" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
-              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-lg" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
             </div>
           </div>
           <style>{`
