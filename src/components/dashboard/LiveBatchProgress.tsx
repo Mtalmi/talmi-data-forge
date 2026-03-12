@@ -144,8 +144,8 @@ export default function LiveBatchProgress() {
       {/* Progress bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Progression</span>
-          <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums">{progress}%</span>
+          <span className="text-[10px] uppercase tracking-wider text-white/40">Progression</span>
+          <span className="text-[10px] font-mono tabular-nums" style={{ color: '#D4A843', fontWeight: '500' }}>{progress}%</span>
         </div>
         <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
         <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
