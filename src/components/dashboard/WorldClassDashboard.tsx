@@ -912,7 +912,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="flex flex-col">
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
             <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
-            <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 vs hier</span>
+            <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 pts vs hier</span>
             <div style={{ display:'flex', gap:'6px', marginTop:'6px' }}><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>LIVRAISONS 60%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>QUALITÉ 96%</span><span style={{ fontSize:'9px', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'4px', padding:'2px 6px', color:'rgba(255,255,255,0.4)' }}>MARGE +12%</span></div>
           </div>
 
@@ -926,7 +926,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
               <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
-              <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR</span></div>
+              <div className="flex items-center gap-1 mt-0.5"><span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20">2 OK</span><span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 animate-pulse">1 VAR <span style={{ fontSize:'9px' }}>↗</span></span></div>
             </div>
             <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
