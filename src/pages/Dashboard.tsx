@@ -1228,21 +1228,24 @@ export default function Dashboard() {
                   <div className="flex-1 flex flex-col" style={{ transition: 'opacity 150ms ease', opacity: 1 }}>
                     {midPanelView === 'data' ? (
                       <>
-                        {/* 2×2 KPI Grid */}
-                        <div className="grid grid-cols-2 gap-4 mt-4 flex-1">
-                          <div>
+                        {/* Top row: Primary KPIs */}
+                        <div className="grid grid-cols-2 gap-3 mt-3">
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3">
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Produit</div>
                             <div className="text-xl text-white font-semibold font-mono">671 <span className="text-sm text-muted-foreground/40">m³</span></div>
                             <div className="text-[10px] text-muted-foreground/40 mb-1.5">sur 800 m³ objectif</div>
-                            <div className="h-[3px] rounded-full bg-white/[0.06] w-full">
-                              <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843' }} />
+                            <div className="h-[4px] rounded-full bg-white/[0.06] w-full">
+                              <div className="h-full rounded-full" style={{ width: '84%', background: '#D4A843', boxShadow: '0 0 8px rgba(212, 168, 67, 0.25)' }} />
                             </div>
                           </div>
-                          <div>
+                          <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3">
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Rendement</div>
                             <div className="text-xl text-emerald-400 font-semibold font-mono">94%</div>
-                            <div className="text-[10px] text-muted-foreground/40">vs 91% hier</div>
+                            <div className="text-[10px] text-muted-foreground/40"><span className="text-emerald-400">↗</span> vs 91% hier</div>
                           </div>
+                        </div>
+                        {/* Bottom row: Secondary KPIs */}
+                        <div className="grid grid-cols-2 gap-3 border-t border-white/[0.04] pt-3 mt-3 flex-1">
                           <div>
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
                             <div className="text-xl text-white font-semibold font-mono">96.2%</div>
@@ -1255,7 +1258,7 @@ export default function Dashboard() {
                           </div>
                         </div>
                         {/* Bottom next delivery */}
-                        <div className="border-t border-white/[0.04] pt-2 mt-2">
+                        <div className="border-t border-white/[0.04] pt-2 mt-2 border-l-2 pl-2" style={{ borderLeftColor: 'rgba(212, 168, 67, 0.3)' }}>
                           <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                             ⏱ Prochain: BL-2603-009 · Ciments du Sud · 14h30
                           </span>
