@@ -559,40 +559,40 @@ function PipelineFunnel() {
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
 
-      <div className="flex items-center flex-1 justify-center">
+      <div className="flex items-center flex-1 justify-center gap-2">
         {stages.map((s, i) => {
+          const stageStyles = [
+            { bg: 'rgba(212,168,67,0.1)', border: 'rgba(212,168,67,0.2)', color: '#D4A843' },
+            { bg: 'rgba(59,130,246,0.1)', border: 'rgba(59,130,246,0.2)', color: 'rgb(96,165,250)' },
+            { bg: 'rgba(148,163,184,0.05)', border: 'rgba(255,255,255,0.04)', color: 'rgba(148,163,184,0.4)' },
+            { bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.2)', color: 'rgb(52,211,153)' },
+          ];
+          const st = stageStyles[i];
           const isEmpty = s.value === 0;
           return (
             <div key={i} className="contents">
               <div
-                className="flex-1 flex flex-col items-center gap-1 rounded-lg py-3 px-2 cursor-pointer"
+                className="flex-1 flex flex-col items-center justify-center gap-1 rounded-lg py-4 px-2"
                 style={{
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  opacity: isEmpty ? 0.4 : 1,
+                  background: st.bg,
+                  border: `1px solid ${st.border}`,
+                  opacity: isEmpty ? 0.5 : 1,
                   transition: 'all 200ms ease-out',
                 }}
-                onMouseEnter={e => { if (!isEmpty) { const el = e.currentTarget; el.style.borderColor = 'rgba(212,168,67,0.3)'; el.style.background = 'rgba(255,255,255,0.06)'; el.style.transform = 'scale(1.02)'; }}}
-                onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor = 'rgba(255,255,255,0.08)'; el.style.background = 'rgba(255,255,255,0.04)'; el.style.transform = 'scale(1)'; }}
               >
-                <span style={{
-                  fontFamily: "ui-monospace, SFMono-Regular, monospace",
-                  fontWeight: 200,
-                  fontSize: '1.5rem',
-                  color: 'white',
-                  lineHeight: 1,
-                }}>
-                  {isEmpty ? '0' : s.value}
+                <span className="text-2xl font-bold font-mono" style={{ color: st.color, lineHeight: 1 }}>
+                  {s.value}
                 </span>
-                <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{s.label}</span>
+                <span className="text-[9px] tracking-[0.1em] uppercase" style={{ color: st.color, opacity: 0.7 }}>{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span className="mx-1 flex-shrink-0" style={{ color: 'rgba(148,163,184,0.25)', fontSize: 18, fontWeight: 300 }}>›</span>
+                <span className="flex-shrink-0 text-lg text-muted-foreground/20">›</span>
               )}
             </div>
           );
         })}
       </div>
+      <div className="text-[10px] text-muted-foreground/30 font-medium mt-3 text-center">Conversion: {Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</div>
     </div>
     </div>
   );
