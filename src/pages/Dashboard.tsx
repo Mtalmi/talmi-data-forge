@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 
 // Lazy-loaded heavy widgets
@@ -72,7 +72,7 @@ export default function Dashboard() {
   const [showExecutiveSummary, setShowExecutiveSummary] = useState(false);
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations'>('command');
+  const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -840,6 +840,18 @@ export default function Dashboard() {
             <Activity size={14} />
             Opérations
           </button>
+          <button
+            onClick={() => setActiveTab('intelligence')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'intelligence' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'intelligence' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'intelligence' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <Sparkles size={14} />
+            Intelligence IA
+          </button>
         </div>
 
         {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
@@ -1405,7 +1417,7 @@ export default function Dashboard() {
         ══════════════════════════════════════════════════ */}
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
-            <WorldClassDashboard hideProductionWidgets hideOpsWidgets />
+            <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
           </Suspense>
         </div>
         </>
@@ -1422,6 +1434,22 @@ export default function Dashboard() {
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
             <WorldClassDashboard hideProductionWidgets showOnlyOps />
+          </Suspense>
+        </div>
+        </>
+        )}
+
+        {/* ═══ INTELLIGENCE IA TAB CONTENT ═══ */}
+        {activeTab === 'intelligence' && (
+        <>
+        <div className="flex items-center gap-3 pt-2 pb-4 mb-0">
+          <Sparkles size={16} className="text-amber-400" />
+          <span className="text-amber-400 text-[11px] font-semibold uppercase tracking-[0.2em] whitespace-nowrap">Intelligence IA</span>
+          <div className="flex-1 h-[1px]" style={{ background: 'linear-gradient(90deg, rgba(212,175,55,0.6), rgba(212,175,55,0.15))' }} />
+        </div>
+        <div className="mt-0">
+          <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
+            <WorldClassDashboard hideProductionWidgets showOnlyIntel />
           </Suspense>
         </div>
         </>

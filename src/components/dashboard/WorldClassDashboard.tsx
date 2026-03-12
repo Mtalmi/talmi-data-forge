@@ -556,7 +556,7 @@ function useWorldClassLiveData() {
 // ═══════════════════════════════════════════════════════
 // MAIN COMPONENT — Operations Zone
 // ═══════════════════════════════════════════════════════
-export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean } = {}) {
+export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidgets = false, showOnlyOps = false, hideIntelWidgets = false, showOnlyIntel = false }: { hideProductionWidgets?: boolean; hideOpsWidgets?: boolean; showOnlyOps?: boolean; hideIntelWidgets?: boolean; showOnlyIntel?: boolean } = {}) {
   const {
     stats, stockData, arAgingData, recentBatches: batches,
     hourlyProductionData, qualityData, loading,
@@ -643,6 +643,14 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
       `}</style>
 
       <div style={{ maxWidth: '100%', margin: '0 auto' }} className="relative overflow-hidden">
+        {showOnlyIntel ? (
+          <div className="space-y-4 mb-5 relative z-[1] w-full max-w-[1400px] mx-auto">
+            <AIAnalystBrief />
+            <ComplianceWidget />
+            <EnergyCostAnomalyWidget />
+            <SeasonalDemandForecasterCard />
+          </div>
+        ) : (
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
@@ -708,13 +716,13 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             )}
 
             {/* AI Analyst Brief */}
-            {!showOnlyOps && <AIAnalystBrief />}
+            {!showOnlyOps && !hideIntelWidgets && <AIAnalystBrief />}
 
             {/* Compliance Widget */}
-            {!showOnlyOps && <ComplianceWidget />}
+            {!showOnlyOps && !hideIntelWidgets && <ComplianceWidget />}
 
             {/* Energy & Cost Anomaly Widget */}
-            {!showOnlyOps && <EnergyCostAnomalyWidget />}
+            {!showOnlyOps && !hideIntelWidgets && <EnergyCostAnomalyWidget />}
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
@@ -879,9 +887,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             )}
           </div>
         </div>
+        )}
 
         {/* ── Seasonal Demand Forecaster ── */}
-        {!showOnlyOps && (
+        {!showOnlyOps && !hideIntelWidgets && !showOnlyIntel && (
         <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%' }}>
           <SeasonalDemandForecasterCard />
         </div>
