@@ -1185,7 +1185,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   const maxVal = Math.max(...arAgingData.map(a => a.value), 1);
                   const pct = (d.value / maxVal) * 100;
                   const barStyle = i === 0
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.8 }
+                    ? { background: 'linear-gradient(to right, rgba(74,222,128,0.8), rgba(74,222,128,0.6))' }
                     : i === 1
                     ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
                     : i === 2
