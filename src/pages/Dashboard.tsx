@@ -104,6 +104,14 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [isCeo]);
 
+  // ─── Sync countdown timer (30s loop) ───
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSyncCountdown(prev => (prev <= 1 ? 30 : prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // ─── Fetch next upcoming delivery ───
   useEffect(() => {
     const fetchNextDelivery = async () => {
