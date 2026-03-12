@@ -709,7 +709,7 @@ export default function WorldClassContractors() {
   const [selectedPrestataire, setSelectedPrestataire] = useState('');
   const [assignerLoading, setAssignerLoading] = useState(false);
   const [assignerError, setAssignerError] = useState('');
-  const [appelsOffres, setAppelsOffres] = useState<typeof UPCOMING[0] | null>(null);
+  const [appelsOffres, setAppelsOffres] = useState<LiveUpcomingItem | null>(null);
   const [aoForm, setAoForm] = useState({ titre: '', description: '', specialite: '', budget_max: '', date_limite: '', priorite: 'normale', chantier: '', duree_estimee: '' });
   const [aoLoading, setAoLoading] = useState(false);
   const [aoError, setAoError] = useState('');
