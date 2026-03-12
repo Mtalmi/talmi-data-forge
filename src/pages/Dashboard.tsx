@@ -872,7 +872,7 @@ export default function Dashboard() {
               value: marge,
               unit: '%',
               watermark: '%',
-              sub: '37.8 K DH costs',
+              sub: '37.8 K DH coûts matières',
               trend: '↗ +1.2%',
               healthyGlow: true,
               accentColor: '#FDB913',
