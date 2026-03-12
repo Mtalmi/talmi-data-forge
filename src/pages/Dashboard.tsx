@@ -786,6 +786,7 @@ export default function Dashboard() {
                   {kpi.trend && (
                     <div className="mt-2 flex items-center gap-1.5">
                       <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
+                      <span className="text-xs text-muted-foreground">vs hier</span>
                     </div>
                   )}
                 </div>
