@@ -1148,6 +1148,30 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* Agent IA Production Banner */}
+          <div className="mt-5 rounded-lg flex items-center gap-3 px-5 py-3.5" style={{
+            background: 'rgba(255,215,0,0.04)',
+            border: '1px solid rgba(212,168,67,0.2)',
+            borderTop: '2px solid rgba(212,168,67,0.4)',
+            backdropFilter: 'blur(4px)',
+          }}>
+            <span style={{ color: '#D4A843', fontSize: 14, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
+            <div className="flex-1 min-w-0">
+              <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#D4A843' }}>Agent IA: </span>
+              <span className="text-xs" style={{ color: 'rgba(241,245,249,0.8)' }}>
+                Prochain batch recommandé — <span className="font-medium text-white/90">Béton B25 Standard</span> · <span className="font-mono">14 m³</span> · <span className="font-medium text-white/90">TGCC</span> · Optimisation séquence activée
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }}>
+                Lancer
+              </button>
+              <button className="px-4 py-1.5 rounded-md text-xs font-medium transition-all hover:bg-white/[0.06]" style={{ background: 'transparent', border: '1px solid rgba(148,163,184,0.2)', color: 'rgba(148,163,184,0.6)' }}>
+                Ignorer
+              </button>
+            </div>
+          </div>
           </div>
           )}
 
