@@ -483,7 +483,7 @@ function AIAnalystBrief() {
         {/* Left column: insights (60%) */}
         <div className="col-span-3 flex flex-col gap-2.5">
           {insights.map((insight, i) => {
-            const color = insight.tone === 'positive' ? T.dotOk : insight.tone === 'warning' ? T.dotWarn : T.dotCrit;
+            const color = insight.tone === 'critical' ? '#F87171' : '#D4A843';
             return (
               <div
                 key={i}
@@ -498,7 +498,7 @@ function AIAnalystBrief() {
                   {(() => {
                     const { headline, detail } = splitHeadlineDetail(insight.text);
                     return <>
-                      <span className="font-medium text-white">{headline}</span>
+                      <span style={{ fontWeight: 600, color: '#E2E8F0' }}>{headline}</span>
                       {detail && <span className="font-normal text-muted-foreground/60"> {detail}</span>}
                     </>;
                   })()}
