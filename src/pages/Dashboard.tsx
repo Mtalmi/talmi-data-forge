@@ -831,7 +831,7 @@ export default function Dashboard() {
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="mb-5 backdrop-blur-sm bg-white/[0.03] border border-white/10 rounded-xl px-8 py-4 flex items-center gap-8 w-full">
+          <div className="bg-[#0d1528] border border-white/10 rounded-xl px-8 py-5 mx-6 mb-6 flex items-center gap-8">
             {/* Taux de Réussite inline circular gauge */}
             <div className="flex items-center gap-3 flex-shrink-0">
               <svg width="56" height="56" viewBox="0 0 60 60">
