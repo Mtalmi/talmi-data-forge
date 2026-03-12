@@ -924,7 +924,7 @@ export default function Dashboard() {
                   <div className="text-[11px] text-slate-500 mt-3 tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontSize: '11px', fontWeight: 400 }}>{kpi.sub}</div>
                   {kpi.trend && (
                     <div className="mt-2 flex items-center gap-1.5">
-                      <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)' }}>{kpi.trend}</span>
+                      <span className="text-[11px] tabular-nums" style={{ fontFamily: "'Inter', system-ui", fontWeight: 400, color: 'rgba(52,211,153,0.7)', textShadow: '0 0 8px rgba(34, 197, 94, 0.2)' }}>{kpi.trend}</span>
                       <span className="text-[11px] text-muted-foreground/40 ml-1">vs hier</span>
                     </div>
                   )}
