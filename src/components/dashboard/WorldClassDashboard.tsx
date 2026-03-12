@@ -472,8 +472,8 @@ function AIAnalystBrief() {
         </div>
         <div className="flex items-center gap-1.5">
           <span className="relative flex h-1.5 w-1.5">
-            <span className="animate-ping absolute h-full w-full rounded-full opacity-30" style={{ background: T.gold }} />
-            <span className="relative rounded-full h-1.5 w-1.5" style={{ background: T.gold }} />
+            <span className="absolute h-full w-full rounded-full opacity-30" style={{ background: T.gold, animation: 'livePulse 2s ease-in-out infinite' }} />
+            <span className="relative rounded-full h-1.5 w-1.5" style={{ background: T.gold, animation: 'livePulse 2s ease-in-out infinite' }} />
           </span>
           <span className="text-[9px] font-mono text-slate-600 tabular-nums">live</span>
         </div>
