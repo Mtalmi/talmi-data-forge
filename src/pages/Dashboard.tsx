@@ -1061,6 +1061,7 @@ export default function Dashboard() {
             <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
               {/* Chart panel */}
               <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                 <div className="flex justify-between items-center mb-1">
                   <div>
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
