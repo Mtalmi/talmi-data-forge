@@ -168,6 +168,18 @@ export default function RecentDeliveries() {
         el.style.borderColor = 'rgba(245, 158, 11, 0.15)';
       }}
     >
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(-1px)';
+        el.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLElement;
+        el.style.transform = 'translateY(0)';
+        el.style.borderColor = 'rgba(245, 158, 11, 0.15)';
+      }}
+    >
 
 
 
