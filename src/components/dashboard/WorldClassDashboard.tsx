@@ -357,7 +357,11 @@ function BatchTimeline({ batches }: { batches: { id: string; volume: number; qua
             <div
               key={i}
               className="flex flex-col items-center cursor-pointer relative"
-              style={{ minWidth: 60, animation: `tbos-fade-up 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 * i + 0.2}s both` }}
+              style={{
+                minWidth: 60,
+                animation: `tbos-fade-up 0.4s cubic-bezier(0.16,1,0.3,1) ${0.08 * i + 0.2}s both`,
+                ...(b.status !== 'complete' ? { borderLeft: '2px solid rgba(212,168,67,0.5)', paddingLeft: '8px', background: 'rgba(212,168,67,0.03)' } : {}),
+              }}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
             >
@@ -1125,7 +1129,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                 { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                 { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
               ].map((q, i) => (
-                <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200" style={!q.ok ? { borderLeft: '2px solid rgba(245,158,11,0.4)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                   <div className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: q.ok ? T.dotOk : T.dotWarn }} />
                     <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
