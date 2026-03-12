@@ -107,7 +107,7 @@ export default function LeakageAlertBanner() {
           </div>
         </div>
         <ChevronRight className={cn(
-          "h-5 w-5 text-muted-foreground transition-transform",
+          "w-5 h-5 text-red-400 transition-all duration-200 ease-out group-hover:translate-x-1",
           expanded && "rotate-90"
         )} />
       </div>
