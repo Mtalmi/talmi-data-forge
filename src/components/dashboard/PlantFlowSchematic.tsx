@@ -124,12 +124,10 @@ export default function PlantFlowSchematic() {
           </div>
         </div>
 
-        <FlowArrow />
-
         {/* ── STAGE 3: CAMIONS ── */}
         <div
-          className="flux-panel group flex-1 min-w-0 p-3"
-          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          className="flux-panel group min-w-0 p-3 rounded-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
           onClick={() => navigate('/logistique')}
         >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Camions</div>
