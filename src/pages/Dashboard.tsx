@@ -1052,7 +1052,7 @@ export default function Dashboard() {
 
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
           {activeTab === 'production' && (
-          <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
+          <div key="tab-production" className="tbos-mobile-card-stack" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
           <div className="flex items-center gap-8 px-6 py-4 w-full mb-6" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', borderRadius: '8px', border: '1px solid rgba(212,168,67,0.08)' }}>
             {/* Taux de Réussite */}
