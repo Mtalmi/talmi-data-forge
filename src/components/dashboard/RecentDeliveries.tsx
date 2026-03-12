@@ -150,6 +150,8 @@ export default function RecentDeliveries() {
     <div
       className="relative overflow-hidden p-6 transition-all duration-500"
       style={{
+        position: 'relative',
+        overflow: 'hidden',
         borderRadius: 8,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         border: '1px solid rgba(245, 158, 11, 0.15)',
@@ -168,7 +170,7 @@ export default function RecentDeliveries() {
         el.style.borderColor = 'rgba(245, 158, 11, 0.15)';
       }}
     >
-      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent,rgba(212,168,67,0.7),transparent)', zIndex:50 }} />
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent 0%,rgba(212,168,67,0.7) 50%,transparent 100%)', zIndex:99, pointerEvents:'none' }} />
 
 
 
