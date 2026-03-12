@@ -797,10 +797,7 @@ export default function Dashboard() {
                     </button>
                     <button
                       onClick={() => navigate('/production')}
-                      className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
-                      style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.20)', color: 'rgba(255,255,255,0.8)' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.15)'; e.currentTarget.style.color = '#fff'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] border border-[#D4A843]/60 text-[#D4A843] bg-[#D4A843]/10 hover:bg-[#D4A843]/20 transition-all duration-200 hover:-translate-y-px"
                     >
                       <BarChart3 size={16} className="opacity-60" />
                       LANCER PRODUCTION
