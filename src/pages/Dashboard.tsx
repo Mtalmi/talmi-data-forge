@@ -742,10 +742,10 @@ export default function Dashboard() {
                 {/* Marge */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
-                    <span className="text-sm ml-1" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
-                  </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase" style={{ color: 'rgba(212,168,67,0.4)' }}>MARGE BRUTE</span>
+                     <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
+                     <span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
+                   </div>
+                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
               </div>
 
