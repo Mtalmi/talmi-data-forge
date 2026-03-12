@@ -1367,7 +1367,7 @@ export default function Dashboard() {
               <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }}>
                 Lancer
               </button>
-              <button className="px-4 py-1.5 rounded-md text-xs font-medium transition-all hover:bg-white/[0.06]" style={{ background: 'transparent', border: '1px solid rgba(148,163,184,0.2)', color: 'rgba(148,163,184,0.6)' }}>
+              <button className="border border-white/20 text-white/50 hover:text-white/80 hover:border-white/30 px-4 py-1.5 rounded-lg text-sm transition-all">
                 Ignorer
               </button>
             </div>
