@@ -1405,7 +1405,7 @@ export default function Dashboard() {
               <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col relative overflow-hidden">
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="mb-3">
-                  <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
+                  <div className="uppercase mb-2" style={{ fontFamily: "'JetBrains Mono', monospace", color: 'rgba(212,168,67,0.7)', letterSpacing: '2px', fontSize: '11px', fontWeight: 500 }}>File de Production</div>
                   <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
@@ -1504,7 +1504,7 @@ export default function Dashboard() {
               {/* Prochain camion */}
               <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03] min-w-0 max-w-full overflow-hidden">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium whitespace-nowrap">Prochain camion</span>
-                <span className="text-sm text-[#D4A843] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                <span className="text-sm font-semibold" style={{ color: '#D4A843', fontFamily: "'SF Mono', ui-monospace, monospace", fontWeight: 500 }}>32 min</span>
                 <span className="text-xs text-muted-foreground/50 truncate max-w-full">→ Constructions Modernes · 20 m³</span>
               </div>
             </div>
