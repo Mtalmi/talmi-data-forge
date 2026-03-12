@@ -910,7 +910,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="flex flex-col">
             <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
             <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
-            <span className="text-[11px] text-emerald-400 font-medium mt-1">↗ +0.4 vs hier</span>
+            <span className="inline-flex items-center text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5 gap-1 mt-1">↗ +0.4 vs hier</span>
           </div>
 
           {/* Middle: Micro-metrics */}
