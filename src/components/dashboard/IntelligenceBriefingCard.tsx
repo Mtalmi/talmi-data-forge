@@ -129,9 +129,9 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       })()}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-        <Clock size={10} color="#64748B" />
-        <span style={{ fontSize: 10, color: '#64748B' }}>
-          {briefing.generated_at ? relativeTime(briefing.generated_at) : '—'}
+        <Clock size={10} className="text-white/40" />
+        <span className="text-xs text-white/40">
+          {isMorning ? 'Ce matin' : (briefing.generated_at ? relativeTime(briefing.generated_at) : '—')}
         </span>
       </div>
     </div>
