@@ -1607,18 +1607,26 @@ export default function Dashboard() {
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }} onClick={() => {
-                setShowLancerToast(true);
-                setLancerToastVisible(true);
-                setTimeout(() => {
-                  setLancerToastVisible(false);
-                  setTimeout(() => setShowLancerToast(false), 300);
-                }, 3000);
-              }}>
+              <button
+                style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.5)', color: '#D4A843', fontWeight: 600, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.25)'; e.currentTarget.style.borderColor = '#D4A843'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.5)'; }}
+                onClick={() => {
+                  setShowLancerToast(true);
+                  setLancerToastVisible(true);
+                  setTimeout(() => {
+                    setLancerToastVisible(false);
+                    setTimeout(() => setShowLancerToast(false), 300);
+                  }, 3000);
+                }}>
                 Lancer
               </button>
-              <button className="border border-white/10 text-white/40 hover:text-white/60 rounded px-3 py-1 text-xs transition-all">
-                Ignorer
+              <button
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.5)', fontWeight: 400, borderRadius: '6px', padding: '6px 16px', cursor: 'pointer', transition: 'all 0.2s ease', fontSize: '12px' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; }}
+              >
+                Passer
               </button>
             </div>
           </div>
