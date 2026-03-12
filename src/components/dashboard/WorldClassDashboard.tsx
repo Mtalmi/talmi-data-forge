@@ -1018,7 +1018,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="hour" tick={{ fill: '#8899aa', fontSize: 11, fontFamily: 'JetBrains Mono, monospace' }} axisLine={false} tickLine={false} />
-                    <Tooltip content={(p) => <RichTooltip {...p} unit=" m³" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
+                    <Tooltip content={(p) => <RichTooltip {...p} unit=" m³/h" sparkData={prodChartData} />} cursor={{ stroke: 'rgba(255,255,255,0.06)', strokeDasharray: '4 4' }} />
                     {/* Single crisp line — no glow layers */}
                     <ReferenceLine y={800} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 4" label={{ value: 'Obj. 800', position: 'right', fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} />
                     <Area type="monotone" dataKey="volume" stroke="#C9A84C" strokeWidth={2} fill="url(#prodGrad)" dot={false} activeDot={{ r: 2, fill: '#C9A84C', stroke: 'none' }} animationDuration={1200} />
