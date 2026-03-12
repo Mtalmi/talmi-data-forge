@@ -693,7 +693,7 @@ function DonutCenter({ cx, cy }: { cx: number; cy: number }) {
 export default function WorldClassContractors() {
   const [activeTab, setActiveTab] = useState('tous');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [missionDrawer, setMissionDrawer] = useState<(typeof MISSIONS[0]) | null>(null);
+  const [missionDrawer, setMissionDrawer] = useState<LiveMission | null>(null);
   const [formData, setFormData] = useState({ nom: '', specialite: '', tarif_journalier: '', note_service: '', statut: 'disponible' });
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
