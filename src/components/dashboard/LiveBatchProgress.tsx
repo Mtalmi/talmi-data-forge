@@ -157,7 +157,7 @@ export default function LiveBatchProgress() {
       </div>
 
       {/* Phase indicators */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="mt-auto flex items-center justify-between mb-3">
         {phases.map((p, i) => (
           <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
             {i > 0 && (
