@@ -96,7 +96,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
           color: '#64748B',
           fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
         }}>
-          {isMorning ? 'il y a 6h' : 'il y a 7h'}
+          {isMorning ? 'il y a 6h' : 'il y a 12h'}
         </span>
       </div>
 
