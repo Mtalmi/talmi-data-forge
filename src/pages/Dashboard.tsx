@@ -180,6 +180,15 @@ export default function Dashboard() {
     return () => clearTimeout(delay);
   }, [firstName]);
 
+  // Close bell dropdown on outside click
+  useEffect(() => {
+    if (!bellOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [bellOpen]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
