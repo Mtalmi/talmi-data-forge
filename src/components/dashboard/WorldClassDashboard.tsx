@@ -926,7 +926,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
-              <div className="overflow-hidden w-full" style={{ height: 180 }}>
+              <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
