@@ -370,7 +370,7 @@ export default function Dashboard() {
           }
           .tbos-hero-card:hover {
             border-color: rgba(212,168,67,0.3) !important;
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow:
               inset 0 1px 0 rgba(255,255,255,0.08),
               0 2px 8px rgba(0,0,0,0.2),
