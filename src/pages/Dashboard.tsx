@@ -553,7 +553,47 @@ export default function Dashboard() {
                       <span className="text-[11px] text-slate-400/60">Ensoleillé · 45%</span>
                       <span className="text-[11px] font-semibold" style={{ color: 'rgba(52,211,153,0.8)' }}>● Optimal</span>
                     </div>
-                  </div>
+                   </div>
+                  {/* Quick Action Buttons */}
+                  <div className="flex flex-wrap items-center gap-2 mt-4" style={{ paddingLeft: 5 }}>
+                    {[
+                      { label: 'Nouveau BL', icon: <PlusCircle size={12} />, path: '/livraisons' },
+                      { label: 'Relancer Clients', icon: <PhoneCall size={12} />, path: '/recouvrement', badge: '2', badgeColor: '#EF4444' },
+                      { label: 'Rapport du Jour', icon: <FileText size={12} />, path: '/rapports', badge: 'New', badgeColor: '#D4A843' },
+                      { label: 'Analytique', icon: <BarChart3 size={12} />, path: '/analytics' },
+                    ].map((btn) => (
+                      <button
+                        key={btn.label}
+                        onClick={() => navigate(btn.path)}
+                        className="relative flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all duration-200 hover:bg-white/[0.08]"
+                        style={{
+                          background: 'rgba(255,255,255,0.04)',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          color: 'rgba(203,213,225,0.7)',
+                        }}
+                      >
+                        <span style={{ color: '#D4A843' }}>{btn.icon}</span>
+                        {btn.label}
+                        {btn.badge && (
+                          <span
+                            className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center rounded-full"
+                            style={{
+                              fontSize: 8,
+                              fontWeight: 700,
+                              minWidth: btn.badge === 'New' ? 22 : 16,
+                              height: 16,
+                              padding: '0 4px',
+                              lineHeight: 1,
+                              background: btn.badgeColor,
+                              color: btn.badgeColor === '#D4A843' ? '#0F1419' : '#FFFFFF',
+                              boxShadow: `0 0 6px ${btn.badgeColor}60`,
+                            }}
+                          >
+                            {btn.badge}
+                          </span>
+                        )}
+                      </button>
+                    ))}
                 </div>
                 <div className="hidden md:flex flex-col items-end gap-2">
                   <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
