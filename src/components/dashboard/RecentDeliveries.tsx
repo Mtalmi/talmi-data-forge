@@ -209,22 +209,37 @@ export default function RecentDeliveries() {
         ))}
       </div>
 
-      {/* Progress bar */}
-      <div className="mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-          <div
-            className="h-full rounded-full transition-all duration-1000"
-            style={{
-              width: `${progressPct}%`,
-              background: 'linear-gradient(90deg, #22c55e, #4ade80)',
-            }}
-          />
-        </div>
-        <div className="flex justify-between mt-1.5">
-          <span className="text-[10px] text-slate-500 font-mono">{doneCount}/{timeline.length} livrées</span>
-          <span className="text-[10px] font-mono tabular-nums" style={{ color: 'rgba(52,211,153,0.6)' }}>{progressPct}%</span>
-        </div>
-      </div>
+      {/* Segmented progress bar */}
+      {(() => {
+        const total = timeline.length || 1;
+        const livreCount = timeline.filter(d => d.status === 'done').length;
+        const enRouteCount = timeline.filter(d => d.status === 'enRoute').length;
+        const lateCount = timeline.filter(d => d.status === 'late').length;
+        const livrePct = (livreCount / total) * 100;
+        const enRoutePct = (enRouteCount / total) * 100;
+        const latePct = (lateCount / total) * 100;
+        return (
+          <div className="mt-3 pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+            <div className="h-1.5 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.06)' }}>
+              {livrePct > 0 && (
+                <div className="h-full transition-all duration-1000" style={{ width: `${livrePct}%`, background: '#22c55e' }} />
+              )}
+              {enRoutePct > 0 && (
+                <div className="h-full transition-all duration-1000" style={{ width: `${enRoutePct}%`, background: '#eab308' }} />
+              )}
+              {latePct > 0 && (
+                <div className="h-full transition-all duration-1000" style={{ width: `${latePct}%`, background: '#ef4444' }} />
+              )}
+            </div>
+            <div className="flex items-center gap-3 mt-1.5">
+              <span className="text-[10px] font-mono tabular-nums" style={{ color: '#22c55e' }}>{livreCount} Livré</span>
+              {enRouteCount > 0 && <span className="text-[10px] font-mono tabular-nums" style={{ color: '#eab308' }}>{enRouteCount} En Route</span>}
+              {lateCount > 0 && <span className="text-[10px] font-mono tabular-nums" style={{ color: '#ef4444' }}>{lateCount} En Retard</span>}
+              <span className="ml-auto text-[10px] text-slate-500 font-mono tabular-nums">{livreCount}/{timeline.length}</span>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
