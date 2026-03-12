@@ -29,16 +29,19 @@ export function EnergyCostAnomalyWidget() {
       }}
     >
       {/* Label */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 10 }}>
-        <Zap size={11} color={T.gold} />
-        <Sparkles size={9} color={T.gold} />
-        <span style={{ color: T.gold, fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
-          Agent IA: Détection Anomalies
-        </span>
-        <span style={{ color: '#D4A843', fontSize: 11, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
-        <span style={{ marginLeft: 4, display: 'inline-flex', alignItems: 'center', padding: '2px 8px', borderRadius: 9999, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,168,67,0.3)', fontSize: 11, fontWeight: 600, color: '#D4A843' }}>
-          Confiance: 85%
-        </span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+          <Zap size={11} color={T.gold} />
+          <Sparkles size={9} color={T.gold} />
+          <span style={{ color: T.gold, fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+            Agent IA: Détection Anomalies
+          </span>
+          <span style={{ color: '#D4A843', fontSize: 11, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
+          <span style={{ marginLeft: 4, display: 'inline-flex', alignItems: 'center', padding: '2px 8px', borderRadius: 9999, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,168,67,0.3)', fontSize: 11, fontWeight: 600, color: '#D4A843' }}>
+            Confiance: 85%
+          </span>
+        </div>
+        <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: 'rgba(148,163,184,0.5)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 1h</span>
       </div>
 
       {/* Status */}

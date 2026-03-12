@@ -130,6 +130,7 @@ export function SeasonalDemandForecasterCard() {
           </span>
           <span style={{ color: '#D4A843', fontSize: 13, animation: 'agentSparkle 2s ease-in-out infinite' }}>✦</span>
           <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, ${T.gold}40, transparent 80%)` }} />
+          <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: 'rgba(148,163,184,0.5)', whiteSpace: 'nowrap', marginRight: 8 }}>Dernière analyse: il y a 3h</span>
         </div>
         {open ? <ChevronUp size={14} color={T.textDim} /> : <ChevronDown size={14} color={T.textDim} />}
       </button>
