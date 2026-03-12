@@ -1021,27 +1021,14 @@ export default function WorldClassContractors() {
                 <div style={{ width: 4, height: 20, background: T.gold, borderRadius: 2 }} />
                 <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Tendance Mensuelle</h3>
               </div>
-              <span style={{
-                background: `${T.warning}22`, color: T.warning, border: `1px solid ${T.warning}44`,
-                borderRadius: 100, padding: '3px 10px', fontSize: 11, fontWeight: 700,
-              }}>+50% depuis Sep</span>
             </div>
-            <ResponsiveContainer width="100%" height={260}>
-              <AreaChart data={TREND_DATA} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={T.gold} stopOpacity={0.3} />
-                    <stop offset="95%" stopColor={T.gold} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke={T.cardBorder} strokeDasharray="3 3" />
-                <XAxis dataKey="month" tick={{ fill: T.textDim, fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: T.textDim, fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `${v}K`} domain={[40, 90]} />
-                <RechartsTooltip content={<DarkTooltip suffix="K DH" />} />
-                <ReferenceLine y={65.5} stroke={T.textDim} strokeDasharray="4 4" strokeOpacity={0.5} />
-                <Area type="monotone" dataKey="cout" stroke={T.gold} strokeWidth={2.5} fill="url(#trendGrad)" dot={{ fill: T.gold, r: 4, strokeWidth: 0 }} animationDuration={1000} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 260, color: T.textDim, fontSize: 13 }}>
+              <div style={{ textAlign: 'center' }}>
+                <Calendar size={36} color={T.textDim} style={{ margin: '0 auto 8px', opacity: 0.3 }} />
+                <div>Données de tendance non disponibles</div>
+                <div style={{ fontSize: 11, color: T.textDim, marginTop: 4 }}>L'historique sera alimenté par les missions futures</div>
+              </div>
+            </div>
           </div>
         </div>
 
