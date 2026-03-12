@@ -154,7 +154,7 @@ export default function LiveBatchProgress() {
             style={{
               width: `${progress}%`,
               background: `linear-gradient(90deg, ${T.dotWarn}, ${T.dotOk})`,
-              boxShadow: `0 0 8px rgba(52,211,153,0.2)`,
+              boxShadow: `-2px 0 8px rgba(212,168,67,0.3), 0 0 8px rgba(52,211,153,0.2)`,
             }}
           >
             <div className="absolute inset-0" style={{
