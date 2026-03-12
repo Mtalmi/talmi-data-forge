@@ -798,6 +798,41 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* ═══ TAB BAR — Command Center / Production Live ═══ */}
+        <div className="flex items-center gap-1 mb-5 relative z-[1] p-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <button
+            onClick={() => setActiveTab('command')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'command' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'command' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'command' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <LayoutDashboard size={14} />
+            Command Center
+          </button>
+          <button
+            onClick={() => setActiveTab('production')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'production' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'production' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'production' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <Factory size={14} />
+            Production Live
+            <span className="relative flex h-1.5 w-1.5 ml-1">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            </span>
+          </button>
+        </div>
+
+        {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
+        {activeTab === 'production' && (
+        <>
         {/* ═══════════════════════════════════════════════════════════ */}
         {/* PRODUCTION COMMAND CENTER — 3-Panel Mission Control Strip */}
         {/* ═══════════════════════════════════════════════════════════ */}
