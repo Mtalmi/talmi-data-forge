@@ -944,9 +944,9 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <circle cx="24" cy="24" r="20" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
                 strokeDasharray={`${2 * Math.PI * 20 * 0.87} ${2 * Math.PI * 20 * 0.13}`}
                 transform="rotate(-90 24 24)" />
-              <text x="24" y="25" textAnchor="middle" dominantBaseline="central" fill="#D4A843" fontSize="11" fontWeight="bold" fontFamily="ui-monospace, SFMono-Regular, monospace">87%</text>
+              <text x="24" y="25" textAnchor="middle" dominantBaseline="central" fontSize="11" fontFamily="ui-monospace, SFMono-Regular, monospace" style={{ color: '#D4A843', fontWeight: '500', textShadow: '0 0 12px rgba(212,168,67,0.3)' }} fill="#D4A843" fontWeight="500">87%</text>
             </svg>
-            <span className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 font-medium mt-1">Objectif</span>
+            <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.4)', textAlign: 'center', marginTop: '4px' }}>Capacité</div>
           </div>
         </div>
 
