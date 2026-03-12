@@ -913,7 +913,7 @@ export default function WorldClassContractors() {
         }}>
           <Zap size={16} color="#D4A843" strokeWidth={2.5} />
           <span style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.85)', fontWeight: 400 }}>
-            3 missions actives · Atlas Pompage termine dans 4 jours · 2 sous-traitants disponibles correspondent aux besoins en attente
+            {aiBannerText}
           </span>
         </div>
 
