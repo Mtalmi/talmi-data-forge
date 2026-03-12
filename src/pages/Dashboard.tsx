@@ -1302,7 +1302,7 @@ export default function Dashboard() {
               <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
                 <div className="mb-3">
                   <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
-                  <div className="mb-2 p-2 rounded-lg border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', border: '1px solid rgba(212,168,67,0.12)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 12px rgba(212, 168, 67, 0.06)' }}>
+                  <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 12px rgba(212,168,67,0.08)' }}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       <span className="text-[10px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>#403-068</span>
@@ -1311,7 +1311,9 @@ export default function Dashboard() {
                     <div className="text-[8px] text-slate-400 mb-1.5">F-B25 · 8 m³ · BTP Maroc</div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-1 bg-slate-800 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: '72%', background: 'linear-gradient(90deg, #f59e0b, #22c55e)', transition: 'width 1s ease-out' }} />
+                        <div className="h-1.5 rounded-full bg-[#D4A843] relative overflow-hidden" style={{ width: '72%', transition: 'width 1s ease-out' }}>
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite]" />
+                        </div>
                       </div>
                       <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
                     </div>
