@@ -431,12 +431,12 @@ function PipelineFunnel() {
   ];
 
   return (
-    <Card className="ops-enter ops-surface-card" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <Card className="ops-enter ops-surface-card flex flex-col" style={{ minHeight: 420, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center flex-1 justify-center">
         {stages.map((s, i) => {
           const isEmpty = s.value === 0;
           return (
@@ -782,7 +782,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ minHeight: 420, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -956,7 +956,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 420, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
