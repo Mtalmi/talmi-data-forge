@@ -1117,7 +1117,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   );
                 })}
               </div>
-            </Card>
+            </div>
+            </div>
             )}
           </div>
         </div>
