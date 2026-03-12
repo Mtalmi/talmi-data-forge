@@ -46,7 +46,7 @@ export function EnergyCostAnomalyWidget() {
             Confiance: 85%
           </span>
         </div>
-        <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: 'rgba(148,163,184,0.5)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 1h</span>
+        <span style={{ fontFamily: "'SF Mono', ui-monospace, monospace", fontSize: 11, color: 'rgba(212,168,67,0.45)', whiteSpace: 'nowrap' }}>Dernière analyse: il y a 1h</span>
       </div>
 
       {/* Status */}
