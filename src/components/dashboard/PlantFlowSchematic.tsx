@@ -44,7 +44,7 @@ function MiniBar({ label, pct, warn }: { label: string; pct: number; warn?: bool
 }
 
 const panelHoverStyle = {
-  transition: 'border-color 200ms ease',
+  transition: 'all 200ms ease-out',
   cursor: 'pointer',
 } as const;
 
