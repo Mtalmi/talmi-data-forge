@@ -206,6 +206,7 @@ export function SeasonalDemandForecasterCard() {
             position: 'relative',
             overflow: 'hidden',
           }}>
+            <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
             <p style={{ fontSize: 10, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12, paddingLeft: 8 }}>
               Courbe de Demande — 90 jours
             </p>
