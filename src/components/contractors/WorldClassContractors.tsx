@@ -1085,11 +1085,11 @@ export default function WorldClassContractors() {
 
         {/* ══════════════════════════ SECTION 7: UPCOMING NEEDS ══════════════════════════ */}
         <div>
-          <SectionHeader title="Besoins à Venir" badge="2 demandes" badgeColor={T.info} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
-            {UPCOMING.map((u, i) => (
-              <UpcomingCard key={i} u={u} delay={i * 100} onAssigner={() => { setAssignerBesoin(u); setSelectedPrestataire(''); setAssignerError(''); }} onAppelOffres={() => { setAppelsOffres(u); setAoForm({ titre: u.besoin || '', description: '', specialite: u.specialty || '', budget_max: u.budget?.replace(/[^0-9]/g, '') || '', date_limite: '', priorite: u.priority?.toLowerCase() || 'normale', chantier: u.chantier || '', duree_estimee: (u.duree || '').replace(/[^0-9]/g, '') || '' }); setAoError(''); setAoSuccess(false); }} />
-            ))}
+          <SectionHeader title="Besoins à Venir" badge="0 demande" badgeColor={T.info} />
+          <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderRadius: 12, padding: '40px 20px', textAlign: 'center' }}>
+            <Calendar size={40} color={T.textDim} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
+            <div style={{ color: T.textSec, fontSize: 14, fontWeight: 500 }}>Aucun besoin planifié</div>
+            <div style={{ color: T.textDim, fontSize: 12, marginTop: 4 }}>Les besoins à venir seront listés ici dès leur création</div>
           </div>
         </div>
 
