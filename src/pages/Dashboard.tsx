@@ -1179,7 +1179,7 @@ export default function Dashboard() {
             <WorldClassDashboard hideProductionWidgets showOnlyIntel />
           </Suspense>
         </div>
-        </>
+        </div>
         )}
 
         {/* FINANCE & CONFORMITÉ — Hidden for CEO demo (no content yet) */}
