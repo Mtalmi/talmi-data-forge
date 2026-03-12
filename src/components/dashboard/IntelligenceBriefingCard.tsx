@@ -120,8 +120,8 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
           const rest = resume.slice(dotIdx + 1).trim();
           return (
             <p style={{ fontSize: 12, lineHeight: 1.65, marginBottom: 8 }}>
-              <span style={{ color: '#fff', fontWeight: 500 }}>{first}</span>
-              {rest && <span style={{ color: 'rgba(148,163,184,0.7)', fontWeight: 400 }}> {rest}{resume.length >= 200 ? '...' : ''}</span>}
+              <span style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>{first}</span>
+              {rest && <span style={{ color: 'rgba(148,163,184,0.5)', fontWeight: 400 }}> {rest}{resume.length >= 200 ? '...' : ''}</span>}
             </p>
           );
         }
