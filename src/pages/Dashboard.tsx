@@ -1057,9 +1057,9 @@ export default function Dashboard() {
                       Production (m³/h) vs Target
                     </div>
                     {/* Target legend */}
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <svg width="8" height="2" className="inline-block"><line x1="0" y1="1" x2="8" y2="1" stroke="rgba(148,163,184,0.3)" strokeWidth="1" strokeDasharray="2,1" /></svg>
-                      <span className="text-[9px] text-muted-foreground/30 font-mono">Target</span>
+                    <div className="flex items-center mt-1">
+                      <div className="w-3 h-px border-t border-dashed border-white/30 inline-block mr-1.5" />
+                      <span className="text-[9px] text-muted-foreground/30 font-medium">Target</span>
                     </div>
                   </div>
                   <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
