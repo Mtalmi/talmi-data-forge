@@ -439,7 +439,7 @@ export default function Dashboard() {
               <div className="flex items-end justify-between">
                 <div>
                   <h1 className="tracking-tight" style={{ fontSize: '1.5625rem', fontWeight: 700, color: '#FFD700', lineHeight: 1, marginBottom: 5 }}>
-                    Bonjour {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
+                    {greeting} {typedName || '\u00A0'}{typedName.length === firstName.length ? '.' : ''}
                     {showCursor && <span className="inline-block w-[2px] h-[24px] ml-0.5 align-bottom" style={{ background: 'rgba(253,185,19,0.6)', animation: 'pulse-alert 0.8s ease-in-out infinite' }} />}
                   </h1>
                   {/* Divider */}
