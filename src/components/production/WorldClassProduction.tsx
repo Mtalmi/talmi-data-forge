@@ -383,10 +383,10 @@ export default function WorldClassProduction() {
     if (hasData) {
       return { produced, inProgress, planned, totalVolume, completedBatches, conformity, totalBatches };
     }
-    // Realistic fallbacks matching Dashboard story
+    // No data — show zeros
     return {
-      produced: 438, inProgress: 47, planned: 186,
-      totalVolume: 671, completedBatches: 12, conformity: 94, totalBatches: 14,
+      produced: 0, inProgress: 0, planned: 0,
+      totalVolume: 0, completedBatches: 0, conformity: 100, totalBatches: 0,
     };
   }, [bons, batches]);
 
@@ -397,19 +397,8 @@ export default function WorldClassProduction() {
       production: bons.filter(b => b.workflow_status === 'production').length,
       validation: bons.filter(b => b.workflow_status === 'validation_technique').length,
     };
-    const hasData = live.planification + live.production + live.validation > 0;
-    return hasData ? live : { planification: 3, production: 2, validation: 9 };
+    return live;
   }, [bons]);
-
-  const FALLBACK_HOURLY = [
-    { hour: '6h', volume: 0, objectif: 90 }, { hour: '7h', volume: 24, objectif: 90 },
-    { hour: '8h', volume: 52, objectif: 90 }, { hour: '9h', volume: 78, objectif: 90 },
-    { hour: '10h', volume: 110, objectif: 90 }, { hour: '11h', volume: 85, objectif: 90 },
-    { hour: '12h', volume: 42, objectif: 90 }, { hour: '13h', volume: 68, objectif: 90 },
-    { hour: '14h', volume: 95, objectif: 90 }, { hour: '15h', volume: 108, objectif: 90 },
-    { hour: '16h', volume: 72, objectif: 90 }, { hour: '17h', volume: 35, objectif: 90 },
-    { hour: '18h', volume: 12, objectif: 90 },
-  ];
 
   const hourlyData = useMemo(() => {
     const hourMap: Record<string, number> = {};
@@ -422,18 +411,10 @@ export default function WorldClassProduction() {
         if (hourMap[key] !== undefined) hourMap[key] += b.volume_m3 || 0;
       }
     });
-    const liveData = Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
-    const hasData = liveData.some(d => d.volume > 0);
-    return hasData ? liveData : FALLBACK_HOURLY;
+    return Object.entries(hourMap).map(([hour, volume]) => ({ hour, volume: Math.round(volume), objectif: 90 }));
   }, [bons]);
 
   const hasHourlyData = hourlyData.some(d => d.volume > 0);
-
-  const FALLBACK_PRODUCTS = [
-    { name: 'F-B25 Standard', volume: 285, color: '#D4A843' },
-    { name: 'F-B30 Structurel', volume: 221, color: '#B8922E' },
-    { name: 'F-B20 Fondation', volume: 165, color: '#8B6914' },
-  ];
 
   const productData = useMemo(() => {
     const formulaMap: Record<string, number> = {};
@@ -441,21 +422,11 @@ export default function WorldClassProduction() {
       const fId = b.formule_id || 'Autre';
       formulaMap[fId] = (formulaMap[fId] || 0) + (b.volume_m3 || 0);
     });
-    const live = Object.entries(formulaMap)
+    return Object.entries(formulaMap)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([name, volume], i) => ({ name, volume: Math.round(volume), color: CHART_COLORS[i % CHART_COLORS.length] }));
-    return live.length > 0 ? live : FALLBACK_PRODUCTS;
   }, [bons]);
-
-  const FALLBACK_QUALITY = [
-    { day: 'Lun', ok: 8, variances: 1, critical: 0 },
-    { day: 'Mar', ok: 10, variances: 0, critical: 0 },
-    { day: 'Mer', ok: 12, variances: 2, critical: 0 },
-    { day: 'Jeu', ok: 9, variances: 1, critical: 1 },
-    { day: 'Ven', ok: 14, variances: 0, critical: 0 },
-    { day: 'Sam', ok: 6, variances: 0, critical: 0 },
-  ];
 
   const qualityData = useMemo(() => {
     const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
@@ -473,9 +444,7 @@ export default function WorldClassProduction() {
       else dayMap[dayName].ok++;
     });
 
-    const live = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
-    const hasData = live.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);
-    return hasData ? live : FALLBACK_QUALITY;
+    return ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map(day => ({ day, ...dayMap[day] }));
   }, [weekBons]);
 
   const hasQualityData = qualityData.some(d => d.ok > 0 || d.variances > 0 || d.critical > 0);

@@ -2268,11 +2268,9 @@ function UpcomingCard({ u, delay, onAssigner, onAppelOffres }: { u: LiveUpcoming
     fetchScore();
   }, [u.besoin]);
 
-  // Fallback static values
-  const fallbackContractor = u.besoin === 'Pompage gros volume' ? 'Atlas Pompage SARL' : 'Électricité MB';
-  const fallbackScore = u.besoin === 'Pompage gros volume' ? 94 : 91;
-  const displayContractor = liveScore?.recommandation || fallbackContractor;
-  const displayScore = liveScore?.score ?? fallbackScore;
+  // No hardcoded fallbacks — show placeholders if no live data
+  const displayContractor = liveScore?.recommandation || '—';
+  const displayScore = liveScore?.score ?? null;
 
   return (
     <div

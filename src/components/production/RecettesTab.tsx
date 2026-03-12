@@ -36,11 +36,7 @@ interface Formula {
   color: string;
 }
 
-const FALLBACK_FORMULAS: Formula[] = [
-  { code: 'F-B25', name: 'Béton B25 Standard', resistance: '25 MPa', classe: 'C25/30', ratioEC: '0.502', slump: '18 cm', ciment: 350, sable: 780, gravette: 1050, eau: 176, adjuvant: 2.8, prixRevient: 620, prixVenteMin: 850, margeCible: '37%', usagePct: 45, color: T.gold },
-  { code: 'F-B30', name: 'Béton B30 Structurel', resistance: '30 MPa', classe: 'C30/37', ratioEC: '0.465', slump: '16 cm', ciment: 400, sable: 750, gravette: 1080, eau: 186, adjuvant: 3.2, prixRevient: 710, prixVenteMin: 980, margeCible: '38%', usagePct: 35, color: T.goldDark },
-  { code: 'F-B20', name: 'Béton B20 Fondation', resistance: '20 MPa', classe: 'C20/25', ratioEC: '0.550', slump: '20 cm', ciment: 300, sable: 820, gravette: 1020, eau: 165, adjuvant: 2.4, prixRevient: 540, prixVenteMin: 750, margeCible: '39%', usagePct: 20, color: T.goldDeep },
-];
+// No fallback formulas — live data only
 
 function mapDbToFormula(row: any, index: number): Formula {
   const ciment = row.ciment_kg_m3 ?? 0;
@@ -214,7 +210,7 @@ export default function RecettesTab() {
     if (dbFormulas && dbFormulas.length > 0) {
       return dbFormulas.map((row, i) => mapDbToFormula(row, i));
     }
-    return FALLBACK_FORMULAS;
+    return [] as Formula[];
   }, [dbFormulas]);
 
   return (
