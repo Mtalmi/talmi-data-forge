@@ -139,7 +139,16 @@ export function SeasonalDemandForecasterCard() {
         <div style={{ padding: '0 20px 20px' }}>
           {/* KPI Summary */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 20 }}>
-            {kpis.map((k, i) => (
+            {kpis.map((k, i) => {
+              const isCapacite = k.label === 'Capacité Disponible';
+              const isStock = k.label === 'Alerte Stock';
+              const valueStyle: React.CSSProperties = {
+                fontSize: 14, fontWeight: isCapacite || isStock ? 600 : 800,
+                color: isCapacite ? '#34D399' : isStock ? '#F87171' : (k.valueColor || T.textPri),
+                fontFamily: 'JetBrains Mono, monospace',
+                ...(isStock ? { textShadow: '0 0 6px rgba(248,113,113,0.2)' } : {}),
+              };
+              return (
               <div key={i} style={{
                 position: 'relative', overflow: 'hidden',
                 background: 'rgba(0,0,0,0.2)', borderRadius: 8,
@@ -147,9 +156,10 @@ export function SeasonalDemandForecasterCard() {
               }}>
                 <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
                 <p style={{ fontSize: 9, fontWeight: 600, color: T.textDim, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 5 }}>{k.label}</p>
-                <span style={{ fontSize: 14, fontWeight: 800, color: k.valueColor || T.textPri, fontFamily: 'JetBrains Mono, monospace' }}>{k.value}</span>
+                <span style={valueStyle}>{k.value}</span>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Forecast Table */}
