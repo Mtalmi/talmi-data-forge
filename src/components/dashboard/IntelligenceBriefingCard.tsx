@@ -77,6 +77,8 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
     <div
       className="tbos-briefing-card cursor-pointer"
       style={{
+      position: 'relative',
+      overflow: 'hidden',
       background: 'rgba(255,255,255,0.05)',
       backdropFilter: 'blur(4px)',
       border: `1px solid ${isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)'}`,
@@ -96,6 +98,7 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
       el.style.transform = 'translateY(0)';
       el.style.borderColor = isMorning ? 'rgba(212,168,67,0.15)' : 'rgba(139,159,204,0.15)';
     }}>
+      <div style={{ position:'absolute', top:0, left:0, right:0, height:'2px', background:'linear-gradient(90deg,transparent, rgba(212,168,67,0.7),transparent)', zIndex:99 }} />
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         {icon}
         <span style={{ fontSize: 13, fontWeight: 700, color: '#F1F5F9' }}>{label}</span>
