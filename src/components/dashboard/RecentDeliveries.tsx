@@ -175,7 +175,7 @@ export default function RecentDeliveries() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-medium text-white/90">Livraisons du Jour</h3>
-          <p className="text-[10px] text-slate-500 mt-0.5 font-mono tabular-nums">
+          <p className="text-xs font-mono text-white/30 mt-0.5 tabular-nums">
             {format(lastUpdate, 'HH:mm:ss', { locale: dateFnsLocale })}
           </p>
         </div>
