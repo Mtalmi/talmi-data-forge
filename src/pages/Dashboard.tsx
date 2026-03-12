@@ -912,11 +912,11 @@ export default function Dashboard() {
                     {kpi.label}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
-                    <span className="text-3xl font-mono tracking-tight text-white" style={{
-                      fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
-                      fontWeight: 200, lineHeight: 1,
-                      textShadow: '0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
-                    }}>
+                     <span className="text-3xl font-mono tracking-tight text-white" style={{
+                       fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
+                       fontWeight: 200, lineHeight: 1,
+                       textShadow: '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
+                     }}>
                       {typeof kpi.value === 'number' && kpi.value % 1 !== 0 ? kpi.value.toFixed(1) : kpi.value}
                     </span>
                     <span className="text-lg font-mono text-muted-foreground ml-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{kpi.unit}</span>
