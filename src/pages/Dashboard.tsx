@@ -594,7 +594,7 @@ export default function Dashboard() {
                         )}
                       </button>
                     ))}
-                </div>
+                  </div>
                 <div className="hidden md:flex flex-col items-end gap-2">
                   <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
                   {/* Prochaine Livraison countdown card */}
