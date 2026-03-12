@@ -931,7 +931,7 @@ export default function Dashboard() {
                 </div>
                 <div style={{ marginTop: 'auto' }}>
                   <div className="flex items-end justify-between pt-3 mt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]">
+                    <svg width="130" height="44" viewBox="0 0 130 44" className="min-w-[130px] min-h-[44px]" style={{ filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.2))' }}>
                       {(() => {
                         // Parse original points and rescale to fill 130x44
                         const rawPts = kpi.sparkline.split(' ').map(p => { const [x, y] = p.split(',').map(Number); return { x, y }; });
