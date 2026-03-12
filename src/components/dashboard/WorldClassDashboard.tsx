@@ -662,8 +662,10 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         {showOnlyIntel ? (
           <div className="space-y-4 mb-5 relative z-[1] w-full max-w-[1400px] mx-auto">
             <AIAnalystBrief />
-            <ComplianceWidget />
-            <EnergyCostAnomalyWidget />
+            <div className="grid grid-cols-2 gap-4">
+              <ComplianceWidget />
+              <EnergyCostAnomalyWidget />
+            </div>
             <SeasonalDemandForecasterCard />
           </div>
         ) : (
