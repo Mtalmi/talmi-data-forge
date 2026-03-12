@@ -73,9 +73,12 @@ export function EnergyCostAnomalyWidget() {
         onClick={() => navigate('/maintenance')}
         style={{
           width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-          padding: '5px 0', borderRadius: 6, fontSize: 10, fontWeight: 600,
-          background: `${T.gold}10`, color: T.gold, border: `1px solid ${T.gold}20`, cursor: 'pointer',
+          padding: '8px 16px', borderRadius: 6, fontSize: 13, fontWeight: 500,
+          background: 'transparent', color: '#D4A843', border: '1px solid rgba(212,168,67,0.4)',
+          cursor: 'pointer', transition: 'all 0.2s ease',
         }}
+        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; }}
       >
         Voir Analyse <ChevronRight size={10} />
       </button>
