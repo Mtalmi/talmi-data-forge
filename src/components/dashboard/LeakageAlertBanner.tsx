@@ -74,7 +74,7 @@ export default function LeakageAlertBanner() {
               Alerte Fuite Détectée
             </p>
             <p className="text-sm text-muted-foreground">
-              {visibleLeakages.length} livraison(s) avec écart de coût &gt; 5%
+              {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-medium">Perte estimée: 1,450 DH</span>
             </p>
           </div>
         </div>
