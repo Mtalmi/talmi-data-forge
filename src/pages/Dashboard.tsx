@@ -1212,9 +1212,9 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] text-slate-600">Prochain camion</span>
-                <span className="text-[9px] text-amber-400 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
-                <span className="text-[9px] text-slate-600">→ Constructions Modernes · 20 m³</span>
+                <span className="text-[11px] text-[#D4A843] font-medium">Prochain camion</span>
+                <span className="text-[11px] text-[#D4A843] font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
+                <span className="text-[11px] text-[#D4A843]/60">→ Constructions Modernes · 20 m³</span>
               </div>
             </div>
           </div>
@@ -1226,7 +1226,8 @@ export default function Dashboard() {
                 <LiveBatchProgress />
               </Suspense>
             </div>
-            <div className="min-w-0 h-full rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="min-w-0 h-full rounded-lg p-5 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out cursor-pointer" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
               <div className="flex items-center gap-2 mb-4">
                 <span className="relative flex h-1.5 w-1.5"><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400" /></span>
                 <span className="text-[14px] font-medium text-white/90">Derniers Batches</span>
@@ -1263,7 +1264,8 @@ export default function Dashboard() {
                 ))}
               </div>
             </div>
-            <div className="min-w-0 h-full rounded-lg p-5" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+            <div className="min-w-0 h-full rounded-lg p-5 relative overflow-hidden hover:border-[#D4A843]/30 hover:-translate-y-[1px] transition-all duration-200 ease-out cursor-pointer" style={{ background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', border: '1px solid rgba(245, 158, 11, 0.15)' }}>
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
               <div className="text-[14px] font-medium text-white/90 mb-3">Contrôle Qualité</div>
               <div className="flex flex-col gap-1">
                 {[

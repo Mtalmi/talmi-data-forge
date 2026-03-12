@@ -113,8 +113,8 @@ export default function LiveBatchProgress() {
       }}
       onMouseEnter={e => {
         const el = e.currentTarget as HTMLElement;
-        el.style.transform = 'translateY(-2px)';
-        el.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+        el.style.transform = 'translateY(-1px)';
+        el.style.borderColor = 'rgba(212,168,67,0.3)';
       }}
       onMouseLeave={e => {
         const el = e.currentTarget as HTMLElement;
@@ -122,6 +122,7 @@ export default function LiveBatchProgress() {
         el.style.borderColor = 'rgba(255, 255, 255, 0.08)';
       }}
     >
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
