@@ -407,6 +407,54 @@ export default function Dashboard() {
           .tbos-hero-card .scanline-overlay {
             display: none !important;
           }
+
+          /* ── Mobile Dashboard Card Spacing ── */
+          @media (max-width: 767px) {
+            .tbos-dashboard-scroll {
+              padding-left: 12px !important;
+              padding-right: 12px !important;
+            }
+            .tbos-dashboard-scroll > * {
+              max-width: 100% !important;
+              overflow-x: hidden;
+            }
+            .tbos-dashboard-scroll .tbos-hero-card {
+              padding: 16px !important;
+            }
+            .tbos-mobile-card-stack > * {
+              margin-bottom: 12px !important;
+            }
+            .tbos-mobile-card-stack > *:last-child {
+              margin-bottom: 0 !important;
+            }
+            .tbos-hero-stat-number {
+              font-size: clamp(24px, 5vw, 36px) !important;
+            }
+            .tbos-stats-bar {
+              flex-wrap: wrap !important;
+              gap: 12px !important;
+            }
+            .tbos-stats-bar .w-px {
+              display: none !important;
+            }
+            .tbos-hero-cockpit {
+              padding: 16px !important;
+            }
+            .tbos-kpi-grid {
+              grid-template-columns: 1fr 1fr !important;
+              gap: 12px !important;
+            }
+            .tbos-prod-stats-bar {
+              flex-wrap: wrap !important;
+              gap: 12px !important;
+              padding: 12px !important;
+            }
+            .tbos-prod-stats-bar > div {
+              border-right: none !important;
+              padding-right: 0 !important;
+              margin-right: 0 !important;
+            }
+          }
         `}</style>
 
         {/* Noise/grain texture overlay — concrete materiality */}
@@ -675,11 +723,11 @@ export default function Dashboard() {
 
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
           {activeTab === 'command' && (
-          <div key="tab-command" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
+          <div key="tab-command" className="tbos-mobile-card-stack" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* (1) Hero — Command Cockpit Strip */}
           <div className="relative z-[1]" style={{ marginBottom: 20, animation: 'ccSectionIn 300ms ease-out 0ms both' }}>
             <div
-              className="rounded-xl backdrop-blur-sm"
+              className="tbos-hero-cockpit rounded-xl backdrop-blur-sm"
               style={{
                 background: 'rgba(15,23,41,0.8)',
                 border: '1px solid rgba(255,255,255,0.06)',
@@ -714,10 +762,10 @@ export default function Dashboard() {
               </div>
 
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
-              <div className="flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
+              <div className="tbos-stats-bar flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
                 {/* Capacity */}
                 <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 30px rgba(212, 168, 67, 0.2)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+                  <span className="tbos-hero-stat-number text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 30px rgba(212, 168, 67, 0.2)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
                   <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                     <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '87%' }} />
                   </div>
@@ -730,7 +778,7 @@ export default function Dashboard() {
                 {/* Alertes */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl text-red-400 font-bold" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", textShadow: '0 0 12px rgba(239, 68, 68, 0.3)' }}>2</span>
+                    <span className="tbos-hero-stat-number text-2xl text-red-400 font-bold" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", textShadow: '0 0 12px rgba(239, 68, 68, 0.3)' }}>2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
@@ -742,7 +790,7 @@ export default function Dashboard() {
                 {/* Production */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
+                    <span className="tbos-hero-stat-number text-2xl text-white" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">m³</span>
                   </div>
                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
@@ -754,7 +802,7 @@ export default function Dashboard() {
                 {/* Marge */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                     <span className="text-2xl" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em' }}>{marge}<span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)', margin: 0, padding: 0, letterSpacing: 0 }}>%</span></span>
+                     <span className="tbos-hero-stat-number text-2xl" style={{ fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace", fontWeight: 200, color: '#D4A843', letterSpacing: '-0.02em' }}>{marge}<span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)', margin: 0, padding: 0, letterSpacing: 0 }}>%</span></span>
                    </div>
                    <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
@@ -843,7 +891,7 @@ export default function Dashboard() {
           </div>
 
           {/* (3) 4 KPI Cards Row */}
-          <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
+          <div className="tbos-kpi-grid grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
           {[
             {
               label: 'VOLUME',
@@ -922,7 +970,7 @@ export default function Dashboard() {
                     {kpi.label}
                   </div>
                   <div className="flex items-baseline gap-2 leading-none">
-                     <span className="text-3xl font-mono tracking-tight text-white" style={{
+                     <span className="tbos-hero-stat-number text-3xl font-mono tracking-tight text-white" style={{
                        fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
                        fontWeight: 200, lineHeight: 1,
                        textShadow: '0 0 20px rgba(255, 255, 255, 0.06), 0 0 35px rgba(255,215,0,0.2), 0 0 70px rgba(255,215,0,0.07)',
@@ -1004,12 +1052,12 @@ export default function Dashboard() {
 
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
           {activeTab === 'production' && (
-          <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
+          <div key="tab-production" className="tbos-mobile-card-stack" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
           {/* Production Stats Bar */}
-          <div className="flex items-center gap-8 px-6 py-4 w-full mb-6" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', borderRadius: '8px', border: '1px solid rgba(212,168,67,0.08)' }}>
+          <div className="tbos-prod-stats-bar flex items-center gap-8 px-6 py-4 w-full mb-6" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.04), transparent)', borderRadius: '8px', border: '1px solid rgba(212,168,67,0.08)' }}>
             {/* Taux de Réussite */}
             <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-              <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+              <span className="tbos-hero-stat-number text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212, 168, 67, 0.15)' }}>94<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
               <div style={{ background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.8), transparent)', height: '2px', width: '48px', margin: '4px auto 0' }} />
               <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                 <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '94%' }} />
@@ -1017,7 +1065,7 @@ export default function Dashboard() {
               <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">TAUX DE RÉUSSITE</span>
               <span className="text-[9px] text-muted-foreground/30">7 derniers jours</span>
             </div>
-            <div style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center' }}>
+            <div className="tbos-prod-stats-bar" style={{ background: 'linear-gradient(to right, rgba(212,168,67,0.05), transparent)', border: '1px solid rgba(212,168,67,0.15)', borderRadius: '8px', padding: '12px 24px', display: 'flex', gap: '0', alignItems: 'center' }}>
               <div className="flex flex-col" style={{ borderRight: '1px solid rgba(255,255,255,0.08)', paddingRight: '24px', marginRight: '24px' }}>
                 <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
                 <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>14</span>
