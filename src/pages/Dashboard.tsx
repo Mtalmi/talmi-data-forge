@@ -1061,7 +1061,7 @@ export default function Dashboard() {
             <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
               {/* Chart panel */}
               <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="flex justify-between items-center mb-1">
                   <div>
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -1188,7 +1188,7 @@ export default function Dashboard() {
               {/* Performance / Camera panel */}
               <div className="flex-[3.5] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col">
                 <div className="flex-1 rounded-lg p-4 flex flex-col relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(15,20,35,0.95) 0%, rgba(10,15,25,0.98) 100%)', border: '1px solid rgba(255,255,255,0.04)', minHeight: '200px' }}>
-                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                   {/* Header with toggle */}
                   <div className="flex items-center justify-between mb-1">
                     <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
@@ -1307,7 +1307,7 @@ export default function Dashboard() {
 
               {/* Batch queue panel */}
               <div className="flex-[3] border-l border-white/[0.04] pl-3 ml-2 min-w-0 flex flex-col relative overflow-hidden">
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
                 <div className="mb-3">
                   <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>File de Production</div>
                   <div className="mb-2 p-2 rounded-lg border border-[#D4A843]/30 border-l-2 border-l-[#D4A843]/50" style={{ background: 'rgba(212,168,67,0.06)', borderLeft: '2px solid rgba(212,168,67,0.5)', boxShadow: '0 0 16px rgba(212,168,67,0.08)', border: '1px solid rgba(212,168,67,0.25)' }}>
@@ -1363,7 +1363,7 @@ export default function Dashboard() {
 
             {/* Environmental Monitoring Strip */}
             <div className="flex items-center justify-center gap-6 bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-3 mx-6 my-4 backdrop-blur-sm" style={{ position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)', zIndex: 10 }} />
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 50 }} />
               {/* Live indicator */}
               <div className="flex items-center gap-1.5 pr-4 mr-4 border-r border-white/10">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
