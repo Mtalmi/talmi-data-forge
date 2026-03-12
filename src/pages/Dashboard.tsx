@@ -316,8 +316,12 @@ export default function Dashboard() {
     const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
     const hourNum = parseInt(d.h);
     const timeLabel = `${hourNum.toString().padStart(2, '0')}:00`;
-    return { x, y, v: d.v, h: d.h, time: timeLabel };
+    const targetVal = TARGET_DATA[hoveredChartIdx]?.t || 0;
+    const diffPct = targetVal > 0 ? Math.round(((d.v - targetVal) / targetVal) * 100) : 0;
+    return { x, y, v: d.v, h: d.h, time: timeLabel, diffPct };
   })() : null;
+
+  const [chartMousePos, setChartMousePos] = useState<{ x: number; y: number } | null>(null);
 
   const handleChartMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;
@@ -329,9 +333,15 @@ export default function Dashboard() {
       return dist < best.dist ? { idx: i, dist } : best;
     }, { idx: 0, dist: Infinity });
     setHoveredChartIdx(closest.idx);
+    // Track pixel position relative to chart container
+    const parent = svg.parentElement;
+    if (parent) {
+      const parentRect = parent.getBoundingClientRect();
+      setChartMousePos({ x: e.clientX - parentRect.left, y: e.clientY - parentRect.top });
+    }
   }, [svgW, allMax]);
 
-  const handleChartMouseLeave = useCallback(() => setHoveredChartIdx(null), []);
+  const handleChartMouseLeave = useCallback(() => { setHoveredChartIdx(null); setChartMousePos(null); }, []);
 
   return (
     <MainLayout>
@@ -1143,7 +1153,7 @@ export default function Dashboard() {
                       if (idx === -1) return null;
                       const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
                       return (
-                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(255,255,255,0.45)" fontSize="4.5" fontFamily="monospace" fontWeight="500">
+                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="#8899aa" fontSize="4.5" fontFamily="monospace" fontWeight="500">
                           {label}
                         </text>
                       );
@@ -1155,6 +1165,23 @@ export default function Dashboard() {
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                   </svg>
                 </div>
+                  {/* Hover tooltip */}
+                  {hoveredPoint && chartMousePos && (
+                    <div
+                      className="absolute pointer-events-none z-20 rounded-md px-2 py-1 font-mono text-[11px] text-white shadow-lg"
+                      style={{
+                        left: chartMousePos.x + 12,
+                        top: chartMousePos.y - 40,
+                        background: '#0f1729',
+                        border: '1px solid rgba(212,168,67,0.4)',
+                      }}
+                    >
+                      <div className="font-semibold" style={{ color: '#D4A843' }}>{hoveredPoint.h} — {hoveredPoint.v} m³/h</div>
+                      <div className="text-[10px]" style={{ color: hoveredPoint.diffPct >= 0 ? 'rgba(52,211,153,0.9)' : 'rgba(248,113,113,0.9)' }}>
+                        {hoveredPoint.diffPct >= 0 ? '▲' : '▼'} {hoveredPoint.diffPct >= 0 ? '+' : ''}{hoveredPoint.diffPct}% vs target
+                      </div>
+                    </div>
+                  )}
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
               </div>
 
