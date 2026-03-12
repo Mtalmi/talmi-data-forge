@@ -124,7 +124,7 @@ export default function LiveBatchProgress() {
         el.style.borderColor = 'rgba(255, 255, 255, 0.08)';
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent 0%, rgba(212,168,67,0.7) 50%, transparent 100%)', zIndex: 50 }} />
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
