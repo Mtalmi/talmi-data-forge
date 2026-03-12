@@ -749,7 +749,7 @@ export default function Dashboard() {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                animation: `cardSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${0.15 + i * 0.1}s both`,
+                animation: `ccSectionIn 300ms ease-out ${200 + i * 50}ms both`,
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
                   borderColor: 'rgba(34,197,94,0.12)',
