@@ -400,7 +400,7 @@ function PipelineFunnel() {
   ];
 
   return (
-    <Card className="ops-enter ops-surface-card" style={{ minHeight: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+    <Card className="ops-enter ops-surface-card" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
@@ -426,7 +426,7 @@ function PipelineFunnel() {
                   color: 'white',
                   lineHeight: 1,
                 }}>
-                  {isEmpty ? '—' : s.value}
+                  {isEmpty ? '0' : s.value}
                 </span>
                 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{s.label}</span>
               </div>
@@ -751,7 +751,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ height: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -925,7 +925,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 280, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <div className="text-[14px] font-medium text-white/90 mb-0.5">Créances Clients</div>
