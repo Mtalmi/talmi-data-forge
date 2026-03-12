@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle, Camera, Settings } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 
@@ -495,6 +495,13 @@ export default function Dashboard() {
               <Maximize2 className="h-3.5 w-3.5 text-slate-500" />
             </button>
           )}
+          <button
+            onClick={() => navigate('/settings')}
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] transition-all duration-300"
+            title="Paramètres"
+          >
+            <Settings className="h-3.5 w-3.5 text-slate-500" />
+          </button>
           <button
             onClick={handleRefresh}
             disabled={refreshing}
