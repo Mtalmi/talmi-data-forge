@@ -721,7 +721,7 @@ export default function Dashboard() {
                     <span className="text-2xl font-bold text-red-400">2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">ALERTES ACTIVES</span>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
                 </div>
 
                 {/* Divider */}
