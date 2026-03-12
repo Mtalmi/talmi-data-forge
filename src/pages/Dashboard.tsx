@@ -539,7 +539,7 @@ export default function Dashboard() {
               <div className="flex flex-col items-start">
                 {/* Title row */}
                 <h2 style={{ fontFamily: "'Inter', 'DM Sans', sans-serif", lineHeight: 1.1, fontSize: 28 }}>
-                  <span style={{ fontWeight: 700, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#fff', textShadow: '0 0 20px rgba(212,168,67,0.15)' }}>TBOS</span>
+                  <span style={{ fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fff', textShadow: '0 0 20px rgba(212,168,67,0.15)' }}>TBOS</span>
                   {' '}
                   <span style={{ fontWeight: 200, letterSpacing: '0.08em', color: 'rgba(255,255,255,0.7)' }}>Tableau de Bord</span>
                 </h2>
