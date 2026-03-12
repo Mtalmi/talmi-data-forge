@@ -552,8 +552,9 @@ function PipelineFunnel() {
   ];
 
   return (
-    <Card className="ops-enter ops-surface-card flex flex-col relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out" style={{ minHeight: 420, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }} onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(212,168,67,0.3)'} onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'}>
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent" />
+    <div className="relative overflow-hidden hover:-translate-y-[1px] cursor-pointer transition-all duration-200 ease-out rounded-lg" style={{ minHeight: 420, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4A843]/60 to-transparent z-10" />
+      <Card className="ops-enter ops-surface-card flex flex-col" style={{ minHeight: 420, border: 'none', background: 'transparent' }}>
       <div className="flex justify-between items-center mb-4">
         <span className="text-[14px] font-medium text-white/90">Pipeline</span>
       </div>
