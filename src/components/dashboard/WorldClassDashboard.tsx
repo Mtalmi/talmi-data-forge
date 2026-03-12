@@ -810,6 +810,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes tbos-scroll-reveal { from { opacity: 0; transform: translateY(24px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.4; } 50% { transform: scale(1.15); opacity: 0.15; } 100% { transform: scale(1); opacity: 0.4; } }
+        @keyframes criticalPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
         @keyframes opsGlow {
           0%, 100% { opacity: 0.4; filter: blur(80px); }
           50% { opacity: 0.7; filter: blur(100px); }
