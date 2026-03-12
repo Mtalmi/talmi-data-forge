@@ -4948,12 +4948,12 @@ hr,
   }
 }
 
-/* ═══ ABSOLUTE FINAL OVERRIDE — 8px card radius ═══ */
+/* ═══ ABSOLUTE FINAL OVERRIDE — 4px card radius ═══ */
 div.ops-surface-card,
 .ops-surface-card[class],
 div.bg-card.ops-surface-card {
-  border-radius: 8px !important;
-  overflow: hidden !important;
+  border-radius: 4px !important;
+  overflow: visible !important;
 }
 
 /* ═══ HIDE LOVABLE BADGE ═══ */
