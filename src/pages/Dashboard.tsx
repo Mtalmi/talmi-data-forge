@@ -84,12 +84,11 @@ export default function Dashboard() {
   const rawFirst = user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Max';
   const firstName = rawFirst.charAt(0).toUpperCase() + rawFirst.slice(1);
 
-  // Time-aware greeting (Casablanca UTC+1)
+  // Time-aware greeting based on browser local time
   const getGreeting = () => {
-    const now = new Date();
-    const casablancaHour = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Casablanca' })).getHours();
-    if (casablancaHour < 12) return 'Bonjour';
-    if (casablancaHour < 18) return 'Bon après-midi';
+    const hours = new Date().getHours();
+    if (hours < 12) return 'Bonjour';
+    if (hours < 18) return 'Bon après-midi';
     return 'Bonsoir';
   };
   const greeting = getGreeting();
