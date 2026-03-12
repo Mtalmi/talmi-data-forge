@@ -899,6 +899,49 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           </div>
         ) : (
         <>
+        {/* ─── Hero Score Bar ─── */}
+        <div className="bg-gradient-to-r from-white/[0.02] via-white/[0.04] to-white/[0.02] border border-white/[0.06] rounded-xl px-6 py-4 mb-6 flex items-center justify-between backdrop-blur-sm relative z-[1] w-full">
+          {/* Left: Score */}
+          <div className="flex flex-col">
+            <span className="text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 font-medium">Score Opérationnel du Jour</span>
+            <span className="text-4xl font-bold font-mono text-[#D4A843]" style={{ textShadow: '0 0 25px rgba(212, 168, 67, 0.2)', lineHeight: 1.1 }}>8.7/10</span>
+            <span className="text-[11px] text-emerald-400 font-medium mt-1">↗ +0.4 vs hier</span>
+          </div>
+
+          {/* Middle: Micro-metrics */}
+          <div className="flex items-center gap-5">
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Livraisons</span>
+              <span className="text-lg text-white font-semibold font-mono">3/5</span>
+              <span className="text-[10px] text-emerald-400">60%</span>
+            </div>
+            <div className="w-px h-8 bg-white/[0.06]" />
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
+              <span className="text-lg text-white font-semibold font-mono">96.2%</span>
+              <span className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR</span>
+            </div>
+            <div className="w-px h-8 bg-white/[0.06]" />
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
+              <span className="text-lg text-emerald-400 font-semibold font-mono">+18.4K</span>
+              <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
+            </div>
+          </div>
+
+          {/* Right: Progress Ring */}
+          <div className="flex flex-col items-center">
+            <svg width="48" height="48" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="3" />
+              <circle cx="24" cy="24" r="20" fill="none" stroke="#D4A843" strokeWidth="3" strokeLinecap="round"
+                strokeDasharray={`${2 * Math.PI * 20 * 0.87} ${2 * Math.PI * 20 * 0.13}`}
+                transform="rotate(-90 24 24)" />
+              <text x="24" y="25" textAnchor="middle" dominantBaseline="central" fill="#D4A843" fontSize="11" fontWeight="bold" fontFamily="ui-monospace, SFMono-Regular, monospace">87%</text>
+            </svg>
+            <span className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 font-medium mt-1">Objectif</span>
+          </div>
+        </div>
+
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
