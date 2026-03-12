@@ -1182,7 +1182,7 @@ export default function Dashboard() {
                     {hoveredPoint && (
                       <>
                         <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
+                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="1.5" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5" />
                       </>
                     )}
                     <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
