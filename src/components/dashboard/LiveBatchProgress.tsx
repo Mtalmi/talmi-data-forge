@@ -211,9 +211,9 @@ export default function LiveBatchProgress() {
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-        <div className="text-[10px]" style={{ color: 'rgba(148,163,184,0.5)' }}>
-          Statut: <span className="text-white/80 font-mono font-medium">{batch.workflow_status || 'planification'}</span>
-        </div>
+        <span className="text-xs font-medium tracking-wider" style={{ color: '#D4A843' }}>
+          <span className="animate-pulse">●</span> {(batch.workflow_status || 'planification').toUpperCase().replace('_', ' ')} EN COURS
+        </span>
       </div>
     </div>
   );
