@@ -197,10 +197,10 @@ export default function RecentDeliveries() {
       
       {/* Table Header */}
       <div className="flex items-center gap-4 py-2 mb-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[60px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Heure</span>
-        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold flex-1" style={{ color: 'rgba(148,163,184,0.4)' }}>Client</span>
-        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[80px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Volume</span>
-        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold w-[80px] text-right" style={{ color: 'rgba(148,163,184,0.4)' }}>Statut</span>
+        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[60px]">Heure</span>
+        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium flex-1">Client</span>
+        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[80px] text-right">Volume</span>
+        <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 font-medium w-[80px] text-right">Statut</span>
       </div>
 
       {/* Table Rows */}
