@@ -822,15 +822,15 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                  <div key={i} className="flex items-center justify-between gap-3 py-2.5 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
                     <div className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? T.dotOk : T.dotWarn }} />
-                      <span className="text-[11px] font-mono text-slate-400 tabular-nums">{q.id}</span>
+                      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: q.ok ? T.dotOk : T.dotWarn }} />
+                      <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px]">
+                    <div className="flex items-center gap-3 text-sm">
                       <span className="text-slate-500">{q.test}</span>
-                      <span className="text-[10px] font-mono tabular-nums" style={{ color: q.ok ? 'rgb(148,163,184)' : 'rgba(251,191,36,0.7)' }}>{q.ok ? 'OK' : 'VAR'}</span>
-                      <span className="text-[9px] font-mono text-slate-600 tabular-nums">{q.time}</span>
+                      <span className="min-w-[48px] text-center text-xs font-medium px-2 py-0.5 rounded" style={{ background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)', color: q.ok ? 'rgb(52,211,153)' : 'rgba(251,191,36,0.8)' }}>{q.ok ? 'OK' : 'VAR'}</span>
+                      <span className="text-xs font-mono text-slate-600 tabular-nums">{q.time}</span>
                     </div>
                   </div>
                 ))}
