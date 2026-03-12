@@ -1256,9 +1256,10 @@ export default function Dashboard() {
                           </div>
                         </div>
                         {/* Bottom next delivery */}
-                        <div className="border-t border-white/[0.04] pt-2 mt-2 border-l-2 pl-2" style={{ borderLeftColor: 'rgba(212, 168, 67, 0.3)' }}>
+                        <div style={{ background: 'rgba(212,168,67,0.05)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '6px', padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                          <span className="text-[#D4A843]">⏱</span>
                           <span className="text-[10px] text-muted-foreground/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                            ⏱ Prochain: BL-2603-009 · Ciments du Sud · 14h30
+                            Prochain: BL-2603-009 · Ciments du Sud · 14h30
                           </span>
                         </div>
                       </>
