@@ -1155,7 +1155,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div className="border-b border-white/[0.04] pb-3 mb-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
-                  <span className="text-lg font-bold text-[#D4A843] font-mono">4.6/5 <span className="text-[#D4A843]">★</span></span>
+                  <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★</span></span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">12 livraisons à l'heure</span>
