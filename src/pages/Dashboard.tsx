@@ -854,7 +854,7 @@ export default function Dashboard() {
               <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
             </Suspense>
           </div>
-          </>
+          </div>
           )}
 
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
