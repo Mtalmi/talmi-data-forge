@@ -66,7 +66,7 @@ export function EnergyCostAnomalyWidget() {
       </div>
 
       {/* Cost */}
-      <p style={{ fontSize: 11, fontWeight: 700, color: T.danger, marginBottom: 10, fontFamily: 'JetBrains Mono, monospace' }}>
+      <p style={{ fontSize: 11, fontWeight: 600, color: T.danger, marginBottom: 10, fontFamily: 'JetBrains Mono, monospace', textShadow: '0 0 6px rgba(239,68,68,0.3)' }}>
         Surcoût Estimé: 4,200 MAD/sem
       </p>
 
