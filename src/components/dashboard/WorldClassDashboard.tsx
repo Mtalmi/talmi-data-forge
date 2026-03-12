@@ -103,7 +103,7 @@ function fireCommanderToast(name: string, daysLeft: number) {
 }
 import {
   AreaChart, Area,
-  XAxis, Tooltip, ResponsiveContainer,
+  XAxis, Tooltip, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
 import { supabase } from '@/integrations/supabase/client';
 import { useDashboardStats } from '@/hooks/useDashboardStats';
