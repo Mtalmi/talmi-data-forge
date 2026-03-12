@@ -33,7 +33,6 @@ export function EnergyCostAnomalyWidget() {
       onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(245,158,11,0.15)'; e.currentTarget.style.borderTop = '1px solid rgba(212,168,67,0.3)'; e.currentTarget.style.transform = 'translateY(0)'; }}
     >
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, transparent, rgba(212,168,67,0.7), transparent)', zIndex: 99, pointerEvents: 'none' }} />
-    >
       {/* Label */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
