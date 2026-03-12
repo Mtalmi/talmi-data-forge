@@ -514,7 +514,7 @@ export default function Dashboard() {
                         />
                         <text x="30" y="32" textAnchor="middle" fill="white" fontSize="13" fontWeight="200" fontFamily="ui-monospace, 'JetBrains Mono', monospace">87%</text>
                       </svg>
-                      <span style={{ color: 'rgba(255,255,255,0.5)' }}>capacity</span>
+                      
                     </span>
                     <span style={{ color: 'rgba(255,215,0,0.2)' }}>|</span>
                     <span className="flex items-center gap-1.5" style={{ fontSize: '0.95rem', fontWeight: 400, lineHeight: 1.5 }}>
