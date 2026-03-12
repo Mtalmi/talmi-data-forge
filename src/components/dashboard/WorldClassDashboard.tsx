@@ -1099,8 +1099,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     : i === 1
                     ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
                     : i === 2
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.35 }
-                    : { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.2 };
+                    ? { background: 'linear-gradient(90deg, #b45309, #f59e0b)', opacity: 0.8 }
+                    : { background: 'linear-gradient(90deg, #dc2626, #ef4444)', opacity: 0.8 };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
