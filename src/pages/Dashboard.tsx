@@ -1472,12 +1472,12 @@ export default function Dashboard() {
                       <span className="text-slate-500">{q.test}</span>
                       <style>{`@keyframes varPulse { 0%, 100% { box-shadow: 0 0 4px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); } }`}</style>
                       <span
-                        className="text-xs font-bold font-mono tabular-nums inline-flex items-center justify-center rounded-md min-w-[48px] px-2 py-0.5 transition-transform duration-150 group-hover:scale-105"
+                        className={`text-xs font-bold font-mono tabular-nums inline-flex items-center justify-center rounded-md min-w-[48px] px-2 py-0.5 transition-transform duration-150 group-hover:scale-105 ${!q.ok ? 'animate-pulse' : ''}`}
                         style={{
                           background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)',
                           border: `1px solid ${q.ok ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)'}`,
                           color: q.ok ? '#34D399' : 'rgba(251,191,36,0.8)',
-                          ...(q.ok ? {} : { animation: 'varPulse 2s ease-in-out infinite' }),
+                          boxShadow: q.ok ? '0 0 8px rgba(34,197,94,0.25)' : '0 0 8px rgba(245,158,11,0.25)',
                         }}
                       >
                         {q.ok ? 'OK' : 'VAR'}
