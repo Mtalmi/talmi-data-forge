@@ -1051,74 +1051,137 @@ export default function Dashboard() {
             <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
               {/* Chart panel */}
               <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                    Production (m³/h) vs Target
+                <div className="flex justify-between items-center mb-1">
+                  <div>
+                    <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                      Production (m³/h) vs Target
+                    </div>
+                    {/* Target legend */}
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <svg width="8" height="2" className="inline-block"><line x1="0" y1="1" x2="8" y2="1" stroke="rgba(148,163,184,0.3)" strokeWidth="1" strokeDasharray="2,1" /></svg>
+                      <span className="text-[9px] text-muted-foreground/30 font-mono">Target</span>
+                    </div>
                   </div>
                   <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     TEMPS RÉEL
                   </span>
                 </div>
-                <svg
-                  width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
-                  className="cursor-crosshair"
-                  onMouseMove={handleChartMouseMove}
-                  onMouseLeave={handleChartMouseLeave}
-                  style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
-                >
-                  {/* Grid lines */}
-                  {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
-                    <line key={i} x1="0" y1={svgH * (1 - pct)} x2={svgW} y2={svgH * (1 - pct)} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-                  ))}
-                  {/* Target line */}
-                  <polyline
-                    fill="none"
-                    stroke="rgba(212,175,55,0.2)"
-                    strokeWidth="1"
-                    strokeDasharray="4,3"
-                    points={TARGET_DATA.map((d, i) => {
-                      const x = (i / (TARGET_DATA.length - 1)) * svgW;
-                      const y = svgH - (d.t / allMax) * svgH * 0.85 - 5;
-                      return `${x},${y}`;
-                    }).join(' ')}
-                  />
-                  {/* Area fill */}
-                  <path d={`M${SPARKLINE_DATA.map((d, i) => {
-                    const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
-                    const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
-                    return `${x},${y}`;
-                  }).join(' L')} L${svgW},${svgH} L0,${svgH} Z`} fill="url(#prodAreaGrad)" />
-                  <defs>
-                    <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="rgba(253,185,19,0.15)" />
-                      <stop offset="100%" stopColor="rgba(253,185,19,0)" />
-                    </linearGradient>
-                  </defs>
-                  {/* Main line */}
-                  <polyline
-                    fill="none"
-                    stroke="#C9A84C"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    points={SPARKLINE_DATA.map((d, i) => {
+                <div className="relative">
+                  {/* Y-axis labels */}
+                  <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none" style={{ height: 220 }}>
+                    {[0, 20, 40, 60].map(val => {
+                      const pct = (val / allMax) * 0.85;
+                      const topPct = (1 - pct) * 100 - (5 / 100 * 100);
+                      return (
+                        <span key={val} className="absolute text-[9px] text-muted-foreground/20 font-mono" style={{ bottom: `${(pct * 100) + 2.3}%`, left: 0 }}>
+                          {val}
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <svg
+                    width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
+                    className="cursor-crosshair"
+                    onMouseMove={handleChartMouseMove}
+                    onMouseLeave={handleChartMouseLeave}
+                    style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
+                  >
+                    {/* Grid lines */}
+                    {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
+                      <line key={i} x1="0" y1={svgH * (1 - pct)} x2={svgW} y2={svgH * (1 - pct)} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
+                    ))}
+                    {/* Y-axis grid lines at 0, 20, 40, 60 */}
+                    {[20, 40, 60].map(val => {
+                      const y = svgH - (val / allMax) * svgH * 0.85 - 5;
+                      return <line key={`yg-${val}`} x1="0" y1={y} x2={svgW} y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />;
+                    })}
+                    {/* Target line */}
+                    <polyline
+                      fill="none"
+                      stroke="rgba(212,175,55,0.2)"
+                      strokeWidth="1"
+                      strokeDasharray="4,3"
+                      points={TARGET_DATA.map((d, i) => {
+                        const x = (i / (TARGET_DATA.length - 1)) * svgW;
+                        const y = svgH - (d.t / allMax) * svgH * 0.85 - 5;
+                        return `${x},${y}`;
+                      }).join(' ')}
+                    />
+                    {/* Area fill */}
+                    <path d={`M${SPARKLINE_DATA.map((d, i) => {
                       const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
                       const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
                       return `${x},${y}`;
-                    }).join(' ')}
-                  />
-                  {/* Now line */}
-                  <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="rgba(52,211,153,0.3)" strokeWidth="1" strokeDasharray="3,3" />
-                  {/* Hover point */}
-                  {hoveredPoint && (
-                    <>
-                      <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                      <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
-                    </>
-                  )}
-                  <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
-                </svg>
+                    }).join(' L')} L${svgW},${svgH} L0,${svgH} Z`} fill="url(#prodAreaGrad)" />
+                    <defs>
+                      <linearGradient id="prodAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="rgba(253,185,19,0.15)" />
+                        <stop offset="100%" stopColor="rgba(253,185,19,0)" />
+                      </linearGradient>
+                    </defs>
+                    {/* Main line */}
+                    <polyline
+                      fill="none"
+                      stroke="#C9A84C"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      points={SPARKLINE_DATA.map((d, i) => {
+                        const x = (i / (SPARKLINE_DATA.length - 1)) * svgW;
+                        const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
+                        return `${x},${y}`;
+                      }).join(' ')}
+                    />
+                    {/* Now line */}
+                    <line x1={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y1="0" x2={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW} y2={svgH} stroke="rgba(52,211,153,0.3)" strokeWidth="1" strokeDasharray="3,3" />
+                    {/* MAINTENANT label at top of now line */}
+                    <text
+                      x={(NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW}
+                      y="4"
+                      textAnchor="middle"
+                      fill="rgba(52,211,153,0.6)"
+                      fontSize="3"
+                      fontFamily="ui-monospace, 'JetBrains Mono', monospace"
+                      fontWeight="500"
+                      letterSpacing="0.3"
+                    >
+                      MAINTENANT
+                    </text>
+                    {/* Current value callout at now intersection */}
+                    {(() => {
+                      const nx = (NOW_INDEX / (SPARKLINE_DATA.length - 1)) * svgW;
+                      const ny = svgH - (SPARKLINE_DATA[NOW_INDEX].v / allMax) * svgH * 0.85 - 5;
+                      return (
+                        <g>
+                          <rect x={nx - 11} y={ny - 10} width="22" height="7" rx="1.5" fill="#0f1729" stroke="rgba(212,168,67,0.4)" strokeWidth="0.4" />
+                          <text x={nx} y={ny - 5} textAnchor="middle" fill="#D4A843" fontSize="3.5" fontFamily="ui-monospace, 'JetBrains Mono', monospace" fontWeight="600">
+                            {SPARKLINE_DATA[NOW_INDEX].v} m³/h
+                          </text>
+                        </g>
+                      );
+                    })()}
+                    {/* X-axis time labels */}
+                    {['6h', '8h', '10h', '12h', '14h', '16h', '18h'].map(label => {
+                      const idx = SPARKLINE_DATA.findIndex(d => d.h === label.replace(/^(\d)h/, '0$1h'));
+                      if (idx === -1) return null;
+                      const x = (idx / (SPARKLINE_DATA.length - 1)) * svgW;
+                      return (
+                        <text key={label} x={x} y={svgH - 0.5} textAnchor="middle" fill="rgba(148,163,184,0.3)" fontSize="3" fontFamily="ui-monospace, 'JetBrains Mono', monospace">
+                          {label}
+                        </text>
+                      );
+                    })}
+                    {/* Hover point */}
+                    {hoveredPoint && (
+                      <>
+                        <line x1={hoveredPoint.x} y1="0" x2={hoveredPoint.x} y2={svgH} stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
+                        <circle cx={hoveredPoint.x} cy={hoveredPoint.y} r="3" fill="#C9A84C" stroke="rgba(0,0,0,0.5)" strokeWidth="1" />
+                      </>
+                    )}
+                    <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
+                  </svg>
+                </div>
                 <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
               </div>
 
