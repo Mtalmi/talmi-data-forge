@@ -1325,8 +1325,8 @@ export default function Dashboard() {
                       </div>
                       <span className="text-[9px] text-white font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>72%</span>
                     </div>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-[9px] text-amber-400/70" style={{ fontFamily: "'JetBrains Mono', monospace" }}>⏱ 01:47</span>
+                    <div className="flex items-center justify-between mt-1 animate-pulse">
+                      <span className="text-[9px]" style={{ fontFamily: "'JetBrains Mono', monospace", color: '#D4A843', textShadow: '0 0 8px rgba(212,168,67,0.4)', fontWeight: '500' }}>⏱ 01:47</span>
                     </div>
                   </div>
                   <div className="space-y-0.5">
