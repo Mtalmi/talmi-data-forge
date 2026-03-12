@@ -323,6 +323,7 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
             background: barBg,
             opacity: 0.7,
             boxShadow: barShadow,
+            ...(pct < 20 ? { animation: 'criticalPulse 2.5s ease-in-out infinite' } : {}),
           }}
         />
       </div>
