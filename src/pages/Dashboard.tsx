@@ -454,6 +454,23 @@ export default function Dashboard() {
               padding-right: 0 !important;
               margin-right: 0 !important;
             }
+            /* Tab bar mobile scroll */
+            .tbos-tab-bar-scroll {
+              display: flex;
+              overflow-x: auto;
+              flex-wrap: nowrap !important;
+              -webkit-overflow-scrolling: touch;
+              scrollbar-width: none;
+              -ms-overflow-style: none;
+            }
+            .tbos-tab-bar-scroll::-webkit-scrollbar {
+              display: none;
+            }
+            .tbos-tab-bar-scroll > button {
+              flex-shrink: 0;
+              white-space: nowrap;
+              padding: 8px 16px !important;
+            }
           }
         `}</style>
 
