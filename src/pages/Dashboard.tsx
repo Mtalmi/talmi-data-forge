@@ -683,25 +683,11 @@ export default function Dashboard() {
           </div>
 
           {/* (2) Alerte Fuite Détectée or All-Clear */}
-          {(isCeo || isAccounting) && (
-            <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
-              animation: 'ccSectionIn 300ms ease-out 100ms both, leakAlertPulse 2s ease-in-out infinite 400ms',
-              borderLeft: '3px solid #F97316',
-              boxShadow: '0 0 12px rgba(249,115,22,0.2)',
-            }}>
-              <LeakageAlertBanner />
-            </div>
-          )}
-          {!(isCeo || isAccounting) && (
-            <div className="mb-4 relative z-[1] rounded-lg overflow-hidden flex items-center gap-3 px-4 py-3" style={{
-              animation: 'ccSectionIn 300ms ease-out 100ms both',
-              background: 'rgba(34,197,94,0.05)',
-              border: '1px solid rgba(34,197,94,0.2)',
-            }}>
-              <CheckCircle2 className="h-4 w-4 shrink-0" style={{ color: '#22c55e' }} />
-              <span className="text-sm" style={{ color: '#22c55e' }}>Aucune alerte active — Opérations normales</span>
-            </div>
-          )}
+          <div className="mb-4 relative z-[1] rounded-lg overflow-hidden" style={{
+            animation: 'ccSectionIn 300ms ease-out 100ms both',
+          }}>
+            <LeakageAlertBanner />
+          </div>
 
           {/* (3) 4 KPI Cards Row */}
           <div className="grid grid-cols-4 gap-4 mb-5 relative z-[1] items-stretch w-full" style={{ alignItems: 'stretch', animation: 'ccSectionIn 300ms ease-out 200ms both' }}>
