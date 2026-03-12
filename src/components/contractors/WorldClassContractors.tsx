@@ -974,7 +974,7 @@ export default function WorldClassContractors() {
                   <h3 style={{ fontWeight: 700, fontSize: 16, color: T.textPri, margin: 0, borderLeft: '3px solid #D4A843', paddingLeft: 10 }}>Répartition des Coûts</h3>
                 </div>
               </div>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>78K DH</span>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 18, color: T.gold, fontWeight: 800 }}>{totalCost > 0 ? `${Math.round(totalCost)}K DH` : '0 DH'}</span>
             </div>
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
