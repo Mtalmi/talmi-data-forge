@@ -13,7 +13,7 @@ import { useDashboardStats } from '@/hooks/useDashboardStats';
 import { useDashboardStatsWithPeriod } from '@/hooks/useDashboardStatsWithPeriod';
 import { usePaymentDelays } from '@/hooks/usePaymentDelays';
 import { useAuth } from '@/hooks/useAuth';
-import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight } from 'lucide-react';
+import { RefreshCw, Maximize2, Wallet, LayoutDashboard, Activity, Factory, Truck, Package, TrendingUp, Radio, Sparkles, PhoneCall, FileText, PlusCircle, BarChart3, CheckCircle2, Bell, ChevronRight, AlertTriangle } from 'lucide-react';
 import { IntelligenceBriefingCard } from '@/components/dashboard/IntelligenceBriefingCard';
 import { ResumeIABar } from '@/components/dashboard/ResumeIABar';
 
