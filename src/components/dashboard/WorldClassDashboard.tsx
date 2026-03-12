@@ -308,13 +308,13 @@ function HorizontalStockBar({ name, current, max, unit }: { name: string; curren
             width: `max(40px, ${Math.max(pct, 3)}%)`,
             background: pct < 20
               ? 'linear-gradient(90deg, #dc2626, #ef4444)'
-              : pct <= 40
+              : pct < 40
                 ? 'linear-gradient(90deg, #ca8a04, #eab308)'
                 : 'linear-gradient(90deg, #16a34a, #22c55e)',
             opacity: 0.7,
             boxShadow: pct < 20
               ? '0 0 6px rgba(239,68,68,0.25)'
-              : pct <= 40
+              : pct < 40
                 ? '0 0 6px rgba(234,179,8,0.2)'
                 : '0 0 6px rgba(34,197,94,0.15)',
           }}
