@@ -652,8 +652,8 @@ export default function Dashboard() {
             display: 'flex', alignItems: 'center',
           }}>
             <div
-              className="overflow-x-auto scrollbar-hide md:overflow-x-visible"
-              style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap', scrollSnapType: 'x mandatory' }}
+              className="overflow-x-auto scrollbar-hide md:overflow-x-visible flex-1"
+              style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
               ref={tabBarRef}
             >
               {([
@@ -667,8 +667,9 @@ export default function Dashboard() {
                   <button
                     key={tab.id}
                     data-tab={tab.id}
+                    ref={el => { if (isActive && el) { el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } }}
                     onClick={() => setActiveTab(tab.id)}
-                    className="flex items-center gap-2 transition-all duration-200"
+                    className="flex items-center gap-2 transition-all duration-200 min-h-[44px] flex-shrink-0 whitespace-nowrap"
                     style={{
                       padding: '14px 20px',
                       background: 'transparent',
@@ -681,7 +682,6 @@ export default function Dashboard() {
                       cursor: 'pointer',
                       fontFamily: "'DM Sans', sans-serif",
                       scrollSnapAlign: 'start',
-                      flexShrink: 0,
                     }}
                   >
                     {tab.label}
@@ -706,6 +706,11 @@ export default function Dashboard() {
                 );
               })}
             </div>
+            {/* Mobile scroll fade indicator */}
+            <div
+              className="absolute right-0 top-0 bottom-0 w-6 pointer-events-none md:hidden"
+              style={{ background: 'linear-gradient(to right, transparent, #13192f)' }}
+            />
           </div>
 
           {/* ═══ COMMAND CENTER TAB CONTENT ═══ */}
