@@ -212,7 +212,7 @@ export default function RecentDeliveries() {
             }}
           >
             <span className="tabular-nums w-[60px]" style={{ fontFamily:'ui-monospace,monospace', color:'rgba(255,255,255,0.6)', fontSize:'13px' }}>{d.time}</span>
-            <span className="text-sm text-white flex-1 truncate min-w-0">{d.client}{d.client === 'Ciments & Béton du Sud' && <span style={{ fontSize: '9px', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '3px', padding: '1px 4px', color: 'rgba(212,168,67,0.7)', marginLeft: '6px', fontWeight: '500' }}>VIP</span>}</span>
+            <span className="text-sm text-white flex-1 truncate min-w-0">{d.client}{(d.client === 'Ciments & Béton du Sud' || d.client === 'BTP Maroc SARL') && <span style={{ fontSize: '9px', background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.2)', borderRadius: '3px', padding: '1px 4px', color: 'rgba(212,168,67,0.7)', marginLeft: '6px', fontWeight: '500' }}>VIP</span>}</span>
             <span className="text-right w-[80px]"><span className="text-sm font-medium text-white">{d.volume}</span><span className="text-xs text-white/40 ml-0.5">m³</span></span>
             <span
               className={`text-xs px-2 py-0.5 rounded font-medium text-right w-[80px] ${
