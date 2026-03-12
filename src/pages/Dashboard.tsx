@@ -316,8 +316,12 @@ export default function Dashboard() {
     const y = svgH - (d.v / allMax) * svgH * 0.85 - 5;
     const hourNum = parseInt(d.h);
     const timeLabel = `${hourNum.toString().padStart(2, '0')}:00`;
-    return { x, y, v: d.v, h: d.h, time: timeLabel };
+    const targetVal = TARGET_DATA[hoveredChartIdx]?.t || 0;
+    const diffPct = targetVal > 0 ? Math.round(((d.v - targetVal) / targetVal) * 100) : 0;
+    return { x, y, v: d.v, h: d.h, time: timeLabel, diffPct };
   })() : null;
+
+  const [chartMousePos, setChartMousePos] = useState<{ x: number; y: number } | null>(null);
 
   const handleChartMouseMove = useCallback((e: React.MouseEvent<SVGSVGElement>) => {
     const svg = e.currentTarget;
@@ -329,9 +333,15 @@ export default function Dashboard() {
       return dist < best.dist ? { idx: i, dist } : best;
     }, { idx: 0, dist: Infinity });
     setHoveredChartIdx(closest.idx);
+    // Track pixel position relative to chart container
+    const parent = svg.parentElement;
+    if (parent) {
+      const parentRect = parent.getBoundingClientRect();
+      setChartMousePos({ x: e.clientX - parentRect.left, y: e.clientY - parentRect.top });
+    }
   }, [svgW, allMax]);
 
-  const handleChartMouseLeave = useCallback(() => setHoveredChartIdx(null), []);
+  const handleChartMouseLeave = useCallback(() => { setHoveredChartIdx(null); setChartMousePos(null); }, []);
 
   return (
     <MainLayout>
