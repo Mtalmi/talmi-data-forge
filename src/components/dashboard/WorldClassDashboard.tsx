@@ -1108,14 +1108,19 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                           </span>
                           {item.daysLeft <= 3 ? (
                             <button
-                              className="px-3 py-1 rounded-md text-[10px] font-medium uppercase tracking-wider whitespace-nowrap flex-shrink-0 transition-all duration-200"
                               style={{
-                                background: 'rgba(212,168,67,0.10)',
-                                border: '1px solid rgba(212,168,67,0.30)',
+                                background: 'transparent',
+                                border: '1px solid rgba(212,168,67,0.4)',
                                 color: '#D4A843',
+                                borderRadius: '6px',
+                                fontSize: '11px',
+                                fontWeight: 500,
+                                padding: '4px 10px',
+                                transition: 'all 0.2s ease',
+                                cursor: 'pointer',
                               }}
-                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.20)'; }}
-                              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.10)'; }}
+                              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.6)'; }}
+                              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(212,168,67,0.4)'; }}
                               onClick={() => fireCommanderToast(item.name, item.daysLeft)}
                             >
                               Commander
