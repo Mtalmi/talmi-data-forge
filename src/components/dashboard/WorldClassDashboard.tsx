@@ -922,11 +922,11 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   </div>
                 </div>
                 <div>
-                  <span className="text-3xl font-extralight text-white font-mono tracking-tight tabular-nums">{prodTotal}</span>
+                  <span className="text-3xl font-extralight text-white font-mono tracking-tight tabular-nums" style={{ textShadow: '0 0 15px rgba(212, 168, 67, 0.15)' }}>{prodTotal}</span>
                   <span className="text-sm font-light text-white/40 ml-1">m³</span>
                 </div>
               </div>
-              <div className="overflow-hidden w-full" style={{ height: 180 }}>
+              <div className="overflow-hidden w-full" style={{ height: 180, filter: 'drop-shadow(0 0 4px rgba(212, 168, 67, 0.25))' }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={prodChartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                     <defs>
@@ -1087,7 +1087,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                   <div className="text-[11px] text-slate-600">Vieillissement</div>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl font-extralight text-white tabular-nums font-mono whitespace-nowrap">{totalAR} K DH</span>
+                  <span className="text-xl font-extralight text-white tabular-nums font-mono whitespace-nowrap" style={{ textShadow: '0 0 15px rgba(255, 255, 255, 0.08)' }}>{totalAR} K DH</span>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
@@ -1099,8 +1099,8 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                     : i === 1
                     ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.55 }
                     : i === 2
-                    ? { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.35 }
-                    : { background: 'linear-gradient(90deg, #C4933B, #FDB913)', opacity: 0.2 };
+                    ? { background: 'linear-gradient(90deg, #b45309, #f59e0b)', opacity: 0.8 }
+                    : { background: 'linear-gradient(90deg, #dc2626, #ef4444)', opacity: 0.8 };
                   return (
                     <div key={i}>
                       <div className="flex justify-between mb-1">
