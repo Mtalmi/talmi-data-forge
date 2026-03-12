@@ -708,13 +708,13 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             )}
 
             {/* AI Analyst Brief */}
-            {!showOnlyOps && <AIAnalystBrief />}
+            {!showOnlyOps && !hideIntelWidgets && <AIAnalystBrief />}
 
             {/* Compliance Widget */}
-            {!showOnlyOps && <ComplianceWidget />}
+            {!showOnlyOps && !hideIntelWidgets && <ComplianceWidget />}
 
             {/* Energy & Cost Anomaly Widget */}
-            {!showOnlyOps && <EnergyCostAnomalyWidget />}
+            {!showOnlyOps && !hideIntelWidgets && <EnergyCostAnomalyWidget />}
           </div>
 
           {/* ─── Col 2: Stock Gauges + Pipeline Funnel ─── */}
