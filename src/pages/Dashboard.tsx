@@ -188,8 +188,10 @@ export default function Dashboard() {
     const handler = (e: MouseEvent) => {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) setBellOpen(false);
     };
+    const keyHandler = (e: KeyboardEvent) => { if (e.key === 'Escape') setBellOpen(false); };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('keydown', keyHandler);
+    return () => { document.removeEventListener('mousedown', handler); document.removeEventListener('keydown', keyHandler); };
   }, [bellOpen]);
 
   const handleRefresh = useCallback(async () => {
