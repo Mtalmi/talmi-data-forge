@@ -709,7 +709,7 @@ export default function Dashboard() {
                       <text x="28" y="28" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="16" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace">87<tspan fill="rgba(255,255,255,0.5)" fontSize="9" fontWeight="500">%</tspan></text>
                     </svg>
                   </div>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/40 mt-1">CAPACITÉ</span>
+                  <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">CAPACITÉ</span>
                 </div>
 
                 {/* Divider */}
@@ -721,7 +721,7 @@ export default function Dashboard() {
                     <span className="text-2xl font-bold text-red-400">2</span>
                     <span className="text-sm text-red-400/60 ml-1">urgent</span>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">ALERTES ACTIVES</span>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">ALERTES ACTIVES</span>
                 </div>
 
                 {/* Divider */}
@@ -733,7 +733,7 @@ export default function Dashboard() {
                     <span className="text-2xl font-bold text-white">{prodVolume}</span>
                     <span className="text-sm text-white/40 ml-1">m³</span>
                   </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/30">PRODUCTION DU JOUR</span>
+                  <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">PRODUCTION DU JOUR</span>
                 </div>
 
                 {/* Divider */}
@@ -742,10 +742,10 @@ export default function Dashboard() {
                 {/* Marge */}
                 <div className="flex flex-col">
                   <div className="flex items-baseline">
-                    <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
-                    <span className="text-sm ml-1" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
-                  </div>
-                  <span className="text-[9px] tracking-[0.12em] uppercase" style={{ color: 'rgba(212,168,67,0.4)' }}>MARGE BRUTE</span>
+                     <span className="text-2xl font-bold" style={{ color: '#D4A843' }}>{marge}</span>
+                     <span className="text-sm" style={{ color: 'rgba(212,168,67,0.5)' }}>%</span>
+                   </div>
+                   <span className="text-[9px] tracking-[0.12em] uppercase text-muted-foreground/50">MARGE BRUTE</span>
                 </div>
               </div>
 
