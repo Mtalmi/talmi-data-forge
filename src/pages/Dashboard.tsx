@@ -1507,7 +1507,7 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#D4A843' }}>Agent IA: </span>
               <span className="text-xs" style={{ color: 'rgba(241,245,249,0.8)' }}>
-                Prochain batch recommandé — <span className="font-medium text-white/90">Béton B25 Standard</span> · <span className="font-mono">14 m³</span> · <span className="font-medium text-white/90">TGCC</span> · Optimisation séquence activée
+                Prochain batch recommandé — <span style={{ fontWeight: '500', color: 'white' }}>Béton B25 Standard</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span className="font-mono">14 m³</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> <span style={{ color: '#D4A843', fontWeight: '500' }}>TGCC</span> <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span> Optimisation séquence activée
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
