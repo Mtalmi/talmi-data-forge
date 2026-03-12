@@ -92,17 +92,11 @@ function BriefingCard({ briefing, type }: { briefing: Briefing | null; type: 'mo
           </span>
         )}
         <span style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-          fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 9999,
-          background: isActive ? 'rgba(16,185,129,0.15)' : 'rgba(100,116,139,0.2)',
-          color: isActive ? '#10B981' : '#64748B', marginLeft: 'auto',
+          fontSize: 10, fontWeight: 400, marginLeft: 'auto',
+          color: '#64748B',
+          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace",
         }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: '50%',
-            background: isActive ? '#10B981' : '#64748B',
-            ...(isActive ? { boxShadow: '0 0 6px #10B98180' } : {}),
-          }} />
-          {isActive ? 'Actif' : 'Archivé'}
+          {isMorning ? 'il y a 6h' : 'il y a 7h'}
         </span>
       </div>
 
