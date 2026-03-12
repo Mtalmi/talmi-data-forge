@@ -245,7 +245,7 @@ export function SeasonalDemandForecasterCard() {
           {/* Actionable Insights */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {insights.map((ins, i) => (
-              <div key={i} style={{
+              <div key={i} className="cursor-pointer" style={{
                 borderLeft: `4px solid ${ins.color}`,
                 background: `${ins.color}06`,
                 border: `1px solid ${ins.color}20`,
@@ -253,7 +253,11 @@ export function SeasonalDemandForecasterCard() {
                 borderLeftColor: ins.color,
                 borderRadius: '0 10px 10px 0',
                 padding: '12px 16px',
-              }}>
+                transition: 'all 200ms ease-out',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.filter = 'brightness(1.1)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'brightness(1)'; }}
+              >
                 <p style={{ fontSize: 11, lineHeight: 1.7, color: T.textSec }}>
                   {(() => {
                     const dotIdx = ins.text.indexOf('.');

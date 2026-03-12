@@ -898,16 +898,27 @@ export default function Dashboard() {
           ].map((kpi, i) => (
             <TiltCard
               key={i}
-              className="tbos-hero-card group cursor-default shimmer-effect h-full flex flex-col min-w-0"
+              className="tbos-hero-card group cursor-pointer shimmer-effect h-full flex flex-col min-w-0"
               style={{
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 animation: `ccSectionIn 300ms ease-out ${200 + i * 50}ms both`,
+                transition: 'all 200ms ease-out',
                 ...(kpi.healthyGlow ? {
                   boxShadow: '0 0 20px rgba(34,197,94,0.06), inset 0 1px 0 rgba(34,197,94,0.08), 0 1px 3px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.15)',
                   borderColor: 'rgba(34,197,94,0.12)',
                 } : {}),
+              }}
+              onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => {
+                const el = e.currentTarget;
+                el.style.borderColor = 'rgba(212,168,67,0.3)';
+                el.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => {
+                const el = e.currentTarget;
+                el.style.borderColor = kpi.healthyGlow ? 'rgba(34,197,94,0.12)' : '';
+                el.style.transform = 'translateY(0)';
               }}
             >
               <div className="scanline-overlay" />

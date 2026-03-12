@@ -48,6 +48,17 @@ const panelHoverStyle = {
   cursor: 'pointer',
 } as const;
 
+const panelHoverHandlers = {
+  onMouseEnter: (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)';
+  },
+  onMouseLeave: (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.background = 'rgba(255,255,255,0.025)';
+    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+  },
+};
+
 export default function PlantFlowSchematic() {
   const navigate = useNavigate();
 
