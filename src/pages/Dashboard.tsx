@@ -510,61 +510,83 @@ export default function Dashboard() {
               title="Notifications"
             >
               <Bell className="h-3.5 w-3.5 text-slate-500" />
-              {!bellSeen && <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-red-500" style={{ border: '2px solid #0a0f1e' }} />}
+              {!bellSeen && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-[16px] flex items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white px-1" style={{ border: '2px solid #0a0f1e' }}>2</span>
+              )}
             </button>
             {bellOpen && (
               <div
-                className="absolute top-full right-0 mt-2 w-[320px] z-50 overflow-hidden"
+                className="absolute z-50"
                 style={{
+                  top: '100%',
+                  right: 0,
+                  marginTop: 8,
+                  width: 380,
+                  maxHeight: 400,
+                  overflowY: 'auto',
                   background: '#0f1729',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 12,
-                  boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                  border: '1px solid rgba(212,168,67,0.12)',
+                  borderRadius: 8,
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                   animation: 'searchDropIn 200ms ease-out',
                 }}
                 onMouseDown={(e) => e.preventDefault()}
               >
                 {/* Header */}
-                <div className="px-4 pt-3 pb-2">
-                  <span className="text-[10px] tracking-[0.15em] text-muted-foreground/50 font-medium uppercase">NOTIFICATIONS</span>
+                <div className="flex items-center justify-between px-4 pt-3 pb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span style={{ fontSize: 10, letterSpacing: '0.15em', color: '#D4A843', fontWeight: 700, textTransform: 'uppercase' as const }}>NOTIFICATIONS</span>
+                  <button
+                    style={{ fontSize: 11, color: 'rgba(212,168,67,0.5)', cursor: 'pointer', background: 'none', border: 'none' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(212,168,67,0.5)'; }}
+                    onClick={() => setBellSeen(true)}
+                  >
+                    Tout marquer comme lu
+                  </button>
                 </div>
 
-                {/* Entry 1 — Critical */}
+                {/* Entry 1 — Critical (unread) */}
                 <div
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  className="flex items-start gap-3 cursor-pointer transition-colors duration-150"
+                  style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', borderLeft: '2px solid rgba(212,168,67,0.4)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span className="w-2 h-2 rounded-full bg-red-500 mt-1.5 flex-shrink-0" />
+                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🔴</span>
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Alerte Fuite — BL-2026-0312</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Constructions Modernes SA · il y a 2h</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Alerte Stock: Niveau eau critique — commander avant le 18 mars</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 2h</div>
                   </div>
                 </div>
 
-                {/* Entry 2 — Warning */}
+                {/* Entry 2 — Warning (unread) */}
                 <div
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  className="flex items-start gap-3 cursor-pointer transition-colors duration-150"
+                  style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)', borderLeft: '2px solid rgba(212,168,67,0.4)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🟡</span>
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Stock Adjuvant critique</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Commande recommandée · il y a 4h</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Devis DEV-2602-316 — relance client recommandée par l'IA</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 4h</div>
                   </div>
                 </div>
 
-                {/* Entry 3 — Info */}
+                {/* Entry 3 — Success (read) */}
                 <div
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-colors duration-150 hover:bg-white/5"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  className="flex items-start gap-3 cursor-pointer transition-colors duration-150"
+                  style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.04)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   onClick={() => setBellOpen(false)}
                 >
-                  <span className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5" style={{ background: '#D4A843' }} />
+                  <span style={{ fontSize: 12, marginTop: 2, flexShrink: 0 }}>🟢</span>
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>Rapport du Soir disponible</div>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.5, marginTop: 2 }}>Score: 9.1/10 · il y a 7h</div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: '#fff', lineHeight: 1.4 }}>Livraison BL-2026-0312 — Ciments & Béton du Sud livré avec succès</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 3 }}>il y a 6h</div>
                   </div>
                 </div>
 
@@ -572,7 +594,7 @@ export default function Dashboard() {
                 <div className="text-center px-4 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <button
                     className="transition-colors duration-150"
-                    style={{ fontSize: 11, color: 'rgba(212,168,67,0.6)', fontWeight: 500 }}
+                    style={{ fontSize: 11, color: 'rgba(212,168,67,0.6)', fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer' }}
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#D4A843'; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(212,168,67,0.6)'; }}
                     onClick={() => { setBellOpen(false); navigate('/alertes'); }}
