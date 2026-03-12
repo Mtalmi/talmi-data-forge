@@ -622,8 +622,9 @@ export default function Dashboard() {
                         {btn.badge && (
                           <span
                             className="absolute inline-flex items-center justify-center rounded-full z-10"
-                            style={{ top: -4, right: -4 }}
                             style={{
+                              top: -4,
+                              right: -4,
                               fontSize: 8,
                               fontWeight: 700,
                               minWidth: btn.badge === 'New' ? 22 : 16,
