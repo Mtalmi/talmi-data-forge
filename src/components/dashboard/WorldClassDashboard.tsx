@@ -942,6 +942,28 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           </div>
         </div>
 
+        {/* ─── Team Status Strip ─── */}
+        <div className="flex items-center justify-between bg-white/[0.02] border border-white/[0.04] rounded-lg px-5 py-2.5 mb-4 relative z-[1] w-full">
+          <div className="flex items-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse mr-2" />
+            <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Équipe en Service</span>
+          </div>
+          <div className="flex items-center gap-6">
+            {[
+              { role: 'Opérateurs', value: '3/3', full: true },
+              { role: 'Chauffeurs', value: '4/5', full: false },
+              { role: 'Lab', value: '1/1', full: true },
+              { role: 'Maintenance', value: '2/2', full: true },
+            ].map(t => (
+              <div key={t.role} className="flex flex-col items-center">
+                <span className="text-[9px] text-muted-foreground/30">{t.role}</span>
+                <span className={`text-sm font-semibold font-mono ${t.full ? 'text-emerald-400' : 'text-amber-400'}`}>{t.value}</span>
+              </div>
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground/30 font-medium">Prochain shift: 14h00 — 3 opérateurs</span>
+        </div>
+
         <div className="tbos-grid-3col grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5 relative z-[1] w-full" style={{ alignItems: 'start' }}>
 
           {/* ─── Col 1: Production + Batch Timeline ─── */}
