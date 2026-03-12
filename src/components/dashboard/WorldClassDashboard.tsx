@@ -930,6 +930,11 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <span className="text-lg font-semibold font-mono" style={{ color: '#D4A843', fontWeight: '500' }}>+18.4K</span>
               <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
             </div>
+            <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
+              <span className="text-[10px] uppercase tracking-wider text-white/40 mb-1">Batches</span>
+              <span className="text-2xl font-light text-white">23</span>
+              <span className="text-[10px] text-white/30">Aujourd'hui</span>
+            </div>
           </div>
 
           {/* Right: Progress Ring */}
