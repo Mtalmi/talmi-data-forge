@@ -1417,7 +1417,7 @@ export default function Dashboard() {
         ══════════════════════════════════════════════════ */}
         <div className="mt-0">
           <Suspense fallback={<div className="h-[600px] rounded-lg bg-white/[0.02] animate-pulse" />}>
-            <WorldClassDashboard hideProductionWidgets hideOpsWidgets />
+            <WorldClassDashboard hideProductionWidgets hideOpsWidgets hideIntelWidgets />
           </Suspense>
         </div>
         </>
