@@ -811,7 +811,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           {/* ─── Col 3: Créances & Deliveries ─── */}
           <div className="space-y-4 min-w-0">
             {/* Créances — Aging Gold-Fade System */}
-            <Card className="ops-enter ops-surface-card tbos-stagger-7" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            {!hideOpsWidgets && (
 
 
               <div className="flex justify-between items-start mb-4">
