@@ -51,7 +51,7 @@ function fireCommanderToast(name: string, daysLeft: number) {
                 marginBottom: 6,
               },
             },
-            'COMMANDE INITIÉE'
+            'COMMANDE EN PRÉPARATION'
           ),
           createElement(
             'div',
@@ -96,7 +96,7 @@ function fireCommanderToast(name: string, daysLeft: number) {
         )
       ),
     {
-      duration: 4000,
+      duration: 3000,
       position: 'top-right',
     }
   );
