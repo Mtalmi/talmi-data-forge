@@ -1330,7 +1330,7 @@ export default function Dashboard() {
                       { id: '#403-069', formula: 'F-B30 · 12 m³', client: 'Atlas BTP' },
                       { id: '#403-070', formula: 'F-B25 · 8 m³', client: 'Const. Modernes' },
                     ].map((batch) => (
-                      <div key={batch.id} className="flex items-center gap-1.5 p-1 rounded hover:bg-white/[0.02] transition-colors">
+                      <div key={batch.id} className="flex items-center gap-1.5 hover:bg-white/5 transition-all duration-200 cursor-pointer rounded-md px-2 py-1">
                         <span className="w-1 h-1 bg-slate-600 rounded-full" />
                         <div className="min-w-0">
                           <div className="text-[8px] text-slate-400" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{batch.id}</div>
