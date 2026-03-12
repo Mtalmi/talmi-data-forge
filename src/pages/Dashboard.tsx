@@ -1246,7 +1246,11 @@ export default function Dashboard() {
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
                             <div className="text-[9px] tracking-[0.1em] uppercase text-muted-foreground/30 mb-1" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Qualité</div>
                             <div className="text-xl text-white font-semibold font-mono">96.2%</div>
-                            <div className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR · 0 CRIT</div>
+                            <div className="flex gap-1 mt-1">
+                              <span className="text-xs px-1.5 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20 font-medium">2 OK</span>
+                              <span className="text-xs px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium animate-pulse">1 VAR</span>
+                              <span className="text-xs px-1.5 py-0.5 rounded bg-white/5 text-white/30 font-medium">0 CRIT</span>
+                            </div>
                           </div>
                           <div className="bg-white/[0.03] border border-white/[0.04] rounded-lg p-3 relative overflow-hidden">
                             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(to right, transparent, rgba(212,168,67,0.6), transparent)' }} />
