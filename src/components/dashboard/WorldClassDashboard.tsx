@@ -1232,7 +1232,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.1), rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }} className="mb-4 relative z-[1] w-full">
             <div className="flex items-center min-w-0">
               <span className="text-[#D4A843] animate-pulse mr-2 flex-shrink-0">✦</span>
-              <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — Constructions Modernes SA (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
+              <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
               <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
