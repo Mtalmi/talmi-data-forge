@@ -1230,7 +1230,7 @@ export default function Dashboard() {
                 {/* Metrics */}
                 <div className="mt-auto grid grid-cols-2 gap-2">
                   {[
-                    { label: 'Rendement', value: '94%', color: '#34D399' },
+                    { label: 'Disponibilité', value: '97%', color: '#34D399' },
                     { label: 'Cadence', value: '47 m³/h', color: '#C9A84C' },
                     { label: 'Batches', value: '23', color: '#94A3B8' },
                     { label: 'Attente', value: '12 min', color: '#FBBF24' },
