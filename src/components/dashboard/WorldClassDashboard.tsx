@@ -782,7 +782,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             <div className="space-y-4 min-w-0">
             {/* Daily Production Chart */}
             {!hideOpsWidgets && (
-            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ minHeight: 300, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+            <Card className="ops-enter ops-surface-card tbos-stagger-1" style={{ minHeight: 420, borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
 
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
