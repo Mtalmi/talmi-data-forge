@@ -86,6 +86,8 @@ export default function Dashboard() {
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
+  const [showLancerToast, setShowLancerToast] = useState(false);
+  const [lancerToastVisible, setLancerToastVisible] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -332,6 +334,15 @@ export default function Dashboard() {
 
   return (
     <MainLayout>
+      {showLancerToast && (
+        <div
+          className="fixed top-4 right-4 z-50 bg-[#0f1729] border border-[#D4A843]/30 rounded-lg px-5 py-3 shadow-2xl border-l-2 border-l-[#D4A843] flex items-center"
+          style={{ transition: 'opacity 300ms ease', opacity: lancerToastVisible ? 1 : 0 }}
+        >
+          <span className="text-[#D4A843] mr-2">✦</span>
+          <span className="text-sm text-white font-medium">Séquence optimisée lancée — Béton B25 Standard · 14 m³</span>
+        </div>
+      )}
       <div
         className="relative tbos-dashboard-scroll space-y-0 overflow-x-hidden max-w-full w-full min-w-0 px-3 sm:px-4 md:px-6 lg:px-8 pt-3 sm:pt-4 md:pt-6 lg:pt-2 pb-3 sm:pb-4 md:pb-6 lg:pb-8 box-border"
         style={{
@@ -1330,7 +1341,14 @@ export default function Dashboard() {
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }}>
+              <button className="px-4 py-1.5 rounded-md text-xs font-semibold transition-all hover:brightness-110" style={{ background: '#D4A843', color: '#0F1629' }} onClick={() => {
+                setShowLancerToast(true);
+                setLancerToastVisible(true);
+                setTimeout(() => {
+                  setLancerToastVisible(false);
+                  setTimeout(() => setShowLancerToast(false), 300);
+                }, 3000);
+              }}>
                 Lancer
               </button>
               <button className="border border-white/20 text-white/50 hover:text-white/80 hover:border-white/30 px-4 py-1.5 rounded-lg text-sm transition-all">
