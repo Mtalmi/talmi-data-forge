@@ -1147,7 +1147,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-          </>
+          </div>
           )}
 
         </div>{/* end hero zone wrapper */}
