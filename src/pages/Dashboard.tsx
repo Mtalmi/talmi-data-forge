@@ -78,6 +78,7 @@ export default function Dashboard() {
   const [bellOpen, setBellOpen] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const tabBarRef = useRef<HTMLDivElement>(null);
   const [nextDelivery, setNextDelivery] = useState<{ client: string; volume: number; minutesLeft: number } | null>(null);
   // ─── Sync countdown ───
   const [syncCountdown, setSyncCountdown] = useState(30);
@@ -213,6 +214,11 @@ export default function Dashboard() {
   };
   const visibleAlerts = stats.alerts.filter(alert => !dismissedAlerts.has(alert.id));
 
+  // Auto-scroll active tab into view on mobile
+  useEffect(() => {
+    const el = tabBarRef.current?.querySelector(`[data-tab="${activeTab}"]`) as HTMLElement | null;
+    el?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }, [activeTab]);
 
   // Animated KPI values — locked for CEO demo determinism
   const prodVolume = useCountUp(671, 1800, 200);
@@ -577,7 +583,11 @@ export default function Dashboard() {
             padding: '0 24px',
             display: 'flex', alignItems: 'center',
           }}>
-            <div className="overflow-x-auto scrollbar-hide" style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap' }}>
+            <div
+              className="overflow-x-auto scrollbar-hide md:overflow-x-visible"
+              style={{ display: 'flex', gap: 0, whiteSpace: 'nowrap', scrollSnapType: 'x mandatory' }}
+              ref={tabBarRef}
+            >
               {([
                 { id: 'command', label: 'COMMAND CENTER' },
                 { id: 'production', label: 'PRODUCTION LIVE', live: true, badge: 2, badgeColor: '#D4A843' },
@@ -588,6 +598,7 @@ export default function Dashboard() {
                 return (
                   <button
                     key={tab.id}
+                    data-tab={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className="flex items-center gap-2 transition-all duration-200"
                     style={{
@@ -601,6 +612,8 @@ export default function Dashboard() {
                       letterSpacing: '0.1em',
                       cursor: 'pointer',
                       fontFamily: "'DM Sans', sans-serif",
+                      scrollSnapAlign: 'start',
+                      flexShrink: 0,
                     }}
                   >
                     {tab.label}
