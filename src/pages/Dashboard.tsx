@@ -1038,15 +1038,22 @@ export default function Dashboard() {
             {/* ── Production Chart ── */}
             <div className="flex gap-3 px-5 pb-4 pt-3 z-10 relative" style={{ minHeight: 320 }}>
               {/* Chart panel */}
-              <div className="flex-[4] min-w-0">
-                <div className="text-[9px] text-slate-500 uppercase tracking-[0.15em] font-medium mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-                  Production (m³/h) vs Target
+              <div className="flex-[4] min-w-0 bg-gradient-to-b from-white/[0.03] to-transparent border border-white/[0.06] rounded-xl p-5 h-full relative overflow-hidden">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    Production (m³/h) vs Target
+                  </div>
+                  <span className="flex items-center gap-1.5 text-[9px] text-emerald-400/70 font-medium">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    TEMPS RÉEL
+                  </span>
                 </div>
                 <svg
                   width="100%" height="220" viewBox={`0 0 ${svgW} ${svgH}`} preserveAspectRatio="none"
                   className="cursor-crosshair"
                   onMouseMove={handleChartMouseMove}
                   onMouseLeave={handleChartMouseLeave}
+                  style={{ filter: 'drop-shadow(0 0 6px rgba(212, 168, 67, 0.15))' }}
                 >
                   {/* Grid lines */}
                   {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => (
@@ -1100,6 +1107,7 @@ export default function Dashboard() {
                   )}
                   <rect x="0" y="0" width={svgW} height={svgH} fill="transparent" />
                 </svg>
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0f1a]/80 to-transparent pointer-events-none" />
               </div>
 
               {/* Camera panel */}
