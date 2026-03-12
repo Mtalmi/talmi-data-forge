@@ -840,6 +840,18 @@ export default function Dashboard() {
             <Activity size={14} />
             Opérations
           </button>
+          <button
+            onClick={() => setActiveTab('intelligence')}
+            className="flex items-center gap-2 px-4 py-2 rounded-md text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-300"
+            style={{
+              background: activeTab === 'intelligence' ? 'rgba(212,168,67,0.12)' : 'transparent',
+              border: activeTab === 'intelligence' ? '1px solid rgba(212,168,67,0.25)' : '1px solid transparent',
+              color: activeTab === 'intelligence' ? '#D4A843' : 'rgba(148,163,184,0.5)',
+            }}
+          >
+            <Sparkles size={14} />
+            Intelligence IA
+          </button>
         </div>
 
         {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
