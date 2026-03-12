@@ -74,6 +74,7 @@ export default function Dashboard() {
   const [hoveredChartIdx, setHoveredChartIdx] = useState<number | null>(null);
   const [alertDismissed, setAlertDismissed] = useState(false);
   const [activeTab, setActiveTab] = useState<'command' | 'production' | 'operations' | 'intelligence'>('command');
+  const [nextDelivery, setNextDelivery] = useState<{ client: string; volume: number; minutesLeft: number } | null>(null);
   // ─── Typewriter effect for greeting ───
   const [typedName, setTypedName] = useState('');
   const [showCursor, setShowCursor] = useState(true);
@@ -100,6 +101,52 @@ export default function Dashboard() {
     const interval = setInterval(() => { refreshPeriod(); }, 60000);
     return () => clearInterval(interval);
   }, [isCeo]);
+
+  // ─── Fetch next upcoming delivery ───
+  useEffect(() => {
+    const fetchNextDelivery = async () => {
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const nowTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      
+      const { data } = await supabase
+        .from('bons_livraison_reels')
+        .select('client_id, volume_m3, heure_prevue, heure_depart_centrale')
+        .eq('date_livraison', todayStr)
+        .order('heure_prevue', { ascending: true })
+        .limit(50);
+      
+      if (data?.length) {
+        // Find next delivery with a scheduled time after now
+        const upcoming = data.find(d => {
+          const t = d.heure_prevue || d.heure_depart_centrale;
+          return t && t > nowTime;
+        });
+        
+        if (upcoming) {
+          const t = upcoming.heure_prevue || upcoming.heure_depart_centrale || '';
+          const [h, m] = t.split(':').map(Number);
+          const diffMin = Math.max(0, (h * 60 + m) - (now.getHours() * 60 + now.getMinutes()));
+          
+          // Fetch client name
+          const { data: clientData } = await supabase
+            .from('clients')
+            .select('nom_client')
+            .eq('client_id', upcoming.client_id)
+            .maybeSingle();
+          
+          setNextDelivery({
+            client: clientData?.nom_client || upcoming.client_id,
+            volume: upcoming.volume_m3,
+            minutesLeft: diffMin,
+          });
+        }
+      }
+    };
+    fetchNextDelivery();
+    const interval = setInterval(fetchNextDelivery, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   // ─── Typewriter boot sequence ───
   useEffect(() => {
@@ -602,10 +649,18 @@ export default function Dashboard() {
                     background: 'rgba(255,255,255,0.04)',
                     border: '1px solid rgba(255,255,255,0.10)',
                   }}>
-                    <Truck size={15} style={{ color: '#D4A843', flexShrink: 0 }} />
+                    <Truck size={15} style={{ color: '#D4A843', flexShrink: 0, alignSelf: 'center' }} />
                     <div className="flex flex-col">
                       <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
-                      <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>47 min</span>
+                      {nextDelivery && (
+                        <span className="text-sm text-white truncate max-w-[140px]">{nextDelivery.client}</span>
+                      )}
+                      <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                        {nextDelivery ? `${nextDelivery.minutesLeft} min` : '47 min'}
+                      </span>
+                      {nextDelivery && (
+                        <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
+                      )}
                     </div>
                   </div>
                 </div>
