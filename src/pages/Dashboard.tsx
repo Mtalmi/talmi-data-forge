@@ -730,7 +730,7 @@ export default function Dashboard() {
                       {/* NOUVEAU DEVIS — neutral */}
                       <button
                         onClick={() => navigate('/ventes')}
-                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(255,255,255,0.04)',
                           border: '1px solid rgba(255,255,255,0.10)',
@@ -740,7 +740,7 @@ export default function Dashboard() {
                         onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
                         <PlusCircle size={16} className="opacity-60" />
-                        Nouveau Devis
+                        NOUVEAU DEVIS
                       </button>
 
                       {/* RELANCER CLIENTS — red urgency */}
