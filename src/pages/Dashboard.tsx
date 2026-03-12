@@ -707,72 +707,129 @@ export default function Dashboard() {
                       <span className="text-[11px] font-semibold" style={{ color: 'rgba(52,211,153,0.8)' }}>● Optimal</span>
                     </div>
                    </div>
-                  {/* Quick Action Buttons */}
-                  <div className="flex flex-wrap items-center gap-2 mt-4" style={{ paddingLeft: 5 }}>
-                    {[
-                      { label: 'Nouveau Devis', icon: <PlusCircle size={12} />, path: '/ventes' },
-                      { label: 'Relancer Clients', icon: <PhoneCall size={12} />, path: '/recouvrement', badge: '2', badgeColor: '#EF4444' },
-                      { label: 'Rapport du Jour', icon: <FileText size={12} />, path: '/rapports', badge: 'New', badgeColor: '#D4A843' },
-                      { label: 'Lancer Production', icon: <BarChart3 size={12} />, path: '/production' },
-                    ].map((btn) => (
+                  {/* Quick Action Bar + Prochaine Livraison */}
+                  <div className="flex items-center gap-3 mt-4">
+                    {/* Action Buttons Container */}
+                    <div className="flex flex-wrap items-center gap-3 flex-1 rounded-xl px-4 py-3" style={{
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                    }}>
+                      {/* NOUVEAU DEVIS — neutral */}
                       <button
-                        key={btn.label}
-                        onClick={() => navigate(btn.path)}
-                        className="relative flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider transition-all duration-200 hover:bg-white/[0.08]"
+                        onClick={() => navigate('/ventes')}
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
                         style={{
                           background: 'rgba(255,255,255,0.04)',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'rgba(203,213,225,0.7)',
+                          border: '1px solid rgba(255,255,255,0.10)',
+                          color: 'rgba(255,255,255,0.8)',
                         }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = '#fff'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                       >
-                        <span style={{ color: '#D4A843' }}>{btn.icon}</span>
-                        {btn.label}
-                        {btn.badge && (
-                          <span
-                            className="absolute inline-flex items-center justify-center rounded-full z-10 min-w-[20px] h-[20px] text-[10px] font-bold"
-                            style={{
-                              top: -6,
-                              right: -6,
-                              padding: '0 5px',
-                              lineHeight: 1,
-                              background: btn.badgeColor,
-                              color: btn.badgeColor === '#D4A843' ? '#0F1419' : '#FFFFFF',
-                              boxShadow: `0 0 6px ${btn.badgeColor}60`,
-                            }}
-                          >
-                            {btn.badge}
-                          </span>
-                        )}
+                        <PlusCircle size={16} className="opacity-60" />
+                        Nouveau Devis
                       </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="hidden md:flex flex-col items-end gap-2">
-                  <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
-                  <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.3)' }}>dernière mise à jour: à l'instant</span>
-                  {/* Prochaine Livraison countdown card */}
-                  <div className="flex items-center gap-2.5 rounded-lg px-4 py-2" style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid rgba(255,255,255,0.10)',
-                  }}>
-                    <Truck size={15} style={{ color: '#D4A843', flexShrink: 0, alignSelf: 'center' }} />
-                    <div className="flex flex-col">
-                      <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
-                      {nextDelivery ? (
-                        <>
-                          <span className="text-xs text-white truncate max-w-[140px]">{nextDelivery.client}</span>
-                          <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-                            {nextDelivery.minutesLeft} min
-                          </span>
-                          <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
-                        </>
-                      ) : (
-                        <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>Aucune livraison</span>
-                      )}
+
+                      {/* RELANCER CLIENTS — red urgency */}
+                      <button
+                        onClick={() => navigate('/recouvrement')}
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        style={{
+                          background: 'rgba(239,68,68,0.08)',
+                          border: '1px solid rgba(239,68,68,0.20)',
+                          color: 'rgba(255,255,255,0.8)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      >
+                        <PhoneCall size={16} className="opacity-60" />
+                        Relancer Clients
+                        <span
+                          className="absolute flex items-center justify-center rounded-full z-10"
+                          style={{
+                            top: -8, right: -8,
+                            minWidth: 20, height: 20,
+                            fontSize: 10, fontWeight: 700,
+                            background: '#EF4444', color: '#fff',
+                            boxShadow: '0 0 8px rgba(239,68,68,0.5)',
+                          }}
+                        >2</span>
+                      </button>
+
+                      {/* RAPPORT DU JOUR — gold intelligence */}
+                      <button
+                        onClick={() => navigate('/rapports')}
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        style={{
+                          background: 'rgba(212,168,67,0.08)',
+                          border: '1px solid rgba(212,168,67,0.20)',
+                          color: 'rgba(255,255,255,0.8)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,168,67,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      >
+                        <FileText size={16} className="opacity-60" />
+                        Rapport du Jour
+                        <span
+                          className="absolute flex items-center justify-center rounded-md z-10"
+                          style={{
+                            top: -8, right: -8,
+                            padding: '2px 6px',
+                            fontSize: 9, fontWeight: 700, letterSpacing: '0.05em',
+                            background: '#D4A843', color: '#000',
+                            boxShadow: '0 0 8px rgba(212,168,67,0.5)',
+                          }}
+                        >NEW</span>
+                      </button>
+
+                      {/* LANCER PRODUCTION — green go */}
+                      <button
+                        onClick={() => navigate('/production')}
+                        className="relative flex items-center gap-2 rounded-lg px-5 py-2.5 text-[13px] font-medium tracking-wide transition-all duration-200 hover:-translate-y-px hover:shadow-lg hover:shadow-black/20"
+                        style={{
+                          background: 'rgba(16,185,129,0.08)',
+                          border: '1px solid rgba(16,185,129,0.20)',
+                          color: 'rgba(255,255,255,0.8)',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.15)'; e.currentTarget.style.color = '#fff'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(16,185,129,0.08)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
+                      >
+                        <BarChart3 size={16} className="opacity-60" />
+                        Lancer Production
+                      </button>
+                    </div>
+
+                    {/* Vertical divider + Prochaine Livraison */}
+                    <div className="hidden md:flex items-center gap-3">
+                      <div className="w-px h-12" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                      <div className="flex items-center gap-2.5 rounded-lg px-4 py-2.5" style={{
+                        background: 'rgba(255,255,255,0.04)',
+                        border: '1px solid rgba(255,255,255,0.10)',
+                      }}>
+                        <Truck size={16} style={{ color: '#D4A843', flexShrink: 0 }} />
+                        <div className="flex flex-col">
+                          <span className="text-[9px] font-semibold uppercase tracking-[0.12em]" style={{ color: 'rgba(148,163,184,0.5)' }}>Prochaine Livraison</span>
+                          {nextDelivery ? (
+                            <>
+                              <span className="text-xs text-white truncate max-w-[140px]">{nextDelivery.client}</span>
+                              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontWeight: 200, fontSize: '1.125rem', color: '#D4A843', lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                                {nextDelivery.minutesLeft} min
+                              </span>
+                              <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
+                            </>
+                          ) : (
+                            <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>Aucune livraison</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                     </div>
                   </div>
                 </div>
-              </div>
+                <div className="hidden md:flex flex-col items-end gap-2 flex-shrink-0">
+                  <span className="tabular-nums" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.35)', letterSpacing: '0.02em' }}>{timeStr}</span>
+                  <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: '10px', color: 'rgba(148,163,184,0.3)' }}>dernière mise à jour: à l'instant</span>
+                </div>
             </div>
           </div>
 
