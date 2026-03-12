@@ -260,7 +260,7 @@ export function useDashboardStats() {
         tauxECMoyen,
         deliveriesTrend: isNaN(deliveriesTrend) ? 0 : deliveriesTrend,
         volumeTrend: isNaN(volumeTrend) ? 0 : volumeTrend,
-        clientsTrend,
+        clientsTrend: isNaN(clientsTrend) ? 0 : clientsTrend,
         curTrend,
         alerts,
       });
