@@ -1270,7 +1270,7 @@ export default function Dashboard() {
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                  <div key={i} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03]">
                     <div className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
                       <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
