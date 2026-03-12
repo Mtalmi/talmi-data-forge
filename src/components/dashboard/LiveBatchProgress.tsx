@@ -159,7 +159,7 @@ export default function LiveBatchProgress() {
       {/* Phase indicators */}
       <div className="flex items-center justify-between mb-3">
         {phases.map((p, i) => (
-          <div key={i} className="flex flex-col items-center gap-1 flex-1">
+          <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
             {i > 0 && (
               <div
                 className="absolute h-px"
@@ -169,14 +169,20 @@ export default function LiveBatchProgress() {
                 }}
               />
             )}
-            <span className="text-[11px]" style={{ opacity: p.active ? 1 : p.done ? 0.8 : 0.3 }}>
+            <span
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
+              style={{
+                background: p.active ? 'rgba(212,168,67,0.15)' : p.done ? 'rgba(52,211,153,0.1)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${p.active ? 'rgba(212,168,67,0.3)' : p.done ? 'rgba(52,211,153,0.2)' : 'rgba(255,255,255,0.06)'}`,
+                opacity: p.active ? 1 : p.done ? 0.9 : 0.4,
+              }}
+            >
               {p.done ? '✅' : p.active ? '⏳' : '○'}
             </span>
             <span
-              className="text-[8px]"
+              className="text-xs font-medium"
               style={{
-                color: p.active ? T.dotWarn : p.done ? 'rgba(148,163,184,0.5)' : 'rgba(148,163,184,0.25)',
-                fontWeight: p.active ? 500 : 400,
+                color: p.active ? T.dotWarn : p.done ? 'rgba(148,163,184,0.6)' : 'rgba(148,163,184,0.3)',
               }}
             >
               {p.label}
