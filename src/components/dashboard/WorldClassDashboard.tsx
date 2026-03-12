@@ -878,23 +878,13 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
             {/* Daily P&L Signature Metric */}
             {!hideOpsWidgets && (
             <Card className="ops-enter ops-surface-card tbos-stagger-9" style={{ borderRadius: 8, border: '1px solid rgba(245, 158, 11, 0.15)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
-              <div className="text-center py-4 relative">
-                <div className="relative z-[1]">
-                  <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-3 font-medium">P&L du jour</div>
-                  <div className="text-[2.5rem] font-extralight font-mono text-white tabular-nums leading-none" style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontWeight: 200,
-                    textShadow: '0 0 30px rgba(253,185,19,0.2), 0 0 60px rgba(253,185,19,0.08)',
-                    letterSpacing: '-0.03em',
-                  }}>
-                    +18.4K DH
-                  </div>
-                  <div className="text-[10px] text-slate-500 mt-2">marge nette estimée</div>
-                  <div className="flex items-center justify-center gap-1.5 mt-3">
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'rgba(52,211,153,0.6)' }} />
-                    <span className="text-[10px]" style={{ color: 'rgb(148,163,184)' }}>+12% vs hier</span>
-                  </div>
+              <div className="py-4 px-4">
+                <div className="text-[9px] uppercase tracking-[0.3em] text-slate-500 mb-1.5 font-medium">P&L du jour</div>
+                <div style={{ fontFamily: "ui-monospace, SFMono-Regular, monospace", fontWeight: 200, fontSize: '1.5rem', color: 'white', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                  +18.4K DH
                 </div>
+                <div className="text-xs mt-1" style={{ color: 'rgba(148,163,184,0.5)' }}>marge nette estimée</div>
+                <div className="text-xs mt-1" style={{ color: 'rgb(52,211,153)' }}>+12% vs hier</div>
               </div>
             </Card>
             )}
