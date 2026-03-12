@@ -1020,7 +1020,7 @@ export default function Dashboard() {
 
           <div
             className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-white/[0.06] p-5"
-            style={{ boxShadow: '0 0 20px rgba(212, 168, 67, 0.03)' }}
+            style={{ boxShadow: '0 0 30px rgba(212, 168, 67, 0.05), inset 0 1px 0 rgba(255,255,255,0.04)' }}
           >
             <div className="relative flex items-center gap-3 px-5 pt-4 pb-1 z-10">
               <Radio size={14} className="text-amber-400" />
