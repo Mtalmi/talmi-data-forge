@@ -83,10 +83,12 @@ export default function LeakageAlertBanner() {
   }
 
   return (
-    <div className={cn(
-      "rounded-lg border-2 border-destructive/50 bg-destructive/10 overflow-hidden cursor-pointer",
-      "animate-fade-in transition-all duration-200 ease-out hover:bg-destructive/[0.15]"
-    )}>
+    <>
+      <style>{`@keyframes alertPulse { 0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.08); } 50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.15); } }`}</style>
+      <div className={cn(
+        "rounded-lg border-2 border-destructive/50 bg-destructive/10 overflow-hidden cursor-pointer",
+        "animate-fade-in transition-all duration-200 ease-out hover:bg-destructive/[0.15]"
+      )} style={{ animation: 'alertPulse 3s ease-in-out infinite', boxShadow: '0 0 15px rgba(239, 68, 68, 0.08)' }}>
       {/* Header */}
       <div 
         className="group flex items-center justify-between p-3 cursor-pointer hover:bg-destructive/5 transition-colors"
@@ -98,11 +100,11 @@ export default function LeakageAlertBanner() {
           </div>
           <div>
             <p className="font-semibold text-destructive flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
+              <AlertTriangle className="h-4 w-4 animate-pulse" />
               Alerte Fuite Détectée
             </p>
              <p className="text-sm text-muted-foreground">
-               {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-semibold">Perte estimée: 1,450 DH</span>
+               {visibleLeakages.length} livraison avec écart de coût de 8.3% — <span className="text-white/80 font-medium">BL-2026-0312</span> · Constructions Modernes SA · <span className="text-destructive font-bold">Perte estimée: 1,450 DH</span>
              </p>
           </div>
         </div>
@@ -160,6 +162,7 @@ export default function LeakageAlertBanner() {
           })}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
