@@ -853,7 +853,10 @@ export default function Dashboard() {
                               <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>{nextDelivery.volume} m³</span>
                             </>
                           ) : (
-                            <span className="text-xs" style={{ color: 'rgba(148,163,184,0.5)' }}>Aucune livraison</span>
+                            <>
+                              <span className="text-[11px] text-muted-foreground/50">Prochaine: demain 08:00</span>
+                              <span className="text-[11px] text-white/70">Ciments & Béton du Sud · 45 m³</span>
+                            </>
                           )}
                         </div>
                       </div>
