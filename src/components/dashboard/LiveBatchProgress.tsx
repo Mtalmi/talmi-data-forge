@@ -145,15 +145,22 @@ export default function LiveBatchProgress() {
           <span className="text-[9px]" style={{ color: 'rgba(148,163,184,0.4)' }}>Progression</span>
           <span className="text-[10px] text-white/80 font-mono font-medium tabular-nums">{progress}%</span>
         </div>
+        <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
         <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
           <div
-            className="h-full rounded-full transition-all duration-1000"
+            className="h-full rounded-full transition-all duration-1000 relative overflow-hidden"
             style={{
               width: `${progress}%`,
               background: `linear-gradient(90deg, ${T.dotWarn}, ${T.dotOk})`,
               boxShadow: `0 0 8px rgba(52,211,153,0.2)`,
             }}
-          />
+          >
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 2s ease-in-out infinite',
+            }} />
+          </div>
         </div>
       </div>
 
