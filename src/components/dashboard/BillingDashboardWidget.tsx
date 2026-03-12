@@ -219,7 +219,7 @@ export function BillingDashboardWidget() {
               <BarChart data={stats.agingData}>
                 <XAxis dataKey="label" className="text-[10px]" tick={{ fontSize: 10 }} />
                 <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} className="text-[10px]" tick={{ fontSize: 10 }} />
-                <Tooltip formatter={(v: number) => `${v.toLocaleString()} DH`} />
+                <Tooltip formatter={(v: number) => `${v.toLocaleString()} DH`} contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(212,168,67,0.3)', borderRadius: 8, backdropFilter: 'blur(12px)', color: '#fff' }} />
                 <Bar dataKey="montant" radius={[4, 4, 0, 0]}>
                   {stats.agingData.map((entry, i) => (
                     <Cell key={i} fill={entry.color} />

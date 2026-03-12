@@ -106,12 +106,12 @@ function RichTooltip({ active, payload, label, unit = '', sparkData }: any) {
   const value = payload[0].value;
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(15,20,35,0.97), rgba(10,14,26,0.99))',
-      border: '1px solid rgba(212,175,55,0.15)',
-      borderRadius: 12,
+      background: 'rgba(15,23,42,0.95)',
+      border: '1px solid rgba(212,168,67,0.3)',
+      borderRadius: 8,
       padding: '10px 14px',
-      boxShadow: '0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)',
-      backdropFilter: 'blur(16px)',
+      boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
+      backdropFilter: 'blur(12px)',
       minWidth: 140,
     }}>
       <div style={{ fontSize: 9, fontFamily: 'JetBrains Mono', color: 'rgba(148,163,184,0.5)', marginBottom: 4, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</div>
