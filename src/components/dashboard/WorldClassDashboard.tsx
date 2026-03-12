@@ -905,10 +905,12 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
                               onClick={() => toast(`Commande en préparation — ${item.name} · ${item.dailyRate}%/j`, {
                                 duration: 3000,
                                 style: {
-                                  background: '#1a1f2e',
-                                  border: '1px solid rgba(255,255,255,0.08)',
-                                  borderLeft: '3px solid #D4A843',
+                                  background: '#0f1729',
+                                  border: '1px solid rgba(212,168,67,0.3)',
+                                  borderLeft: '2px solid #D4A843',
+                                  borderRadius: '8px',
                                   color: '#F1F5F9',
+                                  boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)',
                                 },
                               })}
                             >
