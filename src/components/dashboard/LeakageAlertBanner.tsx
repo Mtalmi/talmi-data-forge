@@ -84,8 +84,8 @@ export default function LeakageAlertBanner() {
 
   return (
     <div className={cn(
-      "rounded-lg border-2 border-destructive/50 bg-destructive/10 overflow-hidden",
-      "animate-fade-in"
+      "rounded-lg border-2 border-destructive/50 bg-destructive/10 overflow-hidden cursor-pointer",
+      "animate-fade-in transition-all duration-200 ease-out hover:bg-destructive/[0.15]"
     )}>
       {/* Header */}
       <div 
