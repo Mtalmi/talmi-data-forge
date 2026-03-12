@@ -588,7 +588,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-  const [midPanelView, setMidPanelView] = useState<'data' | 'camera'>('data');
+  
 
 
 
