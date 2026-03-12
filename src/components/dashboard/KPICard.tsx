@@ -82,7 +82,7 @@ export default function KPICard({
 
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1.5 flex-1 min-w-0">
-          <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {title}
           </p>
           <p
