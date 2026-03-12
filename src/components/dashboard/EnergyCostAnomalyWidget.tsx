@@ -21,9 +21,8 @@ export function EnergyCostAnomalyWidget() {
       className="ops-enter ops-surface-card"
       style={{
         borderRadius: 8,
-        border: `1px solid ${T.danger}25`,
+        border: '1px solid rgba(245, 158, 11, 0.15)',
         borderTop: '1px solid rgba(212,168,67,0.3)',
-        borderLeft: `4px solid ${T.danger}`,
         background: 'linear-gradient(to bottom right, #1a1f2e, #141824)',
         padding: 16,
       }}
