@@ -335,7 +335,12 @@ function AIAnalystBrief() {
   }, []);
 
   return (
-      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)' }}>
+      <div
+        style={{ transition: 'all 200ms ease-out', borderRadius: 8 }}
+        onMouseEnter={e => { const el = e.currentTarget.firstElementChild as HTMLElement; if (el) { el.style.borderColor = 'rgba(255,255,255,0.2)'; el.style.transform = 'translateY(-1px)'; }}}
+        onMouseLeave={e => { const el = e.currentTarget.firstElementChild as HTMLElement; if (el) { el.style.borderColor = 'rgba(255,255,255,0.08)'; el.style.transform = 'translateY(0)'; }}}
+      >
+      <Card className="ops-enter ops-surface-card" style={{ borderRadius: 8, border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(to bottom right, #1a1f2e, #141824)', transition: 'all 200ms ease-out' }}>
 
 
       <div className="flex items-center justify-between mb-4">
@@ -416,6 +421,7 @@ function AIAnalystBrief() {
         <div className="ml-4 mt-1 w-[6px] h-[14px] rounded-sm" style={{ background: T.gold, opacity: 0.6, animation: 'blink 1s step-end infinite' }} />
       )}
     </Card>
+    </div>
   );
 }
 
@@ -442,13 +448,15 @@ function PipelineFunnel() {
           return (
             <div key={i} className="contents">
               <div
-                className="flex-1 flex flex-col items-center gap-1 rounded-lg py-3 px-2"
+                className="flex-1 flex flex-col items-center gap-1 rounded-lg py-3 px-2 cursor-pointer"
                 style={{
                   background: 'rgba(255,255,255,0.04)',
                   border: '1px solid rgba(255,255,255,0.08)',
                   opacity: isEmpty ? 0.4 : 1,
-                  transition: 'opacity 0.3s ease',
+                  transition: 'all 200ms ease-out',
                 }}
+                onMouseEnter={e => { if (!isEmpty) { const el = e.currentTarget; el.style.borderColor = 'rgba(212,168,67,0.3)'; el.style.background = 'rgba(255,255,255,0.06)'; el.style.transform = 'scale(1.02)'; }}}
+                onMouseLeave={e => { const el = e.currentTarget; el.style.borderColor = 'rgba(255,255,255,0.08)'; el.style.background = 'rgba(255,255,255,0.04)'; el.style.transform = 'scale(1)'; }}
               >
                 <span style={{
                   fontFamily: "ui-monospace, SFMono-Regular, monospace",

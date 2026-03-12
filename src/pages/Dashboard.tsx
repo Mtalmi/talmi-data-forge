@@ -359,11 +359,12 @@ export default function Dashboard() {
               0 8px 32px rgba(0,0,0,0.15);
           }
           .tbos-hero-card:hover {
-            border-color: rgba(255,255,255,0.2);
-            transform: translateY(-1px);
+            border-color: rgba(212,168,67,0.3) !important;
+            transform: translateY(-2px);
             box-shadow:
               inset 0 1px 0 rgba(255,255,255,0.08),
-              0 2px 8px rgba(0,0,0,0.2);
+              0 2px 8px rgba(0,0,0,0.2),
+              0 8px 24px rgba(212,168,67,0.05);
           }
           .tbos-hero-card::before {
             display: none !important;
@@ -1249,7 +1250,7 @@ export default function Dashboard() {
                   { id: '#403-065', formula: 'F-B35', vol: '10 m³', time: '12:03', status: 'ok' },
                   { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
                 ].map((b) => (
-                  <div key={b.id} className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-white/[0.02] transition-colors">
+                  <div key={b.id} className="flex items-center justify-between py-1.5 px-2 rounded transition-all duration-150 hover:bg-white/[0.03]">
                     <div className="flex items-center gap-2 w-[70px]">
                       <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.status === 'ok' ? '#34D399' : '#FBBF24' }} />
                       <span className="text-[10px] font-mono text-slate-400">{b.id}</span>
@@ -1269,7 +1270,7 @@ export default function Dashboard() {
                   { id: 'BL-2602-067', test: 'Slump 22cm', ok: false, time: '18:28' },
                   { id: 'BL-2602-073', test: 'Slump 17cm', ok: true, time: '19:13' },
                 ].map((q, i) => (
-                  <div key={i} className="flex items-center justify-between gap-3 py-2 px-2 rounded-lg hover:bg-white/[0.02] transition-colors duration-200">
+                  <div key={i} className="group flex items-center justify-between gap-3 py-2 px-2 rounded-lg transition-all duration-150 hover:bg-white/[0.03]">
                     <div className="flex items-center gap-2">
                       <span className="w-1 h-1 rounded-full shrink-0" style={{ background: q.ok ? '#34D399' : '#FBBF24' }} />
                       <span className="text-sm font-mono text-slate-400 tabular-nums">{q.id}</span>
@@ -1277,7 +1278,7 @@ export default function Dashboard() {
                     <div className="flex items-center gap-2 text-sm">
                       <span className="text-slate-500">{q.test}</span>
                       <span
-                        className="text-xs font-bold font-mono tabular-nums inline-flex items-center justify-center rounded-md min-w-[48px] px-2 py-0.5"
+                        className="text-xs font-bold font-mono tabular-nums inline-flex items-center justify-center rounded-md min-w-[48px] px-2 py-0.5 transition-transform duration-150 group-hover:scale-105"
                         style={{
                           background: q.ok ? 'rgba(52,211,153,0.1)' : 'rgba(251,191,36,0.1)',
                           border: `1px solid ${q.ok ? 'rgba(52,211,153,0.2)' : 'rgba(251,191,36,0.2)'}`,
