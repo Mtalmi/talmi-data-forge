@@ -691,23 +691,13 @@ export default function Dashboard() {
 
               {/* ── ROW 2: STATS BAR (the hero — Production Live format) ── */}
               <div className="flex items-center gap-8 py-3">
-                {/* Gauge */}
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div className="relative w-[56px] h-[56px]" style={{ filter: 'drop-shadow(0 0 12px rgba(212,168,67,0.2))' }}>
-                    <svg width="56" height="56" viewBox="0 0 56 56">
-                      <circle cx="28" cy="28" r="22" fill="none" stroke="#1a2332" strokeWidth="5" />
-                      <circle
-                        cx="28" cy="28" r="22" fill="none"
-                        stroke="#D4A843" strokeWidth="5"
-                        strokeLinecap="round"
-                        strokeDasharray={`${0.87 * 2 * Math.PI * 22} ${2 * Math.PI * 22}`}
-                        transform="rotate(-90 28 28)"
-                        style={{ filter: 'drop-shadow(0 0 4px rgba(212,168,67,0.5))' }}
-                      />
-                      <text x="28" y="28" textAnchor="middle" dominantBaseline="central" fill="white" fontSize="16" fontWeight="700" fontFamily="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace">87<tspan fill="rgba(255,255,255,0.5)" fontSize="9" fontWeight="500">%</tspan></text>
-                    </svg>
+                {/* Capacity */}
+                <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
+                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212,168,67,0.3)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+                  <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
+                    <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '87%' }} />
                   </div>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground/50 mt-1">CAPACITÉ</span>
+                  <span className="text-[9px] tracking-[0.2em] text-muted-foreground/40 uppercase mt-1.5">CAPACITÉ</span>
                 </div>
 
                 {/* Divider */}
