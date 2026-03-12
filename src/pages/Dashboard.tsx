@@ -627,12 +627,14 @@ export default function Dashboard() {
                     key={tab.id}
                     data-tab={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className="flex items-center gap-2 transition-all duration-200 min-h-[44px] flex-shrink-0 whitespace-nowrap"
+                    className="flex items-center gap-2 transition-all duration-200 min-h-[44px] flex-shrink-0 whitespace-nowrap focus:outline-none focus-visible:outline-none"
                     style={{
                       padding: '14px 20px',
                       background: 'transparent',
                       border: 'none',
                       borderBottom: isActive ? '2px solid #D4A843' : '2px solid transparent',
+                      outline: 'none',
+                      boxShadow: 'none',
                       color: isActive ? '#D4A843' : 'rgba(148,163,184,0.5)',
                       fontSize: 12,
                       fontWeight: 700,
