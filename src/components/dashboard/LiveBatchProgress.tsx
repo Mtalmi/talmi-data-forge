@@ -131,7 +131,7 @@ export default function LiveBatchProgress() {
           <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
           <span className="text-[11px] font-medium text-white/90 uppercase tracking-[0.1em]">Batch en Cours</span>
         </div>
-        <span className="text-[11px] font-mono tabular-nums" style={{ color: 'rgba(148,163,184,0.5)' }}>{batch.bl_id}</span>
+        <span className="text-xs font-mono text-white/40 tracking-wider">{batch.bl_id}</span>
       </div>
 
       {/* Details */}
