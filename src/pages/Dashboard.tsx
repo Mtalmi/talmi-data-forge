@@ -602,10 +602,10 @@ export default function Dashboard() {
                   {/* Quick Action Buttons */}
                   <div className="flex flex-wrap items-center gap-2 mt-4" style={{ paddingLeft: 5 }}>
                     {[
-                      { label: 'Nouveau BL', icon: <PlusCircle size={12} />, path: '/livraisons' },
+                      { label: 'Nouveau Devis', icon: <PlusCircle size={12} />, path: '/ventes' },
                       { label: 'Relancer Clients', icon: <PhoneCall size={12} />, path: '/recouvrement', badge: '2', badgeColor: '#EF4444' },
                       { label: 'Rapport du Jour', icon: <FileText size={12} />, path: '/rapports', badge: 'New', badgeColor: '#D4A843' },
-                      { label: 'Analytique', icon: <BarChart3 size={12} />, path: '/analytics' },
+                      { label: 'Lancer Production', icon: <BarChart3 size={12} />, path: '/production' },
                     ].map((btn) => (
                       <button
                         key={btn.label}
