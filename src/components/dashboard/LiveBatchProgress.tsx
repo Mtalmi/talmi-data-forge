@@ -150,11 +150,13 @@ export default function LiveBatchProgress() {
         <style>{`@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }`}</style>
         <div className="h-[6px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
           <div
-            className="h-full rounded-full transition-all duration-1000 relative overflow-hidden"
+            className="relative overflow-hidden"
             style={{
-              width: `${progress}%`,
-              background: 'linear-gradient(to right, rgba(212,168,67,0.8), rgba(212,168,67,1))',
-              boxShadow: '0 0 8px rgba(212,168,67,0.4)',
+              width: '10%',
+              height: '100%',
+              background: '#D4A843',
+              boxShadow: '0 0 8px rgba(212,168,67,0.5)',
+              borderRadius: '9999px',
             }}
           >
             <div className="absolute inset-0" style={{
