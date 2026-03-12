@@ -255,7 +255,7 @@ export default function RecentDeliveries() {
               <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#22c55e' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#22c55e' }} />{livreCount} Livré</span>
               {enRouteCount > 0 && <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#eab308' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#eab308' }} />{enRouteCount} En Route</span>}
               {lateCount > 0 && <span className="flex items-center gap-1.5 text-[10px] font-mono tabular-nums" style={{ color: '#ef4444' }}><span className="w-2 h-2 rounded-full inline-block" style={{ background: '#ef4444' }} />{lateCount} En Retard</span>}
-              <span className="ml-auto text-[10px] text-slate-500 font-mono tabular-nums">{livreCount}/{timeline.length}</span>
+              <span className="ml-auto text-[10px] text-slate-500 font-mono tabular-nums">{livreCount}/{timeline.length}</span><span style={{ fontSize:'11px', color:'rgba(255,255,255,0.4)', fontFamily:'monospace', marginLeft:'8px' }}>60%</span>
             </div>
           </div>
         );

@@ -1169,7 +1169,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
               <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '12px', marginBottom: '12px' }}>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium">Satisfaction Client</span>
-                  <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★</span></span>
+                  <span className="font-mono"><span style={{ fontSize: '20px', fontWeight: '500', color: '#D4A843' }}>4.6</span><span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>/5</span> <span style={{ color: '#D4A843' }}>★★★★</span><span style={{ color: 'rgba(212,168,67,0.25)' }}>★</span></span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded px-2 py-0.5">12 livraisons à l'heure</span>
@@ -1232,7 +1232,7 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           <div style={{ background: 'linear-gradient(90deg, rgba(212,168,67,0.1), rgba(212,168,67,0.03), transparent)', border: '1px solid rgba(212,168,67,0.25)', borderRadius: '8px', padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }} className="mb-4 relative z-[1] w-full">
             <div className="flex items-center min-w-0">
               <span className="text-[#D4A843] animate-pulse mr-2 flex-shrink-0">✦</span>
-              <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — Constructions Modernes SA (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
+              <span className="text-sm text-white/80">AGENT IA : 2 livraisons en retard potentiel — <span style={{ fontWeight:'500', color:'white' }}>Constructions Modernes SA</span> (14:30) arrive à 85% de la fenêtre de livraison. BTP Maroc (16:00) non confirmé.</span>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0 ml-4">
               <button className="text-xs px-3 py-1.5 rounded-lg hover:brightness-110 transition-colors" style={{ boxShadow: '0 0 12px rgba(245,158,11,0.35)', background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.4)', color: 'rgb(251,191,36)', fontWeight: '500' }}>Alerter Client</button>
