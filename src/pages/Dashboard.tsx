@@ -704,7 +704,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-8 py-3 bg-gradient-to-r from-[#D4A843]/[0.03] via-transparent to-transparent rounded-lg">
                 {/* Capacity */}
                 <div className="flex flex-col items-center justify-center flex-shrink-0 w-[90px]">
-                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 20px rgba(212,168,67,0.3)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
+                  <span className="text-3xl font-bold tracking-tight text-[#D4A843]" style={{ textShadow: '0 0 30px rgba(212, 168, 67, 0.2)' }}>87<span className="text-lg font-normal text-[#D4A843]/50">%</span></span>
                   <div className="w-[80px] h-[3px] bg-white/10 rounded-full mt-1.5">
                     <div className="h-full rounded-full bg-gradient-to-r from-[#D4A843]/80 to-[#D4A843]" style={{ width: '87%' }} />
                   </div>
