@@ -1239,7 +1239,7 @@ export default function Dashboard() {
               <div className="w-px h-6 bg-white/[0.06]" />
 
               {/* Prochain camion */}
-              <div className="flex flex-col items-center gap-0.5">
+              <div className="flex flex-col items-center gap-0.5 px-3 py-2 -mx-3 -my-2 rounded-lg cursor-default transition-all duration-200 hover:bg-white/[0.03]">
                 <span className="text-[10px] tracking-[0.1em] uppercase text-muted-foreground/40 font-medium">Prochain camion</span>
                 <span className="text-sm text-[#D4A843] font-semibold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>32 min</span>
                 <span className="text-xs text-muted-foreground/50">→ Constructions Modernes · 20 m³</span>
