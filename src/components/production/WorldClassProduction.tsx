@@ -397,8 +397,7 @@ export default function WorldClassProduction() {
       production: bons.filter(b => b.workflow_status === 'production').length,
       validation: bons.filter(b => b.workflow_status === 'validation_technique').length,
     };
-    const hasData = live.planification + live.production + live.validation > 0;
-    return hasData ? live : { planification: 3, production: 2, validation: 9 };
+    return live;
   }, [bons]);
 
   const FALLBACK_HOURLY = [
