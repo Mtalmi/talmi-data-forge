@@ -3,6 +3,8 @@
 // Silos → Malaxeur → Camions → Chantiers → Qualité
 // ═══════════════════════════════════════════════════════
 
+import { useNavigate } from 'react-router-dom';
+
 const T = {
   dotOk: '#34D399',
   dotWarn: '#FBBF24',
@@ -41,7 +43,14 @@ function MiniBar({ label, pct, warn }: { label: string; pct: number; warn?: bool
   );
 }
 
+const panelHoverStyle = {
+  transition: 'border-color 200ms ease',
+  cursor: 'pointer',
+} as const;
+
 export default function PlantFlowSchematic() {
+  const navigate = useNavigate();
+
   return (
     <div className="mx-auto pt-5 mb-5">
       {/* Header */}
@@ -74,7 +83,11 @@ export default function PlantFlowSchematic() {
         </div>
 
         {/* ── STAGE 1: SILOS ── */}
-        <div className="flex-1 min-w-0 p-3 rounded-l-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div
+          className="flux-panel flex-1 min-w-0 p-3 rounded-l-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)' }}
+          onClick={() => navigate('/stocks')}
+        >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Silos</div>
           <div className="space-y-1">
             <MiniBar label="Ciment" pct={53} />
@@ -90,7 +103,11 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 2: MALAXEUR ── */}
-        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div
+          className="flux-panel flex-1 min-w-0 p-3"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          onClick={() => navigate('/production')}
+        >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Malaxeur</div>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: T.dotOk }} />
@@ -110,7 +127,11 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 3: CAMIONS ── */}
-        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div
+          className="flux-panel flex-1 min-w-0 p-3"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          onClick={() => navigate('/logistique')}
+        >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Camions</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -134,7 +155,11 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 4: CHANTIERS ── */}
-        <div className="flex-1 min-w-0 p-3" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div
+          className="flux-panel flex-1 min-w-0 p-3"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          onClick={() => navigate('/bons-de-commande')}
+        >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Chantiers</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
@@ -161,7 +186,11 @@ export default function PlantFlowSchematic() {
         <FlowArrow />
 
         {/* ── STAGE 5: QUALITÉ ── */}
-        <div className="flex-1 min-w-0 p-3 rounded-r-xl" style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}>
+        <div
+          className="flux-panel flex-1 min-w-0 p-3 rounded-r-xl"
+          style={{ ...panelHoverStyle, background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.05)', borderLeft: 'none' }}
+          onClick={() => navigate('/laboratoire')}
+        >
           <div className="text-[9px] uppercase tracking-[0.15em] font-medium mb-2" style={{ color: 'rgba(148,163,184,0.5)' }}>Qualité</div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">

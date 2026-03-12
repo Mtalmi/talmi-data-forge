@@ -361,6 +361,11 @@
   100% { left: 100%; }
 }
 
+/* ─── Flux Usine Panel Hover ─── */
+.flux-panel:hover {
+  border-color: rgba(212, 168, 67, 0.3) !important;
+}
+
 /* ─── Agent IA Sparkle Pulse ─── */
 @keyframes agentSparkle {
   0%, 100% { opacity: 0.4; }
