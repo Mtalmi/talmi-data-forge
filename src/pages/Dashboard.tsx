@@ -1433,9 +1433,9 @@ export default function Dashboard() {
                   { id: '#403-065', formula: 'F-B35', vol: '10 m³', time: '12:03', status: 'ok' },
                   { id: '#403-064', formula: 'F-B25', vol: '8 m³', time: '11:21', status: 'ok' },
                 ].map((b) => (
-                  <div key={b.id} className={`flex items-center justify-between py-1.5 px-2 rounded-md cursor-pointer transition-colors duration-150 hover:bg-white/[0.03] ${b.status === 'warn' ? 'border-l-2 border-l-amber-500/40' : ''}`}>
+                  <div key={b.id} className={`flex items-center justify-between py-1.5 px-2 rounded-md cursor-pointer transition-colors duration-150 hover:bg-white/[0.03]`} style={b.status === 'warn' ? { borderLeft: '2px solid rgba(245,158,11,0.6)', paddingLeft: '8px', background: 'rgba(245,158,11,0.04)' } : undefined}>
                     <div className="flex items-center gap-2 w-[70px]">
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: b.status === 'ok' ? '#34D399' : '#FBBF24' }} />
+                      <span className={`w-1.5 h-1.5 rounded-full ${b.status === 'warn' ? 'bg-amber-400 animate-pulse' : ''}`} style={{ background: b.status === 'ok' ? '#34D399' : undefined }} />
                       <span className="text-[10px] font-mono text-slate-400">{b.id}</span>
                     </div>
                     <span className="text-[10px] text-slate-500 flex-1 text-center">{b.formula}</span>
