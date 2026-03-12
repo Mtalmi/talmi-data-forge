@@ -865,38 +865,55 @@ export default function Dashboard() {
           {/* ═══ PRODUCTION LIVE TAB CONTENT ═══ */}
           {activeTab === 'production' && (
           <div key="tab-production" style={{ animation: 'tabFadeIn 200ms ease-in-out' }}>
-          {/* Taux de Réussite compact gauge */}
-          <div className="mb-5 flex flex-col items-start">
-            <div className="rounded-lg px-5 py-4 flex flex-col items-center" style={{
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.08)',
-            }}>
-              <svg width="100" height="100" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+          {/* Production Stats Bar */}
+          <div className="mb-5 flex items-center gap-6 w-full rounded-lg p-3 backdrop-blur-sm" style={{
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.10)',
+          }}>
+            {/* Taux de Réussite mini gauge */}
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <svg width="48" height="48" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="4" />
                 <circle
-                  cx="50" cy="50" r="42"
-                  fill="none"
-                  stroke="#D4A843"
-                  strokeWidth="6"
+                  cx="30" cy="30" r="24" fill="none"
+                  stroke="#D4A843" strokeWidth="4"
                   strokeLinecap="round"
-                  strokeDasharray={`${0.94 * 2 * Math.PI * 42} ${2 * Math.PI * 42}`}
-                  transform="rotate(-90 50 50)"
+                  strokeDasharray={`${0.94 * 2 * Math.PI * 24} ${2 * Math.PI * 24}`}
+                  transform="rotate(-90 30 30)"
                   style={{
                     animation: 'tauxGaugeArc 1.5s cubic-bezier(0.25,0.1,0.25,1) forwards',
-                    strokeDashoffset: `${0.94 * 2 * Math.PI * 42}`,
+                    strokeDashoffset: `${0.94 * 2 * Math.PI * 24}`,
                   }}
                 />
-                <text x="50" y="54" textAnchor="middle" fill="white" fontSize="26" fontWeight="200" fontFamily="ui-monospace, SFMono-Regular, monospace">94%</text>
+                <text x="30" y="33" textAnchor="middle" fill="white" fontSize="14" fontWeight="200" fontFamily="ui-monospace, SFMono-Regular, monospace">94%</text>
               </svg>
-              <span className="text-xs mt-1.5" style={{ color: 'rgba(148,163,184,0.5)' }}>Taux de Réussite · 7 derniers jours</span>
+              <div className="flex flex-col">
+                <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Taux de Réussite</span>
+                <span className="text-xs" style={{ color: 'rgba(148,163,184,0.35)' }}>7 derniers jours</span>
+              </div>
             </div>
-            <style>{`
-              @keyframes tauxGaugeArc {
-                from { stroke-dashoffset: ${0.94 * 2 * Math.PI * 42}; }
-                to { stroke-dashoffset: 0; }
-              }
-            `}</style>
+            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="flex flex-col">
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Batches Aujourd'hui</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>14</span>
+            </div>
+            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="flex flex-col">
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
+            </div>
+            <div className="w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
+            <div className="flex flex-col">
+              <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
+              <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 200, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
+            </div>
           </div>
+          <style>{`
+            @keyframes tauxGaugeArc {
+              from { stroke-dashoffset: ${0.94 * 2 * Math.PI * 24}; }
+              to { stroke-dashoffset: 0; }
+            }
+          `}</style>
 
           <div
             className="mb-5 relative z-[1] rounded-lg overflow-hidden bg-gradient-to-br from-[#1a1f2e] to-[#141824] border border-amber-500/20 p-5"
