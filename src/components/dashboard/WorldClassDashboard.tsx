@@ -598,6 +598,7 @@ function PipelineFunnel() {
           );
         })}
       </div>
+      <div style={{ textAlign:'center', color:'rgba(255,255,255,0.15)', fontSize:'11px', letterSpacing:'0.05em', margin:'12px 0' }}>FLUX COMMERCIAL DU JOUR</div>
       <div className="mt-3 text-center"><span className="text-xs text-white/40 uppercase tracking-wider">Conversion </span><span className="text-[#D4A843] font-medium">{Math.round((stages[3].value / Math.max(stages[0].value, 1)) * 100)}%</span><div className="text-[10px] text-white/30 uppercase tracking-wider text-center mt-1">Ce mois</div></div>
     </div>
     </div>
