@@ -914,22 +914,20 @@ export function WorldClassDashboard({ hideProductionWidgets = false, hideOpsWidg
           </div>
 
           {/* Middle: Micro-metrics */}
-          <div className="flex items-center gap-5">
-            <div className="flex flex-col items-center">
+          <div className="flex items-center gap-0">
+            <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Livraisons</span>
-              <span className="text-lg text-white font-semibold font-mono">3/5</span>
+              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(251,191,36)', fontWeight: '500' }}>3/5</span>
               <span className="text-[10px] text-emerald-400">60%</span>
             </div>
-            <div className="w-px h-8 bg-white/[0.06]" />
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center border-r border-white/[0.08] pr-6 mr-6">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Qualité</span>
-              <span className="text-lg text-white font-semibold font-mono">96.2%</span>
+              <span className="text-lg font-semibold font-mono" style={{ color: 'rgb(74,222,128)', fontWeight: '500', textShadow: '0 0 8px rgba(34,197,94,0.2)' }}>96.2%</span>
               <span className="text-[10px] text-muted-foreground/40">2 OK · 1 VAR</span>
             </div>
-            <div className="w-px h-8 bg-white/[0.06]" />
             <div className="flex flex-col items-center">
               <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground/40 font-medium mb-1">Trésorerie</span>
-              <span className="text-lg text-emerald-400 font-semibold font-mono">+18.4K</span>
+              <span className="text-lg font-semibold font-mono" style={{ color: '#D4A843', fontWeight: '500' }}>+18.4K</span>
               <span className="text-[10px] text-muted-foreground/40">vs +16.2K hier</span>
             </div>
           </div>
