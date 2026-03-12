@@ -194,11 +194,16 @@ export default function RecentDeliveries() {
 
       {/* Table Rows */}
       <div className="space-y-0">
-        {timeline.map((d) => (
+        {timeline.map((d) => {
+          const isAlertRow = d.client === 'Constructions Modernes SA' && d.time === '14:30';
+          return (
           <div
             key={d.id}
-            className="group flex items-center gap-4 py-2 hover:bg-white/[0.03] cursor-pointer transition-colors duration-150 rounded-md px-1"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}
+            className="group flex items-center gap-4 py-2 hover:bg-white/5 cursor-pointer transition-all duration-200 rounded-md px-1"
+            style={{ 
+              borderBottom: '1px solid rgba(255,255,255,0.03)',
+              ...(isAlertRow ? { borderLeft: '2px solid rgba(245,158,11,0.5)', paddingLeft: '8px', background: 'rgba(245,158,11,0.03)' } : {})
+            }}
           >
             <span className="text-xs text-muted-foreground/50 font-mono tabular-nums w-[60px]">{d.time}</span>
             <span className="text-sm text-white flex-1 truncate min-w-0">{d.client}</span>
@@ -214,7 +219,8 @@ export default function RecentDeliveries() {
               {d.statusLabel}
             </span>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Segmented progress bar */}
