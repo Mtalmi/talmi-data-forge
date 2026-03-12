@@ -590,7 +590,7 @@ function PipelineFunnel() {
                 <span className="text-[10px] uppercase tracking-wider text-white/40 mt-1 block text-center">{s.label}</span>
               </div>
               {i < stages.length - 1 && (
-                <span className="flex-shrink-0 text-lg text-muted-foreground/20">›</span>
+                <span style={{ color:'rgba(255,255,255,0.2)', fontSize:'16px', margin:'0 4px' }}>›</span>
               )}
             </div>
           );
