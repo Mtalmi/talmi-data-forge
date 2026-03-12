@@ -864,7 +864,7 @@ export default function Dashboard() {
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Cadence</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>47 <span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>m³/h</span></span>
             </div>
-            <div className="w-px h-10 bg-white/10" />
+            <div className="w-px h-10 bg-white/10 self-center" />
             <div className="flex flex-col">
               <span className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: 'rgba(148,163,184,0.5)' }}>Efficacité</span>
               <span style={{ fontFamily: "ui-monospace, 'JetBrains Mono', monospace", fontSize: 18, fontWeight: 300, color: 'white', lineHeight: 1.2 }}>94<span className="text-xs" style={{ color: 'rgba(148,163,184,0.4)' }}>%</span></span>
