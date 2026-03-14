@@ -550,15 +550,15 @@ export function DevisTable({
                       return <span style={{ fontSize: 10, color: '#64748B' }}>—</span>;
                     }
                     const numVal = parseInt(prob);
-                    const color = numVal >= 70 ? '#10B981' : numVal >= 40 ? '#F59E0B' : '#EF4444';
-                    const bg = numVal >= 70 ? 'rgba(16,185,129,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
-                    const border = numVal >= 70 ? 'rgba(16,185,129,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
+                    const color = numVal >= 70 ? '#22C55E' : numVal >= 40 ? '#F59E0B' : '#EF4444';
+                    const bg = numVal >= 70 ? 'rgba(34,197,94,0.12)' : numVal >= 40 ? 'rgba(245,158,11,0.12)' : 'rgba(239,68,68,0.12)';
+                    const border = numVal >= 70 ? 'rgba(34,197,94,0.25)' : numVal >= 40 ? 'rgba(245,158,11,0.25)' : 'rgba(239,68,68,0.25)';
                     return (
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: 4,
                         padding: '3px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700,
                         background: bg, border: `1px solid ${border}`, color,
-                        fontFamily: 'JetBrains Mono, monospace',
+                        fontFamily: 'ui-monospace, monospace',
                       }}>
                         {prob}
                       </span>
