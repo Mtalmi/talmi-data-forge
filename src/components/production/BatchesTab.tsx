@@ -256,12 +256,12 @@ export default function BatchesTab({ bons, batches, loading }: BatchesTabProps) 
           <div style={{ background: T.cardBg, border: `1px solid ${T.cardBorder}`, borderTop: '2px solid #D4A843', borderRadius: '12px 12px 0 0', overflow: 'hidden' }}>
             {/* Headers */}
             <div className="grid items-center" style={{
-              gridTemplateColumns: '120px 1fr 100px 80px 70px 130px 110px 90px',
+              gridTemplateColumns: '110px 1fr 90px 70px 65px 90px 70px 120px 100px 80px',
               padding: '12px 16px', borderBottom: `1px solid ${T.cardBorder}`,
             }}>
-              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
+              {['N° BL', 'CLIENT', 'FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].map(h => {
                 const align: 'left' | 'center' | 'right' =
-                  ['FORMULE', 'VOL (M³)', 'HEURE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
+                  ['FORMULE', 'VOL (M³)', 'HEURE', 'COÛT', 'MARGE', 'STATUT', 'PROGRESSION', 'ACTIONS'].includes(h) ? 'center' : 'left';
                 return (
                   <span key={h} style={{
                     fontSize: 11, textTransform: 'uppercase' as const, letterSpacing: '0.12em',
