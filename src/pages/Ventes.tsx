@@ -516,32 +516,33 @@ export default function Ventes() {
               subtitle="Gestion des devis et bons de commande"
               actions={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <ExportReportsDialog 
-                    devisList={devisList}
-                    bcList={bcList}
-                    selectedDevisIds={selectedDevisIds}
-                    selectedBcIds={selectedBcIds}
-                  />
+                  <div style={{ display: 'inline-flex' }}>
+                    <ExportReportsDialog 
+                      devisList={devisList}
+                      bcList={bcList}
+                      selectedDevisIds={selectedDevisIds}
+                      selectedBcIds={selectedBcIds}
+                    />
+                  </div>
                   {(canCreateBcDirect || isDirecteurOperations) && (
                     <button 
                       onClick={() => setEmergencyBcOpen(true)}
                       style={{
                         background: 'transparent',
-                        border: '1px solid rgba(255,255,255,0.12)',
-                        color: 'rgba(255,255,255,0.7)',
-                        fontSize: 12,
-                        padding: '7px 16px',
+                        border: '1px solid #D4A843',
+                        color: '#D4A843',
+                        fontSize: 14,
+                        padding: '8px 20px',
                         borderRadius: 8,
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         gap: 6,
-                        fontFamily: 'DM Sans, sans-serif',
                         fontWeight: 500,
                         transition: 'all 150ms',
                         whiteSpace: 'nowrap' as const,
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                     >
                       <ShoppingCart size={14} />
@@ -552,21 +553,20 @@ export default function Ventes() {
                     <DropdownMenuTrigger asChild>
                       <button
                         style={{
-                          border: '1px solid rgba(255,255,255,0.12)',
+                          border: '1px solid #D4A843',
                           borderRadius: 8,
-                          padding: '7px 12px',
+                          padding: '8px 20px',
                           background: 'transparent',
-                          color: 'rgba(255,255,255,0.5)',
-                          fontSize: 12,
+                          color: '#D4A843',
+                          fontSize: 14,
                           cursor: 'pointer',
                           display: 'flex',
                           alignItems: 'center',
                           gap: 6,
-                          fontFamily: 'DM Sans, sans-serif',
                           fontWeight: 500,
                           transition: 'all 150ms',
                         }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(212,168,67,0.1)')}
                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                       >
                         <span style={{ fontSize: 14, lineHeight: 1 }}>⋯</span>
