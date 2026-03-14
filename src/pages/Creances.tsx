@@ -2155,11 +2155,7 @@ export default function Creances() {
 
         {/* INTELLIGENCE IA TAB */}
         {creancesTab === 'ia' && (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <p style={{ fontFamily: 'ui-monospace, monospace', fontSize: 13, color: '#9CA3AF' }}>
-              Contenu en cours de déploiement...
-            </p>
-          </div>
+          <EmptyState icon={Bot} title="Intelligence IA en cours de déploiement..." />
         )}
 
         {/* Action Dialog */}
