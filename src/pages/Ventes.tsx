@@ -49,6 +49,9 @@ import { PipelineAnalysisCard } from '@/components/ventes/PipelineAnalysisCard';
 import { PipelineKpiCards } from '@/components/ventes/PipelineKpiCards';
 import { PipelineBriefingCard } from '@/components/ventes/PipelineBriefingCard';
 import { ConversionPredictorCard } from '@/components/ventes/ConversionPredictorCard';
+import { RelanceIntelligenteCard } from '@/components/ventes/RelanceIntelligenteCard';
+import { ScoringDynamiquePrixCard } from '@/components/ventes/ScoringDynamiquePrixCard';
+import { ConcentrationClientCard } from '@/components/ventes/ConcentrationClientCard';
 
 // Phase 5-7 Components
 import { useVentesKeyboardShortcuts, KeyboardShortcutsHint } from '@/components/ventes/KeyboardShortcuts';
